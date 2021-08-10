@@ -1,0 +1,206 @@
+<template>
+  <div class="page animated-page stageContainer stage4 au-animate ">
+    <div class="infoContainer">
+      <div class="heading heading2 title">SEED Details</div>
+      <div class="subtext">
+        Use <a href="/documentation/seed-launch" target="_blank" rel="noopener noreferrer">Seed Details &amp; Benefits</a> to learn more or
+        <a href="https://hi704760.typeform.com/to/TPMzQKFE" target="_blank" rel="noopener noreferrer">get in touch</a> to request further information.
+      </div>
+      <div>
+        <div class="infoInput">
+          <label for="ppt">Funding Tokens per Seed Token</label>
+          <div class="pptContainer">
+            <numeric-input
+              output-as-string="true"
+              id="ppt"
+              value.bind="seedConfig.seedDetails.pricePerToken"
+              placeholder="1.5">
+            </numeric-input>
+          </div>
+        </div>
+        <div class="infoInput maxTarget">
+          <div>
+            <label for="fundingTarget">Funding Target</label>
+            <numeric-input
+              output-as-string="true"
+              id="fundingTarget"
+              value.bind="seedConfig.seedDetails.fundingTarget"
+              placeholder="100">
+            </numeric-input>
+          </div>
+          <div>
+            <div class="labeledQuestion">
+              <label for="fundingMax">Funding Max</label>
+              <div class="questionMark">
+                <question-mark text="Measured in funding tokens"></question-mark>
+              </div>
+            </div>
+            <numeric-input
+              output-as-string="true"
+              id="fundingMax"
+              value.bind="seedConfig.seedDetails.fundingMax"
+              placeholder="1000">
+            </numeric-input>
+          </div>
+        </div>
+        <div class="labeledQuestion">
+          <label for="vestingPeriod">Vesting Schedule</label>
+          <div class="questionMark">
+            <question-mark text="The duration in days in which the Seed token is vested. Vesting is released linearly by default. The vesting cliff is the period in which no tokens can be withdrawn or used — they are locked until this date"></question-mark>
+          </div>
+        </div>
+        <div class="infoInput maxTarget maxTargetLabel">
+          <div>
+            <label for="vestingPeriod">Seed tokens vested for</label>
+            <div class="vestingPeriod">
+              <input
+                placeholder="100.2"
+                id="vestingPeriod"
+                value.bind="seedConfig.seedDetails.vestingPeriod | secondsDays">
+              </input>
+              <div>days</div>
+            </div>
+          </div>
+          <div>
+            <label for="vestingCliff">with a cliff of</label>
+            <div class="vestingPeriod">
+              <input
+                placeholder="20.8"
+                id="vestingCliff"
+                value.bind="seedConfig.seedDetails.vestingCliff | secondsDays">
+              </input>
+              <div>days</div>
+            </div>
+          </div>
+        </div>
+        <label>Seed Schedule</label>
+        <div class="infoInput maxTarget maxTargetLabel">
+          <div>
+            <label for="startDate">Start Date</label>
+            <div class="vestingDates">
+              <input
+                id="startDate"
+                placeholder="YYYY-MM-DD"
+                class="vestingDateInput"
+                value.bind="startDate | date"
+                ref="startDateRef"
+                click.delegate="startDatePicker.show()"
+                autocomplete="off" disabled />
+              <div><i class="far fa-calendar-alt" click.delegate="startDatePicker.show()"></i></div>
+            </div>
+          </div>
+          <div>
+            <label for="startTime">Start Time</label>
+            <div class="vestingDatesContainer">
+              <div class="vestingDates">
+                <input
+                  id="startTime"
+                  value.bind="startTime"
+                  autocomplete="off"
+                  placeholder="HH:MM (GMT)" />
+                <div><i class="far fa-clock"></i></div>
+              </div>
+              <div class="questionMark">
+                <question-mark text="The start time for the launch"></question-mark>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="infoInput maxTarget maxTargetLabel">
+          <div>
+            <label for="endDate">End Date</label>
+            <div class="vestingDates">
+              <input
+                id="endDate"
+                class="vestingDateInput"
+                value.bind="endDate | date"
+                placeholder="YYYY-MM-DD"
+                ref="endDateRef"
+                click.delegate="endDatePicker.show()"
+                autocomplete="off" disabled />
+              <div><i class="far fa-calendar-alt" click.delegate="endDatePicker.show()"></i></div>
+            </div>
+          </div>
+          <div>
+            <label for="endTime">End Time</label>
+            <div class="vestingDatesContainer">
+              <div class="vestingDates">
+                <input
+                  id="endTime" value.bind="endTime"
+                  autocomplete="off"
+                  placeholder="HH:MM (GMT)" />
+                <div><i class="far fa-clock"></i></div>
+              </div>
+              <div class="questionMark">
+                <question-mark text="The maximum end time for the launch. The launch will conclude at this time"></question-mark>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="whitelist">Whitelist</label>
+            <div class="questionMark">
+              <question-mark text="A file containing a list of addresses that are allowed to purchase Seed tokens. This whitelist file must be formatted as plain text and the addresses must be separated by commas or whitespace"></question-mark>
+            </div>
+          </div>
+          <input id="whitelist" value.bind="seedConfig.seedDetails.whitelist"
+            placeholder="(Optional) URL to a whitelist" />
+        </div>
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="disclaimer">Legal Disclaimer</label>
+            <div class="questionMark">
+              <question-mark text="If supplied, all contributors must accept the disclaimer in order to access the launch. The disclaimer must be formatted as plain text or markdown"></question-mark>
+            </div>
+          </div>
+          <input
+            id="disclaimer"
+            value.bind="seedConfig.seedDetails.legalDisclaimer"
+            placeholder="(Optional) URL to a disclaimer" />
+        </div>
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="geoBlock">Geoblock</label>
+            <div class="questionMark">
+              <question-mark allow-html text="When enabled, geoblock prevents a standard list of geographic locations from contributing to your launch.
+
+              <p>Disallowed regions:
+              
+              <p>Afghanistan, Cuba, Ethiopia, Guyana, Iran, Iraq, North Korea, Sudan, Syria, United States, United States Minor Outlying Islands, Venezuela, Yemen, the Crimea.</p></p>"></question-mark>
+            </div>
+          </div>
+          <div class="checkboxContainer" click.delegate="toggleGeoBlocking()">
+            <i class="fas fa-check yes"></i>
+            <i class="fas fa-times no"></i>
+            <div class="checkbox">
+              <input
+                id="geoBlock" type="checkbox"
+                checked.bind="seedConfig.seedDetails.geoBlock" />
+              <label for="geoBlock" />
+            </div>
+          </div>
+        </div>
+        <div class="infoInput admin">
+          <div class="labeledQuestion">
+            <label for="admin">Seed Administrator</label>
+            <div class="questionMark">
+              <question-mark text="The Seed administrator has the ability to pause and close the seed, alter the whitelist and withdraw funding tokens"></question-mark>
+            </div>
+          </div>
+          <input
+            id="admin"
+            value.bind="seedConfig.seedDetails.adminAddress"
+            placeholder="Administrator wallet address" />
+          <template if.to-view="!seedConfig.seedDetails.adminAddress">
+            <div class="button2 small" if.to-view="!ethereumService.defaultAccountAddress" click.delegate="connect()">Connect to get your wallet address</div>
+            <div class="button2 small" else click.delegate="makeMeAdmin()">I will be the administrator</div>
+          </template>
+        </div>
+        <div class="buttonContainer">
+          <div class="stageButton cancel" click.delegate="back()">PREVIOUS</div>
+          <div class="stageButton proceed button1" click.delegate="proceed()">NEXT</div>
+        </div>
+      </div>
+    </div>
+</template>

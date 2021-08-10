@@ -1,0 +1,118 @@
+<template>
+  <div class="page animated-page au-animate home">
+    <div class="section top">
+      <div class="moonshot">
+        <!-- <img src="/nasa-pd4lo70LdbI-unsplash.png" /> -->
+      </div>
+      <div class="title heading heading0">DAO2DAO</div>
+      <div class="subtitle">
+        An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
+      </div>
+      <div class="buttons">
+        <div class="buttonContainer">
+          <div class="contribute" click.delegate="navigate('deals')">
+            <div class="title">
+              <div class="header">All Deals</div>
+              <div class="arrow">&#8599;</div>
+            </div>
+            <div class="icon"></div>
+            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+          </div>
+        </div>
+        <div class="buttonContainer">
+          <div class="launch" click.delegate="navigate('launch')">
+            <div class="title">
+              <div class="header">Initiate a Deal</div>
+              <div class="arrow">&#8599;</div>
+            </div>
+            <div class="icon"></div>
+            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open Deals  -->
+    <div class="section deals open" if.to-view="!featuredSeeds || featuredSeeds.length">
+      <div class="title heading heading1">Open Deals</div>
+      <template if.to-view="featuredSeeds && featuredSeeds.length">
+        <horizontal-scroller item-count.to-view="featuredSeeds.length">
+          <deal-summary 
+            repeat.for="seed of featuredSeeds" 
+            seed.to-view="seed"
+          ></deal-summary>
+        </horizontal-scroller>
+        <div class="dealsButton"><a class="button3" href="deals">VIEW ALL DEALS</a></div>
+      </template>
+      <div if.to-view="!featuredSeeds" class="loading">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+    </div>
+
+    <!-- Hero  -->
+    <div class="section hero">
+      <div class="heroColumn">
+        <div class="subtitle subtext gradient">Subtitle</div>
+        <div class="title heading heading1">Web3 partnerships made easy!</div>
+        <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
+        <a class="notifyButton button2" href="#" target="_blank" rel="noopener noreferrer">INITIATE A DEAL</a>
+      </div>
+
+      <div class="heroColumn">
+        <video class="introVideo" controls poster="https://i.stack.imgur.com/PtbGQ.png">
+          <source src="https://cdn.videvo.net/videvo_files/video/free/2013-07/small_watermarked/hd0051_preview.webm" type="video/mp4">
+          Video is not supported.
+        </video>
+      </div>
+    </div>
+
+    <!-- Counter Panel -->
+
+    <div class="section counter-panel">
+      <div class="counter-column">
+        <div class="counter-number">
+          1K
+        </div>
+        <div class="counter-description">
+          DEALS<br/>CREATED
+        </div>
+      </div>
+      <div class="counter-column">
+        <div class="counter-number">
+          500+
+        </div>
+        <div class="counter-description">
+          SUCCESSFUL<br/>DEALS
+        </div>
+      </div>
+      <div class="counter-column">
+        <div class="counter-number">
+          100+
+        </div>
+        <div class="counter-description">
+          UNIQUE DAO<br/>JOINT VENTURES
+        </div>
+      </div>
+    </div>
+
+    <!-- Running Deals -->
+    <div class="section deals running" if.to-view="!runningSeeds || runningSeeds.length">
+      <div class="title heading heading1">Running Deals</div>
+      <template if.to-view="runningSeeds && runningSeeds.length">
+        <horizontal-scroller item-count.to-view="runningSeeds.length">
+          <deal-summary 
+            repeat.for="seed of runningSeeds" 
+            name.to-view="seed.name"
+            logo.to-view="seed.logo"
+            address.to-view="seed.address"
+          ></deal-summary>
+        </horizontal-scroller>
+        <div class="dealsButton"><a class="button1" href="deals">VIEW ALL DEALS</a></div>
+      </template>
+      <div if.to-view="!runningSeeds" class="loading">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+    </div>
+
+  </div>
+</template>

@@ -1,0 +1,131 @@
+<template>
+  <require from="../resources/elements/questionMark/questionMark.html"></require>
+  <div class="page animated-page stageContainer stage3 au-animate ">
+    <div class="infoContainer">
+      <div class="heading heading2 title">Token Details</div>
+      <div class="subtext">
+        Details about your token design and distribution.
+      </div>
+      <div>
+        <div class="infoInput ticker">
+          <div class="address">
+            <div class="labeledQuestion">
+              <label for="fundingAddress">Funding Token Address</label>
+              <div class="questionMark">
+                <question-mark text="The Ethereum address of the funding token used to purchase Seed tokens. Simply put: the token you are raising funds in (e.g. DAI)"></question-mark>
+              </div>
+            </div>
+            <div class="tickerContainer">
+              <input id="fundingAddress"
+                value.bind="seedConfig.tokenDetails.fundingAddress"
+                blur.trigger="getTokenInfo('funding')">
+              </input>
+              <div class="ticker">
+                ${fundingSymbol}
+              </div>
+              <div if.to-view="fundingIcon">
+                <img src.bind="fundingIcon" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="infoInput ticker">
+          <div class="address">
+            <div class="labeledQuestion">
+              <label for="seedAddress">Seed Token Address</label>
+              <div class="questionMark">
+                <question-mark text="The Ethereum address of the token you are offering to contributors"></question-mark>
+              </div>
+            </div>
+            <div class="tickerContainer">
+              <input id="seedAddress"
+                value.bind="seedConfig.tokenDetails.seedAddress"
+                blur.trigger="getTokenInfo('seed')">
+              </input>
+              <div class="ticker">
+                ${seedSymbol}
+              </div>
+              <div if.to-view="seedIcon">
+                <img src.bind="seedIcon" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="infoInput supply">
+          <div class="labeledQuestion">
+            <label for="maxSeedSupply">Maximum Seed Token Supply</label>
+            <div class="questionMark">
+              <question-mark text="The maximum supply of Seed tokens to exist over the project's lifetime. If there is no maximum, provide a reasonable estimate"></question-mark>
+            </div>
+          </div>
+          <numeric-input
+            output-as-string="true"
+            id="maxSeedSupply"
+            value.bind="seedConfig.tokenDetails.maxSeedSupply">
+          </numeric-input>
+        </div>
+        <div class="infoInput supply">
+          <div class="labeledQuestion">
+            <label for="initialSeedSupply">Initial Circulating Seed Token Supply </label>
+            <div class="questionMark">
+              <question-mark text="The amount of Seed tokens that will be in circulation once the launch has concluded"></question-mark>
+            </div>
+          </div>
+          <numeric-input
+            output-as-string="true"
+            id="initialSeedSupply"
+            value.bind="seedConfig.tokenDetails.initialSeedSupply">
+          </numeric-input>
+        </div>
+        <div class="tokenDistribution">
+          <div class="labeledQuestion">
+            <label>Seed Token Global Distribution</label>
+            <div class="questionMark">
+              <question-mark text="The seed token distribution between different groups. Projects who issue tokens in multiple rounds should clearly demarcate the amount of tokens distributed in each round"></question-mark>
+            </div>
+          </div>
+          <template repeat.for="distrib of seedConfig.tokenDetails.tokenDistrib">
+            <div class="distribRow">
+              <div class="infoInput supply">
+                <div class="category">
+                  <div class="columnHeaders">Category</div>
+                  <span>
+                    ${distrib.category.length || 0}/30
+                  </span>
+                </div>
+                <input type="text" value.bind="distrib.category" class="textInput" maxlength="30">
+              </div>
+              <div class="infoInput supply" value.bind="distrib.amount">
+                <div class="columnHeaders">Amount</div>
+                <numeric-input
+                  output-as-string="true"
+                  value.bind="distrib.amount"
+                  placeholder="0" class="numberInput">
+                </numeric-input>
+              </div>
+              <div class="infoInput supply numberInput" value.bind="distrib.lockup">
+                <div class="columnHeaders">Lock-up (days)</div>
+                <input type="number" value.bind="distrib.lockup" placeholder="0" class="numberInput">
+                <span
+                  class="deleteLink"
+                  title="Delete this row"
+                  click.delegate="deleteTokenDistribution($index)">
+                  <i class="far fa-trash-alt"></i>
+                </span>
+              </div>
+            </div>
+          </template>
+          <div
+            class="addLink"
+            click.delegate="addTokenDistribution()">
+            <a>+ Add Row</a>
+          </div>
+        </div>
+      </div>
+      <div class="buttonContainer">
+        <div class="stageButton cancel" click.delegate="back()">PREVIOUS</div>
+        <div class="stageButton proceed button1" click.delegate="proceed()">NEXT</div>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,92 @@
+<template>
+  <div class="page animated-page stageContainer stage2 au-animate">
+    <div class="infoContainer">
+      <div class="heading heading2 title">Project Details</div>
+      <div class="subtext">Description of your project and team.</div>
+
+      <div class="infoInput">
+        <div class="labelContainer">
+          <div class="labeledQuestion">
+            <label for="projSummary">Project Summary</label>
+            <div class="questionMark">
+              <question-mark text="Describe your project. This introduction will be visible to users on the Home, Deals, and Seed Dashboard pages"></question-mark>
+            </div>
+          </div>
+          <span>
+            ${seedConfig.projectDetails.summary.length}/200
+          </span>
+        </div>
+        <textarea
+          id="projSummary"
+          value.bind="seedConfig.projectDetails.summary"
+          maxlength="200"></textarea>
+      </div>
+      <div class="infoInput">
+        <div class="labelContainer">
+          <div class="labeledQuestion">
+            <label for="valueProp">Value Proposition</label>
+            <div class="questionMark">
+              <question-mark text="Describe why contributors should engage your project. This will be visible at the top of the Seed Dashboard"></question-mark>
+            </div>
+          </div>
+          <span>
+            ${seedConfig.projectDetails.proposition.length}/200
+          </span>
+        </div>
+        <textarea
+          id="valueProp"
+          value.bind="seedConfig.projectDetails.proposition"
+          maxlength="200">
+          </textarea>
+      </div>
+      <div class="infoInput">
+        <div class="labelContainer">
+          <div class="labeledQuestion">
+            <label for="teamDesc">Team Description</label>
+            <div class="questionMark">
+              <question-mark text="Describe the team behind the project. Provide responsibilities and any useful background"></question-mark>
+            </div>
+          </div>
+          <span>
+            ${seedConfig.projectDetails.teamDescription.length}/200
+          </span>
+        </div>
+        <textarea
+          id="teamDesc"
+          value.bind="seedConfig.projectDetails.teamDescription"
+          maxlength="200">
+          </textarea>
+      </div>
+
+      <div class="infoInput logo">
+        <div class="logoInput">
+          <label for="logo">
+            <div class="text">Project Logo</div>
+            <div class="logoPreview" show.to-view="seedLogoIsValid && seedLogoIsLoaded">
+              <img class="logoImage"
+                src.to-view="seedConfig.projectDetails.logo"
+                error.trigger="isLoadedSeedLogo(false)"
+                load.trigger="isLoadedSeedLogo(true)">
+              </img>
+            </div>
+            <div class="logoNone" if.to-view="!seedLogoIsValid || !seedLogoIsLoaded">[none]</div>
+          </label>
+          <input id="logo" type="text"
+            value.bind="seedConfig.projectDetails.logo"
+            input.trigger="isValidSeedLogo()">
+        </div>
+        <div class="fileNote">
+          JPG, GIF, PNG or BMP formats<br />
+          Square aspect ratio<br />
+          Recommended size: 400x400px<br />
+          Maximum 5MB file size
+        </div>
+      </div>
+
+      <div class="buttonContainer">
+        <div class="stageButton cancel" click.delegate="back()">PREVIOUS</div>
+        <div class="stageButton proceed button1" click.delegate="proceed()">NEXT</div>
+      </div>
+    </div>
+  </div>
+</template>

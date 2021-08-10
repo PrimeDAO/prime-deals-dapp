@@ -1,0 +1,68 @@
+@import "styles/styles.scss";
+.documentsContainer {
+    display: grid;
+    grid-template-rows: 0.01fr 1fr;
+    justify-content: center;
+    gap: 20px;
+
+    .documentBody {
+        display: grid;
+        grid-template-columns: 0.7fr 2fr;
+        gap: 20px;
+    }
+
+    .sidebar {
+        line-height: 200.02%;
+        font-family: Inter;
+        font-size: 16px;
+
+        a {
+            text-decoration: none;
+            display: block;
+        }
+
+        .active {
+            color: $Secondary02;
+        }
+    }
+    .docsContainer {
+        max-width: 40rem;
+
+        > .heading3 {
+            line-height: 200%;
+            font-size: 36px;
+        }
+
+        .document {
+            font-family: Inter;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 140%;
+            color: $Neutral03;
+
+            a {
+                color: $Secondary07;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1072px) {
+    .documentsContainer {
+        > .heading.heading1 {
+            -webkit-text-fill-color: $Secondary02;
+            font-size: 34px;
+        }
+        .docsContainer {
+            > .heading.heading3 {
+                font-size: 28px;
+                white-space: normal;
+                line-height: 100%;
+            }
+        }
+        .documentBody {
+            grid-template-columns: unset;
+            gap: 50px;
+        }
+    }
+}

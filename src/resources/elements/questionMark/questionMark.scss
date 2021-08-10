@@ -1,0 +1,14 @@
+@import "styles/colors.scss";
+.questionMark {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  text-align: center;
+  background-color: $Neutral02;
+
+  > .mark {
+    color: $BG01;
+    font-size: 1em;
+    display: inline-flex;
+  }
+}

@@ -1,0 +1,119 @@
+@import "styles/colors.scss";
+.timeLeftContainer {
+  font-size: 16px;
+  > div.mainStatus > div,
+  > div.adminStatus > div {
+    font-family: Inter;
+    align-self: center;
+    white-space: nowrap;
+
+    > .icon {
+      margin-right: 5px;
+    }
+
+    &:not(.timeLeft) {
+      > .icon {
+        display: inline-block;
+        font-size: 7px;
+        position: relative;
+        bottom: 3px;
+      }
+    }
+  }
+
+  > div.mainStatus > div {
+    &.timeLeft {
+      &.soon {
+        color: $AlertRed;
+      }
+
+      &.comingUp {
+        color: $AlertOrange;
+      }
+
+      &.farOff {
+        color: $White;
+      }
+    }
+
+    &.live {
+      color: $AlertGreen;
+    }
+
+    &.complete {
+      color: #18bab0;
+    }
+
+    &.incomplete {
+      color: #da6511;
+    }
+
+    &.uninitialized {
+      color: #717171;
+    }
+  }
+
+  > div.adminStatus > div {
+    &.paused {
+      color: #ff52cf;
+    }
+
+    &.closed {
+      color: #848484;
+    }
+  }
+
+  &.contained {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 6px;
+
+    > div.mainStatus > div,
+    > div.adminStatus > div {
+      border-radius: 87px;
+      padding: 2px 9px;
+    }
+
+    > div.mainStatus > div {
+      &.timeLeft {
+        &.soon {
+          background-color: #3e2638;
+        }
+
+        &.comingUp {
+          background-color: #3e3038;
+        }
+
+        &.farOff {
+          background-color: #3e263c;
+        }
+      }
+
+      &.live {
+        background-color: #2b3139;
+      }
+
+      &.complete {
+        background-color: #2b3239;
+      }
+
+      &.incomplete {
+        background-color: #3e2c27;
+      }
+
+      &.uninitialized {
+        background-color: $Black;
+      }
+    }
+
+    > div.adminStatus > div {
+      &.paused {
+        background-color: #38263e;
+      }
+
+      &.closed {
+        background-color: #2d3131;
+      }
+    }
+  }
+}

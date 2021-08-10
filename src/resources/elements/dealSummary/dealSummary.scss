@@ -1,0 +1,171 @@
+@import "styles/colors.scss";
+.dealSummaryContainer {
+  display: inline-block;
+  cursor: default;
+  width: 360px;
+  height: 262px;
+  min-width: 360px;
+  padding-right: 30px;
+
+  .dealSummary {
+    display: grid;
+    grid-template-columns: 58px 4fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      ". . timeLeft"
+      "icon title title"
+      "description description description"
+      "footer footer footer";
+    row-gap: 8px;
+    background-color: $BG02;
+    border-radius: 6px;
+    padding: 8px 13px 0 13px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: hidden;
+    align-items: center;
+
+    > .icon {
+      display: grid;
+      align-items: center;
+      justify-content: center;
+      grid-area: icon;
+      width: 46px;
+      height: 46px;
+      border-radius: 23px;
+      overflow: hidden;
+      img {
+        height: 46px;
+        width: 46px;
+      }
+    }
+
+    > .title {
+      grid-area: title;
+      font-weight: bold;
+      font-size: 22px;
+      white-space: normal;
+      overflow-x: clip;
+      max-width: 295px;
+    }
+
+    > .description {
+      grid-area: description;
+      font-family: Inter;
+      font-size: 12px;
+      line-height: 17px;
+      color: $Neutral03;
+      height: 103px;
+      white-space: normal;
+    }
+
+    > .countdown {
+      grid-area: timeLeft;
+      text-align: right;
+      height: 24px;
+    }
+
+    > .footer {
+      grid-area: footer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 53px;
+      margin-left: -13px;
+      margin-right: -13px;
+      background: #403453;
+      cursor: pointer;
+      &:hover {
+        text-decoration: none;
+        background: $BG05;
+        &>.title {
+          color: $White;
+        }
+      }
+
+
+      > .title {
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      > .tokensTitle {
+        grid-area: tokensTitle;
+      }
+
+      > .targetTitle {
+        grid-area: targetTitle;
+      }
+
+      > .tokens {
+        grid-area: tokens;
+
+        .tokenPairContainer > img {
+          width: 26px;
+          height: 26px;
+          border-radius: 16px;
+        }
+      }
+
+      > .targetValue {
+        grid-area: targetValue;
+        font-size: 26px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding-top: 32px;
+    i {
+      color: $Secondary07;
+    }
+  }
+}
+
+@media screen and (max-width: 1072px) {
+  .dealSummaryContainer {
+    // because this is going to be vertically-aligned
+    padding-right: 0;
+    margin-bottom: 20px;
+    width: 50%;
+
+    .dealSummary {
+      grid-template-columns: 48px 4fr 1fr;
+      grid-template-areas:
+        ". . timeLeft"
+        "icon title title"
+        "description description ."
+        "footer footer footer";
+
+      > .title {
+        max-width: unset;
+      }
+
+      > .icon {
+        img {
+          height: 36px;
+          width: 36px;
+        }
+      }
+
+      > .footer,
+      > .title,
+      > .description {
+        text-align: left;
+      }
+
+      > .timeLeft {
+        text-align: right;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .dealSummaryContainer {
+    min-width: 100%;
+    width: 100%;
+  }
+}

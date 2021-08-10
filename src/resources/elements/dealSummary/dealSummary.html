@@ -1,0 +1,27 @@
+<template>
+  <div 
+    class="dealSummaryContainer"
+    ref="container"
+  >
+    <div if.to-view="!loading" class="dealSummary">
+      <div class="icon">
+        <img src="${seed.logo}" />
+      </div>
+      <div class="title ellipses">${seed.name}</div>
+      <!-- <div class="title ellipses">${seed.metadata.general.projectName}</div> -->
+      <div class="countdown">
+        <time-left seed.to-view="seed" largest contained></time-left>
+      </div>
+      <div class="description">Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.</div>
+      <!-- <div class="description">${seed.metadata.projectDetails.proposition}</div> -->
+      <a
+        class="footer"
+        href.to-view="`seed/${seed.address}`">
+        <div class="targetTitle title subtext">MAKE OFFER</div>
+      </a>
+    </div>
+    <div else class="loading">
+      <i class="fas fa-circle-notch fa-spin"></i>
+    </div>
+  </div>
+</template>

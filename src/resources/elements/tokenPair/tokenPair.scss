@@ -1,0 +1,16 @@
+@import "styles/styles.scss";
+.tokenPairContainer {
+  height: 23px;
+  > img {
+    @include tokenIcon;
+    height: 19px;
+    width: 19px;
+    border-radius: 13px;
+    border: 2px solid $BG02;
+  }
+
+  > img:nth-child(2) {
+    position: relative;
+    right: 10px;
+  }
+}

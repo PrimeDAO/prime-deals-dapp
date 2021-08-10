@@ -1,0 +1,305 @@
+@import "styles/styles.scss";
+
+.page.home {
+  .section {
+    &.hero,
+    &.deals {
+      margin-bottom: 100px;
+    }
+
+    &.hero {
+      border-radius: 6px;
+      & .title {
+        margin-bottom: 0px;
+      }
+    }
+
+    &.counter-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 300px);
+      grid-gap: 10px;
+      justify-content: center;
+      width: calc(100% + 320px);
+      background: #292235;
+      margin-left: -160px;
+      padding: 63px 0;
+      .counter-column {
+        text-align: center;
+        .counter-number {
+          @include standardTextGradient;
+          font-size: 62px;
+          font-weight: 400;
+          line-height: 72px;
+          font-family: "Aeonik";
+        }
+        .counter-description {
+          color: $Neutral03;
+          font-size: 22px;
+          font-weight: 700;
+          line-height: 33px;
+          font-family: "Inter";
+        }
+        position: relative;
+        &:not(:last-child):after {
+          content: '';
+          position: absolute;
+          left: calc(100% + 4px);
+          background: #403453;
+          width: 2px;
+          height: 80%;
+          top: 10%;
+        }
+      }
+    }
+
+    &.top {
+      width: 56%;
+      margin-bottom: 200px;
+
+      .moonshot {
+        position: absolute;
+        right: 0;
+        z-index: -1;
+        background-color: $BG01;
+
+        img {
+          mix-blend-mode: lighten;
+        }
+      }
+
+      .title {
+        white-space: normal;
+        background: $Gradient08;
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        padding-bottom: 0.1em;
+        max-width: 645px;
+      }
+
+      > .subtitle {
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 33px;
+        max-width: 485px;
+        color: $Neutral03;
+        margin-bottom: 80px;
+        white-space: normal;
+      }
+
+      .buttons {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: space-between;
+        cursor: pointer;
+        width: 710px;
+        grid-gap: 24px;
+        .buttonContainer {
+          display: flex;
+          border-radius: 6px;
+          overflow: hidden;
+          & .header {
+            -webkit-text-fill-color: white;
+          }
+        }
+        .contribute,
+        .launch {
+          border-left-width: 6px;
+          border-left-style: solid;
+          border-image: linear-gradient(to bottom, #ff497a, #a258a7) 1 100%;
+          border-radius: 6px;
+          background-color: $BG02;
+          width: 300px;
+
+          padding: 18px;
+
+          .title {
+            display: flex;
+            justify-content: space-between;
+            color: $White;
+            margin-bottom: 16px;
+            margin-right: 6px;
+
+            .header {
+              font-weight: bold;
+              font-family: "Aeonik";
+              font-size: 28px;
+              white-space: nowrap;
+              padding-right: 16px;
+            }
+
+            .arrow {
+              font-size: 28px;
+            }
+          }
+
+          .subtitle {
+            color: $Neutral03;
+            font-size: 16px;
+            line-height: 20px;
+            font-weight: 400;
+            font-family: "Inter";
+          }
+        }
+      }
+    }
+
+    &.deals {
+      .scrollerContainer {
+        margin-bottom: 28px;
+      }
+
+      > .heading1 {
+        -webkit-text-fill-color: $Secondary02;
+        padding-top: 55px;
+        margin-bottom: 53px;
+      }
+      > .dealsButton {
+        text-align: center;
+        padding: 2em;
+      }
+      .loading {
+        text-align: center;
+        font-size: 32px;
+        padding-top: 24px;
+        i {
+          color: $Secondary07;
+        }
+      }
+
+      margin: 0 -160px;
+      padding: 0 30px;
+      &> .title {
+        padding-left: 130px;
+      }
+      &.open {
+        background: $BG03;
+        margin-bottom: 53px;
+      }
+    }
+
+    &.hero {
+      display: grid;
+      grid-template-columns: minmax(auto, 450px) auto;
+      background-color: $BG01;
+      align-content: center;
+      justify-content: space-evenly;
+      column-gap: 24px;
+      align-items: center;
+
+      .heroColumn {
+        &.title {
+          font-family: "Aeonik";
+        }
+
+        display: grid;
+        row-gap: 24px;
+        .subtitle.subtext {
+          color: $Secondary02;
+          font-size: 20px;
+          line-height: 24px;
+          font-weight: 700;
+          font-family: Inter;
+        }
+
+        .notifyButton {
+          border-radius: 100px;
+          flex-grow: 1;
+          max-width: 250px;
+        }
+
+        align-self: center;
+        &>.introVideo {
+          height: 273px;
+          border-radius: 6px;
+          display: flex;
+          margin-bottom: 4px;
+          justify-content: left;
+        }
+
+        .disclaimer {
+          text-align: left;
+          a {
+            color: $Neutral02;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1072px) {
+  .page.home {
+    .section {
+      &.top,
+      &.deals,
+      &.hero .heroColumn {
+        > .title {
+          white-space: normal;
+          // text-align: center;
+          width: auto; // so text-align:center works
+          max-width: unset;
+          padding-left: unset;
+        }
+      }
+
+      &.top {
+        width: 100%;
+        .moonshot {
+          right: 0;
+          left: 0;
+          top: 0;
+          overflow: hidden;
+          img {
+            opacity: 0.25;
+          }
+        }
+
+        > .subtitle {
+          margin-bottom: 48px;
+          max-width: unset;
+        }
+
+        .buttons {
+          justify-content: center;
+          grid-auto-flow: row;
+          width: 100%;
+          align-items: center;
+
+        }
+      }
+
+      &.deals {
+        .scrollerContainer {
+          margin-bottom: 0;
+        }
+      }
+
+      &.hero {
+        grid-template-columns: auto;
+        padding: 20px;
+        row-gap: 24px;
+
+        .heroColumn {
+          justify-content: center;
+          > .subtitle.subtext {
+            margin-bottom: 12px;
+          }
+
+          &>.introVideo {
+            justify-content: center;
+          }
+        }
+
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .page.home {
+    .section {
+    }
+  }
+}

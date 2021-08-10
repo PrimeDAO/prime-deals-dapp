@@ -1,0 +1,645 @@
+@import "styles/styles.scss";
+// This styles are common to all the stages components
+// Theme for the stages
+.infoContainer {
+  font-family: Inter;
+  background-color: $BG02;
+  border: 1px solid $Border01;
+  border-radius: 1.5em;
+  padding: 2em;
+  min-width: 40rem;
+
+  a {
+    font-family: Aeonik;
+  }
+
+  .title {
+    font-size: 1.625em;
+  }
+  .subtext {
+    line-height: 1.5em;
+    font-size: 1em;
+    color: $Neutral03;
+    margin-bottom: 3em;
+  }
+  .infoInput {
+    margin-bottom: 2em;
+    > textarea {
+      resize: none;
+      width: 23em;
+      height: 4.5em;
+      color: $Neutral02;
+      border: 1px solid $Border01;
+    }
+    .labelContainer {
+      width: 24em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-flow: row nowrap;
+      color: $Neutral02;
+    }
+  }
+  .buttonContainer {
+    display: flex;
+    flex-flow: row wrap;
+    column-gap: 3em;
+    margin-top: 5em;
+    .stageButton {
+      display: flex;
+      align-items: center;
+    }
+    .cancel {
+      cursor: pointer;
+      color: $Shade01;
+      font-family: Inter;
+      font-weight: bold;
+    }
+  }
+  .stageButton {
+    display: flex;
+    align-items: center;
+  }
+  label {
+    display: block;
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 2em;
+    color: $Secondary02;
+  }
+  input {
+    width: 23em;
+    height: 2.7em;
+    border: 1px solid $Border01;
+    border-radius: 10px;
+    color: $Neutral02;
+  }
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none;
+    display: none;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: $Neutral02;
+    transition: background-color 100s ease-in-out 0s;
+    -webkit-box-shadow: 0 0 0px 3.7em $BG01 inset;
+    box-shadow: 0 0 0px 3.7em $BG01 inset;
+    caret-color: $Neutral02;
+  }
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: $Neutral02;
+    transition: background-color 100s ease-in-out 0s;
+    -webkit-box-shadow: 0 0 0px 3.7em $BG01 inset;
+    box-shadow: 0 0 0px 3.7em $BG01 inset;
+  }
+
+  select {
+    width: 14em;
+    height: 2.9em;
+    border: 1px solid $Border01;
+    border-radius: 10px;
+    color: $Neutral02;
+    background-color: $BG01;
+    font-family: Inter;
+    font-size: 1.1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  a {
+    color: $Neutral02;
+  }
+  .labeledQuestion {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 1em;
+  }
+  .questionMark {
+    width: 1.3em;
+    height: 1.3em;
+    align-self: center;
+  }
+  .importantText {
+    font-weight: bolder;
+  }
+}
+
+.page.stageContainer {
+  &.stage1 {
+    .infoContainer {
+      .infoInput {
+        .optional {
+          padding-left: 0.3em;
+          font-weight: lighter;
+        }
+      }
+      .otherLinks {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 1em;
+        margin-bottom: 2em;
+        .sMedia {
+          display: flex;
+          flex-flow: row nowrap;
+          justify-content: space-between;
+          align-items: center;
+          color: $Neutral02;
+        }
+        .platform {
+          width: 11em;
+        }
+        .addLinkContainer {
+          display: flex;
+          align-items: flex-end;
+          flex-flow: column;
+          input {
+            width: 21em;
+          }
+          .deleteLink {
+            cursor: pointer;
+            justify-self: flex-end;
+          }
+          .addLink {
+            cursor: pointer;
+            padding-right: 1em;
+            align-self: flex-start;
+          }
+        }
+      }
+      .addSingleLink {
+        cursor: pointer;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 2em;
+      }
+    }
+  }
+
+  &.stage2 {
+    .logo {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto;
+      column-gap: 12px;
+
+      .logoInput {
+        label {
+          display: flex;
+          align-items: center;
+          .text {
+            padding-right: 8px;
+          }
+          .logoPreview {
+            .logoImage {
+              display: block;
+              height: 26px;
+              width: 26px;
+              border-radius: 13px;
+            }
+          }
+          .logoNone {
+            font-size: 10px;
+            color: $AlertRed;
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
+
+      .fileNote {
+        color: $Neutral02;
+        line-height: 1.5em;
+      }
+    }
+  }
+
+  &.stage3 {
+    .tickerContainer {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      .ticker {
+        font-family: Inter;
+        color: $Neutral02;
+      }
+      img {
+        @include tokenIcon;
+        border-radius: 12px;
+        width: 24px;
+        position: relative;
+        top: 1px;
+      }
+    }
+    .infoInput.supply {
+      input {
+        width: 10em;
+      }
+    }
+    .tokenDistribution {
+      .columnHeaders {
+        font-size: 0.9em;
+        font-weight: normal;
+        line-height: 2em;
+        text-align: left;
+      }
+      .distribRow {
+        display: flex;
+        flex-flow: row wrap;
+        flex: 1;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        .category {
+          display: flex;
+          flex-flow: row nowrap;
+          justify-content: space-between;
+          align-items: center;
+          span {
+            color: $Neutral02;
+          }
+        }
+        .infoInput {
+          margin-bottom: unset;
+        }
+        input {
+          height: 2.3em;
+        }
+        input.textInput {
+          height: 2.3em;
+        }
+        .deleteLink {
+          cursor: pointer;
+          justify-self: flex-end;
+        }
+      }
+    }
+    .addLink {
+      cursor: pointer;
+    }
+  }
+
+  &.stage4 {
+    .infoInput {
+      .pptContainer {
+        input {
+          width: 3em;
+        }
+        > label {
+          align-self: center;
+          -webkit-text-fill-color: $White;
+          font-weight: normal;
+        }
+      }
+      &.maxTarget {
+        input {
+          width: 8.5em;
+        }
+        display: flex;
+        flex-flow: row wrap;
+        flex: 1;
+        gap: 2em;
+        &.maxTargetLabel label {
+          font-size: 0.9em;
+          line-height: 3em;
+          -webkit-text-fill-color: $White;
+          font-weight: normal;
+        }
+        .questionMark {
+          width: 1.3em;
+          height: 1.3em;
+          align-self: center;
+          justify-self: center;
+        }
+      }
+      .vestingPeriod {
+        width: 11em;
+        display: flex;
+        flex-flow: row nowrap;
+        flex: 1;
+        gap: 0em;
+        input {
+          width: 5em;
+          border-top-right-radius: 0em;
+          border-bottom-right-radius: 0em;
+        }
+        > div {
+          width: 5em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: $Border01;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+        }
+      }
+      .vestingDatesContainer {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 1em;
+      }
+      .vestingDates {
+        width: 11em;
+        display: flex;
+        flex-flow: row nowrap;
+        flex: 1;
+        gap: 0em;
+        input {
+          width: 7em;
+          border-top-right-radius: 0em;
+          border-bottom-right-radius: 0em;
+          border-right: 0px;
+          cursor: pointer;
+        }
+        > div {
+          width: 3em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: $BG01;
+          border: 1px solid $Border01;
+          border-left: 0px;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+          z-index: 1;
+          cursor: pointer;
+          i {
+            font-size: 1.4em;
+          }
+        }
+      }
+
+      &.admin {
+        > input {
+          width: 240px;
+          margin-right: 6px;
+        }
+      }
+    }
+    .whitelistContainer {
+      .inputFileLabel {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+        align-items: center;
+        overflow-wrap: break-word;
+        width: 16em;
+        height: 4.5em;
+        border-radius: 0.6em;
+        background-color: #1b1722;
+        border: 1px solid $Border01;
+        cursor: pointer;
+        span {
+          font-size: 0.7em;
+          font-weight: 100;
+          text-align: center;
+          line-height: 1em;
+        }
+        i {
+          font-size: 2.8em;
+          -webkit-text-fill-color: $Neutral02;
+        }
+        span {
+          width: 8em;
+          -webkit-text-fill-color: $Neutral03;
+          font-size: 1em;
+          text-align: left;
+          line-height: 1.24em;
+        }
+      }
+      input[type="file"] {
+        display: none;
+      }
+    }
+    .checkboxContainer {
+      width: 3.7em;
+      height: 2em;
+      border: 1px solid #2a2a2a;
+      border-radius: 23px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 2em;
+      background: $Gradient01;
+      cursor: pointer;
+      i.yes {
+        position: absolute;
+        left: 0.6em;
+        color: black;
+        font-weight: 700;
+      }
+      i.no {
+        position: absolute;
+        right: 0.6em;
+        color: black;
+        font-weight: 700;
+      }
+      .checkbox {
+        width: 1.8em;
+        height: 1.8em;
+        display: flex;
+        align-items: center;
+        > input {
+          width: 1.8em;
+          height: 1.8em;
+          visibility: hidden;
+          position: absolute;
+          &:checked + label {
+            left: 1.7em;
+          }
+        }
+        & label {
+          display: block;
+          width: 1.4em;
+          height: 1.4em;
+          position: absolute;
+          left: 0.15em;
+          background: white;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          border: 2px solid black;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  &.stage5 {
+    .infoContainer {
+      & textarea {
+        height: 7em;
+      }
+    }
+  }
+
+  &.stage6 {
+    .infoContainer {
+      .summaryContainer {
+        margin-bottom: 40px;
+        word-break: break-word;
+        > .heading.heading3 {
+          margin-bottom: 20px;
+        }
+        .stageSeedDetails {
+          display: grid;
+          gap: 10px;
+          margin-bottom: 20px;
+          font-size: 18px;
+          color: $Neutral02;
+
+          .customLinks {
+            grid-template-columns: 0.4fr 1fr;
+          }
+          .tokenDist {
+            grid-template-columns: 1fr 1fr 1fr;
+          }
+          .customLinks,
+          .tokenDist {
+            display: grid;
+            row-gap: 2px;
+            grid-template-rows: auto;
+            .header {
+              font-size: 12px;
+              color: $Neutral03;
+            }
+
+            .cell {
+              margin-bottom: 10px;
+            }
+          }
+
+          .tokenInfo {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            column-gap: 10px;
+            align-items: center;
+            width: fit-content;
+            & .etherscanlink {
+              margin-right: 10px;
+            }
+            & > img {
+              @include tokenIcon;
+              height: 19px;
+            }
+          }
+          hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: $Shade03;
+          }
+        }
+        &:not(:first-child) {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+
+  &.stage8 {
+    & .linksContainer {
+      display: flex;
+      flex-flow: column;
+      gap: 2em;
+      > div {
+        > a {
+          color: $Neutral03;
+        }
+        > i {
+          color: $Secondary02;
+        }
+      }
+      .closeButton {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        width: 107px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 782px) {
+  .infoContainer {
+    min-width: unset;
+    .infoInput {
+      > textarea {
+        width: 90%;
+      }
+      input {
+        width: 90%;
+        height: unset;
+      }
+      .labelContainer {
+        width: unset;
+      }
+    }
+    .labeledQuestion {
+      margin-bottom: 5px;
+    }
+    > .heading.heading2 {
+      font-size: 26px;
+    }
+    label {
+      line-height: 20px;
+    }
+    .summaryContainer {
+      margin-bottom: 30px;
+      word-break: break-word;
+
+      &:not(:first-child) {
+        margin-top: 30px;
+      }
+    }
+  }
+
+  .page.stageContainer {
+    &.stage1 {
+      .infoContainer {
+        .otherLinks {
+          gap: unset;
+          input {
+            width: unset;
+            height: unset;
+          }
+          .addLinkContainer {
+            input {
+              width: unset;
+            }
+          }
+        }
+      }
+    }
+
+    &.stage2 {
+      .logo {
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
+        column-gap: 0;
+        row-gap: 8px;
+      }
+      .fileNote {
+        padding-left: 8px;
+      }
+    }
+
+    &.stage4 {
+      .infoInput {
+        &.admin {
+          > input {
+            margin-bottom: 8px;
+          }
+        }
+      }
+    }
+  }
+}
