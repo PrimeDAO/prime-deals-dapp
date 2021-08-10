@@ -1,6 +1,20 @@
 @import "styles/styles.scss";
 
 .page.home {
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    background-image: url("/static/home-bg-top.gif");
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-left: -160px;
+    width: calc(100% + 320px);
+    height: 800px;
+    top: -150px;
+    z-index: -1;
+  }
   .section {
     &.hero,
     &.deals {
