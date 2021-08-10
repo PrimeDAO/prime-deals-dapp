@@ -21,13 +21,6 @@
       margin-bottom: 100px;
     }
 
-    &.hero {
-      border-radius: 6px;
-      & .title {
-        margin-bottom: 0px;
-      }
-    }
-
     &.counter-panel {
       display: grid;
       grid-template-columns: repeat(auto-fit, 300px);
@@ -119,6 +112,7 @@
         .contribute,
         .launch {
           border-left-width: 6px;
+          border-right-width: 0;
           border-left-style: solid;
           border-image: linear-gradient(to bottom, #ff497a, #a258a7) 1 100%;
           border-radius: 6px;
@@ -194,16 +188,18 @@
 
     &.hero {
       display: grid;
-      grid-template-columns: minmax(auto, 450px) auto;
+      grid-template-columns: minmax(auto, 450px) minmax(600px, 900px);
       background-color: $BG01;
       align-content: center;
-      justify-content: space-evenly;
+      justify-content: space-between;
       column-gap: 24px;
       align-items: center;
+      border-radius: 6px;
 
       .heroColumn {
         &.title {
           font-family: "Aeonik";
+          margin-bottom: 0px;
         }
 
         display: grid;
@@ -224,7 +220,8 @@
 
         align-self: center;
         &>.introVideo {
-          height: 273px;
+          // height: 273px;
+          width: calc(100% - 35px);
           border-radius: 6px;
           display: flex;
           margin-bottom: 4px;

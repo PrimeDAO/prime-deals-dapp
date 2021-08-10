@@ -12,9 +12,7 @@
     padding-left: 130px;
     padding-right: 130px;
     -webkit-overflow-scrolling: touch;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    overflow: hidden;
 
     > div {
       flex: 0 0 auto;
