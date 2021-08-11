@@ -1,9 +1,7 @@
 <template>
+  <require from="../resources/elements/CounterPanel/CounterPanel"></require>
   <div class="page animated-page au-animate home">
     <div class="section top">
-      <div class="moonshot">
-        <!-- <img src="/nasa-pd4lo70LdbI-unsplash.png" /> -->
-      </div>
       <div class="title heading heading0">DAO2DAO</div>
       <div class="subtitle">
         An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
@@ -68,33 +66,7 @@
     </div>
 
     <!-- Counter Panel -->
-
-    <div class="section counter-panel">
-      <div class="counter-column">
-        <div class="counter-number">
-          1K
-        </div>
-        <div class="counter-description">
-          DEALS<br/>CREATED
-        </div>
-      </div>
-      <div class="counter-column">
-        <div class="counter-number">
-          500+
-        </div>
-        <div class="counter-description">
-          SUCCESSFUL<br/>DEALS
-        </div>
-      </div>
-      <div class="counter-column">
-        <div class="counter-number">
-          100+
-        </div>
-        <div class="counter-description">
-          UNIQUE DAO<br/>JOINT VENTURES
-        </div>
-      </div>
-    </div>
+    <counter-panel class="section"></counter-panel>
 
     <!-- Running Deals -->
     <div class="section deals running" if.to-view="!runningSeeds || runningSeeds.length">

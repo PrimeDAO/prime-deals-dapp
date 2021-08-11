@@ -21,58 +21,10 @@
       margin-bottom: 100px;
     }
 
-    &.counter-panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, 300px);
-      grid-gap: 10px;
-      justify-content: center;
-      width: calc(100% + 320px);
-      background: #292235;
-      margin-left: -160px;
-      padding: 63px 0;
-      .counter-column {
-        text-align: center;
-        .counter-number {
-          @include standardTextGradient;
-          font-size: 62px;
-          font-weight: 400;
-          line-height: 72px;
-          font-family: "Aeonik";
-        }
-        .counter-description {
-          color: $Neutral03;
-          font-size: 22px;
-          font-weight: 700;
-          line-height: 33px;
-          font-family: "Inter";
-        }
-        position: relative;
-        &:not(:last-child):after {
-          content: '';
-          position: absolute;
-          left: calc(100% + 4px);
-          background: #403453;
-          width: 2px;
-          height: 80%;
-          top: 10%;
-        }
-      }
-    }
 
     &.top {
       width: 56%;
       margin-bottom: 200px;
-
-      .moonshot {
-        position: absolute;
-        right: 0;
-        z-index: -1;
-        background-color: $BG01;
-
-        img {
-          mix-blend-mode: lighten;
-        }
-      }
 
       .title {
         white-space: normal;
@@ -257,16 +209,6 @@
 
       &.top {
         width: 100%;
-        .moonshot {
-          right: 0;
-          left: 0;
-          top: 0;
-          overflow: hidden;
-          img {
-            opacity: 0.25;
-          }
-        }
-
         > .subtitle {
           margin-bottom: 48px;
           max-width: unset;
