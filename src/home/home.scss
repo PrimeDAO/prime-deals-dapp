@@ -32,7 +32,7 @@
         -webkit-text-fill-color: transparent;
         -webkit-background-clip: text;
         background-clip: text;
-        padding-bottom: 0.1em;
+        padding-bottom: 5px;
         max-width: 645px;
       }
 
@@ -109,8 +109,27 @@
         margin-bottom: 28px;
       }
 
+      > .selector {
+        padding-bottom: 29px;
+        :not(:first-child) {
+          margin-left: 30px;
+        }
+      }
       > .heading1 {
-        -webkit-text-fill-color: $Secondary02;
+        cursor: pointer;
+        -webkit-text-fill-color: $Neutral02;
+        border-bottom: 2px solid $Border01;
+        margin-left: 130px;
+        width: calc(100% - 260px);
+        transition: background 1s ease-in-out;
+        >.active {
+          background: $Gradient02;
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          border-bottom: 6px solid $Secondary02;
+          padding-bottom: 19px;
+        }
         padding-top: 55px;
         margin-bottom: 53px;
       }
@@ -129,9 +148,6 @@
 
       margin: 0 -160px;
       padding: 0 30px;
-      &> .title {
-        padding-left: 130px;
-      }
       &.open {
         background: $BG03;
         margin-bottom: 53px;

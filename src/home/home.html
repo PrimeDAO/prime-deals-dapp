@@ -31,18 +31,21 @@
     </div>
 
     <!-- Open Deals  -->
-    <div class="section deals open" if.to-view="!featuredSeeds || featuredSeeds.length">
-      <div class="title heading heading1">Open Deals</div>
-      <template if.to-view="featuredSeeds && featuredSeeds.length">
-        <horizontal-scroller item-count.to-view="featuredSeeds.length">
+    <div class="section deals open" if.to-view="!featuredDeals || featuredDeals.length">
+      <div class="title heading heading1 selector">
+        <span class="${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
+        <span class="${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
+      </div>
+      <template if.to-view="featuredDeals && featuredDeals.length">
+        <horizontal-scroller item-count.to-view="featuredDeals.length">
           <deal-summary 
-            repeat.for="seed of featuredSeeds" 
-            seed.to-view="seed"
+            repeat.for="deal of featuredDeals" 
+            deal.to-view="deal"
           ></deal-summary>
         </horizontal-scroller>
         <div class="dealsButton"><a class="button3" href="deals">VIEW ALL DEALS</a></div>
       </template>
-      <div if.to-view="!featuredSeeds" class="loading">
+      <div if.to-view="!featuredDeals" class="loading">
         <i class="fas fa-circle-notch fa-spin"></i>
       </div>
     </div>
@@ -66,26 +69,7 @@
     </div>
 
     <!-- Counter Panel -->
-    <counter-panel class="section"></counter-panel>
-
-    <!-- Running Deals -->
-    <div class="section deals running" if.to-view="!runningSeeds || runningSeeds.length">
-      <div class="title heading heading1">Running Deals</div>
-      <template if.to-view="runningSeeds && runningSeeds.length">
-        <horizontal-scroller item-count.to-view="runningSeeds.length">
-          <deal-summary 
-            repeat.for="seed of runningSeeds" 
-            name.to-view="seed.name"
-            logo.to-view="seed.logo"
-            address.to-view="seed.address"
-          ></deal-summary>
-        </horizontal-scroller>
-        <div class="dealsButton"><a class="button1" href="deals">VIEW ALL DEALS</a></div>
-      </template>
-      <div if.to-view="!runningSeeds" class="loading">
-        <i class="fas fa-circle-notch fa-spin"></i>
-      </div>
-    </div>
+    <!-- <counter-panel class="section"></counter-panel> -->
 
   </div>
 </template>
