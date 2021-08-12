@@ -1,5 +1,5 @@
 @import "styles/styles.scss";
-.page.launch {
+.page.initiate {
   font-size: 28px;
   display: flex;
   flex-flow: column wrap;
@@ -12,15 +12,15 @@
 
     > .subtext {
       font-family: Inter;
+      font-weight: 700;
       font-size: 18px;
       color: $Neutral03;
-      font-weight: 700;
       line-height: 27px;
       text-align: center;
       max-width: 615px;
     }
   }
-  .launchBoxes {
+  .initiateBoxes {
     display: flex;
     flex-flow: row wrap;
     flex: 1;
@@ -30,54 +30,38 @@
       font-size: 36px;
       line-height: 65px;
     }
-    > div {
-      width: 40%;
-    }
 
-    .launch-box-container {
+    .initiate-box-container {
       background-color: $BG02;
       border-radius: 16px;
       border: 1px solid $Border01;
-      height: 100%;
       display: grid;
-      grid-template-rows: 2fr 1fr;
+      width: 368px;
+      padding-top: 20px;
+      padding-bottom: 35px;
       > div {
-        padding-left: 40px;
-        padding-right: 32px;
-        font-size: 20px;
+        padding-left: 30px;
+        padding-right: 38px;
       }
       .topSection {
         padding-top: 6px;
-        margin-bottom: 32px;
-
-        .subtext {
-          font-family: Inter;
-          font-weight: normal;
-          font-size: 18px;
-          color: $Neutral03;
-          line-height: 27px;
-        }
+        margin-bottom: 61px;
       }
-      .buttons {
-        display: flex;
-        flex-flow: row wrap;
-        align-items: center;
-        justify-content: space-between;
 
-        .buttonContainer {
-          text-align: center;
-          font-size: 8px;
-          border-radius: 32px;
-          a {
-            font-weight: bold;
-            text-decoration: none;
-            color: $White;
-            cursor: pointer;
-            &.disabled {
-              pointer-events: none;
-              background: $Neutral04;
-              color: $Shade04;
-            }
+      .buttonContainer {
+        text-align: center;
+        font-size: 8px;
+        border-radius: 32px;
+        .button1 {
+          width: -webkit-fill-available;
+          font-weight: bold;
+          text-decoration: none;
+          color: $White;
+          cursor: pointer;
+          &.disabled {
+            pointer-events: none;
+            background: $Neutral04;
+            color: $Shade04;
           }
         }
 
@@ -110,6 +94,16 @@
       }
     }
   }
+  .noPartner {
+    display: grid;
+    justify-content: center;
+    padding-top: 47px;
+    text-align: center;
+    .button2 {
+      margin: 0;
+      margin-top: 11px;
+    }
+  }
   position: relative;
   &>.bg-image {
     position: absolute;
@@ -122,7 +116,7 @@
 }
 
 @media screen and (min-width: 1070px) {
-  .page.launch {
+  .page.initiate {
       &>.bg-image {
         right: -160px;
       }
@@ -130,7 +124,7 @@
 }
 
 @media screen and (max-width: 900px) {
-  .page.launch {
+  .page.initiate {
     .banner {
       > .heading.heading1 {
         white-space: normal;
@@ -140,13 +134,13 @@
         white-space: normal;
       }
     }
-    .launchBoxes {
+    .initiateBoxes {
       flex-flow: column;
       align-items: center;
       > div {
         width: 100%;
       }
-      .launch-box-container {
+      .initiate-box-container {
         .buttons {
           justify-content: space-evenly;
         }

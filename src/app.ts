@@ -117,11 +117,11 @@ export class App {
         title: "Contribute",
       },
       {
-        moduleId: PLATFORM.moduleName("./launch/launch"),
+        moduleId: PLATFORM.moduleName("./initiate/initiate"),
         nav: false,
-        name: "launch",
-        route: ["launch"],
-        title: "Host a Launch",
+        name: "initiate",
+        route: ["initiate"],
+        title: "Initiate a Deal",
       },
       {
         moduleId: PLATFORM.moduleName("./deals/deals"),
