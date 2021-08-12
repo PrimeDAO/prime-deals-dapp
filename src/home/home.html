@@ -30,11 +30,11 @@
       </div>
     </div>
 
-    <!-- Open Deals  -->
+    <!-- Deals Carousel -->
     <div class="section deals open" if.to-view="!featuredDeals || featuredDeals.length">
       <div class="title heading heading1 selector">
-        <span class="${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
-        <span class="${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
+        <span class="selector-tab ${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
+        <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
       </div>
       <template if.to-view="featuredDeals && featuredDeals.length">
         <horizontal-scroller item-count.to-view="featuredDeals.length">
