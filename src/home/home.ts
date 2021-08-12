@@ -215,7 +215,6 @@ export class Home {
           partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
         },
         canGoToDashboard: true,
-        description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         contributingIsOpen: false,
         uninitialized: false,
         hasNotStarted: true,
@@ -240,135 +239,207 @@ export class Home {
           partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
         },
         canGoToDashboard: true,
+        contributingIsOpen: false,
+        uninitialized: false,
+        hasNotStarted: true,
+        hideIcons: false,
+        isPaused: false,
+        isClosed: false,
+        claimingIsOpen: false,
+        startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
       },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 3",
-          partner: "DAO Partner 3",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/fei.png",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 4",
-          partner: "DAO Partner 4",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 5",
-          partner: "DAO Partner 5",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 6",
-          partner: "DAO Partner 6",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 7",
-          partner: "DAO Partner 7",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 8",
-          partner: "DAO Partner 8",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 9",
-          partner: "DAO Partner 9",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
-      {
-        address: "0x1jk3lk4353l45kj345l3k45j345",
-        dao: {
-          creator: "DAO Creator 10",
-          partner: "DAO Partner  10",
-        },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
-        logo: {
-          creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-          partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-        },
-        canGoToDashboard: true,
-      },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 3",
+      //     partner: "DAO Partner 3",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/fei.png",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 4",
+      //     partner: "DAO Partner 4",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 5",
+      //     partner: "DAO Partner 5",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 6",
+      //     partner: "DAO Partner 6",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 7",
+      //     partner: "DAO Partner 7",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 8",
+      //     partner: "DAO Partner 8",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 9",
+      //     partner: "DAO Partner 9",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
+      // {
+      //   address: "0x1jk3lk4353l45kj345l3k45j345",
+      //   dao: {
+      //     creator: "DAO Creator 10",
+      //     partner: "DAO Partner  10",
+      //   },
+      //   proposal: {
+      //     title: "Proposal Title",
+      //     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+      //   },
+      //   logo: {
+      //     creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //     partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+      //   },
+      //   canGoToDashboard: true,
+      //   contributingIsOpen: false,
+      //   uninitialized: false,
+      //   hasNotStarted: true,
+      //   hideIcons: false,
+      //   isPaused: false,
+      //   isClosed: false,
+      //   claimingIsOpen: false,
+      //   startsInMilliseconds: new Date().getUTCMilliseconds() + 0.15*1000*60*60*24,
+      // },
     ];
 
     this.featuredDeals = [...this._openDeals];

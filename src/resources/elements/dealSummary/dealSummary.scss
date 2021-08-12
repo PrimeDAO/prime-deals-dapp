@@ -12,7 +12,7 @@
     grid-template-columns: 50px auto 1fr 1fr;
     grid-template-rows: auto;
     grid-template-areas:
-      ". . . timeLeft"
+      ". . . countdown"
       "icon icon title title"
       "proposal proposal proposal proposal"
       "footer footer footer footer";
@@ -31,24 +31,24 @@
       width: fit-content;
       grid-template-columns: 46px auto;
       grid-area: icon;
-    }
-    .icon {
-      display: grid;
-      align-items: center;
-      justify-content: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 23px;
-      overflow: hidden;
-      img {
-        height: 42px;
+      .icon {
+        display: grid;
+        align-items: center;
+        justify-content: center;
         width: 42px;
-      }
-      border: 2px solid $BG02;
-      &:not(:first-child) {
-        margin-left: -15px;
-        z-index: 2;
-      }
+        height: 42px;
+        border-radius: 23px;
+        overflow: hidden;
+        img {
+          height: 42px;
+          width: 42px;
+        }
+        border: 2px solid $BG02;
+        &:not(:first-child) {
+          margin-left: -15px;
+          z-index: 2;
+        }
+    }
     }
 
     .title {
@@ -92,8 +92,8 @@
     }
 
     > .countdown {
-      grid-area: timeLeft;
-      text-align: right;
+      grid-area: countdown;
+      text-align: center;
       height: 24px;
     }
 
