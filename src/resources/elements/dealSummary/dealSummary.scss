@@ -9,14 +9,14 @@
 
   .dealSummary {
     display: grid;
-    grid-template-columns: 58px 4fr 1fr;
+    grid-template-columns: 50px auto 1fr 1fr;
     grid-template-rows: auto;
     grid-template-areas:
-      ". . timeLeft"
-      "icon title title"
-      "description description description"
-      "footer footer footer";
-    row-gap: 8px;
+      ". . . timeLeft"
+      "icon icon title title"
+      "proposal proposal proposal proposal"
+      "footer footer footer footer";
+    row-gap: 4px;
     background-color: $BG02;
     border-radius: 6px;
     padding: 8px 13px 0 13px;
@@ -24,38 +24,70 @@
     height: 100%;
     overflow: hidden;
     align-items: center;
+    font-family: "Aeonik";
 
-    > .icon {
+    .icons {
+      display: grid;
+      width: fit-content;
+      grid-template-columns: 46px auto;
+      grid-area: icon;
+    }
+    .icon {
       display: grid;
       align-items: center;
       justify-content: center;
-      grid-area: icon;
-      width: 46px;
-      height: 46px;
+      width: 42px;
+      height: 42px;
       border-radius: 23px;
       overflow: hidden;
       img {
-        height: 46px;
-        width: 46px;
+        height: 42px;
+        width: 42px;
+      }
+      border: 2px solid $BG02;
+      &:not(:first-child) {
+        margin-left: -15px;
+        z-index: 2;
       }
     }
 
-    > .title {
+    .title {
       grid-area: title;
-      font-weight: bold;
+      font-weight: 700;
       font-size: 22px;
+      line-height: 26.4px;
       white-space: normal;
       overflow-x: clip;
       max-width: 295px;
+    align-items: center;
     }
 
-    > .description {
+    .daos.title {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 16.8px;
+      opacity: 50%;
+      padding: 9px;
+    }
+
+    .proposal {
+      grid-area: proposal;
+      display: grid;
+      grid-template-areas:
+        "title"
+        "description";
+      grid-template-rows: auto 1fr;
+      height: 103px;
+      align-items: top;
+    }
+
+    .description {
       grid-area: description;
       font-family: Inter;
       font-size: 12px;
-      line-height: 17px;
+      line-height: 16.8px;
+      font-weight: 400;
       color: $Neutral03;
-      height: 103px;
       white-space: normal;
     }
 

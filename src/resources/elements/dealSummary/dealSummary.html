@@ -3,25 +3,67 @@
     class="dealSummaryContainer"
     ref="container"
   >
-    <div if.to-view="!loading" class="dealSummary">
-      <div class="icon">
-        <img src="${seed.logo}" />
+  <!-- Open Deal -->
+    <div if.to-view="!loading && !deal.dao.partner" class="dealSummary">
+      <div class="icons">
+        <div class="icon">
+          <img src="${deal.logo.creator}" />
+        </div>
       </div>
-      <div class="title ellipses">${seed.name}</div>
-      <!-- <div class="title ellipses">${seed.metadata.general.projectName}</div> -->
+      <div class="title ellipses">${deal.dao}</div>
       <div class="countdown">
-        <time-left seed.to-view="seed" largest contained></time-left>
+        <time-left deal.to-view="deal" largest contained></time-left>
       </div>
-      <div class="description">Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.</div>
-      <!-- <div class="description">${seed.metadata.projectDetails.proposition}</div> -->
+      <div class="proposal">
+        <div class="description">
+          ${deal.description}
+        </div>
+      </div>
+      <!-- <div class="description">${deal.metadata.projectDetails.proposition}</div> -->
       <a
         class="footer"
-        href.to-view="`seed/${seed.address}`">
-        <div class="targetTitle title subtext">MAKE OFFER</div>
+        href.to-view="`deal/${deal.address}`">
+        <div class="targetTitle title subtext">PARTICIPATE</div>
       </a>
     </div>
-    <div else class="loading">
+
+    <!-- Running Deal -->
+    <div if.to-view="!loading && deal.dao.partner" class="dealSummary">
+      <div class="icons">
+        <div class="icon">
+          <img src="${deal.logo.creator}" />
+        </div>
+        <div class="icon">
+          <img src="${deal.logo.partner}" />
+        </div>
+      </div>
+      <div class="daos title">
+        <div class="ellipses">
+          ${deal.dao.creator}
+        </div>
+        <div class="ellipses">
+          ${deal.dao.partner}
+        </div>
+      </div>
+      <div class="countdown">
+        <time-left deal.to-view="deal" largest contained></time-left>
+      </div>
+      <div class="proposal">
+        <div class="title ellipses">${deal.proposal.title}</div>
+        <div class="description">
+          ${deal.proposal.description}
+        </div>
+      </div>
+      <a
+        class="footer"
+        href.to-view="`deal/${deal.address}`">
+        <div class="targetTitle title subtext">VIEW PROPOSAL</div>
+      </a>
+    </div>
+
+    <div if.to-view="loading" class="loading">
       <i class="fas fa-circle-notch fa-spin"></i>
     </div>
+
   </div>
 </template>
