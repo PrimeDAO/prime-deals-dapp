@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { BaseStage } from "newSeed/baseStage";
+import { BaseStage } from "registry-wizard/baseStage";
 import { ITokenInfo, TokenService } from "services/TokenService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Utils } from "services/utils";

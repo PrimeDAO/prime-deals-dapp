@@ -34,7 +34,6 @@
     .initiate-box-container {
       background-color: $BG02;
       border-radius: 16px;
-      border: 1px solid $Border01;
       display: grid;
       width: 368px;
       padding-top: 20px;
@@ -108,10 +107,9 @@
   &>.bg-image {
     position: absolute;
     z-index: -1;
-    right: -20px;
-    height: 650px;
+    top: -135px;
     object-fit: cover;
-    max-width: calc(100% - 160px)
+    width: 950px;
   }
 }
 

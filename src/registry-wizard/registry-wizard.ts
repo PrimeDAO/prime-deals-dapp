@@ -1,9 +1,9 @@
-import "./newSeed.scss";
+import "./registry-wizard.scss";
 import { PLATFORM } from "aurelia-pal";
 import { singleton, computedFrom } from "aurelia-framework";
 import { ISeedConfig, SeedConfig } from "./seedConfig";
 import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
-import { IStageState, IWizardState } from "newSeed/baseStage";
+import { IStageState, IWizardState } from "registry-wizard/baseStage";
 
 /**
  * this is the max "real" stage that gathers input from the user and requires
@@ -12,7 +12,7 @@ import { IStageState, IWizardState } from "newSeed/baseStage";
 const maxStage = 5;
 
 @singleton(false)
-export class NewSeed {
+export class NewDeal {
   router: Router;
 
   seedConfig: ISeedConfig;
