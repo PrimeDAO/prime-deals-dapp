@@ -1,0 +1,11 @@
+<template bindable="name, subTitle1, btnText, poweredBy, logo, disabled">
+  <div class="initiate-box-container">
+    <div class="topSection">
+      <div class="heading heading3 title">${name}</div>
+      <div class="subtext">${subTitle1}</div>
+    </div>
+    <div class="buttonContainer">
+      <a class="button1 ${disabled}" route-href="route: newSeed">${btnText}</a>
+    </div>
+  </div>
+</template>
