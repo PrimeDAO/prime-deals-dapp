@@ -1,7 +1,23 @@
-/* eslint-disable linebreak-style */
 import "./initiate.scss";
 
-export class Initiate {
+interface IBoxes {
+  name: string
+  slug: string
+  isDisabled: boolean
+}
 
+export class Initiate {
+  box: IBoxes[] = [
+    {
+      name: "Joint Venture",
+      slug: "joint-venture",
+      isDisabled: true,
+    },
+    {
+      name: "Token Swap",
+      slug: "token-swap",
+      isDisabled: false,
+    },
+  ];
 }
 

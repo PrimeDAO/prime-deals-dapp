@@ -1,7 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DateService } from "./../services/DateService";
-import { BaseStage } from "newSeed/baseStage";
+import { DateService } from "../services/DateService";
+import { BaseStage } from "registry-wizard/baseStage";
 import Litepicker from "litepicker";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";

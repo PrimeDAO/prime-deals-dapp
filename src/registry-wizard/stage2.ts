@@ -1,4 +1,4 @@
-import { BaseStage } from "newSeed/baseStage";
+import { BaseStage } from "registry-wizard/baseStage";
 import { Utils } from "services/utils";
 
 export class Stage2 extends BaseStage {

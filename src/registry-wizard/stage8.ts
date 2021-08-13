@@ -1,7 +1,7 @@
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
-import { BaseStage } from "newSeed/baseStage";
+import { BaseStage } from "registry-wizard/baseStage";
 import { IpfsService } from "services/IpfsService";
 
 @autoinject

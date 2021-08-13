@@ -55,7 +55,7 @@ export abstract class BaseStage {
   }
 
   protected cancel(): void {
-    this.router.parent.navigate("launch");
+    this.router.parent.navigate("initiate");
   }
 
   protected next(): void {

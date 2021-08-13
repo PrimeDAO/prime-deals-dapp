@@ -145,11 +145,11 @@ export class App {
         title: "SEED Dashboard",
       },
       {
-        moduleId: PLATFORM.moduleName("./newSeed/newSeed"),
+        moduleId: PLATFORM.moduleName("./registry-wizard/registry-wizard"),
         nav: false,
-        name: "newSeed",
-        route: ["newSeed"],
-        title: "Register New SEED",
+        name: "newDeal",
+        route: ["initiate/new/:type"],
+        title: "Initiate a New Deal",
       },
       {
         moduleId: PLATFORM.moduleName("./selectPackage/selectPackage"),
