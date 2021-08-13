@@ -177,7 +177,7 @@ export class SeedService {
     const seedConfigString = JSON.stringify(config);
     // this.consoleLogService.logMessage(`seed registration json: ${seedConfigString}`, "debug");
 
-    const metaDataHash = await this.ipfsService.saveString(seedConfigString, `${config.general.projectName}`);
+    const metaDataHash = await this.ipfsService.saveString(seedConfigString, `${config.proposal.name}`);
 
     this.consoleLogService.logMessage(`seed registration hash: ${metaDataHash}`, "info");
 
