@@ -11,6 +11,9 @@
   &.active {
     background-color: $Secondary02;
   }
+  &.verified {
+    background-color: $Neutral02;
+  }
   > .value {
     color: $BG01;
     font-family: Inter;

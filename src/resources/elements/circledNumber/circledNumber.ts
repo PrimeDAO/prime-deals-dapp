@@ -7,4 +7,5 @@ export class CircledNumber {
   @bindable.number number: number;
   @bindable.booleanAttr checkMark: boolean;
   @bindable.booleanAttr active: boolean;
+  @bindable.booleanAttr verified: boolean;
 }

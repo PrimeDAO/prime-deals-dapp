@@ -94,6 +94,9 @@
       .active {
         color: $Secondary02;
       }
+      .verified {
+        color: $Neutral02;
+      }
       .stagesNumber {
         display: flex;
         flex-flow: column nowrap;
@@ -113,6 +116,9 @@
           width: 92px;
           height: 3px;
           background: $Border01;
+          &.verified {
+            background: $Neutral02;
+          }
           margin-top: 1px; // fix ruler center position
         }
       }

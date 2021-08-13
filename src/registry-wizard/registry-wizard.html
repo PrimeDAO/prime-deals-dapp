@@ -17,14 +17,15 @@
             <circled-number
               number.bind="$index + 1"
               check-mark.to-view="stageStates[$index + 1].verified"
-              active.bind="stage.isActive"></circled-number>
-            <div>${stage.config.title}</div>
+              active.bind="stage.isActive"
+              ></circled-number>
+            <div class="${stageStates[$index + 1].verified? 'verified':''}">${stage.config.title}</div>
           </div>
         </div>
         <div
           if.bind="$index + 2 <= router.navigation.length"
           class="timeLine">
-          <div class="ruler"></div>
+          <div class="ruler ${stageStates[$index + 1].verified? 'verified':''}"></div>
         </div>
       </template>
     </div>
