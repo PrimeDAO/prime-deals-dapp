@@ -1,7 +1,7 @@
 <template>
   <require from="../resources/elements/circledNumber/circledNumber.html"></require>
 
-  <div class="newSeedContainer ${currentStage.name}">
+  <div class="newSeedContainer horizontal ${currentStage.name}">
     <div class="sideBarDropDownContainer">
       <div click.delegate="toggleSideBar()" class="sideBarDropDown">
         ${currentStage.title}
@@ -20,11 +20,11 @@
               active.bind="stage.isActive"></circled-number>
             <div>${stage.config.title}</div>
           </div>
-          <div
-            if.bind="$index + 2 <= router.navigation.length"
-            class="timeLine">
-            <div class="ruler"></div>
-          </div>
+        </div>
+        <div
+          if.bind="$index + 2 <= router.navigation.length"
+          class="timeLine">
+          <div class="ruler"></div>
         </div>
       </template>
     </div>
