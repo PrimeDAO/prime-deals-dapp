@@ -25,41 +25,19 @@ html {
     padding-right: 160px;
     overflow-x: hidden;
 
-    input {
-      font-family: 'Aeonik';
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 33px;
-      border: 1px solid $Neutral02;
-      background: $BG01;
-      color: $White;
-      border-radius: 6px;
-      outline: none;
-      padding: 0 12px;
-
-      &::placeholder {
-        color: $Neutral03;
-        mix-blend-mode: normal;
-        opacity: 0.43;
-      }
-      &:focus::placeholder {
-        color: transparent;
-      }
-    }
-
-    textarea {
+    input, textarea {
       font-family: 'Inter';
       font-style: normal;
       font-weight: normal;
       font-size: 16px;
       line-height: 23px;
-      border-radius: 10px;
-      background-color: $BG01;
       border: 1px solid $Neutral02;
+      background: $BG01;
       color: $White;
+      border-radius: 10px;
       outline: none;
-      padding: 12px 12px;
+      padding: 12px;
+      box-sizing: border-box;
 
       &::placeholder {
         color: $Neutral03;
@@ -70,6 +48,29 @@ html {
         color: transparent;
       }
     }
+
+    // textarea {
+    //   font-family: 'Inter';
+    //   font-style: normal;
+    //   font-weight: normal;
+    //   font-size: 16px;
+    //   line-height: 23px;
+    //   border-radius: 10px;
+    //   background-color: $BG01;
+    //   border: 1px solid $Neutral02;
+    //   color: $White;
+    //   outline: none;
+    //   padding: 12px 12px;
+
+    //   &::placeholder {
+    //     color: $Neutral03;
+    //     mix-blend-mode: normal;
+    //     opacity: 0.43;
+    //   }
+    //   &:focus::placeholder {
+    //     color: transparent;
+    //   }
+    // }
 
     .clearInput {
       background-color: transparent;

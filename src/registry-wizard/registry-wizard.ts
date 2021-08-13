@@ -9,7 +9,7 @@ import { IStageState, IWizardState } from "registry-wizard/baseStage";
  * this is the max "real" stage that gathers input from the user and requires
  * validatation of inputs. Reminder that stages are one-indexed.
  */
-const maxStage = 5;
+const maxStage = 4;
 
 @singleton(false)
 export class NewDeal {
@@ -36,27 +36,23 @@ export class NewDeal {
         undefined,
         {
           verified: false,
-          title: "General Information",
+          title: "Proposal",
         },
         {
           verified: false,
-          title: "Project Details",
+          title: "DAO's",
         },
         {
           verified: false,
-          title: "Token Details",
+          title: "Terms",
         },
         {
           verified: false,
-          title: "SEED Details",
-        },
-        {
-          verified: false,
-          title: "Contact Details",
+          title: "Submit",
         },
         {
           verified: true,
-          title: "Seed Summary",
+          title: "Summary",
         },
         {
           verified: true,
@@ -126,7 +122,7 @@ export class NewDeal {
       },
       {
         route: ["stage5"],
-        nav: true,
+        nav: false,
         moduleId: PLATFORM.moduleName("./stage5"),
         name: "stage5",
         title: this.stageStates[5].title,
@@ -160,19 +156,6 @@ export class NewDeal {
           seedConfig: this.seedConfig,
           stageStates: this.stageStates,
           stageNumber: 7,
-          maxStage,
-          wizardState: this.wizardState },
-      },
-      {
-        route: ["stage8"],
-        nav: false,
-        moduleId: PLATFORM.moduleName("./stage8"),
-        name: "stage8",
-        title: this.stageStates[8].title,
-        settings: {
-          seedConfig: this.seedConfig,
-          stageStates: this.stageStates,
-          stageNumber: 8,
           maxStage,
           wizardState: this.wizardState },
       },

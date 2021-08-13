@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-export interface IGeneral {
-  projectName: string,
-  projectWebsite: string,
-  category: string,
-  whitepaper: string,
-  github: string,
-  customLinks: Array<{media: string, url: string }>
+export interface IProposal {
+  name: string,
+  overview: string,
+  // customLinks: Array<{media: string, url: string }>
 }
 
 export interface IProjectDetails {
@@ -73,7 +70,7 @@ export interface ISeedConfig {
    * semantic version of this interface. This value must be updated upon any released changes.
    */
   version: string;
-  general: IGeneral,
+  proposal: IProposal,
   projectDetails: IProjectDetails,
   tokenDetails: ITokenDetails,
   contactDetails: IContactDetails,
@@ -83,7 +80,7 @@ export interface ISeedConfig {
 
 export class SeedConfig implements ISeedConfig {
   public version: string;
-  public general: IGeneral;
+  public proposal: IProposal;
   public projectDetails:IProjectDetails;
   public tokenDetails: ITokenDetails;
   public contactDetails: IContactDetails;
@@ -95,11 +92,10 @@ export class SeedConfig implements ISeedConfig {
 
   clearState(): void {
     this.version = "1.0.0";
-    this.general = {
-      projectName: "",
-      category: "",
-      customLinks: [],
-    } as IGeneral;
+    this.proposal = {
+      name: "",
+      overview: "",
+    } as IProposal;
     this.projectDetails = {
       summary: "",
       proposition: "",

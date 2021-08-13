@@ -2,8 +2,7 @@
 .circledNumber {
   border-radius: 50%;
   text-align: center;
-  background-color: $White;
-  opacity: 0.3;
+  background-color: $Border01;
   width: 40px;
   height: 40px;
   display: flex;
@@ -11,7 +10,6 @@
   justify-content: center;
   &.active {
     background-color: $Secondary02;
-    opacity: 1;
   }
   > .value {
     color: $BG01;

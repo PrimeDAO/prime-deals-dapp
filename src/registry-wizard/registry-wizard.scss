@@ -59,9 +59,8 @@
   }
 
   &.horizontal {
-    grid-template-rows: 100px 1fr;
-
-    align-items: center;
+    grid-template-rows: 120px 1fr;
+    align-items: top;
     background-color: $BG01;
     &.stage8{
       grid-template-rows: 1fr;
@@ -81,11 +80,11 @@
       }
     }
     .currentStageSidebar {
-      line-height: 23px;
-      font-size: 18px;
       font-family: Inter;
       font-weight: 400;
-      color: $Neutral02;
+      font-size: 18px;
+      line-height: 33px;
+      color: $Border01;
       display: grid;
       grid-template-columns: repeat(auto-fit,86px 50px);
       justify-content: center;
@@ -113,8 +112,7 @@
         .ruler {
           width: 92px;
           height: 3px;
-          background: $White;
-          opacity: 0.3;
+          background: $Border01;
           margin-top: 1px; // fix ruler center position
         }
       }

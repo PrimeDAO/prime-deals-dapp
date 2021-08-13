@@ -1,41 +1,44 @@
 @import "styles/styles.scss";
 // This styles are common to all the stages components
 // Theme for the stages
+.headingContainer {
+  &>hr {
+    background: none;
+    border-top: 1px solid $Secondary02;
+    margin: 8px 0 34px 0;
+  }
+}
 .infoContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: clamp(24px, 10%,120px);
   font-family: Inter;
-  background-color: $BG02;
-  border: 1px solid $Border01;
-  border-radius: 1.5em;
-  padding: 2em;
-  min-width: 40rem;
+  min-width: 640px;
+
+  .heading {
+    margin-top: 0;
+  }
 
   a {
     font-family: Aeonik;
   }
 
-  .title {
-    font-size: 1.625em;
-  }
-  .subtext {
-    line-height: 1.5em;
-    font-size: 1em;
+  .sidetext {
+    line-height: 24px;
     color: $Neutral03;
-    margin-bottom: 3em;
   }
   .infoInput {
     margin-bottom: 2em;
     > textarea {
       resize: none;
-      width: 23em;
-      height: 4.5em;
       color: $Neutral02;
       border: 1px solid $Border01;
     }
     .labelContainer {
-      width: 24em;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      max-width: 450px;
       flex-flow: row nowrap;
       color: $Neutral02;
     }
@@ -43,8 +46,8 @@
   .buttonContainer {
     display: flex;
     flex-flow: row wrap;
-    column-gap: 3em;
-    margin-top: 5em;
+    column-gap: 30px;
+    margin-top: 140px;
     .stageButton {
       display: flex;
       align-items: center;
@@ -54,6 +57,7 @@
       color: $Shade01;
       font-family: Inter;
       font-weight: bold;
+      margin-left: auto;
     }
   }
   .stageButton {
@@ -67,8 +71,10 @@
     line-height: 2em;
     color: $Secondary02;
   }
+  input, textarea {
+    width: 455px;
+  }
   input {
-    width: 23em;
     height: 2.7em;
     border: 1px solid $Border01;
     border-radius: 10px;
