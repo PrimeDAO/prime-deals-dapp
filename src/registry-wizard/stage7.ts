@@ -5,7 +5,7 @@ import { Router, RouteConfig, Redirect } from "aurelia-router";
 import { SeedService } from "services/SeedService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
-import { fromWei } from "services/EthereumService";
+// import { fromWei } from "services/EthereumService";
 import { NumberService } from "services/NumberService";
 
 @autoinject
@@ -38,10 +38,10 @@ export class Stage7 extends BaseStage {
     // this.seedConfig.seedDetails.fundingMax = toWei("100").toString();
     // this.seedConfig.seedDetails.pricePerToken = toWei(".5").toString();
     // this.wizardState.seedTokenSymbol = "PRIME";
-    const distributableSeeds = this.numberService.fromString(fromWei(this.seedConfig.seedDetails.fundingMax))
-      / this.numberService.fromString(fromWei(this.seedConfig.seedDetails.pricePerToken));
-    this.wizardState.requiredSeedFee = distributableSeeds * this.seedFee;
-    this.wizardState.requiredSeedDeposit = distributableSeeds + this.wizardState.requiredSeedFee;
+    // const distributableSeeds = this.numberService.fromString(fromWei(this.seedConfig.seedDetails.fundingMax))
+    //   / this.numberService.fromString(fromWei(this.seedConfig.seedDetails.pricePerToken));
+    // this.wizardState.requiredSeedFee = distributableSeeds * this.seedFee;
+    // this.wizardState.requiredSeedDeposit = distributableSeeds + this.wizardState.requiredSeedFee;
   }
 
   async submit(): Promise<void> {

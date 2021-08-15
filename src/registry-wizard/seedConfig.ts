@@ -1,68 +1,20 @@
+import { threadId } from "worker_threads";
+
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 export interface IProposal {
   name: string,
   overview: string,
-  // customLinks: Array<{media: string, url: string }>
 }
 
-export interface IProjectDetails {
-  summary: string,
-  proposition: string,
-  teamDescription: string,
-  logo: string
+export interface IDAO {
+  name: string,
+  tokens: Array<{name: string, amount: number }>
+  social_medias: Array<{name: string, url: string }>
 }
 
-export interface ITokenDetails {
-  fundingAddress: string,
-  seedAddress: string,
-  /**
-   * In wei, maximum ever total supply of seed tokens
-   */
-  maxSeedSupply: string,
-  /**
-   * In wei,
-   */
-  initialSeedSupply: string,
-  tokenDistrib: Array<{
-    category: string,
-    /**
-     * In wei
-     */
-    amount: string,
-    /**
-     * In days
-     */
-    lockup: number
-  }>
-}
-
-export interface ISeedDetails {
-  /**
-   * The price of one seed token in units of funding tokens
-   * In wei.
-   */
-  pricePerToken: string,
-  /**
-   * In wei
-   */
-  fundingTarget: string,
-  /**
-   * In wei
-   */
-  fundingMax: string,
-  vestingPeriod: number,
-  vestingCliff: number,
-  startDate: string,
-  endDate: string,
-  whitelist: string,
-  geoBlock: boolean,
-  legalDisclaimer: string,
-  adminAddress: string,
-}
-
-export interface IContactDetails {
-  contactEmail: string,
-  remarks: string
+export interface IAdmin {
+  address: string,
+  represent: IDAO
 }
 
 export interface ISeedConfig {
@@ -71,20 +23,16 @@ export interface ISeedConfig {
    */
   version: string;
   proposal: IProposal,
-  projectDetails: IProjectDetails,
-  tokenDetails: ITokenDetails,
-  contactDetails: IContactDetails,
-  seedDetails: ISeedDetails,
+  daos: Array<IDAO>,
+  admins: Array<IAdmin>,
   clearState: () => void,
 }
 
 export class SeedConfig implements ISeedConfig {
   public version: string;
   public proposal: IProposal;
-  public projectDetails:IProjectDetails;
-  public tokenDetails: ITokenDetails;
-  public contactDetails: IContactDetails;
-  public seedDetails: ISeedDetails;
+  public daos: Array<IDAO>;
+  public admins: Array<IAdmin>
 
   constructor() {
     this.clearState();
@@ -96,19 +44,18 @@ export class SeedConfig implements ISeedConfig {
       name: "",
       overview: "",
     } as IProposal;
-    this.projectDetails = {
-      summary: "",
-      proposition: "",
-      teamDescription: "",
-    } as IProjectDetails;
-    this.tokenDetails = {
-      tokenDistrib: [],
-    } as ITokenDetails;
-    this.contactDetails={
-      remarks: "",
-    } as IContactDetails;
-    this.seedDetails = {
-      geoBlock: false,
-    } as ISeedDetails;
+    this.daos = [
+      {
+        name: "",
+        tokens: [{name: undefined, amount: undefined}],
+        social_medias: [{name: undefined, url: undefined}],
+      },
+      {
+        name: "",
+        tokens: [{name: undefined, amount: undefined}],
+        social_medias: [{name: undefined, url: undefined}],
+      },
+    ] as IDAO[];
+    this.admins = [{address: undefined, represent: undefined}] as IAdmin[];
   }
 }
