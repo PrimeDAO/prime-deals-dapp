@@ -1,92 +1,184 @@
 <template>
   <div class="page animated-page stageContainer stage2 au-animate">
+    <div class="headingContainer">
+      <h1 class="heading heading1 gradient">DAO's</h1>
+      <hr />
+    </div>
+    <template repeat.for="dao of seedConfig.daos">
+      <div class="infoContainer">
+        <div class="sidetext">
+          <h2 class="heading heading3 title">DAO ${$index + 1}</h2>
+          Description of your project and team.
+        </div>
+        <div>
+          <div class="infoInput">
+            <div class="labelContainer">
+              <label for="proposalName">Name DAO ${$index + 1}</label>
+              <span>
+                ${dao.name.length}/50
+              </span>
+            </div>
+            <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" />
+          </div>
+          <div class="infoInput">
+            <template repeat.for="token of dao.tokens">
+              <div class="otherLinks">
+                <div>
+                  <div class="sMedia">
+                    <label for="$index">Token</label>
+                    <span>
+                      ${token.name.length || 0}/20
+                    </span>
+                  </div>
+                  <input
+                    id="$index"
+                    class="platform"
+                    placeholder="Select Token"
+                    value.bind="dao.tokens[$index].name"
+                    maxlength="20" />
+                </div>
+                <div class="addLinkContainer">
+                  <div>
+                    <label for="url`${index}`">Funding Amount</label>
+                    <input
+                      id="$index"
+                      placeholder=""
+                      type="number"
+                      min="0"
+                      value.bind="dao.tokens[$index].amount" />
+                    <span if.bind="dao.tokens.length > 1"
+                      class="deleteLink"
+                      title="Delete this row"
+                      click.delegate="deleteToken($parent.$index, $index)">
+                      <i class="far fa-trash-alt"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="addLink"
+                click.delegate="addToken($parent.$index)"
+                if.bind="$index == dao.tokens.length - 1">
+                <a>+ Additional token</a>
+              </div>
+            </template>
+            <div
+              if.to-view="dao.tokens.length <= 0"
+              class="addSingleLink"
+              click.delegate="addToken($parent.$index, -1)">
+              <a>+ Additional token</a>
+            </div>
+          </div>
+          <div class="infoInput">
+            <template repeat.for="platform of dao.social_medias">
+              <div class="otherLinks">
+                <div>
+                  <div class="sMedia">
+                    <label for="$index">Social Media</label>
+                    <span>
+                      ${platform.name.length || 0}/20
+                    </span>
+                  </div>
+                  <input
+                    id="$index"
+                    class="platform"
+                    placeholder="Select Platform"
+                    value.bind="dao.social_medias[$index].name"
+                    maxlength="20" />
+                </div>
+                <div class="addLinkContainer">
+                  <div>
+                    <label for="url`${index}`">URL</label>
+                    <input
+                      id="$index"
+                      placeholder="https://..."
+                      maxlength="255"
+                      value.bind="dao.social_medias[$index].amount" />
+                    <span if.bind="dao.social_medias.length > 1"
+                      class="deleteLink"
+                      title="Delete this row"
+                      click.delegate="deleteSocialMedia($parent.$index, $index)">
+                      <i class="far fa-trash-alt"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="addLink"
+                click.delegate="addSocialMedia($parent.$index)"
+                if.bind="$index == dao.social_medias.length - 1">
+                <a>+ Add more</a>
+              </div>
+            </template>
+          </div>
+          <!-- <div
+            if.to-view="dao.social_medias.length <= 0"
+            class="addSingleLink"
+            click.delegate="addSocialMedia($parent.$index, -1)">
+            <a>+ Add more</a>
+          </div> -->
+        </div>
+      </div>
+      <hr />
+    </template>
+
     <div class="infoContainer">
-      <div class="heading heading2 title">Project Details</div>
-      <div class="subtext">Description of your project and team.</div>
+      <div class="sidetext">
+        <h2 class="heading heading3 title">Proposal Admin</h2>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </div>
+      <div>
+        <div class="infoInput">
+          <template repeat.for="admins of seedConfig.admins">
+            <div class="otherLinks">
+              <div>
+                <div class="labelContainer">
+                  <label for="valueProp">Proposal Admin</label>
+                </div>
+                <input
+                  id="valueProp"
+                  placeholder="Proposal admin address..."
+                  maxlength="50"
+                  value.bind="admin.address" />
+              </div>
+              <div class="addLinkContainer">
+                <div class="small-box">
+                  <label for="$index">Representing</label>
+                  <input
+                    id="representing-$index"
+                    placeholder="Select DAO"
+                    value.bind="admin.represent"
+                    maxlength="20" />
+                  <span if.bind="seedConfig.admins.length > 1"
+                    class="deleteLink"
+                    title="Delete this row"
+                    click.delegate="deleteAdmin($index)">
+                    <i class="far fa-trash-alt"></i>
+                  </span>
+              </div>
+            </div>
+            <div
+              class="addLink"
+              click.delegate="addAdmin($index)"
+              if.bind="$index == seedConfig.admins.length - 1">
+              <a>+ Add more</a>
+            </div>
+          </template>
+          <!-- <div
+            if.to-view="dao.admins.length <= 0"
+            class="addSingleLink"
+            click.delegate="addAdmin(-1)">
+            <a>+ Add more</a>
+          </div> -->
+        </div>
 
-      <div class="infoInput">
-        <div class="labelContainer">
-          <div class="labeledQuestion">
-            <label for="projSummary">Project Summary</label>
-            <div class="questionMark">
-              <question-mark text="Describe your project. This introduction will be visible to users on the Home, Deals, and Seed Dashboard pages"></question-mark>
-            </div>
-          </div>
-          <span>
-            ${seedConfig.projectDetails.summary.length}/200
-          </span>
-        </div>
-        <textarea
-          id="projSummary"
-          value.bind="seedConfig.projectDetails.summary"
-          maxlength="200"></textarea>
-      </div>
-      <div class="infoInput">
-        <div class="labelContainer">
-          <div class="labeledQuestion">
-            <label for="valueProp">Value Proposition</label>
-            <div class="questionMark">
-              <question-mark text="Describe why contributors should engage your project. This will be visible at the top of the Seed Dashboard"></question-mark>
-            </div>
-          </div>
-          <span>
-            ${seedConfig.projectDetails.proposition.length}/200
-          </span>
-        </div>
-        <textarea
-          id="valueProp"
-          value.bind="seedConfig.projectDetails.proposition"
-          maxlength="200">
-          </textarea>
-      </div>
-      <div class="infoInput">
-        <div class="labelContainer">
-          <div class="labeledQuestion">
-            <label for="teamDesc">Team Description</label>
-            <div class="questionMark">
-              <question-mark text="Describe the team behind the project. Provide responsibilities and any useful background"></question-mark>
-            </div>
-          </div>
-          <span>
-            ${seedConfig.projectDetails.teamDescription.length}/200
-          </span>
-        </div>
-        <textarea
-          id="teamDesc"
-          value.bind="seedConfig.projectDetails.teamDescription"
-          maxlength="200">
-          </textarea>
-      </div>
-
-      <div class="infoInput logo">
-        <div class="logoInput">
-          <label for="logo">
-            <div class="text">Project Logo</div>
-            <div class="logoPreview" show.to-view="seedLogoIsValid && seedLogoIsLoaded">
-              <img class="logoImage"
-                src.to-view="seedConfig.projectDetails.logo"
-                error.trigger="isLoadedSeedLogo(false)"
-                load.trigger="isLoadedSeedLogo(true)">
-              </img>
-            </div>
-            <div class="logoNone" if.to-view="!seedLogoIsValid || !seedLogoIsLoaded">[none]</div>
-          </label>
-          <input id="logo" type="text"
-            value.bind="seedConfig.projectDetails.logo"
-            input.trigger="isValidSeedLogo()">
-        </div>
-        <div class="fileNote">
-          JPG, GIF, PNG or BMP formats<br />
-          Square aspect ratio<br />
-          Recommended size: 400x400px<br />
-          Maximum 5MB file size
+        <div class="buttonContainer">
+          <div class="stageButton previous button2" disabled click.delegate="previous()">PREVIOUS</div>
+          <div class="stageButton proceed button1" click.delegate="proceed()">Proceed</div>
+          <div class="stageButton cancel" click.delegate="cancel()">CANCEL</div>
         </div>
       </div>
 
-      <div class="buttonContainer">
-        <div class="stageButton cancel" click.delegate="back()">PREVIOUS</div>
-        <div class="stageButton proceed button1" click.delegate="proceed()">NEXT</div>
-      </div>
     </div>
   </div>
 </template>

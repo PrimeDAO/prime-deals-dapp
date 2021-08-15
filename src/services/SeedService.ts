@@ -177,7 +177,7 @@ export class SeedService {
     const seedConfigString = JSON.stringify(config);
     // this.consoleLogService.logMessage(`seed registration json: ${seedConfigString}`, "debug");
 
-    const metaDataHash = await this.ipfsService.saveString(seedConfigString, `${config.general.projectName}`);
+    const metaDataHash = await this.ipfsService.saveString(seedConfigString, `${config.proposal.name}`);
 
     this.consoleLogService.logMessage(`seed registration hash: ${metaDataHash}`, "info");
 
@@ -194,16 +194,16 @@ export class SeedService {
 
     const seedArguments = [
       safeAddress,
-      config.seedDetails.adminAddress,
-      [config.tokenDetails.seedAddress, config.tokenDetails.fundingAddress],
-      [config.seedDetails.fundingTarget, config.seedDetails.fundingMax],
-      config.seedDetails.pricePerToken,
-      // convert from ISO string to Unix epoch seconds
-      Date.parse(config.seedDetails.startDate) / 1000,
-      // convert from ISO string to Unix epoch seconds
-      Date.parse(config.seedDetails.endDate) / 1000,
-      [config.seedDetails.vestingPeriod, config.seedDetails.vestingCliff],
-      !!config.seedDetails.whitelist,
+      // config.seedDetails.adminAddress,
+      // [config.tokenDetails.seedAddress, config.tokenDetails.fundingAddress],
+      // [config.seedDetails.fundingTarget, config.seedDetails.fundingMax],
+      // config.seedDetails.pricePerToken,
+      // // convert from ISO string to Unix epoch seconds
+      // Date.parse(config.seedDetails.startDate) / 1000,
+      // // convert from ISO string to Unix epoch seconds
+      // Date.parse(config.seedDetails.endDate) / 1000,
+      // [config.seedDetails.vestingPeriod, config.seedDetails.vestingCliff],
+      // !!config.seedDetails.whitelist,
       toWei(".02"), // 2%
       this.asciiToHex(metaDataHash),
     ];
