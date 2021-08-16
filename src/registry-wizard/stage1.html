@@ -5,10 +5,10 @@
       <hr />
     </div>
     <div class="infoContainer">
-      <div class="sidetext">
+      <div class="sideText">
         <h2 class="heading heading3 title">Proposal</h2>
         Hey there! You are about to create a new Token Swap deal. A Token Swap deal does this and that. Please follow the steps and fill in the text boxes to complete this process.      </div>
-      <div>
+      <div class="form">
         <div class="infoInput">
           <div class="labelContainer">
             <label for="proposalName">Proposal Name</label>
@@ -28,9 +28,9 @@
           <textarea id="proposalOverview" value.bind="seedConfig.proposal.overview" rows="5" maxlength="250"></textarea>
         </div>
         <div class="buttonContainer">
-          <div class="stageButton previous button2" disabled click.delegate="previous()">PREVIOUS</div>
-          <div class="stageButton proceed button1" click.delegate="proceed()">Proceed</div>
-          <div class="stageButton cancel" click.delegate="cancel()">CANCEL</div>
+          <button class="stageButton previous button2" disabled click.delegate="back()">PREVIOUS</button>
+          <button class="stageButton proceed button1" click.delegate="proceed()">Proceed</button>
+          <button class="stageButton cancel button3" click.delegate="cancel()">CANCEL</button>
         </div>
       </div>
     </div>

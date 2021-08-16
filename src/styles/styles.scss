@@ -216,9 +216,10 @@ html {
     .button3 {
       color: $Neutral03;
       border: solid 1px transparent;
+      background: none;
 
       &:hover {
-        -webkit-text-fill-color: $White;
+        -webkit-text-fill-color: $Secondary04;
       }
     }
 

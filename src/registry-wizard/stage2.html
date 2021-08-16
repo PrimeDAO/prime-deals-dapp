@@ -6,7 +6,7 @@
     </div>
     <template repeat.for="dao of seedConfig.daos">
       <div class="infoContainer">
-        <div class="sidetext">
+        <div class="sideText">
           <h2 class="heading heading3 title">DAO ${$index + 1}</h2>
           Description of your project and team.
         </div>
@@ -87,7 +87,7 @@
                       id="url-${$parent.$index}-${$index}"
                       placeholder="https://..."
                       maxlength="255"
-                      value.bind="dao.social_medias[$index].amount" />
+                      value.bind="dao.social_medias[$index].url" />
                     <span if.bind="dao.social_medias.length > 1"
                       class="deleteLink"
                       title="Delete this row"
@@ -111,7 +111,7 @@
     </template>
 
     <div class="infoContainer">
-      <div class="sidetext">
+      <div class="sideText">
         <h2 class="heading heading3 title">Proposal Admin</h2>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </div>
@@ -153,21 +153,14 @@
               <a>+ Add more</a>
             </div>
           </template>
-          <!-- <div
-            if.to-view="dao.admins.length <= 0"
-            class="addSingleLink"
-            click.delegate="addAdmin(-1)">
-            <a>+ Add more</a>
-          </div> -->
         </div>
 
         <div class="buttonContainer">
-          <div class="stageButton previous button2" disabled click.delegate="previous()">PREVIOUS</div>
-          <div class="stageButton proceed button1" click.delegate="proceed()">Proceed</div>
-          <div class="stageButton cancel" click.delegate="cancel()">CANCEL</div>
+          <button class="stageButton previous button2" click.delegate="back()">PREVIOUS</button>
+          <button class="stageButton proceed button1" click.delegate="proceed()">Proceed</button>
+          <button class="stageButton cancel button3" click.delegate="cancel()">CANCEL</button>
         </div>
       </div>
-
     </div>
   </div>
 </template>
