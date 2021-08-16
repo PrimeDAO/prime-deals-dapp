@@ -26,6 +26,8 @@ export class Stage2 extends BaseStage {
 
   addToken(daoIndex: number): void {
     // Create a new token object
+    console.log({daoIndex});
+
     this.seedConfig.daos[daoIndex].tokens.push({name: undefined, amount: undefined});
   }
   // Delete a row in the tokens array

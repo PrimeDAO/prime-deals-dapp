@@ -10,7 +10,7 @@
           <h2 class="heading heading3 title">DAO ${$index + 1}</h2>
           Description of your project and team.
         </div>
-        <div>
+        <div class="form">
           <div class="infoInput">
             <div class="labelContainer">
               <label for="proposalName">Name DAO ${$index + 1}</label>
@@ -25,13 +25,13 @@
               <div class="otherLinks">
                 <div>
                   <div class="sMedia">
-                    <label for="$index">Token</label>
+                    <label for="token-${$parent.$index}-${$index}">Token</label>
                     <span>
                       ${token.name.length || 0}/20
                     </span>
                   </div>
                   <input
-                    id="$index"
+                    id="token-${$parent.$index}-${$index}"
                     class="platform"
                     placeholder="Select Token"
                     value.bind="dao.tokens[$index].name"
@@ -39,9 +39,9 @@
                 </div>
                 <div class="addLinkContainer">
                   <div>
-                    <label for="url`${index}`">Funding Amount</label>
+                    <label for="amount-${$parent.$index}-${$index}">Funding Amount</label>
                     <input
-                      id="$index"
+                      id="amount-${$parent.$index}-${$index}"
                       placeholder=""
                       type="number"
                       min="0"
@@ -62,25 +62,19 @@
                 <a>+ Additional token</a>
               </div>
             </template>
-            <div
-              if.to-view="dao.tokens.length <= 0"
-              class="addSingleLink"
-              click.delegate="addToken($parent.$index, -1)">
-              <a>+ Additional token</a>
-            </div>
           </div>
           <div class="infoInput">
             <template repeat.for="platform of dao.social_medias">
               <div class="otherLinks">
                 <div>
                   <div class="sMedia">
-                    <label for="$index">Social Media</label>
+                    <label for="platform-${$parent.$index}-${$index}">Social Media</label>
                     <span>
                       ${platform.name.length || 0}/20
                     </span>
                   </div>
                   <input
-                    id="$index"
+                    id="platform-${$parent.$index}-${$index}"
                     class="platform"
                     placeholder="Select Platform"
                     value.bind="dao.social_medias[$index].name"
@@ -88,9 +82,9 @@
                 </div>
                 <div class="addLinkContainer">
                   <div>
-                    <label for="url`${index}`">URL</label>
+                    <label for="url-${$parent.$index}-${$index}">URL</label>
                     <input
-                      id="$index"
+                      id="url-${$parent.$index}-${$index}"
                       placeholder="https://..."
                       maxlength="255"
                       value.bind="dao.social_medias[$index].amount" />
@@ -111,12 +105,6 @@
               </div>
             </template>
           </div>
-          <!-- <div
-            if.to-view="dao.social_medias.length <= 0"
-            class="addSingleLink"
-            click.delegate="addSocialMedia($parent.$index, -1)">
-            <a>+ Add more</a>
-          </div> -->
         </div>
       </div>
       <hr />
@@ -127,7 +115,7 @@
         <h2 class="heading heading3 title">Proposal Admin</h2>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </div>
-      <div>
+      <div class="form">
         <div class="infoInput">
           <template repeat.for="admins of seedConfig.admins">
             <div class="otherLinks">
@@ -143,9 +131,9 @@
               </div>
               <div class="addLinkContainer">
                 <div class="small-box">
-                  <label for="$index">Representing</label>
+                  <label for="representing-${$parent.$index}-${$index}">Representing</label>
                   <input
-                    id="representing-$index"
+                    id="representing-${$parent.$index}-${$index}"
                     placeholder="Select DAO"
                     value.bind="admin.represent"
                     maxlength="20" />
@@ -155,6 +143,7 @@
                     click.delegate="deleteAdmin($index)">
                     <i class="far fa-trash-alt"></i>
                   </span>
+                </div>
               </div>
             </div>
             <div
