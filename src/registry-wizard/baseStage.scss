@@ -19,13 +19,14 @@
     font-family: Aeonik;
   }
 
-  .sidetext {
+  .sideText {
     line-height: 24px;
     color: $Neutral03;
   }
   
   .form {
     grid-column: span 2;
+    max-width: 675px;
   }
   .infoInput {
     margin-bottom: 2em;
@@ -74,11 +75,16 @@
   input, textarea {
     width: 455px;
   }
-  input {
-    height: 2.7em;
+  input, textarea {
     border: 1px solid $Border01;
     border-radius: 10px;
     color: $Neutral02;
+  }
+  input {
+    height: 2.7em;
+  }
+  textarea {
+    resize: none;
   }
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
@@ -155,42 +161,31 @@
     }
   }
 
-  &.stage2 {
-    .logo {
-      display: grid;
-      grid-template-columns: auto auto;
-      grid-template-rows: auto;
-      column-gap: 12px;
-
-      .logoInput {
-        label {
-          display: flex;
-          align-items: center;
-          .text {
-            padding-right: 8px;
-          }
-          .logoPreview {
-            .logoImage {
-              display: block;
-              height: 26px;
-              width: 26px;
-              border-radius: 13px;
-            }
-          }
-          .logoNone {
-            font-size: 10px;
-            color: $AlertRed;
-            position: relative;
-            top: 1px;
-          }
-        }
-      }
-
-      .fileNote {
-        color: $Neutral02;
-        line-height: 1.5em;
-      }
+  .number {
+    width: 11em;
+    display: flex;
+    flex-flow: row nowrap;
+    flex: 1;
+    gap: 0em;
+    input {
+      width: 5em;
+      // border-top-right-radius: 0em;
+      // border-bottom-right-radius: 0em;
     }
+    > div {
+      width: 5em;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      // justify-content: flex-start;
+      // background-color: $Border01;
+      // border-top-right-radius: 10px;
+      // border-bottom-right-radius: 10px;
+    }
+  }
+
+
+  &.stage2, &.stage3 {
     .infoContainer {
       .otherLinks {
         display: flex;
@@ -237,70 +232,6 @@
         justify-content: flex-start;
         margin-bottom: 2em;
       }
-    }
-  }
-
-  &.stage3 {
-    .tickerContainer {
-      display: flex;
-      align-items: center;
-      gap: 1em;
-      .ticker {
-        font-family: Inter;
-        color: $Neutral02;
-      }
-      img {
-        @include tokenIcon;
-        border-radius: 12px;
-        width: 24px;
-        position: relative;
-        top: 1px;
-      }
-    }
-    .infoInput.supply {
-      input {
-        width: 10em;
-      }
-    }
-    .tokenDistribution {
-      .columnHeaders {
-        font-size: 0.9em;
-        font-weight: normal;
-        line-height: 2em;
-        text-align: left;
-      }
-      .distribRow {
-        display: flex;
-        flex-flow: row wrap;
-        flex: 1;
-        justify-content: space-between;
-        margin-bottom: 32px;
-        .category {
-          display: flex;
-          flex-flow: row nowrap;
-          justify-content: space-between;
-          align-items: center;
-          span {
-            color: $Neutral02;
-          }
-        }
-        .infoInput {
-          margin-bottom: unset;
-        }
-        input {
-          height: 2.3em;
-        }
-        input.textInput {
-          height: 2.3em;
-        }
-        .deleteLink {
-          cursor: pointer;
-          justify-self: flex-end;
-        }
-      }
-    }
-    .addLink {
-      cursor: pointer;
     }
   }
 
@@ -585,6 +516,9 @@
 @media screen and (max-width: 782px) {
   .infoContainer {
     min-width: unset;
+    .sideText {
+      grid-column: span 2;
+    }
     .infoInput {
       > textarea {
         width: 90%;

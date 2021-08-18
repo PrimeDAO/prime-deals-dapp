@@ -1,4 +1,4 @@
-import { threadId } from "worker_threads";
+// import { threadId } from "worker_threads";
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 export interface IProposal {
@@ -17,6 +17,19 @@ export interface IAdmin {
   represent: IDAO
 }
 
+export interface IClause {
+  text: string,
+  tag: string,
+}
+
+export interface ITerms {
+  clauses: Array<IClause>,
+  period: number,
+  representatives: string,
+  coreTeamChatURL: string,
+  previousDiscussionURL: string,
+}
+
 export interface ISeedConfig {
   /**
    * semantic version of this interface. This value must be updated upon any released changes.
@@ -25,6 +38,7 @@ export interface ISeedConfig {
   proposal: IProposal,
   daos: Array<IDAO>,
   admins: Array<IAdmin>,
+  terms: ITerms,
   clearState: () => void,
 }
 
@@ -32,7 +46,8 @@ export class SeedConfig implements ISeedConfig {
   public version: string;
   public proposal: IProposal;
   public daos: Array<IDAO>;
-  public admins: Array<IAdmin>
+  public admins: Array<IAdmin>;
+  public terms: ITerms;
 
   constructor() {
     this.clearState();
@@ -56,6 +71,12 @@ export class SeedConfig implements ISeedConfig {
         social_medias: [{name: undefined, url: undefined}],
       },
     ] as IDAO[];
+    this.terms = {
+      clauses: [{text: "", tag: ""}] as IClause[],
+      period: 0,
+      representatives: "",
+      previousDiscussionURL: "",
+    } as ITerms;
     this.admins = [{address: undefined, represent: undefined}] as IAdmin[];
   }
 }
