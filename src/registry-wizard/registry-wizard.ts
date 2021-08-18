@@ -52,14 +52,6 @@ export class NewDeal {
         },
         {
           verified: true,
-          title: "Summary",
-        },
-        {
-          verified: true,
-          title: "Ready to Go!",
-        },
-        {
-          verified: true,
           title: "Thank you!",
         },
       ];
@@ -130,32 +122,6 @@ export class NewDeal {
           seedConfig: this.seedConfig,
           stageStates: this.stageStates,
           stageNumber: 5,
-          maxStage,
-          wizardState: this.wizardState },
-      },
-      {
-        route: ["stage6"],
-        nav: false,
-        moduleId: PLATFORM.moduleName("./stage6"),
-        name: "stage6",
-        title: this.stageStates[6].title,
-        settings: {
-          seedConfig: this.seedConfig,
-          stageStates: this.stageStates,
-          stageNumber: 6,
-          maxStage,
-          wizardState: this.wizardState },
-      },
-      {
-        route: ["stage7"],
-        nav: false,
-        moduleId: PLATFORM.moduleName("./stage7"),
-        name: "stage7",
-        title: this.stageStates[7].title,
-        settings: {
-          seedConfig: this.seedConfig,
-          stageStates: this.stageStates,
-          stageNumber: 7,
           maxStage,
           wizardState: this.wizardState },
       },

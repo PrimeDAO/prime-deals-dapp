@@ -5,7 +5,7 @@
     grid-template-columns: 1fr 2fr;
 
     justify-items: center;
-    background-color: $BG01;
+    background-color: $BG00;
     &.stage8{
       grid-template-columns: 1fr;
       .currentStageSidebar {
@@ -61,7 +61,7 @@
   &.horizontal {
     grid-template-rows: 120px 1fr;
     align-items: top;
-    background-color: $BG01;
+    background-color: $BG00;
     &.stage8{
       grid-template-rows: 1fr;
       .currentStageSidebar {

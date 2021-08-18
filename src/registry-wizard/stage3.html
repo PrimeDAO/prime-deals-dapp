@@ -1,130 +1,122 @@
 <template>
   <require from="../resources/elements/questionMark/questionMark.html"></require>
   <div class="page animated-page stageContainer stage3 au-animate ">
+    <div class="headingContainer">
+      <h1 class="heading heading1 gradient">Terms</h1>
+      <hr />
+    </div>
     <div class="infoContainer">
-      <div class="heading heading2 title">Token Details</div>
-      <div class="subtext">
-        Details about your token design and distribution.
+      <div class="sidetext">
+        <div class="heading heading3 title">Deal Clauses</div>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </div>
-      <div>
-        <div class="infoInput ticker">
-          <div class="address">
-            <div class="labeledQuestion">
-              <label for="fundingAddress">Funding Token Address</label>
-              <div class="questionMark">
-                <question-mark text="The Ethereum address of the funding token used to purchase Seed tokens. Simply put: the token you are raising funds in (e.g. DAI)"></question-mark>
-              </div>
-            </div>
-            <div class="tickerContainer">
-              <input id="fundingAddress"
-                value.bind="seedConfig.tokenDetails.fundingAddress"
-                blur.trigger="getTokenInfo('funding')">
-              </input>
-              <div class="ticker">
-                ${fundingSymbol}
-              </div>
-              <div if.to-view="fundingIcon">
-                <img src.bind="fundingIcon" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="infoInput ticker">
-          <div class="address">
-            <div class="labeledQuestion">
-              <label for="seedAddress">Seed Token Address</label>
-              <div class="questionMark">
-                <question-mark text="The Ethereum address of the token you are offering to contributors"></question-mark>
-              </div>
-            </div>
-            <div class="tickerContainer">
-              <input id="seedAddress"
-                value.bind="seedConfig.tokenDetails.seedAddress"
-                blur.trigger="getTokenInfo('seed')">
-              </input>
-              <div class="ticker">
-                ${seedSymbol}
-              </div>
-              <div if.to-view="seedIcon">
-                <img src.bind="seedIcon" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="infoInput supply">
-          <div class="labeledQuestion">
-            <label for="maxSeedSupply">Maximum Seed Token Supply</label>
-            <div class="questionMark">
-              <question-mark text="The maximum supply of Seed tokens to exist over the project's lifetime. If there is no maximum, provide a reasonable estimate"></question-mark>
-            </div>
-          </div>
-          <numeric-input
-            output-as-string="true"
-            id="maxSeedSupply"
-            value.bind="seedConfig.tokenDetails.maxSeedSupply">
-          </numeric-input>
-        </div>
-        <div class="infoInput supply">
-          <div class="labeledQuestion">
-            <label for="initialSeedSupply">Initial Circulating Seed Token Supply </label>
-            <div class="questionMark">
-              <question-mark text="The amount of Seed tokens that will be in circulation once the launch has concluded"></question-mark>
-            </div>
-          </div>
-          <numeric-input
-            output-as-string="true"
-            id="initialSeedSupply"
-            value.bind="seedConfig.tokenDetails.initialSeedSupply">
-          </numeric-input>
-        </div>
-        <div class="tokenDistribution">
-          <div class="labeledQuestion">
-            <label>Seed Token Global Distribution</label>
-            <div class="questionMark">
-              <question-mark text="The seed token distribution between different groups. Projects who issue tokens in multiple rounds should clearly demarcate the amount of tokens distributed in each round"></question-mark>
-            </div>
-          </div>
-          <template repeat.for="distrib of seedConfig.tokenDetails.tokenDistrib">
-            <div class="distribRow">
-              <div class="infoInput supply">
-                <div class="category">
-                  <div class="columnHeaders">Category</div>
+
+      <div class="form">
+        <div class="infoInput">
+          <template repeat.for="clause of seedConfig.terms.clauses">
+            <div class="otherLinks">
+              <div>
+                <div class="labelContainer">
+                  <label for="proposalOverview">${$index + 1}. Clause</label>
                   <span>
-                    ${distrib.category.length || 0}/30
+                    ${clause.text.length || 0}/250
                   </span>
                 </div>
-                <input type="text" value.bind="distrib.category" class="textInput" maxlength="30">
+                <textarea id="proposalOverview" value.bind="clause.text" rows="5" maxlength="250"></textarea>
               </div>
-              <div class="infoInput supply" value.bind="distrib.amount">
-                <div class="columnHeaders">Amount</div>
-                <numeric-input
-                  output-as-string="true"
-                  value.bind="distrib.amount"
-                  placeholder="0" class="numberInput">
-                </numeric-input>
-              </div>
-              <div class="infoInput supply numberInput" value.bind="distrib.lockup">
-                <div class="columnHeaders">Lock-up (days)</div>
-                <input type="number" value.bind="distrib.lockup" placeholder="0" class="numberInput">
-                <span
-                  class="deleteLink"
-                  title="Delete this row"
-                  click.delegate="deleteTokenDistribution($index)">
-                  <i class="far fa-trash-alt"></i>
-                </span>
+              <div class="addLinkContainer">
+                <div class="small-box">
+                  <label for="clause-${$index + 1}">Tag</label>
+                  <input
+                    id="clause-${$index + 1}"
+                    placeholder=""
+                    value.bind="clause.tag"
+                    maxlength="20" />
+                  <span if.bind="seedConfig.terms.clauses.length > 1"
+                    class="deleteLink"
+                    title="Delete this row"
+                    click.delegate="deleteClause($index)">
+                    <i class="far fa-trash-alt"></i>
+                  </span>
+                </div>
               </div>
             </div>
+            <div
+              class="addLink"
+              click.delegate="addClause($index)"
+              if.bind="$index == seedConfig.terms.clauses.length - 1">
+              <a>+ Add more</a>
+            </div>
           </template>
-          <div
-            class="addLink"
-            click.delegate="addTokenDistribution()">
-            <a>+ Add Row</a>
-          </div>
         </div>
       </div>
-      <div class="buttonContainer">
-        <div class="stageButton cancel" click.delegate="back()">PREVIOUS</div>
-        <div class="stageButton proceed button1" click.delegate="proceed()">NEXT</div>
+    </div>
+    <hr />
+    <div class="infoContainer">
+      <div class="sidetext">
+        <div class="heading heading3 title">Negotiation</div>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </div>
+
+      <div class="form">
+        <div class="infoInput">
+          <label for="negotiationPeriod">Negotiation Period</label>
+          <div class="number">
+            <numeric-input
+              output-as-string="true"
+              id="negotiationPeriod"
+              value.bind="seedConfig.terms.period">
+            </numeric-input>
+            <div>Days</div>
+          </div>
+        </div>
+
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="representatives">Deal Representatives</label>
+            <div class="questionMark">
+              <question-mark text="An address list of the representatives in who can take part in the negotiation discussion. Use space or comma between addresses. Max: 200 addresses."></question-mark>
+            </div>
+          </div>
+          <textarea
+            id="representatives"
+            rows="5"
+            maxlength="8600"
+            value.bind="seedConfig.terms.representatives"
+            placeholder="Representative's address"></textarea>
+        </div>
+
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="teamChat">Core Negotiation Team Chat URL</label>
+            <div class="questionMark">
+              <question-mark text="placeholder"></question-mark>
+            </div>
+          </div>
+          <input
+            id="teamChat"
+            value.bind="seedConfig.terms.coreTeamChatURL"
+            placeholder="https://..." />
+        </div>
+
+        <div class="infoInput">
+          <div class="labeledQuestion">
+            <label for="prevDiscussion">Previous Deal Discussions</label>
+            <div class="questionMark">
+              <question-mark text="Placeholder"></question-mark>
+            </div>
+          </div>
+          <input
+            id="prevDiscussion"
+            value.bind="seedConfig.terms.previousDiscussionURL"
+            placeholder="https://..." />
+        </div>
+
+        <div class="buttonContainer">
+          <button class="stageButton previous button2" click.delegate="back()">PREVIOUS</button>
+          <button class="stageButton proceed button1" click.delegate="proceed()">Proceed</button>
+          <button class="stageButton cancel button3" click.delegate="cancel()">CANCEL</button>
+        </div>
       </div>
     </div>
   </div>
