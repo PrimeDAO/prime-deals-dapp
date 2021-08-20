@@ -17,7 +17,7 @@ html {
   body {
     font-size: 16px;
     margin: 0;
-    background-color: $BG00;
+    background-color: $BG01;
     color: $White;
     font-family: 'Aeonik';
     min-height: 100vh;
@@ -32,7 +32,7 @@ html {
       font-size: 16px;
       line-height: 23px;
       border: 1px solid $Neutral02;
-      background: $BG01;
+      background: $BG04;
       color: $White;
       border-radius: 10px;
       outline: none;
@@ -48,29 +48,6 @@ html {
         color: transparent;
       }
     }
-
-    // textarea {
-    //   font-family: 'Inter';
-    //   font-style: normal;
-    //   font-weight: normal;
-    //   font-size: 16px;
-    //   line-height: 23px;
-    //   border-radius: 10px;
-    //   background-color: $BG01;
-    //   border: 1px solid $Neutral02;
-    //   color: $White;
-    //   outline: none;
-    //   padding: 12px 12px;
-
-    //   &::placeholder {
-    //     color: $Neutral03;
-    //     mix-blend-mode: normal;
-    //     opacity: 0.43;
-    //   }
-    //   &:focus::placeholder {
-    //     color: transparent;
-    //   }
-    // }
 
     .clearInput {
       background-color: transparent;
@@ -160,66 +137,85 @@ html {
       }
     }
 
-    .button1,
-    .button2,
-    .button3 {
-      display: inline-block;
-      border-radius: 50px;
-      border: none;
-      margin: 5px 0 5px 5px;
-      padding: 14px 28px;
-      outline: none;
-
-      font-family: 'Inter-Bold';
-      font-style: normal;
-      font-weight: 700;
-      font-size: 16px;
-      line-height: 19px;
-      text-align: center;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-
-      color: $White;
+    .button {
+      display: block;
       cursor: pointer;
-
-      &:hover {
+      border: none;
+      text-rendering: optimizeLegibility;
+      font-family: 'Inter',Sans-serif;
+      font-size: initial;
+      text-align: center;
+      &:not(.disabled), &:not(:disabled) {
         text-decoration: none;
+        background-image: $Gradient01;
+        background-size: 200% auto;
+        box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+        &:active {
+          box-shadow: none;
+        }
       }
-
-      &:disabled {
+      &.disabled, &:disabled {
+        background: $Neutral02;
         cursor: not-allowed;
-        opacity: 0.2;
+        .button-text {
+          cursor: inherit;
+          color: $Neutral03 !important;
+        }
+        &.outline, &.text-only {
+          &>.button-inner>.button-text {
+            background-image: $Gradient09;
+          }
+        }
+      }
+      border-radius: 100px;
+      margin: 10px;
+      padding: 2px;
+      transition: 0.35s;
+
+      &:hover:not(:disabled) {
+        background-position: right center;
+        &.outline>.button-inner, &.only-text>.button-inner {
+          background: $Border01;
+          .button-text {
+            background-position: right center;
+          }
+        }
+      }
+      &:active:not(:disabled) {
+        transform: translate(0px, 1px);
+        background-position: center 0;
+        &>.button-inner {
+          &>.button-text {
+            color: rgba($White,0.75);
+          }
+        }
+      }
+      &.only-text {
+        box-shadow: none;
+        &>.button-inner {
+          transition: 0.35s;
+          background: $BG01;
+        }
+      }
+      &.outline>.button-inner, &.only-text {
+        background: $BG01;
+        transition: 0.35s;
+        & .button-text {
+          background-image: $Gradient09;
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
       }
 
-      &.small {
-        padding: 8px 17px;
-        font-size: 11px;
-        position: relative;
-        bottom: 4px;
-        text-transform: none;
-      }
-    }
-
-    .button1 {
-      background: $Gradient08;
-    }
-
-    .button2 {
-      @include standardTextGradient;
-      border: solid 2px $Secondary02;
-
-      &:hover {
-        -webkit-text-fill-color: $Secondary04;
-      }
-    }
-
-    .button3 {
-      color: $Neutral03;
-      border: solid 1px transparent;
-      background: none;
-
-      &:hover {
-        -webkit-text-fill-color: $Secondary04;
+      .button-inner {
+        &>.button-text {
+          text-transform: uppercase;
+          color: $White;
+        }
+        border-radius: 100px;
+        padding: 10px 38px;
       }
     }
 

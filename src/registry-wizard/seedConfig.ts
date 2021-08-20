@@ -73,7 +73,7 @@ export class SeedConfig implements ISeedConfig {
     ] as IDAO[];
     this.terms = {
       clauses: [{text: "", tag: ""}] as IClause[],
-      period: 0,
+      period: 14,
       representatives: "",
       previousDiscussionURL: "",
     } as ITerms;

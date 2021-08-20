@@ -143,6 +143,8 @@
     width: 1.3em;
     height: 1.3em;
     align-self: center;
+    cursor: default;
+    user-select: none;
   }
   .importantText {
     font-weight: bolder;
@@ -232,6 +234,13 @@
         justify-content: flex-start;
         margin-bottom: 2em;
       }
+    }
+  }
+
+  &.stage3 {
+    .period-warning {
+      color: orange;
+      font-size: small;
     }
   }
 
