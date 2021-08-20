@@ -71,6 +71,11 @@ body > ux-dialog-container {
     }
 
     ux-dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+
       padding-top: 8px;
       border-top: 1px solid $White;
       border-bottom-left-radius: 6px;

@@ -21,6 +21,9 @@
 
   .leftButton,
   .rightButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: $BG05;
     opacity: 0.8;
     border-radius: 26px;

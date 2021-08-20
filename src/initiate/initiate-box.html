@@ -6,10 +6,14 @@
     </div>
     <div class="buttonContainer">
       <a
-        class="button1 ${disabled?'disabled':''}"
+        class="button ${disabled?'disabled':''}"
         route-href="route: newDeal; params.bind: {type: slug}"
       >
-        ${disabled ? 'Coming Soon' : 'Select'}
+        <div class="button-inner">
+          <div class="button-text">
+            ${disabled ? 'Coming Soon' : 'Select'}
+          </div>
+        </div>
       </a>
     </div>
   </div>

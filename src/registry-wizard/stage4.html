@@ -15,10 +15,34 @@
           ToDo
         </div>
         <div class="buttonContainer">
-          <button class="stageButton previous button2" click.delegate="back()">PREVIOUS</button>
-          <button if.to-view="!connected" class="stageButton proceed button1" click.delegate="connect()">CONNECT WALLET</button>
-          <button else class="stageButton proceed button1" click.delegate="submit()">SUBMIT</button>
-          <button class="stageButton cancel button3" click.delegate="cancel()">CANCEL</button>
+          <button class="stageButton previous button outline" click.delegate="back()">
+            <div class="button-inner">
+              <div class="button-text">
+                Previous
+              </div>
+            </div>
+          </button>
+          <button class="stageButton proceed button" if.to-view="!connected" click.delegate="connect()">
+            <div class="button-inner">
+              <div class="button-text">
+                Connect Wallet
+              </div>
+            </div>
+          </button>
+          <button else class="stageButton proceed button" click.delegate="submit()">
+            <div class="button-inner">
+              <div class="button-text">
+                Submit
+              </div>
+            </div>
+          </button>
+          <button class="stageButton cancel button only-text" click.delegate="cancel()">
+            <div class="button-inner">
+              <div class="button-text">
+                Cancel
+              </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>

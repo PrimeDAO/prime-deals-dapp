@@ -30,6 +30,7 @@ export class Stage4 extends BaseStage {
       }
     }
     // apparently all are valid, so proceed
+    console.log(`Submitting ${JSON.stringify(this.seedConfig)}`);
     this.next();
   } // else we are not valid. Don't proceed.
 

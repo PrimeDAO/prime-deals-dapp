@@ -62,20 +62,26 @@
         <div class="infoInput">
           <label for="negotiationPeriod">Negotiation Period</label>
           <div class="number">
-            <numeric-input
-              output-as-string="true"
+            <input
+              ref="period"
+              type="number"
+              min="1"
+              max="999"
+              step="1"
               id="negotiationPeriod"
               value.bind="seedConfig.terms.period">
-            </numeric-input>
-            <div>Days</div>
+            </input>
           </div>
+          <span if.to-view="seedConfig.terms.period && seedConfig.terms.period < 14" class="period-warning">
+            Please note: Average deals takes more than a week!
+          </span>
         </div>
 
         <div class="infoInput">
           <div class="labeledQuestion">
             <label for="representatives">Deal Representatives</label>
             <div class="questionMark">
-              <question-mark text="An address list of the representatives in who can take part in the negotiation discussion. Use space or comma between addresses. Max: 200 addresses."></question-mark>
+              <question-mark text="List the addresses of the core members involved within this deal.These representatives will be able to approve or decline the deal."></question-mark>
             </div>
           </div>
           <textarea
@@ -90,7 +96,7 @@
           <div class="labeledQuestion">
             <label for="teamChat">Core Negotiation Team Chat URL</label>
             <div class="questionMark">
-              <question-mark text="placeholder"></question-mark>
+              <question-mark text="This url will be only seen by the representatives."></question-mark>
             </div>
           </div>
           <input
@@ -103,7 +109,7 @@
           <div class="labeledQuestion">
             <label for="prevDiscussion">Previous Deal Discussions</label>
             <div class="questionMark">
-              <question-mark text="Placeholder"></question-mark>
+              <question-mark text="Deal admin can include a URL link towards where a D2D deal was discussed before it was submitted to the PrimeDAO platform."></question-mark>
             </div>
           </div>
           <input
@@ -113,9 +119,27 @@
         </div>
 
         <div class="buttonContainer">
-          <button class="stageButton previous button2" click.delegate="back()">PREVIOUS</button>
-          <button class="stageButton proceed button1" click.delegate="proceed()">Proceed</button>
-          <button class="stageButton cancel button3" click.delegate="cancel()">CANCEL</button>
+          <button class="stageButton previous button outline" click.delegate="back()">
+            <div class="button-inner">
+              <div class="button-text">
+                Previous
+              </div>
+            </div>
+          </button>
+          <button class="stageButton proceed button" click.delegate="proceed()">
+            <div class="button-inner">
+              <div class="button-text">
+                Proceed
+              </div>
+            </div>
+          </button>
+          <button class="stageButton cancel button only-text" click.delegate="cancel()">
+            <div class="button-inner">
+              <div class="button-text">
+                Cancel
+              </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>

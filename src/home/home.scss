@@ -151,7 +151,6 @@
       margin: 0 -160px;
       padding: 0 30px;
       &.open {
-        background: $BG03;
         margin-bottom: 53px;
       }
     }
@@ -159,7 +158,6 @@
     &.hero {
       display: grid;
       grid-template-columns: minmax(auto, 450px) minmax(330px, 800px);
-      background-color: $BG01;
       align-content: center;
       justify-content: space-between;
       column-gap: 24px;
@@ -206,6 +204,11 @@
         }
       }
     }
+  }
+
+  .centered {
+    display: flex;
+    justify-content: center;
   }
 }
 
