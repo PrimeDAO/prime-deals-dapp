@@ -7,7 +7,7 @@ import { EventConfigException } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { SeedService } from "services/SeedService";
+// import { SeedService } from "services/SeedService";
 import { IpfsService } from "services/IpfsService";
 import { GeoBlockService } from "services/GeoBlockService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
