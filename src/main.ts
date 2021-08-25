@@ -48,9 +48,8 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.get(ContractsService);
 
-      const seedService = aurelia.container.get(SeedService);
-
-      seedService.initialize();
+      // const seedService = aurelia.container.get(SeedService);
+      // seedService.initialize();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
