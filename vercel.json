@@ -1,7 +1,9 @@
 {
+  "version": 2,
+  "name": "prime-d2d-dapp-test",
   "rewrites": [
     {
-      "source": "/*",
+      "source": "/:path*",
       "destination": "/"
     }
   ]
