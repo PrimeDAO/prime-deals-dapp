@@ -7,5 +7,5 @@
     "editor.formatOnSave": false
   },
   "files.eol": "\n",
-  "svg.preview.background": "black",
+  "svg.preview.background": "transparent",
 }

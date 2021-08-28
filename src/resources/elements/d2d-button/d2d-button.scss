@@ -1,0 +1,193 @@
+@import "../../../styles/styles.scss";
+.button {
+  border: none;
+  display: inline-block;
+  background: transparent;
+  border-radius: 99px;
+  color: white;
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  width: calc(100% - 42px);
+  text-align: center;
+  padding: 14px 21px;
+  font-weight: 100;
+  text-transform: uppercase;
+  font-family: "Inter";
+  letter-spacing: 2px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  &:before, 
+  &:after {
+    content: ' ';
+    position: absolute;
+    border-radius: 99px;
+  }
+
+  &:before {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -2;
+    background: #503b9a;
+    background-image: $Gradient01;
+    background-size: 200%;
+    transition: background 0.35s ease-in-out;
+  }
+
+  &.disabled:before {
+    background-image: none;
+    background: $Neutral02;
+  }
+
+  &.outline {
+    &:after {
+      background-color: $BG01;
+    }
+    &:not(.disabled):hover:after {
+      background: $Border01;
+    }
+  }
+
+  &.only-text {
+    transition: none;
+    &:before {
+      background-image: unset;
+      background: unset;
+    }
+    &:hover {
+      &:before {
+        background: $Border01;
+      }
+    }
+    &:active {
+      &:before {
+        background-image: $Gradient01;
+      }
+    }
+  }
+
+  &:after {
+    top: 2px; 
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    z-index: -1;
+    transition: all 0.35s ease-in-out;
+  }
+
+  &:hover:before {
+    background-position: right center;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0px 0px 10px #8668FC;
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px);
+    &:after {
+      opacity: 0;
+    }
+  }
+
+  &.disabled {
+    background: $Neutral02;
+    cursor: not-allowed;
+    .button-text {
+      cursor: inherit;
+      color: $Neutral03 !important;
+    }
+    &.outline, &.text-only {
+      color: $Neutral02;
+      background-image: none;
+    }
+  }
+}
+
+// .d2d-button {
+//   display: block;
+//   cursor: pointer;
+//   border: none;
+//   text-rendering: optimizeLegibility;
+//   font-family: 'Inter',Sans-serif;
+//   font-size: initial;
+//   text-align: center;
+//   &:not(.disabled), &:not(:disabled) {
+//     text-decoration: none;
+//     background-image: $Gradient01;
+//     background-size: 200% auto;
+//     box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+//     &:active {
+//       box-shadow: none;
+//     }
+//   }
+//   &.disabled, &:disabled {
+//     background: $Neutral02;
+//     cursor: not-allowed;
+//     .button-text {
+//       cursor: inherit;
+//       color: $Neutral03 !important;
+//     }
+//     &.outline, &.text-only {
+//       &>.button-inner>.button-text {
+//         background-image: $Gradient09;
+//       }
+//     }
+//   }
+//   border-radius: 100px;
+//   margin: 10px;
+//   padding: 2px;
+//   transition: 0.35s;
+
+//   &:hover:not(:disabled) {
+//     background-position: right center;
+//     &.outline>.button-inner, &.only-text>.button-inner {
+//       background: $Border01;
+//       .button-text {
+//         background-position: right center;
+//       }
+//     }
+//   }
+//   &:active:not(:disabled) {
+//     transform: translate(0px, 1px);
+//     background-position: center 0;
+//     &>.button-inner {
+//       &>.button-text {
+//         color: rgba($White,0.75);
+//       }
+//     }
+//   }
+//   &.only-text {
+//     box-shadow: none;
+//     &>.button-inner {
+//       transition: 0.35s;
+//       background: $BG01;
+//     }
+//   }
+//   &.outline>.button-inner, &.only-text {
+//     background: $BG01;
+//     transition: 0.35s;
+//     & .button-text {
+//       background-image: $Gradient09;
+//       background-size: 200% auto;
+//       -webkit-background-clip: text;
+//       background-clip: text;
+//       -webkit-text-fill-color: transparent;
+//     }
+//   }
+
+//   .button-inner {
+//     &>.button-text {
+//       text-transform: uppercase;
+//       color: $White;
+//     }
+//     border-radius: 100px;
+//     padding: 10px 38px;
+//   }
+// }
