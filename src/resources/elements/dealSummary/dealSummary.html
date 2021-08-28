@@ -5,26 +5,35 @@
   >
   <!-- Open Deal -->
     <div if.to-view="!loading && !deal.dao.partner" class="dealSummary">
-      <div class="icons">
-        <div class="icon">
-          <img src="${deal.logo.creator}" />
-        </div>
-      </div>
-      <div class="title ellipses">${deal.dao}</div>
       <div class="countdown">
         <time-left deal.to-view="deal" largest contained></time-left>
       </div>
       <div class="proposal">
+        <div class="title ellipses">
+          <h1>${deal.type}</h1>
+          <h2>${deal.title}</h2>
+        </div>
         <div class="description">
           ${deal.description}
         </div>
+      </div> 
+      <div class="footer">
+        <div>
+          <div class="icons">
+            <div class="icon">
+              <img src="${deal.logo.creator}" />
+            </div>
+            <div class="dao name ellipses">
+              ${deal.dao}
+            </div>
+          </div>
+          <d2d-button 
+            class="button outline" 
+            click.delegate="navigate('initiate')">
+            Partner
+          </d2d-button>
+        </div>
       </div>
-      <!-- <div class="description">${deal.metadata.projectDetails.proposition}</div> -->
-      <a
-        class="footer"
-        href.to-view="`deal/${deal.address}`">
-        <div class="targetTitle title subtext">PARTICIPATE</div>
-      </a>
     </div>
 
     <!-- Running Deal -->

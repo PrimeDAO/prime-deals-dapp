@@ -27,4 +27,9 @@ export class DealSummary {
     // this.seed = this.seedService.seeds.get(this.address);
     this.loading = false;
   }
+
+  navigate(href: string): void {
+    this.router.navigate(href);
+  }
+
 }

@@ -3,23 +3,33 @@
   display: inline-block;
   cursor: default;
   width: 360px;
-  height: 262px;
-  min-width: 360px;
+  height: 291px;
   padding-right: 30px;
 
   .dealSummary {
     display: grid;
-    grid-template-columns: 50px auto 1fr 1fr;
-    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: 34px 190px 67px;
     grid-template-areas:
-      ". . . countdown"
-      "icon icon title title"
-      "proposal proposal proposal proposal"
-      "footer footer footer footer";
-    row-gap: 4px;
+      "countdown"
+      "proposal"
+      "footer";
     background-color: $BG02;
+    transition: 0.35s ease-in-out;
+    .button {
+      width: 134px;
+      &:after {
+        background-color: $BG02;
+      }
+    }
+    &:hover {
+      background-color: #403453;
+      .button:after {
+        opacity: 0;
+      }
+    }
     border-radius: 6px;
-    padding: 8px 13px 0 13px;
+    padding: 0 8px 0 20px;
     box-sizing: border-box;
     height: 100%;
     overflow: hidden;
@@ -28,22 +38,22 @@
 
     .icons {
       display: grid;
-      width: fit-content;
-      grid-template-columns: 46px auto;
+      width: inherit;
+      grid-template-columns: 42px auto;
       grid-area: icon;
       .icon {
         display: grid;
         align-items: center;
         justify-content: center;
-        width: 42px;
-        height: 42px;
+        width: 32px;
+        height: 32px;
         border-radius: 23px;
         overflow: hidden;
         img {
-          height: 42px;
-          width: 42px;
+          height: 32px;
+          width: 32px;
         }
-        border: 2px solid $BG02;
+        border: 2px solid inherit;
         &:not(:first-child) {
           margin-left: -15px;
           z-index: 2;
@@ -53,15 +63,30 @@
 
     .title {
       grid-area: title;
-      font-weight: 700;
-      font-size: 22px;
-      line-height: 26.4px;
-      white-space: normal;
-      overflow-x: clip;
-      max-width: 295px;
-    align-items: center;
+      h1,h2 {
+        margin: 0;
+      }
+      h1 {
+        font-size: 14px;
+        color: #64557D;
+        line-height: 140%;
+        text-transform: uppercase;
+      }
+      &>h2 {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 24px;
+        color: $White;
+      }
     }
 
+    .dao.name {
+      display: grid;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #DCDAE5;
+    }
     .daos.title {
       font-size: 14px;
       font-weight: 400;
@@ -76,73 +101,51 @@
       grid-template-areas:
         "title"
         "description";
-      grid-template-rows: auto 1fr;
-      height: 103px;
-      align-items: top;
+      grid-template-rows: 68px 122px;
+      height: 190px;
+      row-gap: 12px;
     }
 
     .description {
       grid-area: description;
       font-family: Inter;
-      font-size: 12px;
-      line-height: 16.8px;
+      font-size: 14px;
+      line-height: 140%;
       font-weight: 400;
-      color: $Neutral03;
-      white-space: normal;
+      color: $Neutral02;
     }
 
     > .countdown {
       grid-area: countdown;
       text-align: center;
+      align-items: end;
       height: 24px;
+      padding-top: 10px;
+      margin-left: auto;
+      display: flex;
+      gap: 4px;
     }
 
     > .footer {
       grid-area: footer;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 53px;
-      margin-left: -13px;
-      margin-right: -13px;
-      background: #403453;
-      cursor: pointer;
-      &:hover {
-        text-decoration: none;
-        background: $BG05;
-        &>.title {
-          color: $White;
+      align-items: baseline;
+      height: 67px;
+
+      &>div {
+        .button {
+          margin: 0;
+          margin-right: 12px;
         }
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        
       }
-
-
-      > .title {
+      .title {
         font-weight: bold;
         font-size: 13px;
-      }
-
-      > .tokensTitle {
-        grid-area: tokensTitle;
-      }
-
-      > .targetTitle {
-        grid-area: targetTitle;
-      }
-
-      > .tokens {
-        grid-area: tokens;
-
-        .tokenPairContainer > img {
-          width: 26px;
-          height: 26px;
-          border-radius: 16px;
-        }
-      }
-
-      > .targetValue {
-        grid-area: targetValue;
-        font-size: 26px;
-        font-weight: bold;
       }
     }
   }
