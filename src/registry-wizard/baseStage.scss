@@ -27,6 +27,9 @@
   .form {
     grid-column: span 2;
     max-width: 675px;
+    .button {
+      width: min-content;
+    }
   }
   .infoInput {
     margin-bottom: 2em;
@@ -49,15 +52,7 @@
     flex-flow: row wrap;
     column-gap: 30px;
     margin-top: 140px;
-    .stageButton {
-      display: flex;
-      align-items: center;
-    }
     .cancel {
-      cursor: pointer;
-      color: $Shade01;
-      font-family: Inter;
-      font-weight: bold;
       margin-left: auto;
     }
   }

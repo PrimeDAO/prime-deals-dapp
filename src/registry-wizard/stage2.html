@@ -155,27 +155,21 @@
         </div>
 
         <div class="buttonContainer">
-          <button class="stageButton previous button outline" click.delegate="back()">
-            <div class="button-inner">
-              <div class="button-text">
-                Previous
-              </div>
-            </div>
-          </button>
-          <button class="stageButton proceed button" click.delegate="proceed()">
-            <div class="button-inner">
-              <div class="button-text">
-                Proceed
-              </div>
-            </div>
-          </button>
-          <button class="stageButton cancel button only-text" click.delegate="cancel()">
-            <div class="button-inner">
-              <div class="button-text">
-                Cancel
-              </div>
-            </div>
-          </button>
+          <d2d-button 
+            class="button previous outline" 
+            click.delegate="back()">
+            Previous
+          </d2d-button>
+          <d2d-button 
+            class="button"proceed  
+            click.delegate="proceed()">
+            Proceed
+          </d2d-button>
+          <d2d-button 
+            class="button cancel only-text" 
+            click.delegate="cancel()">
+            Cancel
+          </d2d-button>
         </div>
       </div>
     </div>
