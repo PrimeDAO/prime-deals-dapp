@@ -226,10 +226,9 @@ export class Home {
           creator: "DAO Creator 1",
           partner: "DAO Partner 1",
         },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
+        type: "Joint Venture",
+        title: "Proposal Title",
+        description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
           partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
@@ -247,13 +246,12 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: {
-          creator: "DAO Creator 2",
+          creator: "DAO Creator 2 With a Looooong Name",
           partner: "DAO Partner 2",
         },
-        proposal: {
-          title: "Proposal Title",
-          description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-        },
+        type: "Joint Venture",
+        title: "Proposal Title",
+        description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
           partner: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",

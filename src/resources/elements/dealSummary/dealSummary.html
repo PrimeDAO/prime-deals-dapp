@@ -4,7 +4,44 @@
     ref="container"
   >
   <!-- Open Deal -->
-    <div if.to-view="!loading && !deal.dao.partner" class="dealSummary">
+    <div if.to-view="!loading" class="dealSummary">
+      <div class="countdown">
+        <time-left deal.to-view="deal" largest contained></time-left>
+      </div>
+      <div class="proposal">
+        <div class="title ellipses">
+          <h1>${deal.type}</h1>
+          <h2>${deal.title}</h2>
+        </div>
+        <div class="description">
+          ${deal.description}
+        </div>
+      </div> 
+      <div class="footer">
+        <div>
+          <div class="icons ${!deal.dao.creator?'open':'running'}">
+            <div if.to-view="deal.logo.creator" class="icon">
+              <img src="${deal.logo.creator}" />
+            </div>
+            <div if.to-view="deal.logo.partner" class="icon">
+              <img src="${deal.logo.partner}" />
+            </div>
+            <div class="dao">
+              <div if.to-view="deal.dao || deal.dao.creator" class="name ellipses">${deal.dao.creator ? deal.dao.creator : deal.dao}</div>
+              <div if.to-view="deal.dao.partner" class="name ellipses">${deal.dao.partner ? deal.dao.partner : ''}</div>
+            </div>
+          </div>
+          <d2d-button 
+            class="button outline" 
+            click.delegate="navigate('initiate')">
+            Partner
+          </d2d-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Running Deal -->
+    <!-- <div if.to-view="!loading && deal.dao.partner" class="dealSummary">
       <div class="countdown">
         <time-left deal.to-view="deal" largest contained></time-left>
       </div>
@@ -23,21 +60,32 @@
             <div class="icon">
               <img src="${deal.logo.creator}" />
             </div>
+            <div class="icon">
+              <img src="${deal.logo.partner}" />
+            </div>
             <div class="dao name ellipses">
               ${deal.dao}
+            </div>
+            <div class="daos title">
+              <div class="ellipses">
+                ${deal.dao.creator}
+              </div>
+              <div class="ellipses">
+                ${deal.dao.partner}
+              </div>
             </div>
           </div>
           <d2d-button 
             class="button outline" 
             click.delegate="navigate('initiate')">
-            Partner
+            View
           </d2d-button>
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <!-- Running Deal -->
-    <div if.to-view="!loading && deal.dao.partner" class="dealSummary">
+
+    <!-- <div if.to-view="!loading && deal.dao.partner" class="dealSummary">
       <div class="icons">
         <div class="icon">
           <img src="${deal.logo.creator}" />
@@ -68,7 +116,7 @@
         href.to-view="`deal/${deal.address}`">
         <div class="targetTitle title subtext">VIEW PROPOSAL</div>
       </a>
-    </div>
+    </div> -->
 
     <div if.to-view="loading" class="loading">
       <i class="fas fa-circle-notch fa-spin"></i>

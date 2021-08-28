@@ -27,6 +27,12 @@
       .button:after {
         opacity: 0;
       }
+      .icons>.icon {
+        border-color: #403453;
+      }
+      .title>h1 {
+        color: #897AA1;
+      }
     }
     border-radius: 6px;
     padding: 0 8px 0 20px;
@@ -38,32 +44,46 @@
 
     .icons {
       display: grid;
+      grid-area: icon;
       width: inherit;
       grid-template-columns: 42px auto;
-      grid-area: icon;
+      &.running {
+        grid-template-columns: 38px 26px auto;
+      }
       .icon {
+        transition: 0.35s ease-in-out;
         display: grid;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 23px;
+        width: 34px;
+        height: 34px;
+        border-radius: 17px;
         overflow: hidden;
         img {
-          height: 32px;
-          width: 32px;
+          height: 34px;
+          width: 34px;
         }
-        border: 2px solid inherit;
+        border: 2px solid $BG02;
         &:not(:first-child) {
           margin-left: -15px;
           z-index: 2;
         }
-    }
+      }
+      .name {
+        white-space: nowrap;
+        padding-right: 10px;
+        color: $Neutral03;
+        font-family: 'Inter';
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 19.6px;
+      }
     }
 
     .title {
       grid-area: title;
       h1,h2 {
+        transition: 0.35s ease-in-out;
         margin: 0;
       }
       h1 {
@@ -80,7 +100,7 @@
       }
     }
 
-    .dao.name {
+    .dao {
       display: grid;
       align-items: center;
       font-size: 14px;
