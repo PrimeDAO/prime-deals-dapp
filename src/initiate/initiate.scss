@@ -51,24 +51,6 @@
         text-align: center;
         font-size: 8px;
         border-radius: 32px;
-        // .button {
-        //   width: -webkit-fill-available;
-        //   font-weight: bold;
-        //   text-decoration: none;
-        //   color: $White;
-        //   cursor: pointer;
-        //   &.disabled {
-        //     pointer-events: none;
-        //     background: $Neutral04;
-        //     color: $Shade04;
-        //   }
-        // }
-
-        .moreInfoContainer {
-          a {
-            @include standardTextGradient;
-          }
-        }
       }
       .container-footer {
         background-color: $Border01;
