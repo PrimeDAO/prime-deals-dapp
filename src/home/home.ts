@@ -30,6 +30,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "PrimeDAO",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -47,6 +49,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Uniswap",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
@@ -64,6 +68,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Compound",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
@@ -81,6 +87,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Fei",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/fei.png",
@@ -98,6 +106,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 5",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -115,6 +125,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 6",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -132,6 +144,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 7",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -149,6 +163,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 8",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -166,6 +182,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 9",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -183,6 +201,8 @@ export class Home {
       {
         address: "0x1jk3lk4353l45kj345l3k45j345",
         dao: "Open DAO 10",
+        type: "Token Swap",
+        title: "Lorem ipsum dolor sit amet, consectetur adipiscing",
         description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
         logo: {
           creator: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",

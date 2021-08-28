@@ -45,13 +45,13 @@
         </horizontal-scroller>
         <div class="dealsButton">
           <div class="buttonContainer centered">
-            <button class="notifyButton button only-text" click.delegate="navigate('initiate')" rel="noopener noreferrer">
-              <div class="button-inner">
-                <div class="button-text">
-                  View All Deals
-                </div>
-              </div>
-            </button>
+            <d2d-button 
+              class="button only-text" 
+              click.delegate="navigate('deals')" 
+              rel="noopener noreferrer"
+            >
+              View All Deals
+            </d2d-button>
           </div>
         </div>
       </template>
@@ -67,13 +67,12 @@
         <div class="title heading heading1">Web3 partnerships made easy!</div>
         <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
         <div class="buttonContainer">
-          <button class="notifyButton button outline" click.delegate="navigate('initiate')" rel="noopener noreferrer">
-            <div class="button-inner">
-              <div class="button-text">
-                Initiate a Deal
-              </div>
-            </div>
-          </button>
+          <d2d-button 
+            class="button outline"
+            click.delegate="navigate('initiate')" 
+            rel="noopener noreferrer">
+            Initiate a Deal
+          </d2d-button>
         </div>
       </div>
 
