@@ -81,6 +81,10 @@ body > ux-dialog-container {
       border-bottom-left-radius: 6px;
       border-bottom-right-radius: 6px;
       padding-right: 32px;
+      gap: 10px;
+      > .button {
+        width: fit-content;
+      }
     }
 
     &.disclaimer {
