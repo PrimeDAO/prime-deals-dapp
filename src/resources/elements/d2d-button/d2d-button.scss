@@ -1,23 +1,25 @@
 @import "../../../styles/styles.scss";
 .button {
   border: none;
+  position: relative;
   display: inline-block;
+  color: white;
   background: transparent;
   border-radius: 99px;
-  color: white;
-  position: relative;
-  z-index: 1;
+  z-index: 0;
+
   font-size: 14px;
-  width: calc(100% - 42px);
-  text-align: center;
-  padding: 14px 21px;
-  font-weight: 100;
-  text-transform: uppercase;
+  font-weight: 700;
   font-family: "Inter";
+  text-transform: uppercase;
   letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+
+  width: calc(100% - 42px);
+  padding: 14px 21px;
   cursor: pointer;
   user-select: none;
-  white-space: nowrap;
 
   &:before, 
   &:after {
@@ -35,7 +37,7 @@
     background: #503b9a;
     background-image: $Gradient01;
     background-size: 200%;
-    transition: background 0.35s ease-in-out;
+    transition: background 0.25s ease-in;
   }
 
   &.disabled:before {
@@ -76,7 +78,7 @@
     left: 2px;
     right: 2px;
     z-index: -1;
-    transition: all 0.35s ease-in-out;
+    transition: all 0.25s ease-in;
   }
 
   &:hover:before {
