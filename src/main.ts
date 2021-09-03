@@ -21,11 +21,7 @@ export function configure(aurelia: Aurelia): void {
     .plugin(PLATFORM.moduleName("aurelia-dialog"), (configuration) => {
       // custom configuration
       configuration.settings.keyboard = false;
-    })
-    // .globalResources([
-    //   // PLATFORM.moduleName("dashboard/dashboard"),
-    // ])
-  ;
+    });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
 
   if (process.env.NODE_ENV === "development") {
