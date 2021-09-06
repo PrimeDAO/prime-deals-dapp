@@ -6,9 +6,6 @@
           <tokenbalance formatted="0.00a" token-address.to-view="primeAddress"></tokenbalance>PRIME
         </div>
         <span class="separator">|</span>
-        <div class="ethBalanceContainer">
-          <tokenbalance formatted="0.00a" token-address.to-view="daiAddress"></tokenbalance>DAI<span class="separator">|</span>
-        </div>
         <div class="ethBalanceContainer ETH">
           <ethbalance formatted="0.00a"></ethbalance>ETH
         </div>
@@ -25,7 +22,14 @@
         </div>
       </div>
     </div>
-    <div else class="connectButton" click.delegate="onConnect()">Connect to a Wallet</div>
+    <d2d-button else
+      class="wallet-connect button outline square" 
+      click.delegate="onConnect()"
+      rel="noopener noreferrer"
+    >
+      Connect to a Wallet
+    </d2d-button>
+    <!-- <div else class="connectButton" click.delegate="onConnect()">Connect to a Wallet</div> -->
   </div>
   </div>
 </template>

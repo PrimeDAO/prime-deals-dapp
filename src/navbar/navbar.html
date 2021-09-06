@@ -4,21 +4,21 @@
       <img src="../../static/logos/primeDAO.svg" alt="PrimeDAO">
     </div>
 
-    <div class="products">
-      <ul>
+    <div class="products ${vertical ? 'vertical' : ''}">
+      <ul class="container">
         <li class="product-page">
           <div class="icon launch"></div>
-          <span>Launch</span>
+          <span click.delegate="navigate('')">Launch</span>
         </li>
         <li class="product-page">
           <div class="icon pools"></div>
-          <span>Pools</span>
+          <span click.delegate="navigate('')">Pools</span>
         </li>
         <li class="product-page">
           <div class="icon rating"></div>
-          <span>Rating</span>
+          <span click.delegate="navigate('')">Rating</span>
         </li>
-        <li class="product-page active">
+        <li click.delegate="navigate('home')" class="product-page active">
           <div class="icon deals"></div>
           <span>Deals</span>
         </li>
@@ -26,20 +26,20 @@
     </div>
 
     <div class="product-sub-pages">
-      <ul>
-        <li class="product-sub-page-link">Open Deals</li>
-        <li class="product-sub-page-link">Running Deals</li>
+      <ul class="container">
+        <li click.delegate="navigate('deals')" class="product-sub-page-link">Open Deals</li>
+        <li click.delegate="navigate('deals')" class="product-sub-page-link">Running Deals</li>
       </ul>
     </div>
 
     <div class="wallet-container">
-      <d2d-button 
-        class="wallet-connect button outline square" 
-
-        rel="noopener noreferrer"
-      >
-        Connect to a Wallet
-      </d2d-button>
+      <div class="networkFeedback">
+        <networkfeedback></networkfeedback>
+      </div>
+      <header-buttons></header-buttons>
+      <div class="headerConnectButton">
+        <connect-button></connect-button>
+      </div>
       <div if.to-view="isConnected" class="wallet-balance">
         <div class="wallet-balance-text">
           <span>XX.xx Prime</span>
