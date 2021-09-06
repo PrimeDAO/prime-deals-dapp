@@ -16,10 +16,14 @@
   text-align: center;
   white-space: nowrap;
 
-  width: calc(100% - 42px);
   padding: 14px 21px;
   cursor: pointer;
   user-select: none;
+  width: max-content;
+
+  &.full-width {
+    width: calc(100% - 42px);
+  }
 
   &:before, 
   &:after {
@@ -54,6 +58,13 @@
     }
   }
 
+  &.square::before, 
+  &.square::after {
+    border-radius: 6px;
+  }
+  &.square.outline:hover:after {
+    background: none;
+  }
   &.only-text {
     transition: none;
     &:before {

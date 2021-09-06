@@ -18,7 +18,7 @@ enum Phase {
 @singleton(false)
 @containerless
 @autoinject
-@customElement("connectbutton")
+@customElement("connect-button")
 export class ConnectButton {
 
   private subscriptions: DisposableCollection = new DisposableCollection();
