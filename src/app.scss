@@ -6,7 +6,7 @@
   grid-template-columns: auto 1fr;
   grid-template-rows: 150px 100fr 1fr;
   grid-template-areas:
-    "logo header"
+    "header header"
     "mainContent mainContent"
     "footer footer";
   height: 100vh;
@@ -19,55 +19,59 @@
     }
   }
 
-  > .logo {
-    grid-area: logo;
-    align-items: start;
-    padding-top: 22px;
-    // just for vertical alignment of the logo
-    display: flex;
-    margin-right: 50px;
-    cursor: pointer;
-    img {
-      margin-right: 10px;
-    }
-  }
-
-  .appHeader {
+  .header {
     grid-area: header;
-    text-align: right;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 76px;
-
-    /**
-     * header connectButton
-     */
-    > .headerConnectButton {
-      padding-right: 20px;
-      padding-top: 12px;
-      padding-bottom: 12px;
-    }
-
-    > .mobilemenuButton {
-      display: none;
-      position: relative;
-      top: 2px;
-      img {
-        width: 32px;
-        height: 32px;
-      }
-    }
-    .networkfeedback {
-      margin-left: 10px;
-      text-align: left;
-    }
   }
 
-  .appHeader, .logo {
-    top: unset;
-    z-index: 998;
-  }
+  // > .logo {
+  //   grid-area: logo;
+  //   align-items: start;
+  //   padding-top: 22px;
+  //   // just for vertical alignment of the logo
+  //   display: flex;
+  //   margin-right: 50px;
+  //   cursor: pointer;
+  //   img {
+  //     margin-right: 10px;
+  //   }
+  // }
+
+  // .appHeader {
+  //   grid-area: header;
+  //   text-align: right;
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-items: center;
+  //   height: 76px;
+
+  //   /**
+  //    * header connectButton
+  //    */
+  //   > .headerConnectButton {
+  //     padding-right: 20px;
+  //     padding-top: 12px;
+  //     padding-bottom: 12px;
+  //   }
+
+  //   > .mobilemenuButton {
+  //     display: none;
+  //     position: relative;
+  //     top: 2px;
+  //     img {
+  //       width: 32px;
+  //       height: 32px;
+  //     }
+  //   }
+  //   .networkfeedback {
+  //     margin-left: 10px;
+  //     text-align: left;
+  //   }
+  // }
+
+  // .appHeader, .logo {
+  //   top: unset;
+  //   z-index: 998;
+  // }
 
   .mobileMenuContainer {
     z-index: 998; // stay below modal screen

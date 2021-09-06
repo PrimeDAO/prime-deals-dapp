@@ -1,7 +1,7 @@
 @import "styles/styles.scss";
 
 .page.home {
-  position: relative;
+  // position: relative;
   &:before {
     content: "";
     position: absolute;
@@ -9,8 +9,11 @@
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
-    margin-left: -160px;
-    width: calc(100% + 320px);
+    // margin-left: -160px;
+    left: 0;
+    margin: 100px 0;
+    width: 100vw;
+    // width: calc(100% + 320px);
     height: 800px;
     top: -150px;
     z-index: -1;
@@ -121,8 +124,7 @@
       > .heading1 {
         -webkit-text-fill-color: $Neutral02;
         border-bottom: 2px solid $Border01;
-        margin-left: 130px;
-        width: calc(100% - 260px);
+        width: 100%;
         transition: background 1s ease-in-out;
         >.active {
           background: $Gradient02;
@@ -148,8 +150,6 @@
         }
       }
 
-      margin: 0 -160px;
-      padding: 0 30px;
       &.open {
         margin-bottom: 53px;
       }

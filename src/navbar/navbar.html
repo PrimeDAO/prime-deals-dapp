@@ -1,0 +1,55 @@
+<template>
+  <nav class="navbar-container">
+    <div class="logo">
+      <img src="../../static/logos/primeDAO.svg" alt="PrimeDAO">
+    </div>
+
+    <div class="products">
+      <ul>
+        <li class="product-page">
+          <div class="icon launch"></div>
+          <span>Launch</span>
+        </li>
+        <li class="product-page">
+          <div class="icon pools"></div>
+          <span>Pools</span>
+        </li>
+        <li class="product-page">
+          <div class="icon rating"></div>
+          <span>Rating</span>
+        </li>
+        <li class="product-page active">
+          <div class="icon deals"></div>
+          <span>Deals</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="product-sub-pages">
+      <ul>
+        <li class="product-sub-page-link">Open Deals</li>
+        <li class="product-sub-page-link">Running Deals</li>
+      </ul>
+    </div>
+
+    <div class="wallet-container">
+      <d2d-button 
+        class="wallet-connect button outline square" 
+
+        rel="noopener noreferrer"
+      >
+        Connect to a Wallet
+      </d2d-button>
+      <div if.to-view="isConnected" class="wallet-balance">
+        <div class="wallet-balance-text">
+          <span>XX.xx Prime</span>
+          <span>X.xx ETH</span>
+        </div>
+        <div class="wallet-user-details">
+          <span>JohnDoe.eth</span>
+          <span> ⌄ </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</template>

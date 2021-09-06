@@ -1,0 +1,110 @@
+@import "styles/colors.scss";
+
+@mixin icon($file) {
+  -webkit-mask: url("../../static/logos/products/" + $file) no-repeat center;
+  mask: url("../../static/logos/products/" + $file) no-repeat center;
+}
+
+.navbar-container {
+  display: grid;
+  position: absolute;
+  left: 0;
+  grid-auto-flow: column;
+  align-items: center;
+  grid-template-areas: "logo products wallet" "sub-pages sub-pages sub-pages";
+  grid-template-columns: 50px auto 400px;
+  width: -webkit-fill-available;
+
+  .logo {
+    grid-area: logo;
+    width: max-content;
+    padding: 6px;
+    padding-left: 20px;
+  }
+
+  .products {
+    grid-area: products;
+    display: flex;
+    width: clamp(250px, 100%, calc(1084px - 50px - 300px));
+    margin: 0 auto;
+    ul {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+      margin: 0;
+
+      .product-page {
+        display: flex;
+        align-items: center;
+        padding: 13px 14px 13px 8px;
+        column-gap: 5px;
+
+        .icon {
+          display: inline-flex;
+          width: 42px;
+          height: 42px;
+          background-color: $Neutral03;
+          &:hover {
+            background: $Primary01;
+          }
+
+          &.launch { @include icon("launch.svg"); }
+          &.pools { @include icon("pools.svg"); }
+          &.rating { @include icon("rating.svg"); }
+          &.deals { @include icon("deals.svg"); }
+        }
+        &.active, &:active {
+          .icon {
+            background: $Primary01;
+          }
+          background-color: $Border01;
+        }
+        &:hover {
+          cursor: pointer;
+          color: $Primary01;
+          .icon {
+            background: $Primary01;
+          }
+        }
+      }
+    }
+  }
+
+  .wallet-container {
+    grid-area: wallet;
+    padding-right: 20px;
+    width: max-content;
+    justify-self: end;
+    &>.button.square::before, 
+    &>.button.square::after {
+      border-radius: 6px;
+    }
+    &>.button.square.outline:hover:after {
+      background: none;
+    }
+  }
+
+  .product-sub-pages {
+    grid-area: sub-pages;
+    background-color: $Border01;
+    display: grid;
+    ul {
+      list-style-type: none;
+      padding: 0 20px;
+      display: grid;
+      column-gap: 10px;
+      grid-template-columns: repeat(auto-fill, 150px);
+      text-align: center;
+      margin: 0;
+      .product-sub-page-link {
+        cursor: pointer;
+        padding: 10px;
+        color: inherit;
+        transition: color 0.075s ease-in;
+        &:hover {
+          color: $Primary01;
+        }
+      }
+    }
+  }
+}
