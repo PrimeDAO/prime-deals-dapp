@@ -1,9 +1,9 @@
 import { toBigNumberJs } from "services/BigNumberService";
-import { IpfsService } from "./../services/IpfsService";
-import { ITokenInfo } from "./../services/TokenService";
+import { IpfsService } from "../services/IpfsService";
+import { ITokenInfo } from "../services/TokenService";
 import { autoinject, computedFrom } from "aurelia-framework";
-import { DateService } from "./../services/DateService";
-import { ContractsService, ContractNames } from "./../services/ContractsService";
+import { DateService } from "../services/DateService";
+import { ContractsService, ContractNames } from "../services/ContractsService";
 import { BigNumber } from "ethers";
 import { Address, EthereumService, fromWei, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
@@ -13,9 +13,9 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { NumberService } from "services/NumberService";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 import { Utils } from "services/utils";
-import { ISeedConfig } from "registry-wizard/seedConfig";
+import { IDealConfig } from "registry-wizard/dealConfig";
 
-export interface ISeedConfiguration {
+export interface IDealConfiguration {
   address: Address;
   beneficiary: Address;
 }
@@ -29,26 +29,26 @@ interface IFunderPortfolio {
 
 
 @autoinject
-export class Seed {
+export class Deal {
   public contract: any;
   public address: Address;
-  public seedInitialized: boolean;
+  public dealInitialized: boolean;
   public beneficiary: Address;
   public startTime: Date;
   public endTime: Date;
   /**
-   * a state set by the admin (creator) of the Seed
+   * a state set by the admin (creator) of the Deal
    */
   public isPaused: boolean;
   /**
-   * a state set by the admin (creator) of the Seed
+   * a state set by the admin (creator) of the Deal
    */
   public isClosed: boolean;
   /**
-   * The number of fundingTokens required to receive one seedToken,
-   * ie, the price of one seed token in units of funding tokens.
+   * The number of fundingTokens required to receive one dealToken,
+   * ie, the price of one deal token in units of funding tokens.
    */
-  public fundingTokensPerSeedToken: number;
+  public fundingTokensPerDealToken: number;
   /**
    * in terms of fundingToken
    */
@@ -60,47 +60,47 @@ export class Seed {
   public cap: BigNumber;
   // public capPrice: number;
   /**
-   * seed has a whitelist
+   * deal has a whitelist
    */
   public whitelisted: boolean;
   /**
-   * the number of seconds of over which seed tokens vest
+   * the number of seconds of over which deal tokens vest
    */
   public vestingDuration: number;
   /**
-   * the initial period in seconds of the vestingDuration during which seed tokens may not
+   * the initial period in seconds of the vestingDuration during which deal tokens may not
    * be claimed
    */
   public vestingCliff: number;
   public minimumReached: boolean;
   /**
-   * the amount of the fundingToken in the seed
+   * the amount of the fundingToken in the deal
    */
   public amountRaised: BigNumber;
   /**
-   * $ value of the total supply of the seed token
+   * $ value of the total supply of the deal token
    */
   public valuation: number;
 
-  public seedTokenAddress: Address;
-  public seedTokenInfo: ITokenInfo;
-  public seedTokenContract: any;
+  public dealTokenAddress: Address;
+  public dealTokenInfo: ITokenInfo;
+  public dealTokenContract: any;
   /**
-   * balance of seed tokens in this contract
+   * balance of deal tokens in this contract
    */
-  public seedTokenBalance: BigNumber;
+  public dealTokenBalance: BigNumber;
   /**
-   * number of tokens in this seed contract
+   * number of tokens in this deal contract
    */
-  public seedRemainder: BigNumber;
+  public dealRemainder: BigNumber;
   /**
    * amount to be distributed, according to the funding cap and prices
    */
-  public seedAmountRequired: BigNumber;
+  public dealAmountRequired: BigNumber;
   /**
-   * Is the seed contract initialized and have enough seed tokens to pay its obligations
+   * Is the deal contract initialized and have enough deal tokens to pay its obligations
    */
-  public hasEnoughSeedTokens: boolean;
+  public hasEnoughDealTokens: boolean;
 
   public feeRemainder: BigNumber;
 
@@ -110,18 +110,18 @@ export class Seed {
 
   public userIsWhitelisted: boolean;
   /**
-   * claimable seed tokens
+   * claimable deal tokens
    */
   public userClaimableAmount: BigNumber;
   /**
-   * pending (locked) seed tokens
+   * pending (locked) deal tokens
    */
   public userPendingAmount: BigNumber;
   public userCanClaim: boolean;
   public userCurrentFundingContributions: BigNumber;
 
   public initializing = true;
-  public metadata: ISeedConfig;
+  public metadata: IDealConfig;
   public metadataHash: Hash;
   public corrupt = false;
 
@@ -199,9 +199,9 @@ export class Seed {
     return !this.uninitialized;
   }
 
-  @computedFrom("hasEnoughSeedTokens")
+  @computedFrom("hasEnoughDealTokens")
   get uninitialized(): boolean {
-    return !this.hasEnoughSeedTokens;
+    return !this.hasEnoughDealTokens;
   }
 
   constructor(
@@ -224,7 +224,7 @@ export class Seed {
     }));
   }
 
-  public create(config: ISeedConfiguration): Seed {
+  public create(config: IDealConfiguration): Deal {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     return Object.assign(this, config);
   }
@@ -245,16 +245,16 @@ export class Seed {
 
   private async loadContracts(): Promise<void> {
     try {
-      this.contract = await this.contractsService.getContractAtAddress(ContractNames.SEED, this.address);
-      if (this.seedTokenAddress) {
-        this.seedTokenContract = this.tokenService.getTokenContract(this.seedTokenAddress);
+      this.contract = await this.contractsService.getContractAtAddress(ContractNames.DEAL, this.address);
+      if (this.dealTokenAddress) {
+        this.dealTokenContract = this.tokenService.getTokenContract(this.dealTokenAddress);
         this.fundingTokenContract = this.tokenService.getTokenContract(this.fundingTokenAddress);
       }
     }
     catch (error) {
       this.corrupt = true;
       this.initializing = false;
-      this.consoleLogService.logMessage(`Seed: Error initializing seed ${error?.message}`, "error");
+      this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
     }
   }
 
@@ -262,19 +262,19 @@ export class Seed {
     try {
       await this.hydrateMetadata();
 
-      this.seedInitialized = await this.contract.initialized();
-      this.seedTokenAddress = await this.contract.seedToken();
+      this.dealInitialized = await this.contract.initialized();
+      this.dealTokenAddress = await this.contract.dealToken();
       this.fundingTokenAddress = await this.contract.fundingToken();
 
-      this.seedTokenInfo = await this.tokenService.getTokenInfoFromAddress(this.seedTokenAddress);
+      this.dealTokenInfo = await this.tokenService.getTokenInfoFromAddress(this.dealTokenAddress);
       this.fundingTokenInfo = await this.tokenService.getTokenInfoFromAddress(this.fundingTokenAddress);
 
-      this.seedTokenContract = this.tokenService.getTokenContract(this.seedTokenAddress);
+      this.dealTokenContract = this.tokenService.getTokenContract(this.dealTokenAddress);
       this.fundingTokenContract = this.tokenService.getTokenContract(this.fundingTokenAddress);
 
       this.startTime = this.dateService.unixEpochToDate((await this.contract.startTime()).toNumber());
       this.endTime = this.dateService.unixEpochToDate((await this.contract.endTime()).toNumber());
-      this.fundingTokensPerSeedToken = this.numberService.fromString(fromWei(await this.contract.price()));
+      this.fundingTokensPerDealToken = this.numberService.fromString(fromWei(await this.contract.price()));
       /**
        * in units of fundingToken
        */
@@ -286,7 +286,7 @@ export class Seed {
       this.cap = await this.contract.hardCap();
       await this.hydateClosedOrPaused();
       // this.capPrice = this.numberService.fromString(fromWei(this.cap)) * (this.fundingTokenInfo.price ?? 0);
-      this.whitelisted = await this.contract.permissionedSeed();
+      this.whitelisted = await this.contract.permissionedDeal();
       this.vestingDuration = (await this.contract.vestingDuration());
       this.vestingCliff = (await this.contract.vestingCliff());
       this.valuation = this.numberService.fromString(fromWei(await this.fundingTokenContract.totalSupply()))
@@ -298,7 +298,7 @@ export class Seed {
     }
     catch (error) {
       this.corrupt = true;
-      this.consoleLogService.logMessage(`Seed: Error initializing seed ${error?.message}`, "error");
+      this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
     } finally {
       this.initializing = false;
     }
@@ -316,11 +316,11 @@ export class Seed {
       this.userCurrentFundingContributions = lock.fundingAmount;
       this.userClaimableAmount = await this.contract.callStatic.calculateClaim(account);
       this.userCanClaim = this.userClaimableAmount.gt(0);
-      const seedAmount = this.seedsFromFunding(lock.fundingAmount);
+      const dealAmount = this.dealsFromFunding(lock.fundingAmount);
       /**
-       * seeds that will be claimable, but are currently still vesting
+       * deals that will be claimable, but are currently still vesting
        */
-      this.userPendingAmount = seedAmount.sub(lock.totalClaimed).sub(this.userClaimableAmount);
+      this.userPendingAmount = dealAmount.sub(lock.totalClaimed).sub(this.userClaimableAmount);
       this.userIsWhitelisted = !this.whitelisted ||
         this.userCanClaim || // can claim now
         this.userPendingAmount.gt(0) || // can eventually claim
@@ -336,35 +336,35 @@ export class Seed {
       this.metadataHash = Utils.toAscii(rawMetadata.slice(2));
       this.consoleLogService.logMessage(`loaded metadata: ${this.metadataHash}`, "info");
     } else {
-      this.eventAggregator.publish("Seed.InitializationFailed", this.address);
-      throw new Error(`seed lacks metadata, is unusable: ${this.address}`);
+      this.eventAggregator.publish("Deal.InitializationFailed", this.address);
+      throw new Error(`deal lacks metadata, is unusable: ${this.address}`);
     }
 
     if (this.metadataHash) {
-      this.metadata = await this.ipfsService.getObjectFromHash(this.metadataHash);
-      if (!this.metadata) {
-        this.eventAggregator.publish("Seed.InitializationFailed", this.address);
-        throw new Error(`seed metadata is not found in IPFS, seed is unusable: ${this.address}`);
-      }
+      // this.metadata = await this.ipfsService.getObjectFromHash(this.metadataHash);
+      // if (!this.metadata) {
+      //   this.eventAggregator.publish("Deal.InitializationFailed", this.address);
+      //   throw new Error(`deal metadata is not found in IPFS, deal is unusable: ${this.address}`);
+      // }
     }
   }
 
   private async hydrateTokensState(): Promise<void> {
     this.minimumReached = await this.contract.minimumReached();
     this.amountRaised = await this.contract.fundingCollected();
-    this.seedRemainder = await this.contract.seedRemainder();
-    this.seedAmountRequired = await this.contract.seedAmountRequired();
+    this.dealRemainder = await this.contract.dealRemainder();
+    this.dealAmountRequired = await this.contract.dealAmountRequired();
     this.feeRemainder = await this.contract.feeRemainder();
-    this.seedTokenBalance = await this.seedTokenContract.balanceOf(this.address);
-    this.hasEnoughSeedTokens =
-      this.seedInitialized && ((this.seedRemainder && this.feeRemainder) ? this.seedTokenBalance?.gte(this.feeRemainder?.add(this.seedRemainder)) : false);
+    this.dealTokenBalance = await this.dealTokenContract.balanceOf(this.address);
+    this.hasEnoughDealTokens =
+      this.dealInitialized && ((this.dealRemainder && this.feeRemainder) ? this.dealTokenBalance?.gte(this.feeRemainder?.add(this.dealRemainder)) : false);
   }
 
 
-  private seedsFromFunding(fundingAmount: BigNumber): BigNumber {
+  private dealsFromFunding(fundingAmount: BigNumber): BigNumber {
     const bnFundingAmount = toBigNumberJs(fundingAmount);
-    if ((this.fundingTokensPerSeedToken > 0) && (fundingAmount.gt(0))) {
-      return BigNumber.from(bnFundingAmount.idiv(this.fundingTokensPerSeedToken).toString());
+    if ((this.fundingTokensPerDealToken > 0) && (fundingAmount.gt(0))) {
+      return BigNumber.from(bnFundingAmount.idiv(this.fundingTokensPerDealToken).toString());
     } else {
       return BigNumber.from(0);
     }

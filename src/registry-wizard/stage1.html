@@ -13,19 +13,19 @@
           <div class="labelContainer">
             <label for="proposalName">Proposal Name</label>
             <span>
-              ${seedConfig.proposal.name.length}/50
+              ${dealConfig.proposal.name.length}/50
             </span>
           </div>
-          <input id="proposalName" value.bind="seedConfig.proposal.name" maxlength="50" />
+          <input id="proposalName" value.bind="dealConfig.proposal.name" maxlength="50" />
         </div>
         <div class="infoInput">
           <div class="labelContainer">
             <label for="proposalOverview">Proposal Overview</label>
             <span>
-              ${seedConfig.proposal.overview.length}/250
+              ${dealConfig.proposal.overview.length}/250
             </span>
           </div>
-          <textarea id="proposalOverview" value.bind="seedConfig.proposal.overview" rows="5" maxlength="250"></textarea>
+          <textarea id="proposalOverview" value.bind="dealConfig.proposal.overview" rows="5" maxlength="250"></textarea>
         </div>
         <div class="buttonContainer">
           <d2d-button 

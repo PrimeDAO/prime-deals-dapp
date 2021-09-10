@@ -10,6 +10,7 @@ export interface IDAO {
   name: string,
   tokens: Array<{name: string, amount: number }>
   social_medias: Array<{name: string, url: string }>
+  logo_url?: string
 }
 
 export interface IAdmin {
@@ -30,7 +31,7 @@ export interface ITerms {
   previousDiscussionURL: string,
 }
 
-export interface ISeedConfig {
+export interface IDealConfig {
   /**
    * semantic version of this interface. This value must be updated upon any released changes.
    */
@@ -39,15 +40,21 @@ export interface ISeedConfig {
   daos: Array<IDAO>,
   admins: Array<IAdmin>,
   terms: ITerms,
+  createdAt: Date | null,
+  modifiedAt: Date | null,
+  createdByAddress: string | null,
   clearState: () => void,
 }
 
-export class SeedConfig implements ISeedConfig {
+export class DealConfig implements IDealConfig {
   public version: string;
   public proposal: IProposal;
   public daos: Array<IDAO>;
-  public admins: Array<IAdmin>;
   public terms: ITerms;
+  public admins: Array<IAdmin>;
+  public createdAt: Date | null;
+  public modifiedAt: Date | null;
+  public createdByAddress: string | null;
 
   constructor() {
     this.clearState();
@@ -64,6 +71,7 @@ export class SeedConfig implements ISeedConfig {
         name: "",
         tokens: [{name: undefined, amount: undefined}],
         social_medias: [{name: undefined, url: undefined}],
+        logo_url: null,
       },
       {
         name: "",
@@ -78,5 +86,8 @@ export class SeedConfig implements ISeedConfig {
       previousDiscussionURL: "",
     } as ITerms;
     this.admins = [{address: undefined, represent: undefined}] as IAdmin[];
+    this.createdAt = null;
+    this.modifiedAt = null;
+    this.createdByAddress = null;
   }
 }

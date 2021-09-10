@@ -2,6 +2,9 @@ import { autoinject } from "aurelia-framework";
 import { Hash } from "services/EthereumService";
 import axios from "axios";
 import { ConsoleLogService } from "services/ConsoleLogService";
+import { IDealConfig } from "../registry-wizard/dealConfig";
+import { Address, EthereumService, Networks } from "services/EthereumService";
+
 const CID = require("cids");
 
 export interface IIpfsClient {
@@ -9,43 +12,57 @@ export interface IIpfsClient {
   addAndPinData(data: string, name?: string): Promise<Hash>;
 }
 
-export interface IAlchemyProposalParams {
-  title: string;
-  url ?: string;
-  description: string;
-  tags ?: string[];
-}
+// export interface IDealProposalParams {
+//   title: string;
+//   url ?: string;
+//   description: string;
+//   tags ?: string[];
+// }
 
 @autoinject
 export class IpfsService {
 
-  constructor(private consoleLogService: ConsoleLogService) {}
+  constructor(
+    private ethereumService: EthereumService,
+    private consoleLogService: ConsoleLogService) {}
 
   /**
    * must be initialize externally prior to using the service
    */
   private ipfs: IIpfsClient;
+  private accountAddress: Address = null;
 
   public initialize(ipfs: IIpfsClient): void {
     this.ipfs = ipfs;
   }
 
   /**
- * save data of an Alchemy proposal to IPFS, return the IPFS hash
- * @param  options an Object to save. This object must have title, url and description defined
+ * save deal proposal to IPFS, return the IPFS hash
+ * @param  options an Object to save. This object must have version, proposal, daos, admins and terms defined
  * @return  a Promise that resolves in the IPFS Hash where the file is saved
  */
-  public saveAlchemyProposalDescription(options: IAlchemyProposalParams): Promise<Hash> {
+  public saveDealProposal(options: IDealConfig): Promise<Hash> {
     let ipfsDataToSave = {};
-    if (options.title || options.url || options.description || options.tags !== undefined) {
+    this.accountAddress = this.ethereumService.defaultAccountAddress || null;
+
+    if (options.version && options.proposal && options.daos.length && options.admins.length && options.terms) {
       ipfsDataToSave = {
-        description: options.description,
-        tags: options.tags,
-        title: options.title,
-        url: options.url,
+        version: options.version,
+        proposal: options.proposal,
+        daos: options.daos,
+        admins: options.admins,
+        terms: options.terms,
+        createdAt: new Date().toISOString(),
+        alteredAt: new Date().toISOString(),
+        creatorAddress: this.accountAddress,
+        uninitialized: false,
+        hasNotStarted: true,
+        incomplete: false,
+        isClosed: false,
+        isPaused: false,
       };
     }
-    return this.ipfs.addAndPinData(JSON.stringify(ipfsDataToSave));
+    return this.ipfs.addAndPinData(JSON.stringify(ipfsDataToSave), options.proposal.name);
   }
 
   /**
@@ -53,7 +70,7 @@ export class IpfsService {
    * @param hash
    * @returns
    */
-  public async getObjectFromHash(hash: Hash) : Promise<any> {
+  public async getDealProposal(hash: string) : Promise<IDealConfig> {
     try {
       const response = await axios.get(this.getIpfsUrl(hash));
 
@@ -77,14 +94,41 @@ export class IpfsService {
     return this.ipfs.addAndPinData(str, name);
   }
 
+  public async getPinnedObjectsHashes(): Promise<Array<Hash>> {
+    try {
+      const response = await axios.get(
+        "https://api.pinata.cloud/data/pinList",
+        {
+          headers: {
+            pinata_api_key: process.env.PINATA_API_KEY_TEST,
+            pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY_TEST,
+          },
+        },
+      );
+
+      if (response.status !== 200) {
+        throw Error("An error occurred getting the pinned jobs");
+      } else {
+        if (response.data.length === 0) return [];
+
+        const pinnedObjects = response.data.rows
+          .filter((pin: any) => pin.date_pinned !== null && pin.date_unpinned === null );
+        return pinnedObjects.map((pin: any) => pin.ipfs_pin_hash);
+      }
+    } catch (ex) {
+      this.consoleLogService.logMessage(ex.message, "warning");
+      return null;
+    }
+  }
+
   /**
    * url to use to request content from IPFS
    * @param hash
    * @returns
    */
-  public getIpfsUrl(hash: string): string {
+  public getIpfsUrl(hash: string, protocol = "ipfs"): string {
     const format = process.env.IPFS_GATEWAY;
-    const encodedHash = new CID(hash).toV1().toBaseEncodedString("base32");
-    return format.replace("${hash}", encodedHash);
+    const encodedHash = (protocol === "ipfs") ? new CID(hash).toV1().toBaseEncodedString("base32") : hash;
+    return format.replace("${hash}", encodedHash).replace("${protocol}", protocol);
   }
 }

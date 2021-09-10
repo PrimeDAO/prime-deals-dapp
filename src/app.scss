@@ -162,6 +162,7 @@
 
 }
 
+
 .animateMobileMenuBackground {
   width: 300vmax;
   height: 300vmax;
@@ -217,9 +218,24 @@
   &.au-leave-active {
     animation: closeMenu 0.25s cubic-bezier(0,.32,.82,1);
   }
-
 }
 
+@media screen and (max-width: 782px) {
+  .appWrapper {
+    .mainContent {
+      padding-top: unset;
+
+      .buttonContainer {
+        margin-top: unset;
+        justify-content: space-between;
+        .button.cancel {
+          margin-right: auto;
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+}
 
 @keyframes openMenu {
   0% {

@@ -9,18 +9,18 @@
         <div class="infoInput">
           <label for="email">Contact Email</label>
           <input id="email" type="email"
-            value.bind="seedConfig.contactDetails.contactEmail" />
+            value.bind="dealConfig.contactDetails.contactEmail" />
         </div>
         <div class="infoInput">
           <div class="labelContainer">
             <label for="remarks">Additional Remarks</label>
-            <span value.from-view="seedConfig.contactDetails.remarks">
-              ${seedConfig.contactDetails.remarks.length}/250
+            <span value.from-view="dealConfig.contactDetails.remarks">
+              ${dealConfig.contactDetails.remarks.length}/250
             </span>
           </div>
           <textarea
             id="remarks"
-            value.bind="seedConfig.contactDetails.remarks"
+            value.bind="dealConfig.contactDetails.remarks"
             placeholder="(Optional)"
             maxlength="250"></textarea>
         </div>

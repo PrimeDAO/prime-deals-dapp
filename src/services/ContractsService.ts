@@ -5,14 +5,14 @@ import { autoinject } from "aurelia-framework";
 
 const ContractAddresses = require("../contracts/contractAddresses.json") as INetworkContractAddresses;
 // const WETHABI = require("../contracts/WETH.json");
-const SeedFactoryABI = require("../contracts/SeedFactory.json");
-const SeedABI = require("../contracts/Seed.json");
+const DealFactoryABI = require("../contracts/DealFactory.json");
+const DealABI = require("../contracts/Deal.json");
 const SignerABI = require("../contracts/Signer.json");
 const ERC20ABI = require("../contracts/ERC20.json");
 
 export enum ContractNames {
-  SEEDFACTORY = "SeedFactory"
-  , SEED = "Seed"
+  DEALFACTORY = "DealFactory"
+  , DEAL = "Deal"
   // , WETH = "WETH"
   , PRIMETOKEN = "PrimeToken"
   , DAI = "DAI"
@@ -37,8 +37,8 @@ export class ContractsService {
 
   private static ABIs = new Map<ContractNames, any>(
     [
-      [ContractNames.SEEDFACTORY, SeedFactoryABI.abi]
-      , [ContractNames.SEED, SeedABI.abi]
+      [ContractNames.DEALFACTORY, DealFactoryABI.abi]
+      , [ContractNames.DEAL, DealABI.abi]
       , [ContractNames.PRIMETOKEN, ERC20ABI.abi]
       , [ContractNames.DAI, ERC20ABI.abi]
       // , [ContractNames.WETH, WETHABI.abi]
@@ -49,8 +49,8 @@ export class ContractsService {
   );
 
   private static Contracts = new Map<ContractNames, Contract>([
-    [ContractNames.SEEDFACTORY, null]
-    , [ContractNames.SEED, null]
+    [ContractNames.DEALFACTORY, null]
+    , [ContractNames.DEAL, null]
     , [ContractNames.SIGNER, null]
     // , [ContractNames.WETH, null]
     // , [ContractNames.PRIMETOKEN, null]
@@ -143,7 +143,7 @@ export class ContractsService {
     }
 
     const reuseContracts = // at least one arbitrary contract already exists
-      ContractsService.Contracts.get(ContractNames.SEEDFACTORY);
+      ContractsService.Contracts.get(ContractNames.DEALFACTORY);
 
     const signerOrProvider = this.createProvider();
 

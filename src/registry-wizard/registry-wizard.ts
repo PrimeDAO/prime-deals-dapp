@@ -1,7 +1,7 @@
 import "./registry-wizard.scss";
 import { PLATFORM } from "aurelia-pal";
 import { singleton, computedFrom } from "aurelia-framework";
-import { ISeedConfig, SeedConfig } from "./seedConfig";
+import { IDealConfig, DealConfig } from "./dealConfig";
 import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
 import { IStageState, IWizardState } from "registry-wizard/baseStage";
 
@@ -15,7 +15,7 @@ const maxStage = 4;
 export class NewDeal {
   router: Router;
 
-  seedConfig: ISeedConfig;
+  dealConfig: IDealConfig;
   stageStates: Array<IStageState>;
   wizardState: IWizardState;
   sideBar: HTMLElement;
@@ -26,8 +26,8 @@ export class NewDeal {
   }
 
   constructor() {
-    if (!this.seedConfig) {
-      this.seedConfig = new SeedConfig();
+    if (!this.dealConfig) {
+      this.dealConfig = new DealConfig();
       this.wizardState = {};
       /**
        * stageStates is 1-based, indexed by stage number
@@ -67,7 +67,7 @@ export class NewDeal {
         name: "stage1",
         title: this.stageStates[1].title,
         settings: {
-          seedConfig: this.seedConfig,
+          dealConfig: this.dealConfig,
           stageStates: this.stageStates,
           stageNumber: 1,
           maxStage,
@@ -80,7 +80,7 @@ export class NewDeal {
         name: "stage2",
         title: this.stageStates[2].title,
         settings: {
-          seedConfig: this.seedConfig,
+          dealConfig: this.dealConfig,
           stageStates: this.stageStates,
           stageNumber: 2,
           maxStage,
@@ -93,7 +93,7 @@ export class NewDeal {
         name: "stage3",
         title: this.stageStates[3].title,
         settings: {
-          seedConfig: this.seedConfig,
+          dealConfig: this.dealConfig,
           stageStates: this.stageStates,
           stageNumber: 3,
           maxStage,
@@ -106,7 +106,7 @@ export class NewDeal {
         name: "stage4",
         title: this.stageStates[4].title,
         settings: {
-          seedConfig: this.seedConfig,
+          dealConfig: this.dealConfig,
           stageStates: this.stageStates,
           stageNumber: 4,
           maxStage,
@@ -119,7 +119,7 @@ export class NewDeal {
         name: "stage5",
         title: this.stageStates[5].title,
         settings: {
-          seedConfig: this.seedConfig,
+          dealConfig: this.dealConfig,
           stageStates: this.stageStates,
           stageNumber: 5,
           maxStage,

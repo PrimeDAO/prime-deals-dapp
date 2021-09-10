@@ -83,8 +83,7 @@
         background-repeat: no-repeat;
         border-radius: 6px;
         background-image: linear-gradient(45deg, var(--colorPrimary) 0%, var(--colorSecondary) 50%, var(--colorTertiary) 100%);
-        // transition: all 0.2s ease-in-out;
-        transition: --colorPrimary 0.3s, --colorSecondary 0.3s, --colorTertiary 0.3s;
+        transition: --colorPrimary 0.3s, --colorSecondary 1.6s, --colorTertiary 2.9s;
         &:hover, &:active {
           --colorPrimary: #A258A7FF;
           --colorSecondary: #FF497AFF;

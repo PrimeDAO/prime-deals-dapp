@@ -13,6 +13,7 @@
   align-items: center;
   grid-template-areas: "logo products wallet" "sub-pages sub-pages sub-pages";
   grid-template-columns: 50px auto 400px;
+  width: -moz-available;
   width: -webkit-fill-available;
   background: $BG01;
 
@@ -105,4 +106,16 @@
       }
     }
   }
+}
+
+@media screen and (max-width: 782px) {
+  .navbar-container {
+    .products,
+    .product-sub-pages,
+    .wallet-container {
+      display: none;
+    }
+  }
+
+
 }

@@ -61,16 +61,16 @@ export class Stage3 extends BaseStage {
   }
 
   addClause(): void {
-    this.seedConfig.terms.clauses.push({text: undefined, tag: undefined});
+    this.dealConfig.terms.clauses.push({text: undefined, tag: undefined});
   }
 
   deleteClause(index:number): void {
-    this.seedConfig.terms.clauses.splice(index, 1);
+    this.dealConfig.terms.clauses.splice(index, 1);
   }
 
   async validateInputs(): Promise<string> {
     let message: string;
-    this.seedConfig.terms.clauses.forEach((clause, index) => {
+    this.dealConfig.terms.clauses.forEach((clause, index) => {
       if (!clause.text) {
         message = `Please enter meaningful description to the ${index + 1}. clause`;
       } else if (!clause.tag) {
@@ -78,8 +78,8 @@ export class Stage3 extends BaseStage {
       }
     });
     if (!message) {
-      if (this.seedConfig.terms.period < 1) {message ="Negotiation period must be at least one day";}
-      if (this.seedConfig.terms.period > 999) {message ="The maximal Negotiation period can not exceed 999 days.";}
+      if (this.dealConfig.terms.period < 1) {message ="Negotiation period must be at least one day";}
+      if (this.dealConfig.terms.period > 999) {message ="The maximal Negotiation period can not exceed 999 days.";}
     }
     this.stageState.verified = !message;
     return Promise.resolve(message);

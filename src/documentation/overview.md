@@ -24,7 +24,7 @@ All official Prime Launches have to be submitted through the <a href="https://ww
 
 There are two methods for hosting a Prime Launch:
 
-🌱 <a href="/documentation/document2">Seed Launch</a> allows early stage projects to host a launch without needing to pre-allocate any resources and with the ability to select which contributors are able to participate.
+🌱 <a href="/documentation/document2">Deal Launch</a> allows early stage projects to host a launch without needing to pre-allocate any resources and with the ability to select which contributors are able to participate.
 
 🌊 <a href="/documentation/document3">Liquid Launch</a> leverages the <a href="https://docs.balancer.fi/" target="_blank" rel="noopener noreferrer">Balancer V2</a> infrastructure. It uses a novel token distribution mechanism, the Liquidity Bootstrapping Pool, to disincentive large contributors from buying all tokens in one go and to punish bots, leading to more fair and accessible distribution. 
 

@@ -1,7 +1,7 @@
 import { DateService } from "./../../../services/DateService";
 import { computedFrom, autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
-// import { Seed } from "entities/Seed";
+// import { Deal } from "entities/Deal";
 import "./timeLeft.scss";
 import tippy from "tippy.js";
 

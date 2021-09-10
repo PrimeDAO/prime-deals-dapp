@@ -24,7 +24,7 @@ export class Stage5 extends BaseStage {
     let message: string;
     // Validate current stage
     // TODO: Check if there is an email validator
-    // if (!Utils.isValidEmail(this.seedConfig.contactDetails.contactEmail)) {
+    // if (!Utils.isValidEmail(this.dealConfig.contactDetails.contactEmail)) {
     //   message = "Please enter a valid email address for Contact Email";
     // }
     this.stageState.verified = !message;

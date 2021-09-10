@@ -42,7 +42,7 @@ npm run start
 
 ## Debug
 
-Each of the following commands will serve up a site that will support Hot Module Reload (HMR).  You can then use your favorate debugger to launch the app at http://localhost:3330.
+Each of the following commands will serve up a site that will support Hot Module Reload (HMR).  You can then use your favorate debugger to launch the app at http://localhost:3340.
 
 ### Build and serve, running against kovan
 `npm run serve-dev`
@@ -58,9 +58,9 @@ Prime Pool relies on solidity contract addresses and ABIs that it obtains from t
 npm run fetchContracts
 ```
 
-## Featured Seeds List
+## Featured Deals List
 
-Prime Launch refers to a list of Seeds that it will display as "Featured" to its users, looking at runtime for this list in the master branch of this repository at [/src/configurations/featuredSeeds.json](https://github.com/PrimeDAO/prime-launch-dapp/blob/master/src/configurations/featuredSeeds.json).
+Prime Launch refers to a list of Deals that it will display as "Featured" to its users, looking at runtime for this list in the master branch of this repository at [/src/configurations/featuredDeals.json](https://github.com/PrimeDAO/prime-launch-dapp/blob/master/src/configurations/featuredDeals.json).
 
 ## <Pool name="dependencies"></Pool> Dependencies
 

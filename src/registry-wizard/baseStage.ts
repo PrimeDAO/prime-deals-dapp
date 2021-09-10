@@ -1,7 +1,7 @@
 import { EventConfigFailure } from "../services/GeneralEvents";
 import { autoinject, singleton, computedFrom } from "aurelia-framework";
 import "./baseStage.scss";
-import { ISeedConfig } from "./seedConfig";
+import { IDealConfig } from "./dealConfig";
 import { RouteConfig } from "aurelia-router";
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -13,21 +13,21 @@ export interface IStageState {
 }
 
 export interface IWizardState {
-  seedHash?: Hash;
+  dealHash?: Hash;
   whiteList?: string;
   fundingTokenSymbol?: string;
   fundingTokenIcon?: string;
-  seedTokenSymbol?: string;
-  seedTokenIcon?: string;
-  requiredSeedDeposit?: number;
-  requiredSeedFee?: number;
-  seedAdminAddress?: Address;
+  dealTokenSymbol?: string;
+  dealTokenIcon?: string;
+  requiredDealDeposit?: number;
+  requiredDealFee?: number;
+  dealAdminAddress?: Address;
 }
 
 @singleton(false)
 @autoinject
 export abstract class BaseStage {
-  protected seedConfig: ISeedConfig;
+  protected dealConfig: IDealConfig;
   protected stageNumber: number;
   protected maxStage: number;
   protected stageStates: Array<IStageState>;
@@ -36,7 +36,7 @@ export abstract class BaseStage {
   @computedFrom("stageStates", "stageNumber")
   protected get stageState(): IStageState { return this.stageStates[this.stageNumber]; }
 
-  protected readonly seedFee = .01;
+  protected readonly dealFee = .01;
 
   constructor(
     protected router: Router,

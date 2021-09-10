@@ -1,11 +1,11 @@
 import { containerless } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
-// import { Seed } from "entities/Seed";
+// import { Deal } from "entities/Deal";
 
 @containerless
-export class SeedAbout{
+export class DealAbout{
 
-  // @bindable seed: Seed;
+  // @bindable deal: Deal;
   @bindable type: string;
 
   linkIcons = new Map<string, string>([

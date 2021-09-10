@@ -3,6 +3,7 @@ import { BaseStage } from "registry-wizard/baseStage";
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EthereumService } from "../services/EthereumService";
+import { IpfsService } from "services/IpfsService";
 // import { Utils } from "services/utils";
 // import { BigNumber } from "ethers";
 
@@ -14,6 +15,7 @@ export class Stage4 extends BaseStage {
     router: Router,
     eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
+    private ipfsService: IpfsService,
   ) {
     super(router, eventAggregator);
   }
@@ -30,7 +32,9 @@ export class Stage4 extends BaseStage {
       }
     }
     // apparently all are valid, so proceed
-    console.log(`Submitting ${JSON.stringify(this.seedConfig)}`);
+
+    const hash = await this.ipfsService.saveDealProposal(this.dealConfig);
+    console.log(`Saved to IPFS ${hash}`);
     this.next();
   } // else we are not valid. Don't proceed.
 

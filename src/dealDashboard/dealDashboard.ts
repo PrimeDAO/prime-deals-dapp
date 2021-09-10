@@ -1,11 +1,11 @@
 import { Router } from "aurelia-router";
-import { DisclaimerService } from "./../services/DisclaimerService";
-import { EthereumService, fromWei } from "./../services/EthereumService";
+import { DisclaimerService } from "../services/DisclaimerService";
+import { EthereumService, fromWei } from "../services/EthereumService";
 import { autoinject, computedFrom } from "aurelia-framework";
-import { SeedService } from "services/SeedService";
+import { DealService } from "services/DealService";
 import { Address } from "services/EthereumService";
-import "./seedDashboard.scss";
-// import { Seed } from "entities/Seed";
+import "./dealDashboard.scss";
+// import { Deal } from "entities/Deal";
 import { Utils } from "services/utils";
 import { EventConfigException } from "services/GeneralEvents";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -15,16 +15,16 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { GeoBlockService } from "services/GeoBlockService";
 
 @autoinject
-export class SeedDashboard {
+export class DealDashboard {
   address: Address;
 
   subscriptions: DisposableCollection = new DisposableCollection();
 
-  // seed: Seed;
+  // deal: Deal;
   loading = true;
-  // seedTokenToReceive = 1;
+  // dealTokenToReceive = 1;
   fundingTokenToPay: BigNumber;
-  seedTokenToReceive: BigNumber;
+  dealTokenToReceive: BigNumber;
   progressBar: HTMLElement;
   bar: HTMLElement;
 
@@ -36,7 +36,7 @@ export class SeedDashboard {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private seedService: SeedService,
+    private dealService: DealService,
     private numberService: NumberService,
     private ethereumService: EthereumService,
     private geoBlockService: GeoBlockService,
@@ -49,13 +49,13 @@ export class SeedDashboard {
     this.connected = !!this.ethereumService.defaultAccountAddress;
   }
 
-  // @computedFrom("seed.amountRaised", "seed.target")
+  // @computedFrom("deal.amountRaised", "deal.target")
   // get fractionComplete(): number {
 
   //   let fraction = 0;
-  //   if (this.seed?.target) {
-  //     fraction = this.numberService.fromString(fromWei(this.seed.amountRaised)) /
-  //       this.numberService.fromString(fromWei(this.seed.target));
+  //   if (this.deal?.target) {
+  //     fraction = this.numberService.fromString(fromWei(this.deal.amountRaised)) /
+  //       this.numberService.fromString(fromWei(this.deal.target));
   //   }
 
   //   if (fraction === 0) {
@@ -68,22 +68,22 @@ export class SeedDashboard {
   //   return fraction;
   // }
 
-  // @computedFrom("seed.amountRaised")
-  // get maxFundable(): BigNumber { return this.seed.cap.sub(this.seed.amountRaised); }
+  // @computedFrom("deal.amountRaised")
+  // get maxFundable(): BigNumber { return this.deal.cap.sub(this.deal.amountRaised); }
 
-  // @computedFrom("fundingTokenToPay", "seed.fundingTokensPerSeedToken")
-  // get seedTokenReward(): number {
-  //   return (this.seed?.fundingTokensPerSeedToken > 0) ?
-  //     (this.numberService.fromString(fromWei(this.fundingTokenToPay ?? "0"))) / this.seed?.fundingTokensPerSeedToken
+  // @computedFrom("fundingTokenToPay", "deal.fundingTokensPerDealToken")
+  // get dealTokenReward(): number {
+  //   return (this.deal?.fundingTokensPerDealToken > 0) ?
+  //     (this.numberService.fromString(fromWei(this.fundingTokenToPay ?? "0"))) / this.deal?.fundingTokensPerDealToken
   //     : 0;
   // }
 
   // /** TODO: don't use current balance */
-  // @computedFrom("seed.seedRemainder", "seed.seedAmountRequired")
-  // get percentSeedTokensLeft(): number {
-  //   return this.seed?.seedAmountRequired?.gt(0) ?
-  //     ((this.numberService.fromString(fromWei(this.seed.seedRemainder)) /
-  //       this.numberService.fromString(fromWei(this.seed.seedAmountRequired))) * 100)
+  // @computedFrom("deal.dealRemainder", "deal.dealAmountRequired")
+  // get percentDealTokensLeft(): number {
+  //   return this.deal?.dealAmountRequired?.gt(0) ?
+  //     ((this.numberService.fromString(fromWei(this.deal.dealRemainder)) /
+  //       this.numberService.fromString(fromWei(this.deal.dealAmountRequired))) * 100)
   //     : 0;
   // }
 
@@ -98,20 +98,20 @@ export class SeedDashboard {
   //   return this.userFundingTokenAllowance?.lt(this.fundingTokenToPay ?? "0") &&
   //     this.maxUserCanPay.gte(this.fundingTokenToPay ?? "0"); }
 
-  // @computedFrom("seed", "ethereumService.defaultAccountAddress")
-  // private get seedDisclaimerStatusKey() {
-  //   return `seed-disclaimer-${this.seed?.address}-${this.ethereumService.defaultAccountAddress}`;
+  // @computedFrom("deal", "ethereumService.defaultAccountAddress")
+  // private get dealDisclaimerStatusKey() {
+  //   return `deal-disclaimer-${this.deal?.address}-${this.ethereumService.defaultAccountAddress}`;
   // }
 
-  // private get seedDisclaimed(): boolean {
-  //   return this.ethereumService.defaultAccountAddress && (localStorage.getItem(this.seedDisclaimerStatusKey) === "true");
+  // private get dealDisclaimed(): boolean {
+  //   return this.ethereumService.defaultAccountAddress && (localStorage.getItem(this.dealDisclaimerStatusKey) === "true");
   // }
 
   // public async canActivate(params: { address: Address }): Promise<boolean> {
-  //   await this.seedService.ensureInitialized();
-  //   const seed = this.seedService.seeds?.get(params.address);
-  //   await seed.ensureInitialized();
-  //   return seed?.canGoToDashboard;
+  //   await this.dealService.ensureInitialized();
+  //   const deal = this.dealService.deals?.get(params.address);
+  //   await deal.ensureInitialized();
+  //   return deal?.canGoToDashboard;
   // }
 
   // async activate(params: { address: Address}): Promise<void> {
@@ -123,34 +123,34 @@ export class SeedDashboard {
   //   let waiting = false;
 
   //   try {
-  //     if (this.seedService.initializing) {
+  //     if (this.dealService.initializing) {
   //       await Utils.sleep(200);
-  //       this.eventAggregator.publish("seeds.loading", true);
+  //       this.eventAggregator.publish("deals.loading", true);
   //       waiting = true;
-  //       await this.seedService.ensureInitialized();
+  //       await this.dealService.ensureInitialized();
   //     }
-  //     const seed = this.seedService.seeds.get(this.address);
-  //     if (seed.initializing) {
+  //     const deal = this.dealService.deals.get(this.address);
+  //     if (deal.initializing) {
   //       if (!waiting) {
   //         await Utils.sleep(200);
-  //         this.eventAggregator.publish("seeds.loading", true);
+  //         this.eventAggregator.publish("deals.loading", true);
   //         waiting = true;
   //       }
-  //       await seed.ensureInitialized();
+  //       await deal.ensureInitialized();
   //     }
-  //     this.seed = seed;
-  //     this.geoBlocked = this.geoBlocked && this.seed.metadata.seedDetails.geoBlock;
+  //     this.deal = deal;
+  //     this.geoBlocked = this.geoBlocked && this.deal.metadata.dealDetails.geoBlock;
 
   //     await this.hydrateUserData();
 
-  //     //this.disclaimSeed();
+  //     //this.disclaimDeal();
 
   //   } catch (ex) {
   //     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", ex));
   //   }
   //   finally {
   //     if (waiting) {
-  //       this.eventAggregator.publish("seeds.loading", false);
+  //       this.eventAggregator.publish("deals.loading", false);
   //     }
   //     this.loading = false;
   //   }
@@ -158,8 +158,8 @@ export class SeedDashboard {
 
   // async hydrateUserData(): Promise<void> {
   //   if (this.ethereumService.defaultAccountAddress) {
-  //     this.userFundingTokenBalance = await this.seed.fundingTokenContract.balanceOf(this.ethereumService.defaultAccountAddress);
-  //     this.userFundingTokenAllowance = await this.seed.fundingTokenAllowance();
+  //     this.userFundingTokenBalance = await this.deal.fundingTokenContract.balanceOf(this.ethereumService.defaultAccountAddress);
+  //     this.userFundingTokenAllowance = await this.deal.fundingTokenAllowance();
   //   }
   // }
 
@@ -167,17 +167,17 @@ export class SeedDashboard {
   //   this.ethereumService.ensureConnected();
   // }
 
-  // async disclaimSeed(): Promise<boolean> {
+  // async disclaimDeal(): Promise<boolean> {
 
   //   let disclaimed = false;
 
-  //   if (!this.seed.metadata.seedDetails.legalDisclaimer || this.seedDisclaimed) {
+  //   if (!this.deal.metadata.dealDetails.legalDisclaimer || this.dealDisclaimed) {
   //     disclaimed = true;
   //   } else {
   //     // const response = await this.dialogService.disclaimer("https://raw.githubusercontent.com/PrimeDAO/prime-launch-dapp/master/README.md");
   //     const response = await this.disclaimerService.showDisclaimer(
-  //       this.seed.metadata.seedDetails.legalDisclaimer,
-  //       `${this.seed.metadata.general.projectName} Disclaimer`,
+  //       this.deal.metadata.dealDetails.legalDisclaimer,
+  //       `${this.deal.metadata.general.projectName} Disclaimer`,
   //     );
 
   //     if (typeof response.output === "string") {
@@ -188,7 +188,7 @@ export class SeedDashboard {
   //       disclaimed = false;
   //     } else {
   //       if (response.output) {
-  //         localStorage.setItem(this.seedDisclaimerStatusKey, "true");
+  //         localStorage.setItem(this.dealDisclaimerStatusKey, "true");
   //       }
   //       disclaimed = response.output as boolean;
   //     }
@@ -201,13 +201,13 @@ export class SeedDashboard {
   // }
 
   // handleMaxClaim(): void {
-  //   this.seedTokenToReceive = this.seed.userClaimableAmount;
+  //   this.dealTokenToReceive = this.deal.userClaimableAmount;
   // }
 
   // async validateClosedOrPaused(): Promise<boolean> {
-  //   const closedOrPaused = await this.seed.hydateClosedOrPaused();
+  //   const closedOrPaused = await this.deal.hydateClosedOrPaused();
   //   if (closedOrPaused) {
-  //     this.eventAggregator.publish("handleValidationError", "Sorry, this seed has been closed or paused");
+  //     this.eventAggregator.publish("handleValidationError", "Sorry, this deal has been closed or paused");
   //     this.router.navigate("/home");
   //     return true;
   //   } else {
@@ -220,8 +220,8 @@ export class SeedDashboard {
   //     return;
   //   }
 
-  //   if (await this.disclaimSeed()) {
-  //     this.seed.unlockFundingTokens(this.fundingTokenToPay)
+  //   if (await this.disclaimDeal()) {
+  //     this.deal.unlockFundingTokens(this.fundingTokenToPay)
   //       .then((receipt) => {
   //         if (receipt) {
   //           this.hydrateUserData();
@@ -236,15 +236,15 @@ export class SeedDashboard {
   //   }
 
   //   if (!this.fundingTokenToPay?.gt(0)) {
-  //     this.eventAggregator.publish("handleValidationError", `Please enter the amount of ${this.seed.fundingTokenInfo.symbol} you wish to contribute`);
+  //     this.eventAggregator.publish("handleValidationError", `Please enter the amount of ${this.deal.fundingTokenInfo.symbol} you wish to contribute`);
   //   } else if (this.userFundingTokenBalance.lt(this.fundingTokenToPay)) {
-  //     this.eventAggregator.publish("handleValidationError", `Your ${this.seed.fundingTokenInfo.symbol} balance is insufficient to cover what you want to pay`);
-  //   } else if (this.fundingTokenToPay.add(this.seed.amountRaised).gt(this.seed.cap)) {
-  //     this.eventAggregator.publish("handleValidationError", `The amount of ${this.seed.fundingTokenInfo.symbol} you wish to contribute will cause the funding maximum to be exceeded`);
+  //     this.eventAggregator.publish("handleValidationError", `Your ${this.deal.fundingTokenInfo.symbol} balance is insufficient to cover what you want to pay`);
+  //   } else if (this.fundingTokenToPay.add(this.deal.amountRaised).gt(this.deal.cap)) {
+  //     this.eventAggregator.publish("handleValidationError", `The amount of ${this.deal.fundingTokenInfo.symbol} you wish to contribute will cause the funding maximum to be exceeded`);
   //   } else if (this.lockRequired) {
-  //     this.eventAggregator.publish("handleValidationError", `Please click UNLOCK to approve the transfer of your ${this.seed.fundingTokenInfo.symbol} to the Seed contract`);
-  //   } else if (await this.disclaimSeed()) {
-  //     this.seed.buy(this.fundingTokenToPay)
+  //     this.eventAggregator.publish("handleValidationError", `Please click UNLOCK to approve the transfer of your ${this.deal.fundingTokenInfo.symbol} to the Deal contract`);
+  //   } else if (await this.disclaimDeal()) {
+  //     this.deal.buy(this.fundingTokenToPay)
   //       .then((receipt) => {
   //         if (receipt) {
   //           this.hydrateUserData();
@@ -258,13 +258,13 @@ export class SeedDashboard {
   //     return;
   //   }
 
-  //   if (this.seed.claimingIsOpen && this.seed.userCanClaim) {
-  //     if (!this.seedTokenToReceive?.gt(0)) {
-  //       this.eventAggregator.publish("handleValidationError", `Please enter the amount of ${this.seed.seedTokenInfo.symbol} you wish to receive`);
-  //     } else if (this.seed.userClaimableAmount.lt(this.seedTokenToReceive)) {
-  //       this.eventAggregator.publish("handleValidationError", `The amount of ${this.seed.seedTokenInfo.symbol} you are requesting exceeds your claimable amount`);
+  //   if (this.deal.claimingIsOpen && this.deal.userCanClaim) {
+  //     if (!this.dealTokenToReceive?.gt(0)) {
+  //       this.eventAggregator.publish("handleValidationError", `Please enter the amount of ${this.deal.dealTokenInfo.symbol} you wish to receive`);
+  //     } else if (this.deal.userClaimableAmount.lt(this.dealTokenToReceive)) {
+  //       this.eventAggregator.publish("handleValidationError", `The amount of ${this.deal.dealTokenInfo.symbol} you are requesting exceeds your claimable amount`);
   //     } else {
-  //       this.seed.claim(this.seedTokenToReceive);
+  //       this.deal.claim(this.dealTokenToReceive);
   //     }
   //   }
   // }
@@ -274,8 +274,8 @@ export class SeedDashboard {
   //     return;
   //   }
 
-  //   if (this.seed.userCanRetrieve) {
-  //     this.seed.retrieveFundingTokens()
+  //   if (this.deal.userCanRetrieve) {
+  //     this.deal.retrieveFundingTokens()
   //       .then((receipt) => {
   //         if (receipt) {
   //           this.hydrateUserData();

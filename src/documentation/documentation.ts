@@ -22,13 +22,13 @@ export class Documentation {
         },
       },
       {
-        route: ["seed-launch"],
+        route: ["deal-launch"],
         nav: true,
         moduleId: PLATFORM.moduleName("./document2"),
         name: "document2",
-        title: "Seed Details & Benefits",
+        title: "Deal Details & Benefits",
         settings: {
-          content: require("/src/documentation/seedLaunch.md").default,
+          content: require("/src/documentation/dealLaunch.md").default,
         },
       },
       {

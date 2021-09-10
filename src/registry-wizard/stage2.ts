@@ -1,42 +1,42 @@
 import { BaseStage } from "registry-wizard/baseStage";
 import { Utils } from "services/utils";
-import { IDAO } from "./seedConfig";
+import { IDAO } from "./dealConfig";
 export class Stage2 extends BaseStage {
 
   // Add a link object to the link object arrays
   addAdmin(): void {
     // Create a new social media object
-    this.seedConfig.admins.push({address: undefined, represent: undefined});
+    this.dealConfig.admins.push({address: undefined, represent: undefined});
   }
   // Delete a row in the social media array
   deleteAdmin(index:number): void {
     // Remove the indexed link
-    this.seedConfig.admins.splice(index, 1);
+    this.dealConfig.admins.splice(index, 1);
   }
 
   addSocialMedia(daoIndex: number): void {
     // Create a new social media object
-    this.seedConfig.daos[daoIndex].social_medias.push({name: undefined, url: undefined});
+    this.dealConfig.daos[daoIndex].social_medias.push({name: undefined, url: undefined});
   }
   // Delete a row in the social media array
   deleteSocialMedia(daoIndex:number, index:number): void {
     // Remove the indexed link
-    this.seedConfig.daos[daoIndex].social_medias.splice(index, 1);
+    this.dealConfig.daos[daoIndex].social_medias.splice(index, 1);
   }
 
   addToken(daoIndex: number): void {
     // Create a new token object
-    this.seedConfig.daos[daoIndex].tokens.push({name: undefined, amount: undefined});
+    this.dealConfig.daos[daoIndex].tokens.push({name: undefined, amount: undefined});
   }
   // Delete a row in the tokens array
   deleteToken(daoIndex: number, index:number): void {
     // Remove the indexed link
-    this.seedConfig.daos[daoIndex].tokens.splice(index, 1);
+    this.dealConfig.daos[daoIndex].tokens.splice(index, 1);
   }
 
   validateInputs(): Promise<string> {
     let message: string;
-    this.seedConfig.daos.forEach((dao:IDAO, idx:number) => {
+    this.dealConfig.daos.forEach((dao:IDAO, idx:number) => {
       if (!dao.name) {
         message = `Please enter a name for DAO ${(idx + 1)}`;
       }

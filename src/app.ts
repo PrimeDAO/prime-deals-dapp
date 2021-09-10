@@ -10,6 +10,7 @@ import tippy from "tippy.js";
 import { BindingSignaler } from "aurelia-templating-resources";
 import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
+import { BrowserStorageService } from "services/BrowserStorageService";
 
 @autoinject
 export class App {
@@ -17,7 +18,8 @@ export class App {
     private signaler: BindingSignaler,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
-    private consoleLogService: ConsoleLogService) { }
+    private consoleLogService: ConsoleLogService,
+    private storageService: BrowserStorageService) { }
 
   router: Router;
   onOff = false;
@@ -42,16 +44,15 @@ export class App {
       this.handleScrollEvent();
     });
 
-    this.eventAggregator.subscribe("seeds.loading", async (onOff: boolean) => {
+    this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
       this.handleOnOff(onOff);
     });
 
-    this.eventAggregator.subscribe("seed.creating", async (onOff: boolean) => {
-      this.modalMessage = "Thank you for your patience while we initiate the creation of a new seed...";
+    this.eventAggregator.subscribe("deal.creating", async (onOff: boolean) => {
+      this.modalMessage = "Thank you for your patience while we initiate the creation of a new deal...";
       this.handleOnOff(onOff);
     });
-
 
     this.eventAggregator.subscribe("transaction.sent", async () => {
       this.modalMessage = "Awaiting confirmation...";
@@ -73,6 +74,8 @@ export class App {
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
+
+    this.ethereumService.connectToConnectedProvider();
   }
 
   private handleOnOff(onOff: boolean): void {
@@ -138,11 +141,11 @@ export class App {
         title: "Documentation",
       },
       {
-        moduleId: PLATFORM.moduleName("./seedDashboard/seedDashboard"),
+        moduleId: PLATFORM.moduleName("./dealDashboard/dealDashboard"),
         nav: false,
-        name: "seedDashboard",
-        route: "/seed/:address",
-        title: "SEED Dashboard",
+        name: "dealDashboard",
+        route: "/deal/:address",
+        title: "DEAL Dashboard",
       },
       {
         moduleId: PLATFORM.moduleName("./registry-wizard/registry-wizard"),
@@ -171,10 +174,10 @@ export class App {
     config.addPreActivateStep({
       run(navigationInstruction: NavigationInstruction, next: Next) {
         if (navigationInstruction.previousInstruction) {
-          let position = sessionStorage.getItem(_this.getScrollStateKey(navigationInstruction.previousInstruction.fragment));
+          let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.previousInstruction.fragment));
           if (!position) {
             position = `${window.scrollX},${window.scrollY}`;
-            sessionStorage.setItem(_this.getScrollStateKey(navigationInstruction.previousInstruction.fragment), position);
+            _this.storageService.ssSet(_this.getScrollStateKey(navigationInstruction.previousInstruction.fragment), position);
           }
         }
         return next();
@@ -186,7 +189,7 @@ export class App {
      */
     config.addPostRenderStep({
       run(navigationInstruction: NavigationInstruction, next: Next) {
-        let position = sessionStorage.getItem(_this.getScrollStateKey(navigationInstruction.fragment));
+        let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
         if (!position) {
           position = "0,0";
         }
@@ -202,7 +205,7 @@ export class App {
    * store the scroll position per each page
    */
   handleScrollEvent(): void {
-    sessionStorage.setItem(this.getScrollStateKey(this.router.currentInstruction.fragment),
+    this.storageService.ssSet(this.getScrollStateKey(this.router.currentInstruction.fragment),
       `${window.scrollX},${window.scrollY}`);
   }
 

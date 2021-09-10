@@ -8,8 +8,8 @@
 }
 .infoContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, clamp(200px, 20vw,675px));
-  grid-gap: clamp(24px, 8%,120px);
+  grid-template-columns: repeat(auto-fit, clamp(200px, 32% ,675px));
+  grid-gap: clamp(5px, 2%, 24px);
   font-family: Inter;
   .heading {
     margin-top: 0;
@@ -32,8 +32,10 @@
     }
   }
   .infoInput {
-    margin-bottom: 2em;
-    > textarea {
+    margin-bottom: 28px;
+    width: -webkit-fill-available;
+    max-width: 455px;
+    & > textarea {
       resize: none;
       color: $Neutral02;
       border: 1px solid $Border01;
@@ -62,13 +64,13 @@
   }
   label {
     display: block;
-    font-size: 1.1em;
+    font-size: 16px;
     font-weight: bold;
-    line-height: 2em;
+    line-height: 28px;
     color: $Secondary02;
   }
   input, textarea {
-    width: 455px;
+    width: inherit;
   }
   input, textarea {
     border: 1px solid $Border01;
@@ -76,7 +78,7 @@
     color: $Neutral02;
   }
   input {
-    height: 2.7em;
+    height: 40px;
   }
   textarea {
     resize: none;
@@ -121,7 +123,7 @@
     color: $Neutral02;
     background-color: $BG01;
     font-family: Inter;
-    font-size: 1.1em;
+    font-size: 16px;
     padding-left: 0.5em;
     padding-right: 0.5em;
   }
@@ -132,11 +134,11 @@
   .labeledQuestion {
     display: flex;
     flex-flow: row nowrap;
-    gap: 1em;
+    gap: 14px;
   }
   .questionMark {
-    width: 1.3em;
-    height: 1.3em;
+    width: 20px;
+    height: 20px;
     align-self: center;
     cursor: default;
     user-select: none;
@@ -159,15 +161,15 @@
   }
 
   .number {
-    width: 11em;
+    width: 114px;
     display: flex;
     flex-flow: row nowrap;
     flex: 1;
-    gap: 0em;
+    gap:0;
     input {
       width: 5em;
-      // border-top-right-radius: 0em;
-      // border-bottom-right-radius: 0em;
+      // border-top-right-radius:0;
+      // border-bottom-right-radius:0;
     }
     > div {
       width: 5em;
@@ -185,6 +187,10 @@
   &.stage2, &.stage3 {
     .infoContainer {
       .otherLinks {
+        &>.textarea-container {
+          max-width: 455px;
+          width: -webkit-fill-available;
+        }
         display: flex;
         flex-flow: row wrap;
         gap: 20px;
@@ -218,7 +224,7 @@
           }
           .addLink {
             cursor: pointer;
-            padding-right: 1em;
+            padding-right: 14px;
             align-self: flex-start;
           }
         }
@@ -227,7 +233,7 @@
         cursor: pointer;
         display: flex;
         justify-content: flex-start;
-        margin-bottom: 2em;
+        margin-bottom: 28px;
       }
     }
   }
@@ -258,7 +264,7 @@
         display: flex;
         flex-flow: row wrap;
         flex: 1;
-        gap: 2em;
+        gap: 28px;
         &.maxTargetLabel label {
           font-size: 0.9em;
           line-height: 3em;
@@ -266,22 +272,22 @@
           font-weight: normal;
         }
         .questionMark {
-          width: 1.3em;
-          height: 1.3em;
+          width: 20px;
+          height: 20px;
           align-self: center;
           justify-self: center;
         }
       }
       .vestingPeriod {
-        width: 11em;
+        width: 114px;
         display: flex;
         flex-flow: row nowrap;
         flex: 1;
-        gap: 0em;
+        gap:0;
         input {
           width: 5em;
-          border-top-right-radius: 0em;
-          border-bottom-right-radius: 0em;
+          border-top-right-radius:0;
+          border-bottom-right-radius:0;
         }
         > div {
           width: 5em;
@@ -296,18 +302,18 @@
       .vestingDatesContainer {
         display: flex;
         flex-flow: row nowrap;
-        gap: 1em;
+        gap: 14px;
       }
       .vestingDates {
-        width: 11em;
+        width: 114px;
         display: flex;
         flex-flow: row nowrap;
         flex: 1;
-        gap: 0em;
+        gap:0;
         input {
           width: 7em;
-          border-top-right-radius: 0em;
-          border-bottom-right-radius: 0em;
+          border-top-right-radius:0;
+          border-bottom-right-radius:0;
           border-right: 0px;
           cursor: pointer;
         }
@@ -324,7 +330,7 @@
           z-index: 1;
           cursor: pointer;
           i {
-            font-size: 1.4em;
+            font-size: 22px;
           }
         }
       }
@@ -353,7 +359,7 @@
           font-size: 0.7em;
           font-weight: 100;
           text-align: center;
-          line-height: 1em;
+          line-height: 14px;
         }
         i {
           font-size: 2.8em;
@@ -362,7 +368,7 @@
         span {
           width: 8em;
           -webkit-text-fill-color: $Neutral03;
-          font-size: 1em;
+          font-size: 14px;
           text-align: left;
           line-height: 1.24em;
         }
@@ -373,13 +379,13 @@
     }
     .checkboxContainer {
       width: 3.7em;
-      height: 2em;
+      height: 28px;
       border: 1px solid #2a2a2a;
       border-radius: 23px;
       position: relative;
       display: flex;
       align-items: center;
-      margin-bottom: 2em;
+      margin-bottom: 28px;
       background: $Gradient01;
       cursor: pointer;
       i.yes {
@@ -395,23 +401,23 @@
         font-weight: 700;
       }
       .checkbox {
-        width: 1.8em;
-        height: 1.8em;
+        width: 26px;
+        height: 26px;
         display: flex;
         align-items: center;
         > input {
-          width: 1.8em;
-          height: 1.8em;
+          width: 26px;
+          height: 26px;
           visibility: hidden;
           position: absolute;
           &:checked + label {
-            left: 1.7em;
+            left: 24px;
           }
         }
         & label {
           display: block;
-          width: 1.4em;
-          height: 1.4em;
+          width: 22px;
+          height: 22px;
           position: absolute;
           left: 0.15em;
           background: white;
@@ -440,7 +446,7 @@
         > .heading.heading3 {
           margin-bottom: 20px;
         }
-        .stageSeedDetails {
+        .stageDealDetails {
           display: grid;
           gap: 10px;
           margin-bottom: 20px;
@@ -499,7 +505,7 @@
     & .linksContainer {
       display: flex;
       flex-flow: column;
-      gap: 2em;
+      gap: 28px;
       > div {
         > a {
           color: $Neutral03;
@@ -524,11 +530,7 @@
       grid-column: span 2;
     }
     .infoInput {
-      > textarea {
-        width: 90%;
-      }
       input {
-        width: 90%;
         height: unset;
       }
       .labelContainer {
@@ -540,9 +542,6 @@
     }
     > .heading.heading2 {
       font-size: 26px;
-    }
-    label {
-      line-height: 20px;
     }
     .summaryContainer {
       margin-bottom: 30px;
@@ -558,6 +557,10 @@
     &.stage1 {
       .infoContainer {
         .otherLinks {
+          &>div {
+            max-width: 455px;
+            width: -webkit-fit-content;
+          }
           gap: unset;
           input {
             width: unset;

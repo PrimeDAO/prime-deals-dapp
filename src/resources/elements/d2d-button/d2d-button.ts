@@ -1,13 +1,13 @@
 import "./d2d-button.scss";
-import { autoinject, bindable, bindingMode} from "aurelia-framework";
+import { autoinject, bindable} from "aurelia-framework";
 import { Router } from "aurelia-router";
 
 @autoinject
-export class StyledButton {
+export class D2dButton {
+  @bindable button: string;
+  @bindable disabled = false;
+
   constructor(
     private router: Router,
   ) { }
-
-  @bindable({ defaultBindingMode: bindingMode.twoWay })
-  public disabled = false;
 }

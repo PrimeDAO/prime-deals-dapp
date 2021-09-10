@@ -4,7 +4,7 @@
       <h1 class="heading heading1 gradient">DAO's</h1>
       <hr />
     </div>
-    <template repeat.for="dao of seedConfig.daos">
+    <template repeat.for="dao of dealConfig.daos">
       <div class="infoContainer">
         <div class="sideText">
           <h2 class="heading heading3 title">DAO ${$index + 1}</h2>
@@ -116,7 +116,7 @@
       </div>
       <div class="form">
         <div class="infoInput">
-          <template repeat.for="admin of seedConfig.admins">
+          <template repeat.for="admin of dealConfig.admins">
             <div class="otherLinks">
               <div>
                 <div class="labelContainer">
@@ -136,7 +136,7 @@
                     placeholder="Select DAO"
                     value.bind="admin.represent"
                     maxlength="20" />
-                  <span if.bind="seedConfig.admins.length > 1"
+                  <span if.bind="dealConfig.admins.length > 1"
                     class="deleteLink"
                     title="Delete this row"
                     click.delegate="deleteAdmin($index)">
@@ -148,7 +148,7 @@
             <div
               class="addLink"
               click.delegate="addAdmin($index)"
-              if.bind="$index == seedConfig.admins.length - 1">
+              if.bind="$index == dealConfig.admins.length - 1">
               <a>+ Add more</a>
             </div>
           </template>

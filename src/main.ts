@@ -7,9 +7,9 @@ import { EventConfigException } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
-// import { SeedService } from "services/SeedService";
+import { DealService } from "services/DealService";
 import { IpfsService } from "services/IpfsService";
-import { GeoBlockService } from "services/GeoBlockService";
+// import { GeoBlockService } from "services/GeoBlockService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
 
@@ -44,14 +44,14 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.get(ContractsService);
 
-      // const seedService = aurelia.container.get(SeedService);
-      // seedService.initialize();
+      const dealService = aurelia.container.get(DealService);
+      dealService.initialize();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
 
-      const geoBlockService = aurelia.container.get(GeoBlockService);
-      geoBlockService.initialize();
+      // const geoBlockService = aurelia.container.get(GeoBlockService);
+      // geoBlockService.initialize();
 
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);

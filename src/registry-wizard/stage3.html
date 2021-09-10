@@ -13,9 +13,9 @@
 
       <div class="form">
         <div class="infoInput">
-          <template repeat.for="clause of seedConfig.terms.clauses">
+          <template repeat.for="clause of dealConfig.terms.clauses">
             <div class="otherLinks">
-              <div>
+              <div class="textarea-container">
                 <div class="labelContainer">
                   <label for="proposalOverview">${$index + 1}. Clause</label>
                   <span>
@@ -32,7 +32,7 @@
                     placeholder=""
                     value.bind="clause.tag"
                     maxlength="20" />
-                  <span if.bind="seedConfig.terms.clauses.length > 1"
+                  <span if.bind="dealConfig.terms.clauses.length > 1"
                     class="deleteLink"
                     title="Delete this row"
                     click.delegate="deleteClause($index)">
@@ -44,7 +44,7 @@
             <div
               class="addLink"
               click.delegate="addClause($index)"
-              if.bind="$index == seedConfig.terms.clauses.length - 1">
+              if.bind="$index == dealConfig.terms.clauses.length - 1">
               <a>+ Add more</a>
             </div>
           </template>
@@ -69,10 +69,10 @@
               max="999"
               step="1"
               id="negotiationPeriod"
-              value.bind="seedConfig.terms.period">
+              value.bind="dealConfig.terms.period">
             </input>
           </div>
-          <span if.to-view="seedConfig.terms.period && seedConfig.terms.period < 14" class="period-warning">
+          <span if.to-view="dealConfig.terms.period && dealConfig.terms.period < 14" class="period-warning">
             Please note: Average deals takes more than a week!
           </span>
         </div>
@@ -88,7 +88,7 @@
             id="representatives"
             rows="5"
             maxlength="8600"
-            value.bind="seedConfig.terms.representatives"
+            value.bind="dealConfig.terms.representatives"
             placeholder="Representative's address"></textarea>
         </div>
 
@@ -101,7 +101,7 @@
           </div>
           <input
             id="teamChat"
-            value.bind="seedConfig.terms.coreTeamChatURL"
+            value.bind="dealConfig.terms.coreTeamChatURL"
             placeholder="https://..." />
         </div>
 
@@ -114,7 +114,7 @@
           </div>
           <input
             id="prevDiscussion"
-            value.bind="seedConfig.terms.previousDiscussionURL"
+            value.bind="dealConfig.terms.previousDiscussionURL"
             placeholder="https://..." />
         </div>
 

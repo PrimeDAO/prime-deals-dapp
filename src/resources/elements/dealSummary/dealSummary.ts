@@ -1,8 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { bindable } from "aurelia-typed-observable-plugin";
-// import { Seed } from "entities/Seed";
-// import { SeedService } from "services/SeedService";
+// import { Deal } from "entities/Deal";
+// import { DealService } from "services/DealService";
 import { Address } from "services/EthereumService";
 import "./dealSummary.scss";
 
@@ -13,18 +13,18 @@ export class DealSummary {
   @bindable name: string;
   @bindable logo: string;
   @bindable deal: any;
-  // seed: Seed;
+  // deal: Deal;
   loading = true;
   container: HTMLElement;
 
   constructor(
     private router: Router,
-    // private seedService: SeedService,
+    // private dealService: DealService,
   ) {}
 
   async attached(): Promise<void> {
-    // await this.seedService.ensureInitialized();
-    // this.seed = this.seedService.seeds.get(this.address);
+    // await this.dealService.ensureInitialized();
+    // this.deal = this.dealService.deals.get(this.address);
     this.loading = false;
   }
 

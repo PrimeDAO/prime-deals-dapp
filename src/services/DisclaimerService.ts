@@ -1,38 +1,40 @@
 import { EventAggregator } from "aurelia-event-aggregator";
-import { autoinject, computedFrom } from "aurelia-framework";
+import { autoinject } from "aurelia-framework";
 import { DialogCloseResult, DialogService } from "services/DialogService";
 import { Disclaimer } from "../resources/dialogs/disclaimer/disclaimer";
 import axios from "axios";
+import { BrowserStorageService } from "services/BrowserStorageService";
+import { Address } from "services/EthereumService";
+import { AxiosService } from "services/axiosService";
 const marked = require("marked");
 
 @autoinject
 export class DisclaimerService {
 
   disclaimed = false;
-  accountAddress: string;
   waiting = false;
 
   constructor(
     private dialogService: DialogService,
     private eventAggregator: EventAggregator,
+    private storageService: BrowserStorageService,
+    private axiosService: AxiosService,
   ) {
   }
 
-  @computedFrom("accountAddress")
-  private get primeDisclaimerStatusKey() {
-    return `disclaimer-${this.accountAddress}`;
+  private getPrimeDisclaimerStatusKey(accountAddress: Address): string {
+    return `disclaimer-${accountAddress}`;
   }
 
-  @computedFrom("primeDisclaimerStatusKey")
-  private get primeDisclaimed(): boolean {
-    return this.accountAddress && (localStorage.getItem(this.primeDisclaimerStatusKey) === "true");
+  public getPrimeDisclaimed(accountAddress: Address): boolean {
+    return accountAddress && (this.storageService.lsGet(this.getPrimeDisclaimerStatusKey(accountAddress), "false") === "true");
   }
 
-  private async disclaimPrime(): Promise<boolean> {
+  private async disclaimPrime(accountAddress: string): Promise<boolean> {
 
     let disclaimed = false;
 
-    if (this.primeDisclaimed) {
+    if (this.getPrimeDisclaimed(accountAddress)) {
       disclaimed = true;
     } else {
       const response = await this.showDisclaimer(
@@ -53,18 +55,16 @@ export class DisclaimerService {
     return disclaimed;
   }
 
-  public async confirmCanConnect(account: string): Promise<boolean> {
-    this.accountAddress = account;
-    if (this.primeDisclaimed) {
-      return true;
-    } else {
-      const accepted = await this.disclaimPrime();
+  public async ensurePrimeDisclaimed(account: string): Promise<boolean> {
+    if (!this.getPrimeDisclaimed(account)) {
+      const accepted = await this.disclaimPrime(account);
       if (accepted) {
-        localStorage.setItem(this.primeDisclaimerStatusKey, "true");
-        return true;
+        this.storageService.lsSet(this.getPrimeDisclaimerStatusKey(account), "true");
+      } else {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   public async confirmMarkdown(url: string): Promise<boolean> {
@@ -78,7 +78,7 @@ export class DisclaimerService {
         }
       })
       .catch((err) => {
-        this.dialogService.axiosErrorHandler(err);
+        this.axiosService.axiosErrorHandler(err);
         return null;
       });
 
