@@ -115,17 +115,41 @@
     box-shadow: 0 0 0px 3.7em $BG01 inset;
   }
 
+  input,
+  select,
+  textarea {
+    &:focus-within, &:active {
+      outline: none;
+      border-color: $Secondary02;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+    }
+  }
   select {
-    width: 14em;
-    height: 2.9em;
-    border: 1px solid $Border01;
+    width: inherit;
+    height: 40px;
+    border: 1px solid #403453;
     border-radius: 10px;
-    color: $Neutral02;
-    background-color: $BG01;
     font-family: Inter;
     font-size: 16px;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding: 0 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: $BG00;
+    color: $Neutral02;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%2398979b' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' aria-hidden='true' role='img' width='1em' height='1em' preserveAspectRatio='xMidYMid meet' viewBox='0 0 1200 1200'><path d='M600.006 989.352l178.709-178.709L1200 389.357l-178.732-178.709L600.006 631.91L178.721 210.648L0 389.369l421.262 421.262l178.721 178.721h.023z'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: calc(100% - 12px);
+    background-position-y: 12px;    
+    // width: 14em;
+    // height: 2.9em;
+    // border: 1px solid $Border01;
+    // border-radius: 10px;
+    // color: $Neutral02;
+    // background-color: $BG01;
+    // font-family: Inter;
+    // font-size: 16px;
+    // padding-left: 0.5em;
+    // padding-right: 0.5em;
   }
 
   a {

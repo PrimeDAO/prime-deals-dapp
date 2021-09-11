@@ -18,7 +18,13 @@
                 ${dao.name.length}/50
               </span>
             </div>
-            <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" />
+            <!-- <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" /> -->
+            <select name="dao${$index + 1}Name" id="dao${$index + 1}Name">
+              <option value="">Select DAO</option>
+              <option repeat.for="dao of daoList" value="${dao.organizationId}">
+                ${dao.name}
+              </option>
+            </select>
           </div>
           <div class="infoInput">
             <template repeat.for="token of dao.tokens">

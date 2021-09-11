@@ -46,6 +46,7 @@ export function configure(aurelia: Aurelia): void {
 
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
+      dealService.getDAOsInformation();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));

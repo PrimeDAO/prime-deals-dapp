@@ -1,3 +1,4 @@
+import { DealService } from "services/DealService";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { BaseStage } from "registry-wizard/baseStage";
 import { Router } from "aurelia-router";
@@ -14,10 +15,11 @@ export class Stage4 extends BaseStage {
   constructor(
     router: Router,
     eventAggregator: EventAggregator,
+    dealService: DealService,
     private ethereumService: EthereumService,
     private ipfsService: IpfsService,
   ) {
-    super(router, eventAggregator);
+    super(dealService, router, eventAggregator );
   }
 
   async submit(): Promise<void> {

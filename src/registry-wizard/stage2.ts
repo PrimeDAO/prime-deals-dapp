@@ -1,7 +1,21 @@
 import { BaseStage } from "registry-wizard/baseStage";
 import { Utils } from "services/utils";
 import { IDAO } from "./dealConfig";
+import { IDaoAPIObject } from "../services/DealService";
+import { bindable } from "aurelia-typed-observable-plugin";
+
 export class Stage2 extends BaseStage {
+  @bindable daoList: Array<IDaoAPIObject> = this.dealService.DAOs;
+
+  attached(): void {
+    if (!this.daoList) this.dealService.getDAOsInformation().then(() => {
+      this.daoList = this.dealService.DAOs.sort((a: any, b: any) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+      );
+    }).catch((err) => {
+      console.error("err", err);
+    });
+  }
 
   // Add a link object to the link object arrays
   addAdmin(): void {

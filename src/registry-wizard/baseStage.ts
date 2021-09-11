@@ -6,6 +6,7 @@ import { RouteConfig } from "aurelia-router";
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Address, Hash } from "services/EthereumService";
+import { DealService, IDaoAPIObject } from "../services/DealService";
 
 export interface IStageState {
   verified: boolean;
@@ -33,12 +34,15 @@ export abstract class BaseStage {
   protected stageStates: Array<IStageState>;
   protected wizardState: IWizardState;
 
+  protected daoList: Array<IDaoAPIObject>;
+
   @computedFrom("stageStates", "stageNumber")
   protected get stageState(): IStageState { return this.stageStates[this.stageNumber]; }
 
   protected readonly dealFee = .01;
 
   constructor(
+    protected dealService: DealService,
     protected router: Router,
     protected eventAggregator: EventAggregator) {
   }

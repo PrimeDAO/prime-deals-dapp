@@ -1,3 +1,4 @@
+import axios from "axios";
 import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
@@ -8,12 +9,49 @@ export interface IDealCreatedEventArgs {
   beneficiary: Address;
 }
 
+const _DAY_IN_MS = 24 * 60 * 60 * 1000;
+const _DEFAULT_DEAL_DURATION = 14;
+export interface IDaoPartner {
+  daoId: string,
+  organizationId: string,
+  title: string,
+  logo: string,
+  totalNumMembers: number
+  totalNumProposals: number
+  totalNumVoters: number
+  totalValueUSD: number
+  totalInUSD: number
+  totalOutUSD: number
+  votersParticipation: number
+  daoName: string,
+  platform: string,
+  thumbName: string
+}
+
+export interface IDaoAPIObject {
+  daoName: string,
+  organizationId: string,
+  daoId: string,
+  logo: string,
+  daosArr: Array<IDaoPartner>,
+  totalNumMembers: number,
+  totalNumProposals: number,
+  totalNumVoters: number,
+  totalValueUSD: number,
+  totalInUSD: number,
+  totalOutUSD: number,
+  votersParticipation: number,
+  thumbName: string,
+  platform: number,
+}
+
 @autoinject
 export class DealService {
 
   public deals: Map<Address, any>;
 
   public dealsObject: any = {};
+  public DAOs: Array<IDaoAPIObject>;
 
   public initializing = true;
 
@@ -34,17 +72,23 @@ export class DealService {
     hashes.forEach( async (hash:string) => {
       this.dealsObject[hash] = await this.ipfsService.getDealProposal(hash)
         .then(async (deal: any) => {
+
+          const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
+
           return {
             address: hash || "",
-            dao: deal.daos[0].name || "",
+            daos: {
+              creator: deal.daos[0].name || "",
+              partner: deal.daos[1].name || "",
+            },
             type: deal.type || "Token Swap",
             title: deal.proposal.name,
             description: deal.proposal.overview,
             logo: {
-              creator: deal.daos[0].logo || "../../logos/ether.png",
-              partner: deal.daos[1].logo || "",
+              creator: deal.daos[0].id ? (await this.getDAOByOrganisationID(deal.daos[0].id)).logo : "../../logos/ether.png",
+              partner: deal.daos[1].id ? (await this.getDAOByOrganisationID(deal.daos[1].id)).logo : "",
             },
-            startsInMilliseconds: deal.createdAt? (new Date(deal.createdAt).getUTCMilliseconds()) + 1000 * 60 * 60 * 24 * parseInt(deal.terms.period || 14): 0,
+            startsInMilliseconds: timeLeft,
             uninitialized: deal.uninitialized || false,
             hasNotStarted: deal.hasNotStarted || deal.createdAt,
             contributingIsOpen: deal.contributingIsOpen || false,
@@ -64,27 +108,43 @@ export class DealService {
     if (this._featuredDeals) {
       console.log("returning cached featured deals");
 
-      return this._featuredDeals;
+      return await this._featuredDeals;
     }
     else {
       await this.getDeals();
-
       /**
        * take the first three deals in order of when they start(ed), if they either haven't
        * started or are live.
-       */
-      this._featuredDeals = Object.values(await this.dealsObject);
-      // .filter((deal: Deal) => { return !deal.uninitialized && !deal.corrupt && (deal.hasNotStarted || deal.contributingIsOpen); })
-      // .sort((a: Deal, b: Deal) => SortService.evaluateDateTimeAsDate(a.startTime, b.startTime))
-      // .slice(0, 12);
-
-      return this._featuredDeals.slice(0, 12);
+        */
+      if (this.dealsObject) {
+        const temp:Array<IDealConfig> = Object.values(this.dealsObject);
+        this._featuredDeals = temp.sort((a: any, b: any) => a.startsInMilliseconds - b.startsInMilliseconds).slice(0, 12);
+        return this._featuredDeals;
+      }
     }
   }
 
   // public async deployDeal(config: IDealConfig): Promise<Hash> {
   //   // TODO
   // }
+
+  public async getDAOsInformation(): Promise<void> {
+    // TODO
+    const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
+
+    this.DAOs = allDAOs.map(dao => ({
+      organizationId: dao.organizationId,
+      name: dao.daoName,
+      logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
+    }));
+  }
+
+  public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
+    if (!this.DAOs) await this.getDAOsInformation;
+
+    const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
+    return dao;
+  }
 
   private asciiToHex(str = ""): string {
     const res = [];
