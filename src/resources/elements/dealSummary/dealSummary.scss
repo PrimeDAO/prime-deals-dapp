@@ -121,7 +121,7 @@
       grid-template-areas:
         "title"
         "description";
-      grid-template-rows: 68px 122px;
+      grid-template-rows: min-content auto;
       height: 190px;
       row-gap: 12px;
     }
@@ -133,6 +133,8 @@
       line-height: 140%;
       font-weight: 400;
       color: $Neutral02;
+      padding-bottom: 12px;
+      text-overflow: ellipsis;
     }
 
     > .countdown {
@@ -187,13 +189,6 @@
     width: 50%;
 
     .dealSummary {
-      grid-template-columns: 48px 4fr 1fr;
-      grid-template-areas:
-        ". . timeLeft"
-        "icon title title"
-        "description description ."
-        "footer footer footer";
-
       > .title {
         max-width: unset;
       }
@@ -206,13 +201,9 @@
       }
 
       > .footer,
-      > .title,
-      > .description {
+      > .countdown,
+      > .proposal {
         text-align: left;
-      }
-
-      > .timeLeft {
-        text-align: right;
       }
     }
   }

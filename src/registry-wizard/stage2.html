@@ -19,9 +19,9 @@
               </span>
             </div>
             <!-- <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" /> -->
-            <select name="dao${$index + 1}Name" id="dao${$index + 1}Name">
+            <select name="dao${$index + 1}Name" id="dao${$index + 1}Name" ref="refDaoSelect" value.bind="daoId">
               <option value="">Select DAO</option>
-              <option repeat.for="dao of daoList" value="${dao.organizationId}">
+              <option repeat.for="dao of daoList" value="${dao.daoId}">
                 ${dao.name}
               </option>
             </select>

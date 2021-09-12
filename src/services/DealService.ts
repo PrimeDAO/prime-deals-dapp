@@ -1,3 +1,4 @@
+import { DealConfig } from "./../registry-wizard/dealConfig";
 import axios from "axios";
 import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
@@ -74,12 +75,12 @@ export class DealService {
         .then(async (deal: any) => {
 
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
-
+          if (timeLeft < 0) deal.incomplete = true;
           return {
             address: hash || "",
             daos: {
-              creator: deal.daos[0].name || "",
-              partner: deal.daos[1].name || "",
+              creator: deal.daos[0].id ? (await this.getDAOByOrganisationID(deal.daos[0].id)).daoName : deal.daos[0].name || "",
+              partner: deal.daos[1].id ? (await this.getDAOByOrganisationID(deal.daos[1].id)).daoName : deal.daos[1].name || "",
             },
             type: deal.type || "Token Swap",
             title: deal.proposal.name,
@@ -134,6 +135,7 @@ export class DealService {
 
     this.DAOs = allDAOs.map(dao => ({
       organizationId: dao.organizationId,
+      daoId: dao.daoId,
       name: dao.daoName,
       logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
     }));

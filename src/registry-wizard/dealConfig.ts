@@ -1,3 +1,4 @@
+import axios from "axios";
 // import { threadId } from "worker_threads";
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
@@ -6,11 +7,38 @@ export interface IProposal {
   overview: string,
 }
 
-export interface IDAO {
+export enum Platforms {
+  "Independent",
+  "DAOstack",
+  "Moloch",
+  "OpenLaw",
+  "Aragon",
+  "Colony",
+  "Compound Governance",
+  "Snapshot",
+  "Gnosis Safe / Snapshot",
+  "Substrate",
+}
+
+export interface IToken {
   name: string,
-  tokens: Array<{name: string, amount: number }>
-  social_medias: Array<{name: string, url: string }>
-  logo_url?: string
+  symbol: string,
+  balance: string,
+  address: string,
+}
+
+export interface ISocialMedia {
+  name: string,
+  url: string,
+}
+export interface IDAO {
+  id: string,
+  name: string,
+  tokens: Array<IToken>
+  social_medias: Array<ISocialMedia>
+  members: Array<string>,
+  logo_url: string,
+  platform?: Platforms,
 }
 
 export interface IAdmin {
@@ -46,6 +74,28 @@ export interface IDealConfig {
   clearState: () => void,
 }
 
+export interface IDeepDaoInfo {
+  id: string,
+  title: string,
+  isActive: boolean,
+  mainSiteLink: string,
+  logo: string,
+  twitter: string,
+  telegram: string,
+  discord: string,
+  github: string,
+  createdAt: string,
+  organizationId: string,
+  daoId: string,
+  rankings: string,
+  indices: string,
+  proposals: string,
+  members: string,
+  votersCoalition: string,
+  financial: string,
+  platform: Platforms
+}
+
 export class DealConfig implements IDealConfig {
   public version: string;
   public proposal: IProposal;
@@ -61,7 +111,7 @@ export class DealConfig implements IDealConfig {
   }
 
   clearState(): void {
-    this.version = "1.0.0";
+    this.version = "0.0.1";
     this.proposal = {
       name: "",
       overview: "",
@@ -69,7 +119,12 @@ export class DealConfig implements IDealConfig {
     this.daos = [
       {
         name: "",
-        tokens: [{name: undefined, amount: undefined}],
+        tokens: [{
+          name: "",
+          symbol: "",
+          balance: "",
+          address: "",
+        }],
         social_medias: [{name: undefined, url: undefined}],
         logo_url: null,
       },
@@ -90,4 +145,28 @@ export class DealConfig implements IDealConfig {
     this.modifiedAt = null;
     this.createdByAddress = null;
   }
+
+  public async getDaoInfoFromDeepDAO(daoId: string): Promise<IDeepDaoInfo> {
+    const daoInfo = await (await axios.get(`https://backend.deepdao.io/dao/ksdf3ksa-937slj3/${daoId}`)).data;
+    return daoInfo;
+  }
+
+  public async populateTokensFromDeepDAO(daoId: string): Promise<Array<IToken>> {
+    const daoTokens = JSON.parse((await this.getDaoInfoFromDeepDAO(daoId)).financial).tokens;
+    console.log(daoTokens);
+
+    return daoTokens.map(token => {
+      return {
+        name: token.tokenName,
+        symbol: token.tokenSymbol,
+        balance: token.tokenBalance,
+        address: token.tokenAddress,
+      };
+    });
+  }
+
+  // populateMembersFromDeepDAO(): void {
+  // }
+  // populateSocialMediaFromDeepDAO(): void {
+  // }
 }
