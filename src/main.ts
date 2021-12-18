@@ -17,6 +17,7 @@ export function configure(aurelia: Aurelia): void {
   aurelia.use
     .standardConfiguration()
     .feature(PLATFORM.moduleName("resources/index"))
+    .feature(PLATFORM.moduleName("resources/elements/primeDesignSystem/index"))
     .plugin(PLATFORM.moduleName("aurelia-animator-css"))
     .plugin(PLATFORM.moduleName("aurelia-dialog"), (configuration) => {
       // custom configuration

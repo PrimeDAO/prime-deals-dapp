@@ -1,0 +1,114 @@
+@import "../colors";
+
+@mixin standardBackground {
+  border: none;
+  padding: 14px 28px;
+  background: $Gradient01;
+  color: $Neutral04;
+}
+
+@mixin standardButton {
+  /**
+    * note one benefit of all: is to set box-sizing: border-box
+    */
+  all: unset;
+  outline: none;
+  padding: 14px 28px;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 19px;
+  letter-spacing: 0.6000000238418579px;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 50px;
+  cursor: pointer;
+  background: transparent;
+  transform: none;
+  user-select: none;
+
+  &:focus {
+    box-shadow: 0 0 10px $Shade06;
+  }
+
+  &.disabled,
+  &.disabled:hover,
+  &:disabled,
+  &:disabled:hover {
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:hover:active:not(.disabled):not(:disabled),
+  &:focus:active:not(.disabled):not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  // transition: 0.5s;
+  // &:hover {
+  //   background-position: right center;
+  // }
+}
+
+button {
+  &.primary {
+    @include standardButton;
+    @include standardBackground;
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      background: $Neutral02;
+    }
+  }
+
+  &.secondary {
+    @include standardButton;
+
+    border: 2px solid $Shade01;
+    padding: 12px 26px;
+
+    &:hover {
+      background: $Border01;
+    }
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      border-color: $Neutral02;
+      background: transparent;
+      color: $Neutral02;
+    }
+
+    // the button is down
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
+      @include standardBackground;
+    }
+  }
+
+  &.tertiary {
+    @include standardButton;
+
+    &:hover {
+      background: $Border01;
+    }
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      color: $Neutral02;
+      background: transparent;
+    }
+
+    // the button is down
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
+      @include standardBackground;
+    }
+  }
+}

@@ -18,7 +18,7 @@ html {
     font-size: 16px;
     background-color: $BG01;
     color: $White;
-    font-family: 'Aeonik';
+    font-family: "Aeonik";
     min-height: 100vh;
     width: clamp(250px, calc(100% - 40px), 1084px);
     margin: 0 auto;
@@ -27,8 +27,9 @@ html {
     // padding-right: 160px;
     overflow-x: hidden;
 
-    input, textarea {
-      font-family: 'Inter';
+    input,
+    textarea {
+      font-family: "Inter";
       font-style: normal;
       font-weight: normal;
       font-size: 16px;
@@ -77,7 +78,7 @@ html {
     }
 
     .heading {
-      font-family: 'Aeonik';
+      font-family: "Aeonik";
       font-style: normal;
       font-weight: bold;
       width: fit-content; // so gradients look right
@@ -117,7 +118,7 @@ html {
       font-size: 20px;
       line-height: 24px;
       font-weight: 700;
-      font-family: 'Inter';
+      font-family: "Inter";
     }
 
     .subtitle1 {
@@ -125,13 +126,13 @@ html {
       font-size: 18px;
       line-height: 27px;
       font-weight: 700;
-      font-family: 'Inter';
+      font-family: "Inter";
     }
 
     .subtext {
       color: $Neutral02;
       font-size: 16px;
-      font-family: 'Inter';
+      font-family: "Inter";
       font-weight: 400;
       line-height: 24px;
       &.gradient {
