@@ -1,5 +1,5 @@
 <template>
-  <button class="${type}" disabled.bind="disabled" role="button">
+  <button class="${type} ${fullWidth?'full-width':''}" disabled.bind="disabled" role="button">
     <slot></slot>
   </button>
 </template>

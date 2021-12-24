@@ -15,18 +15,18 @@
           ToDo
         </div>
         <div class="buttonContainer">
-          <d2d-button class="stageButton previous button outline" click.delegate="back()">
+          <pbutton type="secondary" click.delegate="back()">
             Previous
-          </d2d-button>
-          <d2d-button class="stageButton proceed button" if.to-view="!connected" click.delegate="connect()">
+          </pbutton>
+          <pbutton type="primary" if.to-view="!connected" click.delegate="connect()">
             Connect Wallet
-          </d2d-button>
-          <d2d-button else class="stageButton proceed button" click.delegate="submit()">
+          </pbutton>
+          <pbutton else type="primary" click.delegate="submit()">
             Submit
-          </d2d-button>
-          <d2d-button class="stageButton cancel button only-text" click.delegate="cancel()">
+          </pbutton>
+          <pbutton type="tertiary" click.delegate="cancel()">
             Cancel
-          </d2d-button>
+          </pbutton>
         </div>
       </div>
     </div>

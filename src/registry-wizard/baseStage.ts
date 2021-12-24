@@ -59,7 +59,7 @@ export abstract class BaseStage {
   }
 
   protected cancel(): void {
-    this.router.parent.navigate("initiate");
+    this.router.parent.navigate("home");
   }
 
   protected next(): void {
@@ -69,6 +69,8 @@ export abstract class BaseStage {
   protected back(): void {
     if (this.stageNumber > 1) {
       this.router.navigate(`stage${this.stageNumber - 1}`);
+    } else {
+      this.router.parent.navigate("initiate");
     }
   }
 
