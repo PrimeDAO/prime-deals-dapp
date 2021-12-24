@@ -50,6 +50,11 @@
     transform: translateY(-1px);
   }
 
+  &.full-width {
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
+
   transition: 0.25s;
 }
 
@@ -114,9 +119,5 @@ button {
     &:focus:active:not(.disabled):not(:disabled) {
       @include standardBackground;
     }
-  }
-
-  &.full-width {
-    width: -webkit-fill-available;
   }
 }
