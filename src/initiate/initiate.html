@@ -20,23 +20,25 @@
             </div>
           </div>
           <div class="buttonContainer">
-            <d2d-button
-              class="button full-width ${box.isDisabled && 'disabled'}"
+            <pbutton
+              type="primary"
+              disabled.bind="box.isDisabled"
+              full-width
               click.delegate="!box.isDisabled && navigate('newDeal', {type: box.slug})"
             >
               ${box.isDisabled ? "Coming Soon" : "Select"}
-            </d2d-button>
+            </pbutton>
           </div>
         </div>
       </template>
     </div>
     <div class="noPartner">
       <div class="subtitle1">Don't have a partner yet?</div>
-      <d2d-button 
-        class="button outline" 
+      <pbutton 
+        type="secondary" 
         click.delegate="navigate('newDeal', {type: 'open'})">
         Create an Open Deal
-      </d2d-button>
+      </pbutton>
     </div>
   </div>
 </template>

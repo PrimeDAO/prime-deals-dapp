@@ -27,6 +27,7 @@
   background: transparent;
   transform: none;
   user-select: none;
+  color: $White;
 
   &:focus {
     box-shadow: 0 0 10px $Shade06;
@@ -40,15 +41,21 @@
     box-shadow: none;
   }
 
+  &:hover:not(.disabled):not(:disabled) {
+    color: $White;
+  }
+
   &:hover:active:not(.disabled):not(:disabled),
   &:focus:active:not(.disabled):not(:disabled) {
     transform: translateY(-1px);
   }
 
-  // transition: 0.5s;
-  // &:hover {
-  //   background-position: right center;
-  // }
+  &.full-width {
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
+
+  transition: 0.25s;
 }
 
 button {
@@ -70,8 +77,10 @@ button {
     border: 2px solid $Shade01;
     padding: 12px 26px;
 
-    &:hover {
-      background: $Border01;
+    &:hover:enabled {
+      background-color: $Border01;
+      border-color: $Primary01;
+      color: $White;
     }
 
     &.disabled,

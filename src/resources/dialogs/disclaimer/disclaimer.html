@@ -13,13 +13,13 @@
         I acknowledge that I have fully read and understood this disclaimer
       </label>
 
-      <d2d-button class="button outline" click.trigger="controller.cancel(false)">
+      <pbutton type="secondary" click.trigger="controller.cancel(false)">
         Decline
-      </d2d-button>
+      </pbutton>
 
-      <d2d-button class="button ${!checked && 'disabled'}" disabled.to-view="!checked" click.trigger="checked && controller.ok(true)" rel="okButton">
+      <pbutton type="primary" disabled.bind="!checked" click.trigger="checked && controller.ok(true)" rel="okButton">
         Accept
-      </d2d-button>
+      </pbutton>
     </ux-dialog-footer>
   </ux-dialog>
 </template>
