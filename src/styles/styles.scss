@@ -1,6 +1,7 @@
 @import "./animations";
 @import "./colors";
 @import "tippy.js/dist/tippy.css"; // TODO: use CDN?
+@import "the-new-css-reset/css/reset.css";
 
 @mixin standardTextGradient {
   background-image: $Gradient08;
