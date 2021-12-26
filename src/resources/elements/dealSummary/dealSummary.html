@@ -1,13 +1,11 @@
 <template>
-  <div 
+  <pcard 
     class="dealSummaryContainer"
+    width="360px"
     ref="container"
   >
   <!-- Open Deal -->
-    <div if.to-view="!loading" class="dealSummary">
-      <div class="countdown">
-        <time-left deal.to-view="deal" largest contained></time-left>
-      </div>
+    <div slot="body" if.to-view="!loading" class="dealSummary">
       <div class="proposal">
         <div class="title ellipses">
           <h1>${deal.type}</h1>
@@ -18,7 +16,6 @@
         </div>
       </div> 
       <div class="footer">
-        <div>
           <div class="icons ${!deal.dao.creator?'open':'running'}">
             <div if.to-view="deal.logo.creator" class="icon">
               <img src="${deal.logo.creator}" />
@@ -34,15 +31,13 @@
           <pbutton
             type="secondary"
             click.delegate="navigate('initiate')">
-            Partner
+            View
           </pbutton>
-        </div>
       </div>
     </div>
 
-    <div if.to-view="loading" class="loading">
+    <div else class="loading">
       <i class="fas fa-circle-notch fa-spin"></i>
     </div>
-
-  </div>
+  </pcard>
 </template>

@@ -1,42 +1,42 @@
 @import "styles/colors.scss";
 .dealSummaryContainer {
-  display: inline-block;
-  cursor: default;
-  width: 360px;
-  height: 291px;
-  padding-right: 30px;
-
-  .dealSummary {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 34px 190px 67px;
-    grid-template-areas:
-      "countdown"
-      "proposal"
-      "footer";
+  .cardContainer {
+    display: inline-block;
+    margin-right: 30px;
     background-color: $BG02;
     transition: 0.35s ease-in-out;
-    .button {
-      width: 134px;
-      &:after {
-        background-color: $BG02;
-      }
+    .card {
+      background-color: unset;
     }
     &:hover {
-      background-color: #403453;
-      .button:after {
-        opacity: 0;
-      }
+      background-color: $Border01;
+      // .button:after {
+      //   opacity: 0;
+      // }
       .icons>.icon {
-        border-color: #403453;
+        border-color: $Border01;
       }
       .title>h1 {
         color: #897AA1;
       }
     }
-    border-radius: 6px;
-    padding: 0 8px 0 20px;
-    box-sizing: border-box;
+  }
+  // cursor: default;
+  height: 291px;
+
+  .dealSummary {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 208px 47px;
+    grid-template-areas:
+      "proposal"
+      "footer";
+    .button {
+      width: 134px;
+    }
+    // border-radius: 6px;
+    // padding: 0 8px 0 20px;
+    // box-sizing: border-box;
     height: 100%;
     overflow: hidden;
     align-items: center;
@@ -152,9 +152,7 @@
       grid-area: footer;
       display: flex;
       align-items: baseline;
-      height: 67px;
 
-      &>div {
         .button {
           margin: 0;
           margin-right: 12px;
@@ -169,7 +167,6 @@
         font-weight: bold;
         font-size: 13px;
       }
-    }
   }
 
   .loading {

@@ -26,7 +26,6 @@
 
 
     &.top {
-      width: 56%;
       margin-bottom: 200px;
 
       .title {
@@ -49,61 +48,13 @@
         white-space: normal;
       }
 
-      .buttons {
-        display: grid;
-        grid-auto-flow: column;
-        justify-content: space-between;
+      .cards {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
         cursor: pointer;
-        width: 710px;
         grid-gap: 24px;
-        .buttonContainer {
-          display: flex;
-          border-radius: 6px;
-          overflow: hidden;
-          & .header {
-            -webkit-text-fill-color: white;
-          }
-        }
-        .contribute,
-        .launch {
-          border-left-width: 6px;
-          border-right-width: 0;
-          border-left-style: solid;
-          border-image: linear-gradient(to bottom, #ff497a, #a258a7) 1 100%;
-          border-radius: 6px;
-          background-color: $BG02;
-          width: 300px;
-
-          padding: 18px;
-
-          .title {
-            display: flex;
-            justify-content: space-between;
-            color: $White;
-            margin-bottom: 16px;
-            margin-right: 6px;
-
-            .header {
-              font-weight: bold;
-              font-family: "Aeonik";
-              font-size: 28px;
-              white-space: nowrap;
-              padding-right: 16px;
-            }
-
-            .arrow {
-              font-size: 28px;
-            }
-          }
-
-          .subtitle {
-            color: $Neutral03;
-            font-size: 16px;
-            line-height: 20px;
-            font-weight: 400;
-            font-family: "Inter";
-          }
-        }
       }
     }
 

@@ -1,0 +1,111 @@
+@import "styles/styles.scss";
+
+.cardContainer {
+  border-radius: 6px;
+  overflow: hidden;
+  & .header {
+    -webkit-text-fill-color: white;
+  }
+}
+
+.card {
+  border-radius: 6px;
+  background-color: $BG02;
+  cursor: pointer;
+
+  padding: 18px;
+
+  [slot="header"] {
+    display: flex;
+    justify-content: space-between;
+    color: $White;
+    margin-bottom: 16px;
+    margin-right: 6px;
+    gap: 6px;
+    div, i {
+      width: -webkit-fill-available;
+    }
+
+    .text {
+      font-weight: bold;
+      font-family: "Aeonik";
+      font-size: 28px;
+      white-space: nowrap;
+      padding-right: 16px;
+    }
+
+    .icon {
+      font-size: 28px;
+      width: 28px;
+      text-align: center;
+    }
+
+    .left {
+      text-align: left;
+    }
+    .right {
+      text-align: right;
+    }
+  }
+
+  .subtitle {
+    color: $Neutral03;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 400;
+    font-family: "Inter";
+  }
+
+  &.default, &.success, &.alert, &.warning {
+    border-left-width: 6px;
+    border-right-width: 0;
+    border-left-style: solid;
+  }
+
+  &.success, &.alert, &.warning {
+    [slot="header"]>* {
+      font-size: 18px;
+      line-height: 20px;
+      vertical-align: middle;
+    }
+
+    .text::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      font-family: "Font Awesome 5 Free";
+      font-size: 20px;
+      line-height: inherit;
+      vertical-align: middle;
+      font-weight: 900; 
+      margin-right: 6px;
+    }
+  }
+
+  &.default {
+    border-image: linear-gradient(to bottom, $Primary01, $Secondary02) 1 100%;
+  }
+  &.success {
+    border-image: linear-gradient(to bottom, $Green, $Green) 1 100%;
+    .text::before {
+      content: "\f058";
+      color: $Green;
+    }
+  }
+  &.alert {
+    border-image: linear-gradient(to bottom, $Red, $Red) 1 100%;
+    .text::before {
+      content: "\f071";
+      color: $Red;
+    }
+  }
+  &.warning {
+    border-image: linear-gradient(to bottom, $Orange, $Orange) 1 100%;
+    .text::before {
+      content: "\f05a";
+      color: $Orange;
+    }
+  }
+}
