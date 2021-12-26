@@ -3,7 +3,8 @@
 @mixin standardBackground {
   border: none;
   padding: 14px 28px;
-  background: $Gradient01;
+  background-image: $Gradient08;
+  background-size: 200% auto;
   color: $Neutral04;
 }
 
@@ -43,6 +44,7 @@
 
   &:hover:not(.disabled):not(:disabled) {
     color: $White;
+    background-position: right center;
   }
 
   &:hover:active:not(.disabled):not(:disabled),
