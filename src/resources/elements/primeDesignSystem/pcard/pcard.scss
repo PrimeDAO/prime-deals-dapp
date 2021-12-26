@@ -20,9 +20,8 @@
     justify-content: space-between;
     color: $White;
     margin-bottom: 16px;
-    margin-right: 6px;
     gap: 6px;
-    div, i {
+    >span, >div, >i {
       width: -webkit-fill-available;
     }
 
@@ -32,6 +31,7 @@
       font-size: 28px;
       white-space: nowrap;
       padding-right: 16px;
+      width: 100%;
     }
 
     .icon {
@@ -42,6 +42,9 @@
 
     .left {
       text-align: left;
+    }
+    .center {
+      text-align: center;
     }
     .right {
       text-align: right;
