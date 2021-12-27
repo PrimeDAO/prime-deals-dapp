@@ -1,0 +1,107 @@
+@import "styles/styles.scss";
+
+@mixin icon($file) {
+  background-image: url("../../../static/logos/products/" + $file);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+$menu-open-duration: 0.1s;
+
+.mobile-menu {
+  display: grid;
+  grid-template-rows: 27px auto;
+  grid-template-columns: 100%;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: $BG02;
+  overflow: hidden;
+  width: calc(100% - 40px);
+  height: 100vh;
+  transform: translate(calc(50vw - 29px), calc(-50% + 33px));  clip-path: circle(0%);
+  transition: transform $menu-open-duration ease-in-out, clip-path $menu-open-duration ease-in-out;
+  transition-delay: $menu-open-duration;
+  padding: 10px 20px;
+
+  .menu-body, .menu-header {
+    opacity: 0;
+    align-items: center;
+    transition: opacity $menu-open-duration ease-in-out;
+    transition-delay: 0s;
+  }
+
+  .menu-header {
+    display: grid;
+    text-align: start;
+  }
+
+  .menu-body {
+    text-align: center;
+    >.products {
+      display: inline-flex;
+      column-gap: 15px;
+      width: 75%;
+      justify-content: center;
+    }
+    >.productSubpages {
+      display: inline-flex;
+      height: 100%;
+
+      >.container {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin-top: 20px;
+        text-align: center;
+      }
+    }
+  }
+
+  &.is-open {
+    clip-path: circle(100%);
+    transform: translate(0, 0);
+    transition-delay: 0s;
+    .menu-body, .menu-header {
+      opacity: 1;
+      transition-delay: 0.2s;
+    }
+  }
+
+  .item {
+    color: $Neutral02;
+    padding: 5px;
+    .icon {
+      margin-bottom: 5px;
+      border-bottom: solid 3px transparent;
+      display: inline-flex;
+      background-position: top;
+      width: 32px;
+      height: 47.5px;
+      &.launch { @include icon("launch-mono.svg"); }
+      &.pools { @include icon("pools-mono.svg"); }
+      &.rating { @include icon("rating-mono.svg"); }
+      &.deals { @include icon("deals-mono.svg"); }
+    }
+  
+    &:hover {
+      color: $White;
+    }
+
+    &.active,
+    &:active {
+      color: $Primary01;
+      
+      .icon {
+        border-bottom-color: $Secondary01;
+        &.launch { @include icon("launch.svg"); }
+        &.pools { @include icon("pools.svg"); }
+        &.rating { @include icon("rating.svg"); }
+        &.deals { @include icon("deals.svg"); }
+      }
+    }
+  }
+}
+
