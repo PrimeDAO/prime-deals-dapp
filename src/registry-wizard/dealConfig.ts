@@ -147,7 +147,7 @@ export class DealConfig implements IDealConfig {
   }
 
   public async getDaoInfoFromDeepDAO(daoId: string): Promise<IDeepDaoInfo> {
-    const daoInfo = await (await axios.get(`https://backend.deepdao.io/dao/ksdf3ksa-937slj3/${daoId}`)).data;
+    const daoInfo = await (await axios.get(`/api/organizations/all/${daoId}`)).data;
     return daoInfo;
   }
 

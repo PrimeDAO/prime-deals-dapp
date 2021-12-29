@@ -131,14 +131,20 @@ export class DealService {
 
   public async getDAOsInformation(): Promise<void> {
     // TODO
-    const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
+    this.DAOs = await(await axios.get("http://localhost:3000/api/organizations/all")).data;
 
-    this.DAOs = allDAOs.map(dao => ({
-      organizationId: dao.organizationId,
-      daoId: dao.daoId,
-      name: dao.daoName,
-      logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
-    }));
+    // this.DAOs = allDAOs.map(dao => ({
+    //   organizationId: dao.organizationId,
+    //   daoId: dao.daoId,
+    //   name: dao.daoName,
+    //   logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
+    // }));
+    console.log(this.DAOs);
+  }
+
+
+  public async getDAOsTokenList(id: string): Promise<Array<{tokenName: string, tokenSymbol: string, tokenAddress: string}>> {
+    return await (await axios.get(`http://localhost:3000/api/daos/${id}/tokens`)).data;
   }
 
   public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {

@@ -18,11 +18,10 @@
                 ${dao.name.length}/50
               </span>
             </div>
-            <!-- <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" /> -->
             <select name="dao${$index + 1}Name" id="dao${$index + 1}Name" ref="refDaoSelect" value.bind="daoId">
               <option value="">Select DAO</option>
-              <option repeat.for="dao of daoList" value="${dao.daoId}">
-                ${dao.name}
+              <option repeat.for="dao of daoList" value="${dao.daoId}" data-image="${dao.logo}">
+                ${dao.daoName}
               </option>
             </select>
           </div>
@@ -32,16 +31,19 @@
                 <div>
                   <div class="sMedia">
                     <label for="token-${$parent.$index}-${$index}">Token</label>
-                    <span>
-                      ${token.name.length || 0}/20
-                    </span>
                   </div>
-                  <input
+                  <select name="token-${$parent.$index}-${$index}" class="platform" id="token-${$parent.$index}-${$index}" value.bind="dao.tokens[$index].name">
+                    <option value="">Select Token</option>
+                    <option repeat.for="token of tokenList" value="${token.tokenAddress}" data-image="${token.logo}">
+                      ${token.tokenName}
+                    </option>
+                  </select>
+                  <!-- <input
                     id="token-${$parent.$index}-${$index}"
                     class="platform"
                     placeholder="Select Token"
                     value.bind="dao.tokens[$index].name"
-                    maxlength="20" />
+                    maxlength="20" /> -->
                 </div>
                 <div class="addLinkContainer">
                   <div>

@@ -6,6 +6,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 
 export class Stage2 extends BaseStage {
   @bindable daoList: Array<IDaoAPIObject> = this.dealService.DAOs;
+  @bindable tokenList: Array<{tokenName: string, tokenSymbol: string, tokenAddress: string}> = [];
   @bindable daoId: string;
   @bindable refDaoSelect: HTMLSelectElement;
 
@@ -13,25 +14,19 @@ export class Stage2 extends BaseStage {
 
   attached(): void {
     if (!this.daoList) this.dealService.getDAOsInformation().then(() => {
-      this.daoList = this.dealService.DAOs.sort((a: any, b: any) =>
-        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-      );
+      this.daoList = this.dealService.DAOs
+        .sort((a: any, b: any) =>
+          a.daoName.toLowerCase().localeCompare(b.daoName.toLowerCase()),
+        );
     }).catch((err) => {
       console.error("err", err);
     });
 
-    const el = this.refDaoSelect;
-    console.log(el);
-
-    el.onchange = (evt) => {
-      console.log(this.daoId);
-
-      this.dealConfig.getDaoInfoFromDeepDAO(this.daoId).then((dao: IDeepDaoInfo) => {
-        console.log("dao", dao);
-
-      }).catch((err) => {
-        console.error("err", err);
-      });
+    this.refDaoSelect.onchange = (evt) => {
+      this.dealService.getDAOsTokenList((evt.target as HTMLSelectElement).value)
+        .then((tokens) => {
+          this.tokenList = tokens;
+        });
     };
   }
 
