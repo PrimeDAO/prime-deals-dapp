@@ -1,9 +1,8 @@
-import { DealConfig } from "./../registry-wizard/dealConfig";
 import axios from "axios";
-import { IpfsService } from "./IpfsService";
-import { Address } from "./EthereumService";
+import { IpfsService } from "services/IpfsService";
+import { Address } from "services/EthereumService";
 import { autoinject } from "aurelia-framework";
-import { IDealConfig } from "../registry-wizard/dealConfig";
+import { IToken, IDealConfig } from "registry-wizard/dealConfig";
 
 export interface IDealCreatedEventArgs {
   newDeal: Address;
@@ -44,6 +43,7 @@ export interface IDaoAPIObject {
   votersParticipation: number,
   thumbName: string,
   platform: number,
+  tokens: Array<IToken>,
 }
 
 @autoinject
@@ -73,7 +73,7 @@ export class DealService {
     hashes.forEach( async (hash:string) => {
       this.dealsObject[hash] = await this.ipfsService.getDealProposal(hash)
         .then(async (deal: any) => {
-
+          if (!deal) return {};
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
           if (timeLeft < 0) deal.incomplete = true;
           return {
@@ -132,18 +132,10 @@ export class DealService {
   public async getDAOsInformation(): Promise<void> {
     // TODO
     this.DAOs = await(await axios.get("http://localhost:3000/api/organizations/all")).data;
-
-    // this.DAOs = allDAOs.map(dao => ({
-    //   organizationId: dao.organizationId,
-    //   daoId: dao.daoId,
-    //   name: dao.daoName,
-    //   logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
-    // }));
-    console.log(this.DAOs);
   }
 
 
-  public async getDAOsTokenList(id: string): Promise<Array<{tokenName: string, tokenSymbol: string, tokenAddress: string}>> {
+  public async getDAOsTokenList(id: string): Promise<Array<IToken>> {
     return await (await axios.get(`http://localhost:3000/api/daos/${id}/tokens`)).data;
   }
 

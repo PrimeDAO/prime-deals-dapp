@@ -14,7 +14,6 @@ const addDao = ( prev, current, idx, arr ) => {
 app.get( '/api/organizations/all', async ( req, res ) => {
   const allOrgs = await ( await axios.get( "https://backend.deepdao.io/dashboard/organizations/" ) ).data
   const allDAOs = await ( await axios.get( "https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/" ) ).data.daosSummary.reduce( ( a, v ) => ( { ...a, [ v.organizationId ]: v } ) )
-  console.log( Object.keys( allDAOs ).length, allOrgs.length )
   const orgs = allOrgs.reduce( ( filteredDaos, org ) => {
     if ( allDAOs[ org.id ]?.daoId ) {
       const formattedOrg = {
@@ -36,7 +35,6 @@ app.get( '/api/organizations/all', async ( req, res ) => {
 
 app.get( '/api/daos/all', async ( req, res ) => {
   const allDAOs = await ( await axios.get( "https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/" ) ).data
-  console.log( allDAOs )
   const DAOs = allDAOs.daosSummary.reduce( ( filteredDaos, dao ) => {
     if ( dao.logo && dao.logo !== null ) {
       const formattedDao = {

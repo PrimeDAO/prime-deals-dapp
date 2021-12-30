@@ -1,6 +1,6 @@
 import { BaseStage } from "registry-wizard/baseStage";
 import { Utils } from "services/utils";
-import { IDAO, IDeepDaoInfo, IToken, DealConfig } from "./dealConfig";
+import { IDAO, IToken, DealConfig } from "./dealConfig";
 import { IDaoAPIObject } from "../services/DealService";
 import { bindable } from "aurelia-typed-observable-plugin";
 
@@ -8,7 +8,7 @@ export class Stage2 extends BaseStage {
   @bindable daoList: Array<IDaoAPIObject> = this.dealService.DAOs;
   @bindable tokenList: Array<{tokenName: string, tokenSymbol: string, tokenAddress: string}> = [];
   @bindable daoId: string;
-  @bindable refDaoSelect: HTMLSelectElement;
+  @bindable refDaoSelect: Array<HTMLSelectElement>;
 
   dealConfig: DealConfig;
 
@@ -21,13 +21,6 @@ export class Stage2 extends BaseStage {
     }).catch((err) => {
       console.error("err", err);
     });
-
-    this.refDaoSelect.onchange = (evt) => {
-      this.dealService.getDAOsTokenList((evt.target as HTMLSelectElement).value)
-        .then((tokens) => {
-          this.tokenList = tokens;
-        });
-    };
   }
 
   // Add a link object to the link object arrays

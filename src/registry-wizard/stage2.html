@@ -1,119 +1,12 @@
 <template>
+  <require from="./elements/dao-info/dao-info"></require>
   <div class="page animated-page stageContainer stage2 au-animate">
     <div class="headingContainer">
       <h1 class="heading heading1 gradient">DAO's</h1>
       <hr />
     </div>
     <template repeat.for="dao of dealConfig.daos">
-      <div class="infoContainer">
-        <div class="sideText">
-          <h2 class="heading heading3 title">DAO ${$index + 1}</h2>
-          Description of your project and team.
-        </div>
-        <div class="form">
-          <div class="infoInput">
-            <div class="labelContainer">
-              <label for="proposalName">Name DAO ${$index + 1}</label>
-              <span>
-                ${dao.name.length}/50
-              </span>
-            </div>
-            <select name="dao${$index + 1}Name" id="dao${$index + 1}Name" ref="refDaoSelect" value.bind="daoId">
-              <option value="">Select DAO</option>
-              <option repeat.for="dao of daoList" value="${dao.daoId}" data-image="${dao.logo}">
-                ${dao.daoName}
-              </option>
-            </select>
-          </div>
-          <div class="infoInput">
-            <template repeat.for="token of dao.tokens">
-              <div class="otherLinks">
-                <div>
-                  <div class="sMedia">
-                    <label for="token-${$parent.$index}-${$index}">Token</label>
-                  </div>
-                  <select name="token-${$parent.$index}-${$index}" class="platform" id="token-${$parent.$index}-${$index}" value.bind="dao.tokens[$index].name">
-                    <option value="">Select Token</option>
-                    <option repeat.for="token of tokenList" value="${token.tokenAddress}" data-image="${token.logo}">
-                      ${token.tokenName}
-                    </option>
-                  </select>
-                  <!-- <input
-                    id="token-${$parent.$index}-${$index}"
-                    class="platform"
-                    placeholder="Select Token"
-                    value.bind="dao.tokens[$index].name"
-                    maxlength="20" /> -->
-                </div>
-                <div class="addLinkContainer">
-                  <div>
-                    <label for="amount-${$parent.$index}-${$index}">Funding Amount</label>
-                    <numeric-input
-                      output-as-string="true"
-                      id="amount-${$parent.$index}-${$index}"
-                      value.bind="dao.tokens[$index].amount">
-                    </numeric-input>
-                    <span if.bind="dao.tokens.length > 1"
-                      class="deleteLink"
-                      title="Delete this row"
-                      click.delegate="deleteToken($parent.$index, $index)">
-                      <i class="far fa-trash-alt"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="addLink"
-                click.delegate="addToken($parent.$index)"
-                if.bind="$index == dao.tokens.length - 1">
-                <a>+ Additional token</a>
-              </div>
-            </template>
-          </div>
-          <div class="infoInput">
-            <template repeat.for="platform of dao.social_medias">
-              <div class="otherLinks">
-                <div>
-                  <div class="sMedia">
-                    <label for="platform-${$parent.$index}-${$index}">Social Media</label>
-                    <span>
-                      ${platform.name.length || 0}/20
-                    </span>
-                  </div>
-                  <input
-                    id="platform-${$parent.$index}-${$index}"
-                    class="platform"
-                    placeholder="Select Platform"
-                    value.bind="dao.social_medias[$index].name"
-                    maxlength="20" />
-                </div>
-                <div class="addLinkContainer">
-                  <div>
-                    <label for="url-${$parent.$index}-${$index}">URL</label>
-                    <input
-                      id="url-${$parent.$index}-${$index}"
-                      placeholder="https://..."
-                      maxlength="255"
-                      value.bind="dao.social_medias[$index].url" />
-                    <span if.bind="dao.social_medias.length > 1"
-                      class="deleteLink"
-                      title="Delete this row"
-                      click.delegate="deleteSocialMedia($parent.$index, $index)">
-                      <i class="far fa-trash-alt"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="addLink"
-                click.delegate="addSocialMedia($parent.$index)"
-                if.bind="$index == dao.social_medias.length - 1">
-                <a>+ Add more</a>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
+      <dao-info dao.bind="dao" index.bind="$index"></dao-info>
       <hr />
     </template>
 
