@@ -114,7 +114,7 @@
   }
 
   input,
-  select,
+  // select,
   textarea {
     &:focus-within, &:active {
       outline: none;
@@ -209,6 +209,7 @@
           align-items: center;
           color: $Neutral02;
         }
+        pselect,
         .platform {
           width: 190px;
         }
@@ -222,7 +223,7 @@
           align-items: flex-end;
           flex-flow: column;
           input {
-            width: 245px;
+            width: 215px;
           }
           .deleteLink {
             cursor: pointer;
@@ -537,7 +538,8 @@
       grid-column: span 2;
     }
     .infoInput {
-      input, select {
+      select,
+      input {
         height: unset;
         padding: 12px;
       }
@@ -570,7 +572,8 @@
             width: -webkit-fit-content;
           }
           gap: unset;
-          input, select {
+          select,
+          input {
             width: unset;
             height: unset;
           }

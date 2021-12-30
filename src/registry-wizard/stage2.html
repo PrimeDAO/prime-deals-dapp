@@ -36,12 +36,17 @@
                       ${token.name.length || 0}/20
                     </span>
                   </div>
-                  <input
+                  <pselect
+                    id="token-${$parent.$index}-${$index}"
+                    class="platform"
+                    placeholder="Select Token">
+                  </pselect>
+                  <!-- <input
                     id="token-${$parent.$index}-${$index}"
                     class="platform"
                     placeholder="Select Token"
                     value.bind="dao.tokens[$index].name"
-                    maxlength="20" />
+                    maxlength="20" /> -->
                 </div>
                 <div class="addLinkContainer">
                   <div>
