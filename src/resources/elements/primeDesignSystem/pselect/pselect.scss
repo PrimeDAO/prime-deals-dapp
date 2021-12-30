@@ -1,0 +1,81 @@
+@import "../colors";
+
+.ss-main {
+  width: inherit;
+  .ss-single-selected {
+    border: 1px solid $Border01;
+    background-color: $BG04;
+    border-radius: 10px;
+    padding: 7.5px 10px;
+    width: -webkit-fill-available;
+    height: 40px;
+    color: $Neutral02;
+  }
+
+  .ss-content {
+    background-color: $BG04;
+    border: 1px solid $Border01;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+    .ss-list {
+      padding: 5px 0;
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        transform: translateX(-15px);
+        border-radius: 15px;
+        // border: 2px solid $BG01;
+        background-color: rgba($Neutral02, 0.5);
+        height: 50%;
+        // outline: 1px solid slategrey;
+      }
+      .ss-option {
+        color: $Neutral04;
+        padding: 5px 10px;
+        &.ss-disabled,
+        &:hover {
+          background-color: $Border01;
+        }
+      }
+    }
+
+    .ss-search {
+      border-bottom: 1px solid $Border01;
+      margin: 0 5px;
+      display: inline-flex;
+      align-items: center;
+      &::before {
+        content: "\F002";
+        font-family: "Font Awesome 5 Free";
+        font-weight: bold;
+        font-size: 13px;
+        color: $Neutral04;
+      }
+
+      &>input {
+        border: none;
+        background-color: $BG04;
+        color: $Neutral02;
+        padding: 5px 10px;
+        &:active,
+        &:focus {
+          box-shadow: none;
+        }
+        background-color: unset;
+      }
+    }
+  }
+
+  .ss-open-below + .ss-content {
+    border-top-color: $Border01;
+    border-radius: 0 0 10px 10px;
+  }
+  .ss-open-above + .ss-content {
+    border-bottom-color: $Border01;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .ss-open-above, .ss-open-below, .ss-open {
+    border-color: $Secondary02;
+  }
+}
