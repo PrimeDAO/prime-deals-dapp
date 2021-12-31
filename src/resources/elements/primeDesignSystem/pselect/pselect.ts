@@ -1,5 +1,4 @@
-// import { bindable } from "aurelia-typed-observable-plugin";
-import { customElement } from "aurelia-framework";
+import { bindable, customElement } from "aurelia-framework";
 import SlimSelect from "slim-select";
 import "./pselect.scss";
 
@@ -17,29 +16,31 @@ import "./pselect.scss";
 
 @customElement("pselect")
 export class PButton {
-  // @bindable.string type: ButtonType;
   // @bindable.booleanAttr disabled = false;
   // @bindable.booleanAttr fullWidth = false;
+  @bindable data: Array<{value: string, text: string, innerHTML: string}>;
+  @bindable placeholder = "Please Select...";
+  @bindable isSearchable = false;
 
   refSelectInput: HTMLSelectElement;
   select: SlimSelect;
   isOpen = false;
-  attached():void {
-    this.select = new SlimSelect({
-      select: this.refSelectInput,
 
-      // data: [
-      //   { text: "Option 1"},
-      //   { text: "Option 2"},
-      //   { text: "Option 3"},
-      //   { text: "Option 4"},
-      //   { text: "Option 5"},
-      //   { text: "Option 6"},
-      //   { text: "Option 7"},
-      //   { text: "Option 8"},
-      //   { text: "Option 9"},
-      //   { text: "Option 10"},
-      // ],
+  attached(): void {
+    this.select = new SlimSelect({
+      placeholder: "<span class=\"loading\"><i class=\"fas fa-circle-notch\" ></i> Loading...</span>",
+      select: this.refSelectInput,
+      searchText: "DAO Name is missing.",
+      searchPlaceholder: "Search DAO Name",
+      hideSelectedOption: true,
+      showSearch: this.isSearchable,
+      data: this.data,
     });
+  }
+
+  dataChanged(): void {
+    if (this.select) {
+      this.select.setData([{text: this.placeholder, placeholder: true}, ...this.data]);
+    }
   }
 }

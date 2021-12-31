@@ -192,6 +192,10 @@
 
 
   &.stage2, &.stage3 {
+    pselect {
+      width: 100%;
+    }
+
     .infoContainer {
       .otherLinks {
         &>.textarea-container {
@@ -209,7 +213,6 @@
           align-items: center;
           color: $Neutral02;
         }
-        pselect,
         .platform {
           width: 190px;
         }
