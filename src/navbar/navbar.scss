@@ -1,13 +1,17 @@
 @import "styles/colors.scss";
 
 @mixin icon($file) {
-  -webkit-mask: url("../../static/logos/products/" + $file) no-repeat center;
-  mask: url("../../static/logos/products/" + $file) no-repeat center;
+  background-image: url("../../static/logos/products/" + $file);
+  background-repeat: no-repeat;
+  background-position: center;
 }
+
+$menu-open-duration: 0.1s;
 
 .navbar-container {
   display: grid;
-  position: absolute;
+  position: fixed;
+  z-index: 999;
   left: 0;
   grid-auto-flow: column;
   align-items: center;
@@ -16,6 +20,11 @@
   width: -moz-available;
   width: -webkit-fill-available;
   background: $BG01;
+  box-shadow: inset 0px -1px 0px $BG02;
+
+  .mobile-only {
+    display: none;
+  }
 
   .logo {
     grid-area: logo;
@@ -34,38 +43,38 @@
       padding: 0;
       display: flex;
       margin: 0;
+      gap: 5px;
 
       .product-page {
         display: flex;
         align-items: center;
-        padding: 13px 14px 13px 8px;
+        padding: 19px 14px 19px 8px;
         column-gap: 5px;
+        border-bottom: solid 3px transparent;
+        transition: 175ms all ease-in-out;
 
         .icon {
-          display: inline-flex;
-          width: 42px;
-          height: 42px;
-          background-color: $Neutral03;
-          &:hover {
-            background: $Primary01;
-          }
+          display: flex;
+          width: 30px;
+          height: 28px;
+          transition: 175ms background-image linear;
 
-          &.launch { @include icon("launch.svg"); }
-          &.pools { @include icon("pools.svg"); }
-          &.rating { @include icon("rating.svg"); }
-          &.deals { @include icon("deals.svg"); }
+          &.launch { @include icon("launch-mono.svg"); }
+          &.pools { @include icon("pools-mono.svg"); }
+          &.rating { @include icon("rating-mono.svg"); }
+          &.deals { @include icon("deals-mono.svg"); }
         }
         &.active, &:active {
-          .icon {
-            background: $Primary01;
-          }
-          background-color: $Border01;
+          border-color: $Secondary01;
         }
         &:hover {
           cursor: pointer;
-          color: $Primary01;
+          background: $BG02;
           .icon {
-            background: $Primary01;
+            &.launch { @include icon("launch.svg"); }
+            &.pools { @include icon("pools.svg"); }
+            &.rating { @include icon("rating.svg"); }
+            &.deals { @include icon("deals.svg"); }
           }
         }
       }
@@ -84,38 +93,58 @@
 
   .product-sub-pages {
     grid-area: sub-pages;
-    background-color: $Border01;
+    background-color: $BG02;
     display: grid;
     .container {
       list-style-type: none;
       padding: 0 20px;
       display: flex;
       column-gap: 20px;
-      // grid-template-columns: repeat(auto-fill, min-content);
       text-align: left;
       margin: auto;
       width: clamp(250px, 100%, calc(1084px));
       .product-sub-page-link {
         cursor: pointer;
         padding: 10px 0;
-        color: inherit;
+        color: $Neutral02;
         transition: color 0.075s ease-in;
         &:hover {
-          color: $Primary01;
+          color: $White;
+        }
+        &.active {
+          color: $Secondary01;
         }
       }
     }
   }
 }
 
-@media screen and (max-width: 782px) {
+@media screen and (max-width: 1072px) {
   .navbar-container {
+    .networkFeedback {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .navbar-container {
+    display: inline-flex;
+    grid-template-areas: "logo hamburger-menu";
+    justify-content: space-between;
+
+    .mobile-only {
+      display: block;
+    }
+    .hamburger-menu-button {
+      z-index: 999;
+      grid-area: hamburger-menu;
+    }
+
     .products,
     .product-sub-pages,
     .wallet-container {
       display: none;
     }
   }
-
-
 }
