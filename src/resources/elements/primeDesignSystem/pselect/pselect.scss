@@ -10,6 +10,30 @@
     width: -webkit-fill-available;
     height: 40px;
     color: $Neutral02;
+
+    .placeholder {
+      color: $Neutral02;
+      .loading {
+        display: flex;
+        gap: 5px;
+        line-height: initial;
+        i {
+          animation-name: spin;
+          animation-duration: 1.5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;          color: $Primary01;
+        }
+        
+      }
+      img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 5px;
+        background-color: $Neutral04;
+        overflow: visible;
+      }
+    }
   }
 
   .ss-content {
@@ -31,6 +55,18 @@
       }
       .ss-option {
         color: $Neutral04;
+        span {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          img {
+            margin-right: 5px;
+            height: 20px;
+            width: 20px;
+            background-color: $Neutral03;
+            border-radius: 50%;
+          }
+        }
         padding: 5px 10px;
         &.ss-disabled,
         &:hover {
@@ -42,8 +78,9 @@
     .ss-search {
       border-bottom: 1px solid $Border01;
       margin: 0 5px;
-      display: inline-flex;
       align-items: center;
+      width: -webkit-fill-available;
+      width: -moz-available;
       &::before {
         content: "\F002";
         font-family: "Font Awesome 5 Free";
@@ -78,4 +115,13 @@
   .ss-open-above, .ss-open-below, .ss-open {
     border-color: $Secondary02;
   }
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
 }

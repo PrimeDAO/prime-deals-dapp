@@ -1,6 +1,6 @@
 import { BaseStage } from "registry-wizard/baseStage";
 import { Utils } from "services/utils";
-import { IDAO, IDeepDaoInfo, IToken, DealConfig } from "./dealConfig";
+import { IDAO, IToken, DealConfig } from "./dealConfig";
 import { IDaoAPIObject } from "../services/DealService";
 import { bindable } from "aurelia-typed-observable-plugin";
 
@@ -10,29 +10,35 @@ export class Stage2 extends BaseStage {
   @bindable refDaoSelect: HTMLSelectElement;
 
   dealConfig: DealConfig;
+  @bindable daos: Array<{value: string, text: string}>;
 
   attached(): void {
     if (!this.daoList) this.dealService.getDAOsInformation().then(() => {
       this.daoList = this.dealService.DAOs.sort((a: any, b: any) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
       );
+      this.daos = this.daoList.map((dao: any) => ({
+        innerHTML: `<span><img src="${dao.logo}" /> ${dao.name}</span>`,
+        text: dao.name,
+        value: dao.daoId,
+      }));
     }).catch((err) => {
       console.error("err", err);
     });
 
     const el = this.refDaoSelect;
-    console.log(el);
+    console.log({el});
 
-    el.onchange = (evt) => {
-      console.log(this.daoId);
+    // el.onchange = (evt) => {
+    //   console.log(this.daoId);
 
-      this.dealConfig.getDaoInfoFromDeepDAO(this.daoId).then((dao: IDeepDaoInfo) => {
-        console.log("dao", dao);
+    //   this.dealConfig.getDaoInfoFromDeepDAO(this.daoId).then((dao: IDeepDaoInfo) => {
+    //     console.log("dao", dao);
 
-      }).catch((err) => {
-        console.error("err", err);
-      });
-    };
+    //   }).catch((err) => {
+    //     console.error("err", err);
+    //   });
+    // };
   }
 
   // Add a link object to the link object arrays

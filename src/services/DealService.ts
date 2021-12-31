@@ -24,7 +24,7 @@ export interface IDaoPartner {
   totalInUSD: number
   totalOutUSD: number
   votersParticipation: number
-  daoName: string,
+  name: string,
   platform: string,
   thumbName: string
 }
@@ -133,11 +133,15 @@ export class DealService {
     // TODO
     const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
 
-    this.DAOs = allDAOs.map(dao => ({
+    this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
       organizationId: dao.organizationId,
       daoId: dao.daoId,
       name: dao.daoName,
-      logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
+      logo: (dao.logo)
+        ? (dao.logo.includes("http"))
+          ? dao.logo
+          : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
+        : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
     }));
   }
 
