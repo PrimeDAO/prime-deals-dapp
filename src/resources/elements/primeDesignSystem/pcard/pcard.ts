@@ -14,7 +14,7 @@ import "./pcard.scss";
 export type CardType = "default" | "success" | "alert" | "warning" | "";
 
 @customElement("pcard")
-export class PCurd {
+export class PCard {
   @bindable.string type: CardType = "";
   @bindable.string width = "100%";
 }
