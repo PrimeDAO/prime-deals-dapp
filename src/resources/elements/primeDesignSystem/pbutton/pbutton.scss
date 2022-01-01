@@ -31,8 +31,17 @@
   color: $White;
   display: flex;
   align-items: center;
-  gap: 10px;
-  &>.is-loading {
+  &>.spinner {
+    width: 0;
+    opacity: 0;
+    margin-left: 0;
+    overflow: hidden;
+    transition: 0.15s width ease-in-out, 0.25s margin-left ease-in-out, 0.25s opacity ease-in-out;
+  }
+  &>.spinner.is-loading {
+    width: 100%;
+    opacity: 1;
+    margin-left: 10px;
     animation: spin 1.75s infinite linear;
   }
 
