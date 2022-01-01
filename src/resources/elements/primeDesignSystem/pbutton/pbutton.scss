@@ -26,7 +26,7 @@
   border-radius: 50px;
   cursor: pointer;
   background: transparent;
-  transform: none;
+  transform: translateY(0);
   user-select: none;
   color: $White;
 
@@ -42,13 +42,9 @@
     box-shadow: none;
   }
 
-  &:hover:not(.disabled):not(:disabled) {
-    color: $White;
-    background-position: right center;
-  }
 
-  &:hover:active:not(.disabled):not(:disabled),
-  &:focus:active:not(.disabled):not(:disabled) {
+  &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
+  &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
     transform: translateY(-1px);
   }
 
@@ -57,7 +53,7 @@
     width: -moz-available;
   }
 
-  transition: 0.25s;
+  transition: background 0.25s ease-in, transform 0.1s ease-in;
 }
 
 button {
@@ -71,15 +67,19 @@ button {
     &:disabled:hover {
       background: $Neutral02;
     }
+    &:hover:not(.disabled):not(:disabled):not(.no-animation) {
+      background-position: right center;
+    }
   }
 
   &.secondary {
     @include standardButton;
 
     border: 2px solid $Shade01;
+    box-sizing: border-box;
     padding: 12px 26px;
 
-    &:hover:enabled {
+    &:hover:not(.no-animation) {
       background-color: $Border01;
       border-color: $Primary01;
       color: $White;
@@ -95,8 +95,8 @@ button {
     }
 
     // the button is down
-    &:hover:active:not(.disabled):not(:disabled),
-    &:focus:active:not(.disabled):not(:disabled) {
+    &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
+    &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
       @include standardBackground;
     }
   }
@@ -104,7 +104,7 @@ button {
   &.tertiary {
     @include standardButton;
 
-    &:hover {
+    &:hover:not(.no-animation) {
       background: $Border01;
     }
 
@@ -115,11 +115,12 @@ button {
       color: $Neutral02;
       background: transparent;
     }
-
+    
     // the button is down
-    &:hover:active:not(.disabled):not(:disabled),
-    &:focus:active:not(.disabled):not(:disabled) {
+    &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
+    &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
       @include standardBackground;
+      background: $Border01;
     }
   }
 }

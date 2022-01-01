@@ -19,5 +19,6 @@ export type ButtonType = "primary" | "secondary" | "tertiary";
 export class PButton {
   @bindable.string type: ButtonType;
   @bindable.booleanAttr disabled = false;
+  @bindable.booleanAttr doNotAnimate = false;
   @bindable.booleanAttr fullWidth = false;
 }
