@@ -93,7 +93,7 @@ export class App {
 
   private configureRouter(config: RouterConfiguration, router: Router) {
 
-    config.title = "PrimeLaunch";
+    config.title = "Prime Deals";
     config.options.pushState = true;
     // const isIpfs = (window as any).IS_IPFS;
     // if (isIpfs) {
