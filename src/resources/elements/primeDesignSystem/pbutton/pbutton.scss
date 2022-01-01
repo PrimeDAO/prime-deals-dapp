@@ -29,6 +29,12 @@
   transform: translateY(0);
   user-select: none;
   color: $White;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  &>.is-loading {
+    animation: spin 1.75s infinite linear;
+  }
 
   &:focus {
     box-shadow: 0 0 10px $Shade06;
@@ -122,5 +128,14 @@ button {
       @include standardBackground;
       background: $Border01;
     }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

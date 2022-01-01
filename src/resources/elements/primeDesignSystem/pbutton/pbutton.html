@@ -1,5 +1,6 @@
 <template>
   <button class="${type} ${fullWidth?'full-width':''} ${doNotAnimate? 'no-animation': ''}" disabled.bind="disabled" role="button">
     <slot></slot>
+    <i if.bind="isLoading" class="${isLoading? 'is-loading': ''} fas fa-sync-alt"></i>
   </button>
 </template>

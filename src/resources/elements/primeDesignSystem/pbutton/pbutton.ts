@@ -20,5 +20,6 @@ export class PButton {
   @bindable.string type: ButtonType;
   @bindable.booleanAttr disabled = false;
   @bindable.booleanAttr doNotAnimate = false;
+  @bindable.booleanAttr isLoading = false;
   @bindable.booleanAttr fullWidth = false;
 }
