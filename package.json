@@ -9,7 +9,6 @@
   "author": "CL Cybernetix GmbH",
   "homepage": "./",
   "license": "MIT",
-  "proxy": "http://localhost:3000",
   "scripts": {
     "build": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --extractCss",
     "build-kovan": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=kovan webpack --env.production  --extractCss",

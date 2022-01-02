@@ -131,12 +131,12 @@ export class DealService {
 
   public async getDAOsInformation(): Promise<void> {
     // TODO
-    this.DAOs = await(await axios.get("http://localhost:3000/api/organizations/all")).data;
+    this.DAOs = await(await axios.get("/api/organizations/all")).data;
   }
 
 
   public async getDAOsTokenList(id: string): Promise<Array<IToken>> {
-    return await (await axios.get(`http://localhost:3000/api/daos/${id}/tokens`)).data;
+    return await (await axios.get(`/api/daos/${id}/tokens`)).data;
   }
 
   public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
