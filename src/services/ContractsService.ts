@@ -1,5 +1,5 @@
 import { BigNumber, Contract, ethers, Signer } from "ethers";
-import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo, Networks } from "services/EthereumService";
+import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
@@ -13,7 +13,7 @@ export enum ContractNames {
   , IERC20 = "IERC20"
   , ERC20 = "ERC20"
   , SAFE = "Safe"
-  , SIGNER = "Signer"
+  , SIGNER = "SignerV2"
 }
 
 export interface IStandardEvent<TArgs> {
@@ -113,7 +113,7 @@ export class ContractsService {
     }
 
     const reuseContracts = // at least one arbitrary contract already exists
-      ContractsService.Contracts.get(ContractNames.DEALFACTORY);
+      ContractsService.Contracts.get(ContractNames.SIGNER);
 
     const signerOrProvider = this.createProvider();
 

@@ -11,6 +11,7 @@ import { DealService } from "services/DealService";
 import { IpfsService } from "services/IpfsService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
+import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -44,6 +45,8 @@ export function configure(aurelia: Aurelia): void {
 
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
+
+      ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
 
