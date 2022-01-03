@@ -1,113 +1,101 @@
-# The PrimeDAO’s Home for IDOs
+# Prime Deals dApp
+Prime Deals is an An Interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation. An introduction to Prime Deals [TODO: ADD LINK](link-to-introduction).
 
-This is the [PrimeDAO](primedao.eth.link) web interface enabling the creation of and interaction with IDOs.
+This prime-deals-dapp repository contains in its master branch the web user interface for the Prime Deals website that is deployed to https://deals.prime.xyz.
 
-## Technical Description
+## Development
 
-This project is bootstrapped by [aurelia-cli](https://github.com/aurelia/cli).
+### Prerequisites
+Make sure you have [node.js version >= 14.11.0 < 15](https://nodejs.org/en/)
 
-It is written mostly in Typescript, HTML and SCSS, and is bundled using Webpack.
-
-For more information about bundling, go to https://aurelia.io/docs/cli/webpack
-
-## Install
+### Install
 Install dependencies with the following command:
 ```
 npm ci
 ```
+### Update Contract ABIs
+Prime Deals relies on solidity contract addresses and ABIs that it obtains from the [TODO: ADD LINK TO CONTRACTS REPO](https://github.com/PrimeDAO/). You must clone the contracts repository in a folder sibling to this one.
 
-## <a name="build"></a> Build
-There are several ways to build and run the application.  Each of the following build commands will output to the `dist` folder. After building, run following to launch the result in the browser:
-
-```
-npm run start
-```
-
-### Build with optimized code against mainnet
-`npm run build`
-
-(This is the production build.)
-
-### Build with optimized code against kovan
-
-`npm run build-kovan`
-
-### Build unoptimized code against kovan
-
-`npm run build-dev`
-
-### Build unoptimized code against mainnet
-
-`npm run build-dev-mainnet`
-
-## Debug
-
-Each of the following commands will serve up a site that will support Hot Module Reload (HMR).  You can then use your favorate debugger to launch the app at http://localhost:3340.
-
-### Build and serve, running against kovan
-`npm run serve-dev`
-
-### Build and serve, running against mainnet
-`npm run serve-dev-mainnet`
-
-## Update Required Contracts Information
-
-Prime Pool relies on solidity contract addresses and ABIs that it obtains from the [contracts package](https://github.com/PrimeDAO/contracts). In the case that any of these contracts change, you may clone the contracts package in a folder sibling to this one, and run a script to pull the required information from the contracts package into this one, by running the following:
-
+Then run the following script to pull the required contract ABIs from contracts:
 ```
 npm run fetchContracts
 ```
+You only need run this script once, or else again when any of the contracts change.
 
-## Featured Deals List
+### Build
+The package.json file contains lots of commands for building or serving up the application.
 
-Prime Launch refers to a list of Deals that it will display as "Featured" to its users, looking at runtime for this list in the master branch of this repository at [/src/configurations/featuredDeals.json](https://github.com/PrimeDAO/prime-launch-dapp/blob/master/src/configurations/featuredDeals.json).
+#### Environment
+Before building, make sure to have the following in your OS environment variables or in an ".env" file:
+```jsonc
+RIVET_ID=...
+INFURA_ID=...
+ETHPLORER_KEY=...
 
-## <Pool name="dependencies"></Pool> Dependencies
+PINATA_API_KEY_TEST=...
+PINATA_SECRET_API_KEY_TEST=...
 
+IPFS_GATEWAY="https://${hash}.${protocol}.dweb.link/"
+
+NETWORK=rinkeby // or mainnet
+PORT=...
+```
+
+>When building for production, the build will look for variables in ".env.production".
+
+Following are the two most commonly used commands:
+
+#### Build and serve unoptimized code against rinkeby
+Best for development and debugging, the output goes to webpack-dev-server for use with your favorate debugger, like VSCode:
+```
+npm run serve-dev
+```
+#### Build with optimized code against mainnet
+The production build, output goes to the `dist` folder:
+```
+npm run build
+```
+After successfully building, run the following to serve up the output so you can see it in the browser:
+```
+npm run start
+```
+### Lint
+To confirm that lint succeeds before git commits run
+```
+npm run lint
+```
+To have lint automatically fix all  fixable errors run
+```
+npm run lint.fix
+```
+### Automated Tests
+Run
+```
+npm run test
+```
+To run in watch mode
+```
+npm run test --watch
+```
+### Webpack Analyzer
+To run the Webpack Bundle Analyzer for production build.
+```
+npm run analyze
+```
+### Dependencies
 Various code dependencies include:
+* Token information - etherscan.io, at api.etherscan.io/api
+* Token information - coingecko, at pro-api.coingecko.com/api/v3
+* IPFS gateway - primedao.mypinata.cloud
+* Wallet providers - [Web3Modal](https://github.com/Web3Modal/web3modal)
+* Interactions with Ethereum and wallet providers - [ethers.js](https://docs.ethers.io/v5/)
+* Mainnet web3 provider - [Rivet](https://rivet.cloud/)
 
-* ethplorer<span>.</span>io, at api.ethplorer.io, for token information
-* coingecko, at api.coingecko.com/api/v3/coins,  for token information
-* the Balancer subgraph, at api.thegraph.com/subgraphs/name/balancer-labs/balancer, for pool information
-* [Web3Modal](https://github.com/Web3Modal/web3modal) for selecting wallet providers
-* [ethers.js](https://docs.ethers.io/v5/) for interacting with ethereum and wallet providers
-* [Rivet](https://rivet.cloud/) for the mainnet provider
+## Architecture
+### Technical Description
+The project framework is [Aurelia](https://aurelia.io).
 
-## Lint
+It is written mostly in Typescript, HTML and SCSS, and is bundled using Webpack.
 
-Run `npm run lint` and confirm that lint succeeds before git commits.
-
-You can run `npm run lint.fix` to have lint automatically fix all  fixable errors.
-
-## Automated Tests
-
-Run `npm run test`.
-
-To run in watch mode, `npm run test --watch`.
-
-## Webpack Analyzer
-
-To run the Webpack Bundle Analyzer, do `npm run analyze` (production build).
-
-## Run Locally or Host Centrally
-
-### <a name="env"></a> Environment Variables
-
-Make sure you have in your environment (or in a ".env" file) the following:
-
-```
-DEPLOY_PINATA__SECRET_API_KEY=
-DEPLOY_PINATA__API_KEY=
-RIVET_ID=
-INFURA_ID=
-ETHPLORER_KEY=
-ETHERSCAN_KEY=
-PINATA_API_KEY=
-PINATA_SECRET_API_KEY=
-PINATA_API_KEY_TEST=
-PINATA_SECRET_API_KEY_TEST=
-IPSTACK_API_KEY=
-```
-
-When building for production, the build will look for variables in ".env.production".
-
+## Community
+[Join our Discord](https://discord.gg/primedao) and ask how you can get involved with PrimeDAO
