@@ -9,9 +9,9 @@ import { ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { DealService } from "services/DealService";
 import { IpfsService } from "services/IpfsService";
-// import { GeoBlockService } from "services/GeoBlockService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
+import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -25,10 +25,14 @@ export function configure(aurelia: Aurelia): void {
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
 
-  if (process.env.NODE_ENV === "development") {
+
+  const network = process.env.NETWORK as AllowedNetworks;
+  const inDev = process.env.NODE_ENV === "development";
+
+  if (inDev) {
     aurelia.use.developmentLogging(); // everything
   } else {
-    aurelia.use.developmentLogging("warning"); // only errors and warnings
+    aurelia.use.developmentLogging("warn"); // only errors and warnings
   }
 
   if (environment.testing) {
@@ -38,10 +42,11 @@ export function configure(aurelia: Aurelia): void {
   aurelia.start().then(async () => {
     aurelia.container.get(ConsoleLogService);
     try {
+
       const ethereumService = aurelia.container.get(EthereumService);
-      ethereumService.initialize(
-        process.env.NETWORK as AllowedNetworks ??
-          (process.env.NODE_ENV === "development" ? Networks.Rinkeby : Networks.Mainnet));
+      ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
+
+      ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
 
@@ -51,10 +56,6 @@ export function configure(aurelia: Aurelia): void {
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
-
-      // const geoBlockService = aurelia.container.get(GeoBlockService);
-      // geoBlockService.initialize();
-
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));

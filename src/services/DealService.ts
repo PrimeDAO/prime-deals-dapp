@@ -71,7 +71,7 @@ export class DealService {
   private async getDeals(): Promise<void> {
     const hashes = await this.ipfsService.getPinnedObjectsHashes();
     hashes.forEach( async (hash:string) => {
-      this.dealsObject[hash] = await this.ipfsService.getDealProposal(hash)
+      this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
         .then(async (deal: any) => {
 
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;

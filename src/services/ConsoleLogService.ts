@@ -2,13 +2,16 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, LogManager } from "aurelia-framework";
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "./GeneralEvents";
 import { DisposableCollection } from "./DisposableCollection";
+import { Utils } from "services/utils";
+
+export type ConsoleLogMessageTypes = "info"|"warn"|"warning"|"error"|"debug";
 
 @autoinject
 export class ConsoleLogService {
 
   // probably doesn't really need to be a disposable collection since this is a singleton service
   private subscriptions: DisposableCollection = new DisposableCollection();
-  private logger = LogManager.getLogger("PrimeDeals");
+  private logger = LogManager.getLogger("Prime Deals");
 
   constructor (
     eventAggregator: EventAggregator,
@@ -56,7 +59,7 @@ export class ConsoleLogService {
     let ex;
     if (!(config instanceof EventConfigException)) {
       ex = config as any;
-      message = `${ex?.message ? ex.message : ex}`;
+      message = `${Utils.extractExceptionMessage(ex)}`;
     } else {
       config = config as EventConfigException;
       ex = config.exception;
@@ -96,13 +99,14 @@ export class ConsoleLogService {
     }
   }
 
-  public logMessage(msg: string, level = "info"): void {
+  public logMessage(msg: string, level: ConsoleLogMessageTypes = "info"): void {
     switch (level) {
       case "info":
       default:
         this.logger.info(msg);
         break;
       case "warn":
+      case "warning":
         this.logger.warn(msg);
         break;
       case "error":
