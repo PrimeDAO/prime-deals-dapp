@@ -14,7 +14,7 @@ Install dependencies with the following command:
 npm ci
 ```
 ### Update Contract ABIs
-Prime Deals relies on solidity contract addresses and ABIs that it obtains from the [TODO: ADD LINK TO CONTRACTS REPO](https://github.com/PrimeDAO/). You must clone the contracts repository in a folder sibling to this one.
+Prime Deals relies on solidity contract addresses and ABIs that it obtains from the [PrimeDao contracts-v2 repository](https://github.com/PrimeDAO/contracts-v2). You must clone the contracts-v2 repository in a folder sibling to this one.
 
 Then run the following script to pull the required contract ABIs from contracts:
 ```
@@ -27,18 +27,20 @@ The package.json file contains lots of commands for building or serving up the a
 
 #### Environment
 Before building, make sure to have the following in your OS environment variables or in an ".env" file:
-```jsonc
+```
 RIVET_ID=...
-INFURA_ID=...
-ETHPLORER_KEY=...
+ETHERSCAN_KEY=...
+
+PINATA_API_KEY=...
+PINATA_SECRET_API_KEY=...
 
 PINATA_API_KEY_TEST=...
 PINATA_SECRET_API_KEY_TEST=...
 
-IPFS_GATEWAY="https://${hash}.${protocol}.dweb.link/"
+IPFS_GATEWAY=https://primedao.mypinata.cloud/${protocol}/${hash}
+COINGECKO_API_KEY=...
 
 NETWORK=rinkeby // or mainnet
-PORT=...
 ```
 
 >When building for production, the build will look for variables in ".env.production".
