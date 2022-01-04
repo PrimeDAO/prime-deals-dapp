@@ -25,7 +25,6 @@ export function configure(aurelia: Aurelia): void {
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
 
-
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
 
