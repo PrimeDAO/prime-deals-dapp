@@ -39,8 +39,6 @@ PINATA_SECRET_API_KEY_TEST=...
 
 IPFS_GATEWAY=https://primedao.mypinata.cloud/${protocol}/${hash}
 COINGECKO_API_KEY=...
-
-NETWORK=rinkeby // or mainnet
 ```
 
 >When building for production, the build will look for variables in ".env.production".
