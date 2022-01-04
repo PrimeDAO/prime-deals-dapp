@@ -25,7 +25,8 @@
     "test"
   ],
   "exclude": [
-    "test/coverage-jest"
+    "test/coverage-jest",
+    "src/services/GnosisService.js"
   ],
   "atom": {
     "rewriteTsconfig": false
