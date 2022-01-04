@@ -182,7 +182,7 @@ export class EthereumService {
 
   private async fireAccountsChangedHandler(account: Address) {
     if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({ code: -1, message: "User declined the Prime Launch disclaimer" });
+      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
       account = null;
     }
     console.info(`account changed: ${account}`);

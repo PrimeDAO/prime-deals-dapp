@@ -1,10 +1,10 @@
 {
-  "name": "@primedao/prime-d2d-dapp",
+  "name": "@primedao/prime-deals-dapp",
   "version": "0.0.0",
   "description": "The PrimeDAO’s Home for DAO to DAO Deals",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PrimeDAO/prime-d2d-dapp"
+    "url": "https://github.com/PrimeDAO/prime-deals-dapp"
   },
   "author": "CL Cybernetix GmbH",
   "homepage": "./",
