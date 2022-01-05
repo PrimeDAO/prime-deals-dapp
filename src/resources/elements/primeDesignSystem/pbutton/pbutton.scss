@@ -2,7 +2,6 @@
 
 @mixin standardBackground {
   border: none;
-  padding: 14px 28px;
   background-image: $Gradient08;
   background-size: 200% auto;
   color: $Neutral04;
@@ -29,20 +28,25 @@
   transform: translateY(0);
   user-select: none;
   color: $White;
-  display: flex;
-  align-items: center;
-  &>.spinner {
+
+  display: inline-flex;
+  justify-content: center;
+
+  &>.icon {
     width: 0;
+    padding-left: 0px;
     opacity: 0;
-    margin-left: 0;
     overflow: hidden;
-    transition: 0.15s width ease-in-out, 0.25s margin-left ease-in-out, 0.25s opacity ease-in-out;
-  }
-  &>.spinner.is-loading {
-    width: 100%;
-    opacity: 1;
-    margin-left: 10px;
-    animation: spin 1.75s infinite linear;
+    transition: width 0.5s linear, opacity 0.75s linear, padding-left 0.5s linear;
+    &.is-loading {
+      width: 16px;
+      opacity: 1;
+      padding-left: 6px;
+    }
+    .spinner {
+      width: auto;
+      animation: spin 2s linear infinite;
+    }
   }
 
   &:focus {
@@ -57,9 +61,8 @@
     box-shadow: none;
   }
 
-
-  &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
-  &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
+  &:hover:active:not(.disabled):not(:disabled),
+  &:focus:active:not(.disabled):not(:disabled) {
     transform: translateY(-1px);
   }
 
@@ -91,10 +94,9 @@ button {
     @include standardButton;
 
     border: 2px solid $Shade01;
-    box-sizing: border-box;
     padding: 12px 26px;
 
-    &:hover:not(.no-animation) {
+    &:hover:not(.disabled):not(:disabled) {
       background-color: $Border01;
       border-color: $Primary01;
       color: $White;
@@ -110,8 +112,8 @@ button {
     }
 
     // the button is down
-    &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
-    &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
       @include standardBackground;
     }
   }
@@ -119,7 +121,7 @@ button {
   &.tertiary {
     @include standardButton;
 
-    &:hover:not(.no-animation) {
+    &:hover {
       background: $Border01;
     }
 
@@ -130,12 +132,11 @@ button {
       color: $Neutral02;
       background: transparent;
     }
-    
+
     // the button is down
-    &:hover:active:not(.disabled):not(:disabled):not(.no-animation),
-    &:focus:active:not(.disabled):not(:disabled):not(.no-animation) {
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
       @include standardBackground;
-      background: $Border01;
     }
   }
 }
