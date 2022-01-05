@@ -10,18 +10,12 @@ export class Stage2 extends BaseStage {
   @bindable refDaoSelect: HTMLSelectElement;
 
   dealConfig: DealConfig;
-  @bindable daos: Array<{value: string, text: string}>;
 
   attached(): void {
     if (!this.daoList) this.dealService.getDAOsInformation().then(() => {
       this.daoList = this.dealService.DAOs.sort((a: any, b: any) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
       );
-      this.daos = this.daoList.map((dao: any) => ({
-        innerHTML: `<span><img src="${dao.logo}" /> ${dao.name}</span>`,
-        text: dao.name,
-        value: dao.daoId,
-      }));
     }).catch((err) => {
       console.error("err", err);
     });

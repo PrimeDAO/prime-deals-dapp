@@ -19,14 +19,12 @@
               </span>
             </div>
             <!-- <input id="dao${$index + 1}Name" value.bind="dao.name" maxlength="50" /> -->
-            <pselect
-              class="dao-select"
-              name="dao${$index + 1}Name" 
-              id="dao${$index + 1}Name" 
-              is-searchable="true"
-              placeholder="Select a DAO..."
-              data.bind="daos">
-            </pselect>
+            <select name="dao${$index + 1}Name" id="dao${$index + 1}Name" ref="refDaoSelect" value.bind="daoId">
+              <option value="">Select DAO</option>
+              <option repeat.for="dao of daoList" value="${dao.daoId}">
+                ${dao.name}
+              </option>
+            </select>
           </div>
           <div class="infoInput">
             <template repeat.for="token of dao.tokens">
@@ -38,17 +36,12 @@
                       ${token.name.length || 0}/20
                     </span>
                   </div>
-                  <select
-                    id="token-${$parent.$index}-${$index}"
-                    class="platform"
-                    placeholder="Select Token">
-                  </select>
-                  <!-- <input
+                  <input
                     id="token-${$parent.$index}-${$index}"
                     class="platform"
                     placeholder="Select Token"
                     value.bind="dao.tokens[$index].name"
-                    maxlength="20" /> -->
+                    maxlength="20" />
                 </div>
                 <div class="addLinkContainer">
                   <div>
