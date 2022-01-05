@@ -1,1 +1,8 @@
-{}
+{
+  "baseUrl": "http://localhost:3340",
+  "fileServerFolder": "src",
+  "integrationFolder": "cypress/integration",
+  "pluginsFile": "cypress/plugins/index.js",
+  "supportFile": "cypress/support/index.js",
+  "testFiles": "**/*.e2e.ts"
+}
