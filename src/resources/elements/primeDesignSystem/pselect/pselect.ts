@@ -2,6 +2,12 @@ import { bindable, customElement } from "aurelia-framework";
 import SlimSelect from "slim-select";
 import "./pselect.scss";
 
+export interface IPSelectItemConfig {
+  value: string,
+  text: string,
+  innerHTML: string
+}
+
 /**
  * Usage:
  *    <pselect type="primary">Primary</pselect>
@@ -18,7 +24,7 @@ import "./pselect.scss";
 export class PButton {
   // @bindable.booleanAttr disabled = false;
   // @bindable.booleanAttr fullWidth = false;
-  @bindable data: Array<{value: string, text: string, innerHTML: string}>;
+  @bindable data: Array<IPSelectItemConfig>;
   @bindable placeholder = "Please Select...";
   @bindable isSearchable = false;
 
