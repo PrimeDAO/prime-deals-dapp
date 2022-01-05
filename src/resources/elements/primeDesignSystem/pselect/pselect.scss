@@ -11,6 +11,9 @@
     height: 40px;
     color: $Neutral02;
 
+    .ss-arrow .arrow-down, .ss-arrow .arrow-up {
+      border-color: $White;
+    }
     .placeholder {
       color: $Neutral02;
       .loading {
@@ -114,6 +117,18 @@
 
   .ss-open-above, .ss-open-below, .ss-open {
     border-color: $Secondary02;
+  }
+
+  .ss-single-selected.ss-disabled {
+    background-color: transparent;
+    border-color: $Border01;
+    color: $Secondary05;
+    .ss-disabled {
+      color: $Secondary05;
+    }
+    .ss-arrow .arrow-down, .ss-arrow .arrow-up {
+      border-color: $Secondary05;
+    }
   }
 }
 
