@@ -139,7 +139,7 @@ export class DealService {
       daoId: dao.daoId,
       name: dao.daoName,
       logo: (dao.logo)
-        ? (dao.logo.includes("http"))
+        ? (dao.logo.toLocaleLowerCase().startsWith("http"))
           ? dao.logo
           : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
         : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
