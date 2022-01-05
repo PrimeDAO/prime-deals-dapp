@@ -10,8 +10,9 @@
 @mixin standardButton {
   /**
     * note one benefit of all: is to set box-sizing: border-box
+    * This resets all of the selected element’s properties to their initial values as defined in the CSS spec.
     */
-  all: unset;
+  all: initial;
   outline: none;
   padding: 14px 28px;
   font-family: Inter;
