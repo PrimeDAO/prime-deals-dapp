@@ -65,7 +65,8 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    return this.getDeals();
+    this.getDeals();
+    this.getDAOsInformation();
   }
 
   private async getDeals(): Promise<void> {
