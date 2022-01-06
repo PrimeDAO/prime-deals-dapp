@@ -36,7 +36,8 @@ $menu-open-duration: 0.1s;
       list-style-type: none;
       display: grid;
       grid-template-columns: auto auto auto auto;
-      justify-content: space-between;
+      justify-content: left;
+      column-gap: 14px;
 
       > .item {
         font-family: Aeonik;
