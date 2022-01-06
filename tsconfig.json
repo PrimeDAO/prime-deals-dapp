@@ -10,9 +10,9 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "target": "es5",
+    "target": "es2019",
     "lib": [
-      "es2015",
+      "es2019",
       "dom"
     ],
     "moduleResolution": "node",
@@ -25,7 +25,8 @@
     "test"
   ],
   "exclude": [
-    "test/coverage-jest"
+    "test/coverage-jest",
+    "src/services/GnosisService.js"
   ],
   "atom": {
     "rewriteTsconfig": false
