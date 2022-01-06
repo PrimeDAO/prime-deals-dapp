@@ -1,4 +1,3 @@
-import { DealConfig } from "./../registry-wizard/dealConfig";
 import axios from "axios";
 import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
