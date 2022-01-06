@@ -49,12 +49,12 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.get(ContractsService);
 
+      const ipfsService = aurelia.container.get(IpfsService);
+      ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
+
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
       dealService.getDAOsInformation();
-
-      const ipfsService = aurelia.container.get(IpfsService);
-      ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));

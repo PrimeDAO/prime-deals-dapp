@@ -73,6 +73,7 @@ export class DealService {
     hashes.forEach( async (hash:string) => {
       this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
         .then(async (deal: any) => {
+          if (deal.daos === undefined) return;
 
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
           if (timeLeft < 0) deal.incomplete = true;
