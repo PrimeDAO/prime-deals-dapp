@@ -20,7 +20,7 @@ div.preload > .body {
   font-size: 25px;
   font-weight: 500;
   margin-bottom: 28px;
-  color: #ff99cc;
+  color: #eba7da;
 }
 
 div.preload > .body2 {
@@ -45,7 +45,7 @@ div.preload > button {
   outline: none;
   text-transform: uppercase;
   cursor: pointer;
-  color: #ff99cc;
-  border: 1px solid #ff99cc;
+  color: #eba7da;
+  border: 1px solid #eba7da;
   background-color: #1b1722;
 }

@@ -54,7 +54,7 @@ export function configure(aurelia: Aurelia): void {
 
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
-      dealService.getDAOsInformation();
+
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));
