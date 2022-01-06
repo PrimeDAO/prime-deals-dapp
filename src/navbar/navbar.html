@@ -3,82 +3,57 @@
   <require from="./mobileMenu/mobileMenu"></require>
   <nav class="navbar-container">
     <div class="logo">
-      <img src="/logos/primeDAO.svg" alt="PrimeDAO">
+      <img src="/logomark.svg" alt="PrimeDAO">
     </div>
 
     <div class="products">
-      <ul class="container">
-        <li class="product-page">
-          <div class="icon launch"></div>
-          <span click.delegate="navigate('')">Launch</span>
-        </li>
-        <li class="product-page">
-          <div class="icon pools"></div>
-          <span click.delegate="navigate('')">Pools</span>
-        </li>
-        <li class="product-page">
-          <div class="icon rating"></div>
-          <span click.delegate="navigate('')">Rating</span>
-        </li>
-        <li click.delegate="navigate('home')" class="product-page active">
-          <div class="icon deals"></div>
-          <span>Deals</span>
-        </li>
-      </ul>
-    </div>
-    <div class="product-sub-pages">
-      <ul class="container">
-        <li 
-          click.delegate="navigate('deals/open')"
-          class="product-sub-page-link ${(router.currentInstruction.fragment.includes('/deals/open')) ? 'active' : ''}"
-        >
-          Open Deals
-        </li>
-        <li
-          click.delegate="navigate('deals/running')" 
-          class="product-sub-page-link ${(router.currentInstruction.fragment.includes('/deals/running')) ? 'active' : ''}"
-        >
-          Running Deals
-        </li>
-        <li
-          click.delegate="navigate('initiate')"
-          class="product-sub-page-link ${(router.currentInstruction.fragment.includes('/initiate')) ? 'active' : ''}"
-        >
-          Initiate a Deal
-        </li>
-      </ul>
-    </div>
-    <div class="wallet-container">
-      <div class="networkFeedback">
-        <networkfeedback></networkfeedback>
-      </div>
-      <header-buttons></header-buttons>
-      <div class="headerConnectButton">
-        <connect-button></connect-button>
-      </div>
-      <div if.to-view="isConnected" class="wallet-balance">
-        <div class="wallet-balance-text">
-          <span>XX.xx Prime</span>
-          <span>X.xx ETH</span>
+      <div class="container">
+        <div class="item" click.delegate="goto('https://launch.prime.xyz')">
+          <div class="icon launch"><img class="mono" src="/launch-mono.svg" /><img class="color" src="/launch.svg" /></div>
+          <div class="text">Launch</div>
         </div>
-        <div class="wallet-user-details">
-          <span>JohnDoe.eth</span>
-          <span> ⌄ </span>
+        <div class="item" click.delegate="goto('https://www.prime.xyz/pools')">
+          <div class="icon pools"><img class="mono" src="/pools-mono.svg" /><img class="color" src="/pools.svg" /></div>
+          <div class="text">Pools</div>
+        </div>
+        <div class="item" click.delegate="goto('https://www.prime.xyz/rating')">
+          <div class="icon rating"><img class="mono" src="/rating-mono.svg" /><img class="color" src="/rating.svg" /></div>
+          <div class="text">Rating</div>
+        </div>
+        <div class="item active">
+          <div class="icon deals"><img class="mono" src="/deals-mono.svg" /><img class="color" src="/deals.svg" /></div>
+          <div class="text">Deals</div>
         </div>
       </div>
     </div>
-    <mobile-menu 
-      class="mobile-only" 
-      goto-callback.call="goto(url)" 
-      navigate-callback.call="navigate(href)" 
-      menu-open.bind="menuOpen"
-    >
+
+    <div class="productSubpages">
+      <div class="container">
+        <div click.delegate="navigate('/')" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
+        <div click.delegate="navigate('/register')" class="item ${(router.currentInstruction.config.name === 'register') ? 'active' : ''}">Register</div>
+        <div click.delegate="navigate('/launches')" class="item ${(router.currentInstruction.config.name === 'launches') ? 'active' : ''}">Launches</div>
+        <div click.delegate="navigate('/documentation')" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</div>
+        <div click.delegate="goto('https://primedao.typeform.com/PrimeLaunchSup')" class="item">Support</div>
+      </div>
+    </div>
+
+    <div class="networkFeedback">
+      <networkfeedback></networkfeedback>
+    </div>
+    <div class="headerConnectButton">
+      <connectbutton></connectbutton>
+    </div>
+
+    <mobile-menu
+      class="mobile-only"
+      goto-callback.call="goto(url)"
+      navigate-callback.call="navigate(href)"
+      menu-open.bind="menuOpen">
     </mobile-menu>
     <hamburger-menu-button
       class="mobile-only"
       menu-open.bind="menuOpen"
-      click.delegate="toggleMenu()"
-    >
+      click.delegate="toggleMenu()">
     </hamburger-menu-button>
   </nav>
 </template>

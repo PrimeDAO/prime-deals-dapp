@@ -28,7 +28,8 @@
   background: transparent;
   transform: none;
   user-select: none;
-  color: $White;
+  color: $Neutral04;
+  white-space: nowrap;
 
   &:focus {
     box-shadow: 0 0 10px $Shade06;
@@ -43,7 +44,7 @@
   }
 
   &:hover:not(.disabled):not(:disabled) {
-    color: $White;
+    color: $Neutral04;
   }
 
   &:hover:active:not(.disabled):not(:disabled),
@@ -81,7 +82,7 @@ button {
     &:hover:enabled {
       background-color: $Border01;
       border-color: $Primary01;
-      color: $White;
+      color: $Neutral04;
     }
 
     &.disabled,

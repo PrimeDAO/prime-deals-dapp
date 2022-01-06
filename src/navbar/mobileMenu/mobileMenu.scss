@@ -1,11 +1,5 @@
 @import "styles/styles.scss";
 
-@mixin icon($file) {
-  background-image: url("../../../static/logos/products/" + $file);
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
 $menu-open-duration: 0.1s;
 
 .mobile-menu {
@@ -24,7 +18,7 @@ $menu-open-duration: 0.1s;
   transform: translate(calc(50vw - 29px), calc(-50% + 33px));  clip-path: circle(0%);
   transition: transform $menu-open-duration ease-in-out, clip-path $menu-open-duration ease-in-out;
   transition-delay: $menu-open-duration;
-  padding: 10px 20px;
+  padding: 20px;
 
   .menu-body, .menu-header {
     opacity: 0;
@@ -71,35 +65,29 @@ $menu-open-duration: 0.1s;
   }
 
   .item {
-    color: $Neutral02;
-    padding: 5px;
     .icon {
-      margin-bottom: 5px;
-      border-bottom: solid 3px transparent;
-      display: inline-flex;
-      background-position: top;
-      width: 32px;
-      height: 47.5px;
-      &.launch { @include icon("launch-mono.svg"); }
-      &.pools { @include icon("pools-mono.svg"); }
-      &.rating { @include icon("rating-mono.svg"); }
-      &.deals { @include icon("deals-mono.svg"); }
+      img {
+        width: 32px;
+        height: 30px;
+        &.color {
+          display: none;
+        }
+      }
     }
   
-    &:hover {
-      color: $White;
-    }
-
     &.active,
     &:active {
-      color: $Primary01;
-      
+      border-bottom-color: $Secondary01;
+  
       .icon {
-        border-bottom-color: $Secondary01;
-        &.launch { @include icon("launch.svg"); }
-        &.pools { @include icon("pools.svg"); }
-        &.rating { @include icon("rating.svg"); }
-        &.deals { @include icon("deals.svg"); }
+        img {
+          &.color {
+            display: inline-block;
+          }
+          &.mono {
+            display: none;
+          }
+        }
       }
     }
   }

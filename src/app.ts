@@ -12,6 +12,8 @@ import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 
+export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
+
 @autoinject
 export class App {
   constructor (
@@ -74,6 +76,11 @@ export class App {
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
+
+    /**
+     * undo stuff from base.css now that we don't need it
+     */
+    document.querySelector("body").classList.remove("loading");
 
     this.ethereumService.connectToConnectedProvider();
   }
@@ -155,13 +162,12 @@ export class App {
         title: "Initiate a New Deal",
       },
       {
-        moduleId: PLATFORM.moduleName("./selectPackage/selectPackage"),
+        moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
-        name: "selectPackage",
-        route: "/selectPackage",
-        title: "Select Your Package",
+        name: "comingSoon",
+        route: ["comingSoon"],
+        title: "Coming Soon!",
       },
-
     ]);
 
     config.fallbackRoute("home");

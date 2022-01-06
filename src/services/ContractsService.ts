@@ -8,12 +8,11 @@ export enum ContractNames {
   DEALFACTORY = "DealFactory"
   , DEAL = "Deal"
   // , WETH = "WETH"
-  , PRIMETOKEN = "PrimeToken"
-  , DAI = "DAI"
+  , PRIME = "Prime"
   , IERC20 = "IERC20"
   , ERC20 = "ERC20"
-  , SAFE = "Safe"
-  , SIGNER = "SignerV2"
+  // , SAFE = "Safe"
+  // , SIGNER = "SignerV2"
 }
 
 export interface IStandardEvent<TArgs> {
@@ -29,8 +28,8 @@ export class ContractsService {
   private static Contracts = new Map<ContractNames, Contract>([
     // [ContractNames.DEALFACTORY, null]
     // , [ContractNames.DEAL, null]
-    [ContractNames.SIGNER, null]
-    ,
+    // [ContractNames.SIGNER, null]
+    // ,
   ]);
 
   private initializingContracts: Promise<void>;
@@ -113,7 +112,8 @@ export class ContractsService {
     }
 
     const reuseContracts = // at least one arbitrary contract already exists
-      ContractsService.Contracts.get(ContractNames.SIGNER);
+    // ******* RESTORE THIS WHEN WE HAVE ABIS ***********ContractsService.Contracts.get(ContractNames.SIGNER);
+    true;
 
     const signerOrProvider = this.createProvider();
 

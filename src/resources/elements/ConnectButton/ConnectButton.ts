@@ -2,7 +2,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless, customElement, singleton } from "aurelia-framework";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Address, EthereumService, Networks } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { EventConfigTransaction } from "services/GeneralEvents";
 import { TransactionReceipt } from "services/TransactionsService";
 import "./ConnectButton.scss";
@@ -18,7 +18,7 @@ enum Phase {
 @singleton(false)
 @containerless
 @autoinject
-@customElement("connect-button")
+@customElement("connectbutton")
 export class ConnectButton {
 
   private subscriptions: DisposableCollection = new DisposableCollection();
@@ -26,12 +26,10 @@ export class ConnectButton {
   private txPhase = Phase.None;
   private txReceipt: TransactionReceipt;
   private primeAddress: Address;
-  private daiAddress: Address;
   @bindable.booleanAttr private hideBalances: boolean;
 
   constructor(
     private ethereumService: EthereumService,
-    private contractsService: ContractsService,
     private eventAggregator: EventAggregator,
   ) {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {
@@ -61,10 +59,10 @@ export class ConnectButton {
     }));
 
     this.accountAddress = this.ethereumService.defaultAccountAddress || null;
-    this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIMETOKEN);
+    this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
     // this.bPrimeAddress = this.contractsService.getContractAddress(ContractNames.ConfigurableRightsPool);
     // this.wethAddress = this.contractsService.getContractAddress(ContractNames.WETH);
-    this.daiAddress = ContractsService.getContractAddress(ContractNames.DAI);
+    // this.daiAddress = ContractsService.getContractAddress(ContractNames.DAI);
   }
 
   public dispose(): void {

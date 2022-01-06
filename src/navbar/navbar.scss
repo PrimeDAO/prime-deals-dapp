@@ -1,26 +1,20 @@
-@import "styles/colors.scss";
-
-@mixin icon($file) {
-  background-image: url("../../static/logos/products/" + $file);
-  background-repeat: no-repeat;
-  background-position: center;
-}
+@import "styles/styles.scss";
 
 $menu-open-duration: 0.1s;
 
 .navbar-container {
-  display: grid;
   position: fixed;
-  z-index: 999;
+  z-index: 998;
+  top: 0;
   left: 0;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  display: grid;
   grid-auto-flow: column;
   align-items: center;
-  grid-template-areas: "logo products wallet" "sub-pages sub-pages sub-pages";
-  grid-template-columns: 50px auto 400px;
-  width: -moz-available;
-  width: -webkit-fill-available;
-  background: $BG01;
-  box-shadow: inset 0px -1px 0px $BG02;
+  grid-template-columns: $BodyPaddingLeftRight auto auto auto;
+  grid-template-areas: "logo products networkFeedback connect" "subPages subPages subPages subPages";
+  background-color: $BG01;
 
   .mobile-only {
     display: none;
@@ -28,88 +22,109 @@ $menu-open-duration: 0.1s;
 
   .logo {
     grid-area: logo;
-    width: max-content;
-    padding: 6px;
     padding-left: 20px;
+
+    img {
+      height: 32px;
+    }
   }
 
   .products {
     grid-area: products;
-    display: flex;
-    width: clamp(250px, 100%, calc(1084px - 50px - 300px));
-    margin: 0 auto;
+
     .container {
       list-style-type: none;
-      padding: 0;
-      display: flex;
-      margin: 0;
-      gap: 5px;
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      justify-content: space-between;
 
-      .product-page {
-        display: flex;
+      > .item {
+        font-family: Aeonik;
+        font-size: 18px;
+        line-height: 24px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        text-align: center;
+        border-bottom: 3px solid $BG01;
+        cursor: pointer;
+        color: $Neutral04;
+        padding: 12px 12px 12px 8px;
         align-items: center;
-        padding: 19px 14px 19px 8px;
-        column-gap: 5px;
-        border-bottom: solid 3px transparent;
-        transition: 175ms all ease-in-out;
+        justify-items: start;
+        column-gap: 12px;
 
         .icon {
-          display: flex;
-          width: 30px;
-          height: 28px;
-          transition: 175ms background-image linear;
+          display: inline-grid; // to get vertical alignment
+          img {
+            width: 32px;
+            height: 30px;
+            &.color {
+              display: none;
+            }
+          }
+        }
 
-          &.launch { @include icon("launch-mono.svg"); }
-          &.pools { @include icon("pools-mono.svg"); }
-          &.rating { @include icon("rating-mono.svg"); }
-          &.deals { @include icon("deals-mono.svg"); }
-        }
-        &.active, &:active {
-          border-color: $Secondary01;
-        }
-        &:hover {
-          cursor: pointer;
-          background: $BG02;
+        &.active,
+        &:active {
+          border-bottom-color: $Secondary01;
+
           .icon {
-            &.launch { @include icon("launch.svg"); }
-            &.pools { @include icon("pools.svg"); }
-            &.rating { @include icon("rating.svg"); }
-            &.deals { @include icon("deals.svg"); }
+            img {
+              &.color {
+                display: inline-block;
+              }
+              &.mono {
+                display: none;
+              }
+            }
+          }
+        }
+
+        &:hover {
+          background-color: $BG02;
+
+          .icon {
+            img {
+              &.color {
+                display: inline-block;
+              }
+              &.mono {
+                display: none;
+              }
+            }
           }
         }
       }
     }
   }
 
-  .wallet-container {
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    grid-area: wallet;
-    padding-right: 20px;
-    width: max-content;
-    justify-self: end;
-  }
-
-  .product-sub-pages {
-    grid-area: sub-pages;
+  .productSubpages {
+    transition: height 0.25s ease-in;
+    overflow-y: hidden;
+    grid-area: subPages;
     background-color: $BG02;
-    display: grid;
+    height: 40px;
+
     .container {
       list-style-type: none;
       padding: 0 20px;
-      display: flex;
+      margin: 0;
+      padding-left: $BodyPaddingLeftRight;
+      display: grid;
+      grid-template-columns: auto auto auto auto auto;
+      justify-content: start;
+
       column-gap: 20px;
       text-align: left;
-      margin: auto;
-      width: clamp(250px, 100%, calc(1084px));
-      .product-sub-page-link {
+      > .item {
         cursor: pointer;
         padding: 10px 0;
+
         color: $Neutral02;
-        transition: color 0.075s ease-in;
+
         &:hover {
-          color: $White;
+          color: $Neutral04;
+          text-decoration: none;
         }
         &.active {
           color: $Secondary01;
@@ -117,10 +132,56 @@ $menu-open-duration: 0.1s;
       }
     }
   }
+
+  .networkFeedback {
+    grid-area: networkFeedback;
+    font-family: Inter;
+    text-align: right;
+    .testnet {
+      color: $Shade01;
+    }
+    a {
+      color: $Secondary01;
+    }
+  }
+
+  /**
+     * header connectButton
+     */
+  .headerConnectButton {
+    grid-area: connect;
+    padding-right: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: right;
+  }
 }
 
 @media screen and (max-width: 1072px) {
-  .navbar-container {
+  .navbar-container {  
+    grid-template-columns: calc(#{$BodyPaddingLeftRightMobile} + 50px) 1fr auto;
+    grid-template-areas: "logo products connect" "subPages subPages subPages";
+
+    .products {
+      .container {
+        justify-content: center;
+        column-gap: 2px;
+        .item {
+          grid-template-columns: auto;
+
+          .text {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .productSubpages {
+      .container {
+        padding-left: 0;
+        justify-content: center;
+      }
+    }
     .networkFeedback {
       display: none;
     }
@@ -129,8 +190,8 @@ $menu-open-duration: 0.1s;
 
 @media screen and (max-width: 450px) {
   .navbar-container {
-    display: inline-flex;
-    grid-template-areas: "logo hamburger-menu";
+    grid-template-columns: auto 1fr 0 40px;
+    grid-template-areas: "logo connect sub-pages hamburger-menu";
     justify-content: space-between;
 
     .mobile-only {
@@ -141,9 +202,8 @@ $menu-open-duration: 0.1s;
       grid-area: hamburger-menu;
     }
 
-    .products,
-    .product-sub-pages,
-    .wallet-container {
+    &>.products,
+    &>.productSubpages {
       display: none;
     }
   }

@@ -1,30 +1,30 @@
 <template>
   <div class="mobile-menu ${menuOpen?'is-open':''}">
     <div class="menu-header">
-      <img src="/logos/primeDAO.svg" alt="PrimeDAO">
+      <img src="/logomark.svg" alt="PrimeDAO">
     </div>
     <div class="menu-body">
       <div class="products">
-        <div class="item">
-          <div class="icon launch" click.delegate="gotoCallback({url: 'https://launch.prime.xyz'})"></div>
+        <div class="item active">
+          <div class="icon launch"><img class="mono" src="/launch-mono.svg" /><img class="color" src="/launch.svg" /></div>
         </div>
         <div class="item" click.delegate="gotoCallback({url: 'https://www.prime.xyz/pools'})">
-          <div class="icon pools"></div>
+          <div class="icon pools"><img class="mono" src="/pools-mono.svg" /><img class="color" src="/pools.svg" /></div>
         </div>
         <div class="item" click.delegate="gotoCallback({url: 'https://www.prime.xyz/rating'})">
-          <div class="icon rating"></div>
+          <div class="icon rating"><img class="mono" src="/rating-mono.svg" /><img class="color" src="/rating.svg" /></div>
         </div>
-        <div class="item active" click.delegate="navigateCallback({href: '/'})">
-          <div class="icon deals"></div>
+        <div class="item" click.delegate="gotoCallback({url: 'https://www.prime.xyz/deals'})">
+          <div class="icon deals"><img class="mono" src="/deals-mono.svg" /><img class="color" src="/deals.svg" /></div>
         </div>
       </div>
       <div class="productSubpages">
         <div class="container">
-          <!-- <div click.delegate="navigateCallback({href: '/'})" class="item ${(router.currentInstruction.fragment === '/') ? 'active' : ''}">Home</div> -->
-          <div click.delegate="navigateCallback({href: '/deals/open'})" class="item ${(router.currentInstruction.fragment.includes('/deals/open')) ? 'active' : ''}">Open Deals</div>
-          <div click.delegate="navigateCallback({href: '/deals/running'})" class="item ${(router.currentInstruction.fragment.includes('/deals/running')) ? 'active' : ''}">Running Deals</div>
-          <div click.delegate="navigateCallback({href: '/initiate'})" class="item ${(router.currentInstruction.fragment.includes('/initiate')) ? 'active' : ''}">Initiate a Deal</div>
-          <!-- <div click.delegate="gotoCallback({url: 'https://primedao.typeform.com/PrimeDealsSup'})" class="item">Support</div> -->
+          <div click.delegate="navigateCallback({href: '/'})" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
+          <div click.delegate="navigateCallback({href: '/register'})" class="item ${(router.currentInstruction.config.name === 'register') ? 'active' : ''}">Register</div>
+          <div click.delegate="navigateCallback({href: '/launches'})" class="item ${(router.currentInstruction.config.name === 'launches') ? 'active' : ''}">Launches</div>
+          <div click.delegate="navigateCallback({href: '/documentation'})" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</div>
+          <div click.delegate="gotoCallback({url: 'https://primedao.typeform.com/PrimeLaunchSup'})" class="item">Support</div>
         </div>
       </div>
     </div>
