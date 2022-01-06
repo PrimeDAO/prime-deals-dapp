@@ -1,55 +1,17 @@
+import { FormatTypes, getAddress, Interface } from "ethers/lib/utils";
 import { autoinject } from "aurelia-framework";
-import { BigNumber, Contract, ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import axios from "axios";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { Address, EthereumService, Networks } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { TransactionResponse } from "services/TransactionsService";
-import { toBigNumberJs } from "services/BigNumberService";
 import { from, Subject } from "rxjs";
 import { concatMap } from "rxjs/operators";
-
-export interface IErc20Token {
-  allowance(owner: Address, spender: Address): Promise<BigNumber>;
-  approve(spender: Address, amount: BigNumber): Promise<TransactionResponse>; // boolean
-  balanceOf(account: Address): Promise<BigNumber>;
-  name(): Promise<string>;
-  totalSupply(): Promise<BigNumber>;
-  transfer(recipient: Address, amount: BigNumber): Promise<TransactionResponse>; // boolean
-  transferFrom(sender: Address, recipient: Address, amount: BigNumber): Promise<TransactionResponse>; // boolean
-}
-
-export interface ITokenPrices {
-  // key is "weth" or "primedao"
-  [key: string]: number;
-}
-
-export interface ITokenInfo {
-  address: Address;
-  icon: string;
-  id: string; // id on coingecko
-  name: string; // token name,
-  price: number;
-  // priceChangePercentage_24h: number;
-  // priceChangePercentage_7d: number;
-  // priceChangePercentage_30d: number;
-  symbol: string; // token symbol,
-}
-
-export interface ITokenHolder {
-  /**
-   * address of holder
-   */
-  address: Address;
-  /**
-   * token balance
-   */
-  balance: BigNumber;
-  /**
-   * share of holder in percent
-   */
-  share: number;
-}
+import { IErc20Token, ITokenInfo } from "services/TokenTypes";
+import { TokenListMap, TokenListService } from "services/TokenListService";
+import TokenMetadataService from "services/TokenMetadataService";
+import { AxiosService } from "services/axiosService";
+import { TimingService } from "services/TimingService";
 
 @autoinject
 export class TokenService {
@@ -57,12 +19,21 @@ export class TokenService {
   erc20Abi: any;
   tokenInfos = new Map<Address, ITokenInfo>();
   queue: Subject<() => Promise<void>>;
+  tokenLists: TokenListMap;
+  devFundingTokens: Array<Address>;
+
+  static DefaultLogoURI = "/genericToken.svg";
+  static DefaultNameSymbol = "N/A";
+  static DefaultDecimals = 0;
 
   constructor(
-    private ethereumService: EthereumService,
     private consoleLogService: ConsoleLogService,
-    private contractsService: ContractsService) {
-    this.erc20Abi = contractsService.getContractAbi(ContractNames.ERC20);
+    private contractsService: ContractsService,
+    private tokenListService: TokenListService,
+    private tokenMetadataService: TokenMetadataService,
+    private axiosService: AxiosService) {
+
+    this.erc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
     this.queue = new Subject<() => Promise<void>>();
     // this will initiate the execution of the promises
     // each promise is executed after the previous one has resolved
@@ -72,65 +43,152 @@ export class TokenService {
       .subscribe();
   }
 
-  private getEthplorerUrl(api: string) {
-    // note ethplorer only works on mainnet and kovan
-    return `https://${this.ethereumService.targetedNetwork === Networks.Mainnet ? "" : `${this.ethereumService.targetedNetwork}-`}api.ethplorer.io/${api}?apiKey=${process.env.ETHPLORER_KEY}`;
+  async initialize(): Promise<TokenListMap> {
+    this.geckoCoinInfo = new Map<string, string>();
+    const uri = `https://pro-api.coingecko.com/api/v3/coins/list?x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+
+    TimingService.start("get geckoCoinInfo");
+    /**
+     * prefetch all coingecko ids to use for fetching token prices, etc later
+     */
+    await axios.get(uri)
+      .then((response) => {
+        if (response.data && response.data.length) {
+          response.data.map((tokenInfo: ITokenInfo) =>
+            this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id));
+        }
+      });
+    TimingService.end("get geckoCoinInfo");
+
+    return this.tokenLists = await this.tokenListService.fetchLists();
   }
 
-  private async _getTokenInfoFromAddress(address: Address,
-    resolve: (tokenInfo: ITokenInfo) => void,
-    _rejector: (reason?: any) => void): Promise<void> {
+  geckoCoinInfo: Map<string, string>;
 
-    let tokenInfo = this.tokenInfos.get(address.toLowerCase());
+  private getTokenGeckoMapKey(name: string, symbol: string): string {
+    // PRIMEDao Token HACK!!!
+    if (name.toLowerCase() === "primedao token") { name = "primedao"; }
+    if (name.toLowerCase() === "dai stablecoin") { name = "dai"; }
+    if (name.toLowerCase() === "dstoken") { name = "dai"; } // kovan
+    if (name.toLowerCase() === "wrapped ether") { name = "weth"; }
+    return `${name.toLowerCase()}_${symbol.toLowerCase()}`;
+  }
+
+  private getTokenGeckoId(name: string, symbol: string): string {
+    const id = this.geckoCoinInfo.get(this.getTokenGeckoMapKey(name, symbol));
+    if (id) {
+      return id;
+    } else {
+      this.consoleLogService.logMessage(`TokenService: Unable to find token info in CoinGecko: (${name}/${symbol})`, "warn");
+      return "";
+    }
+  }
+
+  /**
+   * returns promise of a tokenInfo if a the metadata is found in the tokenLists or
+   * a valid token contract is found.
+   *
+   * If there is an error, then throws an exception.
+   */
+  private async _getTokenInfoFromAddress(
+    tokenAddress: Address,
+    resolve: (tokenInfo: ITokenInfo) => void,
+    reject: (reason?: any) => void): Promise<void> {
+
+    let tokenInfo = this.tokenInfos.get(tokenAddress.toLowerCase());
 
     if (!tokenInfo) {
+
+      TimingService.start(`_getTokenInfoFromAddress-${getAddress(tokenAddress)}`);
+
+      tokenAddress = getAddress(tokenAddress);
+
+      if (!tokenAddress) {
+        reject(`Invalid token address: ${tokenAddress}`);
+        return;
+      }
+
+      /**
+       * fetchTokenMetadata will throw an exception if it can't at least find a contract at the
+       * given address.  Otherwise it may return an incomplete tokenInfo.
+       */
+      const tokenInfoMap = await this.tokenMetadataService.fetchTokenMetadata([tokenAddress], this.tokenLists);
       // eslint-disable-next-line require-atomic-updates
-      tokenInfo = {
-        address,
-        icon: "/genericToken.svg",
-        id: "",
-        name: "Unknown",
-        price: 0,
-        symbol: "N/A",
-      };
-
-      if (["mainnet", "kovan"].includes(this.ethereumService.targetedNetwork)) {
-        const uri = this.getEthplorerUrl(`getTokenInfo/${address}`);
-        // eslint-disable-next-line require-atomic-updates
-        await axios.get(uri)
-          .then(async (response) => {
-            tokenInfo = response.data;
-            // eslint-disable-next-line require-atomic-updates
-            tokenInfo.id = await this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
-            this.consoleLogService.logMessage(`loaded token: ${address}`, "info");
-          })
-          .catch((error) => {
-            this.consoleLogService.logMessage(`TokenService: Error fetching token info for ${address}: ${error?.response?.data?.error?.message ?? error?.message}`, "error");
-            // throw new Error(`${error.response?.data?.error.message ?? "Error fetching token info"}`);
-            // TODO:  restore the exception?
-          });
+      tokenInfo = tokenInfoMap[tokenAddress];
+      if (!tokenInfo) {
+        // is not a valid token contract, or some other error occurred
+        reject(`Token does not appear to be a token contract: ${tokenAddress}`);
+        return;
       }
 
-      this.tokenInfos.set(address.toLowerCase(), tokenInfo);
-
-      if (tokenInfo.id) {
-        const uri = `https://api.coingecko.com/api/v3/coins/${tokenInfo.id}?market_data=true&localization=false&community_data=false&developer_data=false&sparkline=false`;
-
-        await axios.get(uri)
-          .then((response) => {
-            tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
-            tokenInfo.icon = response.data.image.thumb;
-          })
-          .catch((error) => {
-            this.consoleLogService.logMessage(`PriceService: Error fetching token price ${error?.message}`, "error");
-          });
+      /**
+       * Set defaults for missing values
+       */
+      if (!tokenInfo.name) {
+        tokenInfo.name = TokenService.DefaultNameSymbol;
       }
+      if (!tokenInfo.symbol) {
+        tokenInfo.symbol = TokenService.DefaultNameSymbol;
+      }
+      if (!tokenInfo.decimals) {
+        tokenInfo.decimals = TokenService.DefaultDecimals;
+      }
+
+      if (!tokenInfo.logoURI) {
+        tokenInfo.logoURI = TokenService.DefaultLogoURI;
+      }
+
+      this.tokenInfos.set(tokenAddress.toLowerCase(), tokenInfo);
+      TimingService.end(`_getTokenInfoFromAddress-${tokenAddress}`);
+      this.consoleLogService.logMessage(`loaded token: ${tokenAddress}`, "info");
     }
 
     resolve(tokenInfo);
   }
 
-  public async getTokenInfoFromAddress(address: Address): Promise<ITokenInfo> {
+  /**
+   * For a list of tokens, efficiently fetch current token prices from coingecko.
+   * Note this does not get the token logo.
+   * @param tokenInfos
+   */
+  public async getTokenPrices(tokenInfos: Array<ITokenInfo>): Promise<void> {
+
+    TimingService.start("getTokenPrices");
+
+    const tokensByGeckoId = new Map<string, ITokenInfo>();
+
+    tokenInfos.forEach((tokenInfo) => {
+      if (tokenInfo.price === undefined) {
+        if (!tokenInfo.id) {
+          tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
+        }
+        tokensByGeckoId.set(tokenInfo.id, tokenInfo);
+      }
+    });
+
+    if (tokensByGeckoId.size) {
+
+      const uri = `https://pro-api.coingecko.com/api/v3/simple/price?vs_currencies=USD%2CUSD&ids=${Array.from(tokensByGeckoId.keys()).join(",")}&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+
+      await axios.get(uri)
+        .then((response) => {
+          const keys = Object.keys(response.data);
+          const keyCount = keys.length;
+          for (let i = 0; i < keyCount; ++i) {
+            const tokenId = keys[i];
+            const tokenInfo = tokensByGeckoId.get(tokenId);
+            tokenInfo.price = response.data[tokenId].usd;
+          }
+        })
+        .catch((error) => {
+          this.consoleLogService.logMessage(`PriceService: Error fetching token price ${this.axiosService.axiosErrorHandler(error)}`);
+        });
+    }
+
+    TimingService.end("getTokenPrices");
+  }
+
+  public async getTokenInfoFromAddress(tokenAddress: Address): Promise<ITokenInfo> {
 
     let resolver: (value: ITokenInfo | PromiseLike<ITokenInfo>) => void;
     let rejector: (reason?: any) => void;
@@ -140,49 +198,40 @@ export class TokenService {
       reject: (reason?: any) => void,
     ): void => {
       resolver = resolve;
-      rejector = reject;
+      rejector = (reason?: any) => {
+        this.consoleLogService.logMessage(reason, "error");
+        reject(reason);
+      };
     });
 
-    this.queue.next(() => this._getTokenInfoFromAddress(address, resolver, rejector) );
+    /**
+     * Fetch tokens one-at-a-time because many requests will be redundant, we want them
+     * to take advantage of caching, and we don't want to re-enter on fetching duplicate tokens.
+     */
+    this.queue.next(() => this._getTokenInfoFromAddress(tokenAddress, resolver, rejector) );
 
     return promise;
   }
 
-  geckoCoinInfo: Map<string, string>;
+  /**
+   * Get the tokenInfos from a specified list.
+   * @param tokenListUri
+   * @returns
+   */
+  public async getTokenInfosFromTokenList(tokenListUri: string): Promise<Array<ITokenInfo>> {
+    const tokenInfos = this.tokenLists[tokenListUri].tokens;
 
-  getTokenGeckoMapKey(name: string, symbol: string): string {
-    // PRIMEDao Token HACK!!!
-    if (name.toLowerCase() === "primedao token") { name = "primedao"; }
-    return `${name.toLowerCase()}_${symbol.toLowerCase()}`;
-  }
-
-  async getTokenGeckoId(name: string, symbol: string): Promise<string> {
-    if (!this.geckoCoinInfo) {
-      const uri = "https://api.coingecko.com/api/v3/coins/list";
-
-      await axios.get(uri)
-        .then((response) => {
-          this.geckoCoinInfo = new Map<string, string>();
-
-          response.data.map((tokenInfo: ITokenInfo) =>
-            this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id));
-        })
-        .catch((error) => {
-          if (process.env.NODE_ENV !== "development") {
-            this.consoleLogService.logMessage(`TokenService: Error fetching token id for ${name}: ${error?.response?.data?.error?.message ?? error?.message}`, "warn");
-          }
-        });
-    }
-
-    if (this.geckoCoinInfo) {
-      const id = this.geckoCoinInfo.get(this.getTokenGeckoMapKey(name, symbol));
-      if (id) {
-        return id;
-      } else {
-        this.consoleLogService.logMessage(`TokenService: Error fetching token info: token not found, or more than one match found (${name}/${symbol})`, "warn");
+    tokenInfos.forEach((tokenInfo) => {
+      const tokenAddress = tokenInfo.address;
+      if (!this.tokenInfos.get(tokenAddress.toLowerCase())) {
+        this.tokenInfos.set(tokenAddress.toLowerCase(), tokenInfo);
+        this.consoleLogService.logMessage(`registered token: ${tokenAddress}`, "info");
       }
-    }
-    return "";
+    });
+
+    await this.getTokenPrices(tokenInfos);
+
+    return tokenInfos;
   }
 
   public getTokenContract(tokenAddress: Address): Contract & IErc20Token {
@@ -192,21 +241,103 @@ export class TokenService {
       this.contractsService.createProvider()) as unknown as Contract & IErc20Token;
   }
 
-  public getHolders(tokenAddress: Address): Promise<Array<ITokenHolder>> {
-    const uri = `${this.getEthplorerUrl(`getTopTokenHolders/${tokenAddress}`)}&limit=1000`;
+  /**
+   * fetch token price and logo from coingecko
+   * @param tokenInfo
+   * @returns
+   */
+  public getTokenGeckoInfo(tokenInfo: ITokenInfo): Promise<ITokenInfo> {
+
+    if (!tokenInfo.id) {
+      tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
+    }
+
+    const uri = `https://pro-api.coingecko.com/api/v3/coins/${tokenInfo.id}?market_data=true&localization=false&community_data=false&developer_data=false&sparkline=false&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+
     return axios.get(uri)
-      .then(async (response) => {
-        const holders = response?.data?.holders ?? [];
-        return holders.filter((holder: {address: string; balance: string, share: number }) => {
-          holders.balance = BigNumber.from(toBigNumberJs(holder.balance).toString());
-          return true;
-        });
+      .then((response) => {
+        tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
+        // tokenInfo.priceChangePercentage_24h = response.data.market_data.price_change_percentage_24h ?? 0;
+        if (!tokenInfo.logoURI || (tokenInfo.logoURI === TokenService.DefaultLogoURI)) {
+          tokenInfo.logoURI = response.data.image.thumb;
+        }
+        return tokenInfo;
       })
-      .catch((error) => {
-        this.consoleLogService.logMessage(`TokenService: Error fetching token holders: ${error?.response?.data?.error?.message ?? error?.message}`, "error");
-        // throw new Error(`${error.response?.data?.error.message ?? "Error fetching token info"}`);
-        // TODO:  restore the exception?
-        return [];
+      .catch((ex) => {
+        this.consoleLogService.logMessage(`PriceService: Error fetching token price ${this.axiosService.axiosErrorHandler(ex)}`, "error");
+        return tokenInfo;
       });
   }
+
+  public async isERC20Token(tokenAddress: Address): Promise<boolean> {
+    let isOk = true;
+
+    TimingService.start(`isERC20Token-${tokenAddress}`);
+    const contract = this.getTokenContract(tokenAddress);
+    if (contract) {
+
+      try {
+        await contract.deployed();
+      } catch {
+        return false;
+      }
+
+      try {
+        if (EthereumService.targetedNetwork === Networks.Mainnet) {
+
+          const proxyImplementation = await this.contractsService.getProxyImplementation(tokenAddress);
+          if (proxyImplementation) {
+            tokenAddress = proxyImplementation;
+          }
+
+          const contractAbi = await axios.get(`https://api.etherscan.io/api?module=contract&action=getabi&address=${tokenAddress}&apikey=${process.env.ETHERSCAN_KEY}`)
+            .then((result) => {
+              return result.data.message !== "OK" ? null : result.data.result;
+            });
+
+          if (!contractAbi) {
+            throw new Error("ABI not obtainable, contract may not be verified in etherscan");
+          }
+
+          const contractInterface = new Interface(contractAbi);
+          const ierc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
+          const ierc20Interface = new Interface(ierc20Abi);
+
+          for (const functionName in ierc20Interface.functions) {
+            const contractFunction = contractInterface.functions[functionName];
+            if (!contractFunction ||
+                (contractFunction.format(FormatTypes.minimal) !== ierc20Interface.functions[functionName].format(FormatTypes.minimal))) {
+              isOk = false;
+              this.consoleLogService.logMessage(`TokenService: Token ${tokenAddress} fails to implement IERC20 on function: ${functionName}`, "error");
+              break;
+            }
+          }
+          if (isOk) {
+            for (const eventName in ierc20Interface.events) {
+              const contractEvent = contractInterface.events[eventName];
+              if (!contractEvent ||
+                  (contractEvent.format(FormatTypes.minimal) !== ierc20Interface.events[eventName].format(FormatTypes.minimal))) {
+                isOk = false;
+                this.consoleLogService.logMessage(`TokenService: Token ${tokenAddress} fails to implement IERC20 on event: ${eventName}`, "error");
+                break;
+              }
+            }
+          }
+        } else { // a testnet, just do this
+          await contract.totalSupply();
+        }
+        // eslint-disable-next-line no-empty
+      } catch (error) {
+        this.consoleLogService.logMessage(`TokenService: Error confirming IERC20: ${error?.response?.data?.error?.message ?? error?.message}`, "error");
+        isOk = false;
+      }
+    } else { // not sure this ever actually happens
+      isOk = false;
+    }
+    TimingService.end(`isERC20Token-${tokenAddress}`);
+
+    return isOk;
+  }
 }
+
+export { IErc20Token, ITokenHolder, ITokenInfo, ITokenPrices } from "services/TokenTypes";

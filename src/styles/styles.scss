@@ -3,9 +3,10 @@
 @import "tippy.js/dist/tippy.css"; // TODO: use CDN?
 
 @mixin standardTextGradient {
-  background-image: $Gradient08;
+  background-image: $Gradient01;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @mixin tokenIcon {
@@ -13,19 +14,25 @@
   border-radius: 9px;
 }
 
+$BodyPaddingLeftRight: 160px;
+$BodyPaddingLeftRightMobile: 20px;
+
 html {
   body {
     font-size: 16px;
+    margin: 0;
     background-color: $BG01;
     color: $White;
-    font-family: "Aeonik";
+    font-family: Aeonik;
     min-height: 100vh;
-    width: clamp(250px, calc(100% - 40px), 1084px);
-    margin: 0 auto;
-    padding: 0 20px;
-    // padding-left: 160px;
-    // padding-right: 160px;
-    overflow-x: hidden;
+    padding-left: $BodyPaddingLeftRight;
+    padding-right: $BodyPaddingLeftRight;
+
+    &:not(.loading) {
+      > .prepage {
+        display: none;
+      }
+    }
 
     input,
     textarea {
@@ -114,7 +121,7 @@ html {
     }
 
     .subtitle {
-      color: $Gradient08;
+      color: $Gradient01;
       font-size: 20px;
       line-height: 24px;
       font-weight: 700;
@@ -186,8 +193,8 @@ html {
 @media screen and (max-width: 1072px) {
   html {
     body {
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: $BodyPaddingLeftRightMobile;
+      padding-right: $BodyPaddingLeftRightMobile;
 
       .heading {
         &.heading0 {

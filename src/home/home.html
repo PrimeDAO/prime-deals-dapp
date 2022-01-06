@@ -2,7 +2,7 @@
   <require from="../resources/elements/CounterPanel/CounterPanel"></require>
   <div class="page animated-page au-animate home">
     <div class="section top">
-      <div class="title heading heading0">DAO2DAO</div>
+      <div class="title heading heading0 gradient">Prime Deals</div>
       <div class="subtitle">
         An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
       </div>
@@ -38,18 +38,16 @@
       </div>
       <template if.to-view="featuredDeals && featuredDeals.length">
         <horizontal-scroller item-count.to-view="featuredDeals.length">
-          <deal-summary 
-            repeat.for="deal of featuredDeals" 
-            deal.to-view="deal"
-          ></deal-summary>
+          <deal-summary
+            repeat.for="deal of featuredDeals"
+            deal.to-view="deal"></deal-summary>
         </horizontal-scroller>
         <div class="dealsButton">
           <div class="buttonContainer centered">
-            <pbutton 
-              type="tertiary" 
-              click.delegate="navigate('deals')" 
-              rel="noopener noreferrer"
-            >
+            <pbutton
+              type="tertiary"
+              click.delegate="navigate('deals')"
+              rel="noopener noreferrer">
               View All Deals
             </pbutton>
           </div>
@@ -67,9 +65,9 @@
         <div class="title heading heading1">Web3 partnerships made easy!</div>
         <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
         <div class="buttonContainer">
-          <pbutton 
+          <pbutton
             type="secondary"
-            click.delegate="navigate('initiate')" 
+            click.delegate="navigate('initiate')"
             rel="noopener noreferrer">
             Initiate a Deal
           </pbutton>
@@ -80,7 +78,7 @@
         <video class="introVideo" controls poster="//assets.codepen.io/32795/poster.png">
           <source id='mp4' src="//media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
           <source id='webm' src="//media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
-          <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' />          Video is not supported.
+          <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' /> Video is not supported.
         </video>
       </div>
     </div>

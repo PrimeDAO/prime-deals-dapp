@@ -1,0 +1,53 @@
+@import "styles/styles.scss";
+
+.tokenSelect {
+  display: inline-block;
+
+  .dropdown {
+    width: 300px;
+  }
+
+  .placeholder {
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    column-gap: 10px;
+    align-items: center;
+    justify-content: left;
+    .spinner {
+      color: $Primary01;
+    }
+  }
+
+  .tokenItem {
+    display: flex;
+    align-items: center;
+    height: 19px;
+
+    img {
+      @include tokenIcon;
+    }
+
+    > img:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  &.symbolOnly {
+    .tokenItem {
+      height: 48px;
+      img {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+      }
+    }
+    .dropdown {
+      .selectedLabel {
+        height: 63px;
+      }
+    }
+    .menu {
+      padding-top: 53px;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<template>
+  <div class="tokenSelect ${symbolOnly ? 'symbolOnly' : '' }">
+    <dropdown
+      item-changed.call="handleSelectionChanged(value, index)"
+      selected-item-index.to-view="selectedTokenIndex"
+      placeholder.bind="!tokenList?'<span class=\'placeholder\'><i class=\'spinner fas fa-circle-notch fa-spin\'></i><span>Loading...</span></span>':placeholder">
+      <div repeat.for="tokenInfo of tokenList">
+        <div class="tokenItem">
+          <img src.to-view="tokenInfo.logoURI"></img>
+          <div if.bind="!symbolOnly">${tokenInfo.name}&nbsp;</div>
+          <div if.bind="!symbolOnly">(${tokenInfo.symbol})</div>
+          <div if.bind="symbolOnly">${tokenInfo.symbol}</div>
+        </div>
+      </div>
+  </div>
+  </dropdown>
+</template>

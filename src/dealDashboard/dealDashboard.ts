@@ -12,7 +12,6 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import { NumberService } from "services/NumberService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { GeoBlockService } from "services/GeoBlockService";
 
 @autoinject
 export class DealDashboard {
@@ -31,7 +30,6 @@ export class DealDashboard {
   userFundingTokenBalance: BigNumber;
   userFundingTokenAllowance: BigNumber;
 
-  geoBlocked: boolean;
   connected = false;
 
   constructor(
@@ -39,7 +37,6 @@ export class DealDashboard {
     private dealService: DealService,
     private numberService: NumberService,
     private ethereumService: EthereumService,
-    private geoBlockService: GeoBlockService,
     private disclaimerService: DisclaimerService,
     private router: Router,
   ) {
@@ -116,7 +113,6 @@ export class DealDashboard {
 
   // async activate(params: { address: Address}): Promise<void> {
   //   this.address = params.address;
-  //   this.geoBlocked = this.geoBlockService.blackisted;
   // }
 
   // async attached(): Promise<void> {
@@ -139,7 +135,6 @@ export class DealDashboard {
   //       await deal.ensureInitialized();
   //     }
   //     this.deal = deal;
-  //     this.geoBlocked = this.geoBlocked && this.deal.metadata.dealDetails.geoBlock;
 
   //     await this.hydrateUserData();
 
