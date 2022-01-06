@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="buttonContainer">
-          <div class="launch" click.delegate="navigate('initiate')">
+          <div data-test="all-deals-button" class="launch" click.delegate="navigate('initiate')">
             <div class="title">
               <div class="header">Initiate a Deal</div>
               <div class="arrow">&#8599;</div>
@@ -66,6 +66,7 @@
         <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
         <div class="buttonContainer">
           <pbutton
+            data-test="initiate-deal-button"
             type="secondary"
             click.delegate="navigate('initiate')"
             rel="noopener noreferrer">
