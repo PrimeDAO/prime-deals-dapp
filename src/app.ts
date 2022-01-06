@@ -168,6 +168,13 @@ export class App {
         route: ["comingSoon"],
         title: "Coming Soon!",
       },
+      {
+        moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),
+        nav: false,
+        name: "storybook",
+        route: ["storybook"],
+        title: "Storybook",
+      },
     ]);
 
     config.fallbackRoute("home");
