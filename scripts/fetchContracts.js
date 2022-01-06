@@ -4,8 +4,6 @@ const path = require("path")
 const { exit } = require("process");
 const srcPath = "../deals-contracts/exports";
 const destPath = "./src/contracts";
-// const gnosisServiceFilePath = "../deals-contracts/tasks/utils/gnosis.js";
-// const gnosisServiceDestPath = "./src/services/GnosisService.js";
 
 if (!fs.existsSync(srcPath)) {
   console.error(`${srcPath} does not exist`);
@@ -22,7 +20,5 @@ files.forEach(file => {
       preserveTimestamps: true
     });
 });
-
-// fs.copySync(gnosisServiceFilePath, gnosisServiceDestPath);
 
 exit(0);

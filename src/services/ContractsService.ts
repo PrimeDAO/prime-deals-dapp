@@ -11,8 +11,6 @@ export enum ContractNames {
   , PRIME = "Prime"
   , IERC20 = "IERC20"
   , ERC20 = "ERC20"
-  // , SAFE = "Safe"
-  // , SIGNER = "SignerV2"
 }
 
 export interface IStandardEvent<TArgs> {
@@ -28,7 +26,6 @@ export class ContractsService {
   private static Contracts = new Map<ContractNames, Contract>([
     // [ContractNames.DEALFACTORY, null]
     // , [ContractNames.DEAL, null]
-    // [ContractNames.SIGNER, null]
     // ,
   ]);
 
