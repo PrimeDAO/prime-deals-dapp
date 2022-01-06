@@ -58,8 +58,12 @@ export class Utils {
   //   }
   // }
 
-  public static goto(where: string): void {
-    window.open(where, "_blank", "noopener noreferrer");
+  public static goto(where: string, newTab = true): void {
+    if (newTab) {
+      window.open(where, "_blank", "noopener noreferrer");
+    } else {
+      window.location.assign(where);
+    }
   }
 
   public static toBoolean(value?: string | boolean): boolean {

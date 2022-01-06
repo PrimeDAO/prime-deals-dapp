@@ -13,9 +13,9 @@ export class Navbar {
     this.menuOpen = !this.menuOpen;
   }
 
-  private goto(url: string): void {
+  private goto(url: string, newTab = true): void {
     this.menuOpen = false;
-    Utils.goto(url);
+    Utils.goto(url, newTab);
   }
 
   private navigate(href: string): void {
