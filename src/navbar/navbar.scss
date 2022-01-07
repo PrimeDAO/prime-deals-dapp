@@ -160,7 +160,7 @@ $menu-open-duration: 0.1s;
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .navbar-container {
     grid-template-columns: calc(#{$BodyPaddingLeftRightMobile} + 50px) 1fr auto;
     grid-template-areas: "logo products connect" "subPages subPages subPages";

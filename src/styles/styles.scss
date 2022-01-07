@@ -16,6 +16,9 @@
 
 $BodyPaddingLeftRight: 160px;
 $BodyPaddingLeftRightMobile: 20px;
+$BodyWidth: 1120px;
+$PageBreakWidth: $BodyWidth + ($BodyPaddingLeftRight * 2);
+// $PageBreakWidthMobile: $BodyWidth + ($BodyPaddingLeftRightMobile * 2);
 
 html {
   body {

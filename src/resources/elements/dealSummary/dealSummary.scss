@@ -1,4 +1,4 @@
-@import "styles/colors.scss";
+@import "styles/styles.scss";
 .dealSummaryContainer {
   display: inline-block;
   cursor: default;
@@ -27,11 +27,11 @@
       .button:after {
         opacity: 0;
       }
-      .icons>.icon {
+      .icons > .icon {
         border-color: #403453;
       }
-      .title>h1 {
-        color: #897AA1;
+      .title > h1 {
+        color: #897aa1;
       }
     }
     border-radius: 6px;
@@ -73,7 +73,7 @@
         white-space: nowrap;
         padding-right: 10px;
         color: $Neutral03;
-        font-family: 'Inter';
+        font-family: "Inter";
         font-size: 14px;
         font-weight: 700;
         line-height: 19.6px;
@@ -82,17 +82,18 @@
 
     .title {
       grid-area: title;
-      h1,h2 {
+      h1,
+      h2 {
         transition: 0.35s ease-in-out;
         margin: 0;
       }
       h1 {
         font-size: 14px;
-        color: #64557D;
+        color: #64557d;
         line-height: 140%;
         text-transform: uppercase;
       }
-      &>h2 {
+      & > h2 {
         font-size: 20px;
         font-weight: 700;
         line-height: 24px;
@@ -105,7 +106,7 @@
       align-items: center;
       font-size: 14px;
       font-weight: 700;
-      color: #DCDAE5;
+      color: #dcdae5;
     }
     .daos.title {
       font-size: 14px;
@@ -154,7 +155,7 @@
       align-items: baseline;
       height: 67px;
 
-      &>div {
+      & > div {
         .button {
           margin: 0;
           margin-right: 12px;
@@ -163,7 +164,6 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        
       }
       .title {
         font-weight: bold;
@@ -181,7 +181,7 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .dealSummaryContainer {
     // because this is going to be vertically-aligned
     padding-right: 0;
