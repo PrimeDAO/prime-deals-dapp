@@ -4,7 +4,7 @@
 
 .appWrapper {
   display: grid;
-  grid-template-columns: minmax($BodyPaddingLeftRight, 1fr) 1120px minmax($BodyPaddingLeftRight, 1fr);
+  grid-template-columns:  1fr 1120px 1fr;
   grid-template-rows: 192px 100fr 1fr;
   grid-template-areas:
     ". . ."
