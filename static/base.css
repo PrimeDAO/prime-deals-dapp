@@ -3,49 +3,5 @@
   we only compile via typescript import and resulting webpack bundling.
 */
 
-body.loading {
-  background-color: #1b1722;
-  margin: 0;
-  text-align: center;
-}
-
-div.preload {
-  padding-top: 120px;
-  display: inline-block;
-  max-width: 800px;
-}
-
-div.preload > .body {
-  font-family: Arial;
-  font-size: 25px;
-  font-weight: 500;
-  margin-bottom: 28px;
-  color: #eba7da;
-}
-
-div.preload > .body2 {
-  font-size: 16px;
-  color: #b783ac;
-}
-
-div.preload > img {
-  width: 300px;
-  margin-bottom: 16px;
-}
-
-div.preload.initialLoading > img {
-  width: 280px;
-  height: 280px;
-  margin-bottom: 28px;
-}
-
-div.preload > button {
-  border-radius: 50px;
-  padding: 14px 28px;
-  outline: none;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: #eba7da;
-  border: 1px solid #eba7da;
-  background-color: #1b1722;
+body {
 }

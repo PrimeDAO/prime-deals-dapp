@@ -1,9 +1,5 @@
 @import "styles/styles.scss";
 
-body > ux-dialog-overlay.active {
-  opacity: 0.75;
-}
-
 /**
  * specify "body" to force this css to take precedence over Aurelia's
  **/
@@ -14,10 +10,11 @@ body > ux-dialog-container {
   bottom: 10vh;
   left: 10vw;
 
+  // -bottom: 4px; // for some reason is needed to make room for the footer
   background: linear-gradient(to bottom, $Primary01 0%, $Secondary02 100%);
   padding-left: 4px;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 1px;
+  padding-bottom: 1px;
   padding-right: 4px;
   border-radius: 6px;
 
@@ -67,30 +64,30 @@ body > ux-dialog-container {
         text-align: center;
         padding-top: 32px;
         i {
-          color: $Primary01;
+          color: $Secondary07;
           font-size: 28px;
         }
       }
     }
 
     ux-dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+
       padding-top: 8px;
       border-top: 1px solid $White;
       border-bottom-left-radius: 6px;
       border-bottom-right-radius: 6px;
       padding-right: 32px;
+      gap: 10px;
+      > .button {
+        width: fit-content;
+      }
     }
 
     &.disclaimer {
-      .checkbox {
-        margin-right: 10px;
-      }
-      .action-buttons {
-        display: inline-flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-end;
-      }
       .bodyContainer {
         white-space: pre-wrap;
         word-break: break-word;
@@ -99,6 +96,9 @@ body > ux-dialog-container {
           max-width: 100%;
         }
       }
+    }
+
+    &.alert {
     }
   }
 }
@@ -116,8 +116,11 @@ body > ux-dialog-overlay {
 
     ux-dialog.dialog {
       min-width: 0;
+      // border-radius: 0;
+      // background: linear-gradient(to bottom, $Primary01 0%, $Secondary02 100%);
 
       ux-dialog-header {
+        border-radius: 0;
         .heading {
           white-space: normal;
           text-align: center;
@@ -131,12 +134,10 @@ body > ux-dialog-overlay {
       }
 
       ux-dialog-footer {
+        border-radius: 0;
         display: flex;
         flex-direction: column;
         text-align: center;
-        .action-buttons {
-          justify-content: center;
-        }
       }
     }
   }

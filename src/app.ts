@@ -12,8 +12,6 @@ import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 
-export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
-
 @autoinject
 export class App {
   constructor (
@@ -77,11 +75,6 @@ export class App {
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
 
-    /**
-     * undo stuff from base.css now that we don't need it
-     */
-    document.querySelector("body").classList.remove("loading");
-
     this.ethereumService.connectToConnectedProvider();
   }
 
@@ -100,7 +93,7 @@ export class App {
 
   private configureRouter(config: RouterConfiguration, router: Router) {
 
-    config.title = "Prime Deals";
+    config.title = "PrimeLaunch";
     config.options.pushState = true;
     // const isIpfs = (window as any).IS_IPFS;
     // if (isIpfs) {
@@ -162,19 +155,13 @@ export class App {
         title: "Initiate a New Deal",
       },
       {
-        moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
+        moduleId: PLATFORM.moduleName("./selectPackage/selectPackage"),
         nav: false,
-        name: "comingSoon",
-        route: ["comingSoon"],
-        title: "Coming Soon!",
+        name: "selectPackage",
+        route: "/selectPackage",
+        title: "Select Your Package",
       },
-      {
-        moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),
-        nav: false,
-        name: "storybook",
-        route: ["storybook"],
-        title: "Storybook",
-      },
+
     ]);
 
     config.fallbackRoute("home");

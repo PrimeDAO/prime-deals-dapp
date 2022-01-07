@@ -7,7 +7,7 @@ import { EthereumService, Hash } from "services/EthereumService";
 @autoinject
 export default class TransactionsService {
 
-  private static blocksToConfirm = 1;
+  private static blocksToConfirm = 3;
 
   constructor(
     private eventAggregator: EventAggregator,

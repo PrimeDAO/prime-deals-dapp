@@ -10,6 +10,6 @@ export class NetworkFeedback {
   private network: string;
 
   constructor(private ethereumService: EthereumService) {
-    this.network = EthereumService.targetedNetwork;
+    this.network = this.ethereumService.targetedNetwork;
   }
 }

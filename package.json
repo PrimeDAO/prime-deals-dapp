@@ -1,10 +1,10 @@
 {
-  "name": "@primedao/prime-deals-dapp",
+  "name": "@primedao/prime-d2d-dapp",
   "version": "0.0.0",
   "description": "The PrimeDAO’s Home for DAO to DAO Deals",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PrimeDAO/prime-deals-dapp"
+    "url": "https://github.com/PrimeDAO/prime-d2d-dapp"
   },
   "author": "CL Cybernetix GmbH",
   "homepage": "./",
@@ -21,12 +21,12 @@
     "start-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env.development --open",
     "analyze": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env.production --analyze",
     "test": "au test",
+    "ipfs-deploy": "ipfs-deploy dist --pinner pinata --no-open --no-clipboard",
     "lint": "eslint --ext .ts ./src ./test",
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js"
   },
   "dependencies": {
-    "@makerdao/multicall": "^0.12.0",
     "@metamask/detect-provider": "^1.2.0",
     "@toruslabs/torus-embed": "1.8.6",
     "@walletconnect/web3-provider": "^1.3.6",
@@ -35,7 +35,7 @@
     "aurelia-dialog": "^2.0.0",
     "aurelia-event-aggregator": "^1.0.3",
     "aurelia-typed-observable-plugin": "^0.4.2",
-    "axios": "^0.21.4",
+    "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "cids": "^1.1.7",
     "dompurify": "^2.2.9",
@@ -103,7 +103,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "engines": {
-    "node": ">=14.11.0 <15"
+    "node": ">=14.11.0"
   },
   "browser": {
     "http": false

@@ -1,10 +1,9 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { EventConfig, EventConfigException } from "./GeneralEvents";
 import { DialogCloseResult, DialogService } from "./DialogService";
 import { DisposableCollection } from "./DisposableCollection";
-import { Alert, ShowButtonsEnum } from "../resources/dialogs/alert/alert";
-import { EventAggregator } from "aurelia-event-aggregator";
-import { Utils } from "services/utils";
+import { Alert } from "../resources/dialogs/alert/alert";
 
 @autoinject
 export class AlertService {
@@ -13,17 +12,19 @@ export class AlertService {
   private subscriptions: DisposableCollection = new DisposableCollection();
 
   constructor(
-    private eventAggregator: EventAggregator,
+    eventAggregator: EventAggregator,
     private dialogService: DialogService,
   ) {
-  }
-
-  shouldHandleErrors(): void {
-    this.subscriptions.push(this.eventAggregator
+    this.subscriptions.push(eventAggregator
       .subscribe("handleException",
         (config: EventConfigException | any) => this.handleException(config)));
-    this.subscriptions.push(this.eventAggregator
+    this.subscriptions.push(eventAggregator
       .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+  }
+
+  /* shouldn't actually ever happen */
+  public dispose(): void {
+    this.subscriptions.dispose();
   }
 
   private handleException(config: EventConfigException | any) {
@@ -37,7 +38,7 @@ export class AlertService {
       message = config.message;
     }
 
-    this.showAlert(`${message ? `${message}: ` : ""}${Utils.extractExceptionMessage(ex)}`);
+    this.showAlert(`${message ? `${message}: ` : ""}${ex?.reason ?? ex?.message ?? ex}`);
   }
 
   private handleFailure(config: EventConfig | string) {
@@ -48,28 +49,10 @@ export class AlertService {
     return (typeof config === "string") ? config : config.message;
   }
 
-  public showAlert(message: string, buttons = ShowButtonsEnum.OK): Promise<DialogCloseResult> {
-    /**
-     * hack we gotta go through because of how the gradient border, size
-     * and position of the dialog is defined in ux-dialog-container.
-     * See alert.scss and dialogs.scss.  We have no other way to selectively
-     * alter the css of that element.  Once alert.scss is loaded, it forever overrides
-     * the default styling on ux-dialog-container.
-     */
-    let theContainer: Element;
-
-    return this.dialogService.open(Alert, { message, buttons }, {
-      keyboard: true,
-      position: (modalContainer: Element, _modalOverlay: Element): void => {
-        theContainer = modalContainer;
-        modalContainer.classList.add("alert");
-      },
-    })
+  public showAlert(message: string): Promise<DialogCloseResult> {
+    return this.dialogService.open(Alert, { message }, { keyboard: true })
       .whenClosed(
-        (result: DialogCloseResult) => {
-          theContainer.classList.remove("alert");
-          return result;
-        },
+        (result: DialogCloseResult) => result,
         // not sure if this works for alert
         (error: string) => { return { output: error, wasCancelled: false }; });
   }

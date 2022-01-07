@@ -1,3 +1,4 @@
+import { DealConfig } from "./../registry-wizard/dealConfig";
 import axios from "axios";
 import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
@@ -64,16 +65,14 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    this.getDeals();
-    this.getDAOsInformation();
+    return this.getDeals();
   }
 
   private async getDeals(): Promise<void> {
     const hashes = await this.ipfsService.getPinnedObjectsHashes();
     hashes.forEach( async (hash:string) => {
-      this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
+      this.dealsObject[hash] = await this.ipfsService.getDealProposal(hash)
         .then(async (deal: any) => {
-          if (deal.daos === undefined) return {};
 
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
           if (timeLeft < 0) deal.incomplete = true;

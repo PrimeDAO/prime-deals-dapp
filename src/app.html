@@ -1,23 +1,32 @@
 <template>
-  <require from="./footer/footer"></require>
   <require from="./navbar/navbar"></require>
+  <require from="./footer/footer"></require>
+  <banner></banner>
+  <modalscreen on-off.to-view="onOff" message.to-view="modalMessage">
+    <div class="appWrapper ${showingMobileMenu ? 'showingMobileMenu' : ''}">
+      <navbar class="header"></navbar>
 
-  <div if.bind="showCountdownPage">
-    <compose view-model="./comingSoon/comingSoon"></compose>
-  </div>
+      <div class="mainContent">
+        <router-view></router-view>
+      </div>
 
-  <div else>
-    <banner></banner>
-    <navbar></navbar>
-    <modalscreen on-off.to-view="onOff" message.to-view="modalMessage">
-      <div class="appWrapper">
-        <div class="mainContent">
-          <router-view></router-view>
-        </div>
-        <div class="appFooter">
-          <footer></footer>
+      <div class="appFooter">
+        <footer></footer>
+      </div>
+
+      <div if.bind="showingMobileMenu" class="animateMobileMenuBackground au-animate">
+        <div class="mobileMenuContainer ${showingMobileMenu ? 'showingMobileMenu' : ''}">
+          <div class="menu" if.bind="showingMobileMenu">
+            <networkfeedback></networkfeedback>
+            <div class="mobileConnectButton">
+              <connectbutton hide-balances></connectbutton>
+            </div>
+            <div class="menuitems">
+              <header-buttons vertical on-navigate.call="onNavigate()"></header-buttons>
+            </div>
+          </div>
         </div>
       </div>
-    </modalscreen>
-  </div>
+    </div>
+  </modalscreen>
 </template>

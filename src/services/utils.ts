@@ -15,22 +15,6 @@ export class Utils {
     const len = str.length;
     return `${str.slice(0, 6)}...${str.slice(len - 4, len)}`;
   }
-
-  /**
-   * Converts a hash into a string representation of a hex number
-   * @param str
-   * @returns
-   */
-  public static asciiToHex(str = ""): string {
-    const res = [];
-    const { length: len } = str;
-    for (let n = 0, l = len; n < l; n++) {
-      const hex = Number(str.charCodeAt(n)).toString(16);
-      res.push(hex);
-    }
-    return `0x${res.join("")}`;
-  }
-
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   // public static getObjectKeys(obj: any): Array<string> {
   //   const temp = [];
@@ -58,12 +42,8 @@ export class Utils {
   //   }
   // }
 
-  public static goto(where: string, newTab = true): void {
-    if (newTab) {
-      window.open(where, "_blank", "noopener noreferrer");
-    } else {
-      window.location.assign(where);
-    }
+  public static goto(where: string): void {
+    window.open(where, "_blank", "noopener noreferrer");
   }
 
   public static toBoolean(value?: string | boolean): boolean {
@@ -89,17 +69,14 @@ export class Utils {
   public static waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000): Promise<void> {
     return new Promise((resolve, reject) => {
       const timerId = setInterval(async () => {
-        if (await test()) { clearTimeout(timerId); return resolve(); }
+        if (await test()) { return resolve(); }
       }, 100);
-      setTimeout(() => {
-        clearTimeout(timerId);
-        return reject(new Error("Test timed out.."));
-      }, timeOut);
+      setTimeout(() => { clearTimeout(timerId); return reject(new Error("Test timed out..")); }, timeOut);
     });
   }
 
   // eslint-disable-next-line no-useless-escape
-  private static pattern = new RegExp(/^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?%#[\]@!\$&'\(\)\*\+,;=.]+$/i);
+  private static pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?%#[\]@!\$&'\(\)\*\+,;=.]+$/i);
 
   public static isValidUrl(str: string, emptyOk = false): boolean {
     return (emptyOk && (!str || !str.trim())) || (str && Utils.pattern.test(str));
@@ -128,43 +105,5 @@ export class Utils {
       str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
     }
     return str;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public static extractExceptionMessage(ex: any): string {
-    return ex?.error?.message ?? ex?.reason ?? ex?.message ?? ex;
-  }
-
-  public static allowableNumericInput(e: KeyboardEvent): boolean {
-    return (!isNaN(Number(e.key)) ||
-      ([
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-        "Backspace", "Delete", "Tab", "Escape", "Enter", "NumLock", "CapsLock", "Shift", "Control",
-        "ArrowHome", "ArrowEnd", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
-        "Cut", "Copy", "Clear", "Paste", "CrSel", "EraseEof", "Insert", "Redo", "Undo",
-      ].indexOf(e.key) !== -1) ||
-      ((["a", "x", "c", "v"].indexOf(e.key) !== -1) && (e.ctrlKey === true || e.metaKey === true))
-    );
-  }
-
-  public static replaceAll(str: string, what: string, that: string): string {
-    /**
-     * when we can use es2021, we can use the native replaceAll function
-     */
-    return str.split(what).join(that);
-  }
-
-
-  /**
-   * remove precision from the decimals part.  Need this because toFixed adds phantom numbers with decimals > 16
-   * @param num
-   * @returns
-   */
-  public static truncateDecimals(num: number, decimals: number): number {
-    if ((num === undefined) || (num === null) || Number.isInteger(num) || isNaN(num)) {
-      return num;
-    }
-    const parts = num.toString().split(".");
-    return Number(`${parts[0]}.${parts[1].slice(0, decimals)}`);
   }
 }

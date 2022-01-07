@@ -1,25 +1,19 @@
-import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { Utils } from "services/utils";
+import { containerless } from "aurelia-framework";
+import { bindable } from "aurelia-typed-observable-plugin";
 import "./navbar.scss";
 
-@autoinject
+@containerless
 export class Navbar {
-  menuOpen = false;
+  @bindable.booleanAttr vertical: boolean;
+  @bindable onNavigate?: () => void;
 
   constructor(private router: Router) {}
 
-  private toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  private goto(url: string, newTab = true): void {
-    this.menuOpen = false;
-    Utils.goto(url, newTab);
-  }
-
-  private navigate(href: string): void {
-    this.menuOpen = false;
+  navigate(href: string): void {
+    if (this.onNavigate) {
+      this.onNavigate();
+    }
     this.router.navigate(href);
   }
 }

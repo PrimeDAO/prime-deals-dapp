@@ -10,9 +10,9 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "target": "es2019",
+    "target": "es5",
     "lib": [
-      "es2019",
+      "es2015",
       "dom"
     ],
     "moduleResolution": "node",

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Prime Deals</title>
+  <title>PrimeDAO2DAO</title>
   <meta http-equiv="Content-Language" content="en">
   <meta name="viewport" content="width=device-width, initial-scale=1"
     content="A decentralized autonomous organization and ecosystem for the adoption of decentralized, open finance.">
@@ -18,41 +18,9 @@
   <% } %>
 
   <style>
-    /* these are here so webpack will pick up the fonts */
     @font-face {
       font-family: "Inter";
-      src: url("./Inter-Light.ttf");
-      font-weight: 300;
-    }
-
-    @font-face {
-      font-family: "Inter";
-      src: url("./Inter-Regular.ttf");
-      font-weight: 400;
-    }
-
-    @font-face {
-      font-family: "Inter";
-      src: url("./Inter-Medium.ttf");
-      font-weight: 500;
-    }
-
-    @font-face {
-      font-family: "Inter";
-      src: url("./Inter-SemiBold.ttf");
-      font-weight: 600;
-    }
-
-    @font-face {
-      font-family: "Inter";
-      src: url("./Inter-Bold.ttf");
-      font-weight: 700;
-    }
-
-    @font-face {
-      font-family: "Inter";
-      src: url("./Inter-ExtraBold.ttf");
-      font-weight: 800;
+      src: url("./Inter-VariableFont.ttf");
     }
 
     @font-face {
@@ -63,29 +31,41 @@
     @font-face {
       font-family: "Aeonik";
       src: url("./Aeonik-Bold.otf");
-      font-weight: 600;
+      font-weight: bold;
     }
   </style>
+
+  <script>
+    (function () {
+      const { pathname, hostname, protocol } = window.location
+
+      // redirect to https on non-localhost
+      if (protocol === 'http:' && hostname !== 'localhost' && hostname.indexOf('ipfs.localhost') === -1) {
+        window.location.protocol = 'https'
+        return
+      }
+
+      //      const ipfsMatch = /.*\/Qm\w{44}/.exec(pathname)
+      //      changeBaseHref(ipfsMatch)
+      //
+      //      window.IS_IPFS = !!ipfsMatch || hostname.endsWith('.eth.link')
+      //
+      //      function changeBaseHref(match) {
+      //        if (match && match.length > 0) {
+      //          let baseHref = match[0]
+      //          if (!baseHref.endsWith('/')) baseHref += '/'
+      //
+      //          const base = document.querySelector('base')
+      //          base.href = baseHref
+      //        }
+      //      }
+      //
+    })();
+  </script>
   <!-- imported CSS are concatenated and added automatically -->
 </head>
 
-<body aurelia-app="main" class="loading">
-
-  <!-- <body class="loading"> -->
-  <div class="initialLoading preload">
-    <img src="/PD_Logo-Loop.gif">
-    <div class="body">Almost There!</div>
-    <div class="body body2">Thanks for your patience</div>
-  </div>
-
-  <!-- <div class="temporarilyDown preload">
-    <img src="/primeLaunchLogo-color.svg">
-    <div class="body">Sorry, Prime Deals is experiencing a technical issue.</div>
-    <div class="body body2">Thanks for your patience as we work hard to resolve it!</div>
-    <div class="body body2">Please feel free to make enquiries and receive updates by clicking Visit Support.</div>
-    <button><a src="#" target="_blank" rel="noopener noreferrer">VISIT SUPPORT</a></button>
-  </div> -->
-
+<body aurelia-app="main">
 </body>
 
 </html>

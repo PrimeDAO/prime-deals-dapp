@@ -1,16 +1,24 @@
-import { BigNumber, Contract, ethers, Signer } from "ethers";
+import { Contract, ethers, Signer } from "ethers";
 import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
-import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+
+const ContractAddresses = require("../contracts/contractAddresses.json") as INetworkContractAddresses;
+// const WETHABI = require("../contracts/WETH.json");
+const DealFactoryABI = require("../contracts/DealFactory.json");
+const DealABI = require("../contracts/Deal.json");
+const SignerABI = require("../contracts/Signer.json");
+const ERC20ABI = require("../contracts/ERC20.json");
 
 export enum ContractNames {
   DEALFACTORY = "DealFactory"
   , DEAL = "Deal"
   // , WETH = "WETH"
-  , PRIME = "Prime"
-  , IERC20 = "IERC20"
+  , PRIMETOKEN = "PrimeToken"
+  , DAI = "DAI"
   , ERC20 = "ERC20"
+  , SAFE = "Safe"
+  , SIGNER = "Signer"
 }
 
 export interface IStandardEvent<TArgs> {
@@ -20,13 +28,34 @@ export interface IStandardEvent<TArgs> {
   getBlock(): Promise<IBlockInfoNative>;
 }
 
+interface INetworkContractAddresses {
+  [network: string]: Map<ContractNames, string>;
+}
+
 @autoinject
 export class ContractsService {
 
+  private static ABIs = new Map<ContractNames, any>(
+    [
+      [ContractNames.DEALFACTORY, DealFactoryABI.abi]
+      , [ContractNames.DEAL, DealABI.abi]
+      , [ContractNames.PRIMETOKEN, ERC20ABI.abi]
+      , [ContractNames.DAI, ERC20ABI.abi]
+      // , [ContractNames.WETH, WETHABI.abi]
+      , [ContractNames.ERC20, ERC20ABI.abi]
+      , [ContractNames.SIGNER, SignerABI.abi]
+      ,
+    ],
+  );
+
   private static Contracts = new Map<ContractNames, Contract>([
-    // [ContractNames.DEALFACTORY, null]
-    // , [ContractNames.DEAL, null]
-    // ,
+    [ContractNames.DEALFACTORY, null]
+    , [ContractNames.DEAL, null]
+    , [ContractNames.SIGNER, null]
+    // , [ContractNames.WETH, null]
+    // , [ContractNames.PRIMETOKEN, null]
+    // , [ContractNames.DAI, null]
+    ,
   ]);
 
   private initializingContracts: Promise<void>;
@@ -50,6 +79,7 @@ export class ContractsService {
         (this.networkInfo?.chainName !== info?.chainName) ||
         (this.networkInfo?.provider !== info?.provider)) {
         this.networkInfo = info;
+        this.initializeContracts();
       }
     };
 
@@ -92,7 +122,7 @@ export class ContractsService {
 
   public createProvider(): any {
     let signerOrProvider;
-    if (this.accountAddress && this.networkInfo?.provider) {
+    if (this.accountAddress) {
       signerOrProvider = Signer.isSigner(this.accountAddress) ? this.accountAddress : this.networkInfo.provider.getSigner(this.accountAddress);
     } else {
       signerOrProvider = this.ethereumService.readOnlyProvider;
@@ -101,6 +131,10 @@ export class ContractsService {
   }
 
   private initializeContracts(): void {
+    if (!ContractAddresses || !ContractAddresses[this.ethereumService.targetedNetwork]) {
+      throw new Error("initializeContracts: ContractAddresses not set");
+    }
+
     /**
      * to assert that contracts are not available during the course of this method
      */
@@ -109,8 +143,7 @@ export class ContractsService {
     }
 
     const reuseContracts = // at least one arbitrary contract already exists
-    // ******* RESTORE THIS WHEN WE HAVE ABIS ***********ContractsService.Contracts.get(ContractNames.SIGNER);
-    true;
+      ContractsService.Contracts.get(ContractNames.DEALFACTORY);
 
     const signerOrProvider = this.createProvider();
 
@@ -121,8 +154,8 @@ export class ContractsService {
         contract = ContractsService.Contracts.get(contractName).connect(signerOrProvider);
       } else {
         contract = new ethers.Contract(
-          ContractsService.getContractAddress(contractName),
-          ContractsService.getContractAbi(contractName),
+          ContractAddresses[this.ethereumService.targetedNetwork][contractName],
+          this.getContractAbi(contractName),
           signerOrProvider);
       }
       ContractsService.Contracts.set(contractName, contract);
@@ -138,48 +171,18 @@ export class ContractsService {
     return ContractsService.Contracts.get(contractName);
   }
 
-  public static getContractAbi(contractName: ContractNames): Array<any> {
-    return ContractsDeploymentProvider.getContractAbi(contractName);
+  public getContractAbi(contractName: ContractNames): Address {
+    return ContractsService.ABIs.get(contractName);
   }
 
-  public static getContractAddress(contractName: ContractNames): Address {
-    return ContractsDeploymentProvider.getContractAddress(contractName);
+  public getContractAddress(contractName: ContractNames): Address {
+    return ContractAddresses[this.ethereumService.targetedNetwork][contractName];
   }
 
   public getContractAtAddress(contractName: ContractNames, address: Address): Contract & any {
     return new ethers.Contract(
       address,
-      ContractsService.getContractAbi(contractName),
+      this.getContractAbi(contractName),
       this.createProvider());
-  }
-
-  // org.zeppelinos.proxy.implementation
-  private static storagePositionZep = "0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3";
-
-  // eip1967.proxy.implementation
-  private static storagePosition1967 = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
-
-
-  /**
-   * Attempts to obtain the addresss of a proxy contract implementation.
-   * Uses a heuristic described here:
-   *     https://ethereum.stackexchange.com/questions/103143/how-do-i-get-the-implementation-contract-address-from-the-proxy-contract-address
-   *
-   * More info here:
-   *     https://medium.com/etherscan-blog/and-finally-proxy-contract-support-on-etherscan-693e3da0714b
-   *
-   * @param proxyContract
-   * @returns null if not found
-   */
-  public async getProxyImplementation(proxyContract: Address): Promise<Address> {
-
-    let result = await this.ethereumService.readOnlyProvider.getStorageAt(proxyContract, ContractsService.storagePositionZep);
-    if (BigNumber.from(result).isZero()) {
-      result = await this.ethereumService.readOnlyProvider.getStorageAt(proxyContract, ContractsService.storagePosition1967);
-    }
-
-    const bnResult = BigNumber.from(result);
-
-    return bnResult.isZero() ? null : bnResult.toHexString();
   }
 }

@@ -1,45 +1,41 @@
-﻿import { BigNumber } from "ethers";
-
-const numeral = require("numeral");
+﻿const numeral = require("numeral");
 
 // export enum RoundingType {
 //   Bankers = 1,
 //   HalfUp = 2
 // }
 
-export interface IToStringOptions {
-  /**
-   * number of significant digits
-   */
-  // precision?: string | number,
-  /**
-   * truncate with 'k', 'M','B', etc.
-   * average takes precedence over thousandSeparated if both are present
-   */
-  average?: boolean,
-  /**
-   * places after the decimal, padded with zeroes if needed.
-   * default is 2
-   * If you supply 0, then will output a whole number rounded up by any fractional part.
-   * If you supply -1, then will show all decimal values, or no decimal place if there isn't one
-   */
-  mantissa?: string | number,
-  /**
-   * insert commas
-   */
-  thousandSeparated?: boolean,
-}
-
 export class NumberService {
   /**
    * @param value
    * @param format
    */
-  public toString(value: number | string, options?: IToStringOptions,
+  public toString(value: number | string,
+    options?: {
+      /**
+       * number of significant digits
+       */
+      // precision?: string | number,
+      /**
+       * truncate with 'k', 'M','B', etc.
+       * average takes precedence over thousandSeparated if both are present
+       */
+      average?: boolean,
+      /**
+       * places after the decimal, padded with zeroes if needed.
+       * default is 2
+       * If you supply 0, then will output a whole number rounded up by any fractional part.
+       */
+      mantissa?: string | number,
+      /**
+       * insert commas
+       */
+      thousandSeparated?: boolean,
+    },
   ): string | null | undefined {
 
     // this helps to display the erroneus value in the GUI
-    if ((typeof value === "string") || (value === null) || (value === undefined)) {
+    if ((typeof value === "string") || (value === null) || (typeof value === "undefined")) {
       return value as any;
     }
 
@@ -52,13 +48,10 @@ export class NumberService {
 
     let formatString: string;
 
-    if (mantissa > 0) {
+    if (mantissa) {
       formatString = "0.".padEnd(mantissa + 2, "0");
-    } else if (!mantissa) {
+    } else {
       formatString = "0";
-    }
-    else if (mantissa === -1) {
-      formatString = ".[0]";
     }
 
     if (thousandSeparated) {
@@ -67,19 +60,10 @@ export class NumberService {
       formatString = formatString + "a";
     }
     /**
-     * numeral.js is no longer maintained.  It has a bug where for small numbers it always
-     * returns NaN.
+     * supply trunc as rounding function because we don't want to round up
      */
-    if (!!value && (Math.abs(value) <= 0.0000001)) {
-      return numeral(0).format(formatString, Math.trunc) as string;
-    } else {
-      /**
-       * supply trunc as rounding function because we don't want to round up
-       */
-      return numeral(value).format(formatString, Math.trunc) as string;
-    }
+    return numeral(value).format(formatString, Math.trunc) as string;
   }
-
   /**
    * returns number with `digits` number of digits.
    * @param value the value
@@ -115,16 +99,9 @@ export class NumberService {
   //   return result;
   // }
 
-  public fromString(value: string | number | BigNumber, decimalPlaces = 1000): number {
+  public fromString(value: string | number, decimalPlaces = 1000): number {
 
     if (typeof(value) === "number") return value;
-
-    /**
-     * ok, isn't a string, but still helpful
-     */
-    if (BigNumber.isBigNumber(value)) {
-      return value.toNumber();
-    }
 
     // this helps to display the erroneus value in the GUI
     if (!this.stringIsNumber(value, decimalPlaces)) {
@@ -219,21 +196,4 @@ export class NumberService {
       `^[+|-]?(((\\d{1,3}\\,)((\\d{3}\\,)?)(\\d{3}?(\\.\\d{0,${decimalPlaces}})?))|(\\d{1,})|(\\d{0,}(\\.\\d{0,${decimalPlaces}})))$` :
       "^[+|-]?(((\\d{1,3}\\,)((\\d{3}\\,)?)(\\d{3}))|(\\d{1,}))$";
   }
-
-  // private toNonExponentialString(value): string {
-  //   const valueString = value.toString();
-  //   const parts = new RegExp(/^(-)?([0-9]+)\.?([0-9]+)?e([-+])?([0-9]+)$/).exec(valueString);
-  //   if (parts) {
-  //     const sign = parts[1];
-  //     const iPart = parts[2];
-  //     const fPart = parts[3];
-  //     const eSign = parts[4];
-  //     const e = parts[5];
-  //     const zeros = "0".repeat(parseInt(e) - (eSign === "-" ? iPart : fPart || "").length);
-  //     return (sign || "") + (eSign === "-" ? "0." + zeros : "") + iPart + (fPart || "") + (eSign !== "-" ? zeros : "");
-  //   } else {
-  //     return valueString;
-  //   }
-  // }
-
 }
