@@ -4,9 +4,10 @@
 @import "the-new-css-reset/css/reset.css";
 
 @mixin standardTextGradient {
-  background-image: $Gradient08;
+  background-image: $Gradient01;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @mixin tokenIcon {
@@ -14,19 +15,30 @@
   border-radius: 9px;
 }
 
+$BodyPaddingLeftRight: 160px;
+$BodyPaddingLeftRightMobile: 20px;
+$BodyWidth: 1120px;
+/**
+  * no idea with the '8' is needed.  Without it, at a width range around 1440 the footer will be
+  * wider than the page and cause a horizontal scrollbar to appear
+  */
+$PageBreakWidth: $BodyWidth + ($BodyPaddingLeftRight * 2) + 8;
+// $PageBreakWidthMobile: $BodyWidth + ($BodyPaddingLeftRightMobile * 2);
+
 html {
   body {
     font-size: 16px;
+    margin: 0;
     background-color: $BG01;
     color: $White;
-    font-family: "Aeonik";
+    font-family: Aeonik;
     min-height: 100vh;
-    width: clamp(250px, calc(100% - 40px), 1084px);
-    margin: 0 auto;
-    padding: 0 20px;
-    // padding-left: 160px;
-    // padding-right: 160px;
-    overflow-x: hidden;
+
+    &:not(.loading) {
+      > .prepage {
+        display: none;
+      }
+    }
 
     input,
     textarea {
@@ -115,7 +127,7 @@ html {
     }
 
     .subtitle {
-      color: $Gradient08;
+      color: $Gradient01;
       font-size: 20px;
       line-height: 24px;
       font-weight: 700;
@@ -187,9 +199,6 @@ html {
 @media screen and (max-width: 1072px) {
   html {
     body {
-      padding-left: 20px;
-      padding-right: 20px;
-
       .heading {
         &.heading0 {
           font-size: 48px;
