@@ -17,7 +17,11 @@
 $BodyPaddingLeftRight: 160px;
 $BodyPaddingLeftRightMobile: 20px;
 $BodyWidth: 1120px;
-$PageBreakWidth: $BodyWidth + ($BodyPaddingLeftRight * 2);
+/**
+  * no idea with the '8' is needed.  Without it, at a width range around 1440 the footer will be
+  * wider than the page and cause a horizontal scrollbar to appear
+  */
+$PageBreakWidth: $BodyWidth + ($BodyPaddingLeftRight * 2) + 8;
 // $PageBreakWidthMobile: $BodyWidth + ($BodyPaddingLeftRightMobile * 2);
 
 html {
