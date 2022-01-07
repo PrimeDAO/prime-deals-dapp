@@ -25,8 +25,8 @@ html {
     color: $White;
     font-family: Aeonik;
     min-height: 100vh;
-    padding-left: $BodyPaddingLeftRight;
-    padding-right: $BodyPaddingLeftRight;
+    // padding-left: $BodyPaddingLeftRight;
+    // padding-right: $BodyPaddingLeftRight;
 
     &:not(.loading) {
       > .prepage {
@@ -193,8 +193,8 @@ html {
 @media screen and (max-width: 1072px) {
   html {
     body {
-      padding-left: $BodyPaddingLeftRightMobile;
-      padding-right: $BodyPaddingLeftRightMobile;
+      // padding-left: $BodyPaddingLeftRightMobile;
+      // padding-right: $BodyPaddingLeftRightMobile;
 
       .heading {
         &.heading0 {

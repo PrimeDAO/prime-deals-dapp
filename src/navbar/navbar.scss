@@ -193,9 +193,14 @@ $menu-open-duration: 0.1s;
 
 @media screen and (max-width: 450px) {
   .navbar-container {
-    grid-template-columns: auto 1fr 0 40px;
-    grid-template-areas: "logo connect sub-pages hamburger-menu";
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "logo connect hamburger-menu";
     justify-content: space-between;
+    height: 70px;
+
+    .logo {
+      padding-left: $BodyPaddingLeftRightMobile;
+    }
 
     .mobile-only {
       display: block;
@@ -203,6 +208,11 @@ $menu-open-duration: 0.1s;
     .hamburger-menu-button {
       z-index: 999;
       grid-area: hamburger-menu;
+      margin-right: $BodyPaddingLeftRightMobile;
+    }
+    .headerConnectButton {
+      text-align: center;
+      padding-right: 0;
     }
 
     & > .products,
