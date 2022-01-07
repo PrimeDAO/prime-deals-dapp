@@ -3,12 +3,12 @@
 @import "resources/dialogs/dialogs.scss";
 .appWrapper {
   display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: 107px 1fr 58px;
+  grid-template-columns: minmax($BodyPaddingLeftRight, 1fr) 1120px minmax($BodyPaddingLeftRight, 1fr);
+  grid-template-rows: 192px 100fr 1fr;
   grid-template-areas:
-    "header header"
-    "mainContent mainContent"
-    "footer footer";
+    ". . ."
+    ". mainContent ."
+    "footer footer footer";
   height: 100vh;
 
   .networkfeedback {
@@ -133,123 +133,6 @@
   }
 
   .appWrapper {
-    &.showingMobileMenu {
-      .appHeader, 
-      .logo {
-        top: 0;
-        position: fixed;
-      }
-    }
-
-    .appHeader {
-      right: 20px;
-      .networkfeedback,
-      .headerButtons,
-      > .headerConnectButton {
-        display: none;
-      }
-      > .mobilemenuButton {
-        display: block;
-      }
-    }
-
-    .appFooter {
-      padding: 0 20px;
-      margin: 0 -20px;
-    }
-  }
-
-
-}
-
-
-.animateMobileMenuBackground {
-  width: 300vmax;
-  height: 300vmax;
-  background: $BG03;
-  border-radius: 50%;
-  border: 1px solid $BG02;
-  position: fixed;
-  top: calc(-150vmax + 40px);
-  right: calc(-150vmax + 50px);
-
-  &>.mobileMenuContainer {
-    position: fixed;
-    left: calc(50vw - 85px);
-    top: calc(50vh - 115px);
-    text-align: center;
-
-    &.showingMobileMenu {
-      display: unset;
-    }
-
-    &>.menu {
-      .networkfeedback {
-        margin-bottom: 20px;
-      }
-
-      .mobileConnectButton {
-        margin-bottom: 26px;
-      }
-
-      .menuitems {
-        a.item {
-          padding-left: calc(50% - 80px);
-          .text {
-            justify-items: unset;
-          }
-        }
-      }
-    }
-  }
-
-  &.au-enter, &.au-left {
-    transform: scale(0);
-  }
-  &.au-leave, &.au-entered {
-    transform: scale(1);
-  }
-  &.au-enter-active {
-    & .menu {
-      opacity: 0;
-    }
-    animation: openMenu 0.25s cubic-bezier(.42,.49,1,.35);
-  }
-  &.au-leave-active {
-    animation: closeMenu 0.25s cubic-bezier(0,.32,.82,1);
-  }
-}
-
-@media screen and (max-width: 782px) {
-  .appWrapper {
-    .mainContent {
-      padding-top: unset;
-
-      .buttonContainer {
-        margin-top: unset;
-        justify-content: space-between;
-        .button.cancel {
-          margin-right: auto;
-          margin-top: 40px;
-        }
-      }
-    }
-  }
-}
-
-@keyframes openMenu {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes closeMenu {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
+    grid-template-columns: minmax($BodyPaddingLeftRightMobile, 1fr) 100fr minmax($BodyPaddingLeftRightMobile, 1fr);
   }
 }
