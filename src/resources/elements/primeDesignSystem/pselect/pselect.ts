@@ -5,7 +5,7 @@ import "./pselect.scss";
 export interface IPSelectItemConfig {
   value: string,
   text: string,
-  innerHTML: string
+  innerHTML: string,
 }
 
 /**
@@ -37,7 +37,7 @@ export class PButton {
   @bindable data: Array<IPSelectItemConfig>;
   @bindable placeholder = "Please Select...";
   @bindable searchText = "No result found.";
-  @bindable searchPlaceholder =" Type to search...";
+  @bindable searchPlaceholder ="Type to search...";
   @bindable isSearchable = false;
 
   refSelectInput: HTMLSelectElement;
@@ -45,16 +45,25 @@ export class PButton {
   isOpen = false;
 
   attached(): void {
-    this.select = new SlimSelect({
+    const selectConfig = {
       placeholder: "<span class=\"loading\"><i class=\"fas fa-circle-notch\"></i> Loading...</span>",
       select: this.refSelectInput,
       isEnabled: !this.disabled,
       searchText: this.searchText,
-      searchPlaceholder: "Type to search...",
+      searchPlaceholder: this.searchPlaceholder,
       hideSelectedOption: true,
       showSearch: this.isSearchable,
-      data: this.data,
-    });
+      data: undefined,
+    };
+
+    if (this.data) {
+      selectConfig.data = [
+        {text: this.placeholder, placeholder: true},
+        ...this.data,
+      ];
+    }
+
+    this.select = new SlimSelect(selectConfig);
   }
 
   dataChanged(): void {
