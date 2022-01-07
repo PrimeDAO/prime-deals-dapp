@@ -51,6 +51,8 @@
     "web3modal": "^1.9.0"
   },
   "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^6.0.0",
+    "@cypress/webpack-preprocessor": "^5.11.0",
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.2",
     "@types/webpack": "^4.41.22",
@@ -146,5 +148,8 @@
       "text",
       "html"
     ]
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
   }
 }
