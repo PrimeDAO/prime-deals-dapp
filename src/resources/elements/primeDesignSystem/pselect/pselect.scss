@@ -1,38 +1,38 @@
-@import "../colors";
+@import "../styles";
+@include loading-icon;
+// @include spin;
 
 .ss-main {
   width: inherit;
   .ss-single-selected {
-    border: 1px solid $Border01;
-    background-color: $BG04;
-    border-radius: 10px;
-    padding: 7.5px 10px;
+    border: 1px solid $input-border-color-default;
+    background-color: $input-background-color-default;
+    border-radius: $border-radius-normal;
+    padding: $spacing-medium-small $spacing-normal;
+    color: $input-text-color-default;
+    height: $input-height;
     width: -webkit-fill-available;
-    height: 40px;
-    color: $Neutral02;
 
     .ss-arrow .arrow-down, .ss-arrow .arrow-up {
       border-color: $White;
     }
     .placeholder {
-      color: $Neutral02;
+      &>.ss-disabled {
+        color: $input-text-color-default;
+      }
+
       .loading {
         display: flex;
-        gap: 5px;
+        gap: $spacing-small;
         line-height: initial;
-        i {
-          animation-name: spin;
-          animation-duration: 1.5s;
-          animation-iteration-count: infinite;
-          animation-timing-function: linear;          color: $Primary01;
-        }
-        
+        @include loading-icon;
       }
+
       img {
-        width: 20px;
-        height: 20px;
+        width: $logo-icon-size-small;
+        height: $logo-icon-size-small;
         border-radius: 50%;
-        margin-right: 5px;
+        margin-right: $spacing-small;
         background-color: $Neutral04;
         overflow: visible;
       }
@@ -40,47 +40,46 @@
   }
 
   .ss-content {
-    background-color: $BG04;
-    border: 1px solid $Border01;
+    background-color: $input-background-color-default;
+    border: 1px solid $input-border-color-default;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
     .ss-list {
-      padding: 5px 0;
+      padding: $spacing-small 0;
       &::-webkit-scrollbar {
-        width: 5px;
+        width: $spacing-small;
       }
       &::-webkit-scrollbar-thumb {
         transform: translateX(-15px);
         border-radius: 15px;
-        // border: 2px solid $BG01;
-        background-color: rgba($Neutral02, 0.5);
+        background-color: rgba($scroll-bar-thumb-color, 0.5);
         height: 50%;
-        // outline: 1px solid slategrey;
       }
       .ss-option {
-        color: $Neutral04;
+        color: $input-text-color-highlighted;
         span {
           display: flex;
           justify-content: start;
           align-items: center;
+          gap: $spacing-small;
           img {
-            margin-right: 5px;
-            height: 20px;
-            width: 20px;
-            background-color: $Neutral03;
+            margin-right: $spacing-small;
+            height: $logo-icon-size-small;
+            width: $logo-icon-size-small;
+            background-color: $logo-icon-background-default;
             border-radius: 50%;
           }
         }
-        padding: 5px 10px;
+        padding: $spacing-small $spacing-normal;
         &.ss-disabled,
         &:hover {
-          background-color: $Border01;
+          background-color: $input-border-color-active;
         }
       }
     }
 
     .ss-search {
-      border-bottom: 1px solid $Border01;
-      margin: 0 5px;
+      border-bottom: 1px solid $input-border-color-default;
+      margin: 0 $spacing-small;
       align-items: center;
       width: -webkit-fill-available;
       width: -moz-available;
@@ -94,9 +93,9 @@
 
       &>input {
         border: none;
-        background-color: $BG04;
-        color: $Neutral02;
-        padding: 5px 10px;
+        background-color: $input-background-color-default;
+        color: $input-text-color-default;
+        padding: $spacing-small $spacing-normal;
         &:active,
         &:focus {
           box-shadow: none;
@@ -107,36 +106,27 @@
   }
 
   .ss-open-below + .ss-content {
-    border-top-color: $Border01;
-    border-radius: 0 0 10px 10px;
+    border-top-color: $input-border-color-default;
+    border-radius: 0 0 $border-radius-normal $border-radius-normal;
   }
   .ss-open-above + .ss-content {
-    border-bottom-color: $Border01;
-    border-radius: 10px 10px 0 0;
+    border-bottom-color: $input-border-color-default;
+    border-radius: $border-radius-normal $border-radius-normal 0 0;
   }
 
   .ss-open-above, .ss-open-below, .ss-open {
-    border-color: $Secondary02;
+    border-color: $input-border-color-active;
   }
 
   .ss-single-selected.ss-disabled {
     background-color: transparent;
-    border-color: $Border01;
-    color: $Secondary05;
+    border-color: $input-border-color-default;
+    color: $input-text-color-disabled;
     .ss-disabled {
-      color: $Secondary05;
+      color: $input-border-color-disabled;
     }
     .ss-arrow .arrow-down, .ss-arrow .arrow-up {
-      border-color: $Secondary05;
+      border-color: $input-text-color-disabled;
     }
   }
-}
-
-@keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
 }
