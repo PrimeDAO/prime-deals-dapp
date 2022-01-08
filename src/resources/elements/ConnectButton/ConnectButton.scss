@@ -46,6 +46,7 @@
     .ethBalanceContainer {
       display: inline-block;
       white-space: nowrap;
+      font-size: 14px;
 
       &.ETH {
         margin-right: 0.5em;
@@ -112,7 +113,7 @@
   }
 }
 
-@media screen and (max-width: 1368px) {
+@media screen and (max-width: 1068px) {
   .connectButtonContainer {
     &.connected {
       padding-left: 0;
