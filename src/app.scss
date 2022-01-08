@@ -4,12 +4,12 @@
 
 .appWrapper {
   display: grid;
-  grid-template-columns: 100%;
+  grid-template-columns: minmax($BodyPaddingLeftRight, 1fr) $BodyWidth minmax($BodyPaddingLeftRight, 1fr);
   grid-template-rows: 192px 100fr 1fr;
   grid-template-areas:
-    "."
-    "mainContent"
-    "footer";
+    ". . ."
+    ". mainContent ."
+    "footer footer footer";
   height: 100vh;
 
   .mainContent {
@@ -23,8 +23,8 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .appWrapper {
-    grid-template-rows: 128px 100fr 1fr;
+    grid-template-columns: minmax($BodyPaddingLeftRightMobile, 1fr) 100fr minmax($BodyPaddingLeftRightMobile, 1fr);
   }
 }

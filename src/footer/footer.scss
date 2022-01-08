@@ -86,17 +86,6 @@
   > hr {
     background-color: $Border01;
     height: 1px;
-    margin-left: -$BodyPaddingLeftRight;
-    margin-right: -$BodyPaddingLeftRight;
-  }
-}
-
-@media screen and (max-width: 1072px) {
-  .footerContainer {
-    > hr {
-      margin-left: -$BodyPaddingLeftRightMobile;
-      margin-right: -$BodyPaddingLeftRightMobile;
-    }
   }
 }
 
