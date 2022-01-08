@@ -1,4 +1,4 @@
-@import "styles/colors.scss";
+@import "styles/styles.scss";
 
 .scrollerContainer {
   display: inline-grid; // to make this have 100% width while still supporting scrolling
@@ -10,7 +10,7 @@
     overflow-x: auto;
     width: calc(100% - calc(100vw - max-content));
     padding-left: auto;
-    padding-right: auto; 
+    padding-right: auto;
     -webkit-overflow-scrolling: touch;
     overflow: hidden;
 
@@ -64,7 +64,7 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .scrollerContainer {
     display: block;
     position: unset;

@@ -12,8 +12,8 @@ $menu-open-duration: 0.1s;
   display: grid;
   grid-auto-flow: column;
   align-items: center;
-  grid-template-columns: $BodyPaddingLeftRight auto auto auto;
-  grid-template-areas: "logo products networkFeedback connect" "subPages subPages subPages subPages";
+  grid-template-columns: $BodyPaddingLeftRight auto auto;
+  grid-template-areas: "logo products connect" "subPages subPages subPages";
   background-color: $BG01;
 
   .mobile-only {
@@ -49,7 +49,7 @@ $menu-open-duration: 0.1s;
         border-bottom: 3px solid $BG01;
         cursor: pointer;
         color: $Neutral04;
-        padding: 12px 12px 12px 8px;
+        padding: 12px 12px 12px 0;
         align-items: center;
         justify-items: start;
         column-gap: 12px;
@@ -105,6 +105,10 @@ $menu-open-duration: 0.1s;
     grid-area: subPages;
     background-color: $BG02;
     height: 40px;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: center;
 
     .container {
       list-style-type: none;
@@ -112,7 +116,7 @@ $menu-open-duration: 0.1s;
       margin: 0;
       padding-left: $BodyPaddingLeftRight;
       display: grid;
-      grid-template-columns: auto auto auto auto auto;
+      grid-template-columns: auto auto auto;
       justify-content: start;
 
       column-gap: 20px;
@@ -136,17 +140,17 @@ $menu-open-duration: 0.1s;
         }
       }
     }
-  }
 
-  .networkFeedback {
-    grid-area: networkFeedback;
-    font-family: Inter;
-    text-align: right;
-    .testnet {
-      color: $Shade01;
-    }
-    a {
-      color: $Secondary01;
+    .networkFeedback {
+      padding-right: 22px;
+      font-family: Inter;
+      text-align: right;
+      .testnet {
+        color: $Shade01;
+      }
+      a {
+        color: $Secondary01;
+      }
     }
   }
 
@@ -160,7 +164,7 @@ $menu-open-duration: 0.1s;
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: 900px) {
   .navbar-container {
     grid-template-columns: calc(#{$BodyPaddingLeftRightMobile} + 50px) 1fr auto;
     grid-template-areas: "logo products connect" "subPages subPages subPages";
@@ -180,13 +184,13 @@ $menu-open-duration: 0.1s;
     }
 
     .productSubpages {
+      justify-content: center;
       .container {
         padding-left: 0;
-        justify-content: center;
       }
-    }
-    .networkFeedback {
-      display: none;
+      .networkFeedback {
+        display: none;
+      }
     }
   }
 }
