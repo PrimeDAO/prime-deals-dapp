@@ -12,9 +12,41 @@
 // the project's config changing)
 
 /* eslint-disable */
+const webpack = require("@cypress/webpack-preprocessor");
+
 module.exports = (on, config) => {
   // bind to the event we care about
   // on('<event>', (arg1, arg2) => {
   //   // plugin stuff here
   // });
+  on("file:preprocessor", webpack({
+    webpackOptions: {
+      resolve: {
+        extensions: [".ts", ".js"]
+      },
+      devtool: 'eval-source-map',
+      module: {
+        rules: [
+          {
+            test: /\.ts$/,
+            exclude: [/node_modules/],
+            use: [
+              {
+                loader: "ts-loader"
+              }
+            ]
+          },
+          {
+            test: /\.feature$/,
+            use: [
+              {
+                loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+                options: config
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }));
 };

@@ -151,6 +151,11 @@
     ]
   },
   "cypress-cucumber-preprocessor": {
-    "nonGlobalStepDefinitions": true
+    "stepDefinitions": [
+      "cypress/integration/[filepath]/**/*.{js,ts}",
+      "cypress/integration/[filepath].{js,ts}",
+      "cypress/integration/**/*.{js,ts}",
+      "cypress/integration/common/**/*.{js,ts}"
+    ]
   }
 }
