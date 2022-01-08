@@ -47,6 +47,7 @@
     "moment-timezone": "^0.5.31",
     "numeral": "^2.0.6",
     "rxjs": "^6.6.3",
+    "slim-select": "^1.27.1",
     "the-new-css-reset": "^1.4.4",
     "tippy.js": "^6.2.7",
     "web3modal": "^1.9.0"
