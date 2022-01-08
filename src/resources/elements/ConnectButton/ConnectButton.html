@@ -21,8 +21,8 @@
           ? ' confirming' : '')">
             <div class="phase">${txPhase}</div><i class="spinner fas fa-circle-notch fa-spin"></i>
           </div>
-          <div else class="balances">
-            ${accountAddress | smallHexString} <i class="fas fa-caret-down"></i>
+          <div else class="address">
+            ${accountAddress | smallHexString} <span class="caret fas fa-caret-down"></span>
           </div>
         </pbutton>
       </div>
