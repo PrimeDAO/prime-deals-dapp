@@ -114,7 +114,7 @@
   }
 
   input,
-  select,
+  // select,
   textarea {
     &:focus-within, &:active {
       outline: none;
@@ -192,6 +192,10 @@
 
 
   &.stage2, &.stage3 {
+    pselect {
+      width: 100%;
+    }
+
     .infoContainer {
       .otherLinks {
         &>.textarea-container {
@@ -222,7 +226,7 @@
           align-items: flex-end;
           flex-flow: column;
           input {
-            width: 245px;
+            width: 215px;
           }
           .deleteLink {
             cursor: pointer;
@@ -537,7 +541,8 @@
       grid-column: span 2;
     }
     .infoInput {
-      input, select {
+      select,
+      input {
         height: unset;
         padding: 12px;
       }
@@ -570,7 +575,8 @@
             width: -webkit-fit-content;
           }
           gap: unset;
-          input, select {
+          select,
+          input {
             width: unset;
             height: unset;
           }

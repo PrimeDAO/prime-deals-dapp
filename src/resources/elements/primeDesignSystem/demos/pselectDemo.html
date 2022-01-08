@@ -1,0 +1,19 @@
+<template>
+  <section class="demo">
+    <h1>Simple Dropdown</h1>
+    <pselect data.bind="simpleData"></pselect>
+    <h1>Searchable Dropdown</h1>
+    <pselect is-searchable data.bind="simpleData"></pselect>
+    <h2>With custom search placeholder</h2>
+    <pselect is-searchable search-placeholder="Custom search placeholder" data.bind="simpleData"></pselect>
+    <h2>With custom empty search list text</h2>
+    <p>(Search an item not on the list)</p>
+    <pselect is-searchable search-text="Custom Search Text" data.bind="simpleData"></pselect>
+    <h1>Custom placeholder</h1>
+    <pselect is-searchable placeholder="Custom placeholder..." data.bind="simpleData"></pselect>
+    <h1>Disabled Dropdown</h1>
+    <pselect disabled="true" is-searchable data.bind="simpleData"></pselect>
+    <h1>Dropdown With Icons</h1>
+    <pselect placeholder="Choose DAO" data.bind="complexData"></pselect>
+  </section>
+</template>
