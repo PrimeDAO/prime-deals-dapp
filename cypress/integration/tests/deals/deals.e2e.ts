@@ -1,5 +1,5 @@
 
-import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Given("I choose Deal Type", () => {
   cy.get("[data-test='initiate-deal-button']").click();
@@ -17,4 +17,6 @@ Given("I want to see Running Deals", () => {
   cy.contains("li", "Running Deals").click();
   cy.url().should("include", "deals/running");
 });
+
+Then("I can read about the deal types", () => {})
 
