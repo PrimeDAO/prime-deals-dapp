@@ -13,7 +13,7 @@ $menu-open-duration: 0.1s;
   grid-auto-flow: column;
   align-items: center;
   grid-template-columns: $BodyPaddingLeftRight auto auto;
-  grid-template-areas: "logo products connect" "subPages subPages subPages";
+  grid-template-areas: "logo products connect" ". subPages subPages";
   background-color: $BG01;
 
   .mobile-only {
@@ -112,9 +112,7 @@ $menu-open-duration: 0.1s;
 
     .container {
       list-style-type: none;
-      padding: 0 20px;
       margin: 0;
-      padding-left: $BodyPaddingLeftRight;
       display: grid;
       grid-template-columns: auto auto auto;
       justify-content: start;
@@ -164,11 +162,9 @@ $menu-open-duration: 0.1s;
   }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: $PageBreakWidth) {
   .navbar-container {
-    grid-template-columns: calc(#{$BodyPaddingLeftRightMobile} + 50px) 1fr auto;
-    grid-template-areas: "logo products connect" "subPages subPages subPages";
-
+    grid-template-columns: calc(#{$ContentBodyPaddingLeftRightMobile} + 50px) auto auto;
     .products {
       .container {
         justify-content: center;
@@ -184,10 +180,6 @@ $menu-open-duration: 0.1s;
     }
 
     .productSubpages {
-      justify-content: center;
-      .container {
-        padding-left: 0;
-      }
       .networkFeedback {
         display: none;
       }
@@ -203,7 +195,7 @@ $menu-open-duration: 0.1s;
     height: 70px;
 
     .logo {
-      padding-left: $BodyPaddingLeftRightMobile;
+      padding-left: $ContentBodyPaddingLeftRightMobile;
     }
 
     .mobile-only {
@@ -212,7 +204,7 @@ $menu-open-duration: 0.1s;
     .hamburger-menu-button {
       z-index: 999;
       grid-area: hamburger-menu;
-      margin-right: $BodyPaddingLeftRightMobile;
+      margin-right: $ContentBodyPaddingLeftRightMobile;
     }
     .headerConnectButton {
       text-align: center;
