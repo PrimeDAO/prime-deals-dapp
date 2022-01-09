@@ -13,8 +13,14 @@ $menu-open-duration: 0.1s;
   grid-auto-flow: column;
   align-items: center;
   grid-template-columns: $BodyPaddingLeftRight auto auto;
-  grid-template-areas: "logo products connect" ". subPages subPages";
+  grid-template-areas: "logo products connect" "blank subPages subPages";
   background-color: $BG01;
+
+  .blank {
+    grid-area: blank;
+    background-color: $BG02;
+    padding: 10px 0;
+  }
 
   .mobile-only {
     display: none;
@@ -106,8 +112,7 @@ $menu-open-duration: 0.1s;
     background-color: $BG02;
     height: 40px;
     display: grid;
-    grid-template-columns: auto auto;
-    justify-content: space-between;
+    grid-template-columns: 1fr auto;
     align-items: center;
 
     .container {
@@ -212,6 +217,7 @@ $menu-open-duration: 0.1s;
     }
 
     & > .products,
+    & > .blank,
     & > .productSubpages {
       display: none;
     }
