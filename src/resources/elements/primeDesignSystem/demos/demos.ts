@@ -21,6 +21,13 @@ export class Demos {
         name: "pselect",
         title: "pSelect Demo",
       },
+      {
+        route: ["pinput-numeric"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pInputNumericDemo.html"),
+        name: "pinput-numeric",
+        title: "pSelect Demo",
+      },
     ];
 
     config.map(routes);

@@ -1,2 +1,53 @@
 @import "./colors.scss";
 @import "./variables.scss";
+
+.pInput {
+  font-style: normal;
+  font-weight: normal;
+  font-size: $font-size1;
+  line-height: 23px;
+  border: 1px solid $Neutral02;
+  background: $BG04;
+  color: $White;
+  border-radius: $border-radius-normal;
+  outline: none;
+  padding: $spacing-normal;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $Neutral03;
+    mix-blend-mode: normal;
+    opacity: 0.43;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+
+  &-error {
+    border-color: $Red;
+
+    .fas {
+      color: $Red;
+    }
+  }
+
+  &-warning {
+    border-color: $Orange;
+
+    .fas {
+      color: $Orange;
+    }
+  }
+
+  &-disabled {
+    background-color: $BG01;
+    border-color: $Border01;
+    cursor: not-allowed;
+  }
+
+  &-focused {
+    border-color: $Secondary02;
+  }
+
+}
