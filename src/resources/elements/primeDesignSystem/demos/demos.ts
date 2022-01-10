@@ -26,7 +26,7 @@ export class Demos {
         nav: true,
         moduleId: PLATFORM.moduleName("./pInputNumericDemo.html"),
         name: "pinput-numeric",
-        title: "pSelect Demo",
+        title: "pInput Numeric Demo",
       },
     ];
 
