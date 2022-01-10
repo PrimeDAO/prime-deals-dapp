@@ -6,18 +6,16 @@
   font-weight: normal;
   font-size: $font-size1;
   line-height: 23px;
-  border: 1px solid $Neutral02;
+  border: 1px solid $Border01;
   background: $BG04;
-  color: $White;
+  color: $Neutral04;
   border-radius: $border-radius-normal;
   outline: none;
   padding: $spacing-normal;
   box-sizing: border-box;
 
-  &::placeholder {
-    color: $Neutral03;
-    mix-blend-mode: normal;
-    opacity: 0.43;
+  &, input::placeholder {
+    color: $Neutral02;
   }
 
   &:focus::placeholder {
@@ -42,8 +40,15 @@
 
   &-disabled {
     background-color: $BG01;
-    border-color: $Border01;
     cursor: not-allowed;
+
+    &, input::placeholder {
+      color: $Secondary05;
+    }
+  }
+
+  &-validating {
+    border-color: $Neutral04;
   }
 
   &-focused {
