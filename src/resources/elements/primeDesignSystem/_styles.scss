@@ -14,8 +14,12 @@
   padding: $spacing-normal;
   box-sizing: border-box;
 
-  &, input::placeholder {
-    color: $Neutral02;
+  input {
+    color: $Neutral04;
+
+    &::placeholder {
+      color: $Neutral02;
+    }
   }
 
   &:focus::placeholder {
@@ -42,8 +46,12 @@
     background-color: $BG01;
     cursor: not-allowed;
 
-    &, input::placeholder {
+    &, input {
       color: $Secondary05;
+
+      &::placeholder {
+        color: $Secondary05;
+      }
     }
   }
 
