@@ -51,8 +51,6 @@
           }
           header {
             display: flex;
-            font-family: "Aeonik";
-            font-weight: 700;
             font-size: 28px;
             line-height: 65px;
             justify-content: space-between;
@@ -63,9 +61,6 @@
             }
           }
           .subtitle {
-            font-family: "Inter";
-            font-weight: 400;
-            font-size: 16px;
             line-height: 20px;
             color: $Neutral03;
           }
@@ -203,7 +198,7 @@
           max-width: unset;
         }
 
-        .buttons {
+        .cards {
           justify-content: center;
           grid-auto-flow: row;
           width: 100%;
