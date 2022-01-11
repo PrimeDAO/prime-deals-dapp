@@ -1,7 +1,8 @@
 @import "styles/colors.scss";
 
 .walletMenuContainer {
-  display: none;
+  display: grid;
+  position: fixed;
   z-index: 998;
   background-color: $BG02;
   border: 2px solid $BG02;
@@ -11,6 +12,12 @@
   font-family: Inter;
   font-size: 14px;
   width: 360px;
+  top: 58px;
+  right: -380px;
+
+  -webkit-transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -moz-transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   hr {
     color: $Border01;
@@ -47,9 +54,6 @@
   }
 
   &.showing {
-    position: fixed;
-    display: grid;
-    top: 58px;
     right: 20px;
   }
 
@@ -69,6 +73,14 @@
       .dot {
         color: $AlertRed;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .walletMenuContainer {
+    &.showing {
+      right: 0;
     }
   }
 }
