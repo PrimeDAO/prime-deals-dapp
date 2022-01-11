@@ -35,7 +35,35 @@ Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E
 ### Flow
 1. Single out a Specification, that you want to cover with automated tests
 2. Define the Specifications in [Gherkin][gherkin] format in `.feature` files
+```feature
+# The singled out specification from 1.
+Feature: Choose Deal type
+    # Similar to "beforeEach"
+    Background:
+      Given I navigate to the Deals home page
+      And I navigate to the All Deals page
+
+    # A scenario, that describes the Feature in more detail
+    # (Scenario can also be called Example)
+    Scenario: Read about deal types
+      # Test body
+      # Other Keywords: Given, When, And, But, * (star)
+      Then I can read about the deal types
+
+    Scenario: Choose deal types
+```
+  - [List of Gherkin keywords](https://cucumber.io/docs/gherkin/reference/#keywords)
 3. Write corresponding Cypress test with file convention `.e2e.ts`
+  - Eg. `Given("I open a Deal", () => { /* test body */ })`, where in the test body you write Cypress test code, typically
+```ts
+// Select the dom part in question
+// Here: Click on Open Deal button
+cy.get("[data-test='open-deal-button']").click()
+
+// Run assertion
+// Here: Because we clicked on a button, there is a change in the url
+cy.url().should("include", "deals/open");
+```
 
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
