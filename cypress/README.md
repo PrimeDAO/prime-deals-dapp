@@ -37,4 +37,7 @@ Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E
 2. Define the Specifications in [Gherkin][gherkin] format in `.feature` files
 3. Write corresponding Cypress test with file convention `.e2e.ts`
 
+### Tooling
+- [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
+
 [gherkin]: (https://cucumber.io/docs/gherkin/)
