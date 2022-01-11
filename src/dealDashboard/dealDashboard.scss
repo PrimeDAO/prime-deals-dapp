@@ -4,7 +4,7 @@
 .page.dealDashboardContainer {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-areas: "top ." "content aside";
+  grid-template-areas: "top ." "content aside" "discussion discussion";
   gap: 50px 115px;
 
   section {
@@ -17,7 +17,7 @@
         margin: 0 0 100px 0;
       }
       
-      p {
+      .clauses>p {
         margin-bottom: 20px;
       }
 
@@ -72,6 +72,9 @@
           }
         }
       }
+    }
+    &.discussion {
+      grid-area: discussion;
     }
 
   }

@@ -1,0 +1,46 @@
+@import "styles/styles";
+@import "src/resources/elements/primeDesignSystem/styles";
+
+.discussions-list {
+  table {
+    thead {
+      tr {
+        border-bottom: 1px solid $Secondary02;
+        th {
+          padding: $spacing-normal;
+        }
+      }
+    }
+    tbody {
+      td {
+        padding: $spacing-normal;
+        line-height: 24px;
+        &.v-centered {
+          vertical-align: middle;
+        }
+        &.h-centered {
+          text-align: center;
+        }
+        .creator {
+          padding-top: $spacing-small;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 17px;
+          color: $Neutral02;
+          height: 17px;
+          display: inline-block;
+          i {
+            display: inline;
+            width: 12px;
+            height: 12px;
+            padding: 2px;
+            padding-right: 7px;
+            font-size: 12px;
+          }
+        }
+
+        border-bottom: 1px solid $Border01;
+      }
+    }
+  }
+}

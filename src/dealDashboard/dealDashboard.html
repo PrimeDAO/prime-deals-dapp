@@ -1,4 +1,5 @@
 <template>
+  <require from="./discussionsList/discussionsList"></require>
   <main class="page animated-page au-animate dealDashboardContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -42,13 +43,12 @@
           </div>
         </ol>
       </section>
-      <section class="discussion">
-        <h2 class="subtitle heading heading3 gradient">
-          Discuss
-        </h2>
-      </section>
     </section>
-    <div show.to-view="!loading" class="dealDashboard">
-    </div>
+    <section class="discussion">
+      <h2 class="subtitle heading heading3 gradient">
+        Discuss
+      </h2>
+      <discussions-list></discussions-list>
+    </section>
   </main>
 </template>
