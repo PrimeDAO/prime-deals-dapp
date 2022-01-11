@@ -1,8 +1,5 @@
 <template>
-  <div class="networkfeedback">
-    <div if.bind="network !== 'mainnet'" class="testnet">
-      Testing (${network})
-    </div>
-    <div else>Mainnet</div>
+  <div class="networkfeedback ${ network !== 'mainnet' ? 'testnet' : ''}">
+    <span class="dot">&bullet;</span> ${network}
   </div>
 </template>

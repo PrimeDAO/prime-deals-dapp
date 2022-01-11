@@ -112,7 +112,7 @@ $menu-open-duration: 0.1s;
     background-color: $BG02;
     height: 40px;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto;
     align-items: center;
 
     .container {
@@ -143,18 +143,6 @@ $menu-open-duration: 0.1s;
         }
       }
     }
-
-    .networkFeedback {
-      padding-right: 22px;
-      font-family: Inter;
-      text-align: right;
-      .testnet {
-        color: $Shade01;
-      }
-      a {
-        color: $Secondary01;
-      }
-    }
   }
 
   /**
@@ -181,12 +169,6 @@ $menu-open-duration: 0.1s;
             display: none;
           }
         }
-      }
-    }
-
-    .productSubpages {
-      .networkFeedback {
-        display: none;
       }
     }
   }
