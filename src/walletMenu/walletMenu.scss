@@ -33,6 +33,17 @@
   .pair {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+    img {
+      width: 34px;
+      height: 34px;
+    }
   }
 
   &.showing {
