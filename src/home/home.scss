@@ -44,11 +44,37 @@
 
       .cards {
         display: flex;
+        pcard {
+          width: clamp(100px, 100%, 360px);
+          .pcard {
+            padding: 0 24px 24px;
+          }
+          header {
+            display: flex;
+            font-family: "Aeonik";
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 65px;
+            justify-content: space-between;
+            align-items: center;
+            color: $White;
+            .icon {
+              font-weight: 400;
+            }
+          }
+          .subtitle {
+            font-family: "Inter";
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 20px;
+            color: $Neutral03;
+          }
+        }
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: start;
         cursor: pointer;
-        grid-gap: 24px;
+        gap: 24px;
       }
     }
 
