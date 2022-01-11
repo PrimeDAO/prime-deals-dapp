@@ -1,10 +1,14 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
+import { bindable } from "aurelia-typed-observable-plugin";
 import "./navbar.scss";
 
 @autoinject
 export class Navbar {
+
+  @bindable private showWalletMenu?: () => void;
+
   menuOpen = false;
 
   constructor(private router: Router) {}
@@ -21,5 +25,9 @@ export class Navbar {
   private navigate(href: string): void {
     this.menuOpen = false;
     this.router.navigate(href);
+  }
+
+  private handleShowWalletMenu(): void {
+    this.showWalletMenu();
   }
 }
