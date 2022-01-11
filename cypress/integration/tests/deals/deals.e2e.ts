@@ -1,6 +1,11 @@
 
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
+Given("I navigate to the All Deals page", () => {
+  cy.get("[data-test='all-deals-button']").click();
+  cy.url().should("include", "initiate");
+});
+
 Given("I choose Deal Type", () => {
   cy.get("[data-test='initiate-deal-button']").click();
   cy.url().should("include", "initiate");
