@@ -10,6 +10,9 @@ export class WalletMenu {
 
   @bindable.booleanAttr({ defaultBindingMode: bindingMode.twoWay }) showing = false;
   container: HTMLElement;
+  /**
+   * doing it with bind is the only way I can find that properly removes the event handlers
+   */
   thisClickHandler = this.handleClick.bind(this)
   thisEscHandler = this.handleEsc.bind(this)
 
