@@ -23,8 +23,9 @@ export class PInputNumeric {
   @bindable public handleChange: ({keyCode: number}) => boolean;
   @bindable public autocomplete = "off";
   @bindable.booleanAttr public disabled;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) public value: string | BigNumber;
-  @bindable.booleanAttr public isWei?: boolean = true;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) public value: number | BigNumber | string;
+  @bindable.booleanAttr public notWei?: boolean = false;
+  @bindable.number public decimals?: number = 18;
   @bindable.booleanAttr public outputAsString?: boolean = false;
   @bindable.string public placeholder = "";
   @bindable inFocus = false; //  attribute name "focus" doesn't work
