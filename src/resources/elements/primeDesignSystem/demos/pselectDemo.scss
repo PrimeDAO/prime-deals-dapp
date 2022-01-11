@@ -1,0 +1,26 @@
+pselect {
+  width: -webkit-fill-available;
+  width: -moz-available;
+}
+
+.demo {
+  h1, h2, p {
+    all: unset;
+    display: block;
+    padding-top: 5px;
+  }
+  h1 {
+    font-size: 20px;
+    padding-bottom: 10px;
+  }
+  h2 {
+    font-size: 16px;
+    color: gray;
+    padding-bottom: 5px;
+  }
+  p {
+    font-size: 12px;
+    padding-bottom: 5px;
+    color: orange;
+  }
+}

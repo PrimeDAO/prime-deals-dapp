@@ -1,4 +1,3 @@
-import { DealConfig } from "./../registry-wizard/dealConfig";
 import axios from "axios";
 import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
@@ -24,7 +23,7 @@ export interface IDaoPartner {
   totalInUSD: number
   totalOutUSD: number
   votersParticipation: number
-  daoName: string,
+  name: string,
   platform: string,
   thumbName: string
 }
@@ -65,14 +64,16 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    return this.getDeals();
+    this.getDeals();
+    this.getDAOsInformation();
   }
 
   private async getDeals(): Promise<void> {
     const hashes = await this.ipfsService.getPinnedObjectsHashes();
     hashes.forEach( async (hash:string) => {
-      this.dealsObject[hash] = await this.ipfsService.getDealProposal(hash)
+      this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
         .then(async (deal: any) => {
+          if (deal.daos === undefined) return {};
 
           const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
           if (timeLeft < 0) deal.incomplete = true;
@@ -133,11 +134,15 @@ export class DealService {
     // TODO
     const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
 
-    this.DAOs = allDAOs.map(dao => ({
+    this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
       organizationId: dao.organizationId,
       daoId: dao.daoId,
       name: dao.daoName,
-      logo: `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`,
+      logo: (dao.logo)
+        ? (dao.logo.toLocaleLowerCase().startsWith("http"))
+          ? dao.logo
+          : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
+        : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
     }));
   }
 

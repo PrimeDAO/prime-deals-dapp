@@ -11,6 +11,10 @@ import { BindingSignaler } from "aurelia-templating-resources";
 import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
+import { AlertService } from "services/AlertService";
+import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
+
+export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
 @autoinject
 export class App {
@@ -19,6 +23,7 @@ export class App {
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
+    private alertService: AlertService,
     private storageService: BrowserStorageService) { }
 
   router: Router;
@@ -27,6 +32,7 @@ export class App {
   modalMessage: string;
   initializing = true;
   showingMobileMenu = false;
+  showingWalletMenu = false;
   intervalId: any;
 
   errorHandler = (ex: unknown): boolean => {
@@ -67,6 +73,26 @@ export class App {
       this.handleOnOff(false);
     });
 
+    this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
+
+      let notChanged = true;
+      const connect = await this.alertService.showAlert(
+        `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
+        // eslint-disable-next-line no-bitwise
+        ShowButtonsEnum.OK | ShowButtonsEnum.Cancel);
+
+      if (!connect.wasCancelled && !connect.output) {
+        if (await this.ethereumService.switchToTargetedNetwork(info.provider)) {
+          notChanged = false;
+        }
+      }
+
+      if (notChanged) {
+        this.ethereumService.disconnect({ code: -1, message: "wrong network" });
+        this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
+      }
+    });
+
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
       const blockDate = this.ethereumService.lastBlockDate;
@@ -74,6 +100,11 @@ export class App {
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
+
+    /**
+     * undo stuff from base.css now that we don't need it
+     */
+    document.querySelector("body").classList.remove("loading");
 
     this.ethereumService.connectToConnectedProvider();
   }
@@ -93,7 +124,7 @@ export class App {
 
   private configureRouter(config: RouterConfiguration, router: Router) {
 
-    config.title = "PrimeLaunch";
+    config.title = "Prime Deals";
     config.options.pushState = true;
     // const isIpfs = (window as any).IS_IPFS;
     // if (isIpfs) {
@@ -155,13 +186,19 @@ export class App {
         title: "Initiate a New Deal",
       },
       {
-        moduleId: PLATFORM.moduleName("./selectPackage/selectPackage"),
+        moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
-        name: "selectPackage",
-        route: "/selectPackage",
-        title: "Select Your Package",
+        name: "comingSoon",
+        route: ["comingSoon"],
+        title: "Coming Soon!",
       },
-
+      {
+        moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),
+        nav: false,
+        name: "storybook",
+        route: ["storybook"],
+        title: "Storybook",
+      },
     ]);
 
     config.fallbackRoute("home");
@@ -231,5 +268,9 @@ export class App {
   navigate(href: string): void {
     this.onNavigate();
     this.router.navigate(href);
+  }
+
+  handleShowWalletMenu(): void {
+    this.showingWalletMenu = true;
   }
 }

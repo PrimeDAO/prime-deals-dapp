@@ -1,14 +1,14 @@
 <template>
   <ux-dialog class="dialog alert">
-    <ux-dialog-header>
-      <i class="fas fa-error"></i>
-      An error occurred
-    </ux-dialog-header>
+    <!-- <ux-dialog-header>
+      <img src="/primeLaunchLogo.svg" />
+    </ux-dialog-header> -->
     <ux-dialog-body with.bind="model">
       <div class="body">${message}</div>
     </ux-dialog-body>
     <ux-dialog-footer>
-      <button class="button" ref="okButton" click.trigger="controller.ok()">Ok</button>
+      <pbutton type="primary" if.bind="showOkButton" ref="okButton" click.trigger="controller.ok()">Ok</pbutton>
+      <pbutton type="tertiary" if.bind="showCancelButton" ref="cancelButton" click.trigger="controller.cancel()">Cancel</pbutton>
     </ux-dialog-footer>
   </ux-dialog>
 </template>

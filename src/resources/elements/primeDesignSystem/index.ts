@@ -5,5 +5,6 @@ export function configure(config: FrameworkConfiguration): void {
   config.globalResources([
     PLATFORM.moduleName("./pbutton/pbutton"),
     PLATFORM.moduleName("./pcard/pcard"),
+    PLATFORM.moduleName("./pselect/pselect"),
   ]);
 }

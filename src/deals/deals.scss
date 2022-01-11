@@ -201,7 +201,7 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .page.deals {
     .section {
       > .title {

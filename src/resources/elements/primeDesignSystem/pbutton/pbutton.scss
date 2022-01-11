@@ -1,17 +1,18 @@
-@import "../colors";
+@import "../styles";
 
 @mixin standardBackground {
   border: none;
-  padding: 14px 28px;
-  background: $Gradient01;
+  background-image: $Gradient08;
+  background-size: 200% auto;
   color: $Neutral04;
 }
 
 @mixin standardButton {
   /**
     * note one benefit of all: is to set box-sizing: border-box
+    * This resets all of the selected element’s properties to their initial values as defined in the CSS spec.
     */
-  all: unset;
+  all: initial;
   outline: none;
   padding: 14px 28px;
   font-family: Inter;
@@ -25,9 +26,30 @@
   border-radius: 50px;
   cursor: pointer;
   background: transparent;
-  transform: none;
+  transform: translateY(0);
   user-select: none;
-  color: $White;
+  color: $Neutral04;
+  white-space: nowrap;
+
+  display: inline-flex;
+  justify-content: center;
+
+  &>.icon {
+    width: 0;
+    padding-left: 0px;
+    opacity: 0;
+    overflow: hidden;
+    transition: width 0.5s linear, opacity 0.75s linear, padding-left 0.5s linear;
+    &.is-loading {
+      width: 16px;
+      opacity: 1;
+      padding-left: 6px;
+    }
+    .spinner {
+      width: auto;
+      animation: spin 2s linear infinite;
+    }
+  }
 
   &:focus {
     box-shadow: 0 0 10px $Shade06;
@@ -41,10 +63,6 @@
     box-shadow: none;
   }
 
-  &:hover:not(.disabled):not(:disabled) {
-    color: $White;
-  }
-
   &:hover:active:not(.disabled):not(:disabled),
   &:focus:active:not(.disabled):not(:disabled) {
     transform: translateY(-1px);
@@ -55,7 +73,7 @@
     width: -moz-available;
   }
 
-  transition: 0.25s;
+  transition: background 0.25s ease-in, transform 0.1s ease-in;
 }
 
 button {
@@ -69,6 +87,9 @@ button {
     &:disabled:hover {
       background: $Neutral02;
     }
+    &:hover:not(.disabled):not(:disabled):not(.no-animation) {
+      background-position: right center;
+    }
   }
 
   &.secondary {
@@ -77,10 +98,10 @@ button {
     border: 2px solid $Shade01;
     padding: 12px 26px;
 
-    &:hover:enabled {
+    &:hover:not(.disabled):not(:disabled) {
       background-color: $Border01;
       border-color: $Primary01;
-      color: $White;
+      color: $Neutral04;
     }
 
     &.disabled,
@@ -119,5 +140,14 @@ button {
     &:focus:active:not(.disabled):not(:disabled) {
       @include standardBackground;
     }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

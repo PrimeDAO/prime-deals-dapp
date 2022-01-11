@@ -1,29 +1,24 @@
-@import "styles/colors.scss";
+@import "styles/styles.scss";
 
 @mixin logo($url) {
-  -webkit-mask: url("../../static/logos/" + $url) no-repeat center;
-  mask: url("../../static/logos/" + $url) no-repeat center;
+  -webkit-mask: url("../../static/" + $url) no-repeat center;
+  mask: url("../../static/" + $url) no-repeat center;
 }
 
 .footerContainer {
-  position: absolute;
-  left: 0;
-  width: calc(100% - 40px);
-  padding: 0 20px;
-  color: $Border01;
-  font-family: Inter;
-  font-size: 14px;
-  font-weight: 400;
-
   .sections {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     column-gap: 5px;
-    padding: 5px 0;
+    padding: 0 20px;
+    color: $Border01;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
 
     .section {
-      &.governed-by, 
+      &.governed-by,
       &.pages {
         a {
           color: $Secondary05;
@@ -55,7 +50,11 @@
           margin-inline-end: 12px;
           margin-block-start: 16px;
           margin-block-end: 16px;
-          .website, .twitter, .discord, .telegram, .medium {
+          .website,
+          .twitter,
+          .discord,
+          .telegram,
+          .medium {
             width: 24px;
             height: 16px;
             background-color: $Secondary05;
@@ -64,11 +63,21 @@
             }
           }
 
-          .website { @include logo("website.svg"); }
-          .twitter { @include logo("twitter.svg"); }
-          .discord { @include logo("discord.svg"); }
-          .telegram { @include logo("telegram.svg"); }
-          .medium { @include logo("medium.svg"); }
+          .website {
+            @include logo("website.svg");
+          }
+          .twitter {
+            @include logo("twitter.svg");
+          }
+          .discord {
+            @include logo("discord.svg");
+          }
+          .telegram {
+            @include logo("telegram.svg");
+          }
+          .medium {
+            @include logo("medium.svg");
+          }
         }
       }
     }
@@ -77,9 +86,6 @@
   > hr {
     background-color: $Border01;
     height: 1px;
-    width: 100vw;
-    position: absolute;
-    margin: 0 -20px;
   }
 }
 

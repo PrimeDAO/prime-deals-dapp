@@ -2,7 +2,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless, customElement, singleton } from "aurelia-framework";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Address, EthereumService, Networks } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { EventConfigTransaction } from "services/GeneralEvents";
 import { TransactionReceipt } from "services/TransactionsService";
 import "./ConnectButton.scss";
@@ -18,20 +18,24 @@ enum Phase {
 @singleton(false)
 @containerless
 @autoinject
-@customElement("connect-button")
+@customElement("connectbutton")
 export class ConnectButton {
+
+  @bindable.booleanAttr private hideBalances: boolean;
+  @bindable private showWalletMenu?: () => void;
 
   private subscriptions: DisposableCollection = new DisposableCollection();
   private accountAddress: Address = null;
   private txPhase = Phase.None;
   private txReceipt: TransactionReceipt;
   private primeAddress: Address;
-  private daiAddress: Address;
-  @bindable.booleanAttr private hideBalances: boolean;
+
+  private get txInProgress(): boolean {
+    return this.txPhase !== "None";
+  }
 
   constructor(
     private ethereumService: EthereumService,
-    private contractsService: ContractsService,
     private eventAggregator: EventAggregator,
   ) {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {
@@ -61,21 +65,29 @@ export class ConnectButton {
     }));
 
     this.accountAddress = this.ethereumService.defaultAccountAddress || null;
-    this.primeAddress = this.contractsService.getContractAddress(ContractNames.PRIMETOKEN);
+    this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
     // this.bPrimeAddress = this.contractsService.getContractAddress(ContractNames.ConfigurableRightsPool);
     // this.wethAddress = this.contractsService.getContractAddress(ContractNames.WETH);
-    this.daiAddress = this.contractsService.getContractAddress(ContractNames.DAI);
+    // this.daiAddress = ContractsService.getContractAddress(ContractNames.DAI);
   }
 
   public dispose(): void {
     this.subscriptions.dispose();
   }
 
-  private onConnect() {
-    return this.ethereumService.ensureConnected();
+  private onConnect(): void {
+    if (!this.accountAddress) {
+      this.ethereumService.ensureConnected();
+    } else if (this.txInProgress) {
+      this.gotoTx();
+    } else {
+      if (this.showWalletMenu) {
+        this.showWalletMenu();
+      }
+    }
   }
 
-  private gotoTx() {
+  private gotoTx(): void {
     if (this.txReceipt) {
       Utils.goto(this.ethereumService.getEtherscanLink(this.txReceipt.transactionHash, true));
     }

@@ -3,33 +3,33 @@
     <div class="connectedButtons" if.to-view="accountAddress">
       <template if.to-view="!hideBalances">
         <div class="ethBalanceContainer">
-          <tokenbalance formatted="0.00a" token-address.to-view="primeAddress"></tokenbalance>PRIME
+          <tokenbalance formatted="0.00a" token-address.to-view="primeAddress"></tokenbalance>D2D
         </div>
         <span class="separator">|</span>
+        <!-- <div class="ethBalanceContainer">
+          <tokenbalance formatted="0.00a" token-address.to-view="daiAddress"></tokenbalance>DAI
+        </div>
+          <span class="separator">|</span>
+        -->
         <div class="ethBalanceContainer ETH">
           <ethbalance formatted="0.00a"></ethbalance>ETH
         </div>
       </template>
       <div class="connectButton">
-        <div if.to-view="txPhase !== 'None'" click.delegate="gotoTx()" class.bind="'pending' + ((txPhase==='Confirming')
+        <pbutton type="tertiary" click.delegate="onConnect()">
+          <div if.to-view="txInProgress" class.bind="'pending' + ((txPhase==='Confirming')
           ? ' confirming' : '')">
-          <div class="phase">${txPhase}</div><i class="spinner fas fa-circle-notch fa-spin"></i>
-        </div>
-        <div else class="balances">
-          <etherscanlink
-            address.to-view="accountAddress"
-            text.to-view="accountAddress | smallHexString"></etherscanlink>
-        </div>
+            <div class="phase">${txPhase}</div><i class="spinner fas fa-circle-notch fa-spin"></i>
+          </div>
+          <div else class="address">
+            <usersaddress small show-ens></usersaddress> <span class=" caret fas fa-caret-down"></span>
+          </div>
+        </pbutton>
       </div>
     </div>
-    <pbutton else
-      type="secondary"
-      click.delegate="onConnect()"
-      rel="noopener noreferrer"
-    >
-      Connect to a Wallet
-    </pbutton>
-    <!-- <div else class="connectButton" click.delegate="onConnect()">Connect to a Wallet</div> -->
+    <div else class="connectButton">
+      <pbutton type="secondary connect" click.delegate="onConnect()">Connect to a Wallet</pbutton>
+    </div>
   </div>
   </div>
 </template>

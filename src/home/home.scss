@@ -1,39 +1,33 @@
 @import "styles/styles.scss";
 
 .page.home {
-  // position: relative;
-  &:before {
-    content: "";
-    position: absolute;
-    background-image: url("/static/home-bg-top.gif");
-    background-position: top center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    // margin-left: -160px;
-    left: 0;
-    margin: 100px 0;
-    width: 100vw;
-    // width: calc(100% + 320px);
-    height: 800px;
-    top: -150px;
-    z-index: -1;
-  }
+  // &:before {
+  //   content: "";
+  //   position: absolute;
+  //   background-image: url("/static/home-bg-top.gif");
+  //   background-position: top center;
+  //   background-repeat: no-repeat;
+  //   background-size: cover;
+  //   // margin-left: -160px;
+  //   left: 0;
+  //   margin: 100px 0;
+  //   width: 100vw;
+  //   // width: calc(100% + 320px);
+  //   height: 800px;
+  //   top: -150px;
+  //   z-index: -1;
+  // }
   .section {
     &.hero,
     &.deals {
       margin-bottom: 100px;
     }
 
-
     &.top {
       margin-bottom: 200px;
 
       .title {
         white-space: normal;
-        background: $Gradient08;
-        -webkit-text-fill-color: transparent;
-        -webkit-background-clip: text;
-        background-clip: text;
         padding-bottom: 5px;
         max-width: 645px;
       }
@@ -68,7 +62,7 @@
         :not(:first-child) {
           margin-left: 30px;
         }
-        >.selector-tab {
+        > .selector-tab {
           cursor: pointer;
         }
       }
@@ -77,7 +71,7 @@
         border-bottom: 2px solid $Border01;
         width: 100%;
         transition: background 1s ease-in-out;
-        >.active {
+        > .active {
           background: $Gradient02;
           -webkit-text-fill-color: transparent;
           -webkit-background-clip: text;
@@ -138,7 +132,7 @@
         }
 
         align-self: center;
-        &>.introVideo {
+        & > .introVideo {
           width: 100%;
           border-radius: 6px;
           display: flex;
@@ -163,7 +157,7 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: $PageBreakWidth) {
   .page.home {
     .section {
       &.top,
@@ -188,7 +182,6 @@
           grid-auto-flow: row;
           width: 100%;
           align-items: center;
-
         }
       }
 
@@ -209,19 +202,11 @@
             margin-bottom: 12px;
           }
 
-          &>.introVideo {
+          & > .introVideo {
             justify-content: center;
           }
         }
-
       }
-    }
-  }
-}
-
-@media screen and (max-width: 680px) {
-  .page.home {
-    .section {
     }
   }
 }
