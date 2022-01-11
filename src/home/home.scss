@@ -178,6 +178,16 @@
   }
 }
 
+@media screen and (max-width: $PageBreakWidthWide) {
+  .page.home {
+    .section.top {
+      .cards {
+        justify-content: center;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: $PageBreakWidth) {
   .page.home {
     .section {

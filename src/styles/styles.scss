@@ -42,6 +42,7 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
 /**
  * this is to sync with when the navbar controls start to break
  */
+$PageBreakWidthWide: 1080px;
 $PageBreakWidth: 900px;
 
 html {
