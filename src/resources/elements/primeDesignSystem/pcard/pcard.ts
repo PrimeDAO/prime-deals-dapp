@@ -11,10 +11,9 @@ import "./pcard.scss";
  *    <pcard ... click.delegate="message('Hi!')">Clickable</pcard>
  *    <pcard ... width="100%">Fix Size</pcard>
 */
-export type CardType = "default" | "success" | "alert" | "warning" | "";
+export type CardType = "gradient" | "success" | "alert" | "warning" | "";
 
 @customElement("pcard")
 export class PCard {
   @bindable.string type: CardType = "";
-  @bindable.string width = "100%";
 }
