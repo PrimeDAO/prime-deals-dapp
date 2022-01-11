@@ -11,7 +11,7 @@ import "./pcard.scss";
  *    <pcard ... click.delegate="message('Hi!')">Clickable</pcard>
  *    <pcard ... width="100%">Fix Size</pcard>
 */
-export type CardType = "gradient" | "success" | "alert" | "warning" | "";
+export type CardType = "gradient" | "";
 
 @customElement("pcard")
 export class PCard {
