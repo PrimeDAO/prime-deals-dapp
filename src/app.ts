@@ -29,6 +29,7 @@ export class App {
   modalMessage: string;
   initializing = true;
   showingMobileMenu = false;
+  showingWalletMenu = false;
   intervalId: any;
 
   errorHandler = (ex: unknown): boolean => {
@@ -244,5 +245,9 @@ export class App {
   navigate(href: string): void {
     this.onNavigate();
     this.router.navigate(href);
+  }
+
+  handleShowWalletMenu(): void {
+    this.showingWalletMenu = true;
   }
 }

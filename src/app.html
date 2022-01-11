@@ -1,6 +1,7 @@
 <template>
   <require from="./footer/footer"></require>
   <require from="./navbar/navbar"></require>
+  <require from="./walletMenu/walletMenu"></require>
 
   <div if.bind="showCountdownPage">
     <compose view-model="./comingSoon/comingSoon"></compose>
@@ -8,7 +9,8 @@
 
   <div else>
     <banner></banner>
-    <navbar></navbar>
+    <navbar show-wallet-menu.call="handleShowWalletMenu()"></navbar>
+    <wallet-menu showing.bind="showingWalletMenu"></wallet-menu>
     <modalscreen on-off.to-view="onOff" message.to-view="modalMessage">
       <div class="appWrapper">
         <div class="mainContent">
