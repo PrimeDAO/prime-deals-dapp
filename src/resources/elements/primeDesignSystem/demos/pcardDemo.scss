@@ -1,0 +1,44 @@
+@import "../styles";
+
+.pcard {
+  display: grid;
+  row-gap: 20px;
+}
+
+.demo {
+  display: grid;
+  row-gap: 20px;
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: $Neutral04;
+  }
+
+  img {
+    border-radius: $border-radius-normal;
+    width: 100%;
+
+  }
+
+  code {
+    background-color: $Neutral02;
+    padding: 2px;
+    border-radius: $border-radius-small;
+  }
+
+  .card1 {
+    width: 335px;
+  }
+
+  .card3 {
+    text-align: center;
+  }
+
+  .card4 {
+    height: 75px;
+  }
+}
