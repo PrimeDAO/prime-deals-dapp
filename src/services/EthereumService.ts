@@ -1,5 +1,5 @@
 import detectEthereumProvider from "@metamask/detect-provider";
-// import { BrowserStorageService } from "./BrowserStorageService";
+import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BigNumber, BigNumberish, ethers, Signer } from "ethers";
@@ -69,14 +69,14 @@ export class EthereumService {
     private eventAggregator: EventAggregator,
     private disclaimerService: DisclaimerService,
     private consoleLogService: ConsoleLogService,
-    // private storageService: BrowserStorageService,
+    private storageService: BrowserStorageService,
   ) { }
 
   public static ProviderEndpoints = {
     "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
     "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
     "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-  }
+  };
   private static providerOptions = {
     torus: {
       package: Torus, // required
@@ -119,7 +119,7 @@ export class EthereumService {
     const block = await this.getBlock(blockNumber);
     this._lastBlockDate = block.blockDate;
     this.eventAggregator.publish("Network.NewBlock", block);
-  }
+  };
 
   public initialize(network: AllowedNetworks): void {
 
@@ -150,7 +150,7 @@ export class EthereumService {
   /**
    * provided by Web3Modal
    */
-  private web3ModalProvider: Web3Provider & IEIP1193;
+  private web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider;
 
   private chainNameById = new Map<number, AllowedNetworks>([
     [1, Networks.Mainnet],
@@ -256,7 +256,7 @@ export class EthereumService {
 
     this.ensureWeb3Modal();
 
-    const provider = detectEthereumProvider ? (await detectEthereumProvider()) as any : undefined;
+    const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
 
     /**
      * at this writing, `_metamask.isUnlocked` is "experimental", according to MetaMask.
@@ -306,7 +306,7 @@ export class EthereumService {
     return network;
   }
 
-  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193): Promise<void> {
+  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
     try {
       if (web3ModalProvider) {
         const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
@@ -378,7 +378,7 @@ export class EthereumService {
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
     this.fireAccountsChangedHandler(accounts?.[0]);
-  }
+  };
 
   private handleChainChanged = async (chainId: number) => {
     const network = ethers.providers.getNetwork(Number(chainId));
@@ -390,11 +390,11 @@ export class EthereumService {
     else {
       this.fireChainChangedHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
     }
-  }
+  };
 
   private handleDisconnect = (error: { code: number; message: string }) => {
     this.disconnect(error);
-  }
+  };
 
   public disconnect(error: { code: number; message: string }): void {
     // this.cachedProvider = null;
@@ -427,7 +427,7 @@ export class EthereumService {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexChainId }],
         });
-        this.setProvider(provider as unknown as Web3Provider);
+        this.setProvider(provider as any);
         return true;
       }
     } catch (err) {
@@ -443,6 +443,64 @@ export class EthereumService {
     return false;
   }
 
+  public async addTokenToMetamask(
+    tokenAddress: Address,
+    tokenSymbol: string,
+    tokenDecimals: number,
+    tokenImage: string,
+  ): Promise<boolean> {
+
+    let wasAdded = false;
+
+    if (this.walletProvider) {
+
+      if (this.getMetamaskHasToken(tokenAddress)) {
+        return true;
+      }
+
+      try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        wasAdded = await (this.web3ModalProvider as any).request({
+          method: "wallet_watchAsset",
+          params: {
+            type: "ERC20", // Initially only supports ERC20, but eventually more!
+            options: {
+              address: tokenAddress, // The address that the token is at.
+              symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+              decimals: tokenDecimals, // The number of decimals in the token
+              image: tokenImage, // A string url of the token logo
+            },
+          },
+        });
+
+        if (wasAdded) {
+          this.setMetamaskHasToken(tokenAddress);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return wasAdded;
+  }
+
+  public getMetamaskHasToken(tokenAddress: Address): boolean {
+    if (!this.defaultAccountAddress) {
+      throw new Error("metamaskHasToken: no account");
+    }
+    return !!this.storageService.lsGet(this.getKeyForMetamaskHasToken(tokenAddress));
+  }
+
+  private getKeyForMetamaskHasToken(tokenAddress: Address): string {
+    return `${this.defaultAccountAddress}_${tokenAddress}`;
+  }
+
+  private setMetamaskHasToken(tokenAddress: Address): void {
+    if (!this.defaultAccountAddress) {
+      throw new Error("metamaskHasToken: no account");
+    }
+    this.storageService.lsSet(this.getKeyForMetamaskHasToken(tokenAddress), true);
+  }
 
   private _lastBlockDate: Date;
 
@@ -462,7 +520,6 @@ export class EthereumService {
     block.blockDate = new Date(block.timestamp * 1000);
     return block;
   }
-
 
   public getEtherscanLink(addressOrHash: Address | Hash, tx = false): string {
     let targetedNetwork = EthereumService.targetedNetwork as string;
