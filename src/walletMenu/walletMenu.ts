@@ -16,8 +16,8 @@ export class WalletMenu {
   /**
    * doing it with bind is the only way I can find that properly removes the event handlers
    */
-  thisClickHandler = this.handleClick.bind(this)
-  thisEscHandler = this.handleEsc.bind(this)
+  thisClickHandler = this.handleClick.bind(this);
+  thisEscHandler = this.handleEsc.bind(this);
 
   constructor(
     private ethereumService: EthereumService,

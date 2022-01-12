@@ -24,7 +24,6 @@ export class IpfsService {
     this.ipfs = ipfs;
   }
 
-
   /**
    * fetches JSON data given hash, converts to an object
    * @param hash

@@ -76,7 +76,7 @@ export class EthereumService {
     "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
     "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
     "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-  }
+  };
   private static providerOptions = {
     torus: {
       package: Torus, // required
@@ -119,7 +119,7 @@ export class EthereumService {
     const block = await this.getBlock(blockNumber);
     this._lastBlockDate = block.blockDate;
     this.eventAggregator.publish("Network.NewBlock", block);
-  }
+  };
 
   public initialize(network: AllowedNetworks): void {
 
@@ -378,7 +378,7 @@ export class EthereumService {
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
     this.fireAccountsChangedHandler(accounts?.[0]);
-  }
+  };
 
   private handleChainChanged = async (chainId: number) => {
     const network = ethers.providers.getNetwork(Number(chainId));
@@ -390,11 +390,11 @@ export class EthereumService {
     else {
       this.fireChainChangedHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
     }
-  }
+  };
 
   private handleDisconnect = (error: { code: number; message: string }) => {
     this.disconnect(error);
-  }
+  };
 
   public disconnect(error: { code: number; message: string }): void {
     // this.cachedProvider = null;
@@ -520,7 +520,6 @@ export class EthereumService {
     block.blockDate = new Date(block.timestamp * 1000);
     return block;
   }
-
 
   public getEtherscanLink(addressOrHash: Address | Hash, tx = false): string {
     let targetedNetwork = EthereumService.targetedNetwork as string;

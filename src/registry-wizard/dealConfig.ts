@@ -153,7 +153,7 @@ export class DealConfig implements IDealConfig {
 
   public async populateTokensFromDeepDAO(daoId: string): Promise<Array<IToken>> {
     const daoTokens = JSON.parse((await this.getDaoInfoFromDeepDAO(daoId)).financial).tokens;
-    console.log(daoTokens);
+    // console.log(daoTokens);
 
     return daoTokens.map(token => {
       return {

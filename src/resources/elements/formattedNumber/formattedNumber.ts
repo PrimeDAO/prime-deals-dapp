@@ -26,7 +26,6 @@ export class FormattedNumber {
   @bindable public defaultText = "--";
   @bindable.booleanAttr public thousandsSeparated = false;
 
-
   private text: string;
   private textElement: HTMLElement;
   private _value: number | string;
