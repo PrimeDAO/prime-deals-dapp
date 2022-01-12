@@ -7,7 +7,6 @@ import { EthereumService } from "../../../services/EthereumService";
 @customElement("usersaddress")
 export class UsersAddress {
 
-
   @bindable.booleanAttr small?: boolean;
   @bindable.booleanAttr showEns?: boolean;
 

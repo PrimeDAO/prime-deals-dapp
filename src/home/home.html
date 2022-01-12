@@ -6,27 +6,21 @@
       <div class="subtitle">
         An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
       </div>
-      <div class="buttons">
-        <div class="buttonContainer">
-          <div class="contribute" click.delegate="navigate('deals')">
-            <div class="title">
-              <div class="header">All Deals</div>
-              <div class="arrow">&#8599;</div>
-            </div>
-            <div class="icon"></div>
-            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-          </div>
-        </div>
-        <div class="buttonContainer">
-          <div class="launch" click.delegate="navigate('initiate')">
-            <div class="title">
-              <div class="header">Initiate a Deal</div>
-              <div class="arrow">&#8599;</div>
-            </div>
-            <div class="icon"></div>
-            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-          </div>
-        </div>
+      <div class="cards">
+        <pcard type="gradient" click.delegate="navigate('deals')">
+          <header>
+            <span class="heading left">All Deals</span>
+            <span class="icon center">&#8599;</span>
+          </header>
+          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        </pcard>
+        <pcard type="gradient" click.delegate="navigate('initiate')">
+          <header>
+            <span class="heading">Initiate a Deal</span>
+            <span class="icon">&#8599;</span>
+          </header>
+          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        </pcard>
       </div>
     </div>
 
@@ -43,11 +37,12 @@
             deal.to-view="deal"></deal-summary>
         </horizontal-scroller>
         <div class="dealsButton">
-          <div class="buttonContainer centered">
-            <pbutton
-              type="tertiary"
-              click.delegate="navigate('deals')"
-              rel="noopener noreferrer">
+          <div class="centered">
+            <pbutton 
+              type="tertiary" 
+              click.delegate="navigate('deals')" 
+              rel="noopener noreferrer"
+            >
               View All Deals
             </pbutton>
           </div>
@@ -64,8 +59,8 @@
         <div class="subtitle subtext gradient">Subtitle</div>
         <div class="title heading heading1">Web3 partnerships made easy!</div>
         <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
-        <div class="buttonContainer">
-          <pbutton
+        <div class="cardContainer">
+          <pbutton 
             type="secondary"
             click.delegate="navigate('initiate')"
             rel="noopener noreferrer">

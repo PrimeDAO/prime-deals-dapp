@@ -6,7 +6,6 @@ import { Router } from "aurelia-router";
 import "./deals.scss";
 // import { Deal } from "entities/Deal";
 import { SortService } from "services/SortService";
-import { Utils } from "services/utils";
 
 @singleton(false)
 @autoinject

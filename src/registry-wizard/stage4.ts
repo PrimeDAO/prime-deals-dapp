@@ -36,8 +36,9 @@ export class Stage4 extends BaseStage {
     }
     // apparently all are valid, so proceed
 
-    const hash = await this.saveDealProposal(this.dealConfig);
-    console.log(`Saved to IPFS ${hash}`);
+    // const hash =
+    await this.saveDealProposal(this.dealConfig);
+    // console.log(`Saved to IPFS ${hash}`);
     this.next();
   } // else we are not valid. Don't proceed.
 

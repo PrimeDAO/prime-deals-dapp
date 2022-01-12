@@ -117,6 +117,14 @@
       "always"
     ],
     "eol-last": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 0,
+        "maxBOF": 0
+      }
+    ],
     "eqeqeq": "error",
     "getter-return": 0,
     "linebreak-style": [

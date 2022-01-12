@@ -1,4 +1,3 @@
-
 export class SortValueConverter {
   /**
    * returns a copy of the array, sorted by sortEvaluator
@@ -13,4 +12,3 @@ export class SortValueConverter {
     return array.slice(0).sort(sortEvaluator);
   }
 }
-

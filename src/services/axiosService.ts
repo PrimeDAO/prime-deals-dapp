@@ -7,7 +7,6 @@ export class AxiosService {
     private consoleLogService: ConsoleLogService,
   ) {}
 
-
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public axiosErrorHandler(err: any): string {
     let errorMsg: string;

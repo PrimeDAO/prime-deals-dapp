@@ -44,4 +44,3 @@ export interface ITokenHolder {
    */
   share: number;
 }
-

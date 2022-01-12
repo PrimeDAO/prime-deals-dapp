@@ -21,6 +21,13 @@ export class Demos {
         name: "pselect",
         title: "pSelect Demo",
       },
+      {
+        route: ["pcard"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pcardDemo"),
+        name: "pcard",
+        title: "pCard Demo",
+      },
     ];
 
     config.map(routes);

@@ -41,7 +41,6 @@
     overflow: hidden;
     align-items: center;
     font-family: "Aeonik";
-
     .icons {
       display: grid;
       grid-area: icon;
@@ -79,7 +78,6 @@
         line-height: 19.6px;
       }
     }
-
     .title {
       grid-area: title;
       h1,
@@ -100,7 +98,6 @@
         color: $White;
       }
     }
-
     .dao {
       display: grid;
       align-items: center;
@@ -115,7 +112,6 @@
       opacity: 50%;
       padding: 9px;
     }
-
     .proposal {
       grid-area: proposal;
       display: grid;
@@ -126,7 +122,6 @@
       height: 190px;
       row-gap: 12px;
     }
-
     .description {
       grid-area: description;
       font-family: Inter;
@@ -137,7 +132,6 @@
       padding-bottom: 12px;
       text-overflow: ellipsis;
     }
-
     > .countdown {
       grid-area: countdown;
       text-align: center;
@@ -148,7 +142,6 @@
       display: flex;
       gap: 4px;
     }
-
     > .footer {
       grid-area: footer;
       display: flex;
@@ -171,7 +164,6 @@
       }
     }
   }
-
   .loading {
     text-align: center;
     padding-top: 32px;
@@ -180,26 +172,22 @@
     }
   }
 }
-
 @media screen and (max-width: $PageBreakWidth) {
   .dealSummaryContainer {
     // because this is going to be vertically-aligned
     padding-right: 0;
     margin-bottom: 20px;
     width: 50%;
-
     .dealSummary {
       > .title {
         max-width: unset;
       }
-
       > .icon {
         img {
           height: 36px;
           width: 36px;
         }
       }
-
       > .footer,
       > .countdown,
       > .proposal {
@@ -208,7 +196,6 @@
     }
   }
 }
-
 @media screen and (max-width: 400px) {
   .dealSummaryContainer {
     min-width: 100%;

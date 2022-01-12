@@ -1,4 +1,3 @@
-
 /**
  * show days from seconds.  For best results, use: `& updateTrigger:'blur'`
  */

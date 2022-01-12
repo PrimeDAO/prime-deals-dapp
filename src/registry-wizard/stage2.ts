@@ -16,12 +16,12 @@ export class Stage2 extends BaseStage {
       this.daoList = this.dealService.DAOs.sort((a: any, b: any) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
       );
-    }).catch((err) => {
-      console.error("err", err);
+    }).catch((_err) => {
+      // console.error("err", err);
     });
 
-    const el = this.refDaoSelect;
-    console.log({el});
+    // const el = this.refDaoSelect;
+    // console.log({el});
 
     // el.onchange = (evt) => {
     //   console.log(this.daoId);

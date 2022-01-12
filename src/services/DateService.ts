@@ -28,7 +28,6 @@ export class DateService {
     return dtMidnight;
   }
 
-
   public localTimezoneOffset: number;
   public localTimezone: string;
 
@@ -172,7 +171,6 @@ export class DateService {
     // utc is meaningless here
     return this.createMomentFromTicks(ticks).toDate();
   }
-
 
   public unixEpochToDate(seconds: number): Date | null {
     return this.ticksToDate(seconds * 1000);

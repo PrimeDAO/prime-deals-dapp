@@ -159,7 +159,6 @@ export class ContractsService {
   // eip1967.proxy.implementation
   private static storagePosition1967 = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
 
-
   /**
    * Attempts to obtain the addresss of a proxy contract implementation.
    * Uses a heuristic described here:
