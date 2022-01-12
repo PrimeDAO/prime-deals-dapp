@@ -1,22 +1,6 @@
 @import "styles/styles.scss";
 
 .page.home {
-  // &:before {
-  //   content: "";
-  //   position: absolute;
-  //   background-image: url("/static/home-bg-top.gif");
-  //   background-position: top center;
-  //   background-repeat: no-repeat;
-  //   background-size: cover;
-  //   // margin-left: -160px;
-  //   left: 0;
-  //   margin: 100px 0;
-  //   width: 100vw;
-  //   // width: calc(100% + 320px);
-  //   height: 800px;
-  //   top: -150px;
-  //   z-index: -1;
-  // }
   .section {
     &.hero,
     &.deals {
@@ -44,7 +28,12 @@
 
       .cards {
         display: flex;
-        pcard {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
+        cursor: pointer;
+        gap: 24px;
+        pcard{
           width: clamp(100px, 100%, 360px);
           .pcard {
             padding: 0 18px 24px 24px;
@@ -65,11 +54,6 @@
             color: $Neutral03;
           }
         }
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: start;
-        cursor: pointer;
-        gap: 24px;
       }
     }
 
