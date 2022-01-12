@@ -70,7 +70,6 @@ export class MultiCallService {
   //     });
   // }
 
-
   private convertModel(model: Array<IBatcherCallsModel>): Array<any> {
     let callCounter = 0;
 

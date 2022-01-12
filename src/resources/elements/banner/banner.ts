@@ -179,7 +179,6 @@ export class Banner {
     this.queueEventConfig(bannerConfig);
   }
 
-
   private handleInfo(config: EventConfig | string): void {
 
     if ((config as any).originatingUiElement) {

@@ -1,6 +1,9 @@
 @import "./colors.scss";
 @import "./variables.scss";
 
+/**
+  This class was added here and not in every individual component so it can be used on any element when necessary.
+ */
 .pInput {
   font-style: normal;
   font-weight: normal;
@@ -13,6 +16,10 @@
   outline: none;
   padding: $spacing-normal;
   box-sizing: border-box;
+  display: flex;
+  column-gap: $spacing-normal;
+  align-items: center;
+  height: $input-height;
 
   input {
     color: $Neutral04;

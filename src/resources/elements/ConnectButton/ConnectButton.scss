@@ -3,12 +3,9 @@
 .connectButtonContainer {
   display: inline-block;
   padding: 0;
-  border-radius: 0.75rem;
-  border: 1px solid;
-  background-color: #212429;
-  border-color: transparent;
   z-index: 1000; // stay over modal mask
   font-family: Inter;
+  color: $Neutral02;
 
   .connectButton {
     > pbutton > button {
@@ -19,6 +16,7 @@
       padding: 10px 14px;
       text-transform: none;
       transition: none;
+      color: $Neutral03;
 
       &:focus {
         box-shadow: none;
@@ -54,37 +52,38 @@
       display: inline-block;
       white-space: nowrap;
       font-size: 14px;
+      margin-right: 20px;
 
       &.ETH {
-        margin-right: 0.5em;
+        margin-right: 12px;
       }
     }
   }
 
   &.connected {
-    background-color: $BG05;
-    border-color: $BG05;
     padding-left: 14px;
     padding-right: 1px;
     padding-top: 1px;
     padding-bottom: 1px;
 
-    .separator {
-      display: inline-block;
-      margin-left: 0.5em;
-      margin-right: 0.5em;
-      position: relative;
-      bottom: 1px;
-      color: $White;
-    }
+    // .separator {
+    //   display: inline-block;
+    //   margin-left: 0.5em;
+    //   margin-right: 0.5em;
+    //   position: relative;
+    //   bottom: 1px;
+    //   color: $White;
+    // }
 
     .connectedButtons {
       .connectButton {
         cursor: default;
         text-align: center;
-        border: 0;
-        color: white;
-        border-color: transparent;
+        // color: white;
+        // background-color: $BG05;
+        // border-color: transparent;
+        // border-radius: 0.75rem;
+        // border: 1px solid;
 
         .pending {
           .phase {
@@ -128,8 +127,8 @@
         .connectButton {
           margin-left: 0;
         }
-        .ethBalanceContainer,
-        .separator {
+        //.separator,
+        .ethBalanceContainer {
           display: none;
         }
       }

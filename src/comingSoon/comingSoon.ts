@@ -6,7 +6,6 @@ import "./comingSoon.scss";
 @autoinject
 export class ComingSoon {
 
-
   constructor(
     private dateService: DateService,
   ) {
