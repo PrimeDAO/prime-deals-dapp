@@ -63,7 +63,6 @@ export class PinataIpfsClient implements IIpfsClient {
     }
   }
 
-
   public async getPinnedObjectsHashes(): Promise<Array<Hash>> {
     try {
       const response = await axios.get(

@@ -3,7 +3,6 @@ import { DateService } from "./../services/DateService";
 import { autoinject, singleton } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import "./home.scss";
-import { Deal } from "entities/Deal";
 
 @singleton(false)
 @autoinject
@@ -26,7 +25,6 @@ export class Home {
       this.featuredDeals = [...deals];
       this._openDeals = [...this.featuredDeals];
     });
-
 
     // this._runningDeals = [...this.featuredDeals];
     this._runningDeals = [

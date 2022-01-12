@@ -5,24 +5,18 @@
         <div class="ethBalanceContainer">
           <tokenbalance formatted="0.00a" token-address.to-view="primeAddress"></tokenbalance>D2D
         </div>
-        <span class="separator">|</span>
-        <!-- <div class="ethBalanceContainer">
-          <tokenbalance formatted="0.00a" token-address.to-view="daiAddress"></tokenbalance>DAI
-        </div>
-          <span class="separator">|</span>
-        -->
         <div class="ethBalanceContainer ETH">
           <ethbalance formatted="0.00a"></ethbalance>ETH
         </div>
       </template>
       <div class="connectButton">
         <pbutton type="tertiary" click.delegate="onConnect()">
-          <div if.to-view="txPhase !== 'None'" click.delegate="gotoTx()" class.bind="'pending' + ((txPhase==='Confirming')
+          <div if.to-view="txInProgress" class.bind="'pending' + ((txPhase==='Confirming')
           ? ' confirming' : '')">
             <div class="phase">${txPhase}</div><i class="spinner fas fa-circle-notch fa-spin"></i>
           </div>
           <div else class="address">
-            ${accountAddress | smallHexString} <span class="caret fas fa-caret-down"></span>
+            <usersaddress small show-ens></usersaddress> <span class=" caret fas fa-caret-down"></span>
           </div>
         </pbutton>
       </div>

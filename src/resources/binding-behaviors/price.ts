@@ -17,5 +17,3 @@
 //     binding.originalUpdateTarget = null;
 //   }
 // }
-
-

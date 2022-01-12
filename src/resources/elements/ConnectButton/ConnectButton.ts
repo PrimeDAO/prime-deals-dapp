@@ -21,12 +21,18 @@ enum Phase {
 @customElement("connectbutton")
 export class ConnectButton {
 
+  @bindable.booleanAttr private hideBalances: boolean;
+  @bindable private showWalletMenu?: () => void;
+
   private subscriptions: DisposableCollection = new DisposableCollection();
   private accountAddress: Address = null;
   private txPhase = Phase.None;
   private txReceipt: TransactionReceipt;
   private primeAddress: Address;
-  @bindable.booleanAttr private hideBalances: boolean;
+
+  private get txInProgress(): boolean {
+    return this.txPhase !== "None";
+  }
 
   constructor(
     private ethereumService: EthereumService,
@@ -69,11 +75,19 @@ export class ConnectButton {
     this.subscriptions.dispose();
   }
 
-  private onConnect() {
-    return this.ethereumService.ensureConnected();
+  private onConnect(): void {
+    if (!this.accountAddress) {
+      this.ethereumService.ensureConnected();
+    } else if (this.txInProgress) {
+      this.gotoTx();
+    } else {
+      if (this.showWalletMenu) {
+        this.showWalletMenu();
+      }
+    }
   }
 
-  private gotoTx() {
+  private gotoTx(): void {
     if (this.txReceipt) {
       Utils.goto(this.ethereumService.getEtherscanLink(this.txReceipt.transactionHash, true));
     }

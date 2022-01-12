@@ -1,8 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { bindable } from "aurelia-typed-observable-plugin";
-// import { Deal } from "entities/Deal";
-// import { DealService } from "services/DealService";
 import { Address } from "services/EthereumService";
 import "./dealSummary.scss";
 
@@ -19,12 +17,9 @@ export class DealSummary {
 
   constructor(
     private router: Router,
-    // private dealService: DealService,
   ) {}
 
   async attached(): Promise<void> {
-    // await this.dealService.ensureInitialized();
-    // this.deal = this.dealService.deals.get(this.address);
     this.loading = false;
   }
 
