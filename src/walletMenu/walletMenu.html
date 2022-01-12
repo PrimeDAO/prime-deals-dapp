@@ -6,7 +6,7 @@
       <hr />
       <div class="pair">
         <div class="title">Connected with MetaMask</div>
-        <div class="action">Disconnect</div>
+        <div class="action" click.delegate="disconnect()">Disconnect</div>
       </div>
       <!-- <hr />
       <div class="pair">
@@ -16,10 +16,10 @@
       <div class="pair">
         <div class="title">0.5463 PRIME $14.10</div>
       </div> -->
-      <hr />
-      <div class="pair">
+      <hr show.bind="!metamaskHasPrimeToken" />
+      <div class="pair" show.bind="!metamaskHasPrimeToken">
         <div class="title"><img src="/logomark.svg" alt="Prime (D2D)"></img>Prime (D2D)</div>
-        <div class="action">Add Token to Wallet</div>
+        <div class="action" click.delegate="addTokenToWallet()">Add Token to Wallet</div>
       </div>
       <hr />
       <div class="pair">

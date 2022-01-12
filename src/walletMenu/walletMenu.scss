@@ -35,6 +35,11 @@
     color: $Secondary02;
     font-weight: 400;
     line-height: 17px;
+
+    &:hover {
+      color: $Neutral03;
+      cursor: pointer;
+    }
   }
 
   .pair {

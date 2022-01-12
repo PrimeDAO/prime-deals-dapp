@@ -1,15 +1,17 @@
-import { TransactionHistoryService } from "services/TransactionHistoryService";
+import { TokenService } from "services/TokenService";
 import { autoinject, bindingMode } from "aurelia-framework";
-import { BrowserStorageService } from "services/BrowserStorageService";
 import { EthereumService } from "services/EthereumService";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./walletMenu.scss";
+import { ContractNames, ContractsService } from "services/ContractsService";
 
 @autoinject
 export class WalletMenu {
 
   @bindable.booleanAttr({ defaultBindingMode: bindingMode.twoWay }) showing = false;
   container: HTMLElement;
+  primeAddress: string;
+  metamaskHasPrimeToken: boolean;
   /**
    * doing it with bind is the only way I can find that properly removes the event handlers
    */
@@ -18,12 +20,15 @@ export class WalletMenu {
 
   constructor(
     private ethereumService: EthereumService,
-    private storageService: BrowserStorageService,
-    private tansactionHistoryService: TransactionHistoryService,
-  ) { }
+    private tokenService: TokenService,
+  ) {
+    this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
+  }
 
   showingChanged(show: boolean): void {
     if (show) {
+      this.metamaskHasPrimeToken = this.ethereumService.getMetamaskHasToken(this.primeAddress);
+
       document.addEventListener("click", this.thisClickHandler);
       document.addEventListener("keydown", this.thisEscHandler);
     } else {
@@ -45,5 +50,20 @@ export class WalletMenu {
       this.showing = false;
       event.preventDefault();
     }
+  }
+
+  disconnect(): void {
+    this.ethereumService.disconnect({ code: 0, message: "User requested" });
+    this.showing = false;
+  }
+
+  async addTokenToWallet(): Promise<void> {
+    const tokenInfo = await this.tokenService.getTokenInfoFromAddress(this.primeAddress);
+    this.metamaskHasPrimeToken = await this.ethereumService.addTokenToMetamask(
+      tokenInfo.address,
+      tokenInfo.symbol,
+      tokenInfo.decimals,
+      tokenInfo.logoURI,
+    );
   }
 }
