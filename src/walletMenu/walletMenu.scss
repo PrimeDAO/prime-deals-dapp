@@ -58,6 +58,27 @@
     }
   }
 
+  .connected {
+    margin-bottom: 6px;
+  }
+
+  .accountInfo {
+    padding: 8px 10px;
+    column-gap: 6px;
+    background-color: $BG01;
+    border-radius: 6px;
+    color: $Neutral02;
+    .buttons {
+      display: flex;
+      column-gap: 4px;
+      align-items: center;
+
+      i {
+        color: $Secondary05;
+      }
+    }
+  }
+
   &.showing {
     right: 20px;
   }

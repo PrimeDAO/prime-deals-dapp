@@ -4,6 +4,7 @@ import { EthereumService } from "services/EthereumService";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./walletMenu.scss";
 import { ContractNames, ContractsService } from "services/ContractsService";
+import { Utils } from "services/utils";
 
 @autoinject
 export class WalletMenu {
@@ -65,5 +66,9 @@ export class WalletMenu {
       tokenInfo.decimals,
       tokenInfo.logoURI,
     );
+  }
+
+  gotoEtherscan(): void {
+    Utils.goto(this.ethereumService.getEtherscanLink(this.ethereumService.defaultAccountAddress));
   }
 }
