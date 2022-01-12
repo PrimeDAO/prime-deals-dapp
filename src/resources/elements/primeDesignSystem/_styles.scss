@@ -1,2 +1,73 @@
 @import "./colors.scss";
 @import "./variables.scss";
+
+/**
+  This class was added here and not in every individual component so it can be used on any element when necessary.
+ */
+.pInput {
+  font-style: normal;
+  font-weight: normal;
+  font-size: $font-size1;
+  line-height: 23px;
+  border: 1px solid $Border01;
+  background: $BG04;
+  color: $Neutral04;
+  border-radius: $border-radius-normal;
+  outline: none;
+  padding: $spacing-normal;
+  box-sizing: border-box;
+  display: flex;
+  column-gap: $spacing-normal;
+  align-items: center;
+  height: $input-height;
+
+  input {
+    color: $Neutral04;
+
+    &::placeholder {
+      color: $Neutral02;
+    }
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+
+  &-error {
+    border-color: $Red;
+
+    .fas {
+      color: $Red;
+    }
+  }
+
+  &-warning {
+    border-color: $Orange;
+
+    .fas {
+      color: $Orange;
+    }
+  }
+
+  &-disabled {
+    background-color: $BG01;
+    cursor: not-allowed;
+
+    &, input {
+      color: $Secondary05;
+
+      &::placeholder {
+        color: $Secondary05;
+      }
+    }
+  }
+
+  &-validating {
+    border-color: $Neutral04;
+  }
+
+  &-focused {
+    border-color: $Secondary02;
+  }
+
+}

@@ -10,7 +10,7 @@ body > ux-dialog-container.alert {
       border-top-left-radius: 6px;
       border-top-right-radius: 6px;
       border-top-width: 0;
-      padding: 24px 40px 12px 40px;
+      padding: 24px 40px 24px 40px;
       font-family: Inter;
       font-size: 16px;
       line-height: 32px;
@@ -18,8 +18,8 @@ body > ux-dialog-container.alert {
 
     ux-dialog-footer {
       border-top-width: 0;
-      padding: 4px 40px 24px 40px;
-      text-align: center;
+      padding: 20px 40px 20px 40px;
+      text-align: left;
       .button1 {
         &.small {
           width: 98px;

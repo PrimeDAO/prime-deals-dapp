@@ -108,8 +108,7 @@ export class DealService {
   public async getFeaturedDeals(): Promise<Array<IDealConfig>> {
 
     if (this._featuredDeals) {
-      console.log("returning cached featured deals");
-
+      // console.log("returning cached featured deals");
       return await this._featuredDeals;
     }
     else {

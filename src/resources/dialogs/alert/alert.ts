@@ -20,7 +20,6 @@ export class Alert {
 
   constructor(private controller: DialogController) { }
 
-
   public activate(model: IAlertModel): void {
     this.model = model;
     this.buttons = model.buttons ?? ShowButtonsEnum.OK;

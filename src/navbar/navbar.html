@@ -31,17 +31,15 @@
 
     <div class="productSubpages">
       <div class="container">
+        <div click.delegate="navigate('/')" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
         <div click.delegate="navigate('/deals/open')" class="item ${(router.currentInstruction.config.name === '/deals/open') ? 'active' : ''}">Open Deals</div>
         <div click.delegate="navigate('/deals/running')" class="item ${(router.currentInstruction.config.name === '/deals/running') ? 'active' : ''}">Running Deals</div>
         <div click.delegate="navigate('/initiate')" class="item ${(router.currentInstruction.config.name === 'initiate') ? 'active' : ''}">Initiate a Deal</div>
       </div>
-      <div class="networkFeedback">
-        <networkfeedback></networkfeedback>
-      </div>
     </div>
 
     <div class="headerConnectButton">
-      <connectbutton></connectbutton>
+      <connectbutton show-wallet-menu.call="handleShowWalletMenu()"></connectbutton>
     </div>
 
     <mobile-menu
