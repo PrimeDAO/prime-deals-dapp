@@ -14,19 +14,24 @@
   color: $Neutral04;
   border-radius: $border-radius-normal;
   outline: none;
-  padding: $spacing-normal;
   box-sizing: border-box;
   display: flex;
-  column-gap: $spacing-normal;
+  column-gap: $spacing-small;
   align-items: center;
   height: $input-height;
+  overflow: hidden;
 
-  input {
+  input, textarea {
     color: $Neutral04;
+    padding: $spacing-normal;
 
     &::placeholder {
       color: $Neutral02;
     }
+  }
+
+  .fas {
+    margin-right: $spacing-small;
   }
 
   &:focus::placeholder {
