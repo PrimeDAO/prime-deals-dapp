@@ -59,31 +59,6 @@ html {
       }
     }
 
-    input,
-    textarea {
-      font-family: "Inter";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 23px;
-      border: 1px solid $Neutral02;
-      background: $BG04;
-      color: $White;
-      border-radius: 10px;
-      outline: none;
-      padding: 12px;
-      box-sizing: border-box;
-
-      &::placeholder {
-        color: $Neutral03;
-        mix-blend-mode: normal;
-        opacity: 0.43;
-      }
-      &:focus::placeholder {
-        color: transparent;
-      }
-    }
-
     .clearInput {
       background-color: transparent;
       color: $BG01;
