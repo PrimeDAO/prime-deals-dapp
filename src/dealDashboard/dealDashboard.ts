@@ -1,13 +1,11 @@
 import { Router } from "aurelia-router";
 import { DisclaimerService } from "../services/DisclaimerService";
-import { EthereumService, fromWei } from "../services/EthereumService";
-import { autoinject, computedFrom } from "aurelia-framework";
+import { EthereumService } from "../services/EthereumService";
+import { autoinject } from "aurelia-framework";
 import { DealService } from "services/DealService";
 import { Address } from "services/EthereumService";
 import "./dealDashboard.scss";
 // import { Deal } from "entities/Deal";
-import { Utils } from "services/utils";
-import { EventConfigException } from "services/GeneralEvents";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import { NumberService } from "services/NumberService";

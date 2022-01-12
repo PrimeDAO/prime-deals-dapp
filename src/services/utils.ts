@@ -154,7 +154,6 @@ export class Utils {
     return str.split(what).join(that);
   }
 
-
   /**
    * remove precision from the decimals part.  Need this because toFixed adds phantom numbers with decimals > 16
    * @param num

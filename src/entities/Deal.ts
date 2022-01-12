@@ -27,7 +27,6 @@ interface IFunderPortfolio {
   feeClaimed: BigNumber;
 }
 
-
 @autoinject
 export class Deal {
   public contract: any;
@@ -359,7 +358,6 @@ export class Deal {
     this.hasEnoughDealTokens =
       this.dealInitialized && ((this.dealRemainder && this.feeRemainder) ? this.dealTokenBalance?.gte(this.feeRemainder?.add(this.dealRemainder)) : false);
   }
-
 
   private dealsFromFunding(fundingAmount: BigNumber): BigNumber {
     const bnFundingAmount = toBigNumberJs(fundingAmount);

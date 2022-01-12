@@ -38,7 +38,7 @@ export class App {
   errorHandler = (ex: unknown): boolean => {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
-  }
+  };
 
   public attached(): void {
     // so all elements with data-tippy-content will automatically have a tooltip
