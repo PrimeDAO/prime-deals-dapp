@@ -4,20 +4,30 @@
 
     <div class="networkFeedback">
       <hr />
-      <div class="pair">
+      <div class="pair connected">
         <div class="title">Connected with MetaMask</div>
-        <div class="action">Disconnect</div>
+        <div class="action" click.delegate="disconnect()">Disconnect</div>
+      </div>
+      <div class="pair accountInfo">
+        <usersaddress small></usersaddress>
+        <div class="buttons">
+          <copy-to-clipboard-button text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
+          <div class="eslink" click.trigger="gotoEtherscan()"><i class="fa fa-external-link-alt"></i></div>
+        </div>
       </div>
       <!-- <hr />
       <div class="pair">
         <div class="title">Recent Transactions</div>
       </div> -->
-      <hr />
+      <!-- <hr />
       <div class="pair">
         <div class="title">0.5463 PRIME $14.10</div>
+      </div> -->
+      <hr show.bind="!metamaskHasPrimeToken" />
+      <div class="pair" show.bind="!metamaskHasPrimeToken">
+        <div class="title"><img src="/logomark.svg" alt="Prime (D2D)"></img>Prime (D2D)</div>
+        <div class="action" click.delegate="addTokenToWallet()">Add Token to Wallet</div>
       </div>
-      <!-- <hr />
-      <div class="title">PRIME</div> -->
       <hr />
       <div class="pair">
         <div class="title">Network</div>

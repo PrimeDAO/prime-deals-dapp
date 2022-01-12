@@ -12,6 +12,8 @@ import { IpfsService } from "services/IpfsService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+import { TimingService } from "services/TimingService";
+import { TokenService } from "services/TokenService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -51,6 +53,11 @@ export function configure(aurelia: Aurelia): void {
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
+
+      TimingService.start("TokenService Initialization");
+      const tokenService = aurelia.container.get(TokenService);
+      await tokenService.initialize();
+      TimingService.end("TokenService Initialization");
 
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
