@@ -28,6 +28,13 @@ export class Demos {
         name: "pcard",
         title: "pCard Demo",
       },
+      {
+        route: ["pinput-numeric"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pInputNumericDemo.html"),
+        name: "pinput-numeric",
+        title: "pInput Numeric Demo",
+      },
     ];
 
     config.map(routes);

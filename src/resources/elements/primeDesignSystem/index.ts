@@ -6,5 +6,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pbutton/pbutton"),
     PLATFORM.moduleName("./pcard/pcard"),
     PLATFORM.moduleName("./pselect/pselect"),
+    PLATFORM.moduleName("./pinput-numeric/pinput-numeric"),
   ]);
 }
