@@ -2,13 +2,7 @@ import {bindable} from "aurelia-typed-observable-plugin";
 import {bindingMode, customElement} from "aurelia-framework";
 import "./pinput-numeric.scss";
 import {BigNumber} from "ethers";
-
-enum ValidationState {
-  ok = "ok",
-  validating = "validating",
-  warning = "warning",
-  error = "error"
-}
+import {ValidationState} from "../types";
 
 @customElement("pinput-numeric")
 export class PInputNumeric {
