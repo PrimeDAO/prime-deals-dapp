@@ -33,20 +33,12 @@
     color: transparent;
   }
 
-  &-error {
-    border-color: $Red;
-
-    .fas {
-      color: $Red;
-    }
+  &-validating {
+    border-color: $Neutral04;
   }
 
-  &-warning {
-    border-color: $Orange;
-
-    .fas {
-      color: $Orange;
-    }
+  &-focused {
+    border-color: $Secondary02;
   }
 
   &-disabled {
@@ -62,12 +54,20 @@
     }
   }
 
-  &-validating {
-    border-color: $Neutral04;
+  &-error {
+    border-color: $Red;
+
+    .fas {
+      color: $Red;
+    }
   }
 
-  &-focused {
-    border-color: $Secondary02;
+  &-warning {
+    border-color: $Orange;
+
+    .fas {
+      color: $Orange;
+    }
   }
 
 }
