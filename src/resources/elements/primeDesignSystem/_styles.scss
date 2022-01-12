@@ -20,9 +20,11 @@
   column-gap: $spacing-normal;
   align-items: center;
   height: $input-height;
+  cursor: text;
 
-  input {
+  input, textarea {
     color: $Neutral04;
+    height: 100%;
 
     &::placeholder {
       color: $Neutral02;
