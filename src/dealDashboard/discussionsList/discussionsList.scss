@@ -3,6 +3,7 @@
 
 .discussions-list {
   table {
+    width: 100%;
     thead {
       tr {
         border-bottom: 1px solid $Secondary02;
@@ -40,6 +41,35 @@
         }
 
         border-bottom: 1px solid $Border01;
+      }
+    }
+  }
+
+  .pagination {
+    &.container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: $spacing-normal;
+      padding: $spacing-normal;
+    }
+
+    .button {
+      display: flex;
+      border-radius: 2px;
+      width: 26px;
+      height: 26px;
+      justify-content: center;
+      align-items: center;
+      font-family: "Inter";
+      font-size: 16px;
+      font-weight: 400;
+      >.tertiary {
+        padding: $spacing-small;
+      }
+      &.active, &:hover, &:focus {
+        background-color: $BG02;
+        color: $White;
       }
     }
   }

@@ -15,6 +15,10 @@
       grid-area: content;
       section {
         margin: 0 0 100px 0;
+
+        &.overview, &.clauses {
+          min-height: 390px;
+        }
       }
       
       .clauses>p {
@@ -78,191 +82,43 @@
     }
 
   }
+
   aside {
     grid-area: aside;
-    background-color: $BG02;
-    border-radius: $border-radius-normal;
-    padding: $spacing-normal;
-  }
-}
+    .sticky-container {
+      // position: sticky;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      top: 105px;
 
-@media screen and (max-width: 1475px) {
-  .page.dealDashboardContainer {
-    .dealDashboard {
-      grid-template-areas:
-        "dealBanner"
-        "dealSummary"
-        "dealProgress"
-        "forms"
-        "dealAboutOneColumn";
-      grid-template-columns: auto;
-      row-gap: 60px;
-
-      .dealBanner {
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-areas:
-          "title"
-          "description"
-          "countdown"
-          "timeleft";
-        margin: 0 10%;
-        align-items: center;
-
-        .title {
-          width: 100%;
-          max-width: unset;
-        }
-
-        .description {
-          margin-bottom: 24px;
-        }
-
-        .description,
-        .countdown,
-        .title,
-        .timeLeft {
-          text-align: center;
-        }
+      section {
+        background-color: $BG02;
+        display: block;
+        border-radius: $border-radius-normal;
+        padding: $spacing-normal;
+        width: 360px;
       }
-
-      .forms {
-        max-width: 560px;
-        justify-self: center;
+      .vote {
+        height: 465px;
       }
-
-      .dealProgress,
-      .dealSummary {
-        justify-content: space-evenly;
-      }
-
-      .dealProgress {
-        .raised {
-          grid-template-columns: auto 0.1fr 4fr;
-        }
-
-        .tokenId {
-          justify-content: center;
-        }
-      }
-
-      .dealSummary {
-        grid-template-rows: auto 46px auto 64px;
-        grid-template-areas:
-          "targetLabel maxLabel valuationLabel"
-          "target max valuation"
-          "tokensleftLabel tokenpriceLabel tokenpriceLabel"
-          "tokensleft tokenprice tokenprice";
-      }
-
-      .dealAbout {
-        margin: 0 10%;
-        text-align: center;
-
-        &.onecolumn {
-          display: unset;
-        }
-
-        &.twocolumn {
-          display: none;
-        }
-
-        .title {
-          width: 100%;
-        }
-
-        .links {
-          margin: 0 10%;
-          flex-direction: column;
-
-          a {
-            display: flex;
-            justify-content: center;
-            .name {
-              margin-right: 0;
-            }
-          }
-        }
+      .deal-information {
+        height: 511px;
       }
     }
   }
 }
 
-@media screen and (max-width: 620px) {
+@media screen and (max-width: $MaxContentBodyWidth) {
   .page.dealDashboardContainer {
-    .dealDashboard {
-      padding-left: initial;
-      padding-right: initial;
-
-      .forms {
-        .section2,
-        .section3,
-        .section4 {
-          justify-items: center;
-
-          .description {
-            justify-self: self-end;
-          }
-
-          .help {
-            justify-self: center;
-            align-self: center;
-          }
-        }
-
-        .section2 {
-          .form {
-            grid-template-columns: auto auto;
-            grid-template-rows: auto auto auto auto;
-            grid-template-areas:
-              "input units1"
-              "equals equals"
-              "output units2"
-              "vestedMessage vestedMessage";
-          }
-        }
-        .section3 {
-          .form {
-            grid-template-columns: auto auto;
-            grid-template-rows: auto auto auto auto;
-            grid-template-areas:
-              "input units1"
-              ". ."
-              "output units2"
-              "vestedMessage vestedMessage";
-          }
-        }
-      }
-      .dealSummary {
-        .value {
-          font-size: 20px;
-        }
-        .tokenprice {
-          padding-top: 4px;
-        }
-      }
-
-      .dealAbout {
-        .links {
-          a {
-            text-align: left;
-            justify-content: flex-start;
-          }
-        }
-      }
-    }
+    grid-template-columns: 1fr;
+    grid-template-areas: "top" "aside" "content" "discussion";
   }
 }
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width: $MaxContentBodyWidthMobile) {
   .page.dealDashboardContainer {
-    .dealDashboard {
-      .dealProgress {
-        .raised {
-          font-size: 18px;
-          line-height: 22px;
-        }
-      }
-    }
+    grid-template-columns: 1fr;
+    grid-template-areas: "top" "aside" "content" "discussion";
   }
 }

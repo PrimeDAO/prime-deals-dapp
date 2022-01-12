@@ -1,5 +1,5 @@
 <template>
-  <section class="section discussions-list">
+  <section if.bind="discussions.length" class="section discussions-list">
     <table>
       <thead>
         <tr>
@@ -7,44 +7,34 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="h-centered">1</td>
+        <tr id="${discussion.id}" repeat.for="discussion of discussions">
+          <td class="h-centered">${$index + 1}</td>
           <td>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <p>
+              ${discussion.topic}
+            </p>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
-              Created by John Dow on Jan 10, 2021
+              Created by ${discussion.creator} on ${discussion.createdAt.toLocaleDateString("en-US", dateFormatOptions)}
             </p>
           </td>
-          <td class="h-centered v-centered">0</td>
-          <td class="h-centered v-centered">0</td>
-        </tr>
-        <tr>
-          <td class="h-centered">2</td>
-          <td>
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            <p class="creator">
-              <i class="fas fa-pencil-alt"></i>
-              Created by John Dow on Jan 4, 2021
-            </p>
-          </td>
-          <td class="h-centered v-centered">0</td>
-          <td class="h-centered v-centered">0</td>
-        </tr>
-        <tr>
-          <td class="h-centered">3</td>
-          <td>
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            <p class="creator">
-              <i class="fas fa-pencil-alt"></i>
-              Created by John Dow on Jan 1, 2021
-            </p>
-          </td>
-          <td class="h-centered v-centered">0</td>
-          <td class="h-centered v-centered">0</td>
-        </tr>
+          <td class="h-centered v-centered">${discussion.replies}</td>
+          <td class="h-centered v-centered">${discussion.lastActivity}</td>
         </tr>
       </tbody>
     </table>
+    <div if.bind="discussions.length >= paginationConfig.listLength" class="pagination container">
+      <button class="pagination button left" type="tertiary"><</button>
+      <button 
+        repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
+        class="page button ${page.isActive? 'active' : ''}"
+        type="tertiary">
+        ${$index + 1}
+      </button>
+      <button class="pagination button right" type="tertiary">></button>
+    </div>
+  </section>
+  <section else>
+    There are no discussions on this deal yet. Click on a deal clause to get started. 
   </section>
 </template>
