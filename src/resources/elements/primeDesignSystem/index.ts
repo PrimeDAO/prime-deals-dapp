@@ -7,6 +7,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pcard/pcard"),
     PLATFORM.moduleName("./pselect/pselect"),
     PLATFORM.moduleName("./pinput-numeric/pinput-numeric"),
-    PLATFORM.moduleName("./pinput-textarea/pinput-textarea"),
+    PLATFORM.moduleName("./ptextarea/ptextarea"),
   ]);
 }

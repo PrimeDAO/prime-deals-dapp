@@ -36,11 +36,11 @@ export class Demos {
         title: "pInput Numeric Demo",
       },
       {
-        route: ["pinput-textarea"],
+        route: ["ptextarea"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./pInputTextAreaDemo.html"),
-        name: "pinput-textarea",
-        title: "pInput Textarea Demo",
+        moduleId: PLATFORM.moduleName("./pTextareaDemo.html"),
+        name: "ptextarea",
+        title: "ptextarea",
       },
     ];
 

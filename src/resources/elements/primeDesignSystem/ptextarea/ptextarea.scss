@@ -1,0 +1,10 @@
+@import "../styles";
+
+ptextarea {
+  @extend .pInput;
+  height: auto;
+
+  textarea {
+    width: 100%;
+  }
+}
