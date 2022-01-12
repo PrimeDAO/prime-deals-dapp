@@ -11,7 +11,6 @@ export interface IDiscussion {
   lastActivity: number | null,
 }
 
-
 @autoinject
 export class DiscussionsList{
 
@@ -21,7 +20,7 @@ export class DiscussionsList{
   paginationConfig = {
     listLength: 5,
     maxVisiblePages: 5,
-  }
+  };
 
   constructor(
     private dateService: DateService,
@@ -39,7 +38,6 @@ export class DiscussionsList{
       },
     ];
   };
-
 
   attached(): void {
     this.getDiscussions();

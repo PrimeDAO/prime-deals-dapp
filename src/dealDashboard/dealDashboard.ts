@@ -62,7 +62,7 @@ export class DealDashboard {
         createdAt: new Date(2022, 0, 1),
       },
     },
-  ]
+  ];
 
   constructor(
     private ethereumService: EthereumService,
