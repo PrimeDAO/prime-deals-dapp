@@ -1,0 +1,37 @@
+<template>
+  <div class="page animated-page stageContainer stage1 au-animate">
+    <div class="headingContainer">
+      <h1 class="heading heading1 gradient">Token swap proposal</h1>
+      <hr />
+    </div>
+    <div class="infoContainer">
+      <div class="sideText">
+        <h2 class="heading heading3 title">Primary DAO</h2>
+        Enter the Primary DAO information
+      </div>
+      <div class="form">
+        <div class="infoInput">
+          <div class="labelContainer">
+            <label for="proposalName">DAO Name</label>
+            <span>
+              ${wizard.wizardResult.daos[0].name.length}/50
+            </span>
+          </div>
+          <input id="proposalName" value.bind="wizard.wizardResult.daos[0].name" maxlength="50" />
+          <span>${errors.name}</span>
+        </div>
+        <div class="buttonContainer">
+          <pbutton type="secondary" click.delegate="previous()">
+            Previous
+          </pbutton>
+          <pbutton type="primary" click.delegate="proceed()">
+            Proceed
+          </pbutton>
+          <pbutton type="tertiary" click.delegate="cancel()">
+            Cancel
+          </pbutton>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

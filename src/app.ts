@@ -186,6 +186,13 @@ export class App {
         title: "Initiate a New Deal",
       },
       {
+        moduleId: PLATFORM.moduleName("./dealWizard/openDealWizard/openDealWizard"),
+        nav: false,
+        name: "openDealWizard",
+        route: "/initiate2/open",
+        title: "Initiate a New Deal",
+      },
+      {
         moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
         name: "comingSoon",
