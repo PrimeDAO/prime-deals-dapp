@@ -7,7 +7,7 @@ import "../wizardStage.scss";
 @autoinject
 export class PrimaryDAO implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizardConfig
+  public wizard: IWizardConfig;
   public errors: {[key: string]: string} = {};
 
   constructor(private dealWizardService: DealWizardService) {}
