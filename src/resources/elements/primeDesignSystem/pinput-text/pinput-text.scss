@@ -2,12 +2,6 @@
 
 pinput-text {
   @extend .pInput;
-  display: flex;
-  column-gap: $spacing-normal;
-  align-items: center;
-  height: $input-height;
-  padding-top: 0;
-  padding-bottom: 0;
 
   input {
     width: 100%;

@@ -19,10 +19,10 @@
     autocomplete.to-view="autocomplete"
   ></numeric-input>
 
-  <i if.bind="validationState === 'warning'" class="fas fa-exclamation-circle"></i>
+  <i if.bind="validationState === 'warning'" class="feedback-icon fas fa-exclamation-circle"></i>
 
-  <i if.bind="validationState === 'error'" class="fas fa-exclamation-triangle"></i>
+  <i if.bind="validationState === 'error'" class="feedback-icon fas fa-exclamation-triangle"></i>
 
-  <i if.bind="validationState === 'validating'" class=" loading fas fa-circle-notch"></i>
+  <i if.bind="validationState === 'validating'" class=" loading feedback-icon fas fa-circle-notch"></i>
 
 </template>
