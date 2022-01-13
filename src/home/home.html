@@ -6,87 +6,79 @@
       <div class="subtitle">
         An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
       </div>
-      <div class="buttons">
-        <div class="buttonContainer">
-          <div class="contribute" click.delegate="navigate('deals')">
-            <div class="title">
-              <div class="header">All Deals</div>
-              <div class="arrow">&#8599;</div>
-            </div>
-            <div class="icon"></div>
-            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-          </div>
-        </div>
-        <div class="buttonContainer">
-          <div data-test="all-deals-button" class="launch" click.delegate="navigate('initiate')">
-            <div class="title">
-              <div class="header">Initiate a Deal</div>
-              <div class="arrow">&#8599;</div>
-            </div>
-            <div class="icon"></div>
-            <div class="subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-          </div>
-        </div>
+      <div class="cards">
+        <pcard type="gradient" click.delegate="navigate('deals')">
+          <header>
+            <span class="heading left">All Deals</span>
+            <span class="icon center">&#8599;</span>
+          </header>
+          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        </pcard>
+        <pcard data-test="all-deals-button" type="gradient" click.delegate="navigate('initiate')">
+          <header>
+            <span class="heading">Initiate a Deal</span>
+            <span class="icon">&#8599;</span>
+          </header>
+          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        </pcard>
       </div>
-    </div>
 
-    <!-- Deals Carousel -->
-    <div class="section deals open" if.to-view="!featuredDeals || featuredDeals.length">
-      <div class="title heading heading1 selector">
-        <span class="selector-tab ${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
-        <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
+      <!-- Deals Carousel -->
+      <div class="section deals open" if.to-view="!featuredDeals || featuredDeals.length">
+        <div class="title heading heading1 selector">
+          <span class="selector-tab ${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
+          <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
+        </div>
+        <template if.to-view="featuredDeals && featuredDeals.length">
+          <horizontal-scroller item-count.to-view="featuredDeals.length">
+            <deal-summary
+              repeat.for="deal of featuredDeals"
+              deal.to-view="deal"></deal-summary>
+          </horizontal-scroller>
+          <div class="dealsButton">
+            <div class="centered">
+              <pbutton
+                type="tertiary"
+                click.delegate="navigate('deals')"
+                rel="noopener noreferrer">
+                View All Deals
+              </pbutton>
+            </div>
+          </div>
+        </template>
+        <div if.to-view="!featuredDeals" class="loading">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
       </div>
-      <template if.to-view="featuredDeals && featuredDeals.length">
-        <horizontal-scroller item-count.to-view="featuredDeals.length">
-          <deal-summary
-            repeat.for="deal of featuredDeals"
-            deal.to-view="deal"></deal-summary>
-        </horizontal-scroller>
-        <div class="dealsButton">
-          <div class="centered">
+
+      <!-- Hero  -->
+      <div class="section hero">
+        <div class="heroColumn">
+          <div class="subtitle subtext gradient">Subtitle</div>
+          <div class="title heading heading1">Web3 partnerships made easy!</div>
+          <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
+          <div class="cardContainer">
             <pbutton
-              type="tertiary"
-              click.delegate="navigate('deals')"
-              rel="noopener noreferrer"
-            >
-              View All Deals
+              data-test="initiate-deal-button"
+              type="secondary"
+              click.delegate="navigate('initiate')"
+              rel="noopener noreferrer">
+              Initiate a Deal
             </pbutton>
           </div>
         </div>
-      </template>
-      <div if.to-view="!featuredDeals" class="loading">
-        <i class="fas fa-circle-notch fa-spin"></i>
-      </div>
-    </div>
 
-    <!-- Hero  -->
-    <div class="section hero">
-      <div class="heroColumn">
-        <div class="subtitle subtext gradient">Subtitle</div>
-        <div class="title heading heading1">Web3 partnerships made easy!</div>
-        <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
-        <div class="cardContainer">
-          <pbutton
-            data-test="initiate-deal-button"
-            type="secondary"
-            click.delegate="navigate('initiate')"
-            rel="noopener noreferrer">
-            Initiate a Deal
-          </pbutton>
+        <div class="heroColumn">
+          <video class="introVideo" controls poster="//assets.codepen.io/32795/poster.png">
+            <source id='mp4' src="//media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
+            <source id='webm' src="//media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
+            <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' /> Video is not supported.
+          </video>
         </div>
       </div>
 
-      <div class="heroColumn">
-        <video class="introVideo" controls poster="//assets.codepen.io/32795/poster.png">
-          <source id='mp4' src="//media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
-          <source id='webm' src="//media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
-          <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' /> Video is not supported.
-        </video>
-      </div>
+      <!-- Counter Panel -->
+      <!-- <counter-panel class="section"></counter-panel> -->
+
     </div>
-
-    <!-- Counter Panel -->
-    <!-- <counter-panel class="section"></counter-panel> -->
-
-  </div>
 </template>
