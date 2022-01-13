@@ -3,8 +3,16 @@
 ptextarea {
   @extend .pInput;
   height: auto;
+  position: relative;
 
   textarea {
     width: 100%;
+  }
+
+  // The feedback icon looks weird when the textarea has a scroll bar so
+  //  I decided to position it differently for this particular case
+  .feedback-icon{
+    position: absolute;
+    right: $spacing-normal;
   }
 }
