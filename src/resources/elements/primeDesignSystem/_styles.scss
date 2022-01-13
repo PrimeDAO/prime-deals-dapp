@@ -31,7 +31,7 @@
     }
   }
 
-  .fas {
+  .feedback-icon {
     margin-right: $spacing-normal;
   }
 
@@ -63,7 +63,7 @@
   &-error {
     border-color: $Red;
 
-    .fas {
+    .feedback-icon {
       color: $Red;
     }
   }
@@ -71,7 +71,7 @@
   &-warning {
     border-color: $Orange;
 
-    .fas {
+    .feedback-icon {
       color: $Orange;
     }
   }
