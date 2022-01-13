@@ -16,7 +16,6 @@ export class NumericInput {
   @bindable.booleanAttr public decimal = true;
   @bindable public css?: string;
   @bindable({ defaultBindingMode: bindingMode.oneTime }) public id?: string;
-  @bindable(({ defaultBindingMode: bindingMode.twoWay })) inFocus = false;
   /**
    * what to display when there is no value
    */
