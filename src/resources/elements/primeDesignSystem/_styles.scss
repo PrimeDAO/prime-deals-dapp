@@ -20,60 +20,64 @@
   height: $input-height;
   cursor: text;
   overflow: hidden;
+  width: 100%;
+  padding: $spacing-normal;
 
-  input, textarea {
-    color: $Neutral04;
-    height: 100%;
-    padding: $spacing-normal;
-
-    &::placeholder {
-      color: $Neutral02;
-    }
-  }
-
-  .feedback-icon {
-    margin-right: $spacing-normal;
-  }
-
-  &:focus::placeholder {
-    color: transparent;
+  &::placeholder {
+    color: $Neutral02;
   }
 
   &-validating {
     border-color: $Neutral04;
   }
 
-  &-focused {
+  &:focus:not(&-error):not(&-warning) {
     border-color: $Secondary02;
   }
 
-  &-disabled {
+  &:disabled {
     background-color: $BG01;
     cursor: not-allowed;
 
-    &, input {
-      color: $Secondary05;
+    color: $Secondary05;
 
-      &::placeholder {
-        color: $Secondary05;
-      }
+    &::placeholder {
+      color: $Secondary05;
     }
+
   }
 
   &-error {
     border-color: $Red;
 
-    .feedback-icon {
-      color: $Red;
-    }
   }
 
   &-warning {
     border-color: $Orange;
-
-    .feedback-icon {
-      color: $Orange;
-    }
   }
 
+  &-validating, &-warning, &-error {
+    padding-right: 34px;
+  }
+
+}
+
+.pInput-parent {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  .feedback-icon {
+    right: $spacing-normal;
+    top: 35%;
+    position: absolute;
+  }
+
+  &.pInput-parent-error .feedback-icon {
+      color: $Red;
+  }
+
+  &.pInput-parent-warning .feedback-icon {
+      color: $Orange;
+  }
 }

@@ -1,27 +1,14 @@
-<template
-  class="
-  ${
-    validationState === 'warning'? 'pInput-warning'
-      : validationState === 'error'? 'pInput-error'
-        : validationState === 'validating'? 'pInput-validating'
-          : ''
-  }
-  ${disabled ? 'pInput-disabled' : ''}
-  ${inFocus ? 'pInput-focused' : ''}
-">
-
+<template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
   <input
+    class="pInput ${ validationState ? 'pInput-' + validationState : '' }"
     disabled.bind="disabled"
     value.bind="value"
-    focus.bind="inFocus"
     placeholder.to-view="placeholder"
     autocomplete.to-view="autocomplete"
   />
 
   <i if.bind="validationState === 'warning'" class="feedback-icon fas fa-exclamation-circle"></i>
-
   <i if.bind="validationState === 'error'" class="feedback-icon fas fa-exclamation-triangle"></i>
-
-  <i if.bind="validationState === 'validating'" class=" loading feedback-icon fas fa-circle-notch"></i>
+  <i if.bind="validationState === 'validating'" class=" feedback-icon fas fa-circle-notch loading"></i>
 
 </template>
