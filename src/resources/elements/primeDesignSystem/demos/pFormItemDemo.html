@@ -11,27 +11,33 @@
   </pform-item>
 
   <h1>Form item with helper text</h1>
-  <pform-item label="Name" helper-message="This is a helper message" label-extra.to-view="(field1? field1.length : 0) + '/20'">
+  <pform-item label="Name" helper-message="This is a helper message"
+              label-extra.to-view="(field1? field1.length : 0) + '/20'">
     <pinput-text autcomplete="off" value.bind="field1"></pinput-text>
   </pform-item>
 
   <h1>Form item with helper text and feedback message</h1>
-  <pform-item label="Name" helper-message="This is a helper message" message="This is an error" validation-state="error" label-extra.to-view="(field1? field1.length : 0) + '/20'">
-    <pinput-text autcomplete="off" value.bind="field1"  validation-state="error"></pinput-text>
+  <pform-item label="Name" helper-message="This is a helper message" message="This is an error" validation-state="error"
+              label-extra.to-view="(field1? field1.length : 0) + '/20'">
+    <pinput-text autcomplete="off" value.bind="field1" validation-state="error"></pinput-text>
   </pform-item>
 
   <h1>Form item with error</h1>
-  <pform-item label="Name" message="Error message" validation-state="error" label-extra.to-view="(field1? field1.length : 0) + '/20'">
+  <pform-item label="Name" message="Error message" validation-state="error"
+              label-extra.to-view="(field1? field1.length : 0) + '/20'">
     <pinput-text validation-state="error" value.bind="field1"></pinput-text>
   </pform-item>
 
   <h1>Form item with warning</h1>
-  <pform-item label="Name" message="Warning message" validation-state="warning" label-extra.to-view="(field1? field1.length : 0) + '/20'">
+  <pform-item label="Name" message="Warning message" validation-state="warning"
+              label-extra.to-view="(field1? field1.length : 0) + '/20'">
     <pinput-text validation-state="warning" value.bind="field1"></pinput-text>
   </pform-item>
 
-  <h1>Form item with dynamic state (write "warning", "validating" or "error" in the input to see how it will update)</h1>
-  <pform-item label="Name" label-extra.to-view="(field2 ? field2.length : 0) + '/20'" message.bind="field2" validation-state.bind="field2">
+  <h1>Form item with dynamic state (write "warning", "validating" or "error" in the input to see how it will
+    update)</h1>
+  <pform-item label="Name" label-extra.to-view="(field2 ? field2.length : 0) + '/20'" message.bind="field2"
+              validation-state.bind="field2">
     <pinput-text value.bind="field2" autcomplete="off" validation-state.bind="field2"></pinput-text>
   </pform-item>
 
