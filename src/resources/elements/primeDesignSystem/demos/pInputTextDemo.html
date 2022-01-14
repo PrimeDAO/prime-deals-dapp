@@ -1,0 +1,38 @@
+<template>
+  <style>
+      h1 {
+          font-size: 20px;
+          margin: 24px 0 8px 0;
+      }
+  </style>
+  <h1>Simple focused text input (notice border color)</h1>
+  <pinput-text
+    value.bind="testValue"
+    placeholder="Some text"
+    in-focus.to-view="true"
+  ></pinput-text>
+  <h1>Disabled</h1>
+  <pinput-text
+    value.bind="testValue"
+    placeholder="Some text"
+    disabled.bind="true"
+  ></pinput-text>
+  <h1>Validating</h1>
+  <pinput-text
+    value.bind="testValue"
+    placeholder="Some text"
+    validation-state="validating"
+  ></pinput-text>
+  <h1>Warning message</h1>
+  <pinput-text
+    value.bind="testValue"
+    placeholder="Some text"
+    validation-state="warning"
+  ></pinput-text>
+  <h1>Error message</h1>
+  <pinput-text
+    value.bind="testValue"
+    placeholder="Some text"
+    validation-state="error"
+  ></pinput-text>
+</template>
