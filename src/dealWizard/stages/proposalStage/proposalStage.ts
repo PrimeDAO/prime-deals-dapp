@@ -8,7 +8,7 @@ import "../wizardStage.scss";
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizard: IWizard;
-  public errors: {[key: string]: string} = {};
+  public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
 

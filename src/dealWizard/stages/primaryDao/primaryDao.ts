@@ -8,7 +8,7 @@ import "../wizardStage.scss";
 export class PrimaryDAO implements IBaseWizardStage {
   public wizardManager: any;
   public wizard: IWizard;
-  public errors: {[key: string]: string} = {};
+  public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
 
@@ -24,7 +24,7 @@ export class PrimaryDAO implements IBaseWizardStage {
     this.errors = {};
 
     if (!this.wizard.wizardResult.daos[0].name) {
-      this.errors.name ="Please enter the name of the Primary DAO";
+      this.errors.name = "Please enter the name of the Primary DAO";
     }
 
     this.wizardService.getCurrentStage(this.wizardManager).valid = !Object.keys(this.errors).length;
