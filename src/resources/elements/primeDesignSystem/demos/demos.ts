@@ -42,6 +42,20 @@ export class Demos {
         name: "pinput-text",
         title: "pInput Text Demo",
       },
+      {
+        route: ["pcircled-number"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pcircledNumberDemo"),
+        name: "pcircled-number",
+        title: "pcircled-number Demo",
+      },
+      {
+        route: ["pstepper"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pstepperDemo"),
+        name: "pstepper",
+        title: "pstepper Demo",
+      },
     ];
 
     config.map(routes);

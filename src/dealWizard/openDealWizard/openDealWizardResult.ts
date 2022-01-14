@@ -1,4 +1,5 @@
-import { IProposal, IDAO, ITerms, IAdmin, IClause, IWizardResult } from "../dealWizard.types";
+import { IWizardResult } from "services/WizardService";
+import { IProposal, IDAO, ITerms, IAdmin, IClause } from "../dealWizard.types";
 
 export class OpenDealWizardResult implements IWizardResult {
   public version: string;

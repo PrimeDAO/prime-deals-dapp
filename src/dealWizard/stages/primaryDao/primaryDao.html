@@ -21,13 +21,13 @@
           <span>${errors.name}</span>
         </div>
         <div class="buttonContainer">
-          <pbutton type="secondary" click.delegate="previous()">
+          <pbutton type="secondary" click.delegate="wizardService.previous(wizardManager)">
             Previous
           </pbutton>
           <pbutton type="primary" click.delegate="proceed()">
             Proceed
           </pbutton>
-          <pbutton type="tertiary" click.delegate="cancel()">
+          <pbutton type="tertiary" click.delegate="wizardService.cancel()">
             Cancel
           </pbutton>
         </div>

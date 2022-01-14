@@ -1,13 +1,13 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { IWizardStage } from "dealWizard/dealWizard.types";
 import { OpenDealWizardResult } from "./openDealWizardResult";
-import { DealWizardService } from "../../services/DealWizardService";
+import { WizardService, IWizard, IWizardStage } from "../../services/WizardService";
 
 @autoinject
 export class OpenDealWizard {
   public wizardManager = this;
+  public wizard: IWizard;
   private stages: IWizardStage[] = [{
     name: "Proposal",
     valid: false,
@@ -19,18 +19,17 @@ export class OpenDealWizard {
     route: "stage2",
     moduleId: PLATFORM.moduleName("../stages/primaryDao/primaryDao"),
   }];
-
   private wizardResult = new OpenDealWizardResult();
 
-  constructor(private dealWizardService: DealWizardService) {
-    this.dealWizardService.registerWizard(this, this.stages, this.wizardResult);
+  constructor(public wizardService: WizardService) {
+    this.wizard = this.wizardService.registerWizard(this.wizardManager, this.stages, this.wizardResult);
   }
 
-  private attached(): void {
-    this.dealWizardService.updateIndexOfActiveBaseOnRoute(this);
+  public onClick(index: number): void {
+    this.wizardService.goToStage(this.wizardManager, index);
   }
 
   private configureRouter(config: RouterConfiguration, router: Router): void {
-    this.dealWizardService.configureRouter(this, config, router);
+    this.wizardService.configureRouter(this.wizardManager, config, router);
   }
 }
