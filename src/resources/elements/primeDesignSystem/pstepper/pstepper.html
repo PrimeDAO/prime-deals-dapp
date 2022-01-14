@@ -1,10 +1,10 @@
 <template>
-  <div class="dealWizardStepper">
+  <div class="pstepper">
     <template repeat.for="step of steps">
-      <div class="${$index === wizard.indexOfActive ? 'active' : ''}" click.delegate="onClick($index)">
+      <div class="${$index === indexOfActive ? 'active' : ''}" click.delegate="onClick({index: $index})">
         <div class="stagesNumber">
           <circled-number number.bind="$index + 1" check-mark.to-view="step.valid"
-            active.bind="$index === wizard.indexOfActive">
+            active.bind="$index === indexOfActive">
           </circled-number>
           <div class="${step.valid? 'valid':''}">${step.name}</div>
         </div>

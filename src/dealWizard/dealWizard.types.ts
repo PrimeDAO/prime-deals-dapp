@@ -1,16 +1,4 @@
-import { IWizardConfig } from "services/DealWizardService";
-
-export interface IWizardStage {
-  name: string;
-  valid: boolean;
-  route: any;
-  moduleId: any
-}
-
-export interface IStepperStep {
-  name: string;
-  valid: boolean;
-}
+import { IWizard } from "services/WizardService";
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 export interface IProposal {
@@ -70,21 +58,12 @@ export interface ITerms {
   previousDiscussionURL: string,
 }
 
-export interface IWizardResult {
-  version: string;
-  clearState: () => void,
-  [key: string]: any;
-}
-
 export interface IBaseWizardStage {
   wizardManager: any;
-  wizard: IWizardConfig;
-  errors: {[key: string]: string};
+  wizard: IWizard;
+  errors?: {[key: string]: string};
 
   activate;
   attached: () => void;
-  validateInputs(): boolean;
-  proceed: () => void;
-  cancel: () => void;
-  previous: () => void;
+  proceed?: () => void;
 }

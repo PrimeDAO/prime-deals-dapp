@@ -1,23 +1,23 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import { DealWizardService, IWizardConfig } from "../../../services/DealWizardService";
+import { WizardService, IWizard } from "../../../services/WizardService";
 import "../wizardStage.scss";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizardConfig;
+  public wizard: IWizard;
   public errors: {[key: string]: string} = {};
 
-  constructor(private dealWizardService: DealWizardService) {}
+  constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
     this.wizardManager = routeConfig.settings.wizardManager;
   }
 
   attached(): void {
-    this.wizard = this.dealWizardService.getWizard(this.wizardManager);
+    this.wizard = this.wizardService.getWizard(this.wizardManager);
   }
 
   validateInputs(): boolean {
@@ -31,22 +31,14 @@ export class ProposalStage implements IBaseWizardStage {
       this.errors.overview = "Please enter a descriptive overview for your proposal";
     }
 
-    this.wizard.stages.find(stage => stage.name === "Proposal").valid = !Object.keys(this.errors).length;
+    this.wizardService.getCurrentStage(this.wizardManager).valid = !Object.keys(this.errors).length;
 
     return !Object.keys(this.errors).length;
   }
 
   proceed(): void {
     if (this.validateInputs()){
-      this.dealWizardService.proceed(this.wizardManager);
+      this.wizardService.proceed(this.wizardManager);
     }
-  }
-
-  cancel(): void {
-    this.dealWizardService.cancel();
-  }
-
-  previous(): void {
-    this.dealWizardService.previous(this.wizardManager);
   }
 }

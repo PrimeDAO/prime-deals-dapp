@@ -1,31 +1,45 @@
 import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { IWizardResult, IWizardStage } from "../dealWizard/dealWizard.types";
 
-export interface IWizardConfig {
+export interface IWizard {
   stages: Array<IWizardStage>;
   indexOfActive: number;
   wizardResult: IWizardResult;
 }
 
+export interface IWizardStage {
+  name: string;
+  valid: boolean;
+  route: any;
+  moduleId: any
+}
+
+export interface IWizardResult {
+  version: string;
+  clearState: () => void,
+  [key: string]: any;
+}
+
 @autoinject
-export class DealWizardService {
-  private dealWizards = new Map<any, IWizardConfig>();
+export class WizardService {
+  private wizards = new Map<any, IWizard>();
   private router: Router;
 
   public registerWizard(
-    key: any,
+    wizardManager: any,
     stages: Array<IWizardStage>,
     wizardResult: IWizardResult,
-  ): void {
-    this.dealWizards.set(
-      key,
+  ): IWizard {
+    this.wizards.set(
+      wizardManager,
       {
         stages,
         indexOfActive: 0,
         wizardResult,
       },
     );
+
+    return this.getWizard(wizardManager);
   }
 
   public configureRouter(
@@ -33,7 +47,7 @@ export class DealWizardService {
     config: RouterConfiguration,
     router: Router,
   ): void {
-    const stageConfig = this.dealWizards.get(wizardManager);
+    const stageConfig = this.wizards.get(wizardManager);
 
     const routes = stageConfig.stages.map(stage => ({
       route: [stage.route],
@@ -48,14 +62,17 @@ export class DealWizardService {
     config.map(routes);
 
     this.router = router;
+
+    this.updateIndexOfActiveBaseOnRoute(wizardManager);
   }
 
-  public getWizard(wizardManager: any): IWizardConfig {
-    return this.dealWizards.get(wizardManager);
+  public getWizard(wizardManager: any): IWizard {
+    return this.wizards.get(wizardManager);
   }
 
-  public getWizardStage(wizardManager: any, stageName: string): IWizardStage{
-    return this.getWizard(wizardManager).stages.find(stage => stage.name === stageName);
+  public getCurrentStage(wizardManager: any): IWizardStage {
+    const wizard = this.getWizard(wizardManager);
+    return wizard.stages[wizard.indexOfActive];
   }
 
   public cancel(): void {
@@ -71,7 +88,7 @@ export class DealWizardService {
     }
   }
 
-  public previous(wizardManager: any) {
+  public previous(wizardManager: any): void {
     const indexOfActive = this.getWizard(wizardManager).indexOfActive;
 
     if (indexOfActive > 0) {
@@ -87,10 +104,17 @@ export class DealWizardService {
     wizard.indexOfActive = index;
   }
 
-  public updateIndexOfActiveBaseOnRoute(wizardManager: any): void {
+  private updateIndexOfActiveBaseOnRoute(wizardManager: any): void {
+    const routeFragments = window.location.pathname.split("/");
+    const stageRoute = routeFragments[routeFragments.length - 1];
+
     const wizard = this.getWizard(wizardManager);
     wizard.indexOfActive = wizard.stages.findIndex(
-      stage => stage.route === this.router.currentInstruction.fragment,
+      stage => stage.route === stageRoute,
     );
+  }
+
+  private getWizardStage(wizardManager: any, stageName: string): IWizardStage{
+    return this.getWizard(wizardManager).stages.find(stage => stage.name === stageName);
   }
 }

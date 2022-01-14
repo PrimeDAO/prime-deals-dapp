@@ -1,7 +1,10 @@
 <template>
-  <require from="../components/dealWizardStepper/dealWizardStepper"></require>
   <div>
-    <deal-wizard-stepper wizard-manager.bind="wizardManager"></deal-wizard-stepper>
+    <pstepper
+      steps.bind="wizard.stages"
+      index-of-active.bind="wizard.indexOfActive"
+      on-click.call="onClick(index)">
+    </pstepper>
     <div>
       <router-view></router-view>
     </div>

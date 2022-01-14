@@ -6,3 +6,8 @@ export enum ValidationState {
   warning = "warning",
   error = "error"
 }
+
+export interface IStepperStep {
+  name: string;
+  valid: boolean;
+}
