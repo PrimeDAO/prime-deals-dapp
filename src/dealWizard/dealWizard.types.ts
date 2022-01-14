@@ -61,9 +61,7 @@ export interface ITerms {
 export interface IBaseWizardStage {
   wizardManager: any;
   wizard: IWizard;
-  errors?: {[key: string]: string};
 
   activate;
   attached: () => void;
-  proceed?: () => void;
 }
