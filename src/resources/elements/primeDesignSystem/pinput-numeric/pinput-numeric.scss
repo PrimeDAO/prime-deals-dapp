@@ -1,13 +1,7 @@
 @import "../styles";
 
 pinput-numeric {
-  @extend .pInput;
-  padding-top: 0;
-  padding-bottom: 0;
-
   numeric-input {
-    width: 100%;
-
     input {
       width: 100%;
     }

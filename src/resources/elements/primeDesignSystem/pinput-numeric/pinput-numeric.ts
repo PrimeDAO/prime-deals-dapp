@@ -7,7 +7,7 @@ import {ValidationState} from "../types";
 @customElement("pinput-numeric")
 export class PInputNumeric {
 
-  @bindable public validationState = ValidationState.ok;
+  @bindable public validationState?: ValidationState;
 
   /**
    * Look into the numeric-input for more info about the below properties
@@ -22,5 +22,4 @@ export class PInputNumeric {
   @bindable.number public decimals?: number = 18;
   @bindable.booleanAttr public outputAsString?: boolean = false;
   @bindable.string public placeholder = "";
-  @bindable inFocus = false; //  attribute name "focus" doesn't work
 }
