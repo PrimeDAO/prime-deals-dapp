@@ -1,5 +1,4 @@
 <template>
-  <require from="./discussionsList/discussionsList"></require>
   <main class="page animated-page au-animate dealDashboardContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -32,20 +31,24 @@
         </header>
         <p>Start a discussion below by selecting a specific clause.</p>
         <ol>
-          <div repeat.for="clause of dealClauses">
+          <div repeat.for="clause of dealClauses" class="clause ${activeClause === clause.discussionThread.threadId ? 'active' : ''}">
             <li></li>
-            ${clause.text}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            <span>Discuss<img src="/comment.svg"></img></span>
+            <span class="body">
+              ${clause.description}
+              <small>
+                ${clause.discussionThread.threadId}
+              </small>
+            </span>
+            <span class="button" click.delegate="addDiscussion(clause.description, $index)">Discuss<img src="/comment.svg"></img></span>
           </div>
         </ol>
       </section>
     </section>
     <section class="discussion">
-      <h2 class="subtitle heading heading3 gradient">
-        Discuss
-      </h2>
-      <discussions-list discussions.bind="discussions"></discussions-list>
+      <router-view>
+        <!-- discussions-list -->
+        <!-- deal-thread -->
+      </router-view>
     </section>
   </main>
 </template>

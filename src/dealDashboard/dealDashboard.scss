@@ -1,10 +1,14 @@
 @import "styles/styles.scss";
 @import "src/resources/elements/primeDesignSystem/styles";
 
+$hover-transition-speed-fast: 175ms;
+$hover-transition-speed-medium: 0.3s;
+$hover-transition-speed-slow: 0.4s;
+
 .page.dealDashboardContainer {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-areas: "top ." "content aside" "discussion discussion";
+  grid-template-areas: "top ." "content aside" "discussion discussion" "thread thread";
   gap: 50px 115px;
 
   section {
@@ -20,67 +24,93 @@
           min-height: 390px;
         }
       }
-      
-      .clauses>p {
-        margin-bottom: 20px;
+
+      .clauses {>
+        p {
+          margin-bottom: 20px;
+        }
+
+        ol {
+          display: grid;
+          gap: $spacing-small;
+          list-style-type: decimal;
+          list-style-position: inside;
+          .clause {
+            display: flex;
+            gap: $spacing-normal * 2;
+            vertical-align: top;
+            padding: $spacing-normal $spacing-medium-small;
+            // padding-right: 150px;
+            cursor: default;
+            position: relative;
+
+            border-radius: $border-radius-normal;
+            background-color: transparent;
+            transition: background-color $hover-transition-speed-fast ease-in-out;
+            transition-delay: $hover-transition-speed-fast / 2;
+            .body {
+              width: calc(100% - 165px);
+              small {
+                font-size: 12px;
+                text-overflow: ellipsis;
+              }
+            }
+            .button {
+              position: absolute;
+              display: flex;
+              gap: $spacing-small;
+              align-items: center;
+              line-height: 19px;
+              right: 0;
+              top: 0;
+              height: -webkit-fill-available;
+              height: -moz-available;
+              padding: 0 $spacing-normal * 1.5;
+              background: $BG02;
+              opacity: 0;
+              justify-content: center;
+              border-radius: $border-radius-normal;
+              text-transform: uppercase;
+              font-size: 16px;
+              font-weight: 700;
+              letter-spacing: 0.6px;
+              color: $Neutral04;
+              transition: opacity $hover-transition-speed-fast ease-in;
+              transition-delay: 0s;
+              img {
+                width: $logo-icon-size-small;
+                height: $logo-icon-size-small;
+              }
+              cursor: pointer;
+            }
+            &:hover, &.active {
+              transition-delay: 0s;
+              &:not(.active) span {
+                transition-delay: $hover-transition-speed-fast / 2;
+                opacity: 1;
+              }
+              background-color: $BG02;
+            }
+
+            ::marker {
+              font-size: 26px;
+              font-weight: 700;
+              font-family: "Inter";
+              color: $Border01;
+              padding-right: 20px;
+            }
+          }
+        }
       }
 
-      ol {
-        list-style-type: decimal;
-        list-style-position: inside;
-        >div {
-          display: flex;
-          gap: $spacing-normal * 2;
-          vertical-align: top;
-          padding: $spacing-normal $spacing-medium-small;
-          cursor: default;
-          position: relative;
-          span {
-            position: absolute;
-            display: none;
-            gap: $spacing-small;
-            align-items: center;
-            line-height: 19px;
-            right: 0;
-            top: 0;
-            height: -webkit-fill-available;
-            height: -moz-available;
-            padding: 0 $spacing-normal * 3;
-            background: inherit;
-            justify-content: center;
-            border-radius: $border-radius-normal;
-            text-transform: uppercase;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.6px;
-            color: $Neutral04;
-            img {
-              width: 20px;
-              height: 20px;
-            }
-            cursor: pointer;
-          }
-        }
-        ::marker {
-          font-size: 26px;
-          font-weight: 700;
-          font-family: "Inter";
-          color: $Border01;
-          padding-right: 20px;
-        }
-        :hover {
-          background-color: $BG02;
-          border-radius: $border-radius-normal;
-          span {
-            display: flex;
-          }
-        }
-      }
     }
     &.discussion {
       grid-area: discussion;
+      .header {
+        display: flex;
+        justify-content: space-between;
+      }
     }
-
   }
 
   aside {
