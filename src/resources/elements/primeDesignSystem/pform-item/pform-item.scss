@@ -1,0 +1,42 @@
+@import "../styles";
+
+pform-item {
+  .formItemLabel {
+    display: flex;
+    color: $Secondary02;
+    margin-bottom: $spacing-normal;
+    align-items: center;
+    justify-content: space-between;
+
+    .formItemLabelExtra {
+      color: $Neutral02;
+      font-size: $font-size2;
+    }
+  }
+  .helperMessage{
+    color: $Neutral02;
+    font-size: $font-size2;
+  }
+
+  .feedback-message {
+    margin-top: $spacing-small;
+    opacity: 0;
+    transition: all ease-in-out 0.2s;
+    height: 1rem;
+    transform: translateY(-10px);
+
+    &.feedback-message-visible {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    &.error-message {
+      color: $Red;
+    }
+
+    &.warning-message {
+      color: $Orange;
+    }
+  }
+
+}

@@ -1,0 +1,15 @@
+<template>
+  <label class="formItemLabel">
+    ${label}
+    <div class="formItemLabelExtra" if.bind="labelExtra">
+      ${labelExtra}
+    </div>
+  </label>
+  <slot></slot>
+
+  <p if.bind="helperMessage" class="helperMessage">${helperMessage}</p>
+
+  <p class="feedback-message ${ message ? 'feedback-message-visible': '' } ${validationState + '-message'}">
+    ${message}
+  </p>
+</template>
