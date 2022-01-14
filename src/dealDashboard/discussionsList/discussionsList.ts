@@ -1,9 +1,10 @@
+import { DiscussionsService } from "../discussionsService";
 import { autoinject } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { DateService } from "services/DateService";
 import "./discussionsList.scss";
 
 export interface IDiscussion {
-  id: string,
   topic: string,
   creator: string,
   createdAt: Date,
@@ -14,32 +15,36 @@ export interface IDiscussion {
 @autoinject
 export class DiscussionsList{
 
-  dateFormatOptions = { year: "numeric", month: "short", day: "numeric" };
-  discussions: Array<IDiscussion> = [];
-
   paginationConfig = {
     listLength: 5,
     maxVisiblePages: 5,
   };
 
+  private discussions: Array<IDiscussion> = [];
+  private hasDiscussions: boolean;
+
   constructor(
     private dateService: DateService,
+    private router: Router,
+    private discussionsService: DiscussionsService,
   ) {}
 
-  getDiscussions = async (): Promise<void> => {
-    this.discussions = await [
-      {
-        id: "1",
-        topic: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
-        creator: "John Doe",
-        createdAt: new Date(2022, 0, 1),
-        replies: 2,
-        lastActivity: Math.floor(this.dateService.getDurationBetween(new Date(), new Date(2022, 0, 2)).asDays()),
-      },
-    ];
-  };
-
   attached(): void {
-    this.getDiscussions();
+    this.discussionsService.init();
+    this.discussions = Object.keys(this.discussionsService.discussions).map(key => (
+      {id: key, ...this.discussionsService.discussions[key]}
+    ));
+
+    this.hasDiscussions = !!this.discussions.length;
+  }
+
+  private niceDate(date: number): string {
+    const dateObj = new Date(date);
+
+    return dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
+
+  private navigateTo(page) {
+    this.router.navigate(page);
   }
 }

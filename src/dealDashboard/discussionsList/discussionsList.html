@@ -1,4 +1,9 @@
 <template>
+  <div class="header">
+    <h1 class="subtitle heading heading1 gradient">
+      Discuss
+    </h1>
+  </div>
   <section if.bind="discussions.length" class="section discussions-list">
     <table>
       <thead>
@@ -7,7 +12,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr id="${discussion.id}" repeat.for="discussion of discussions">
+        <tr 
+          id="${discussion.id}"
+          click.delegate="navigateTo(`thread/${discussion.id}`)"
+          repeat.for="discussion of discussions">
           <td class="h-centered">${$index + 1}</td>
           <td>
             <p>
@@ -15,7 +23,7 @@
             </p>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
-              Created by ${discussion.creator} on ${discussion.createdAt.toLocaleDateString("en-US", dateFormatOptions)}
+              Created by ${discussion.creator} on ${niceDate(discussion.createdAt)}
             </p>
           </td>
           <td class="h-centered v-centered">${discussion.replies}</td>
@@ -35,6 +43,6 @@
     </div>
   </section>
   <section else>
-    There are no discussions on this deal yet. Click on a deal clause to get started. 
+    There are no discussions on this deal yet. Click on a deal clause to get started.
   </section>
 </template>
