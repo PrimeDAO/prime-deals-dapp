@@ -1,5 +1,6 @@
 import { autoinject } from "aurelia-framework";
-import { Router, RouterConfiguration } from "aurelia-router";
+import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
+import { EventAggregator } from "aurelia-event-aggregator";
 
 export interface IWizard {
   stages: Array<IWizardStage>;
@@ -24,6 +25,8 @@ export interface IWizardResult {
 export class WizardService {
   private wizards = new Map<any, IWizard>();
   private router: Router;
+
+  constructor(private eventAggregator: EventAggregator){}
 
   public registerWizard(
     wizardManager: any,
@@ -63,7 +66,10 @@ export class WizardService {
 
     this.router = router;
 
-    this.updateIndexOfActiveBaseOnRoute(wizardManager);
+    this.eventAggregator.subscribeOnce(RouterEvent.Complete, (event: { instruction: NavigationInstruction }) => {
+      this.updateIndexOfActiveBaseOnRoute(wizardManager, event.instruction.params.childRoute);
+    });
+
   }
 
   public getWizard(wizardManager: any): IWizard {
@@ -104,10 +110,7 @@ export class WizardService {
     wizard.indexOfActive = index;
   }
 
-  private updateIndexOfActiveBaseOnRoute(wizardManager: any): void {
-    const routeFragments = window.location.pathname.split("/");
-    const stageRoute = routeFragments[routeFragments.length - 1];
-
+  private updateIndexOfActiveBaseOnRoute(wizardManager: any, stageRoute: string): void {
     const wizard = this.getWizard(wizardManager);
     wizard.indexOfActive = wizard.stages.findIndex(
       stage => stage.route === stageRoute,
