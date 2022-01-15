@@ -1,8 +1,13 @@
 @import "styles/colors.scss";
 
+$walletMenuWidth: 360px;
+
 .walletMenuContainer {
   display: grid;
   position: fixed;
+  width: $walletMenuWidth;
+  right: -($walletMenuWidth + 20);
+  top: 58px;
   z-index: 998;
   background-color: $BG02;
   border: 2px solid $BG02;
@@ -11,9 +16,6 @@
   padding: 20px;
   font-family: Inter;
   font-size: 14px;
-  width: 360px;
-  top: 58px;
-  right: -380px;
 
   -webkit-transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   -moz-transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -103,7 +105,7 @@
   }
 }
 
-@media screen and (max-width: 360px) {
+@media screen and (max-width: $walletMenuWidth) {
   .walletMenuContainer {
     &.showing {
       right: 0;

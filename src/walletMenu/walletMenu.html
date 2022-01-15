@@ -11,8 +11,8 @@
       <div class="pair accountInfo">
         <usersaddress small></usersaddress>
         <div class="buttons">
-          <copy-to-clipboard-button text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
-          <div class="eslink" click.trigger="gotoEtherscan()"><i class="fa fa-external-link-alt"></i></div>
+          <copy-to-clipboard-button handle-click.call="copyAddress()" text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
+          <div class="eslink" click.delegate="gotoEtherscan()"><i class="fa fa-external-link-alt"></i></div>
         </div>
       </div>
       <!-- <hr />
