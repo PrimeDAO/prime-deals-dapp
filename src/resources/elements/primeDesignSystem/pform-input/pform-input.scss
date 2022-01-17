@@ -1,14 +1,14 @@
 @import "../styles";
 
-pform-item {
-  .formItemLabel {
+pform-input {
+  .formInputLabel {
     display: flex;
     color: $Secondary02;
     margin-bottom: $spacing-normal;
     align-items: center;
     justify-content: space-between;
 
-    .formItemLabelExtra {
+    .formInputLabelExtra {
       color: $Neutral02;
       font-size: $font-size2;
     }
