@@ -17,6 +17,8 @@ export class CopyToClipboardButton {
   @bindable
   public message = "Copied to the clipboard";
 
+  @bindable handleClick: () => void;
+
   private button: HTMLElement;
 
   constructor(
@@ -43,5 +45,9 @@ export class CopyToClipboardButton {
     this.eventAggregator.publish("showMessage", this.message);
 
     e.stopPropagation();
+
+    if (this.handleClick) {
+      this.handleClick();
+    }
   }
 }

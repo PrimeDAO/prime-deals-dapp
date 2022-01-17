@@ -1,13 +1,13 @@
 @import "../styles";
 
-.pcard {
-  display: grid;
-  row-gap: 20px;
-}
-
 .demo {
   display: grid;
   row-gap: 20px;
+
+  .pcard {
+    display: grid;
+    row-gap: 20px;
+  }
 
   h1 {
     font-size: 24px;
@@ -21,7 +21,6 @@
   img {
     border-radius: $border-radius-normal;
     width: 100%;
-
   }
 
   code {

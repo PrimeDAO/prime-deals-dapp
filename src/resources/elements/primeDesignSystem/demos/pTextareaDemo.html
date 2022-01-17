@@ -1,0 +1,37 @@
+<template>
+  <style>
+      h1 {
+          font-size: 20px;
+          margin: 24px 0 8px 0;
+      }
+  </style>
+  <h1>Simple textarea input (notice border color on focus)</h1>
+  <ptextarea
+    value.bind="testValue"
+    placeholder="Some textarea"
+  ></ptextarea>
+  <h1>Disabled</h1>
+  <ptextarea
+    value.bind="testValue"
+    placeholder="Some textarea"
+    disabled.bind="true"
+  ></ptextarea>
+  <h1>Validating</h1>
+  <ptextarea
+    value.bind="testValue"
+    placeholder="Some textarea"
+    validation-state="validating"
+  ></ptextarea>
+  <h1>Warning message</h1>
+  <ptextarea
+    value.bind="testValue"
+    placeholder="Some textarea"
+    validation-state="warning"
+  ></ptextarea>
+  <h1>Error message</h1>
+  <ptextarea
+    value.bind="testValue"
+    placeholder="Some textarea"
+    validation-state="error"
+  ></ptextarea>
+</template>

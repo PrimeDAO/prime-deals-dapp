@@ -1,6 +1,5 @@
-import { CssAnimator } from "aurelia-animator-css";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { autoinject, containerless } from "aurelia-framework";
+import { computedFrom, autoinject, containerless } from "aurelia-framework";
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "../../../services/GeneralEvents";
 import { from, Subject } from "rxjs";
 import { concatMap } from "rxjs/operators";
@@ -14,14 +13,14 @@ import { Utils } from "services/utils";
 export class Banner {
 
   private resolveToClose: () => void;
-  private okButton: HTMLElement;
   private showing = false;
-  private banner: HTMLElement;
+  // private banner: HTMLElement;
   private elMessage: HTMLElement;
   private subscriptions: DisposableCollection = new DisposableCollection();
   private queue: Subject<IBannerConfig>;
   private timeoutId: any;
   private stdTimeout = 6000;
+  private type: EventMessageType;
   // private etherScanTooltipConfig = {
   //   placement: "bottom",
   //   title: "Click to go to etherscan.io transaction information page",
@@ -31,7 +30,6 @@ export class Banner {
 
   constructor(
     eventAggregator: EventAggregator,
-    private animator: CssAnimator,
     private aureliaHelperService: AureliaHelperService,
   ) {
     this.subscriptions.push(eventAggregator
@@ -66,37 +64,32 @@ export class Banner {
   }
 
   private async showBanner(config: IBannerConfig, resolve: () => void) {
-    switch (config.type) {
-      case EventMessageType.Info:
-        this.banner.classList.remove("failure");
-        this.banner.classList.remove("warning");
-        this.banner.classList.add("info");
-        break;
-      case EventMessageType.Warning:
-        this.banner.classList.remove("info");
-        this.banner.classList.remove("failure");
-        this.banner.classList.add("warning");
-        break;
-      default:
-        this.banner.classList.remove("warning");
-        this.banner.classList.remove("info");
-        this.banner.classList.add("failure");
-        break;
-    }
+    // switch (config.type) {
+    //   case EventMessageType.Info:
+    //     this.banner.classList.remove("failure");
+    //     this.banner.classList.remove("warning");
+    //     this.banner.classList.add("info");
+    //     break;
+    //   case EventMessageType.Warning:
+    //     this.banner.classList.remove("info");
+    //     this.banner.classList.remove("failure");
+    //     this.banner.classList.add("warning");
+    //     break;
+    //   default:
+    //     this.banner.classList.remove("warning");
+    //     this.banner.classList.remove("info");
+    //     this.banner.classList.add("failure");
+    //     break;
+    // }
     this.elMessage.innerHTML = config.message;
     this.aureliaHelperService.enhanceElement(this.elMessage, this, true);
+    this.type = config.type;
     this.resolveToClose = resolve;
-    await this.animator.addClass(this.banner, "au-enter-active");
     if (config.timer) {
       this.timeoutId = setInterval(() => this.close(), config.timer);
     }
     this.showing = true;
   }
-
-  // public attached(): void {
-  //   // attach-focus doesn't work
-  //   //this.okButton.focus();
-  // }
 
   public dispose(): void {
     this.subscriptions.dispose();
@@ -104,7 +97,6 @@ export class Banner {
 
   private async close(): Promise<void> {
     if (this.resolveToClose) {
-      await this.animator.leave(this.banner);
       this.showing = false;
       this.resolveToClose();
       this.resolveToClose = null;
@@ -198,6 +190,57 @@ export class Banner {
   private queueEventConfig(config: IBannerConfig): void {
     // TODO: enable these to stack vertically
     this.queue.next(config);
+  }
+
+  @computedFrom("type")
+  private get iconClass(): string {
+    switch (this.type) {
+      case EventMessageType.Failure:
+      case EventMessageType.Exception:
+        return "fa-exclamation-triangle";
+      case EventMessageType.Warning:
+        return "fa-exclamation-circle";
+      case EventMessageType.Info:
+        return "fa-info-circle";
+      case EventMessageType.Success:
+        return "fa-check-circle";
+      case EventMessageType.Transaction:
+        return "fa-check-circle";
+    }
+  }
+
+  @computedFrom("type")
+  private get typeClass(): string {
+    switch (this.type) {
+      case EventMessageType.Failure:
+      case EventMessageType.Exception:
+        return "error";
+      case EventMessageType.Warning:
+        return "warning";
+      case EventMessageType.Info:
+        return "info";
+      case EventMessageType.Success:
+        return "success";
+      case EventMessageType.Transaction:
+        return "transaction";
+    }
+  }
+
+  @computedFrom("type")
+  private get title(): string {
+    switch (this.type) {
+      case EventMessageType.Failure:
+      case EventMessageType.Exception:
+        return "Error";
+      case EventMessageType.Warning:
+        return "Warning";
+      case EventMessageType.Info:
+        return "Information";
+      case EventMessageType.Success:
+        return "Success";
+      case EventMessageType.Transaction:
+        return "Completed";
+    }
   }
 }
 

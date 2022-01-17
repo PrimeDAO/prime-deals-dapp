@@ -1,0 +1,40 @@
+<template>
+  <require from="../../components/stageButtons/stageButtons"></require>
+  <div class="page animated-page stageContainer stage1 au-animate">
+    <div class="headingContainer">
+      <h1 class="heading heading1 gradient">Token Swap Proposal</h1>
+      <hr />
+    </div>
+    <div class="infoContainer">
+      <div class="sideText">
+        <h2 class="heading heading3 title">Proposal</h2>
+        Hey there! You are about to create a new Token Swap deal. A Token Swap deal does this and that. Please follow
+        the steps and fill in the text boxes to complete this process.
+      </div>
+      <div class="form">
+        <div class="infoInput">
+          <div class="labelContainer">
+            <label for="proposalName">Proposal Name</label>
+            <span>
+              ${wizard.wizardResult.proposal.name.length}/50
+            </span>
+          </div>
+          <input id="proposalName" value.bind="wizard.wizardResult.proposal.name" maxlength="50" />
+          <span>${errors.name}</span>
+        </div>
+        <div class="infoInput">
+          <div class="labelContainer">
+            <label for="proposalOverview">Proposal Overview</label>
+            <span>
+              ${wizard.wizardResult.proposal.overview.length}/250
+            </span>
+          </div>
+          <textarea id="proposalOverview" value.bind="wizard.wizardResult.proposal.overview" rows="5"
+            maxlength="250"></textarea>
+          <span>${errors.overview}</span>
+        </div>
+        <stage-buttons wizard-manager.bind="wizardManager" validate.call="validateInputs()"></stage-buttons>
+      </div>
+    </div>
+  </div>
+</template>

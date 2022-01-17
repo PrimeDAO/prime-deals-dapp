@@ -70,5 +70,10 @@ export class WalletMenu {
 
   gotoEtherscan(): void {
     Utils.goto(this.ethereumService.getEtherscanLink(this.ethereumService.defaultAccountAddress));
+    this.showing = false;
+  }
+
+  copyAddress(): void {
+    this.showing = false;
   }
 }
