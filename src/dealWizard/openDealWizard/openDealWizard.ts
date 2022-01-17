@@ -6,7 +6,6 @@ import { WizardService, IWizard, IWizardStage } from "../../services/WizardServi
 
 @autoinject
 export class OpenDealWizard {
-  public wizardManager = this;
   public wizard: IWizard;
   private stages: IWizardStage[] = [{
     name: "Proposal",
@@ -22,14 +21,14 @@ export class OpenDealWizard {
   private wizardResult = new OpenDealWizardResult();
 
   constructor(public wizardService: WizardService) {
-    this.wizard = this.wizardService.registerWizard(this.wizardManager, this.stages, this.wizardResult);
+    this.wizard = this.wizardService.registerWizard(this, this.stages, this.wizardResult);
   }
 
   public onClick(index: number): void {
-    this.wizardService.goToStage(this.wizardManager, index);
+    this.wizardService.goToStage(this, index);
   }
 
   private configureRouter(config: RouterConfiguration, router: Router): void {
-    this.wizardService.configureRouter(this.wizardManager, config, router);
+    this.wizardService.configureRouter(this, config, router);
   }
 }
