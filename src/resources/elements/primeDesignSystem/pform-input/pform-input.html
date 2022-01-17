@@ -1,15 +1,27 @@
 <template>
-  <label class="formInputLabel">
-    ${label}
-    <div class="formInputLabelExtra" if.bind="labelExtra">
-      ${labelExtra}
+  <label class="formInputLabel" if.bind="label">
+    <span class="formInputLabelTitle">
+      ${label}
+    </span>
+    <div class="formInputLabelExtra" if.bind="showCounter">
+      ${input.value.length || 0}${maxValue ? '/' + maxValue : ''}
     </div>
   </label>
-  <slot></slot>
+
+  <slot name="label"></slot>
+
+  <p if.bind="labelDescription" class="labelDescription">${labelDescription}</p>
+
+  <div class="inputContainer">
+    <slot></slot>
+  </div>
 
   <p if.bind="helperMessage" class="helperMessage">${helperMessage}</p>
+  <slot name="helper"></slot>
 
-  <p class="feedback-message ${ message ? 'feedback-message-visible': '' } ${validationState + '-message'}">
-    ${message}
+  <p
+    class="feedback-message ${ validationStateExists(validationState) ? 'feedback-message-visible': '' } ${validationState + '-message'}">
+    ${validationMessage}
+    <slot name="validation"></slot>
   </p>
 </template>

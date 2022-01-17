@@ -8,12 +8,25 @@ pform-input {
     align-items: center;
     justify-content: space-between;
 
+    .formInputLabelTitle {
+      font-size: $font-size3;
+      font-weight: 700;
+    }
     .formInputLabelExtra {
       color: $Neutral02;
       font-size: $font-size2;
     }
   }
-  .helperMessage{
+
+  .labelDescription {
+    color: $Neutral02;
+  }
+
+  .inputContainer {
+    margin-top: 10px;
+  }
+
+  .helperMessage {
     color: $Neutral02;
     font-size: $font-size2;
   }

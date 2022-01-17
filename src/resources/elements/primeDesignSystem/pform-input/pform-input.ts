@@ -1,13 +1,55 @@
-import {customElement} from "aurelia-framework";
+import {BindingEngine, child, customElement} from "aurelia-framework";
 import "./pform-input.scss";
-import {bindable} from "aurelia-typed-observable-plugin";
+import {bindable, observable} from "aurelia-typed-observable-plugin";
 import {ValidationState} from "../types";
+import {Disposable} from "aurelia-binding";
+import {View} from "aurelia-templating";
+import {AU} from "aurelia-hot-module-reload/dist/system/_typings";
 
 @customElement("pform-input")
 export class PFormInput {
-  @bindable public validationState?: ValidationState;
-  @bindable label = "";
-  @bindable labelExtra = "";
-  @bindable message = "";
+  @bindable.string @observable validationState?: ValidationState;
+  @bindable.string label = "";
+  @bindable.string labelDescription = "";
+  @bindable validationMessage = "";
+  @bindable.boolean showCounter = false;
+  @bindable.number maxValue = 0;
   @bindable.string helperMessage = "";
+  @child("*") input;
+
+  private inputValueObserverSubscription?: Disposable
+
+  constructor(private element: Element,private bindingEngine: BindingEngine) {
+  }
+
+  attached() {
+    this.validationStateChanged(this.validationState)
+
+    if (this.input && this.showCounter) {
+      this.limitInputCharacterLength();
+    }
+  }
+
+  private limitInputCharacterLength() {
+    const inputValueObserver = this.bindingEngine.propertyObserver(this.input, 'value')
+    this.inputValueObserverSubscription = inputValueObserver.subscribe(newValue => {
+      if (newValue?.length > this.maxValue) {
+        this.input.value = newValue.substring(0, this.maxValue);
+      }
+    })
+  }
+
+  validationStateChanged(newValue?: ValidationState) {
+    if (this.input) {
+      this.input.validationState = newValue
+    }
+  }
+
+  validationStateExists(state: ValidationState){
+    return Object.values(ValidationState).includes(state)
+  }
+
+  detached() {
+    this.inputValueObserverSubscription?.dispose();
+  }
 }
