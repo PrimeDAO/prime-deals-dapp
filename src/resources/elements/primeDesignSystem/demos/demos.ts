@@ -63,6 +63,13 @@ export class Demos {
         name: "pstepper",
         title: "pstepper Demo",
       },
+      {
+        route: ["pform-input"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pFormInputDemo.html"),
+        name: "pform-input",
+        title: "pform-input Demo",
+      },
     ];
 
     config.map(routes);
