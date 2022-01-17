@@ -30,14 +30,12 @@
           <h2 class="subtitle heading heading3">Deal Clauses</h2>
         </header>
         <p>Start a discussion below by selecting a specific clause.</p>
+        <p>Active clause: ${activeClause}</p>
         <ol>
           <div repeat.for="clause of dealClauses" class="clause ${activeClause === clause.discussionThread.threadId ? 'active' : ''}">
             <li></li>
             <span class="body">
               ${clause.description}
-              <small>
-                ${clause.discussionThread.threadId}
-              </small>
             </span>
             <span class="button" click.delegate="addDiscussion(clause.description, $index)">Discuss<img src="/comment.svg"></img></span>
           </div>

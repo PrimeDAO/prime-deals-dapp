@@ -7,6 +7,7 @@ import { EthereumService } from "../../../services/EthereumService";
 @customElement("usersaddress")
 export class UsersAddress {
 
+  @bindable.string overrideAddress?: string;
   @bindable.booleanAttr small?: boolean;
   @bindable.booleanAttr showEns?: boolean;
 
@@ -23,8 +24,12 @@ export class UsersAddress {
     this.initialize();
   }
 
-  private async initialize() {
-    this.usersAddress = this.ethereumService.defaultAccountAddress;
+  overrideAddressChanged() {
+    this.initialize(this.overrideAddress);
+  }
+
+  private async initialize(address = this.ethereumService.defaultAccountAddress) {
+    this.usersAddress = address;
     if (this.usersAddress && this.showEns) {
       this.ens = await this.ethereumService.walletProvider.lookupAddress(this.usersAddress);
     }

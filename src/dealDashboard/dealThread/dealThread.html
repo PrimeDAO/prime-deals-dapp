@@ -7,13 +7,23 @@
       <pbutton type="secondary" click.delegate="navigateTo('')">Back To List</pbutton>
     </div>
     <hgroup>
-      <h2 class="heading topic">${dealClause.text}</h2>
+      <h2 class="heading topic">${dealClause.topic}</h2>
       <span>
-        <h3 class="subtext">Clause #${dealClause.index}</h3>
+        <h3 class="subtext">Clause #${dealClause.idx}</h3>
         <h3 class="subtext">
-          Created by ${dealClause.discussionThread.creator} 
-          at ${niceDate(dealClause.discussionThread.createdAt)}</h3>
+          Created by <usersaddress override-address.bind="dealClause.creator" small show-ens></usersaddress>
+          at ${niceDate(dealClause.createdAt)}</h3>
       </span>
     </hgroup>
+    <div class="comments-container">
+      comments
+    </div>
+    <pinput-text
+      placeholder="Add a comment..."
+      value.two-way="comment"
+      enter.delegate="addComment()"
+      focus.delegate="focus()"
+      blur.delegate="blur()"
+      class="comment-input"></pinput-text>
   </section>
 </template>

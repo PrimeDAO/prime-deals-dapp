@@ -12,7 +12,7 @@
   hgroup {
     padding-bottom: $spacing-medium-small + $spacing-normal;
     border-bottom: 1px solid $Secondary02;
-    span {
+    &>span {
       display: flex;
       justify-content: space-between;
     }

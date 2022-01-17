@@ -22,7 +22,7 @@ export class DealDashboard {
   connected = false;
   private router: Router;
   private routeChangeEvent: Subscription;
-  private activeClause = "";
+  private activeClause: string;
 
   // TODO: get from a service
   dealClauses: Array<IClause> = [
@@ -97,32 +97,35 @@ export class DealDashboard {
       this.activeClause = "";
     }
   }
-  private addDiscussion = async (topic: string, id: string): Promise<boolean> => {
-    this.activeClause = await this.discussionsService.createDiscussion(topic);
+
+  private addDiscussion = async (topic: string, id: number): Promise<void> => {
+    this.activeClause = await this.discussionsService.createDiscussion(topic, id + 1);
     this.dealClauses[id].discussionThread.threadId = this.activeClause;
 
-    this.router.navigate(`thread/${this.activeClause}` );
-    return true;
+    this.router.navigate(`thread/${this.activeClause}`);
   };
 
   private configureRouter(config: RouterConfiguration, router: Router): void {
     const routes = [
       {
-        route: [""],
-        nav: true,
+        route: "",
+        nav: false,
         moduleId: PLATFORM.moduleName("./discussionsList/discussionsList"),
         name: "discussions-list",
         title: "Discussions",
       },
       {
-        route: ["thread"],
-        href: "thread/:threadId",
-        nav: true,
+        route: "thread",
+        nav: false,
+        redirect: "",
+      },
+      {
+        route: "thread/:threadId",
+        nav: false,
         moduleId: PLATFORM.moduleName("./dealThread/dealThread"),
         name: "deal-thread",
         title: "Thread",
       },
-
     ];
 
     config.map(routes);

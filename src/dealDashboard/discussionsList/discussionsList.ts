@@ -1,16 +1,8 @@
-import { DiscussionsService } from "../discussionsService";
+import { DiscussionsService, IDiscussion } from "../discussionsService";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { DateService } from "services/DateService";
 import "./discussionsList.scss";
-
-export interface IDiscussion {
-  topic: string,
-  creator: string,
-  createdAt: Date,
-  replies: number,
-  lastActivity: number | null,
-}
 
 @autoinject
 export class DiscussionsList{

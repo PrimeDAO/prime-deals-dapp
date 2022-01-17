@@ -16,7 +16,7 @@
           id="${discussion.id}"
           click.delegate="navigateTo(`thread/${discussion.id}`)"
           repeat.for="discussion of discussions">
-          <td class="h-centered">${$index + 1}</td>
+          <td class="h-centered">${discussion.idx}</td>
           <td>
             <p>
               ${discussion.topic}

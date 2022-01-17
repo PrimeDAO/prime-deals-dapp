@@ -1,31 +1,24 @@
-// import { DiscussionsService } from "../discussionsService";
 import { autoinject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DiscussionsService } from "dealDashboard/discussionsService";
+import { DiscussionsService, IDiscussion } from "dealDashboard/discussionsService";
 import "./dealThread.scss";
 
-export interface IDiscussion {
-  id: string,
-  topic: string,
-  creator: string,
-  createdAt: Date,
-  replies: number,
-  lastActivity: number | null,
-}
-
 @autoinject
-export class DealThread{
-  @bindable dealClause: string;
+export class DealThread {
+  dealClause: IDiscussion;
+  @bindable private dealClauseId: string;
 
   constructor(
     private router: Router,
     private discussionsService: DiscussionsService,
   ) {}
 
-  private dealClauseId: string;
-
   attached(): void {
-    this.dealClauseId = this.router.currentInstruction.params.childRoute;
+    this.dealClauseId = this.router.currentInstruction.params.threadId;
+    this.dealClause = this.discussionsService.discussions[this.dealClauseId];
+  }
+
+  dealClauseIdChanged(newValue, oldValue) {
     this.dealClause = this.discussionsService.discussions[this.dealClauseId];
   }
 
@@ -33,4 +26,9 @@ export class DealThread{
     this.router.navigate(page);
   }
 
+  private niceDate(date: number): string {
+    const dateObj = new Date(date);
+
+    return dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
 }

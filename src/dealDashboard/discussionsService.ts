@@ -1,9 +1,18 @@
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable } from "aurelia-framework";
-import { IDiscussion } from "./discussionsList/discussionsList";
 import { ethers } from "ethers";
 import { ConsoleLogService } from "services/ConsoleLogService";
 // import { Realtime } from "ably/promises";
+
+export interface IDiscussion {
+  id: string,
+  idx: number,
+  topic: string,
+  creator: string,
+  createdAt: Date,
+  replies: number,
+  lastActivity: number | null,
+}
 
 export interface IComment {
   _id: string,
@@ -56,24 +65,27 @@ export class DiscussionsService {
     this.getDiscussions();
   }
 
-  private getDiscussions = async (): Promise<void> => {
+  private getDiscussions = async (): Promise<IDiscussion> => {
     try {
       if (localStorage.length) {
         this.discussions = JSON.parse(localStorage.getItem("discussions") || "{}");
         if (Object.keys(this.discussions).length === 0) {
           localStorage.setItem("discussions", JSON.stringify(this.discussions));
         }
+        return this.discussions;
       }
     } catch (error) {
       this.consoleLogService.logMessage(error);
     }
   };
 
-  public async createDiscussion(topic: string): Promise<string> {
+  public async createDiscussion(topic: string, idx: number): Promise<string> {
     this.getDiscussions();
 
     const discussionId = ethers.utils.hashMessage(topic);
     const newDiscussion: IDiscussion = {
+      id: discussionId,
+      idx,
       topic: topic,
       creator: this.ethereumService.defaultAccountAddress,
       createdAt: new Date(),
@@ -81,7 +93,9 @@ export class DiscussionsService {
       lastActivity: null,
     };
 
-    this.discussions[discussionId] = newDiscussion;
+    if (!this.discussions[discussionId]) {
+      this.discussions[discussionId] = newDiscussion;
+    }
     localStorage.setItem("discussions", JSON.stringify(this.discussions));
     return discussionId;
   }
