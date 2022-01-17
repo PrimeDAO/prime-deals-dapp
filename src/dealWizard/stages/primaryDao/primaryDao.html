@@ -23,7 +23,7 @@
         </div>
         <stage-buttons
           wizard-manager.bind="wizardManager"
-          validate.bind="validate"
+          validate.call="validateInputs()"
           show-submit.bind="true">
         </stage-buttons>
       </div>
