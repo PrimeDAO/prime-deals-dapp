@@ -49,15 +49,6 @@
       color: $Neutral02;
     }
   }
-  .buttonContainer {
-    display: flex;
-    flex-flow: row wrap;
-    column-gap: 30px;
-    margin-top: 140px;
-    .cancel {
-      margin-left: auto;
-    }
-  }
   .stageButton {
     display: flex;
     align-items: center;
