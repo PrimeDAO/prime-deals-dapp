@@ -42,6 +42,13 @@ export class Demos {
         name: "pinput-text",
         title: "pInput Text Demo",
       },
+      {
+        route: ["ptextarea"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pTextareaDemo.html"),
+        name: "ptextarea",
+        title: "pTextarea Demo",
+      },
     ];
 
     config.map(routes);
