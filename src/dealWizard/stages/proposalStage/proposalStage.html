@@ -33,7 +33,7 @@
             maxlength="250"></textarea>
           <span>${errors.overview}</span>
         </div>
-        <stage-buttons wizard-manager.bind="wizardManager" validate.bind="validate"></stage-buttons>
+        <stage-buttons wizard-manager.bind="wizardManager" validate.call="validateInputs()"></stage-buttons>
       </div>
     </div>
   </div>

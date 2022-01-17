@@ -9,7 +9,6 @@ export class PrimaryDAO implements IBaseWizardStage {
   public wizardManager: any;
   public wizard: IWizard;
   public errors: Record<string, string> = {};
-  public validate = this.validateInputs.bind(this);
 
   constructor(public wizardService: WizardService) {}
 
@@ -28,8 +27,10 @@ export class PrimaryDAO implements IBaseWizardStage {
       this.errors.name = "Please enter the name of the Primary DAO";
     }
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = !Object.keys(this.errors).length;
+    const valid = !Object.keys(this.errors).length;
 
-    return !Object.keys(this.errors).length;
+    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+
+    return valid;
   }
 }

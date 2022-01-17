@@ -9,7 +9,6 @@ export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizard: IWizard;
   public errors: Record<string, string> = {};
-  public validate = this.validateInputs.bind(this);
 
   constructor(public wizardService: WizardService) {}
 
@@ -32,8 +31,10 @@ export class ProposalStage implements IBaseWizardStage {
       this.errors.overview = "Please enter a descriptive overview for your proposal";
     }
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = !Object.keys(this.errors).length;
+    const valid = !Object.keys(this.errors).length;
 
-    return !Object.keys(this.errors).length;
+    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+
+    return valid;
   }
 }
