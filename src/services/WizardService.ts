@@ -85,7 +85,10 @@ export class WizardService {
     this.router.parent.navigate("home");
   }
 
-  public proceed(wizardManager: any): void {
+  public proceed(wizardManager: any, valid: boolean): void {
+    if (!valid) {
+      return;
+    }
     const wizard = this.getWizard(wizardManager);
     const indexOfActive = wizard.indexOfActive;
 
@@ -102,6 +105,10 @@ export class WizardService {
     } else {
       this.router.parent.navigate("initiate");
     }
+  }
+
+  public submit(wizardManager: any, valid: boolean): void {
+    console.log("submit", wizardManager, valid);
   }
 
   public goToStage(wizardManager: any, index: number): void {
