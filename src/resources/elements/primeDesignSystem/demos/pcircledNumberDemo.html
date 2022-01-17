@@ -1,0 +1,48 @@
+<template>
+  <style>
+    .example {
+      display: grid;
+      grid-template-columns: 60px auto 1fr;
+      grid-column-gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+  </style>
+  <div class="example">
+    <div>Active</div>
+    <pcircled-number
+      number.bind="1"
+      check-mark.to-view="false"
+      active.bind="true">
+    </pcircled-number>
+    <code>${state1}</code>
+  </div>
+  <div class="example">
+    <div>Inactive</div>
+    <pcircled-number
+      number.bind="2"
+      check-mark.to-view="false"
+      active.bind="false">
+    </pcircled-number>
+    <code>${state2}</code>
+  </div>
+  <div class="example">
+    <div>Inactive Checked</div>
+    <pcircled-number
+      number.bind="7"
+      check-mark.to-view="true"
+      active.bind="false">
+    </pcircled-number>
+    <code>${state3}</code>
+  </div>
+  <div class="example">
+    <div>Active Checked</div>
+    <pcircled-number
+      number.bind="5"
+      check-mark.to-view="true"
+      active.bind="true">
+    </pcircled-number>
+    <code>${state4}</code>
+  </div>
+</template>

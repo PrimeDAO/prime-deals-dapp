@@ -1,0 +1,12 @@
+<template>
+  <div>
+    <pstepper
+      steps.bind="wizard.stages"
+      index-of-active.bind="wizard.indexOfActive"
+      on-click.call="onClick(index)">
+    </pstepper>
+    <div>
+      <router-view></router-view>
+    </div>
+  </div>
+</template>

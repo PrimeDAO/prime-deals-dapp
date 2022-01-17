@@ -1,0 +1,9 @@
+.buttonContainer {
+  display: flex;
+  flex-flow: row wrap;
+  column-gap: 30px;
+  margin-top: 140px;
+  .cancel {
+    margin-left: auto;
+  }
+}
