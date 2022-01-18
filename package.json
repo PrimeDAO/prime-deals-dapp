@@ -22,6 +22,7 @@
     "analyze": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env.production --analyze",
     "test": "au test",
     "e2e": "npx cypress open",
+    "e2e-run": "npx cypress run",
     "lint": "eslint --ext .ts ./src ./test",
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js"
