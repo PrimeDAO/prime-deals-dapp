@@ -1,0 +1,52 @@
+@import "../styles";
+
+.pstepper {
+  position: sticky;
+  background: $BG01;
+  padding: 5px;
+  top: 0;
+  z-index: 1;
+
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 33px;
+  color: $Border01;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,86px 50px);
+  justify-content: center;
+
+  .active {
+    color: $Secondary02;
+  }
+  .valid {
+    color: $Neutral02;
+  }
+  .stagesNumber {
+    cursor: pointer;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    >div {
+      max-width: 86px;
+      text-align: center;
+    }
+  }
+  .connector {
+    width: 91px;
+    margin-left: -20px;
+    height: 38px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    .ruler {
+      width: inherit;
+      height: 3px;
+      background: $Border01;
+      &.valid {
+        background: $Neutral02;
+      }
+      margin-top: 1px; // fix ruler center position
+    }
+  }
+}

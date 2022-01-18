@@ -1,0 +1,13 @@
+@import "../styles";
+
+ptextarea.pInput-parent {
+  textarea.pInput {
+    height: auto;
+    overflow: auto;
+  }
+
+  .feedback-icon {
+    right: 20px;
+  }
+
+}

@@ -1,0 +1,17 @@
+<template>
+  <div class="pstepper">
+    <template repeat.for="step of steps">
+      <div class="${$index === indexOfActive ? 'active' : ''}" click.delegate="onClick({index: $index})">
+        <div class="stagesNumber">
+          <circled-number number.bind="$index + 1" check-mark.to-view="step.valid"
+            active.bind="$index === indexOfActive">
+          </circled-number>
+          <div class="${step.valid? 'valid':''}">${step.name}</div>
+        </div>
+      </div>
+      <div if.bind="$index + 1 < steps.length" class="connector">
+        <div class="ruler ${step.valid ? 'valid':''}"></div>
+      </div>
+    </template>
+  </div>
+</template>

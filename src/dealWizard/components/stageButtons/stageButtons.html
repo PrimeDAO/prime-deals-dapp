@@ -1,0 +1,22 @@
+<template>
+  <div class="buttonContainer">
+    <pbutton type="secondary" click.delegate="wizardService.previous(wizardManager)">
+      Previous
+    </pbutton>
+    <pbutton
+      if.bind="!showSubmit"
+      type="primary"
+      click.delegate="wizardService.proceed(wizardManager, validate())">
+      Proceed
+    </pbutton>
+    <pbutton
+      if.bind="showSubmit"
+      type="primary"
+      click.delegate="wizardService.submit(wizardManager, validate())">
+      Submit
+    </pbutton>
+    <pbutton class="cancel" type="tertiary" click.delegate="wizardService.cancel()">
+      Cancel
+    </pbutton>
+  </div>
+</template>

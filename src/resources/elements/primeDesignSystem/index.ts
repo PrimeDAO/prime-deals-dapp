@@ -8,5 +8,8 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pselect/pselect"),
     PLATFORM.moduleName("./pinput-numeric/pinput-numeric"),
     PLATFORM.moduleName("./pinput-text/pinput-text"),
+    PLATFORM.moduleName("./ptextarea/ptextarea"),
+    PLATFORM.moduleName("./pcircled-number/pcircled-number"),
+    PLATFORM.moduleName("./pstepper/pstepper"),
   ]);
 }
