@@ -14,7 +14,7 @@ pform-input {
     }
     .formInputLabelExtra {
       color: $Neutral02;
-      font-size: $font-size2;
+      font-size: $font-size1;
     }
   }
 
@@ -28,26 +28,26 @@ pform-input {
 
   .helperMessage {
     color: $Neutral02;
-    font-size: $font-size2;
+    font-size: $font-size1;
   }
 
-  .feedback-message {
+  .feedbackMessage {
     margin-top: $spacing-small;
     opacity: 0;
     transition: all ease-in-out 0.2s;
     height: 1rem;
     transform: translateY(-10px);
 
-    &.feedback-message-visible {
+    &.feedbackMessageVisible {
       opacity: 1;
       transform: translateY(0px);
     }
 
-    &.error-message {
+    &.errorMessage {
       color: $Red;
     }
 
-    &.warning-message {
+    &.warningMessage {
       color: $Orange;
     }
   }

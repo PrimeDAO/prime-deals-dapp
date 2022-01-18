@@ -1,4 +1,5 @@
 <template>
+  <!-- Label section -->
   <label class="formInputLabel" if.bind="label">
     <span class="formInputLabelTitle">
       ${label}
@@ -7,20 +8,23 @@
       ${input.value.length || 0}${maxValue ? '/' + maxValue : ''}
     </div>
   </label>
-
   <slot name="label"></slot>
 
+  <!-- Label description section -->
   <p if.bind="labelDescription" class="labelDescription">${labelDescription}</p>
 
+  <!-- Input section -->
   <div class="inputContainer">
     <slot></slot>
   </div>
 
+  <!-- Helper message section -->
   <p if.bind="helperMessage" class="helperMessage">${helperMessage}</p>
   <slot name="helper"></slot>
 
+  <!-- Validation message section -->
   <p
-    class="feedback-message ${ validationStateExists(validationState) ? 'feedback-message-visible': '' } ${validationState + '-message'}">
+    class="feedbackMessage ${ validationStateExists(validationState) ? 'feedbackMessageVisible': '' } ${validationState + 'Message'}">
     ${validationMessage}
     <slot name="validation"></slot>
   </p>

@@ -13,6 +13,10 @@ export class PFormInput {
   @bindable.boolean showCounter = false;
   @bindable.number maxValue = 0;
   @bindable.string helperMessage = "";
+  /**
+   * This "child" selector is used to select any input used within the "pform-input" element.
+   *  With it, we can get the character length used in the "max characters" counter section.
+   */
   @child("*") input;
 
   private inputValueObserverSubscription?: Disposable;
@@ -43,7 +47,7 @@ export class PFormInput {
     }
   }
 
-  validationStateExists(state: ValidationState){
+  validationStateExists(state: ValidationState) {
     return Object.values(ValidationState).includes(state);
   }
 
