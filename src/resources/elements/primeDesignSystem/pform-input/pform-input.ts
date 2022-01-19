@@ -10,7 +10,7 @@ export class PFormInput {
   @bindable.string label = "";
   @bindable.string labelInfo = "";
   @bindable.string labelDescription = "";
-  @bindable.boolean showCounter = false;
+  @bindable.booleanAttr showCounter = false;
   @bindable.number maxLength = 0;
   @bindable.string helperMessage = "";
   @bindable validationMessage = "";
