@@ -151,6 +151,20 @@ export class App {
         title: "Contribute",
       },
       {
+        moduleId: PLATFORM.moduleName("./dealWizard/openDealWizard/openDealWizard"),
+        nav: false,
+        name: "openDealWizard",
+        route: "/initiate/token-swap/open-proposal",
+        title: "Initiate an Open Proposal",
+      },
+      {
+        moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
+        nav: false,
+        name: "tokenSwapTypeSelection",
+        route: "/initiate/token-swap",
+        title: "Select Token Swap Type",
+      },
+      {
         moduleId: PLATFORM.moduleName("./initiate/initiate"),
         nav: false,
         name: "initiate",
@@ -183,13 +197,6 @@ export class App {
         nav: false,
         name: "newDeal",
         route: "/initiate/new/:type",
-        title: "Initiate a New Deal",
-      },
-      {
-        moduleId: PLATFORM.moduleName("./dealWizard/openDealWizard/openDealWizard"),
-        nav: false,
-        name: "openDealWizard",
-        route: "/initiate2/open",
         title: "Initiate a New Deal",
       },
       {

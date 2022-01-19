@@ -1,0 +1,31 @@
+<template>
+  <div class="page animated-page au-animate selectDealTypePage">
+    <img class="bg-image" src="/prime-d2d-initiate-bg.svg" alt="" role="presentation">
+    <div class="banner">
+      <div class="gradient heading heading1">
+        ${title}
+      </div>
+      <div class="subtext">
+        ${description}
+      </div>
+    </div>
+    <div class="dealTypeBoxes">
+      <template repeat.for="box of boxes">
+        <div class="dealTypeBox">
+          <div data-test="initiate-deal-type-title" class="heading heading3 title">${box.name}</div>
+          <div class="subtext">
+            ${box.description}
+          </div>
+          <pbutton
+            data-test="button-${box.slug}"
+            type="primary"
+            disabled.bind="box.isDisabled"
+            full-width
+            click.delegate="!box.isDisabled && navigate(box.slug)">
+            ${box.isDisabled ? "Coming Soon" : "Select"}
+          </pbutton>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

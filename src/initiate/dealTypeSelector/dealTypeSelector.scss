@@ -1,0 +1,92 @@
+@import "styles/styles.scss";
+
+.selectDealTypePage {
+  font-size: 28px;
+  display: flex;
+  flex-flow: column wrap;
+  position: relative;
+  &>.bg-image {
+    position: absolute;
+    z-index: -1;
+    top: -135px;
+    object-fit: cover;
+    width: 950px;
+  }
+
+  .banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    padding-bottom: 84px;
+    height: 218px;
+  
+    > .subtext {
+      font-family: Inter;
+      font-weight: 700;
+      font-size: 18px;
+      color: $Neutral03;
+      line-height: 27px;
+      text-align: center;
+      max-width: 615px;
+      margin-top: 10px;
+    }
+  }
+  .dealTypeBoxes {
+    display: flex;
+    flex-flow: row wrap;
+    flex: 1;
+    gap: 24px;
+    justify-content: center;
+  
+    .dealTypeBox {
+      background-color: $BG02;
+      border-radius: 16px;
+      max-width: 368px;
+      height: 295px;
+      padding-top: 20px;
+      padding-bottom: 35px;
+      padding-left: 30px;
+      padding-right: 38px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+
+      .title {
+        font-size: 36px;
+        line-height: 65px;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1070px) {
+  .selectDealTypePage {
+      &>.bg-image {
+        right: -160px;
+      }
+  }
+}
+  
+@media screen and (max-width: 900px) {
+
+  .selectDealTypePage {
+    &>.bg-image {
+      display: none;
+    }
+    .banner {
+      > .heading.heading1 {
+        white-space: normal;
+        text-align: center;
+      }
+      > .subtext {
+        white-space: normal;
+      }
+    }
+    .dealTypeBoxes {
+      flex-flow: column;
+      align-items: center;
+    }
+  }
+}
+
