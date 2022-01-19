@@ -11,7 +11,7 @@ export class PFormInput {
   @bindable.string labelDescription = "";
   @bindable validationMessage = "";
   @bindable.boolean showCounter = false;
-  @bindable.number maxValue = 0;
+  @bindable.number maxLength = 0;
   @bindable.string helperMessage = "";
   /**
    * This "child" selector is used to select any input used within the "pform-input" element.
@@ -35,8 +35,8 @@ export class PFormInput {
   private limitInputCharacterLength() {
     const inputValueObserver = this.bindingEngine.propertyObserver(this.input, "value");
     this.inputValueObserverSubscription = inputValueObserver.subscribe(newValue => {
-      if (newValue?.length > this.maxValue) {
-        this.input.value = newValue.substring(0, this.maxValue);
+      if (newValue?.length > this.maxLength) {
+        this.input.value = newValue.substring(0, this.maxLength);
       }
     });
   }

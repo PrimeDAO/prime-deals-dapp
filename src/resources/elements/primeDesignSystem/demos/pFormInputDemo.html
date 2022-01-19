@@ -17,7 +17,7 @@
   </pform-input>
 
   <h1>Character counter</h1>
-  <pform-input label="Name" show-counter="true" max-value="26">
+  <pform-input label="Name" show-counter="true" max-length="26">
     <pinput-text></pinput-text>
   </pform-input>
 
@@ -43,7 +43,7 @@
   </pform-input>
 
   <h1>Dynamic state (write "warning", "validating" or "error" in the input to see how it will update)</h1>
-  <pform-input label="Name" show-counter="true" max-value="23" validation-message="This is a validation message"
+  <pform-input label="Name" show-counter="true" max-length="23" validation-message="This is a validation message"
                validation-state.bind="field2">
     <pinput-text value.bind="field2"></pinput-text>
   </pform-input>

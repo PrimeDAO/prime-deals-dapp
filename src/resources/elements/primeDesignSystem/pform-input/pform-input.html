@@ -5,7 +5,7 @@
       ${label}
     </span>
     <div class="formInputLabelExtra" if.bind="showCounter">
-      ${input.value.length || 0}${maxValue ? '/' + maxValue : ''}
+      ${input.value.length || 0}${maxLength ? '/' + maxLength : ''}
     </div>
   </label>
   <slot name="label"></slot>
