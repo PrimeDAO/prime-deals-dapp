@@ -26,8 +26,9 @@ $input-text-color-disabled: $Secondary05;
 
 $scroll-bar-thumb-color: $Neutral02;
 
-$font-size1: 16px;
-$font-size2: 14px;
+$font-size1: 14px;
+$font-size2: 16px;
+$font-size3: 18px;
 
 @mixin spin {
   @keyframes spin {
