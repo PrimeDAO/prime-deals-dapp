@@ -32,6 +32,9 @@ Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E
 - Open a Cypress GUI, where you can develop interactively
   - Note the "Cypress Studio" feature to generate tests based on your interactions
 
+`npm run e2e-run`
+- Run all cypress tests in headless mode
+
 ### Flow
 1. Single out a Specification, that you want to cover with automated tests
 2. Define the Specifications in [Gherkin][gherkin] format in `.feature` files
@@ -67,5 +70,8 @@ cy.url().should("include", "deals/open");
 
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
+
+### Configuration
+https://docs.cypress.io/guides/references/configuration#cypress-json
 
 [gherkin]: (https://cucumber.io/docs/gherkin/)
