@@ -3,21 +3,25 @@ import "./pform-input.scss";
 import {bindable, observable} from "aurelia-typed-observable-plugin";
 import {ValidationState} from "../types";
 import {Disposable} from "aurelia-binding";
+import tippy from "tippy.js";
 
 @customElement("pform-input")
 export class PFormInput {
-  @bindable.string @observable validationState?: ValidationState;
   @bindable.string label = "";
+  @bindable.string labelInfo = "";
   @bindable.string labelDescription = "";
-  @bindable validationMessage = "";
   @bindable.boolean showCounter = false;
   @bindable.number maxLength = 0;
   @bindable.string helperMessage = "";
+  @bindable validationMessage = "";
+  @bindable.string @observable validationState?: ValidationState;
   /**
    * This "child" selector is used to select any input used within the "pform-input" element.
    *  With it, we can get the character length used in the "max characters" counter section.
    */
   @child("*") input;
+
+  private labelInfoIcon: HTMLElement;
 
   private inputValueObserverSubscription?: Disposable;
 
@@ -25,6 +29,10 @@ export class PFormInput {
   }
 
   attached() {
+    if (this.labelInfoIcon) {
+      tippy(this.labelInfoIcon);
+    }
+
     this.validationStateChanged(this.validationState);
 
     if (this.input && this.showCounter) {
