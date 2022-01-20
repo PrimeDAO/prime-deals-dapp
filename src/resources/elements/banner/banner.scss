@@ -14,10 +14,9 @@ $bannerWidth: 336px;
   right: -$bannerWidth - 20px;
   top: 58px;
   z-index: 10001; // stay over modal mask and wallet popup
-  background-color: $BG02;
+  background-color: $Border01;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
   border-radius: $border-radius-normal;
-  background: $BG02;
   padding: $spacing-normal; // only if there is no padding on the parent
   align-items: center;
   row-gap: 8px;

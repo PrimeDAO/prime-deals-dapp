@@ -11,5 +11,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./ptextarea/ptextarea"),
     PLATFORM.moduleName("./pcircled-number/pcircled-number"),
     PLATFORM.moduleName("./pstepper/pstepper"),
+    PLATFORM.moduleName("./pform-input/pform-input"),
   ]);
 }

@@ -5,8 +5,9 @@ import { autoinject } from "aurelia-framework";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 
 export enum ContractNames {
-  DEALFACTORY = "DealFactory"
-  , DEAL = "Deal"
+  BASECONTRACT = "BaseContract"
+  , DEPOSITCONTRACT = "DepositContract"
+  , TOKENSWAPMODULE = "TokenSwapModule"
   // , WETH = "WETH"
   , PRIME = "Prime"
   , IERC20 = "IERC20"
@@ -24,9 +25,10 @@ export interface IStandardEvent<TArgs> {
 export class ContractsService {
 
   private static Contracts = new Map<ContractNames, Contract>([
-    // [ContractNames.DEALFACTORY, null]
-    // , [ContractNames.DEAL, null]
-    // ,
+    [ContractNames.BASECONTRACT, null]
+    , [ContractNames.DEPOSITCONTRACT, null]
+    , [ContractNames.TOKENSWAPMODULE, null]
+    ,
   ]);
 
   private initializingContracts: Promise<void>;
@@ -109,8 +111,7 @@ export class ContractsService {
     }
 
     const reuseContracts = // at least one arbitrary contract already exists
-    // ******* RESTORE THIS WHEN WE HAVE ABIS ***********ContractsService.Contracts.get(ContractNames.SIGNER);
-    true;
+      ContractsService.Contracts.get(ContractNames.BASECONTRACT);
 
     const signerOrProvider = this.createProvider();
 
