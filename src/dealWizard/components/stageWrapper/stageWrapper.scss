@@ -1,0 +1,44 @@
+@import "styles/styles.scss";
+// This styles are common to all the stages components
+// Theme for the stages
+
+.wizardStage {
+  margin-bottom: 150px;
+
+  .stageHeader {
+    margin-top: 60px;
+    margin-bottom: 32px;
+  }
+
+  .stageSection, .stageSubsection {
+    display: grid;
+    grid-template-columns: 360px auto;
+    grid-column-gap: 115px;
+    padding-top: 32px;
+  }
+  .stageSection {
+    border-top: 1px solid $Secondary02;
+  }
+
+  .wizardFormInput {
+    margin-bottom: 13px;
+  }
+
+  .wizardFormInputNarrow {
+    max-width: 455px;
+  }
+
+  @media screen and (max-width: 1068px) {
+    .stageSection, .stageSubsection {
+      grid-template-columns: 300px auto;
+      grid-column-gap: 20px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .stageSection, .stageSubsection {
+      grid-template-columns: auto;
+      grid-row-gap: 20px;
+    }
+  }
+}

@@ -1,9 +1,21 @@
-.buttonContainer {
+.stageButtons {
   display: flex;
   flex-flow: row wrap;
   column-gap: 30px;
+  margin-left: 475px;
   margin-top: 140px;
+
   .cancel {
     margin-left: auto;
+  }
+
+  @media screen and (max-width: 1068px) {
+    margin-left: 320px;
+    margin-top: 70px;
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0px;
+    margin-top: 32px;
   }
 }
