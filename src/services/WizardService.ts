@@ -103,7 +103,7 @@ export class WizardService {
     if (indexOfActive > 0) {
       this.goToStage(wizardManager, indexOfActive - 1);
     } else {
-      this.router.parent.navigate("initiate");
+      this.router.parent.navigate("initiate/token-swap");
     }
   }
 

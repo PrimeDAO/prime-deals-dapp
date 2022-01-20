@@ -2,7 +2,6 @@ import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizard.types";
 import { WizardService, IWizard } from "../../../services/WizardService";
-import "../wizardStage.scss";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
@@ -24,11 +23,19 @@ export class ProposalStage implements IBaseWizardStage {
     this.errors = {};
 
     if (!this.wizard.wizardResult.proposal.name) {
-      this.errors.name ="Please enter a name for your proposal";
+      this.errors.name = "Required Input";
     }
 
-    if (this.wizard.wizardResult.proposal.overview.length < 5) {
-      this.errors.overview = "Please enter a descriptive overview for your proposal";
+    if (!this.wizard.wizardResult.proposal.summary) {
+      this.errors.summary = "Required Input";
+    } else if (this.wizard.wizardResult.proposal.summary.length < 10) {
+      this.errors.summary = "Input is too short";
+    }
+
+    if (!this.wizard.wizardResult.proposal.description) {
+      this.errors.description = "Required Input";
+    } else if (this.wizard.wizardResult.proposal.description.length < 10) {
+      this.errors.description = "Input is too short";
     }
 
     const valid = !Object.keys(this.errors).length;

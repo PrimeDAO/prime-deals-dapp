@@ -1,40 +1,49 @@
 <template>
-  <require from="../../components/stageButtons/stageButtons"></require>
-  <div class="page animated-page stageContainer stage1 au-animate">
-    <div class="headingContainer">
-      <h1 class="heading heading1 gradient">Token Swap Proposal</h1>
-      <hr />
-    </div>
-    <div class="infoContainer">
-      <div class="sideText">
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <stage-wrapper
+    title="Token Swap Proposal"
+    wizard-manager.bind="wizardManager"
+    validate.call="validateInputs()">
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Proposal</h2>
-        Hey there! You are about to create a new Token Swap deal. A Token Swap deal does this and that. Please follow
-        the steps and fill in the text boxes to complete this process.
+        <p class="subtext">
+          Hey there! You are about to create a Token Swap Deal. Token swap allows users to trustlessly exchange tokens with other users.
+        </p>
       </div>
-      <div class="form">
-        <div class="infoInput">
-          <div class="labelContainer">
-            <label for="proposalName">Proposal Name</label>
-            <span>
-              ${wizard.wizardResult.proposal.name.length}/50
-            </span>
-          </div>
-          <input id="proposalName" value.bind="wizard.wizardResult.proposal.name" maxlength="50" />
-          <span>${errors.name}</span>
-        </div>
-        <div class="infoInput">
-          <div class="labelContainer">
-            <label for="proposalOverview">Proposal Overview</label>
-            <span>
-              ${wizard.wizardResult.proposal.overview.length}/250
-            </span>
-          </div>
-          <textarea id="proposalOverview" value.bind="wizard.wizardResult.proposal.overview" rows="5"
-            maxlength="250"></textarea>
-          <span>${errors.overview}</span>
-        </div>
-        <stage-buttons wizard-manager.bind="wizardManager" validate.call="validateInputs()"></stage-buttons>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Title"
+          validation-state.bind="errors.name ? 'error' : ''"
+          validation-message.bind="errors.name"
+          show-counter
+          max-length="50">
+          <pinput-text value.bind="wizard.wizardResult.proposal.name"></pinput-text>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Summary"
+          label-info="Give a brief outline of the Token swap deal."
+          validation-state.bind="errors.summary ? 'error' : ''"
+          validation-message.bind="errors.summary"
+          show-counter
+          max-length="250">
+          <ptextarea value.bind="wizard.wizardResult.proposal.summary" rows="7"></ptextarea>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Description"
+          label-info="Give a precise idea of the Token swap, its background, uniqueness, and features."
+          validation-state.bind="errors.description ? 'error' : ''"
+          validation-message.bind="errors.description"
+          show-counter
+          max-length="1000">
+          <ptextarea value.bind="wizard.wizardResult.proposal.description" rows="7"></ptextarea>
+        </pform-input>
       </div>
     </div>
-  </div>
+  </stage-wrapper>
 </template>

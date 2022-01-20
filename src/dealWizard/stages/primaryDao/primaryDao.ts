@@ -2,7 +2,6 @@ import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { WizardService, IWizard } from "services/WizardService";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import "../wizardStage.scss";
 
 @autoinject
 export class PrimaryDAO implements IBaseWizardStage {
