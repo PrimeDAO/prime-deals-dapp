@@ -71,7 +71,7 @@
 
   .feedback-icon {
     right: $spacing-normal;
-    top: 35%;
+    top: calc(50% - 8px); // centers the icon
     position: absolute;
   }
 
