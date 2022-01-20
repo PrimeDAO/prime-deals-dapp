@@ -1,6 +1,8 @@
 @import "../styles";
 
 pform-input {
+  display: block;
+
   .formInputLabel {
     display: flex;
     color: $Secondary02;
@@ -12,12 +14,13 @@ pform-input {
       font-size: $font-size3;
       font-weight: 700;
     }
+
     .formInputLabelExtra {
       color: $Neutral02;
       font-size: $font-size1;
     }
 
-    .labelInfoIcon{
+    .labelInfoIcon {
       color: $Neutral02;
     }
   }
