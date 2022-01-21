@@ -2,8 +2,9 @@ import { IWizard } from "services/WizardService";
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 export interface IProposal {
-  name: string,
-  overview: string,
+  title: string,
+  summary: string,
+  description: string;
 }
 
 export enum Platforms {
@@ -40,9 +41,9 @@ export interface IDAO {
   platform?: Platforms,
 }
 
-export interface IAdmin {
+export interface IProposalLead {
   address: string,
-  represent: IDAO
+  email?: string;
 }
 
 export interface IClause {

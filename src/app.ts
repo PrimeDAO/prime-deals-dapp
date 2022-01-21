@@ -158,6 +158,13 @@ export class App {
         title: "Initiate an Open Proposal",
       },
       {
+        moduleId: PLATFORM.moduleName("./dealWizard/makeOfferWizard/makeOfferWizard"),
+        nav: false,
+        name: "makeOfferWizard",
+        route: "/make-an-offer",
+        title: "Submit a Proposal",
+      },
+      {
         moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
         nav: false,
         name: "tokenSwapTypeSelection",

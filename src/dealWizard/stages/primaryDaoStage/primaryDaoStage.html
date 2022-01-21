@@ -1,0 +1,18 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="../../components/daoDetailsSection/daoDetailsSection"></require>
+  <stage-wrapper
+    title="Primary DAO Details"
+    wizard-manager.bind="wizardManager"
+    validate.call="validateInputs()">
+    <dao-details-section
+      title="Primary DAO"
+      description="Please fill in the details of the first DAO who will be initiating the deal."
+      name-field-label="Primary DAO Name"
+      avatar-field-label="Primary DAO Avatar"
+      errors.bind="errors"
+      data.bind="wizard.wizardResult.primaryDAO"
+      disabled.bind="disabled">
+    </dao-details-section>
+  </stage-wrapper>
+</template>

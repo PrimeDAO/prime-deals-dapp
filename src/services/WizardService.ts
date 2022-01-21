@@ -13,6 +13,7 @@ export interface IWizardStage {
   valid: boolean;
   route: any;
   moduleId: any
+  settings?: {[key: string]: any};
 }
 
 export interface IWizardResult {
@@ -59,6 +60,7 @@ export class WizardService {
       name: stage.name,
       settings: {
         wizardManager: wizardManager,
+        ...stage.settings,
       },
     }));
 

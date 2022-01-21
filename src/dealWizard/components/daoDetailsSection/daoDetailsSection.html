@@ -1,0 +1,25 @@
+<template>
+  <div class="stageSection">
+    <div class="stageSectionSidebar">
+      <h2 class="heading heading3 title">${title}</h2>
+      <p class="subtext">${description}</p>
+    </div>
+    <div class="stageSectionContent">
+      <pform-input
+        class="wizardFormInput wizardFormInputNarrow"
+        label.bind="nameFieldLabel"
+        validation-state.bind="errors.name ? 'error' : ''"
+        validation-message.bind="errors.name">
+        <pinput-text value.bind="data.name" disabled.bind="disabled"></pinput-text>
+      </pform-input>
+
+      <pform-input
+        class="wizardFormInput wizardFormInputNarrow"
+        label.bind="avatarFieldLabel"
+        validation-state.bind="errors.avatar ? 'error' : ''"
+        validation-message.bind="errors.avatar">
+        <pinput-text value.bind="data.details" disabled.bind="disabled"></pinput-text>
+      </pform-input>
+    </div>
+  </div>
+</template>

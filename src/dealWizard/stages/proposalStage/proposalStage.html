@@ -15,11 +15,11 @@
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Title"
-          validation-state.bind="errors.name ? 'error' : ''"
-          validation-message.bind="errors.name"
+          validation-state.bind="errors.title ? 'error' : ''"
+          validation-message.bind="errors.title"
           show-counter
           max-length="50">
-          <pinput-text value.bind="wizard.wizardResult.proposal.name"></pinput-text>
+          <pinput-text value.bind="wizard.wizardResult.proposal.title"></pinput-text>
         </pform-input>
 
         <pform-input
