@@ -77,6 +77,11 @@ To run in watch mode
 ```
 npm run test --watch
 ```
+
+**Further readings:**
+- Unit tests in `/test` - [readme](./test/README.md)
+- E2E tests in `/cypress` - [readme](./cypress/README.md)
+
 ### Webpack Analyzer
 To run the Webpack Bundle Analyzer for production build.
 ```
