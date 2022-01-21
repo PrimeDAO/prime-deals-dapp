@@ -25,14 +25,15 @@
           We propose AcmeDAO and GreenLabDAO to swap 1,000 ACM and 140,000 GLD to solidify the partnership between the two projects and align their incentives going forward. AcmeDAO also agrees to continue developing current and future products on top of GreenLabDAO’s protocol, which GreenLabDAO will help support promotionally.
         </p>
       </section>
+
+      <!-- Clauses List -->
       <section class="clauses">
         <header>
           <h2 class="subtitle heading heading3">Deal Clauses</h2>
         </header>
         <p>Start a discussion below by selecting a specific clause.</p>
-        <p>Active clause: ${activeClause}</p>
         <ol>
-          <div repeat.for="clause of dealClauses" class="clause ${activeClause === clause.discussionThread.threadId ? 'active' : ''}">
+          <div repeat.for="clause of dealConfig.clauses" class="clause ${activeClause === $index ? 'active' : ''}">
             <li></li>
             <span class="body">
               ${clause.description}
@@ -42,6 +43,8 @@
         </ol>
       </section>
     </section>
+
+    <!-- Discussions / Discussion Comments Thread -->
     <section class="discussion">
       <router-view>
         <!-- discussions-list -->

@@ -1,0 +1,74 @@
+<template>
+  <require from="./singleComment/singleComment"></require>
+  <section class="thread">
+    <section class="head container">
+      <div class="header">
+        <h1 class="subtitle heading heading1 gradient">
+          Discuss
+        </h1>
+        <pbutton type="secondary" click.delegate="navigateTo('')">Back To List</pbutton>
+      </div>
+      <hgroup class="title">
+        <h2 class="heading topic">${dealDiscussion.topic}</h2>
+        <span if.bind="dealDiscussion && dealDiscussion.createdBy">
+          <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
+          <h3 class="subtext">
+            Created by ${dealDiscussion.createdBy}></usersaddress>
+            at ${niceDate(dealDiscussion.createdOn)}</h3>
+        </span>
+      </hgroup>
+    </section>
+    <div class="sticky-area">
+      <section class="comments container">
+        <div if.bind="!threadComments.length && isLoading" class="comment isLoading">
+          Loading comments...
+        </div>
+        <div if.bind="!threadComments.length && !isLoading" class="no comment">
+          This discussion has no comments yet.
+        </div>
+        <div 
+          if.bind="!isLoading && threadComments.length"
+          repeat.for="comment of threadComments"
+          id="comment${$index}"
+          class="comment">
+          <single-comment discussionId.bind="dealClauseId" comment.bind="comment"></single-comment>
+        </div>
+      </section>
+      <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton>
+      <section class="action container">
+        <div if.bind="isReply">
+          <p class="action heading heading3">
+            <i class="fas fa-share"></i>
+            <span if.bind="dealDiscussion && dealDiscussion.createdBy">
+              Reply to ${dealDiscussion.createdBy}
+            </span>
+            <i class="fas fa-times"></i>
+          </p>
+          <p class="subtitle">comment text... one line.</p>
+        </div>
+        <div else>
+          <p class="action heading heading3">
+            <span>Comment</span>
+          </p>
+        </div>
+        <ptextarea
+          placeholder="${isReply? 'Type your reply here...' : 'Type your comment here...'}"
+          value.two-way="comment"
+          enter.delegate="addComment()"
+          focus.delegate="focus()"
+          blur.delegate="blur()"
+          validation-state="${isLoading ? 'validating' : ''}"
+          disabled.bind="isLoading"
+          class="comment-input"></ptextarea>
+        <pbutton
+          class="action do"
+          type="primary"
+          full-width
+          disabled.bind="isLoading"
+          click.delegate="addComment()">
+          ${isReply ? "Reply" : "Comment"}
+        </pbutton>
+      </section>
+    </div>
+  </section>
+</template>

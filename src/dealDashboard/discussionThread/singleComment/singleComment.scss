@@ -1,0 +1,58 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
+
+.single.comment {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 30px 1fr auto;
+  grid-template-areas: "header" "comment" "footer";
+  height: auto;
+  grid-gap: $spacing-normal;
+
+  footer>.count {
+    display: inherit;
+    align-items: center;
+  }
+  footer>.action {
+    display: none;
+    align-items: center;
+  }
+  &:hover {
+    footer>.vote.count {
+      display: none;
+    }
+    footer>.vote.action {
+      display: inherit;
+    }
+  }
+  header {
+    grid-area: header;
+    display: flex;
+    width: auto;
+    align-items: center;
+    justify-content: flex-start;
+    gap: $spacing-normal * 2;
+    .avatar {
+      img {
+        height: 30px;
+        vertical-align: middle;
+      }
+    }
+    .lastActivity {
+      margin-left: auto;
+    }
+  }
+  main {
+    grid-area: comment;
+  }
+  footer {
+    grid-area: footer;
+    display: flex;
+    height: 29px;
+    justify-content: flex-end;
+    gap: $spacing-normal;
+    pbutton>button {
+      padding: $spacing-small $spacing-normal;
+    }
+  }
+}

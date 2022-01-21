@@ -1,11 +1,12 @@
 import { DiscussionsService, IDiscussion } from "../discussionsService";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DateService } from "services/DateService";
 import "./discussionsList.scss";
 
 @autoinject
 export class DiscussionsList{
+
+  dealId: string;
 
   paginationConfig = {
     listLength: 5,
@@ -16,18 +17,22 @@ export class DiscussionsList{
   private hasDiscussions: boolean;
 
   constructor(
-    private dateService: DateService,
     private router: Router,
     private discussionsService: DiscussionsService,
   ) {}
 
   attached(): void {
-    this.discussionsService.init();
-    this.discussions = Object.keys(this.discussionsService.discussions).map(key => (
-      {id: key, ...this.discussionsService.discussions[key]}
-    ));
+    this.dealId = this.router.parent.currentInstruction.params.address;
+    console.log("DiscussionsList attached", this.dealId);
+    this.discussionsService.getDiscussions().then(discussions => {
+      console.log("DiscussionsList attached", discussions);
 
-    this.hasDiscussions = !!this.discussions.length;
+      this.discussions = Object.keys(discussions).map(key => (
+        {id: key, ...discussions[key]}
+      ));
+
+      this.hasDiscussions = !!this.discussions.length;
+    });
   }
 
   private niceDate(date: number): string {

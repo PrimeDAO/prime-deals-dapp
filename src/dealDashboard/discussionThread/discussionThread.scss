@@ -1,0 +1,115 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
+
+.thread {
+  grid-area: thread;
+  background-color: $BG01;
+  .head.container {
+    // position: sticky;
+    // top: 0;
+    // padding-top: 114px;
+    background-color: inherit;
+
+    .title {
+      padding-bottom: $spacing-medium-small + $spacing-normal;
+      border-bottom: 1px solid $Secondary02;
+      &>span {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  
+    .topic {
+      font-family: "Inter";
+      font-size: 24px;
+      line-height: 33px;
+      font-weight: 700;
+    }
+  }
+
+  .sticky-area {
+    background-color: inherit;
+    .comments.container {
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      padding-top: 20px;
+      display: block;
+      border-bottom: 1px solid $Border01;
+      .comment {
+        // display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: $spacing-normal;
+        &:not(:last-child) {
+          border-bottom: 1px solid $Border01;
+        }
+        &:nth-child(even) {
+          background-color: $BG00;
+        }
+      }
+    }
+    .load-more {
+      display: flex;
+      justify-content: center;
+      padding: $spacing-normal;
+    }
+    .action.container {
+      position: sticky;
+      display: grid;
+      grid-gap: $spacing-small $spacing-normal * 4;
+      grid-template-areas: "header header" "subtitle ." "input action-bottom";
+      grid-template-columns: 1fr auto;
+      background-color: inherit;
+      bottom: 0;
+      padding-bottom: $spacing-normal;
+      border-top: 1px solid $Border01;
+      padding-top: 48px;
+
+      &>p.action.heading {
+        display: flex;
+        width: 100%;
+        margin-bottom: 0;
+        grid-area: header;
+        justify-content: flex-start;
+        gap: 13px;
+        &:hover {
+          &>i.fa-times {
+            color: $Primary01;
+          }
+        }
+        i.fa-times, i.fa-share {
+          cursor: pointer;
+          color: $Secondary05;
+          font-size: 24px;
+        }
+      }
+      &>.subtitle {
+        grid-area: subtitle;
+        padding-left: 37px;
+        font-size: 14px;
+        font-weight: 400;
+        color: $Neutral02;
+        margin-bottom: 20px;
+        text-overflow: ellipsis;
+      }
+      &>ptextarea {
+        grid-area: input;
+        &>textarea {
+          min-height: (24px + $spacing-normal) * 2; // 2 rows
+          height: (24px + $spacing-normal) * 2;
+          resize: vertical;
+          max-height: 130px;
+        }
+      }
+      &>.action.do{
+        grid-area: action-bottom;
+      }
+      &>.action.heading {
+        button {
+          padding: $spacing-small $spacing-normal * 2;
+        }
+      }
+    }
+  }
+}

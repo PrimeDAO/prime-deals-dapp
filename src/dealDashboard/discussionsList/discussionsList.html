@@ -14,20 +14,20 @@
       <tbody>
         <tr 
           id="${discussion.id}"
-          click.delegate="navigateTo(`thread/${discussion.id}`)"
+          click.delegate="navigateTo(`discussion/${discussion.id}`)"
           repeat.for="discussion of discussions">
-          <td class="h-centered">${discussion.idx}</td>
+          <td class="h-centered">${discussion.clauseId + 1 || "-" }</td>
           <td>
             <p>
               ${discussion.topic}
             </p>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
-              Created by ${discussion.creator} on ${niceDate(discussion.createdAt)}
+              Created by ${discussion.createdBy} on ${niceDate(discussion.createdOn)}
             </p>
           </td>
-          <td class="h-centered v-centered">${discussion.replies}</td>
-          <td class="h-centered v-centered">${discussion.lastActivity}</td>
+          <td class="h-centered v-centered">${discussion.replies || 0}</td>
+          <td class="h-centered v-centered">${discussion.lastActivity || 0}</td>
         </tr>
       </tbody>
     </table>

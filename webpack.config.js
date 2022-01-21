@@ -42,6 +42,9 @@ const sassRules = [
 ];
 
 module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, host } = {}) => ({
+  node: {
+    fs: "empty"
+  },
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
