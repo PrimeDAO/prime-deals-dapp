@@ -13,7 +13,7 @@
         <span if.bind="dealDiscussion && dealDiscussion.createdBy">
           <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
           <h3 class="subtext">
-            Created by ${dealDiscussion.createdBy}></usersaddress>
+            Created by ${dealDiscussion.createdBy}</usersaddress>
             at ${niceDate(dealDiscussion.createdOn)}</h3>
         </span>
       </hgroup>
@@ -31,7 +31,7 @@
           repeat.for="comment of threadComments"
           id="comment${$index}"
           class="comment">
-          <single-comment discussionId.bind="dealClauseId" comment.bind="comment"></single-comment>
+          <single-comment discussionId.bind="dealClauseId" author.bind="dealDiscussion.createdBy" comment.bind="comment"></single-comment>
         </div>
       </section>
       <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton>

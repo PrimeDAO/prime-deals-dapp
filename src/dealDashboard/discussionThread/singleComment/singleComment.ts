@@ -8,6 +8,7 @@ import "./singleComment.scss";
 @autoinject
 export class SingleComment {
   @bindable private comment: IComment;
+  @bindable private author: string;
   private dealClauseId: string;
   private connectedAddress: string;
 
@@ -24,8 +25,6 @@ export class SingleComment {
   }
 
   private deleteComment(): void {
-    console.log(this.dealClauseId, this.comment._id);
-
     this.discussionsService.deleteComment(this.dealClauseId, this.comment._id);
   }
 

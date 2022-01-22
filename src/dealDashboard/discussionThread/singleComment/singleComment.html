@@ -5,6 +5,7 @@
         <img src="/genericToken.svg" alt="">
       </figure>
       <h3 if.bind="comment.author">${comment.author}</h3>
+      <span if.bind="comment.author === author">(Author)</span>
       <time class="lastActivity">${niceDate(comment.createdOn).diff()}</time>
     </header>
     <section class="reply">
@@ -19,12 +20,13 @@
         <pbutton type="tertiary" click.delegate="vote('down')"><i class="fas fa-thumbs-down"></i></pbutton>
         <pbutton type="tertiary" click.delegate="reply()">Reply&nbsp;<i class="fas fa-reply"></i></pbutton>
       </div>
-      <div if.bind="comment.author !== connectedAddress" class="vote count">
+      <div class="vote count">
         <div type="tertiary"><i class="fas fa-thumbs-up"></i> ${0}</div>
       </div>
-      <div else>
+      <div if.bind="comment.author === connectedAddress" class="vote action">
         <pbutton type="tertiary" click.delegate="deleteComment()">Delete</pbutton>
         <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton>
+        <pbutton type="tertiary" click.delegate="reply()">Reply&nbsp;<i class="fas fa-reply"></i></pbutton>
       </div>
     </footer>
   </div>
