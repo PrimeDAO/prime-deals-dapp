@@ -47,6 +47,10 @@
         &:nth-child(even) {
           background-color: $BG00;
         }
+
+        &.isReply {
+          background-color: $Border02;
+        }
       }
     }
     .load-more {

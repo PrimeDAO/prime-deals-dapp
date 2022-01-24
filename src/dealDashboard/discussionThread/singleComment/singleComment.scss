@@ -57,6 +57,22 @@
     }
   }
   main {
+    .reply {
+      &>div {
+        display: flex;
+        align-items: center;
+        gap: $spacing-normal;
+        margin-bottom: $spacing-normal;
+        figure {
+          height: 30px;
+          width: 30px;
+        }
+      }
+      border: 1px solid $Border01;
+      border-radius: $border-radius-small;
+      padding: $spacing-medium-small;
+      margin-bottom: $spacing-normal;
+    }
     grid-area: comment;
   }
   footer {

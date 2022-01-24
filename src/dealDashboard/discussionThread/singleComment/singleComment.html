@@ -8,10 +8,21 @@
       <span if.bind="comment.author === author">(Author)</span>
       <time class="lastActivity">${niceDate(comment.createdOn).diff()}</time>
     </header>
-    <section class="reply">
-  
-    </section>
     <main>
+      <section if.bind="repliesTo" class="reply">
+        <div>
+          <figure>
+            <img src="/genericToken.svg" alt="">
+          </figure>
+          <span>
+            ${repliesTo.author | smallHexString} 
+            <span if.bind="comment.author === author">(Author)</span>
+          </span>
+        </div>
+        <p>
+          ${repliesTo.text}
+        </p>
+      </section>
       ${comment.text}
     </main>
     <footer>

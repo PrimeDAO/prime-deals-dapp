@@ -4,6 +4,10 @@ import { DiscussionsService, IDiscussion, IComment, EVote } from "dealDashboard/
 import { DateService } from "services/DateService";
 import "./discussionThread.scss";
 
+type TCommentDictionary = {
+  [key: string]: IComment
+}
+
 @autoinject
 export class DiscussionThread {
   dealDiscussion: IDiscussion;
@@ -12,7 +16,8 @@ export class DiscussionThread {
   private isReply = false;
   private replyToOriginalMessage: IComment;
 
-  private threadComments = [];
+  private threadComments: IComment[] = [];
+  private threadDictionary: TCommentDictionary = {};
   private comment = "";
   private isLoading = "";
 
@@ -22,9 +27,6 @@ export class DiscussionThread {
     private discussionsService: DiscussionsService,
   ) {}
 
-  private async ensureDealDiscussion() {
-    this.dealDiscussion = await this.discussionsService.getDiscussionInfo(this.dealClauseId);
-  }
   attached(): void {
     this.isLoading = "isFetching";
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
@@ -33,12 +35,20 @@ export class DiscussionThread {
       (comments: IComment[]) => {
         this.threadComments = comments;
         this.discussionsService.subscribeToDiscussion(this.dealClauseId);
+        this.threadDictionary = comments.reduce(function(r, e) {
+          r[e._id] = e;
+          return r;
+        }, {});
         this.isLoading = "";
       });
   }
 
   detached(): void {
     this.discussionsService.unsubscribeFromDiscussion();
+  }
+
+  private async ensureDealDiscussion() {
+    this.dealDiscussion = await this.discussionsService.getDiscussionInfo(this.dealClauseId);
   }
 
   // loadMoreComments() {

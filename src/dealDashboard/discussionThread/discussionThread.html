@@ -29,13 +29,14 @@
         <div 
           if.bind="isLoading !== 'isFetching' && threadComments.length"
           repeat.for="comment of threadComments"
-          id="comment${$index}"
-          class="comment">
+          id="${comment._id}"
+          class="comment ${isReply && comment._id === replyToOriginalMessage._id ? 'isReply' : ''}">
           <single-comment
+            callback.call="doAction(action, args)"
             discussionId.bind="dealClauseId"
             author.bind="dealDiscussion.createdBy"
-            callback.call="doAction(action, args)"
             loading.bind="isLoading"
+            replies-to.bind="threadDictionary[comment.replyTo]"
             comment.bind="comment">
           </single-comment>
         </div>

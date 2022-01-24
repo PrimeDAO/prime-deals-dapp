@@ -8,6 +8,7 @@ import "./singleComment.scss";
 @autoinject
 export class SingleComment {
   @bindable private comment: IComment;
+  @bindable private repliesTo: IComment;
   @bindable private author: string;
   @bindable private loading: string;
   @bindable callback;
@@ -28,7 +29,6 @@ export class SingleComment {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
     this.isConnected = !!this.connectedAddress;
-
   }
 
   @computedFrom("comment.upvotes", "comment.downvotes")
