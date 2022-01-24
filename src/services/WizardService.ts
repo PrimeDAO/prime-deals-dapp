@@ -78,9 +78,13 @@ export class WizardService {
     return this.wizardsStates.get(wizardManager);
   }
 
-  public getCurrentStage(wizardManager: any): IWizardStage {
+  public getActiveStage(wizardManager: any): IWizardStage {
     const wizardState = this.getWizardState(wizardManager);
     return wizardState.stages[wizardState.indexOfActive];
+  }
+
+  public updateStageValidity(wizardManager: any, valid: boolean) {
+    this.getActiveStage(wizardManager).valid = valid;
   }
 
   public cancel(): void {

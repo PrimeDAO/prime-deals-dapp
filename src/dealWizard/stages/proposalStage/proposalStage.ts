@@ -40,7 +40,7 @@ export class ProposalStage implements IBaseWizardStage {
 
     const valid = !Object.keys(this.errors).length;
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+    this.wizardService.updateStageValidity(this.wizardManager, valid);
 
     return valid;
   }
