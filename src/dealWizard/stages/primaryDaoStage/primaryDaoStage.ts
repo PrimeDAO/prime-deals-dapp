@@ -1,34 +1,36 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizard } from "services/WizardService";
+import { WizardService, IWizardState } from "services/WizardService";
 import { IBaseWizardStage } from "../../dealWizard.types";
 
 @autoinject
-export class PrimaryDAO implements IBaseWizardStage {
+export class PrimaryDaoStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
+  public disabled: boolean;
 
   constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
     this.wizardManager = routeConfig.settings.wizardManager;
+    this.disabled = routeConfig.settings.disabled;
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.daos[0].name) {
+    if (!this.wizardState.wizardResult.primaryDAO.name) {
       this.errors.name = "Please enter the name of the Primary DAO";
     }
 
     const valid = !Object.keys(this.errors).length;
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+    this.wizardService.updateStageValidity(this.wizardManager, valid);
 
     return valid;
   }

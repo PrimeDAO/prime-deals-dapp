@@ -4,15 +4,17 @@ import { IBaseWizardStage } from "../../dealWizard.types";
 import { WizardService, IWizardState } from "../../../services/WizardService";
 
 @autoinject
-export class ProposalStage implements IBaseWizardStage {
+export class MakeOfferProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState;
   public errors: Record<string, string> = {};
+  public disabled = false;
 
   constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
     this.wizardManager = routeConfig.settings.wizardManager;
+    this.disabled = routeConfig.settings.disabled;
   }
 
   attached(): void {
@@ -22,20 +24,8 @@ export class ProposalStage implements IBaseWizardStage {
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizardState.wizardResult.proposal.title) {
-      this.errors.title = "Required Input";
-    }
-
-    if (!this.wizardState.wizardResult.proposal.summary) {
-      this.errors.summary = "Required Input";
-    } else if (this.wizardState.wizardResult.proposal.summary.length < 10) {
-      this.errors.summary = "Input is too short";
-    }
-
-    if (!this.wizardState.wizardResult.proposal.description) {
-      this.errors.description = "Required Input";
-    } else if (this.wizardState.wizardResult.proposal.description.length < 10) {
-      this.errors.description = "Input is too short";
+    if (!this.wizardState.wizardResult.proposalLead.address) {
+      this.errors.address = "Required Input";
     }
 
     const valid = !Object.keys(this.errors).length;
