@@ -1,4 +1,4 @@
-import { IWizard } from "services/WizardService";
+import { IWizardState } from "services/WizardService";
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 export interface IProposal {
@@ -61,7 +61,7 @@ export interface ITerms {
 
 export interface IBaseWizardStage {
   wizardManager: any;
-  wizard: IWizard;
+  wizardState: IWizardState;
 
   activate;
   attached: () => void;

@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import { WizardService, IWizard } from "../../../services/WizardService";
+import { WizardService, IWizardState } from "../../../services/WizardService";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
@@ -16,25 +16,25 @@ export class ProposalStage implements IBaseWizardStage {
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.proposal.title) {
+    if (!this.wizardState.wizardResult.proposal.title) {
       this.errors.title = "Required Input";
     }
 
-    if (!this.wizard.wizardResult.proposal.summary) {
+    if (!this.wizardState.wizardResult.proposal.summary) {
       this.errors.summary = "Required Input";
-    } else if (this.wizard.wizardResult.proposal.summary.length < 10) {
+    } else if (this.wizardState.wizardResult.proposal.summary.length < 10) {
       this.errors.summary = "Input is too short";
     }
 
-    if (!this.wizard.wizardResult.proposal.description) {
+    if (!this.wizardState.wizardResult.proposal.description) {
       this.errors.description = "Required Input";
-    } else if (this.wizard.wizardResult.proposal.description.length < 10) {
+    } else if (this.wizardState.wizardResult.proposal.description.length < 10) {
       this.errors.description = "Input is too short";
     }
 

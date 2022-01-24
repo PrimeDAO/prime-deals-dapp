@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizard } from "services/WizardService";
+import { WizardService, IWizardState } from "services/WizardService";
 import { IBaseWizardStage } from "../../dealWizard.types";
 
 @autoinject
 export class PartnerDaoStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
   public disabled: boolean;
 
@@ -18,13 +18,13 @@ export class PartnerDaoStage implements IBaseWizardStage {
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.partnerDAO.name) {
+    if (!this.wizardState.wizardResult.partnerDAO.name) {
       this.errors.name = "Please enter the name of the Partner DAO";
     }
 

@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { OpenProposalWizardResult } from "./openProposalWizardResult";
-import { WizardService, IWizard, IWizardStage } from "../../services/WizardService";
+import { MakeOfferWizardResult } from "./makeOfferWizardResult";
+import { WizardService, IWizardState, IWizardStage } from "../../services/WizardService";
 
 @autoinject
-export class OpenProposalWizard {
-  public wizard: IWizard;
+export class MakeOfferWizardManager {
+  public wizardState: IWizardState;
   private stages: IWizardStage[] = [{
     name: "Proposal",
     valid: false,
@@ -16,17 +16,29 @@ export class OpenProposalWizard {
     name: "Lead Details",
     valid: false,
     route: "stage2",
-    moduleId: PLATFORM.moduleName("./openProposalProposalLeadStage/openProposalProposalLeadStage"),
+    moduleId: PLATFORM.moduleName("./makeOfferProposalLeadStage/makeOfferProposalLeadStage"),
+    settings: {
+      // @TODO this should be passed conditionally, that is if open proposal "keep admin rights" is set to true, we should pass true, otherwise false
+      disabled: true,
+    },
   }, {
     name: "Primary DAO",
     valid: false,
     route: "stage3",
     moduleId: PLATFORM.moduleName("../stages/primaryDaoStage/primaryDaoStage"),
+    settings: {
+      disabled: true,
+    },
+  }, {
+    name: "Partner DAO",
+    valid: false,
+    route: "stage4",
+    moduleId: PLATFORM.moduleName("../stages/partnerDaoStage/partnerDaoStage"),
   }];
-  private wizardResult = new OpenProposalWizardResult();
+  private wizardResult = new MakeOfferWizardResult();
 
   constructor(public wizardService: WizardService) {
-    this.wizard = this.wizardService.registerWizard(this, this.stages, this.wizardResult);
+    this.wizardState = this.wizardService.registerWizard(this, this.stages, this.wizardResult);
   }
 
   public onClick(index: number): void {

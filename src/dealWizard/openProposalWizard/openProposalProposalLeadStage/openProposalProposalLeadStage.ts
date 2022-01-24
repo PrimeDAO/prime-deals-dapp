@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import { WizardService, IWizard } from "../../../services/WizardService";
+import { WizardService, IWizardState } from "../../../services/WizardService";
 
 @autoinject
 export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
@@ -16,13 +16,13 @@ export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.proposalLead.address) {
+    if (!this.wizardState.wizardResult.proposalLead.address) {
       this.errors.address = "Required Input";
     }
 

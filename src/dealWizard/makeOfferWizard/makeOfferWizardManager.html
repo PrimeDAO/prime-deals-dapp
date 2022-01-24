@@ -1,8 +1,8 @@
 <template>
   <div>
     <pstepper
-      steps.bind="wizard.stages"
-      index-of-active.bind="wizard.indexOfActive"
+      steps.bind="wizardState.stages"
+      index-of-active.bind="wizardState.indexOfActive"
       on-click.call="onClick(index)">
     </pstepper>
     <div>

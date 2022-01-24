@@ -2,7 +2,7 @@ import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 
-export interface IWizard {
+export interface IWizardState {
   stages: Array<IWizardStage>;
   indexOfActive: number;
   wizardResult: IWizardResult;
@@ -24,7 +24,7 @@ export interface IWizardResult {
 
 @autoinject
 export class WizardService {
-  private wizards = new Map<any, IWizard>();
+  private wizardsStates = new Map<any, IWizardState>();
   private router: Router;
 
   constructor(private eventAggregator: EventAggregator){}
@@ -33,8 +33,8 @@ export class WizardService {
     wizardManager: any,
     stages: Array<IWizardStage>,
     wizardResult: IWizardResult,
-  ): IWizard {
-    this.wizards.set(
+  ): IWizardState {
+    this.wizardsStates.set(
       wizardManager,
       {
         stages,
@@ -43,7 +43,7 @@ export class WizardService {
       },
     );
 
-    return this.getWizard(wizardManager);
+    return this.getWizardState(wizardManager);
   }
 
   public configureRouter(
@@ -51,7 +51,7 @@ export class WizardService {
     config: RouterConfiguration,
     router: Router,
   ): void {
-    const stageConfig = this.wizards.get(wizardManager);
+    const stageConfig = this.wizardsStates.get(wizardManager);
 
     const routes = stageConfig.stages.map(stage => ({
       route: [stage.route],
@@ -74,13 +74,13 @@ export class WizardService {
 
   }
 
-  public getWizard(wizardManager: any): IWizard {
-    return this.wizards.get(wizardManager);
+  public getWizardState(wizardManager: any): IWizardState {
+    return this.wizardsStates.get(wizardManager);
   }
 
   public getCurrentStage(wizardManager: any): IWizardStage {
-    const wizard = this.getWizard(wizardManager);
-    return wizard.stages[wizard.indexOfActive];
+    const wizardState = this.getWizardState(wizardManager);
+    return wizardState.stages[wizardState.indexOfActive];
   }
 
   public cancel(): void {
@@ -91,16 +91,16 @@ export class WizardService {
     if (!valid) {
       return;
     }
-    const wizard = this.getWizard(wizardManager);
-    const indexOfActive = wizard.indexOfActive;
+    const wizardState = this.getWizardState(wizardManager);
+    const indexOfActive = wizardState.indexOfActive;
 
-    if (indexOfActive < wizard.stages.length - 1) {
+    if (indexOfActive < wizardState.stages.length - 1) {
       this.goToStage(wizardManager, indexOfActive + 1);
     }
   }
 
   public previous(wizardManager: any): void {
-    const indexOfActive = this.getWizard(wizardManager).indexOfActive;
+    const indexOfActive = this.getWizardState(wizardManager).indexOfActive;
 
     if (indexOfActive > 0) {
       this.goToStage(wizardManager, indexOfActive - 1);
@@ -115,19 +115,19 @@ export class WizardService {
   }
 
   public goToStage(wizardManager: any, index: number): void {
-    const wizard = this.getWizard(wizardManager);
-    this.router.navigate(wizard.stages[index].route);
-    wizard.indexOfActive = index;
+    const wizardState = this.getWizardState(wizardManager);
+    this.router.navigate(wizardState.stages[index].route);
+    wizardState.indexOfActive = index;
   }
 
   private updateIndexOfActiveBaseOnRoute(wizardManager: any, stageRoute: string): void {
-    const wizard = this.getWizard(wizardManager);
-    wizard.indexOfActive = wizard.stages.findIndex(
+    const wizardState = this.getWizardState(wizardManager);
+    wizardState.indexOfActive = wizardState.stages.findIndex(
       stage => stage.route === stageRoute,
     );
   }
 
   private getWizardStage(wizardManager: any, stageName: string): IWizardStage{
-    return this.getWizard(wizardManager).stages.find(stage => stage.name === stageName);
+    return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
   }
 }
