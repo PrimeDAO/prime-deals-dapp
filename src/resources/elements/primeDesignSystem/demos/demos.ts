@@ -1,5 +1,5 @@
-import { PLATFORM } from "aurelia-pal";
-import { Router, RouterConfiguration } from "aurelia-router";
+import {PLATFORM} from "aurelia-pal";
+import {Router, RouterConfiguration} from "aurelia-router";
 
 export class Demos {
 
@@ -69,6 +69,13 @@ export class Demos {
         moduleId: PLATFORM.moduleName("./pFormInputDemo.html"),
         name: "pform-input",
         title: "pform-input Demo",
+      },
+      {
+        route: ["ptoggle"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pToggleDemo.html"),
+        name: "ptoggle",
+        title: "ptoggle Demo",
       },
     ];
 

@@ -1,5 +1,5 @@
-import { FrameworkConfiguration } from "aurelia-framework";
-import { PLATFORM } from "aurelia-pal";
+import {FrameworkConfiguration} from "aurelia-framework";
+import {PLATFORM} from "aurelia-pal";
 
 export function configure(config: FrameworkConfiguration): void {
   config.globalResources([
@@ -12,5 +12,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pcircled-number/pcircled-number"),
     PLATFORM.moduleName("./pstepper/pstepper"),
     PLATFORM.moduleName("./pform-input/pform-input"),
+    PLATFORM.moduleName("./ptoggle/ptoggle"),
   ]);
 }
