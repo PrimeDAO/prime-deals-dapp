@@ -1,16 +1,21 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject, bindable } from "aurelia-framework";
+import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { DiscussionsService, IComment } from "dealDashboard/discussionsService";
-import { DateService } from "services/dateService";
+import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
 @autoinject
 export class SingleComment {
   @bindable private comment: IComment;
   @bindable private author: string;
+  @bindable private loading: string;
+  @bindable callback;
+
+  private isConnected = false;
   private dealClauseId: string;
   private connectedAddress: string;
+  // private votes: number;
 
   constructor(
     private discussionsService: DiscussionsService,
@@ -22,10 +27,46 @@ export class SingleComment {
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
+    this.isConnected = !!this.connectedAddress;
+
   }
 
-  private deleteComment(): void {
-    this.discussionsService.deleteComment(this.dealClauseId, this.comment._id);
+  @computedFrom("comment.upvotes", "comment.downvotes")
+  private get votes(): number {
+    return this.comment.upvotes.length - this.comment.downvotes.length;
+  }
+
+  @computedFrom ("votes")
+  private get voteDirection(): string {
+    return this.votes > 0 ? "up" : this.votes < 0 ? "down": "no";
+  }
+
+  delete() {
+    this.callback({
+      action: "delete",
+      args: {
+        _id: this.comment._id,
+      },
+    });
+  }
+
+  reply() {
+    this.callback({
+      action: "reply",
+      args: {
+        _id: this.comment._id,
+      },
+    });
+  }
+
+  vote(vote: string) {
+    this.callback({
+      action: "vote",
+      args: {
+        _id: this.comment._id,
+        vote,
+      },
+    });
   }
 
   // TODO? Live update

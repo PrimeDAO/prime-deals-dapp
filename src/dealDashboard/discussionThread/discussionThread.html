@@ -13,25 +13,31 @@
         <span if.bind="dealDiscussion && dealDiscussion.createdBy">
           <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
           <h3 class="subtext">
-            Created by ${dealDiscussion.createdBy}</usersaddress>
-            at ${niceDate(dealDiscussion.createdOn)}</h3>
+            Created by ${dealDiscussion.createdBy | smallHexString}
+            at ${niceDate(dealDiscussion.createdOn).short()}</h3>
         </span>
       </hgroup>
     </section>
     <div class="sticky-area">
       <section class="comments container">
-        <div if.bind="!threadComments.length && isLoading" class="comment isLoading">
+        <div if.bind="isLoading === 'isFetching'" class="comment isLoading">
           Loading comments...
         </div>
-        <div if.bind="!threadComments.length && !isLoading" class="no comment">
+        <div if.bind="!threadComments.length && isLoading !== 'isFetching'" class="no comment">
           This discussion has no comments yet.
         </div>
         <div 
-          if.bind="!isLoading && threadComments.length"
+          if.bind="isLoading !== 'isFetching' && threadComments.length"
           repeat.for="comment of threadComments"
           id="comment${$index}"
           class="comment">
-          <single-comment discussionId.bind="dealClauseId" author.bind="dealDiscussion.createdBy" comment.bind="comment"></single-comment>
+          <single-comment
+            discussionId.bind="dealClauseId"
+            author.bind="dealDiscussion.createdBy"
+            callback.call="doAction(action, args)"
+            loading.bind="isLoading"
+            comment.bind="comment">
+          </single-comment>
         </div>
       </section>
       <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton>
@@ -40,11 +46,13 @@
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
             <span if.bind="dealDiscussion && dealDiscussion.createdBy">
-              Reply to ${dealDiscussion.createdBy}
+              Reply to ${replyToOriginalMessage.author | smallHexString}
             </span>
-            <i class="fas fa-times"></i>
+            <button click.delegate="closeReply()">
+              <i class="fas fa-times"></i>
+            </button>
           </p>
-          <p class="subtitle">comment text... one line.</p>
+          <p class="subtitle">${replyToOriginalMessage.text}</p>
         </div>
         <div else>
           <p class="action heading heading3">
@@ -57,14 +65,14 @@
           enter.delegate="addComment()"
           focus.delegate="focus()"
           blur.delegate="blur()"
-          validation-state="${isLoading ? 'validating' : ''}"
-          disabled.bind="isLoading"
+          validation-state="${isLoading === 'commenting' ? 'validating' : ''}"
+          disabled.bind="isLoading === 'commenting'">
           class="comment-input"></ptextarea>
         <pbutton
           class="action do"
           type="primary"
           full-width
-          disabled.bind="isLoading"
+          disabled.bind="isLoading === 'commenting'"
           click.delegate="addComment()">
           ${isReply ? "Reply" : "Comment"}
         </pbutton>

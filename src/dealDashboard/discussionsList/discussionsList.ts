@@ -1,6 +1,7 @@
-import { DiscussionsService, IDiscussion } from "../discussionsService";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
+import { DiscussionsService, IDiscussion } from "../discussionsService";
+import { DateService } from "services/DateService";
 import "./discussionsList.scss";
 
 @autoinject
@@ -18,15 +19,13 @@ export class DiscussionsList{
 
   constructor(
     private router: Router,
+    private dateService: DateService,
     private discussionsService: DiscussionsService,
   ) {}
 
   attached(): void {
     this.dealId = this.router.parent.currentInstruction.params.address;
-    console.log("DiscussionsList attached", this.dealId);
     this.discussionsService.getDiscussions().then(discussions => {
-      console.log("DiscussionsList attached", discussions);
-
       this.discussions = Object.keys(discussions).map(key => (
         {id: key, ...discussions[key]}
       ));
@@ -35,10 +34,31 @@ export class DiscussionsList{
     });
   }
 
-  private niceDate(date: number): string {
-    const dateObj = new Date(date);
+  // TODO? Live update
+  niceDate(date: number | string): any {
+    return {
+      short: (locale = "en-US") => (
+        new Date(date).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })
+      ),
+      diff: () => {
+        const diff = this.dateService.getDurationBetween(
+          new Date(), new Date(date),
+        );
 
-    return dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        if (diff.minutes() <= 1)
+          return diff.asSeconds().toFixed(0) + "sec";
+        if (diff.hours() <= 1)
+          return diff.asMinutes().toFixed(0) + "min";
+        if (diff.days() <= 1)
+          return diff.asHours().toFixed(0) + "h";
+        if (diff.weeks() <= 1)
+          return diff.asDays().toFixed(0) + "d";
+        if (diff.months() <= 12)
+          return diff.asHours().toFixed(0) + "w";
+
+        return diff.asMonths().toFixed(0) + "y";
+      },
+    };
   }
 
   private navigateTo(page) {

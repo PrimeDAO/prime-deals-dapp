@@ -1,5 +1,6 @@
 @import "styles/styles.scss";
 @import "src/resources/elements/primeDesignSystem/styles";
+@include spin;
 
 .single.comment {
   display: grid;
@@ -12,13 +13,26 @@
   footer>.count {
     display: inherit;
     align-items: center;
+    .upVote {
+      color: $AlertGreen;
+    }
+    .downVote {
+      color: $AlertRed;
+    }
+    .spinner {
+      animation-name: spin;
+      animation-duration: 1.5s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      color: $Primary01;
+    }
   }
   footer>.action {
     display: none;
     align-items: center;
   }
   &:hover {
-    footer>.vote.count {
+    footer>.vote.count.isConnected {
       display: none;
     }
     footer>.vote.action {
