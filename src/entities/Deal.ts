@@ -59,6 +59,7 @@ export class Deal {
 
   private async hydrate(): Promise<void> {
     try {
+      //
     }
     catch (error) {
       this.corrupt = true;
@@ -76,6 +77,7 @@ export class Deal {
     const account = this.ethereumService.defaultAccountAddress;
 
     if (account) {
+      //
     }
   }
 }
