@@ -1,12 +1,8 @@
 <template>
-  <div 
-    class="dealSummaryContainer"
-    ref="container"
-  >
-  <!-- Open Deal -->
+  <pcard>
     <div if.to-view="!loading" class="dealSummary">
       <div class="countdown">
-        <time-left deal.to-view="deal" largest contained></time-left>
+        <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
       </div>
       <div class="proposal">
         <div class="title ellipses">
@@ -16,33 +12,31 @@
         <div class="description">
           ${deal.description}
         </div>
-      </div> 
+      </div>
       <div class="footer">
         <div>
-          <div class="icons ${!deal.dao.creator?'open':'running'}">
+          <div class="icons ${ !deal.dao.partner ? 'open' : 'running' }">
             <div if.to-view="deal.logo.creator" class="icon">
-              <img src="${deal.logo.creator}" />
+              <img src="${deal.logo.creator}"/>
             </div>
             <div if.to-view="deal.logo.partner" class="icon">
-              <img src="${deal.logo.partner}" />
+              <img src="${deal.logo.partner}"/>
             </div>
             <div class="dao">
-              <div if.to-view="deal.dao || deal.dao.creator" class="name ellipses">${deal.dao.creator ? deal.dao.creator : deal.dao}</div>
+              <div if.to-view="deal.dao || deal.dao.creator" class="name ellipses">
+                ${deal.dao.creator ? deal.dao.creator : deal.dao}
+              </div>
               <div if.to-view="deal.dao.partner" class="name ellipses">${deal.dao.partner ? deal.dao.partner : ''}</div>
             </div>
           </div>
-          <pbutton
-            type="secondary"
-            click.delegate="navigate('initiate')">
-            Partner
+          <pbutton click.delegate="navigate('initiate')" type="secondary">
+            View
           </pbutton>
         </div>
       </div>
     </div>
-
     <div if.to-view="loading" class="loading">
       <i class="fas fa-circle-notch fa-spin"></i>
     </div>
-
-  </div>
+  </pcard>
 </template>

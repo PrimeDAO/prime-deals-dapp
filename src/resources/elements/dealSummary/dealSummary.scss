@@ -1,193 +1,210 @@
-@import "styles/styles.scss";
-.dealSummaryContainer {
-  display: inline-block;
-  cursor: default;
-  width: 360px;
-  height: 291px;
-  padding-right: 30px;
+@import "src/styles/styles.scss";
+@import "../primeDesignSystem/variables";
 
-  .dealSummary {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 34px 190px 67px;
-    grid-template-areas:
-      "countdown"
-      "proposal"
-      "footer";
+deal-summary {
+  pcard {
+    display: inline-block;
+    width: 360px;
     background-color: $BG02;
+    padding: $spacing-normal;
     transition: 0.35s ease-in-out;
-    .button {
-      width: 134px;
-      &:after {
-        background-color: $BG02;
-      }
-    }
+
     &:hover {
       background-color: #403453;
+
       .button:after {
         opacity: 0;
       }
+
       .icons > .icon {
         border-color: #403453;
       }
+
       .title > h1 {
         color: #897aa1;
       }
     }
-    border-radius: 6px;
-    padding: 0 8px 0 20px;
-    box-sizing: border-box;
-    height: 100%;
-    overflow: hidden;
-    align-items: center;
-    font-family: "Aeonik";
-    .icons {
+
+    .dealSummary {
       display: grid;
-      grid-area: icon;
-      width: inherit;
-      grid-template-columns: 42px auto;
-      &.running {
-        grid-template-columns: 38px 26px auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 190px 67px;
+      grid-template-areas:
+      "countdown"
+      "proposal"
+      "footer";
+
+
+      .icons {
+        display: grid;
+        grid-area: icon;
+        width: inherit;
+        grid-template-columns: 42px auto;
+
+        &.running {
+          grid-template-columns: 38px 26px auto;
+        }
+
+        .icon {
+          transition: 0.35s ease-in-out;
+          display: grid;
+          align-items: center;
+          justify-content: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 17px;
+          overflow: hidden;
+
+          img {
+            height: 34px;
+            width: 34px;
+          }
+
+          border: 2px solid $BG02;
+
+          &:not(:first-child) {
+            margin-left: -15px;
+            z-index: 2;
+          }
+        }
+
+        .name {
+          white-space: nowrap;
+          padding-right: 10px;
+          color: $Neutral03;
+          font-family: "Inter";
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 19.6px;
+        }
       }
-      .icon {
-        transition: 0.35s ease-in-out;
+
+      .title {
+        grid-area: title;
+
+        h1,
+        h2 {
+          transition: 0.35s ease-in-out;
+          margin: 0;
+        }
+
+        h1 {
+          font-size: 14px;
+          color: #64557d;
+          line-height: 140%;
+          text-transform: uppercase;
+        }
+
+        & > h2 {
+          font-size: 20px;
+          font-weight: 700;
+          line-height: 24px;
+          color: $White;
+        }
+      }
+
+      .dao {
         display: grid;
         align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        border-radius: 17px;
-        overflow: hidden;
-        img {
-          height: 34px;
-          width: 34px;
-        }
-        border: 2px solid $BG02;
-        &:not(:first-child) {
-          margin-left: -15px;
-          z-index: 2;
-        }
-      }
-      .name {
-        white-space: nowrap;
-        padding-right: 10px;
-        color: $Neutral03;
-        font-family: "Inter";
         font-size: 14px;
         font-weight: 700;
-        line-height: 19.6px;
+        color: #dcdae5;
       }
-    }
-    .title {
-      grid-area: title;
-      h1,
-      h2 {
-        transition: 0.35s ease-in-out;
-        margin: 0;
-      }
-      h1 {
+
+      .daos.title {
         font-size: 14px;
-        color: #64557d;
-        line-height: 140%;
-        text-transform: uppercase;
+        font-weight: 400;
+        line-height: 16.8px;
+        opacity: 50%;
+        padding: 9px;
       }
-      & > h2 {
-        font-size: 20px;
-        font-weight: 700;
-        line-height: 24px;
-        color: $White;
-      }
-    }
-    .dao {
-      display: grid;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 700;
-      color: #dcdae5;
-    }
-    .daos.title {
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 16.8px;
-      opacity: 50%;
-      padding: 9px;
-    }
-    .proposal {
-      grid-area: proposal;
-      display: grid;
-      grid-template-areas:
+
+      .proposal {
+        grid-area: proposal;
+        display: grid;
+        grid-template-areas:
         "title"
         "description";
-      grid-template-rows: min-content auto;
-      height: 190px;
-      row-gap: 12px;
-    }
-    .description {
-      grid-area: description;
-      font-family: Inter;
-      font-size: 14px;
-      line-height: 140%;
-      font-weight: 400;
-      color: $Neutral02;
-      padding-bottom: 12px;
-      text-overflow: ellipsis;
-    }
-    > .countdown {
-      grid-area: countdown;
-      text-align: center;
-      align-items: end;
-      height: 24px;
-      padding-top: 10px;
-      margin-left: auto;
-      display: flex;
-      gap: 4px;
-    }
-    > .footer {
-      grid-area: footer;
-      display: flex;
-      align-items: baseline;
-      height: 67px;
+        grid-template-rows: min-content auto;
+        height: 190px;
+        row-gap: 12px;
+        padding: 0 $spacing-normal $spacing-normal $spacing-normal;
+      }
 
-      & > div {
-        .button {
-          margin: 0;
-          margin-right: 12px;
-        }
+      .description {
+        grid-area: description;
+        font-family: Inter;
+        font-size: 14px;
+        line-height: 140%;
+        font-weight: 400;
+        color: $Neutral02;
+        padding-bottom: 12px;
+        text-overflow: ellipsis;
+      }
+
+      > .countdown {
+        grid-area: countdown;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
+        justify-content: flex-end;
+        font-size: 12px;
       }
-      .title {
-        font-weight: bold;
-        font-size: 13px;
+
+      > .footer {
+        grid-area: footer;
+        display: flex;
+        align-items: baseline;
+        padding: $spacing-normal;
+
+        & > div {
+          .button {
+            margin: 0 12px 0 0;
+          }
+
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .title {
+          font-weight: bold;
+          font-size: 13px;
+        }
       }
     }
-  }
-  .loading {
-    text-align: center;
-    padding-top: 32px;
-    i {
-      color: $Secondary07;
+
+    .loading {
+      text-align: center;
+      padding-top: 32px;
+
+      i {
+        color: $Secondary07;
+      }
     }
+
   }
 }
+
+
 @media screen and (max-width: $PageBreakWidth) {
   .dealSummaryContainer {
     // because this is going to be vertically-aligned
     padding-right: 0;
     margin-bottom: 20px;
     width: 50%;
+
     .dealSummary {
       > .title {
         max-width: unset;
       }
+
       > .icon {
         img {
           height: 36px;
           width: 36px;
         }
       }
+
       > .footer,
       > .countdown,
       > .proposal {
@@ -196,6 +213,7 @@
     }
   }
 }
+
 @media screen and (max-width: 400px) {
   .dealSummaryContainer {
     min-width: 100%;

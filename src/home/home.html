@@ -24,16 +24,15 @@
       </div>
 
       <!-- Deals Carousel -->
-      <div class="section deals open" if.to-view="!featuredDeals || featuredDeals.length">
+      <div class="section deals" if.to-view="!featuredDeals || featuredDeals.length">
         <div class="title heading heading1 selector">
-          <span class="selector-tab ${cardIndex==0?'active':''}" click.delegate="dealToggle(0)">Open Deals</span>
-          <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1)">Running Deals</span>
+          <span class="selector-tab ${cardIndex==0?'active':''}"
+                click.delegate="dealToggle(0, 'open')">Open Deals</span>
+          <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1, 'partnered')">Partnered Deals</span>
         </div>
         <template if.to-view="featuredDeals && featuredDeals.length">
-          <horizontal-scroller item-count.to-view="featuredDeals.length">
-            <deal-summary
-              repeat.for="deal of featuredDeals"
-              deal.to-view="deal"></deal-summary>
+          <horizontal-scroller class="featuredDealsScroller" item-count.to-view="featuredDeals.length">
+            <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
           </horizontal-scroller>
           <div class="dealsButton">
             <div class="centered">
@@ -54,13 +53,13 @@
       <!-- Hero  -->
       <div class="section hero">
         <div class="heroColumn">
-          <div class="subtitle subtext gradient">Subtitle</div>
+          <div class="subtitle subtext gradient">How it works</div>
           <div class="title heading heading1">Web3 partnerships made easy!</div>
           <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
           <div class="cardContainer">
             <pbutton
               data-test="initiate-deal-button"
-              type="secondary"
+              type="primary"
               click.delegate="navigate('initiate')"
               rel="noopener noreferrer">
               Initiate a Deal

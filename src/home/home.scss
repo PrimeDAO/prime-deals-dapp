@@ -1,22 +1,7 @@
-@import "styles/styles.scss";
+@import "src/styles/styles.scss";
+@import "../resources/elements/primeDesignSystem/variables";
 
 .page.home {
-  // &:before {
-  //   content: "";
-  //   position: absolute;
-  //   background-image: url("/static/home-bg-top.gif");
-  //   background-position: top center;
-  //   background-repeat: no-repeat;
-  //   background-size: cover;
-  //   // margin-left: -160px;
-  //   left: 0;
-  //   margin: 100px 0;
-  //   width: 100vw;
-  //   // width: calc(100% + 320px);
-  //   height: 800px;
-  //   top: -150px;
-  //   z-index: -1;
-  // }
   .section {
     &.hero,
     &.deals {
@@ -24,12 +9,9 @@
     }
 
     &.top {
-      margin-bottom: 200px;
-
       .title {
         white-space: normal;
         padding-bottom: 5px;
-        max-width: 645px;
       }
 
       > .subtitle {
@@ -44,11 +26,15 @@
 
       .cards {
         display: flex;
+        margin-bottom: 200px;
+
         pcard {
           width: clamp(100px, 100%, 360px);
+
           .pcard {
             padding: 0 18px 24px 24px;
           }
+
           header {
             display: flex;
             font-size: 28px;
@@ -56,15 +42,18 @@
             justify-content: space-between;
             align-items: center;
             color: $White;
+
             .icon {
               font-weight: 400;
             }
           }
+
           .subtitle {
             line-height: 20px;
             color: $Neutral03;
           }
         }
+
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: start;
@@ -76,22 +65,37 @@
     &.deals {
       .scrollerContainer {
         margin-bottom: 28px;
+
+        .scroller {
+          deal-summary {
+            margin-right: $spacing-normal * 2;
+
+            &:last-child {
+              margin-right: 0;
+            }
+          }
+        }
       }
 
       > .selector {
         padding-bottom: 29px;
+
         :not(:first-child) {
           margin-left: 30px;
         }
+
         > .selector-tab {
           cursor: pointer;
         }
       }
+
       > .heading1 {
+        display: flex;
         -webkit-text-fill-color: $Neutral02;
         border-bottom: 2px solid $Border01;
         width: 100%;
         transition: background 1s ease-in-out;
+
         > .active {
           background: $Gradient02;
           -webkit-text-fill-color: transparent;
@@ -100,24 +104,32 @@
           border-bottom: 6px solid $Secondary02;
           padding-bottom: 19px;
         }
-        padding-top: 55px;
+
         margin-bottom: 53px;
       }
+
       > .dealsButton {
-        text-align: center;
         padding: 32px;
+
+        button.tertiary {
+          color: $Neutral03;
+          opacity: 0.3;
+          transition: 0.2s;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
       }
+
       .loading {
         text-align: center;
         font-size: 32px;
         padding-top: 24px;
+
         i {
           color: $Secondary07;
         }
-      }
-
-      &.open {
-        margin-bottom: 53px;
       }
     }
 
@@ -138,6 +150,7 @@
 
         display: grid;
         row-gap: 24px;
+
         .subtitle.subtext {
           color: $Secondary02;
           font-size: 20px;
@@ -153,6 +166,7 @@
         }
 
         align-self: center;
+
         & > .introVideo {
           width: 100%;
           border-radius: 6px;
@@ -163,6 +177,7 @@
 
         .disclaimer {
           text-align: left;
+
           a {
             color: $Neutral02;
             text-decoration: underline;
@@ -203,6 +218,7 @@
 
       &.top {
         width: 100%;
+
         > .subtitle {
           margin-bottom: 48px;
           max-width: unset;
@@ -219,6 +235,11 @@
       &.deals {
         .scrollerContainer {
           margin-bottom: 0;
+
+          .scroller deal-summary {
+            margin: 0;
+            margin-bottom: 20px;
+          }
         }
       }
 
@@ -229,6 +250,7 @@
 
         .heroColumn {
           justify-content: center;
+
           > .subtitle.subtext {
             margin-bottom: 12px;
           }

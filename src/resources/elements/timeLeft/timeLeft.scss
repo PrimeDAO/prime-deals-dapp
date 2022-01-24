@@ -1,6 +1,9 @@
 @import "styles/colors.scss";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
 .timeLeftContainer {
-  font-size: 16px;
+  font-size: $font-size1;
+
   > div.mainStatus > div,
   > div.adminStatus > div {
     font-family: Inter;
@@ -32,12 +35,12 @@
       }
 
       &.farOff {
-        color: $White;
+        color: #cecece;
       }
     }
 
     &.live {
-      color: $AlertGreen;
+      color: $Green;
     }
 
     &.complete {
@@ -71,7 +74,7 @@
     > div.mainStatus > div,
     > div.adminStatus > div {
       border-radius: 87px;
-      padding: 2px 9px;
+      padding: 4px 8px;
     }
 
     > div.mainStatus > div {
@@ -85,7 +88,7 @@
         }
 
         &.farOff {
-          background-color: #3e263c;
+          background-color: #30343e;
         }
       }
 
