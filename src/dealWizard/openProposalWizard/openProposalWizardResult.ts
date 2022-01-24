@@ -1,7 +1,7 @@
 import { IWizardResult } from "services/WizardService";
 import { IProposal, IDAO, IProposalLead } from "../dealWizard.types";
 
-export class OpenDealWizardResult implements IWizardResult {
+export class OpenProposalWizardResult implements IWizardResult {
   public version: string;
   public proposal: IProposal;
   public primaryDAO: IDAO;
@@ -9,6 +9,8 @@ export class OpenDealWizardResult implements IWizardResult {
   public createdAt: Date | null;
   public modifiedAt: Date | null;
   public createdByAddress: string | null;
+  public keepAdminRights: boolean;
+  public offersPrivate: boolean;
 
   constructor() {
     this.clearState();
@@ -37,6 +39,8 @@ export class OpenDealWizardResult implements IWizardResult {
       address: "",
       email: "",
     };
+    this.keepAdminRights = true;
+    this.offersPrivate = true;
     this.createdAt = null;
     this.modifiedAt = null;
     this.createdByAddress = null;

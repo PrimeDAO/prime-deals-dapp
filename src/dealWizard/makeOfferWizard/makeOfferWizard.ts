@@ -16,7 +16,11 @@ export class MakeOfferWizard {
     name: "Lead Details",
     valid: false,
     route: "stage2",
-    moduleId: PLATFORM.moduleName("../stages/proposalLeadStage/proposalLeadStage"),
+    moduleId: PLATFORM.moduleName("./makeOfferProposalLeadStage/makeOfferProposalLeadStage"),
+    settings: {
+      // @TODO this should be passed conditionally, that is if open proposal "keep admin rights" is set to true, we should pass true, otherwise false
+      disabled: true,
+    },
   }, {
     name: "Primary DAO",
     valid: false,

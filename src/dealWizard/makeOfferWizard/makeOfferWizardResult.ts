@@ -7,6 +7,7 @@ export class MakeOfferWizardResult implements IWizardResult {
   public primaryDAO: IDAO;
   public partnerDAO: IDAO;
   public proposalLead: IProposalLead;
+  public isPrivate: boolean;
   public createdAt: Date | null;
   public modifiedAt: Date | null;
   public createdByAddress: string | null;
@@ -50,6 +51,7 @@ export class MakeOfferWizardResult implements IWizardResult {
       address: "0x123123123",
       email: "",
     };
+    this.isPrivate = true;
     this.createdAt = null;
     this.modifiedAt = null;
     this.createdByAddress = null;

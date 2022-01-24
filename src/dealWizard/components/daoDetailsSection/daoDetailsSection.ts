@@ -5,6 +5,7 @@ export class DaoDetailsSection {
   @bindable description: string;
   @bindable nameFieldLabel: string;
   @bindable avatarFieldLabel: string;
+  @bindable representativesLabel: string;
   @bindable errors: Record<string, string> = {};
   @bindable data: Record<string, string>;
   @bindable disabled = false;

@@ -4,7 +4,7 @@ import { IBaseWizardStage } from "../../dealWizard.types";
 import { WizardService, IWizard } from "../../../services/WizardService";
 
 @autoinject
-export class ProposalLeadStage implements IBaseWizardStage {
+export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizard: IWizard;
   public errors: Record<string, string> = {};
@@ -23,7 +23,7 @@ export class ProposalLeadStage implements IBaseWizardStage {
     this.errors = {};
 
     if (!this.wizard.wizardResult.proposalLead.address) {
-      this.errors.leadAddress = "Required Input";
+      this.errors.address = "Required Input";
     }
 
     const valid = !Object.keys(this.errors).length;

@@ -1,0 +1,50 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="../../components/proposalLeadSection/proposalLeadSection"></require>
+  <stage-wrapper
+    title="Proposal Lead"
+    wizard-manager.bind="wizardManager"
+    validate.call="validateInputs()">
+
+    <proposal-lead-section
+      errors.bind="errors"
+      data.bind="wizard.wizardResult.proposalLead">
+    </proposal-lead-section>
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Keep Admin Rights?</h2>
+        <p class="subtext">
+          Select “keep admin rights” if you would like to the proposal lead to keep the rights to editing, discussion, funding initiation and token swap execution for all incoming offers to collaborate.
+          <br />
+          <br />
+          We suggest transferring your admin rights if you anticipate a lot of proposals, and won’t have time to manage all of them.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Keep Admin Rights With All Incoming Offers">
+          <ptoggle value.bind="wizard.wizardResult.keepAdminRights"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Make Offers Private?</h2>
+        <p class="subtext">
+          Select "make offers private" if you would like the offers you receive from this Open Proposal to be private. Private deals will only be accessible to the proposal lead and deal representatives.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Make Offers Private">
+          <ptoggle value.bind="wizard.wizardResult.offersPrivate"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+  </stage-wrapper>
+</template>

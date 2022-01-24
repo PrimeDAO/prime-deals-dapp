@@ -1,0 +1,32 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="../../components/proposalLeadSection/proposalLeadSection"></require>
+  <stage-wrapper
+    title="Proposal Lead"
+    wizard-manager.bind="wizardManager"
+    validate.call="validateInputs()">
+
+    <proposal-lead-section
+      errors.bind="errors"
+      data.bind="wizard.wizardResult.proposalLead"
+      disabled.bind="disabled">
+    </proposal-lead-section>
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Make Deal Private</h2>
+        <p class="subtext">
+          Making a deal private will make it visible to only the proposal lead and deal representatives from both DAOs.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Make Deal Private">
+          <ptoggle value.bind="wizard.wizardResult.isPrivate" disabled.bind="disabled"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+  </stage-wrapper>
+</template>
