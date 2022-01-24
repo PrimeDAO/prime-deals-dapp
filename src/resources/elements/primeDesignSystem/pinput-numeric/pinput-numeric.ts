@@ -12,14 +12,14 @@ export class PInputNumeric {
   /**
    * Look into the numeric-input for more info about the below properties
    */
-  @bindable.booleanAttr public decimal = true;
-  @bindable.string public defaultText = "";
-  @bindable public handleChange: ({keyCode: number}) => boolean;
-  @bindable public autocomplete = "off";
-  @bindable.booleanAttr public disabled;
-  @bindable({ defaultBindingMode: bindingMode.twoWay }) public value: number | BigNumber | string;
-  @bindable.booleanAttr public notWei?: boolean = false;
-  @bindable.number public decimals?: number = 18;
-  @bindable.booleanAttr public outputAsString?: boolean = false;
-  @bindable.string public placeholder = "";
+  @bindable.booleanAttr decimal = true;
+  @bindable.string defaultText = "";
+  @bindable handleChange: ({keyCode: number}) => boolean;
+  @bindable autocomplete = "off";
+  @bindable.booleanAttr disabled = false;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) value: number | BigNumber | string;
+  @bindable.booleanAttr notWei?: boolean = false;
+  @bindable.number decimals?: number = 18;
+  @bindable.booleanAttr outputAsString?: boolean = false;
+  @bindable.string placeholder = "";
 }

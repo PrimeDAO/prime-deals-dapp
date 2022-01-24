@@ -6,9 +6,9 @@ import {ValidationState} from "../types";
 @customElement("pinput-text")
 export class PInputText {
 
-  @bindable public validationState?: ValidationState;
-  @bindable public autocomplete = "off";
-  @bindable.booleanAttr public disabled;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) public value: string;
-  @bindable.string public placeholder = "";
+  @bindable validationState?: ValidationState;
+  @bindable autocomplete = "off";
+  @bindable.booleanAttr disabled = false;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) value: string;
+  @bindable.string placeholder = "";
 }
