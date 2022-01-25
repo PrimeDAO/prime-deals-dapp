@@ -5,6 +5,8 @@ import { autoinject } from "aurelia-framework";
 import { IDealConfig } from "../registry-wizard/dealConfig";
 import { OPEN_DEALS_MOCK, PARTNERED_DEALS_MOCK } from "entities/MockDealEntity";
 import { IDummyDeal } from "entities/Deal";
+import { MAKE_OFFER_WIZARD_MOCK, OPEN_PROPOSAL_WIZARD_MOCK } from "entities/MockWizardEntity";
+import { IWizardData } from "./WizardService";
 
 export interface IDealCreatedEventArgs {
   newDeal: Address;
@@ -80,6 +82,14 @@ export class DealService {
 
   public async getPartneredDeals(): Promise<IDummyDeal[]> {
     return Promise.resolve(PARTNERED_DEALS_MOCK);
+  }
+
+  public async getOpenProposalData(): Promise<IWizardData> {
+    return Promise.resolve(OPEN_PROPOSAL_WIZARD_MOCK);
+  }
+
+  public async getMakeOfferData(): Promise<IWizardData> {
+    return Promise.resolve(MAKE_OFFER_WIZARD_MOCK);
   }
 
   private async getDealsIPFS(): Promise<void> {

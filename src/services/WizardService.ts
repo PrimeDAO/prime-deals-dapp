@@ -1,6 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
+import { IDAO, IProposal, IProposalLead } from "dealWizard/dealWizard.types";
 
 export interface IWizard {
   stages: Array<IWizardStage>;
@@ -19,6 +20,20 @@ export interface IWizardResult {
   version: string;
   clearState: () => void,
   [key: string]: any;
+}
+
+export interface IWizardData {
+  version: string;
+  proposal: IProposal;
+  primaryDAO: IDAO;
+  partnerDAO: IDAO;
+  proposalLead: IProposalLead;
+  isPrivate?: boolean;
+  keepAdminRights?: boolean;
+  offersPrivate?: boolean;
+  createdAt: Date | null;
+  modifiedAt: Date | null;
+  createdByAddress: string | null;
 }
 
 @autoinject
