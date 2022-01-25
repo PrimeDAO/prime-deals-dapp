@@ -9,6 +9,25 @@ export interface IDealConfiguration {
   beneficiary: Address;
 }
 
+type DealStatus = "hasNotStarted" | "claimingIsOpen" | "incomplete" | "uninitialized" | "contributingIsOpen" | "isPaused" | "isClosed";
+
+export interface IDummyDeal {
+  address: Address,
+  dao: {
+    creator: string,
+    partner?: string,
+  },
+  type: string,
+  title: string,
+  description: string,
+  logo: {
+    creator: string,
+    partner?: string,
+  },
+  startsInMilliseconds: number,
+  status: DealStatus
+}
+
 @autoinject
 export class Deal {
   public contract: any;
