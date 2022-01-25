@@ -23,11 +23,11 @@
             </p>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
-              Created by ${discussion.createdBy | smallHexString} on ${niceDate(discussion.createdOn).short()}
+              Created by ${discussion.createdBy | smallHexString} on ${dateService.formattedTime(discussion.createdOn).short()}
             </p>
           </td>
           <td class="h-centered v-centered">${discussion.replies || 0}</td>
-          <td class="h-centered v-centered">${niceDate(discussion.lastActivity).diff() || 0}</td>
+          <td class="h-centered v-centered">${dateService.formattedTime(discussion.lastActivity).diff()}</td>
         </tr>
       </tbody>
     </table>

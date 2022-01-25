@@ -4,9 +4,9 @@
       <figure class="avatar">
         <img src="/genericToken.svg" alt="">
       </figure>
-      <h3 if.bind="comment.author">${comment.author}</h3>
+      <h3 if.bind="comment.author">${comment.author | smallHexString}</h3>
       <span if.bind="comment.author === author">(Author)</span>
-      <time class="lastActivity">${niceDate(comment.createdOn).diff()}</time>
+      <time class="lastActivity">${dateService.formattedTime(comment.createdOn * 1).diff()}</time>
     </header>
     <main>
       <section if.bind="repliesTo" class="reply">

@@ -187,6 +187,13 @@ export class DiscussionsService {
     return JSON.parse(localStorage.getItem("discussions"))[discussionId];
   }
 
+  public updateDiscussionListStatus(discussionId: string, timestamp?: number): void {
+    const discussions = JSON.parse(localStorage.getItem("discussions"));
+    discussions[discussionId].replies = this.comments.length;
+    if (timestamp) discussions[discussionId].lastActivity = timestamp;
+    localStorage.setItem("discussions", JSON.stringify(discussions));
+  }
+
   public async subscribeToDiscussion(discussionId: string): Promise<void> {
     const channelName = `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
     const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
@@ -201,10 +208,7 @@ export class DiscussionsService {
       if (!this.comments.some(item => item._id === comment.data._id)) {
         this.comments.push(comment.data);
       }
-      const discussions = JSON.parse(localStorage.getItem("discussions"));
-      discussions[discussionId].replies = this.comments.length;
-      discussions[discussionId].lastActivity = comment.timestamp;
-      localStorage.setItem("discussions", JSON.stringify(discussions));
+      this.updateDiscussionListStatus(discussionId, comment.timestamp);
     });
   }
 
@@ -322,13 +326,14 @@ export class DiscussionsService {
         commentId,
       );
       this.comments = this.comments.filter(comment => comment._id !== commentId);
+      this.updateDiscussionListStatus(discussionId, Date.now());
     } catch (error) {
       this.consoleLogService.logMessage(error);
     }
     return this.comments;
   }
 
-  public async voteMessage(_id: string, type: EVote): Promise<IComment[]> {
+  public async voteMessage(discussionId: string, commentId: string, type: EVote): Promise<IComment[]> {
     const walletAddress = this.ethereumService.defaultAccountAddress;
 
     if (!walletAddress) {
@@ -355,7 +360,7 @@ export class DiscussionsService {
     const token = localStorage.getItem("discussionToken");
 
     try {
-      const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${_id}`)).data;
+      const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${commentId}`)).data;
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -380,9 +385,10 @@ export class DiscussionsService {
         "type": type,
       });
       if (res.data.success) {
-        const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${_id}`)).data;
-        const commentId = this.comments.findIndex(comment => comment._id === message._id);
-        this.comments[commentId] = message;
+        const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${commentId}`)).data;
+        const commentIndex = this.comments.findIndex(comment => comment._id === message._id);
+        this.comments[commentIndex] = message;
+        this.updateDiscussionListStatus(discussionId, Date.now());
         return [...this.comments];
       }
 

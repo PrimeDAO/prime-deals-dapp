@@ -14,7 +14,7 @@
           <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
           <h3 class="subtext">
             Created by ${dealDiscussion.createdBy | smallHexString}
-            at ${niceDate(dealDiscussion.createdOn).short()}</h3>
+            at ${ dateService.formattedTime(dealDiscussion.createdOn).short() }</h3>
         </span>
       </hgroup>
     </section>
@@ -33,7 +33,7 @@
           class="comment ${isReply && comment._id === replyToOriginalMessage._id ? 'isReply' : ''}">
           <single-comment
             callback.call="doAction(action, args)"
-            discussionId.bind="dealClauseId"
+            discussionId.bind="discussionId"
             author.bind="dealDiscussion.createdBy"
             loading.bind="isLoading"
             replies-to.bind="threadDictionary[comment.replyTo]"
@@ -42,7 +42,9 @@
         </div>
       </section>
       <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton>
-      <section class="action container">
+
+      <!-- Comment Input -->
+      <section if.bind="isAuthorized" class="action container">
         <div if.bind="isReply">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>

@@ -389,6 +389,62 @@ export class DateService {
   }
 
   /**
+   * ## Returns formatted time:
+   * @param date the date reference (Date).
+   *
+   * ### Methods:
+   *
+   * #### `short`:
+   * Short formatted date string with the format of "MMM dd, yyyy"
+   *
+   * @param locale in which local to return the date. Defaults to "en-US"
+   * @returns Date
+   *
+   * #### `diff`:
+   * Return the time passed from <date> until now as the number of
+   * seconds, minutes, hours, days, weeks or years- depends on the
+   * difference size.
+   * * Up to 1 minutes, the output is "#sec".
+   * * Up to 1 hour, the output is "#min".
+   * * Up to 1 day, the output is "#h".
+   * * Up to 1 week, the output is "#d".
+   * * Up to 1 year, the output is "#w".
+   * * Over 1 year, the output is "#y".
+   * @returns string
+   *
+   * #### Example:
+   * formatDate(new Date()).short("de-DE");
+   *
+   * formatDate(new Date()).diff();
+   */
+  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: () => string} {
+    const _date = new Date(date);
+
+    return {
+      short: (locale = "en-US") => _date.toLocaleDateString(
+        locale,
+        { year: "numeric", month: "short", day: "numeric" },
+      ),
+      diff: () => {
+        if (!date) return "-";
+        const diff = this.getDurationBetween(new Date(), _date);
+
+        if (diff.asMinutes() <= 1)
+          return diff.asSeconds().toFixed(0) + "sec";
+        if (diff.asHours() <= 1)
+          return diff.asMinutes().toFixed(0) + "min";
+        if (diff.asDays() <= 1)
+          return diff.asHours().toFixed(0) + "h";
+        if (diff.asWeeks() <= 1)
+          return diff.asDays().toFixed(0) + "d";
+        if (diff.asMonths() <= 12)
+          return diff.asHours().toFixed(0) + "w";
+
+        return diff.asMonths().toFixed(0) + "y";
+      },
+    };
+  }
+  /**
    * Trying here to keep everything in local timezone with option to translate into UTC when formating as a string.
    * The utc option will only control how toString() behaves, and only when using moment's toString.
    *

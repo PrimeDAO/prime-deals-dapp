@@ -34,33 +34,6 @@ export class DiscussionsList{
     });
   }
 
-  // TODO? Live update
-  niceDate(date: number | string): any {
-    return {
-      short: (locale = "en-US") => (
-        new Date(date).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })
-      ),
-      diff: () => {
-        const diff = this.dateService.getDurationBetween(
-          new Date(), new Date(date),
-        );
-
-        if (diff.minutes() <= 1)
-          return diff.asSeconds().toFixed(0) + "sec";
-        if (diff.hours() <= 1)
-          return diff.asMinutes().toFixed(0) + "min";
-        if (diff.days() <= 1)
-          return diff.asHours().toFixed(0) + "h";
-        if (diff.weeks() <= 1)
-          return diff.asDays().toFixed(0) + "d";
-        if (diff.months() <= 12)
-          return diff.asHours().toFixed(0) + "w";
-
-        return diff.asMonths().toFixed(0) + "y";
-      },
-    };
-  }
-
   private navigateTo(page) {
     this.router.navigate(page);
   }

@@ -36,9 +36,9 @@
           <div repeat.for="clause of dealConfig.clauses" class="clause ${activeClause === $index ? 'active' : ''}">
             <li></li>
             <span class="body">
-              ${clause.description}
+              ${clause}
             </span>
-            <span class="button" click.delegate="addDiscussion(clause.description, $index)">Discuss<img src="/comment.svg"></img></span>
+            <span class="button" click.delegate="addDiscussion(clause, $index)">Discuss<img src="/comment.svg"></img></span>
           </div>
         </ol>
       </section>
