@@ -1,18 +1,23 @@
 import { autoinject } from "aurelia-framework";
-import { Address, EthereumService } from "services/EthereumService";
+import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
+import { IDataSourceDeals } from "services/IDataSource";
+import { IDealConfig } from "registry-wizard/dealConfig";
+import { CeramicServiceMock } from "services/CeramicServiceMock";
 
-export interface IDealConfiguration {
-  address: Address;
-  beneficiary: Address;
+export interface IDealsData {
+  // votes: Array<IVoteInfo>;
+  // discussions: Array<IClause, Hash>;
+  registration: IDealConfig;
 }
 
 @autoinject
 export class Deal {
   public contract: any;
-  public address: Address;
+  public id: Hash;
+  public rootData: IDealsData;
   public dealInitialized: boolean;
 
   public initializing = true;
@@ -21,15 +26,39 @@ export class Deal {
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
 
+  public get registration(): IDealConfig {
+    return this.rootData.registration;
+  }
+
+  // public get votes(): Array<IVoteInfo> {
+  //   return this.rootData.votes;
+  // }
+
+  // public get discussions(): Array<Array<IClause, Hash>> {
+  //   return this.rootData.discussions;
+  // }
+
+  public get isOpen(): boolean {
+    return true;
+    // return this.rootData?.registration.[???];
+  }
+
+  public get isPartnered(): boolean {
+    return true;
+    // return this.rootData?.registration.[???];
+  }
+
   constructor(
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
+    private dataSourceDeals: CeramicServiceMock,
   ) {
   }
 
-  public create(config: IDealConfiguration): Deal {
+  public create(id: Hash): Deal {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
-    return Object.assign(this, config);
+    this.id = id;
+    return this;
   }
 
   /**
@@ -60,6 +89,21 @@ export class Deal {
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
+      // RootOfRoot is stream of DealIds
+
+      // rootOfRoot - immutable cid
+      /**
+       * Collection of                  DealCids
+       *    ^                ^              ^           ^
+       *    |                |              |           |
+       *   appending      reginstraion    votes    discussion
+       *                        ^
+       *                        |
+       *
+       * Find appending --> bottleneck
+       */
+
+      this.rootData = await this.dataSourceDeals.get<IDealsData>("root_stream_id");
     }
     catch (error) {
       this.corrupt = true;

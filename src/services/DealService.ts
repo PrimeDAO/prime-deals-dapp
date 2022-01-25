@@ -1,16 +1,14 @@
 import axios from "axios";
-import { IpfsService } from "./IpfsService";
-import { Address } from "./EthereumService";
-import { autoinject } from "aurelia-framework";
+import { Address, Hash } from "./EthereumService";
+import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { IDealConfig } from "../registry-wizard/dealConfig";
+import { Deal } from "entities/Deal";
+import { IDataSourceDeals } from "../services/IDataSource";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { AureliaHelperService } from "./AureliaHelperService";
+import { ConsoleLogService } from "./ConsoleLogService";
+import { CeramicServiceMock } from "./CeramicServiceMock";
 
-export interface IDealCreatedEventArgs {
-  newDeal: Address;
-  beneficiary: Address;
-}
-
-const _DAY_IN_MS = 24 * 60 * 60 * 1000;
-const _DEFAULT_DEAL_DURATION = 14;
 export interface IDaoPartner {
   daoId: string,
   organizationId: string,
@@ -48,15 +46,34 @@ export interface IDaoAPIObject {
 @autoinject
 export class DealService {
 
-  public deals: Map<Address, any>;
+  /**
+   * key is a ceramic Hash
+   */
+  public deals: Map<Hash, Deal>;
+  @computedFrom("seeds.size")
+  public get dealsArray(): Array<Deal> {
+    return this.deals ? Array.from(this.deals.values()) : [];
+  }
+  public initializing = true;
+  private initializedPromise: Promise<void>;
 
-  public dealsObject: any = {};
+  public get openDeals(): Array<any> {
+    return this.dealsArray.filter((deal: Deal) => deal.isOpen );
+  }
+
+  public get partneredDeals(): Array<any> {
+    return this.dealsArray.filter((deal: Deal) => deal.isPartnered );
+  }
+
+  // public dealsObject: any = {};
   public DAOs: Array<IDaoAPIObject>;
 
-  public initializing = true;
-
   constructor(
-    private ipfsService: IpfsService,
+    private dataSourceDeals: CeramicServiceMock,
+    private eventAggregator: EventAggregator,
+    private container: Container,
+    private aureliaHelperService: AureliaHelperService,
+    private consoleLogService: ConsoleLogService,
   ) {
   }
 
@@ -69,38 +86,73 @@ export class DealService {
   }
 
   private async getDeals(): Promise<void> {
-    const hashes = await this.ipfsService.getPinnedObjectsHashes();
-    hashes.forEach( async (hash:string) => {
-      this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
-        .then(async (deal: any) => {
-          if (deal.daos === undefined) return {};
+    return this.initializedPromise = new Promise(
+      (resolve: (value: void | PromiseLike<void>) => void,
+        reject: (reason?: any) => void): void => {
+        if (!this.deals?.size) {
+          try {
+            const dealsMap = new Map<Address, Deal>();
 
-          const timeLeft: number = deal.createdAt? (new Date(deal.createdAt).getTime()) + (_DAY_IN_MS * parseInt(deal.terms.period || _DEFAULT_DEAL_DURATION)) - (new Date().getTime()): 0;
-          if (timeLeft < 0) deal.incomplete = true;
-          return {
-            address: hash || "",
-            daos: {
-              creator: deal.daos[0].id ? (await this.getDAOByOrganisationID(deal.daos[0].id)).daoName : deal.daos[0].name || "",
-              partner: deal.daos[1].id ? (await this.getDAOByOrganisationID(deal.daos[1].id)).daoName : deal.daos[1].name || "",
-            },
-            type: deal.type || "Token Swap",
-            title: deal.proposal.name,
-            description: deal.proposal.overview,
-            logo: {
-              creator: deal.daos[0].id ? (await this.getDAOByOrganisationID(deal.daos[0].id)).logo : "../../logos/ether.png",
-              partner: deal.daos[1].id ? (await this.getDAOByOrganisationID(deal.daos[1].id)).logo : "",
-            },
-            startsInMilliseconds: timeLeft,
-            uninitialized: deal.uninitialized || false,
-            hasNotStarted: deal.hasNotStarted || deal.createdAt,
-            contributingIsOpen: deal.contributingIsOpen || false,
-            claimingIsOpen: deal.claimingIsOpen || false,
-            incomplete: deal.incomplete || false,
-            isClosed: deal.isClosed || !deal.createdAt,
-            isPaused: deal.isPaused || false,
-          };
-        });
-    });
+            /**
+             * rootId is just some way of identifying where in Ceramic to search for this list of Deal ids.
+             */
+            const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
+
+            for (const dealId of dealIds) {
+              const deal = this.createSeedFromConfig(dealId);
+              dealsMap.set(dealId, deal);
+              /**
+               * remove the deal if it is corrupt
+               */
+              this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
+                if (newValue) { // pretty much the only case
+                  this.deals.delete(deal.id);
+                }
+              });
+              this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
+              deal.initialize(); // set this off asyncronously.
+            }
+            this.deals = dealsMap;
+            this.initializing = false;
+            resolve();
+          }
+          catch (error) {
+            this.deals = new Map();
+            // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
+            this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
+            this.initializing = false;
+            reject();
+          }
+        }
+      },
+    );
+  }
+
+  private createSeedFromConfig(dealId: Hash): Deal {
+    const deal = this.container.get(Deal);
+    return deal.create(dealId);
+  }
+
+  public ensureInitialized(): Promise<void> {
+    return this.initializedPromise;
+  }
+
+  public async ensureAllDealsInitialized(): Promise<void> {
+    await this.ensureInitialized();
+    for (const deal of this.dealsArray) {
+      await deal.ensureInitialized();
+    }
+  }
+
+  public async createRegistration(registration: IDealConfig): Promise<void> {
+    this.dataSourceDeals.save("key", registration);
+  }
+
+  /**
+   * has to be able to update individual parts of the registration or any other data (votes, discussions)
+   */
+  public async updateDealRegistration(registration: IDealConfig): Promise<void> {
+    this.dataSourceDeals.save("key", registration);
   }
 
   private _featuredDeals: Array<IDealConfig>;
@@ -129,6 +181,9 @@ export class DealService {
   //   // TODO
   // }
 
+  /**
+   * TODO: move this to a `DaosService`
+   */
   public async getDAOsInformation(): Promise<void> {
     // TODO
     const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
