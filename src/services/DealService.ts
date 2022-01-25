@@ -66,8 +66,8 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    this.getDeals();
-    this.getDAOsInformation();
+    this.getDealsIPFS();
+    // this.getDAOsInformation();
   }
 
   public async getDeals(): Promise<IDummyDeal[]> {
@@ -82,6 +82,7 @@ export class DealService {
     return Promise.resolve(PARTNERED_DEALS_MOCK);
   }
 
+  private async getDealsIPFS(): Promise<void> {
     const hashes = await this.ipfsService.getPinnedObjectsHashes();
     hashes.forEach( async (hash:string) => {
       this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
@@ -125,7 +126,7 @@ export class DealService {
       return await this._featuredDeals;
     }
     else {
-      await this.getDeals();
+      await this.getDealsIPFS();
       /**
        * take the first three deals in order of when they start(ed), if they either haven't
        * started or are live.
@@ -159,7 +160,7 @@ export class DealService {
   }
 
   public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
-    if (!this.DAOs) await this.getDAOsInformation;
+    // if (!this.DAOs) await this.getDAOsInformation;
 
     const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
     return dao;
