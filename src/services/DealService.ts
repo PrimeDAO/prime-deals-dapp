@@ -3,6 +3,8 @@ import { IpfsService } from "./IpfsService";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { IDealConfig } from "../registry-wizard/dealConfig";
+import { OPEN_DEALS_MOCK, PARTNERED_DEALS_MOCK } from "entities/MockDealEntity";
+import { IDummyDeal } from "entities/Deal";
 
 export interface IDealCreatedEventArgs {
   newDeal: Address;
@@ -68,7 +70,18 @@ export class DealService {
     this.getDAOsInformation();
   }
 
-  private async getDeals(): Promise<void> {
+  public async getDeals(): Promise<IDummyDeal[]> {
+    return Promise.resolve(OPEN_DEALS_MOCK);
+  }
+
+  public async getOpenDeals(): Promise<IDummyDeal[]> {
+    return Promise.resolve(OPEN_DEALS_MOCK);
+  }
+
+  public async getPartneredDeals(): Promise<IDummyDeal[]> {
+    return Promise.resolve(PARTNERED_DEALS_MOCK);
+  }
+
     const hashes = await this.ipfsService.getPinnedObjectsHashes();
     hashes.forEach( async (hash:string) => {
       this.dealsObject[hash] = await (this.ipfsService.getObjectFromHash(hash) as Promise<IDealConfig>)
