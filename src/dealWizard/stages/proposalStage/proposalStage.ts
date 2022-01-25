@@ -8,9 +8,9 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public errors: Record<string, string> = {};
+  public errors: IProposalErrorStates = {};
 
-  constructor(public wizardService: WizardService) {}
+  constructor(public wizardService: WizardService, public wizardValidationService: WizardValidationService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
     this.wizardManager = routeConfig.settings.wizardManager;
@@ -21,23 +21,7 @@ export class ProposalStage implements IBaseWizardStage {
   }
 
   validateInputs(): boolean {
-    this.errors = {};
-
-    if (!this.wizardState.registrationData.proposal.title) {
-      this.errors.title = "Required Input";
-    }
-
-    if (!this.wizardState.registrationData.proposal.summary) {
-      this.errors.summary = "Required Input";
-    } else if (this.wizardState.registrationData.proposal.summary.length < 10) {
-      this.errors.summary = "Input is too short";
-    }
-
-    if (!this.wizardState.registrationData.proposal.description) {
-      this.errors.description = "Required Input";
-    } else if (this.wizardState.registrationData.proposal.description.length < 10) {
-      this.errors.description = "Input is too short";
-    }
+    this.errors = this.wizardValidationService.externalValidation(this.wizardState);
 
     const valid = !Object.keys(this.errors).length;
 
