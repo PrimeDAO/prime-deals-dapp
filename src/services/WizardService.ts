@@ -107,9 +107,10 @@ export class WizardService {
     }
   }
 
-  // public submit(wizardManager: any, valid: boolean): void {
-  //   console.log("submit", wizardManager, valid);
-  // }
+  public submit(wizardManager: any, valid: boolean): void {
+    // eslint-disable-next-line no-console
+    console.log("submit", wizardManager, valid);
+  }
 
   public goToStage(wizardManager: any, index: number): void {
     const wizard = this.getWizard(wizardManager);

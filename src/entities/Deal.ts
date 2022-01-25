@@ -58,6 +58,7 @@ export class Deal {
   }
 
   private async hydrate(): Promise<void> {
+    // eslint-disable-next-line no-empty
     try {
       //
     }
@@ -76,6 +77,7 @@ export class Deal {
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
+    // eslint-disable-next-line no-empty
     if (account) {
       //
     }

@@ -1,7 +1,7 @@
 <template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
 
   <textarea
-    class="pInput ${ validationState ? 'pInput-' + validationState : '' }"
+    class="pInput ${ validationState ? 'pInput-' + validationState : '' } ${resizable ? 'resizable': ''}"
     disabled.bind="disabled"
     value.bind="value"
     focus.bind="inFocus"
