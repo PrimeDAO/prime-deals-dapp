@@ -4,6 +4,10 @@ ptextarea.pInput-parent {
   textarea.pInput {
     height: auto;
     overflow: auto;
+
+    &.resizable{
+      resize: vertical;
+    }
   }
 
   .feedback-icon {

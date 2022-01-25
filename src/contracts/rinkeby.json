@@ -1587,7 +1587,8 @@
       ]
     },
     "Prime": {
-      "abi": "ERC20"
+      "abi": "ERC20",
+      "address": "0xF70d807A0828d2498fa01246c88bA5BaCd70889b"
     },
     "WETH": {
       "abi": "ERC20",
