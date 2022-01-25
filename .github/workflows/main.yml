@@ -11,6 +11,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Install modules
-      run: npm install
+      run: npm ci
     - name: Run ESLint
       run: npm run lint
