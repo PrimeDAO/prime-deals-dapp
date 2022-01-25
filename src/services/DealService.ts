@@ -155,32 +155,6 @@ export class DealService {
     this.dataSourceDeals.save("key", registration);
   }
 
-  private _featuredDeals: Array<IDealConfig>;
-
-  public async getFeaturedDeals(): Promise<Array<IDealConfig>> {
-
-    if (this._featuredDeals) {
-      // console.log("returning cached featured deals");
-      return await this._featuredDeals;
-    }
-    else {
-      await this.getDeals();
-      /**
-       * take the first three deals in order of when they start(ed), if they either haven't
-       * started or are live.
-        */
-      if (this.dealsObject) {
-        const temp:Array<IDealConfig> = Object.values(this.dealsObject);
-        this._featuredDeals = temp.sort((a: any, b: any) => a.startsInMilliseconds - b.startsInMilliseconds).slice(0, 12);
-        return this._featuredDeals;
-      }
-    }
-  }
-
-  // public async deployDeal(config: IDealConfig): Promise<Hash> {
-  //   // TODO
-  // }
-
   /**
    * TODO: move this to a `DaosService`
    */

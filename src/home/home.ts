@@ -21,11 +21,6 @@ export class Home {
   }
 
   attached(): void {
-    this.dealService.getFeaturedDeals().then((deals) => {
-      this.featuredDeals = [...deals];
-      this._openDeals = [...this.featuredDeals];
-    });
-
     // this._runningDeals = [...this.featuredDeals];
     this._runningDeals = [
       {
