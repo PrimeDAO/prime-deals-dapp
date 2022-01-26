@@ -52,3 +52,67 @@ $font-size3: 18px;
 
   @include spin;
 }
+
+/* Typography sizes */
+$text-xs: 12px;
+$text-sm: 14px;
+$text-base: 16px;
+$text-lg: 18px;
+$text-xl: 20px;
+$text-2xl: 24px;
+$text-3xl: 30px;
+$text-4xl: 36px;
+$text-5xl: 48px;
+$text-6xl: 60px;
+$text-7xl: 72px;
+$text-8xl: 96px;
+$text-9xl: 128px;
+
+/* Typography weights */
+$font-thin: 100;
+$font-extralight: 200;
+$font-light: 300;
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+$font-extrabold: 800;
+$font-black: 900;
+
+/* Spacing */
+$space-base: 4px;
+$space-0: 0;
+$space-px: 1px;
+$space-0-5: $space-base * 0.5px;
+$space-1: $space-base * 1px;
+$space-1-5: $space-base * 1.5px;
+$space-2: $space-base * 2px;
+$space-2-5: $space-base * 2.5px;
+$space-3: $space-base * 3px;
+$space-3-5: $space-base * 3.5px;
+$space-4: $space-base * 4px;
+$space-5: $space-base * 5px;
+$space-6: $space-base * 6px;
+$space-7: $space-base * 7px;
+$space-8: $space-base * 8px;
+$space-9: $space-base * 9px;
+$space-10: $space-base * 10px;
+$space-11: $space-base * 11px;
+$space-12: $space-base * 12px;
+$space-14: $space-base * 14px;
+$space-16: $space-base * 16px;
+$space-20: $space-base * 20px;
+$space-24: $space-base * 24px;
+$space-28: $space-base * 28px;
+$space-32: $space-base * 32px;
+$space-36: $space-base * 36px;
+$space-40: $space-base * 40px;
+$space-44: $space-base * 44px;
+$space-48: $space-base * 48px;
+$space-52: $space-base * 52px;
+$space-56: $space-base * 56px;
+$space-60: $space-base * 60px;
+$space-64: $space-base * 64px;
+$space-72: $space-base * 72px;
+$space-80: $space-base * 80px;
+$space-96: $space-base * 96px;
