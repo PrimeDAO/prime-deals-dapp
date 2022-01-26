@@ -220,6 +220,9 @@ export class App {
         route: ["storybook"],
         title: "Storybook",
       },
+      {
+        route: "storybook/*componentName", moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demosWelcome/demosWelcome"),
+      },
     ]);
 
     config.fallbackRoute("home");
