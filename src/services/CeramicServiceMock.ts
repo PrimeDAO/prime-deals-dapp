@@ -21,15 +21,13 @@ const MOCK_DATA = {
   },
 } as const;
 
-type MockDataKeys = keyof typeof MOCK_DATA
-
 export class CeramicServiceMock implements DataSourceDeals {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   initialize(rootId?: string): void {
     // throw new Error("Method not implemented.");
   }
 
-  get<T>(id: MockDataKeys): T {
+  get<T>(id: string): T {
     return MOCK_DATA[id] as unknown as T;
   }
 
