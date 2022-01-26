@@ -200,13 +200,6 @@ export class App {
         title: "DEAL Dashboard",
       },
       {
-        moduleId: PLATFORM.moduleName("./registry-wizard/registry-wizard"),
-        nav: false,
-        name: "newDeal",
-        route: "/initiate/new/:type",
-        title: "Initiate a New Deal",
-      },
-      {
         moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
         name: "comingSoon",
