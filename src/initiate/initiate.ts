@@ -1,34 +1,18 @@
-import { Router } from "aurelia-router";
-import { autoinject } from "aurelia-framework";
-import "./initiate.scss";
+import { IDealTypeBox } from "./dealTypeSelector/dealTypeSelector";
 
-interface IBoxes {
-  name: string,
-  slug: string,
-  isDisabled: boolean,
-  slot: string,
-}
-
-@autoinject
 export class Initiate {
-  boxes: IBoxes[] = [
+  boxes: IDealTypeBox[] = [
+    {
+      name: "Token Swap",
+      slug: "initiate/token-swap",
+      isDisabled: false,
+      description: "Trustlessly exchange tokens between multiple parties with customized vesting options.",
+    },
     {
       name: "Joint Venture",
       slug: "joint-venture",
       isDisabled: true,
-      slot: "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat.",
-    },
-    {
-      name: "Token Swap",
-      slug: "token-swap",
-      isDisabled: false,
-      slot: "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat.",
+      description: "DAO's collaborate to launch new domain-specific DAO's or entities. ",
     },
   ];
-
-  constructor(private router: Router) { }
-
-  navigate(href: string, args): void {
-    this.router.navigateToRoute(href, args);
-  }
 }
