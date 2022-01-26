@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { IStepperStep } from "../types";
+import { IStepperStep } from "../../types";
 
 export class PStepper {
   steps1: IStepperStep[] = [{

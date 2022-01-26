@@ -7,7 +7,7 @@ export class DemosWelcome {
     if (params.componentName) {
       const { componentName } = params;
       this.componentName = componentName;
-      this.viewModel = `../${componentName}`;
+      this.viewModel = `../${componentName}/${componentName}`;
     }
   }
 
