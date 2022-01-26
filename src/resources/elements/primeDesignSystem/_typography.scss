@@ -1,0 +1,42 @@
+@import "./variables";
+
+.Title {
+  font-size: $text-6xl;
+  font-weight: $font-bold;
+  @include standardTextGradient;
+}
+
+.Subtitle {
+  font-size: $text-2xl;
+  font-weight: $font-bold;
+}
+
+.Heading01 {
+  font-size: $text-5xl;
+  color: $Secondary02;
+  font-weight: $font-bold;
+}
+
+.Heading02 {
+  font-size: $text-3xl;
+  color: $Secondary02;
+  font-weight: $font-bold;
+}
+
+.Heading03 {
+  font-size: $text-2xl;
+  color: $Secondary02;
+  font-weight: $font-bold;
+}
+
+.BodyText {
+  font-size: $text-base;
+  color: $Neutral02;
+  font-weight: $font-normal;
+}
+
+.BodySmallText {
+  font-size: $text-sm;
+  color: $Neutral02;
+  font-weight: $font-normal;
+}
