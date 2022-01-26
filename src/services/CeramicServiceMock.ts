@@ -24,8 +24,7 @@ const MOCK_DATA = {
 type MockDataKeys = keyof typeof MOCK_DATA
 
 export class CeramicServiceMock implements DataSourceDeals {
-  constructor() {}
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   initialize(rootId?: string): void {
     // throw new Error("Method not implemented.");
   }
@@ -34,15 +33,18 @@ export class CeramicServiceMock implements DataSourceDeals {
     return MOCK_DATA[id] as unknown as T;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(registration: IDealConfig): Promise<string> {
     return Promise.resolve("");
     // throw new Error("Method not implemented.");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   save(id: string, registration: IDealConfig): void {
     // throw new Error("Method not implemented.");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(id: string, registration: IDealConfig): void {
     // throw new Error("Method not implemented.");
   }
