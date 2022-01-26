@@ -1,42 +1,77 @@
 @import "./variables";
 
-.Title {
-  font-size: $text-6xl;
-  font-weight: $font-bold;
+.standardTextGradient {
   @include standardTextGradient;
 }
 
-.Subtitle {
-  font-size: $text-2xl;
-  font-weight: $font-bold;
+.heading01 {
+  font-family: Inter;
+  font-size: 64px;
+  font-weight: 700;
 }
 
-.Heading01 {
-  font-size: $text-5xl;
+.heading01Gradient {
+  @extend .heading01;
+  @extend .standardTextGradient;
+}
+
+.heading02 {
+  font-family: Inter;
+  font-size: 48px;
+  font-weight: 700;
+  color: $Neutral03;
+}
+
+.heading02Gradient {
+  @extend .heading02;
+  @extend .standardTextGradient;
+}
+
+.heading03 {
+  font-family: Inter;
+  font-size: 28px;
+  font-weight: 700;
+
+}
+
+.heading04 {
+  font-family: Inter;
+  font-size: 22px;
+  font-weight: 700;
+  color: $Neutral03;
+  line-height: 33px;
+}
+
+.heading05 {
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.heading05Secondary {
+  @extend .heading05;
   color: $Secondary02;
-  font-weight: $font-bold;
 }
 
-.Heading02 {
-  font-size: $text-3xl;
-  color: $Secondary02;
-  font-weight: $font-bold;
+.normalText {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 24px;
+  color: $Neutral03;
+  font-weight: 400;
 }
 
-.Heading03 {
-  font-size: $text-2xl;
-  color: $Secondary02;
-  font-weight: $font-bold;
-}
-
-.BodyText {
-  font-size: $text-base;
+.bodyText {
+  font-family: Inter;
+  font-size: 16px;
   color: $Neutral02;
-  font-weight: $font-normal;
+  font-weight: 400;
+  line-height: 24px;
 }
 
-.BodySmallText {
-  font-size: $text-sm;
+.bodySmallText {
+  font-family: Inter;
+  font-size: 14px;
   color: $Neutral02;
-  font-weight: $font-normal;
+  font-weight: 400;
 }

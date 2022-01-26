@@ -9,19 +9,13 @@
     }
 
     &.top {
-      .title {
-        white-space: normal;
+      .heading01Gradient {
         padding-bottom: 5px;
       }
 
-      > .subtitle {
-        font-weight: 700;
-        font-size: 22px;
-        line-height: 33px;
+      > .heading04 {
         max-width: 485px;
-        color: $Neutral03;
         margin-bottom: 80px;
-        white-space: normal;
       }
 
       .cards {
@@ -29,11 +23,8 @@
         margin-bottom: 200px;
 
         pcard {
-          width: clamp(100px, 100%, 360px);
-
-          .pcard {
-            padding: 0 18px 24px 24px;
-          }
+          width: clamp(100px, 100%, 335px);
+          padding: 12px 24px 24px 24px;
 
           header {
             display: flex;
@@ -48,17 +39,13 @@
             }
           }
 
-          .subtitle {
-            line-height: 20px;
-            color: $Neutral03;
-          }
         }
 
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: start;
         cursor: pointer;
-        gap: 24px;
+        gap: 40px;
       }
     }
 
@@ -78,7 +65,6 @@
       }
 
       > .selector {
-        padding-bottom: 29px;
 
         :not(:first-child) {
           margin-left: 30px;
@@ -87,9 +73,7 @@
         > .selector-tab {
           cursor: pointer;
         }
-      }
 
-      > .heading1 {
         display: flex;
         -webkit-text-fill-color: $Neutral02;
         border-bottom: 2px solid $Border01;
@@ -135,7 +119,7 @@
 
     &.hero {
       display: grid;
-      grid-template-columns: minmax(auto, 450px) minmax(330px, 800px);
+      grid-template-columns: minmax(auto, 470px) minmax(330px, 800px);
       align-content: center;
       justify-content: space-between;
       column-gap: 24px;
@@ -143,21 +127,8 @@
       border-radius: 6px;
 
       .heroColumn {
-        &.title {
-          font-family: "Aeonik";
-          margin-bottom: 0px;
-        }
-
         display: grid;
         row-gap: 24px;
-
-        .subtitle.subtext {
-          color: $Secondary02;
-          font-size: 20px;
-          line-height: 24px;
-          font-weight: 700;
-          font-family: Inter;
-        }
 
         .notifyButton {
           border-radius: 100px;
@@ -209,20 +180,10 @@
       &.top,
       &.deals,
       &.hero .heroColumn {
-        > .title {
-          white-space: normal;
-          max-width: unset;
-          padding-left: unset;
-        }
       }
 
       &.top {
         width: 100%;
-
-        > .subtitle {
-          margin-bottom: 48px;
-          max-width: unset;
-        }
 
         .cards {
           justify-content: center;
@@ -239,6 +200,10 @@
           .scroller deal-summary {
             margin: 0;
             margin-bottom: 20px;
+
+            .dealSummary {
+              text-align: left;
+            }
           }
         }
       }
@@ -250,10 +215,6 @@
 
         .heroColumn {
           justify-content: center;
-
-          > .subtitle.subtext {
-            margin-bottom: 12px;
-          }
 
           & > .introVideo {
             justify-content: center;

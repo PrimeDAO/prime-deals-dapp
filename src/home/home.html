@@ -2,32 +2,33 @@
   <require from="../resources/elements/CounterPanel/CounterPanel"></require>
   <div class="page animated-page au-animate home">
     <div class="section top">
-      <div class="title heading heading0 gradient">Prime Deals</div>
-      <div class="subtitle">
-        An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation.
+      <div class="heading01Gradient">Prime Deals</div>
+      <div class="heading04">
+        An interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture
+        formation.
       </div>
       <div class="cards">
         <pcard type="gradient" click.delegate="navigate('deals')">
           <header>
-            <span class="heading left">All Deals</span>
+            <span class="heading03">View all Deals</span>
             <span class="icon center">&#8599;</span>
           </header>
-          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+          <div class="bodyText">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
         </pcard>
         <pcard data-test="all-deals-button" type="gradient" click.delegate="navigate('initiate')">
           <header>
-            <span class="heading">Initiate a Deal</span>
+            <span class="heading03">Initiate a Deal</span>
             <span class="icon">&#8599;</span>
           </header>
-          <div class="subtitle subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+          <div class="bodyText">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
         </pcard>
       </div>
 
       <!-- Deals Carousel -->
       <div class="section deals" if.to-view="!featuredDeals || featuredDeals.length">
-        <div class="title heading heading1 selector">
+        <div class="heading02Gradient selector">
           <span class="selector-tab ${cardIndex==0?'active':''}"
-                click.delegate="dealToggle(0, 'open')">Open Deals</span>
+                click.delegate="dealToggle(0, 'open')">Open Proposals</span>
           <span class="selector-tab ${cardIndex==1?'active':''}" click.delegate="dealToggle(1, 'partnered')">Partnered Deals</span>
         </div>
         <template if.to-view="featuredDeals && featuredDeals.length">
@@ -53,9 +54,11 @@
       <!-- Hero  -->
       <div class="section hero">
         <div class="heroColumn">
-          <div class="subtitle subtext gradient">How it works</div>
-          <div class="title heading heading1">Web3 partnerships made easy!</div>
-          <div class="disclaimer subtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>
+          <div class="heading05Secondary">How it works</div>
+          <div class="heading02">Web3 partnerships made easy!</div>
+          <div class="bodyText">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+          </div>
           <div class="cardContainer">
             <pbutton
               data-test="initiate-deal-button"
@@ -69,9 +72,10 @@
 
         <div class="heroColumn">
           <video class="introVideo" controls poster="//assets.codepen.io/32795/poster.png">
-            <source id='mp4' src="//media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
-            <source id='webm' src="//media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
-            <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' /> Video is not supported.
+            <source id='mp4' src="//media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4'/>
+            <source id='webm' src="//media.w3.org/2010/05/sintel/trailer.webm" type='video/webm'/>
+            <source id='ogv' src="//media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg'/>
+            Video is not supported.
           </video>
         </div>
       </div>
@@ -80,4 +84,5 @@
       <!-- <counter-panel class="section"></counter-panel> -->
 
     </div>
+  </div>
 </template>
