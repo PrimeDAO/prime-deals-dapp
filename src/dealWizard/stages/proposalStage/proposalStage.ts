@@ -22,19 +22,19 @@ export class ProposalStage implements IBaseWizardStage {
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizardState.wizardResult.proposal.title) {
+    if (!this.wizardState.registrationData.proposal.title) {
       this.errors.title = "Required Input";
     }
 
-    if (!this.wizardState.wizardResult.proposal.summary) {
+    if (!this.wizardState.registrationData.proposal.summary) {
       this.errors.summary = "Required Input";
-    } else if (this.wizardState.wizardResult.proposal.summary.length < 10) {
+    } else if (this.wizardState.registrationData.proposal.summary.length < 10) {
       this.errors.summary = "Input is too short";
     }
 
-    if (!this.wizardState.wizardResult.proposal.description) {
+    if (!this.wizardState.registrationData.proposal.description) {
       this.errors.description = "Required Input";
-    } else if (this.wizardState.wizardResult.proposal.description.length < 10) {
+    } else if (this.wizardState.registrationData.proposal.description.length < 10) {
       this.errors.description = "Input is too short";
     }
 

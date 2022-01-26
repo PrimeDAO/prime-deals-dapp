@@ -5,7 +5,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 export interface IWizardState {
   stages: Array<IWizardStage>;
   indexOfActive: number;
-  wizardResult: IWizardResult;
+  registrationData: IRegistrationData;
 }
 
 export interface IWizardStage {
@@ -16,7 +16,7 @@ export interface IWizardStage {
   settings?: {[key: string]: any};
 }
 
-export interface IWizardResult {
+export interface IRegistrationData {
   version: string;
   clearState: () => void,
   [key: string]: any;
@@ -32,14 +32,14 @@ export class WizardService {
   public registerWizard(
     wizardManager: any,
     stages: Array<IWizardStage>,
-    wizardResult: IWizardResult,
+    registrationData: IRegistrationData,
   ): IWizardState {
     this.wizardsStates.set(
       wizardManager,
       {
         stages,
         indexOfActive: 0,
-        wizardResult,
+        registrationData,
       },
     );
 

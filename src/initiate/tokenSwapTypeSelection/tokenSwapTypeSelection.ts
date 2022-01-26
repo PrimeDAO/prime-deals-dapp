@@ -10,7 +10,7 @@ export class Initiate {
     },
     {
       name: "Partnered Deal",
-      slug: "initiate",
+      slug: "initiate/token-swap/partnered-deal/stage1",
       isDisabled: false,
       description: "Select this option if you already have a partner DAO and would like to create a token swap deal with them.",
     },

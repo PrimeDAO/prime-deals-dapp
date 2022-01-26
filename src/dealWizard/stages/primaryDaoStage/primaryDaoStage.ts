@@ -24,7 +24,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizardState.wizardResult.primaryDAO.name) {
+    if (!this.wizardState.registrationData.primaryDAO.name) {
       this.errors.name = "Please enter the name of the Primary DAO";
     }
 

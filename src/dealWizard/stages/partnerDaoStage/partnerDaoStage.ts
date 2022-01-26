@@ -24,7 +24,7 @@ export class PartnerDaoStage implements IBaseWizardStage {
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizardState.wizardResult.partnerDAO.name) {
+    if (!this.wizardState.registrationData.partnerDAO.name) {
       this.errors.name = "Please enter the name of the Partner DAO";
     }
 

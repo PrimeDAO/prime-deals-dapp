@@ -24,7 +24,7 @@ export class MakeOfferProposalLeadStage implements IBaseWizardStage {
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizardState.wizardResult.proposalLead.address) {
+    if (!this.wizardState.registrationData.proposalLead.address) {
       this.errors.address = "Required Input";
     }
 

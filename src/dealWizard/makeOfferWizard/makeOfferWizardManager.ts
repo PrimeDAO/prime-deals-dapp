@@ -1,9 +1,10 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, useView } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { MakeOfferWizardResult } from "./makeOfferWizardResult";
 import { WizardService, IWizardState, IWizardStage } from "../../services/WizardService";
+import { RegistrationData } from "../registrationData";
 
+@useView(PLATFORM.moduleName("../wizardManager.html"))
 @autoinject
 export class MakeOfferWizardManager {
   public wizardState: IWizardState;
@@ -20,6 +21,10 @@ export class MakeOfferWizardManager {
     settings: {
       // @TODO this should be passed conditionally, that is if open proposal "keep admin rights" is set to true, we should pass true, otherwise false
       disabled: true,
+      // @TODO to pass information about what wizard it is
+      // instead of doing any logic here (such as disableThis: true, disableThat: false)
+      // we could provide a flag "makingAnOffer: true"
+      // and then the stage component could handle the logic
     },
   }, {
     name: "Primary DAO",
@@ -35,10 +40,10 @@ export class MakeOfferWizardManager {
     route: "stage4",
     moduleId: PLATFORM.moduleName("../stages/partnerDaoStage/partnerDaoStage"),
   }];
-  private wizardResult = new MakeOfferWizardResult();
+  private registrationData = new RegistrationData();
 
   constructor(public wizardService: WizardService) {
-    this.wizardState = this.wizardService.registerWizard(this, this.stages, this.wizardResult);
+    this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);
   }
 
   public onClick(index: number): void {

@@ -8,7 +8,7 @@
 
     <proposal-lead-section
       errors.bind="errors"
-      data.bind="wizardState.wizardResult.proposalLead"
+      data.bind="wizardState.registrationData.proposalLead"
       disabled.bind="disabled">
     </proposal-lead-section>
 
@@ -23,7 +23,7 @@
         <pform-input
           class="wizardFormInput"
           label="Make Deal Private">
-          <ptoggle value.bind="wizardState.wizardResult.isPrivate" disabled.bind="disabled"></ptoggle>
+          <ptoggle value.bind="wizardState.registrationData.isPrivate" disabled.bind="disabled"></ptoggle>
         </pform-input>
       </div>
     </div>

@@ -19,7 +19,7 @@
           validation-message.bind="errors.title"
           show-counter
           max-length="50">
-          <pinput-text value.bind="wizardState.wizardResult.proposal.title"></pinput-text>
+          <pinput-text value.bind="wizardState.registrationData.proposal.title"></pinput-text>
         </pform-input>
 
         <pform-input
@@ -30,7 +30,7 @@
           validation-message.bind="errors.summary"
           show-counter
           max-length="250">
-          <ptextarea value.bind="wizardState.wizardResult.proposal.summary" rows="7"></ptextarea>
+          <ptextarea value.bind="wizardState.registrationData.proposal.summary" rows="7"></ptextarea>
         </pform-input>
 
         <pform-input
@@ -41,7 +41,7 @@
           validation-message.bind="errors.description"
           show-counter
           max-length="1000">
-          <ptextarea value.bind="wizardState.wizardResult.proposal.description" rows="7"></ptextarea>
+          <ptextarea value.bind="wizardState.registrationData.proposal.description" rows="7"></ptextarea>
         </pform-input>
       </div>
     </div>

@@ -158,6 +158,13 @@ export class App {
         title: "Initiate an Open Proposal",
       },
       {
+        moduleId: PLATFORM.moduleName("./dealWizard/partneredDealWizard/partneredDealWizardManager"),
+        nav: false,
+        name: "partneredDealWizard",
+        route: "/initiate/token-swap/partnered-deal",
+        title: "Create a Partnered Deal",
+      },
+      {
         moduleId: PLATFORM.moduleName("./dealWizard/makeOfferWizard/makeOfferWizardManager"),
         nav: false,
         name: "makeOfferWizard",

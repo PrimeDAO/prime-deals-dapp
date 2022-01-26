@@ -8,7 +8,7 @@
 
     <proposal-lead-section
       errors.bind="errors"
-      data.bind="wizardState.wizardResult.proposalLead">
+      data.bind="wizardState.registrationData.proposalLead">
     </proposal-lead-section>
 
     <div class="stageSection">
@@ -25,7 +25,7 @@
         <pform-input
           class="wizardFormInput"
           label="Keep Admin Rights With All Incoming Offers">
-          <ptoggle value.bind="wizardState.wizardResult.keepAdminRights"></ptoggle>
+          <ptoggle value.bind="wizardState.registrationData.keepAdminRights"></ptoggle>
         </pform-input>
       </div>
     </div>
@@ -41,7 +41,7 @@
         <pform-input
           class="wizardFormInput"
           label="Make Offers Private">
-          <ptoggle value.bind="wizardState.wizardResult.offersPrivate"></ptoggle>
+          <ptoggle value.bind="wizardState.registrationData.offersPrivate"></ptoggle>
         </pform-input>
       </div>
     </div>
