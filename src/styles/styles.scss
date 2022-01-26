@@ -1,15 +1,9 @@
 @import "./animations";
-@import "../resources//elements//primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/colors";
 @import "./colors";
 @import "tippy.js/dist/tippy.css"; // TODO: use CDN?
 @import "the-new-css-reset/css/reset.css";
-
-@mixin standardTextGradient {
-  background-image: $Gradient01;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 @mixin tokenIcon {
   width: 19px;

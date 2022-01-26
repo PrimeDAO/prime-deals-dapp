@@ -1,0 +1,77 @@
+@import "./variables";
+
+.standardTextGradient {
+  @include standardTextGradient;
+}
+
+.heading01 {
+  font-family: Inter;
+  font-size: 64px;
+  font-weight: 700;
+}
+
+.heading01Gradient {
+  @extend .heading01;
+  @extend .standardTextGradient;
+}
+
+.heading02 {
+  font-family: Inter;
+  font-size: 48px;
+  font-weight: 700;
+  color: $Neutral03;
+}
+
+.heading02Gradient {
+  @extend .heading02;
+  @extend .standardTextGradient;
+}
+
+.heading03 {
+  font-family: Inter;
+  font-size: 28px;
+  font-weight: 700;
+
+}
+
+.heading04 {
+  font-family: Inter;
+  font-size: 22px;
+  font-weight: 700;
+  color: $Neutral03;
+  line-height: 33px;
+}
+
+.heading05 {
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.heading05Secondary {
+  @extend .heading05;
+  color: $Secondary02;
+}
+
+.normalText {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 24px;
+  color: $Neutral03;
+  font-weight: 400;
+}
+
+.bodyText {
+  font-family: Inter;
+  font-size: 16px;
+  color: $Neutral02;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.bodySmallText {
+  font-family: Inter;
+  font-size: 14px;
+  color: $Neutral02;
+  font-weight: 400;
+}

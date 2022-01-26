@@ -2,39 +2,33 @@
   <div class="timeLeftContainer ${contained ? 'contained' : ''}">
     <div class="mainStatus">
       <div
-        if.to-view="!deal.uninitialized && deal.hasNotStarted && !deal.incomplete"
+        class="timeLeft ${(proximity===1) ? 'soon' : ((proximity===2) ? 'comingUp' : 'farOff' )}"
         ref="timeLeft"
-        class="timeLeft ${(proximity===1) ? 'soon' : ((proximity===2) ? 'comingUp' : 'farOff' )}">
-        <span if.to-view="!hideIcons" class="icon far fa-clock"></span>${deal.startsInMilliseconds | timespan:"minutes":largest} left
+        if.to-view="deal.status !== 'uninitialized' && deal.status === 'hasNotStarted' && deal.status !== 'incomplete'"
+      >
+        <span if.to-view="!hideIcons" class="icon far fa-clock"></span>${deal.startsInMilliseconds | timespan
+      :
+      "minutes"
+      :
+      largest} left
       </div>
-      <div
-        if.to-view="deal.contributingIsOpen"
-        class="live">
-        <span if.to-view="!hideIcons" class="icon fa fa-circle"></span>LIVE
+      <div class="live" if.to-view="deal.status === 'contributingIsOpen'">
+        Open
       </div>
-      <div
-        if.to-view="deal.claimingIsOpen"
-        class="complete">
-        <span if.to-view="!hideIcons" class="icon fa fa-circle"></span>COMPLETE
+      <div class="complete" if.to-view="deal.status === 'claimingIsOpen'">
+        Completed
       </div>
-      <div
-        if.to-view="deal.incomplete"
-        class="incomplete">
-        <span if.to-view="!hideIcons" class="icon fa fa-circle"></span>INCOMPLETE
+      <div class="incomplete" if.to-view="deal.status === 'incomplete'">
+        Incomplete
       </div>
-      <div
-        if.to-view="deal.uninitialized && !deal.isClosed && !deal.isPaused"
-        class="uninitialized">
-        <span if.to-view="!hideIcons" class="icon fa fa-circle"></span>UNINITIALIZED
+      <div class="uninitialized"
+           if.to-view="deal.status === 'uninitialized' && deal.status !== 'isClosed' && deal.status !== 'isPaused'">
+        Uninitialized
       </div>
     </div>
     <div class="adminStatus">
-      <div
-        if.to-view="deal.isPaused"
-        class="paused">PAUSED</div>
-      <div
-        if.to-view="deal.isClosed"
-        class="closed">CLOSED</div>
+      <div class="paused" if.to-view="deal.status === 'isPaused'">PAUSED</div>
+      <div class="closed" if.to-view="deal.status === 'isClosed'">CLOSED</div>
     </div>
   </div>
 </template>
