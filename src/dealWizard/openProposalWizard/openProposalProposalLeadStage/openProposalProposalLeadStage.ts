@@ -1,13 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizard } from "services/WizardService";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import "../wizardStage.scss";
+import { WizardService, IWizardState } from "../../../services/WizardService";
 
 @autoinject
-export class PrimaryDAO implements IBaseWizardStage {
+export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
@@ -17,19 +16,19 @@ export class PrimaryDAO implements IBaseWizardStage {
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.daos[0].name) {
-      this.errors.name = "Please enter the name of the Primary DAO";
+    if (!this.wizardState.registrationData.proposalLead.address) {
+      this.errors.address = "Required Input";
     }
 
     const valid = !Object.keys(this.errors).length;
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+    this.wizardService.updateStageValidity(this.wizardManager, valid);
 
     return valid;
   }
