@@ -133,8 +133,8 @@ export class WizardService {
 
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
-    this.router.navigate(wizardState.stages[index].route);
     wizardState.indexOfActive = index;
+    this.router.navigate(wizardState.stages[index].route);
   }
 
   private updateIndexOfActiveBaseOnRoute(wizardManager: any, stageRoute: string): void {

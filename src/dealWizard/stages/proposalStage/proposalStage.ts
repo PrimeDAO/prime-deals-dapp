@@ -10,7 +10,7 @@ export class ProposalStage implements IBaseWizardStage {
   public wizardState: IWizardState<IDealRegistrationData>;
   public stage: IWizardStage<IProposalStageErrors>;
 
-  constructor(public wizardService: WizardService, public wizardValidationService: WizardValidationService) {}
+  constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
     this.wizardManager = routeConfig.settings.wizardManager;

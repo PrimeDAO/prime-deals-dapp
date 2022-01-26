@@ -13,10 +13,11 @@ export class PartneredDealWizardManager {
     valid: false,
     route: "stage1",
     moduleId: PLATFORM.moduleName("../stages/proposalStage/proposalStage"),
+    validationMethod: this.wizardValidationService.validateProposalStage,
   }];
   private registrationData = new DealRegistrationData();
 
-  constructor(public wizardService: WizardService) {
+  constructor(public wizardService: WizardService, private wizardValidationService: WizardValidationService) {
     this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);
   }
 

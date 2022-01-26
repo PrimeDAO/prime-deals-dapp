@@ -19,6 +19,7 @@ export class OpenProposalWizardManager {
     valid: false,
     route: "stage2",
     moduleId: PLATFORM.moduleName("./openProposalProposalLeadStage/openProposalProposalLeadStage"),
+    validationMethod: this.wizardValidationService.validateProposalLeadStage,
   }, {
     name: "Primary DAO",
     valid: false,

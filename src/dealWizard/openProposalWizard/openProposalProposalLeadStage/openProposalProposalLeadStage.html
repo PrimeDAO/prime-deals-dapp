@@ -4,9 +4,8 @@
   <stage-wrapper
     title="Proposal Lead"
     wizard-manager.bind="wizardManager">
-
     <proposal-lead-section
-      errors.bind="errors"
+      errors.bind="stage.errors"
       data.bind="wizardState.registrationData.proposalLead">
     </proposal-lead-section>
 

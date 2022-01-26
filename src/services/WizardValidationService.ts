@@ -6,28 +6,48 @@ export interface IProposalStageErrors {
   description?: string;
 }
 
+export interface IProposalLeadStageErrors {
+  address?: string;
+}
+
 export class WizardValidationService {
 
-  validateProposalStage(source: IWizardState): {
+  validateProposalStage(wizardState: IWizardState): {
     valid: boolean;
-    errors: any
+    errors: IProposalStageErrors
   } {
     const errors: IProposalStageErrors = {};
 
-    if (!source.wizardResult.proposal.title) {
+    if (!wizardState.registrationData.proposal.title) {
       errors.title = "Required Input";
     }
 
-    if (!source.wizardResult.proposal.summary) {
+    if (!wizardState.registrationData.proposal.summary) {
       errors.summary = "Required Input";
-    } else if (source.wizardResult.proposal.summary.length < 10) {
+    } else if (wizardState.registrationData.proposal.summary.length < 10) {
       errors.summary = "Input is too short";
     }
 
-    if (!source.wizardResult.proposal.description) {
+    if (!wizardState.registrationData.proposal.description) {
       errors.description = "Required Input";
-    } else if (source.wizardResult.proposal.description.length < 10) {
+    } else if (wizardState.registrationData.proposal.description.length < 10) {
       errors.description = "Input is too short";
+    }
+
+    return {
+      valid: !Object.keys(errors).length,
+      errors,
+    };
+  }
+
+  validateProposalLeadStage(wizardState: IWizardState): {
+    valid: boolean;
+    errors: IProposalLeadStageErrors
+  } {
+    const errors: IProposalLeadStageErrors = {};
+
+    if (!wizardState.registrationData.proposalLead.address) {
+      errors.address = "Required Input";
     }
 
     return {
