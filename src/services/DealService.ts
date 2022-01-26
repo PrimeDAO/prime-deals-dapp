@@ -3,11 +3,10 @@ import { Address, Hash } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { IDealConfig } from "../registry-wizard/dealConfig";
 import { Deal } from "entities/Deal";
-import { IDataSourceDeals } from "../services/IDataSource";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { CeramicServiceMock } from "./CeramicServiceMock";
+import { DataSourceDeals } from "./DataSourceDeals";
 
 export interface IDaoPartner {
   daoId: string,
@@ -69,7 +68,7 @@ export class DealService {
   public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: CeramicServiceMock,
+    private dataSourceDeals: DataSourceDeals,
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,

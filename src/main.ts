@@ -16,7 +16,7 @@ import { TimingService } from "services/TimingService";
 import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { Deal } from "entities/Deal";
-import { IDataSourceDeals } from "./services/IDataSource";
+import { DataSourceDeals } from "services/DataSourceDeals";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -29,7 +29,7 @@ export function configure(aurelia: Aurelia): void {
       configuration.settings.keyboard = false;
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
-  aurelia.use.singleton(CeramicServiceMock, CeramicServiceMock);
+  aurelia.use.singleton(DataSourceDeals, CeramicServiceMock);
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";

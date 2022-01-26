@@ -3,9 +3,8 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { IDataSourceDeals } from "services/IDataSource";
 import { IDealConfig } from "registry-wizard/dealConfig";
-import { CeramicServiceMock } from "services/CeramicServiceMock";
+import { DataSourceDeals } from "services/DataSourceDeals";
 
 export interface IDealsData {
   // votes: Array<IVoteInfo>;
@@ -51,7 +50,7 @@ export class Deal {
   constructor(
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
-    private dataSourceDeals: CeramicServiceMock,
+    private dataSourceDeals: DataSourceDeals,
   ) {
   }
 

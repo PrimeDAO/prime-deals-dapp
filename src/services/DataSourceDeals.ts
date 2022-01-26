@@ -1,34 +1,21 @@
 import { IDealConfig } from "registry-wizard/dealConfig";
-import { DataSourceDeals } from "./DataSourceDeals";
+import { IDataSourceDeals } from "./IDataSource";
 
-const MOCK_DATA = {
-  "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
-  "open_deals_stream_id": {},
-  "partner_deals_stream_id": {},
-} as const;
-
-type MockDataKeys = keyof typeof MOCK_DATA
-
-export class CeramicServiceMock implements DataSourceDeals {
-  constructor() {}
-
+export class DataSourceDeals implements IDataSourceDeals {
   initialize(rootId?: string): void {
     // throw new Error("Method not implemented.");
   }
-
-  get<T>(id: MockDataKeys): T {
-    return MOCK_DATA[id] as T;
+  get<T>(id?: string): T {
+    return;
+    // throw new Error("Method not implemented.");
   }
-
   create(registration: IDealConfig): Promise<string> {
     return Promise.resolve("");
     // throw new Error("Method not implemented.");
   }
-
   save(id: string, registration: IDealConfig): void {
     // throw new Error("Method not implemented.");
   }
-
   update(id: string, registration: IDealConfig): void {
     // throw new Error("Method not implemented.");
   }
