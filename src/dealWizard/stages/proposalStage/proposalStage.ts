@@ -8,7 +8,7 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public errors: IProposalErrorStates = {};
+  public stage: IWizardStage<IProposalStageErrors>;
 
   constructor(public wizardService: WizardService, public wizardValidationService: WizardValidationService) {}
 
@@ -18,15 +18,6 @@ export class ProposalStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-  }
-
-  validateInputs(): boolean {
-    this.errors = this.wizardValidationService.externalValidation(this.wizardState);
-
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
+    this.stage = this.wizardState.stages[this.wizardState.indexOfActive];
   }
 }

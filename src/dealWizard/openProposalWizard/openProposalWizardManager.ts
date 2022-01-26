@@ -13,6 +13,7 @@ export class OpenProposalWizardManager {
     valid: false,
     route: "stage1",
     moduleId: PLATFORM.moduleName("../stages/proposalStage/proposalStage"),
+    validationMethod: this.wizardValidationService.validateProposalStage,
   }, {
     name: "Lead Details",
     valid: false,
@@ -26,7 +27,10 @@ export class OpenProposalWizardManager {
   }];
   private registrationData = new DealRegistrationData();
 
-  constructor(public wizardService: WizardService) {
+  constructor(
+    public wizardService: WizardService,
+    private wizardValidationService: WizardValidationService,
+  ) {
     this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);
   }
 

@@ -1,3 +1,12 @@
 <template>
-  <compose view="../components/wizardManager.html"></compose>
+  <div>
+    <pstepper
+      steps.bind="wizardState.stages"
+      index-of-active.bind="wizardState.indexOfActive"
+      on-click.call="onClick(index)">
+    </pstepper>
+    <div>
+      <router-view></router-view>
+    </div>
+  </div>
 </template>

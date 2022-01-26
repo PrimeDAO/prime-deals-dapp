@@ -1,3 +1,4 @@
+import { WizardValidationService } from "./WizardValidationService";
 import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -8,12 +9,18 @@ export interface IWizardState<Data = any> {
   registrationData: Data;
 }
 
-export interface IWizardStage {
+export interface IWizardStage<Errors = any> {
   name: string;
   valid: boolean;
   route: any;
   moduleId: any
   settings?: {[key: string]: any};
+  errors?: Errors;
+  validationMethod?: any;
+  // validationMethod?: () => {
+  //   valid: boolean;
+  //   errors: Errors;
+  // };
 }
 
 @autoinject
@@ -21,7 +28,10 @@ export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
   private router: Router;
 
-  constructor(private eventAggregator: EventAggregator){}
+  constructor(
+    private eventAggregator: EventAggregator,
+    private wizardValidationService: WizardValidationService,
+  ){}
 
   public registerWizard<Data>(
     wizardManager: any,
@@ -77,6 +87,11 @@ export class WizardService {
     return wizardState.stages[wizardState.indexOfActive];
   }
 
+  public getActiveStageErrors(wizardManager: any): any {
+    const wizardState = this.getWizardState(wizardManager);
+    return wizardState.stages[wizardState.indexOfActive].errors;
+  }
+
   public updateStageValidity(wizardManager: any, valid: boolean) {
     this.getActiveStage(wizardManager).valid = valid;
   }
@@ -85,12 +100,16 @@ export class WizardService {
     this.router.parent.navigate("home");
   }
 
-  public proceed(wizardManager: any, valid: boolean): void {
-    if (!valid) {
-      return;
-    }
+  public proceed(wizardManager: any): void {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
+    const validation = wizardState.stages[indexOfActive].validationMethod(wizardState);
+    wizardState.stages[indexOfActive].errors = validation.errors;
+    wizardState.stages[indexOfActive].valid = validation.valid;
+
+    if (!wizardState.stages[indexOfActive].valid) {
+      return;
+    }
 
     if (indexOfActive < wizardState.stages.length - 1) {
       this.goToStage(wizardManager, indexOfActive + 1);

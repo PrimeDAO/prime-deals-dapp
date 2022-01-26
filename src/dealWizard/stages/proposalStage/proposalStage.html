@@ -2,8 +2,7 @@
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <stage-wrapper
     title="Token Swap Proposal"
-    wizard-manager.bind="wizardManager"
-    validate.call="validateInputs()">
+    wizard-manager.bind="wizardManager">
     <div class="stageSection">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Proposal</h2>
@@ -15,8 +14,8 @@
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Title"
-          validation-state.bind="errors.title ? 'error' : ''"
-          validation-message.bind="errors.title"
+          validation-state.bind="stage.errors.title ? 'error' : ''"
+          validation-message.bind="stage.errors.title"
           show-counter
           max-length="50">
           <pinput-text value.bind="wizardState.registrationData.proposal.title"></pinput-text>
@@ -26,8 +25,8 @@
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Summary"
           label-info="Give a brief outline of the Token swap deal."
-          validation-state.bind="errors.summary ? 'error' : ''"
-          validation-message.bind="errors.summary"
+          validation-state.bind="stage.errors.summary ? 'error' : ''"
+          validation-message.bind="stage.errors.summary"
           show-counter
           max-length="250">
           <ptextarea value.bind="wizardState.registrationData.proposal.summary" rows="7"></ptextarea>
@@ -37,8 +36,8 @@
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Description"
           label-info="Give a precise idea of the Token swap, its background, uniqueness, and features."
-          validation-state.bind="errors.description ? 'error' : ''"
-          validation-message.bind="errors.description"
+          validation-state.bind="stage.errors.description ? 'error' : ''"
+          validation-message.bind="stage.errors.description"
           show-counter
           max-length="1000">
           <ptextarea value.bind="wizardState.registrationData.proposal.description" rows="7"></ptextarea>

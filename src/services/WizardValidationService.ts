@@ -1,6 +1,6 @@
 import { IWizardState } from "./WizardService";
 
-export interface IProposalErrorStates {
+export interface IProposalStageErrors {
   title?: string;
   summary?: string;
   description?: string;
@@ -8,8 +8,11 @@ export interface IProposalErrorStates {
 
 export class WizardValidationService {
 
-  externalValidation(source: IWizardState): IProposalErrorStates {
-    const errors: IProposalErrorStates = {};
+  validateProposalStage(source: IWizardState): {
+    valid: boolean;
+    errors: any
+  } {
+    const errors: IProposalStageErrors = {};
 
     if (!source.wizardResult.proposal.title) {
       errors.title = "Required Input";
@@ -27,6 +30,9 @@ export class WizardValidationService {
       errors.description = "Input is too short";
     }
 
-    return errors;
+    return {
+      valid: !Object.keys(errors).length,
+      errors,
+    };
   }
 }
