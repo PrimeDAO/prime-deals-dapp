@@ -38,13 +38,11 @@ export class Deal {
   // }
 
   public get isOpen(): boolean {
-    return true;
-    // return this.rootData?.registration.[???];
+    return this.rootData?.registration.daos.length === 1;
   }
 
   public get isPartnered(): boolean {
-    return true;
-    // return this.rootData?.registration.[???];
+    return this.rootData?.registration.daos.length === 2;
   }
 
   constructor(
@@ -102,7 +100,7 @@ export class Deal {
        * Find appending --> bottleneck
        */
 
-      this.rootData = await this.dataSourceDeals.get<IDealsData>("root_stream_id");
+      this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
     }
     catch (error) {
       this.corrupt = true;
