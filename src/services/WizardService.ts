@@ -1,4 +1,3 @@
-import { WizardValidationService } from "./WizardValidationService";
 import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -9,18 +8,16 @@ export interface IWizardState<Data = any> {
   registrationData: Data;
 }
 
-export interface IWizardStage<Errors = any> {
+export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
+
+export interface IWizardStage<Model = object> {
   name: string;
   valid: boolean;
-  route: any;
+  route: string;
   moduleId: any
   settings?: {[key: string]: any};
-  errors?: Errors;
-  validationMethod?: any;
-  // validationMethod?: () => {
-  //   valid: boolean;
-  //   errors: Errors;
-  // };
+  errors?: WizardErrors<Model>;
+  validationMethod?: (wizardState: IWizardState) => this["errors"];
 }
 
 @autoinject
@@ -28,10 +25,7 @@ export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
   private router: Router;
 
-  constructor(
-    private eventAggregator: EventAggregator,
-    private wizardValidationService: WizardValidationService,
-  ){}
+  constructor(private eventAggregator: EventAggregator){}
 
   public registerWizard<Data>(
     wizardManager: any,
@@ -103,9 +97,9 @@ export class WizardService {
   public proceed(wizardManager: any): void {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
-    const validation = wizardState.stages[indexOfActive].validationMethod(wizardState);
-    wizardState.stages[indexOfActive].errors = validation.errors;
-    wizardState.stages[indexOfActive].valid = validation.valid;
+    const errors = wizardState.stages[indexOfActive].validationMethod(wizardState);
+    wizardState.stages[indexOfActive].errors = errors;
+    wizardState.stages[indexOfActive].valid = !Object.keys(errors).length;
 
     if (!wizardState.stages[indexOfActive].valid) {
       return;

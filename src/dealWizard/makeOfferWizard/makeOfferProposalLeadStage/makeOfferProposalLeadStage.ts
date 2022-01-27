@@ -21,18 +21,4 @@ export class MakeOfferProposalLeadStage implements IBaseWizardStage {
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
-
-  validateInputs(): boolean {
-    this.errors = {};
-
-    if (!this.wizardState.registrationData.proposalLead.address) {
-      this.errors.address = "Required Input";
-    }
-
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
-  }
 }

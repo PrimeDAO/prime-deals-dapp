@@ -8,7 +8,7 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public stage: IWizardStage<IProposalStageErrors>;
+  public stage: IWizardStage<IProposal>;
 
   constructor(public wizardService: WizardService) {}
 

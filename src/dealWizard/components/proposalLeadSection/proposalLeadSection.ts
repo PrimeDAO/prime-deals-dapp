@@ -1,8 +1,9 @@
 import { bindable } from "aurelia-typed-observable-plugin";
-import { IProposalLeadStageErrors } from "../../../services/WizardValidationService";
+import { IProposalLead } from "entities/Deal";
+import { WizardErrors } from "services/WizardService";
 
 export class ProposalLeadSection {
-  @bindable errors: IProposalLeadStageErrors;
+  @bindable errors: WizardErrors<IProposalLead>;
   @bindable data: Record<string, string>;
   @bindable disabled = false;
 }
