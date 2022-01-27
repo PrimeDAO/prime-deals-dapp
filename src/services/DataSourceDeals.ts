@@ -1,4 +1,4 @@
-import { IDealConfig } from "registry-wizard/dealConfig";
+import { IDealConfig } from "./DealService";
 import { IDataSourceDeals } from "./IDataSource";
 
 export class DataSourceDeals implements IDataSourceDeals {

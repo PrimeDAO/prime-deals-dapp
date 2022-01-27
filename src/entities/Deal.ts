@@ -3,7 +3,7 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { IDealConfig } from "registry-wizard/dealConfig";
+import { IDealConfig } from "services/DealService";
 import { DataSourceDeals } from "services/DataSourceDeals";
 
 export interface IDealsData {

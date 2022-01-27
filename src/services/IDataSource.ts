@@ -1,4 +1,4 @@
-import { IDealConfig } from "registry-wizard/dealConfig";
+import { IDealConfig } from "./DealService";
 import { Hash } from "./EthereumService";
 
 export declare class IDataSourceDeals {

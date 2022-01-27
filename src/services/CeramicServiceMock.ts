@@ -1,5 +1,6 @@
-import { IDAO, IDealConfig } from "registry-wizard/dealConfig";
+import { IDAO } from "dealWizard/dealWizard.types";
 import { DataSourceDeals } from "./DataSourceDeals";
+import { IDealConfig } from "./DealService";
 
 const MOCK_DATA = {
   "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
