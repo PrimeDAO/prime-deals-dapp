@@ -7,9 +7,9 @@ import { IDealConfig } from "services/DealService";
 import { DataSourceDeals } from "services/DataSourceDeals";
 
 export interface IDealsData {
-  // votes: Array<IVoteInfo>;
-  // discussions: Array<IClause, Hash>;
-  registration: IDealConfig;
+  // votes: Hash; // Array<IVoteInfo>;
+  // discussions: Hash; // Array<IClause, Hash>;
+  registration: Hash; // IDealConfig;
 }
 
 @autoinject
@@ -25,9 +25,7 @@ export class Deal {
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
 
-  public get registration(): IDealConfig {
-    return this.rootData.registration;
-  }
+  public registration: IDealConfig;
 
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
@@ -38,11 +36,11 @@ export class Deal {
   // }
 
   public get isOpen(): boolean {
-    return this.rootData?.registration.daos.length === 1;
+    return this.registration?.daos.length === 1;
   }
 
   public get isPartnered(): boolean {
-    return this.rootData?.registration.daos.length === 2;
+    return this.registration?.daos.length === 2;
   }
 
   constructor(
@@ -86,14 +84,14 @@ export class Deal {
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
-      // RootOfRoot is stream of DealIds
+      // RootOfRoot is stream of Deal cids (which will become Deal.id)
 
       // rootOfRoot - immutable cid
       /**
        * Collection of                  DealCids
        *    ^                ^              ^           ^
        *    |                |              |           |
-       *   appending      reginstraion    votes    discussion
+       *   appending      registration    votes    discussion
        *                        ^
        *                        |
        *
@@ -101,6 +99,7 @@ export class Deal {
        */
 
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
+      this.registration = await this.dataSourceDeals.get<IDealConfig>(this.rootData.registration);
     }
     catch (error) {
       this.corrupt = true;
