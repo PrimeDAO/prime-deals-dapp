@@ -1,13 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizard.types";
-import { WizardService, IWizard } from "../../../services/WizardService";
-import "../wizardStage.scss";
+import { WizardService, IWizardState } from "../../../services/WizardService";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizard: IWizard;
+  public wizardState: IWizardState;
   public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}
@@ -17,23 +16,31 @@ export class ProposalStage implements IBaseWizardStage {
   }
 
   attached(): void {
-    this.wizard = this.wizardService.getWizard(this.wizardManager);
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
 
   validateInputs(): boolean {
     this.errors = {};
 
-    if (!this.wizard.wizardResult.proposal.name) {
-      this.errors.name ="Please enter a name for your proposal";
+    if (!this.wizardState.registrationData.proposal.title) {
+      this.errors.title = "Required Input";
     }
 
-    if (this.wizard.wizardResult.proposal.overview.length < 5) {
-      this.errors.overview = "Please enter a descriptive overview for your proposal";
+    if (!this.wizardState.registrationData.proposal.summary) {
+      this.errors.summary = "Required Input";
+    } else if (this.wizardState.registrationData.proposal.summary.length < 10) {
+      this.errors.summary = "Input is too short";
+    }
+
+    if (!this.wizardState.registrationData.proposal.description) {
+      this.errors.description = "Required Input";
+    } else if (this.wizardState.registrationData.proposal.description.length < 10) {
+      this.errors.description = "Input is too short";
     }
 
     const valid = !Object.keys(this.errors).length;
 
-    this.wizardService.getCurrentStage(this.wizardManager).valid = valid;
+    this.wizardService.updateStageValidity(this.wizardManager, valid);
 
     return valid;
   }

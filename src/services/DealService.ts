@@ -1,12 +1,84 @@
 import axios from "axios";
 import { Address, Hash } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
-import { IDealConfig } from "../registry-wizard/dealConfig";
 import { Deal } from "entities/Deal";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { DataSourceDeals } from "./DataSourceDeals";
+
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+interface IProposal {
+  name: string,
+  overview: string,
+}
+
+enum Platforms {
+  "Independent",
+  "DAOstack",
+  "Moloch",
+  "OpenLaw",
+  "Aragon",
+  "Colony",
+  "Compound Governance",
+  "Snapshot",
+  "Gnosis Safe / Snapshot",
+  "Substrate",
+}
+
+interface IToken {
+  name: string,
+  symbol: string,
+  balance: string,
+  address: string,
+}
+
+interface ISocialMedia {
+  name: string,
+  url: string,
+}
+interface IDAO {
+  id: string,
+  name: string,
+  tokens: Array<IToken>
+  social_medias: Array<ISocialMedia>
+  members: Array<string>,
+  logo_url: string,
+  platform?: Platforms,
+}
+
+interface IAdmin {
+  address: string,
+  represent: IDAO
+}
+
+interface IClause {
+  text: string,
+  tag: string,
+}
+
+interface ITerms {
+  clauses: Array<IClause>,
+  period: number,
+  representatives: string,
+  coreTeamChatURL: string,
+  previousDiscussionURL: string,
+}
+
+export interface IDealConfig {
+  /**
+   * semantic version of this interface. This value must be updated upon any released changes.
+   */
+  version: string;
+  proposal: IProposal,
+  daos: Array<IDAO>,
+  admins: Array<IAdmin>,
+  terms: ITerms,
+  createdAt: Date | null,
+  modifiedAt: Date | null,
+  createdByAddress: string | null,
+  clearState: () => void,
+}
 
 export interface IDaoPartner {
   daoId: string,
