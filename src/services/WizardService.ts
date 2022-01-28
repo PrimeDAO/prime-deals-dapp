@@ -10,14 +10,13 @@ export interface IWizardState<Data = any> {
 
 export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
 
-export interface IWizardStage<Model = object> {
+export interface IWizardStage {
   name: string;
   valid: boolean;
   route: string;
   moduleId: any
   settings?: {[key: string]: any};
-  errors?: WizardErrors<Model>;
-  validationMethod?: (wizardState: IWizardState) => this["errors"];
+  validate?: () => boolean;
 }
 
 @autoinject
@@ -81,13 +80,16 @@ export class WizardService {
     return wizardState.stages[wizardState.indexOfActive];
   }
 
-  public getActiveStageErrors(wizardManager: any): any {
-    const wizardState = this.getWizardState(wizardManager);
-    return wizardState.stages[wizardState.indexOfActive].errors;
-  }
-
   public updateStageValidity(wizardManager: any, valid: boolean) {
     this.getActiveStage(wizardManager).valid = valid;
+  }
+
+  public registerStageValidateFunction(
+    wizardManager: any,
+    validate: () => boolean,
+  ) {
+    const stage = this.getActiveStage(wizardManager);
+    stage.validate = validate;
   }
 
   public cancel(): void {
@@ -97,9 +99,7 @@ export class WizardService {
   public proceed(wizardManager: any): void {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
-    const errors = wizardState.stages[indexOfActive].validationMethod(wizardState);
-    wizardState.stages[indexOfActive].errors = errors;
-    wizardState.stages[indexOfActive].valid = !Object.keys(errors).length;
+    wizardState.stages[indexOfActive].valid = wizardState.stages[indexOfActive].validate();
 
     if (!wizardState.stages[indexOfActive].valid) {
       return;

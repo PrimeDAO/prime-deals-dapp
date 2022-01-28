@@ -8,7 +8,7 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public stage: IWizardStage<IProposal>;
+  public errors: WizardErrors<IProposalLead> = {};
 
   constructor(public wizardService: WizardService) {}
 
@@ -18,6 +18,16 @@ export class OpenProposalProposalLeadStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.stage = this.wizardState.stages[this.wizardState.indexOfActive];
+    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
+  }
+
+  validate(): boolean {
+    this.errors = {};
+
+    if (!this.wizardState.registrationData.proposalLead.address) {
+      this.errors.address = "Required Input";
+    }
+
+    return !Object.keys(this.errors).length;
   }
 }

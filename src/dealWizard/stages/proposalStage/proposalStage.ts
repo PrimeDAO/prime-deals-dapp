@@ -8,7 +8,7 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public stage: IWizardStage<IProposal>;
+  public errors: WizardErrors<IProposal> = {};
 
   constructor(public wizardService: WizardService) {}
 
@@ -18,6 +18,28 @@ export class ProposalStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.stage = this.wizardState.stages[this.wizardState.indexOfActive];
+    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
+  }
+
+  validate(): boolean {
+    this.errors = {};
+
+    if (!this.wizardState.registrationData.proposal.title) {
+      this.errors.title = "Required Input";
+    }
+
+    if (!this.wizardState.registrationData.proposal.summary) {
+      this.errors.summary = "Required Input";
+    } else if (this.wizardState.registrationData.proposal.summary.length < 10) {
+      this.errors.summary = "Input is too short";
+    }
+
+    if (!this.wizardState.registrationData.proposal.description) {
+      this.errors.description = "Required Input";
+    } else if (this.wizardState.registrationData.proposal.description.length < 10) {
+      this.errors.description = "Input is too short";
+    }
+
+    return !Object.keys(this.errors).length;
   }
 }

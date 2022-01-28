@@ -13,13 +13,11 @@ export class OpenProposalWizardManager {
     valid: false,
     route: "stage1",
     moduleId: PLATFORM.moduleName("../stages/proposalStage/proposalStage"),
-    validationMethod: this.dealWizardValidationService.validateProposalStage,
   }, {
     name: "Lead Details",
     valid: false,
     route: "stage2",
     moduleId: PLATFORM.moduleName("./openProposalProposalLeadStage/openProposalProposalLeadStage"),
-    validationMethod: this.dealWizardValidationService.validateProposalLeadStage,
   }, {
     name: "Primary DAO",
     valid: false,
@@ -28,10 +26,7 @@ export class OpenProposalWizardManager {
   }];
   private registrationData = new DealRegistrationData();
 
-  constructor(
-    public wizardService: WizardService,
-    private dealWizardValidationService: DealWizardValidationService,
-  ) {
+  constructor(public wizardService: WizardService) {
     this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);
   }
 
