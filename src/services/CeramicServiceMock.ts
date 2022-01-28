@@ -1,6 +1,6 @@
-import { IDAO } from "dealWizard/dealWizard.types";
 import { DataSourceDeals } from "./DataSourceDeals";
-import { IDealConfig } from "./DealService";
+import { RegistrationData } from "dealWizard/registrationData";
+import { IDAO, IDealRegistrationData } from "entities/Deal";
 
 const MOCK_DATA = {
   "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
@@ -10,6 +10,9 @@ const MOCK_DATA = {
         {name: "Creator"},
       ]as Partial<IDAO>[],
     },
+  },
+  "open_deals_stream_id_2": {
+    registration: new RegistrationData(),
   },
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   "partner_deals_stream_id": {
@@ -33,18 +36,18 @@ export class CeramicServiceMock implements DataSourceDeals {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(registration: IDealConfig): Promise<string> {
+  create(registration: IDealRegistrationData): Promise<string> {
     return Promise.resolve("");
     // throw new Error("Method not implemented.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  save(id: string, registration: IDealConfig): void {
+  save(id: string, registration: IDealRegistrationData): void {
     // throw new Error("Method not implemented.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: string, registration: IDealConfig): void {
+  update(id: string, registration: IDealRegistrationData): void {
     // throw new Error("Method not implemented.");
   }
 }

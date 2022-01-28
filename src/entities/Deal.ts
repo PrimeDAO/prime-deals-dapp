@@ -3,13 +3,88 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { IDealConfig } from "services/DealService";
 import { DataSourceDeals } from "services/DataSourceDeals";
 
 export interface IDealsData {
   // votes: Hash; // Array<IVoteInfo>;
   // discussions: Hash; // Array<IClause, Hash>;
-  registration: Hash; // IDealConfig;
+  registration: Hash; // RegistrationData;
+}
+
+export interface IProposal {
+  title: string,
+  summary: string,
+  description: string;
+}
+
+export enum Platforms {
+  "Independent",
+  "DAOstack",
+  "Moloch",
+  "OpenLaw",
+  "Aragon",
+  "Colony",
+  "Compound Governance",
+  "Snapshot",
+  "Gnosis Safe / Snapshot",
+  "Substrate",
+}
+
+export interface IToken {
+  name: string,
+  symbol: string,
+  balance: string,
+  address: string,
+}
+
+export interface ISocialMedia {
+  name: string,
+  url: string,
+}
+export interface IDAO {
+  id: string,
+  name: string,
+  tokens: Array<IToken>
+  social_medias: Array<ISocialMedia>
+  members: Array<string>,
+  logo_url: string,
+  platform?: Platforms,
+}
+
+export interface IProposalLead {
+  address: string,
+  email?: string;
+  dao?: IDAO
+}
+
+export interface IClause {
+  text: string,
+  tag: string,
+}
+
+export interface ITerms {
+  clauses: Array<IClause>,
+  period: number,
+  representatives: string,
+  coreTeamChatURL: string,
+  previousDiscussionURL: string,
+}
+
+export interface IDealRegistrationData {
+  version: string;
+  proposal: IProposal;
+  primaryDAO: IDAO;
+  partnerDAO: IDAO;
+  proposalLead: IProposalLead; // this contains to address
+  terms: ITerms;
+  keepAdminRights: boolean;
+  offersPrivate: boolean;
+  isPrivate: boolean;
+  createdAt: Date | null;
+  modifiedAt: Date | null;
+  createdByAddress: string | null;
+  executionPeriodInDays: number;
+  dealType: "token-swap" | "joint-venture"; // @TODO do we need dealType?
 }
 
 @autoinject
@@ -25,8 +100,8 @@ export class Deal {
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
 
-  public registration: IDealConfig;
-
+  public registrationData: IDealRegistrationData;
+  public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
@@ -36,11 +111,11 @@ export class Deal {
   // }
 
   public get isOpen(): boolean {
-    return this.registration?.daos.length === 1;
+    return !this.registrationData.partnerDAO;
   }
 
   public get isPartnered(): boolean {
-    return this.registration?.daos.length === 2;
+    return !!this.registrationData.partnerDAO;
   }
 
   constructor(
@@ -99,7 +174,7 @@ export class Deal {
        */
 
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      this.registration = await this.dataSourceDeals.get<IDealConfig>(this.rootData.registration);
+      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationData>(this.rootData.registration);
     }
     catch (error) {
       this.corrupt = true;

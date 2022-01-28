@@ -3,11 +3,12 @@ import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
 import { RegistrationData } from "../registrationData";
 import { WizardService, IWizardState, IWizardStage } from "../../services/WizardService";
+import { IDealRegistrationData } from "entities/Deal";
 
 @useView(PLATFORM.moduleName("../wizardManager.html"))
 @autoinject
 export class PartneredDealWizardManager {
-  public wizardState: IWizardState;
+  public wizardState: IWizardState<IDealRegistrationData>;
   private stages: IWizardStage[] = [{
     name: "Proposal",
     valid: false,

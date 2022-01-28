@@ -1,13 +1,14 @@
 import { autoinject, useView } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
+import { IDealRegistrationData } from "entities/Deal";
 import { WizardService, IWizardState, IWizardStage } from "../../services/WizardService";
 import { RegistrationData } from "../registrationData";
 
 @useView(PLATFORM.moduleName("../wizardManager.html"))
 @autoinject
 export class OpenProposalWizardManager {
-  public wizardState: IWizardState;
+  public wizardState: IWizardState<IDealRegistrationData>;
   private stages: IWizardStage[] = [{
     name: "Proposal",
     valid: false,
