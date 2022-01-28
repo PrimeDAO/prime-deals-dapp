@@ -1,5 +1,5 @@
 import { bindable } from "aurelia-typed-observable-plugin";
-import { IProposalLead } from "entities/Deal";
+import { IProposalLead } from "entities/DealRegistrationData";
 import { WizardErrors } from "services/WizardService";
 
 export class ProposalLeadSection {

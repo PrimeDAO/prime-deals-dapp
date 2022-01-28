@@ -1,8 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizardTypes";
-import { WizardService, IWizardState } from "../../../services/WizardService";
-import { IDealRegistrationData } from "entities/DealRegistrationData";
+import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IDealRegistrationData, IProposalLead } from "entities/DealRegistrationData";
 
 @autoinject
 export class OpenProposalProposalLeadStage implements IBaseWizardStage {
