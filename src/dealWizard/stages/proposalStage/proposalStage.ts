@@ -1,12 +1,13 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { IBaseWizardStage } from "../../dealWizard.types";
+import { IBaseWizardStage } from "../../dealWizardTypes";
 import { WizardService, IWizardState } from "../../../services/WizardService";
+import { IDealRegistrationData } from "entities/DealRegistrationData";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizardState: IWizardState;
+  public wizardState: IWizardState<IDealRegistrationData>;
   public errors: Record<string, string> = {};
 
   constructor(public wizardService: WizardService) {}

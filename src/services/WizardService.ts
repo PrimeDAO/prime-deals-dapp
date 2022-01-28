@@ -2,10 +2,10 @@ import { autoinject } from "aurelia-framework";
 import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 
-export interface IWizardState {
+export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
   indexOfActive: number;
-  registrationData: IRegistrationData;
+  registrationData: Data;
 }
 
 export interface IWizardStage {
@@ -16,12 +16,6 @@ export interface IWizardStage {
   settings?: {[key: string]: any};
 }
 
-export interface IRegistrationData {
-  version: string;
-  clearState: () => void,
-  [key: string]: any;
-}
-
 @autoinject
 export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
@@ -29,11 +23,11 @@ export class WizardService {
 
   constructor(private eventAggregator: EventAggregator){}
 
-  public registerWizard(
+  public registerWizard<Data>(
     wizardManager: any,
     stages: Array<IWizardStage>,
-    registrationData: IRegistrationData,
-  ): IWizardState {
+    registrationData: Data,
+  ): IWizardState<Data> {
     this.wizardsStates.set(
       wizardManager,
       {
@@ -74,7 +68,7 @@ export class WizardService {
 
   }
 
-  public getWizardState(wizardManager: any): IWizardState {
+  public getWizardState<Data>(wizardManager: any): IWizardState<Data> {
     return this.wizardsStates.get(wizardManager);
   }
 

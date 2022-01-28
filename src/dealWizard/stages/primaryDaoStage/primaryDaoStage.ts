@@ -1,12 +1,13 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
+import { IDealRegistrationData } from "entities/DealRegistrationData";
 import { WizardService, IWizardState } from "services/WizardService";
-import { IBaseWizardStage } from "../../dealWizard.types";
+import { IBaseWizardStage } from "../../dealWizardTypes";
 
 @autoinject
 export class PrimaryDaoStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizardState: IWizardState;
+  public wizardState: IWizardState<IDealRegistrationData>;
   public errors: Record<string, string> = {};
   public disabled: boolean;
 
