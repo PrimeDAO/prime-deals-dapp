@@ -151,6 +151,13 @@ export class App {
         title: "Contribute",
       },
       {
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        nav: false,
+        name: "dealWizard",
+        route: "/initiate/token-swap/wizard",
+        title: "Wizard",
+      },
+      {
         moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
         nav: false,
         name: "openProposalWizard",
