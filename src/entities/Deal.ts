@@ -3,13 +3,13 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { IDealRegistrationData } from "entities/DealRegistrationData";
 
 export interface IDealsData {
-  // votes: Hash; // Array<IVoteInfo>;
-  // discussions: Hash; // Array<IClause, Hash>;
-  registration: Hash; // RegistrationData;
+  // votes: IKey; // Array<IVoteInfo>;
+  // discussions: IKey; // Array<IClause, Hash>;
+  registration: IKey; // RegistrationData;
 }
 
 @autoinject
