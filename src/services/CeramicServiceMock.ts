@@ -1,7 +1,7 @@
 import { DealRegistrationData, IDAO } from "entities/DealRegistrationData";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
-const MOCK_DATA = {
+export const MOCK_DATA = {
   "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
   "open_deals_stream_id": {
     registration: {
