@@ -1,9 +1,8 @@
 import { autoinject, useView } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { RegistrationData } from "../registrationData";
 import { WizardService, IWizardState, IWizardStage } from "../../services/WizardService";
-import { IDealRegistrationData } from "entities/Deal";
+import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
 
 @useView(PLATFORM.moduleName("../wizardManager.html"))
 @autoinject
@@ -15,7 +14,7 @@ export class PartneredDealWizardManager {
     route: "stage1",
     moduleId: PLATFORM.moduleName("../stages/proposalStage/proposalStage"),
   }];
-  private registrationData = new RegistrationData();
+  private registrationData = new DealRegistrationData();
 
   constructor(public wizardService: WizardService) {
     this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);

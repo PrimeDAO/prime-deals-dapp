@@ -1,11 +1,11 @@
 import axios from "axios";
 import { Address, Hash } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
-import { Deal, IDealRegistrationData } from "entities/Deal";
+import { Deal } from "entities/Deal";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { DataSourceDeals } from "./DataSourceDeals";
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 
 export interface IDaoPartner {
   daoId: string,
@@ -67,7 +67,7 @@ export class DealService {
   public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: DataSourceDeals,
+    private dataSourceDeals: IDataSourceDeals,
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,
@@ -140,17 +140,6 @@ export class DealService {
     for (const deal of this.dealsArray) {
       await deal.ensureInitialized();
     }
-  }
-
-  public async createRegistration(registration: IDealRegistrationData): Promise<void> {
-    this.dataSourceDeals.save("key", registration);
-  }
-
-  /**
-   * has to be able to update individual parts of the registration or any other data (votes, discussions)
-   */
-  public async updateDealRegistration(registration: IDealRegistrationData): Promise<void> {
-    this.dataSourceDeals.save("key", registration);
   }
 
   /**
