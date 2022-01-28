@@ -9,7 +9,7 @@ export class DemosWelcome {
     "pInputTextDemo",
     "pTextareaDemo",
     "pToggleDemo",
-  ]
+  ];
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   activate(params): void {
