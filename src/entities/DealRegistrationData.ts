@@ -1,6 +1,80 @@
-import { IDAO, IDealRegistrationData, IProposal, IProposalLead, ITerms } from "entities/Deal";
+export interface IProposal {
+  title: string,
+  summary: string,
+  description: string;
+}
 
-export class RegistrationData implements IDealRegistrationData {
+export enum Platforms {
+  "Independent",
+  "DAOstack",
+  "Moloch",
+  "OpenLaw",
+  "Aragon",
+  "Colony",
+  "Compound Governance",
+  "Snapshot",
+  "Gnosis Safe / Snapshot",
+  "Substrate",
+}
+
+export interface IToken {
+  name: string,
+  symbol: string,
+  balance: string,
+  address: string,
+}
+
+export interface ISocialMedia {
+  name: string,
+  url: string,
+}
+export interface IDAO {
+  id: string,
+  name: string,
+  tokens: Array<IToken>
+  social_medias: Array<ISocialMedia>
+  members: Array<string>,
+  logo_url: string,
+  platform?: Platforms,
+}
+
+export interface IProposalLead {
+  address: string,
+  email?: string;
+  dao?: IDAO
+}
+
+export interface IClause {
+  text: string,
+  tag: string,
+}
+
+export interface ITerms {
+  clauses: Array<IClause>,
+  period: number,
+  representatives: string,
+  coreTeamChatURL: string,
+  previousDiscussionURL: string,
+}
+
+export interface IDealRegistrationData {
+  version: string;
+  proposal: IProposal;
+  primaryDAO: IDAO;
+  partnerDAO: IDAO;
+  proposalLead: IProposalLead; // this contains to address
+  terms: ITerms;
+  keepAdminRights: boolean;
+  offersPrivate: boolean;
+  isPrivate: boolean;
+  createdAt: Date | null;
+  modifiedAt: Date | null;
+  createdByAddress: string | null;
+  executionPeriodInDays: number;
+  dealType: "token-swap" | "joint-venture"; // @TODO do we need dealType?
+}
+
+export class DealRegistrationData implements IDealRegistrationData {
   public version: string;
   public proposal: IProposal;
   public primaryDAO: IDAO;

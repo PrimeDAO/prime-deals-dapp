@@ -3,88 +3,13 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { DataSourceDeals } from "services/DataSourceDeals";
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDealRegistrationData } from "entities/DealRegistrationData";
 
 export interface IDealsData {
   // votes: Hash; // Array<IVoteInfo>;
   // discussions: Hash; // Array<IClause, Hash>;
   registration: Hash; // RegistrationData;
-}
-
-export interface IProposal {
-  title: string,
-  summary: string,
-  description: string;
-}
-
-export enum Platforms {
-  "Independent",
-  "DAOstack",
-  "Moloch",
-  "OpenLaw",
-  "Aragon",
-  "Colony",
-  "Compound Governance",
-  "Snapshot",
-  "Gnosis Safe / Snapshot",
-  "Substrate",
-}
-
-export interface IToken {
-  name: string,
-  symbol: string,
-  balance: string,
-  address: string,
-}
-
-export interface ISocialMedia {
-  name: string,
-  url: string,
-}
-export interface IDAO {
-  id: string,
-  name: string,
-  tokens: Array<IToken>
-  social_medias: Array<ISocialMedia>
-  members: Array<string>,
-  logo_url: string,
-  platform?: Platforms,
-}
-
-export interface IProposalLead {
-  address: string,
-  email?: string;
-  dao?: IDAO
-}
-
-export interface IClause {
-  text: string,
-  tag: string,
-}
-
-export interface ITerms {
-  clauses: Array<IClause>,
-  period: number,
-  representatives: string,
-  coreTeamChatURL: string,
-  previousDiscussionURL: string,
-}
-
-export interface IDealRegistrationData {
-  version: string;
-  proposal: IProposal;
-  primaryDAO: IDAO;
-  partnerDAO: IDAO;
-  proposalLead: IProposalLead; // this contains to address
-  terms: ITerms;
-  keepAdminRights: boolean;
-  offersPrivate: boolean;
-  isPrivate: boolean;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
-  createdByAddress: string | null;
-  executionPeriodInDays: number;
-  dealType: "token-swap" | "joint-venture"; // @TODO do we need dealType?
 }
 
 @autoinject
@@ -121,7 +46,7 @@ export class Deal {
   constructor(
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
-    private dataSourceDeals: DataSourceDeals,
+    private dataSourceDeals: IDataSourceDeals,
   ) {
   }
 
@@ -194,5 +119,16 @@ export class Deal {
     // eslint-disable-next-line no-empty
     if (account) {
     }
+  }
+
+  public async createRegistration(registration: IDealRegistrationData): Promise<void> {
+    this.dataSourceDeals.create("key", JSON.stringify(registration));
+  }
+
+  /**
+   * has to be able to update individual parts of the registration or any other data (votes, discussions)
+   */
+  public async updateDealRegistration(registration: IDealRegistrationData): Promise<void> {
+    this.dataSourceDeals.update("key", JSON.stringify(registration));
   }
 }
