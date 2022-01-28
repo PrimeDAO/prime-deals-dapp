@@ -30,5 +30,5 @@ export class DemosWelcome {
 }
 
 function getViewPath(componentName: string): string {
-  return `../${componentName}/${componentName}.html`;
+  return `../${componentName}.html`;
 }
