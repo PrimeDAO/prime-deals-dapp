@@ -22,10 +22,6 @@ export class Deals {
     this.sort("starts"); // sort order will be ASC
   }
 
-  async attached(): Promise<void> {
-    this.featuredDeals = await this.dealService.getFeaturedDeals();
-  }
-
   seeMore(yesNo: boolean): void {
     this.seeingMore = yesNo;
   }

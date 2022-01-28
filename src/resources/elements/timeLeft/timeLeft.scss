@@ -1,6 +1,28 @@
-@import "styles/colors.scss";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+
+$soonColor: $Red;
+$soonBackground: #3e2638;
+$comingUpColor: $Orange;
+$comingUpBackground: #3e3038;
+$farOffColor: #cecece;
+$farOffBackground: #30343e;
+$liveColor: $Green;
+$liveBackground: #2b3139;
+$completeColor: #18bab0;
+$completeBackground: #2b3239;
+$incompleteColor: #da6511;
+$incompleteBackground: #3e2c27;
+$uninitializedColor: #717171;
+$uninitializedBackground: #000;
+$pausedColor: #ff52cf;
+$pausedBackground: #38263e;
+$closedColor: #848484;
+$closedBackground: #2d3131;
+
 .timeLeftContainer {
-  font-size: 16px;
+  font-size: $font-size1;
+
   > div.mainStatus > div,
   > div.adminStatus > div {
     font-family: Inter;
@@ -24,42 +46,42 @@
   > div.mainStatus > div {
     &.timeLeft {
       &.soon {
-        color: $AlertRed;
+        color: $soonColor;
       }
 
       &.comingUp {
-        color: $AlertOrange;
+        color: $comingUpColor;
       }
 
       &.farOff {
-        color: $White;
+        color: $farOffColor;
       }
     }
 
     &.live {
-      color: $AlertGreen;
+      color: $liveColor;
     }
 
     &.complete {
-      color: #18bab0;
+      color: $completeColor;
     }
 
     &.incomplete {
-      color: #da6511;
+      color: $incompleteColor;
     }
 
     &.uninitialized {
-      color: #717171;
+      color: $uninitializedColor;
     }
   }
 
   > div.adminStatus > div {
     &.paused {
-      color: #ff52cf;
+      color: $pausedColor;
     }
 
     &.closed {
-      color: #848484;
+      color: $closedColor;
     }
   }
 
@@ -71,48 +93,48 @@
     > div.mainStatus > div,
     > div.adminStatus > div {
       border-radius: 87px;
-      padding: 2px 9px;
+      padding: 4px 8px;
     }
 
     > div.mainStatus > div {
       &.timeLeft {
         &.soon {
-          background-color: #3e2638;
+          background-color: $soonBackground;
         }
 
         &.comingUp {
-          background-color: #3e3038;
+          background-color: $comingUpBackground;
         }
 
         &.farOff {
-          background-color: #3e263c;
+          background-color: $farOffBackground;
         }
       }
 
       &.live {
-        background-color: #2b3139;
+        background-color: $liveBackground;
       }
 
       &.complete {
-        background-color: #2b3239;
+        background-color: $completeBackground;
       }
 
       &.incomplete {
-        background-color: #3e2c27;
+        background-color: $incompleteBackground;
       }
 
       &.uninitialized {
-        background-color: $Black;
+        background-color: $uninitializedBackground;
       }
     }
 
     > div.adminStatus > div {
       &.paused {
-        background-color: #38263e;
+        background-color: $pausedBackground;
       }
 
       &.closed {
-        background-color: #2d3131;
+        background-color: $closedBackground;
       }
     }
   }

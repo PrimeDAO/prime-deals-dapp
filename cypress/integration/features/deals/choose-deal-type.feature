@@ -1,9 +1,21 @@
 Feature: Choose Deal type
-    Background:
-      Given I navigate to the Deals home page
-      And I navigate to the All Deals page
+  Background:
+    Given I navigate to the Deals home page
+    And I navigate to the initiate a deal page
+    
+  Scenario: View deal types
+    Then I can see Token Swap deal type
+    And I can see Joint Venture deal type
 
-    Scenario: Read about deal types
-      Then I can read about the deal types
+  Scenario: Access Token Swap
+    When I select Token Swap
+    Then I am presented the option to choose a partner
 
-    Scenario: Choose deal types
+  Scenario: Verify correct Token Swap types
+    Given I select Token Swap
+    Then I can see Open Proposal and Partnered Deal
+    
+  Scenario: Select Open Proposal
+    Given I select Token Swap
+    And I select Open Proposal
+    Then I can view the Open Proposal wizard
