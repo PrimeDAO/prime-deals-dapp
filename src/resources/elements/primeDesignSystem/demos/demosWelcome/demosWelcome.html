@@ -15,12 +15,12 @@
   <require from="../pselectDemo/pselectDemo"></require>
   <require from="../pcardDemo/pcardDemo"></require>
   <require from="../pcircledNumberDemo/pcircledNumberDemo"></require>
-  <require from="../pFormInputDemo/pFormInputDemo"></require>
-  <require from="../pInputNumericDemo/pInputNumericDemo"></require>
-  <require from="../pInputTextDemo/pInputTextDemo"></require>
-  <require from="../pTextareaDemo/pTextareaDemo"></require>
+  <require from="../pFormInputDemo/pFormInputDemo.html"></require>
+  <require from="../pInputNumericDemo/pInputNumericDemo.html"></require>
+  <require from="../pInputTextDemo/pInputTextDemo.html"></require>
   <require from="../pstepperDemo/pstepperDemo"></require>
-  <require from="../pToggleDemo/pToggleDemo"></require>
+  <require from="../pTextareaDemo/pTextareaDemo.html"></require>
+  <require from="../pToggleDemo/pToggleDemo.html"></require>
 
   <pbutton type="secondary"> <a href="/storybook/pbuttonDemo">pbuttonDemo</a> </pbutton>
   <pbutton type="secondary"> <a href="/storybook/pselectDemo">pselect</a> </pbutton>
@@ -29,13 +29,18 @@
   <pbutton type="secondary"> <a href="/storybook/pInputNumericDemo">pinput-numeric</a> </pbutton>
   <pbutton type="secondary"> <a href="/storybook/pInputTextDemo">pinput-text</a> </pbutton>
   <pbutton type="secondary"> <a href="/storybook/pFormInputDemo">pform-input</a> </pbutton>
-  <pbutton type="secondary"> <a href="/storybook/pTextareaDemo">pTextarea</a> </pbutton>
   <pbutton type="secondary"> <a href="/storybook/pstepperDemo">pstepper</a> </pbutton>
+  <pbutton type="secondary"> <a href="/storybook/pTextareaDemo">pTextarea</a> </pbutton>
   <pbutton type="secondary"> <a href="/storybook/pToggleDemo">ptoggle</a> </pbutton>
 
   <div class="demosWelcome__compose">
     <compose
-      if.bind="viewModel"
+      if.bind="view"
+      view.bind="view"
+      class="${view}"
+    ></compose>
+    <compose
+      else
       view-model.bind="viewModel"
       class="${viewModelName}"
     ></compose>
