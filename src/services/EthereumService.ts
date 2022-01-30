@@ -117,7 +117,7 @@ export class EthereumService {
 
   private handleNewBlock = async (blockNumber: number): Promise<void> => {
     const block = await this.getBlock(blockNumber);
-    this._lastBlockDate = block.blockDate;
+    this.lastBlock = block;
     this.eventAggregator.publish("Network.NewBlock", block);
   };
 
@@ -502,11 +502,7 @@ export class EthereumService {
     this.storageService.lsSet(this.getKeyForMetamaskHasToken(tokenAddress), true);
   }
 
-  private _lastBlockDate: Date;
-
-  public get lastBlockDate(): Date {
-    return this._lastBlockDate;
-  }
+  public lastBlock: IBlockInfo;
 
   /**
    * so unit tests will be able to complete
@@ -518,6 +514,7 @@ export class EthereumService {
   public async getBlock(blockNumber: number): Promise<IBlockInfo> {
     const block = await this.readOnlyProvider.getBlock(blockNumber) as unknown as IBlockInfo;
     block.blockDate = new Date(block.timestamp * 1000);
+    this.lastBlock = block;
     return block;
   }
 
