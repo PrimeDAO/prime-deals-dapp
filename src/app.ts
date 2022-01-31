@@ -214,6 +214,16 @@ export class App {
         title: "Coming Soon!",
       },
       {
+        moduleId: PLATFORM.moduleName("./playground/playground"),
+        nav: false,
+        name: "playground",
+        route: ["playground"],
+        title: "Playground",
+      },
+      {
+        route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
+      },
+      {
         moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),
         nav: false,
         name: "storybook",
