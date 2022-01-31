@@ -8,12 +8,15 @@ export interface IWizardState<Data = any> {
   registrationData: Data;
 }
 
+export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
+
 export interface IWizardStage {
   name: string;
   valid: boolean;
-  route: any;
+  route: string;
   moduleId: any
   settings?: {[key: string]: any};
+  validate?: () => boolean;
 }
 
 @autoinject
@@ -81,16 +84,26 @@ export class WizardService {
     this.getActiveStage(wizardManager).valid = valid;
   }
 
+  public registerStageValidateFunction(
+    wizardManager: any,
+    validate: () => boolean,
+  ) {
+    const stage = this.getActiveStage(wizardManager);
+    stage.validate = validate;
+  }
+
   public cancel(): void {
     this.router.parent.navigate("home");
   }
 
-  public async proceed(wizardManager: any, valid: Promise<boolean>) {
-    if (!await valid) {
-      return;
-    }
+  public proceed(wizardManager: any): void {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
+    wizardState.stages[indexOfActive].valid = wizardState.stages[indexOfActive].validate();
+
+    if (!wizardState.stages[indexOfActive].valid) {
+      return;
+    }
 
     if (indexOfActive < wizardState.stages.length - 1) {
       this.goToStage(wizardManager, indexOfActive + 1);
@@ -114,8 +127,8 @@ export class WizardService {
 
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
-    this.router.navigate(wizardState.stages[index].route);
     wizardState.indexOfActive = index;
+    this.router.navigate(wizardState.stages[index].route);
   }
 
   private updateIndexOfActiveBaseOnRoute(wizardManager: any, stageRoute: string): void {

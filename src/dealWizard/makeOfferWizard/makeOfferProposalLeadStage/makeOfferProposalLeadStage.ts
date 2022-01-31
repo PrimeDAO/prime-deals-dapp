@@ -1,14 +1,14 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { IBaseWizardStage } from "../../dealWizard.types";
-import { WizardService, IWizardState } from "../../../services/WizardService";
-import { IDealRegistrationData } from "entities/Deal";
+import { IBaseWizardStage } from "../../dealWizardTypes";
+import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IDealRegistrationData, IProposalLead } from "entities/DealRegistrationData";
 
 @autoinject
 export class MakeOfferProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationData>;
-  public errors: Record<string, string> = {};
+  public errors: WizardErrors<IProposalLead> = {};
   public disabled = false;
 
   constructor(public wizardService: WizardService) {}
@@ -20,19 +20,16 @@ export class MakeOfferProposalLeadStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
   }
 
-  validateInputs(): boolean {
+  validate(): boolean {
     this.errors = {};
 
     if (!this.wizardState.registrationData.proposalLead.address) {
       this.errors.address = "Required Input";
     }
 
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
+    return !Object.keys(this.errors).length;
   }
 }

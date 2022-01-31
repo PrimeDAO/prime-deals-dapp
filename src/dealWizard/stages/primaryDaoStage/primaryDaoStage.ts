@@ -1,8 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { IDealRegistrationData } from "entities/Deal";
+import { IDealRegistrationData } from "entities/DealRegistrationData";
 import { WizardService, IWizardState } from "services/WizardService";
-import { IBaseWizardStage } from "../../dealWizard.types";
+import { IBaseWizardStage } from "../../dealWizardTypes";
 
 @autoinject
 export class PrimaryDaoStage implements IBaseWizardStage {
@@ -20,19 +20,5 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-  }
-
-  validateInputs(): boolean {
-    this.errors = {};
-
-    if (!this.wizardState.registrationData.primaryDAO.name) {
-      this.errors.name = "Please enter the name of the Primary DAO";
-    }
-
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
   }
 }

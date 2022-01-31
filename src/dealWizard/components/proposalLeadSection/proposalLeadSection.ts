@@ -1,13 +1,14 @@
 import { bindable } from "aurelia-typed-observable-plugin";
+import { IProposalLead } from "entities/DealRegistrationData";
+import { WizardErrors } from "services/WizardService";
 import "./proposalLeadSection.scss";
-import { EthereumService } from "../../../services/EthereumService";
 import { autoinject } from "aurelia-framework";
+import { EthereumService } from "../../../services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { IProposalLead } from "../../../entities/Deal";
 
 @autoinject
 export class ProposalLeadSection {
-  @bindable errors: Record<string, string> = {};
+  @bindable errors: WizardErrors<IProposalLead>;
   @bindable data: IProposalLead;
   @bindable disabled = false;
 

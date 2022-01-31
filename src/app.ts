@@ -95,7 +95,7 @@ export class App {
 
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      const blockDate = this.ethereumService.lastBlockDate;
+      const blockDate = this.ethereumService.lastBlock.blockDate;
       this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
     }, 1000);
 
@@ -212,6 +212,16 @@ export class App {
         name: "comingSoon",
         route: ["comingSoon"],
         title: "Coming Soon!",
+      },
+      {
+        moduleId: PLATFORM.moduleName("./playground/playground"),
+        nav: false,
+        name: "playground",
+        route: ["playground"],
+        title: "Playground",
+      },
+      {
+        route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
       },
       {
         moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),

@@ -1,6 +1,5 @@
-import { DataSourceDeals } from "./DataSourceDeals";
-import { RegistrationData } from "dealWizard/registrationData";
-import { IDAO, IDealRegistrationData } from "entities/Deal";
+import { DealRegistrationData, IDAO } from "entities/DealRegistrationData";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
 const MOCK_DATA = {
   "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
@@ -12,7 +11,7 @@ const MOCK_DATA = {
     },
   },
   "open_deals_stream_id_2": {
-    registration: new RegistrationData(),
+    registration: new DealRegistrationData(),
   },
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   "partner_deals_stream_id": {
@@ -25,29 +24,23 @@ const MOCK_DATA = {
   },
 } as const;
 
-export class CeramicServiceMock implements DataSourceDeals {
+export class CeramicServiceMock extends IDataSourceDeals {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  initialize(rootId?: string): void {
+  public initialize(rootId?: IKey): void {
     // throw new Error("Method not implemented.");
   }
 
-  get<T>(id: string): T {
+  public get<T>(id: IKey): T {
     return MOCK_DATA[id] as unknown as T;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(registration: IDealRegistrationData): Promise<string> {
-    return Promise.resolve("");
-    // throw new Error("Method not implemented.");
+  public create(registration: IKey): Promise<string> {
+    throw new Error("Method not implemented.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  save(id: string, registration: IDealRegistrationData): void {
-    // throw new Error("Method not implemented.");
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: string, registration: IDealRegistrationData): void {
-    // throw new Error("Method not implemented.");
+  public update(id: IKey, data: string): Promise<IKey> {
+    throw new Error("Method not implemented.");
   }
 }
