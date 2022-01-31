@@ -96,8 +96,7 @@ export class App {
 
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      // @ts-ignore
-      const blockDate = this.ethereumService?.lastBlock?.blockDate;
+      const blockDate = this.ethereumService.lastBlock.blockDate;
       this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
     }, 1000);
 
