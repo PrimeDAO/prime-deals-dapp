@@ -22,18 +22,4 @@ export class PrimaryDaoStage implements IBaseWizardStage {
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
-
-  validateInputs(): boolean {
-    this.errors = {};
-
-    if (!this.wizardState.registrationData.primaryDAO.name) {
-      this.errors.name = "Please enter the name of the Primary DAO";
-    }
-
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
-  }
 }

@@ -21,18 +21,4 @@ export class PartnerDaoStage implements IBaseWizardStage {
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
   }
-
-  validateInputs(): boolean {
-    this.errors = {};
-
-    if (!this.wizardState.registrationData.partnerDAO.name) {
-      this.errors.name = "Please enter the name of the Partner DAO";
-    }
-
-    const valid = !Object.keys(this.errors).length;
-
-    this.wizardService.updateStageValidity(this.wizardManager, valid);
-
-    return valid;
-  }
 }
