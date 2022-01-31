@@ -1,5 +1,5 @@
 import { autoinject } from "aurelia-framework";
-import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
+import { NavigationInstruction, Router, RouterConfiguration, RouterEvent } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 
 export interface IWizardState<Data = any> {
@@ -85,8 +85,8 @@ export class WizardService {
     this.router.parent.navigate("home");
   }
 
-  public proceed(wizardManager: any, valid: boolean): void {
-    if (!valid) {
+  public async proceed(wizardManager: any, valid: Promise<boolean>) {
+    if (!await valid) {
       return;
     }
     const wizardState = this.getWizardState(wizardManager);

@@ -4,23 +4,39 @@
       <h2 class="heading heading3 title">Proposal Lead</h2>
       <p class="subtext">
         Provide the Ethereum address for the proposal lead who will gain admin rights of the deal.
-        <br />
-        <br />
-        Proposal leads will be responsible for editing the deal during negotiation, initiating the funding phase once a deal is approved, and executing the token swap. You don’t need to be part of a DAO to be the lead proposal.
+        <br/>
+        <br/>
+        Proposal leads will be responsible for editing the deal during negotiation, initiating the funding phase once a
+        deal is approved, and executing the token swap. You don’t need to be part of a DAO to be the lead proposal.
       </p>
     </div>
     <div class="stageSectionContent">
       <pform-input
-        class="wizardFormInput wizardFormInputNarrow"
+        class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
         label="Proposal Lead Address"
         validation-state.bind="errors.address ? 'error' : ''"
-        validation-message.bind="errors.address">
-        <pinput-text value.bind="data.address" disabled.bind="disabled"></pinput-text>
+        validation-message.bind="errors.address"
+      >
+        <pinput-text disabled.bind="disabled" placeholder="0x..." value.bind="data.address"></pinput-text>
+        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!address">
+          Connect your wallet
+        </pbutton>
+        <pbutton
+          class="walletButton"
+          click.delegate="data.address = address"
+          if.bind="address && data.address !== address"
+        >
+          Make me an admin
+        </pbutton>
       </pform-input>
+
 
       <pform-input
         class="wizardFormInput wizardFormInputNarrow"
-        label="Contact E-mail (optional)">
+        label="Contact E-mail (optional)"
+        validation-message.bind="errors.email"
+        validation-state.bind="errors.email ? 'error' : ''"
+      >
         <pinput-text value.bind="data.email" disabled.bind="disabled"></pinput-text>
       </pform-input>
     </div>

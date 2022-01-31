@@ -7,7 +7,7 @@ import "./stageButtons.scss";
 @autoinject
 export class stageButtons {
   @bindable wizardManager: any;
-  @bindable validate: () => boolean;
+  @bindable validate: () => Promise<boolean>;
   @bindable showSubmit = false;
 
   constructor(public wizardService: WizardService) {}

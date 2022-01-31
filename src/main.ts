@@ -17,6 +17,8 @@ import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { Deal } from "entities/Deal";
 import { DataSourceDeals } from "services/DataSourceDeals";
+import { ValidationRules } from "aurelia-validation";
+import { Utils } from "./services/utils";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -24,6 +26,7 @@ export function configure(aurelia: Aurelia): void {
     .feature(PLATFORM.moduleName("resources/index"))
     .feature(PLATFORM.moduleName("resources/elements/primeDesignSystem/index"))
     .plugin(PLATFORM.moduleName("aurelia-animator-css"))
+    .plugin(PLATFORM.moduleName("aurelia-validation"))
     .plugin(PLATFORM.moduleName("aurelia-dialog"), (configuration) => {
       // custom configuration
       configuration.settings.keyboard = false;
@@ -71,6 +74,8 @@ export function configure(aurelia: Aurelia): void {
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
 
+      addCustomValidationRulesToAurelia();
+
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));
@@ -78,4 +83,13 @@ export function configure(aurelia: Aurelia): void {
     }
     aurelia.setRoot(PLATFORM.moduleName("app"));
   });
+}
+
+function addCustomValidationRulesToAurelia() {
+  ValidationRules.customRule(
+    "isETHAddress",
+    // We need to cast it to a boolean because `Utils.isAddress` returns `undefined`
+    (value) => Boolean(Utils.isAddress(value)),
+    "Please enter a valid wallet address",
+  );
 }
