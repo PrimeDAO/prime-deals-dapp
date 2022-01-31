@@ -14,9 +14,10 @@ export class PrimaryDaoStage implements IBaseWizardStage {
   constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
-    const wizardType = routeConfig.settings.wizardType;
-    this.disabled = wizardType === WizardType.makeAnOffer;
+    console.log('TCL: ProposalStage -> constructor -> _params', _params)
+    console.log('TCL: ProposalStage -> constructor -> routeConfig', routeConfig)
+    // @ts-ignore
+    this.wizardManager = _params.wizardManager
   }
 
   attached(): void {

@@ -13,6 +13,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
+import { WizardType } from "dealWizard/dealWizardTypes";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -95,7 +96,8 @@ export class App {
 
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      const blockDate = this.ethereumService.lastBlock.blockDate;
+      // @ts-ignore
+      const blockDate = this.ethereumService?.lastBlock?.blockDate;
       this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
     }, 1000);
 
@@ -154,16 +156,37 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "dealWizard",
-        route: "/initiate/token-swap/wizard",
+        // route: "/initiate/token-swap/wizard",
+        route: "/initiate/token-swap/open-proposal",
         title: "Wizard",
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
-        nav: false,
-        name: "openProposalWizard",
-        route: "/initiate/token-swap/open-proposal",
-        title: "Initiate an Open Proposal",
+        // moduleId: PLATFORM.moduleName("./dealWizard/stages/stagesWelcome"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: "/initiate/token-swap/open-proposal/*stageNumber",
+        // route: "/initiate/token-swap/open-proposal/stage1",
+        settings: {
+          wizardType: WizardType.openProposal
+        }
       },
+
+            // {
+            //   moduleId: PLATFORM.moduleName("./playground/playground"),
+            //   nav: false,
+            //   name: "playground",
+            //   route: ["playground"],
+            //   title: "Playground",
+            // },
+            // {
+            //   route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
+            // },
+      // {
+      //   moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
+      //   nav: false,
+      //   name: "openProposalWizard",
+      //   route: "/initiate/token-swap/open-proposal",
+      //   title: "Initiate an Open Proposal",
+      // },
       {
         moduleId: PLATFORM.moduleName("./dealWizard/partneredDealWizard/partneredDealWizardManager"),
         nav: false,

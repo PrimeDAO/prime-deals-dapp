@@ -13,10 +13,14 @@ export class ProposalStage implements IBaseWizardStage {
   constructor(public wizardService: WizardService) {}
 
   activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
+    console.log('TCL: ProposalStage -> constructor -> _params', _params)
+    console.log('TCL: ProposalStage -> constructor -> routeConfig', routeConfig)
+    // @ts-ignore
+    this.wizardManager = _params.wizardManager
   }
 
   attached(): void {
+    console.log('TCL: ProposalStage -> constructor -> this.wizardManager', this.wizardManager)
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
   }

@@ -6,7 +6,16 @@
       on-click.call="onClick(index)">
     </pstepper>
     <div>
-      <router-view></router-view>
+      hi
+        <!-- view="./stages/proposalStage/proposalStage.html"
+        view-model="./stages/proposalStage/proposalStage" -->
+      <compose
+        if.bind="view && viewModel"
+        view.bind="view"
+        view-model.bind="viewModel"
+        model.bind="infoForStages"
+        class="${viewModelName}"
+      ></compose>
     </div>
   </div>
 </template>

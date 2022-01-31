@@ -22,9 +22,8 @@ export interface IWizardStage {
 @autoinject
 export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
-  private router: Router;
 
-  constructor(private eventAggregator: EventAggregator){}
+  constructor(private eventAggregator: EventAggregator, private router: Router){}
 
   public registerWizard<Data>(
     wizardManager: any,
@@ -48,30 +47,31 @@ export class WizardService {
     config: RouterConfiguration,
     router: Router,
   ): void {
-    const stageConfig = this.wizardsStates.get(wizardManager);
+    // const stageConfig = this.wizardsStates.get(wizardManager);
 
-    const routes = stageConfig.stages.map(stage => ({
-      route: [stage.route],
-      nav: true,
-      moduleId: stage.moduleId,
-      name: stage.name,
-      settings: {
-        wizardManager: wizardManager,
-        ...stage.settings,
-      },
-    }));
+    // const routes = stageConfig.stages.map(stage => ({
+    //   route: [stage.route],
+    //   nav: true,
+    //   moduleId: stage.moduleId,
+    //   name: stage.name,
+    //   settings: {
+    //     wizardManager: wizardManager,
+    //     ...stage.settings,
+    //   },
+    // }));
 
-    config.map(routes);
+    // config.map(routes);
 
-    this.router = router;
+    // this.router = router;
 
-    this.eventAggregator.subscribeOnce(RouterEvent.Complete, (event: { instruction: NavigationInstruction }) => {
-      this.updateIndexOfActiveBaseOnRoute(wizardManager, event.instruction.params.childRoute);
-    });
+    // this.eventAggregator.subscribeOnce(RouterEvent.Complete, (event: { instruction: NavigationInstruction }) => {
+    //   this.updateIndexOfActiveBaseOnRoute(wizardManager, event.instruction.params.childRoute);
+    // });
 
   }
 
   public getWizardState<Data>(wizardManager: any): IWizardState<Data> {
+    console.log('1. TCL: this.wizardsStates', this.wizardsStates)
     return this.wizardsStates.get(wizardManager);
   }
 
@@ -128,6 +128,7 @@ export class WizardService {
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
     wizardState.indexOfActive = index;
+    console.log('TCL: wizardState.stages[index].route', wizardState.stages[index].route)
     this.router.navigate(wizardState.stages[index].route);
   }
 
