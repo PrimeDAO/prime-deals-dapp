@@ -1,5 +1,5 @@
+import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
 import { IDealRegistrationData, IProposalLead } from "entities/DealRegistrationData";
@@ -12,11 +12,8 @@ export class OpenProposalProposalLeadStage implements IBaseWizardStage {
 
   constructor(public wizardService: WizardService) {}
 
-  activate(_params: unknown, routeConfig: RouteConfig): void {
-    console.log('TCL: ProposalStage -> constructor -> _params', _params)
-    console.log('TCL: ProposalStage -> constructor -> routeConfig', routeConfig)
-    // @ts-ignore
-    this.wizardManager = _params.wizardManager
+  activate(stageMeta: IStageMeta): void {
+    this.wizardManager = stageMeta.wizardManager;
   }
 
   attached(): void {

@@ -1,88 +1,73 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
-import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
+import { RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
 import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
-import { WizardType } from "./dealWizardTypes";
+import { IStageMeta, WizardType } from "./dealWizardTypes";
 
 @autoinject
 export class WizardManager {
   public wizardState: IWizardState<IDealRegistrationData>;
+  public stageMeta: IStageMeta;
+  public view: string;
+  public viewModel: string;
   private stages: IWizardStage[] = [{
     name: "Proposal",
     valid: false,
-    route: "initiate/token-swap/open-proposal/stage1",
-    moduleId: "./stages/proposalStage/proposalStage",
-    settings: {},
+    route: "stage1",
+    moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
   }, {
     name: "Lead Details",
     valid: false,
-    route: "initiate/token-swap/open-proposal/stage2",
-    moduleId: "./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage",
-    // moduleId: "./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage",
-    settings: {},
+    route: "stage2",
+    moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
   }, {
     name: "Primary DAO",
     valid: false,
-    route: "initiate/token-swap/open-proposal/stage3",
-    moduleId: "./stages/primaryDaoStage/primaryDaoStage",
-    settings: {},
+    route: "stage3",
+    moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
   }];
   private registrationData = new DealRegistrationData();
 
-  private WizardManagerInstance = this;
+  constructor(public wizardService: WizardService) {}
 
-  private infoForStages: any;
-  view: string;
-  viewModel: string;
+  activate(params: any, routeConfig: RouteConfig): void {
+    if (!params.stageRoute) return;
 
-  constructor(public wizardService: WizardService) {
-    PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage")
-    // this.configureStages();
-  }
+    const { stageRoute } = params;
+    const wizardType = routeConfig.settings.wizardType;
+    const parentRoutePath = routeConfig.route as string;
 
-  activate(params: any, routeConfig: RouteConfig, other): void {
-    console.log('TCL: StagesWelcome -> params', params)
-    // console.log('TCL: StagesWelcome -> routeConfig', routeConfig)
-    console.log('TCL: WizardManager -> routeConfig.settings.wizardType', routeConfig.settings.wizardType)
-    // console.log('TCL: StagesWelcome -> other', other)
-    if (!params.stageNumber) return
-
-    const { stageNumber } = params;
-      // console.log('TCL: StagesWelcome -> stageNumber', stageNumber)
-
-
-    this.wizardState = this.wizardService.registerWizard(this, this.stages, this.registrationData);
-    console.log('>>>> TCL: WizardManager -> this.wizardState', this.wizardState)
-
-    this.infoForStages = {
-      wizardType: routeConfig.settings.wizardType,
-      wizardManager: this
+    if (!this.wizardService.hasWizard(this)) {
+      this.configureStages(wizardType, parentRoutePath);
     }
 
-    const targetStage = this.stages.find(stage => stage.route.includes(stageNumber))
-    this.view = `${targetStage.moduleId}.html`
-    console.log('TCL: WizardManager -> this.view', this.view)
-    this.viewModel = targetStage.moduleId
-    console.log('TCL: WizardManager -> this.viewModel', this.viewModel)
+    this.stageMeta = {
+      wizardType,
+      wizardManager: this,
+    };
+
+    const indexOfActive = this.stages.findIndex(stage => stage.route.includes(stageRoute));
+    const targetStage = this.stages[indexOfActive];
+    this.view = `${targetStage.moduleId}.html`;
+    this.viewModel = targetStage.moduleId;
+
+    this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActive, this.registrationData);
   }
 
   public onClick(index: number): void {
     this.wizardService.goToStage(this, index);
   }
 
-  private configureStages() {
-    const wizardType = this.getWizardType();
+  private configureStages(wizardType: WizardType, parentRoutePath: string) {
     switch (wizardType) {
       case WizardType.partneredDeal:
       case WizardType.makeAnOffer:
-        // @TODO this configuration could be done in a cleaner way, this is proof of concept
         this.stages.push({
           name: "Partner DAO",
           valid: false,
           route: "stage4",
           moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
-          settings: {},
         });
         break;
 
@@ -90,22 +75,13 @@ export class WizardManager {
         break;
     }
 
-    this.addWizardTypeToStages(wizardType);
+    this.stages = this.updateStagesWithFullRoutePath(parentRoutePath);
   }
 
-  private getWizardType(): WizardType {
-    // @TODO add logic
-
-    return WizardType.partneredDeal;
+  private updateStagesWithFullRoutePath(parentRoute) {
+    return this.stages.map(stage => ({
+      ...stage,
+      route: parentRoute.replace("*stageRoute", stage.route),
+    }));
   }
-
-  private addWizardTypeToStages(wizardType: WizardType) {
-    this.stages.forEach(stage => {
-      stage.settings.wizardType = wizardType;
-    });
-  }
-
-  // private configureRouter(config: RouterConfiguration, router: Router): void {
-  //   this.wizardService.configureRouter(this, config, router);
-  // }
 }

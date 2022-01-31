@@ -9,3 +9,8 @@ export interface IBaseWizardStage {
   activate;
   attached: () => void;
 }
+
+export interface IStageMeta {
+  wizardManager: any;
+  wizardType: WizardType;
+}

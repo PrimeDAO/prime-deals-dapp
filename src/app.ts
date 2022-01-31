@@ -154,52 +154,33 @@ export class App {
       },
       {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: "/initiate/token-swap/open-proposal/*stageRoute",
         nav: false,
-        name: "dealWizard",
-        // route: "/initiate/token-swap/wizard",
-        route: "/initiate/token-swap/open-proposal",
-        title: "Wizard",
-      },
-      {
-        // moduleId: PLATFORM.moduleName("./dealWizard/stages/stagesWelcome"),
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
-        route: "/initiate/token-swap/open-proposal/*stageNumber",
-        // route: "/initiate/token-swap/open-proposal/stage1",
+        name: "createOpenProposal",
+        title: "Create an Open Proposal",
         settings: {
-          wizardType: WizardType.openProposal
-        }
+          wizardType: WizardType.openProposal,
+        },
       },
-
-            // {
-            //   moduleId: PLATFORM.moduleName("./playground/playground"),
-            //   nav: false,
-            //   name: "playground",
-            //   route: ["playground"],
-            //   title: "Playground",
-            // },
-            // {
-            //   route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
-            // },
-      // {
-      //   moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
-      //   nav: false,
-      //   name: "openProposalWizard",
-      //   route: "/initiate/token-swap/open-proposal",
-      //   title: "Initiate an Open Proposal",
-      // },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/partneredDealWizard/partneredDealWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: "/initiate/token-swap/partnered-deal/*stageRoute",
         nav: false,
         name: "partneredDealWizard",
-        route: "/initiate/token-swap/partnered-deal",
         title: "Create a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDeal,
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/makeOfferWizard/makeOfferWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: "/make-an-offer",
+        route: "/make-an-offer/*stageRoute",
         title: "Submit a Proposal",
+        settings: {
+          wizardType: WizardType.makeAnOffer,
+        },
       },
       {
         moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
