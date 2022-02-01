@@ -5,42 +5,57 @@ import { WizardService, IWizardState, IWizardStage } from "services/WizardServic
 import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
 
-const proposalStage: IWizardStage = {
-  name: "Proposal",
-  valid: false,
-  route: "proposal",
-  moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
-};
-
-const proposalLeadStage: IWizardStage = {
-  name: "Lead Details",
-  valid: false,
-  route: "proposal-lead",
-  moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
-};
-
-const primaryDaoStage: IWizardStage = {
-  name: "Primary DAO",
-  valid: false,
-  route: "primary-dao",
-  moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
-};
-
-const partnerDaoStage: IWizardStage = {
-  name: "Partner DAO",
-  valid: false,
-  route: "partner-dao",
-  moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
-};
-
 @autoinject
 export class WizardManager {
   public wizardState: IWizardState<IDealRegistrationData>;
+
+  // a meta configuration passed to each stage component in the view
+  // for stage components to know which wizardManger they belong to and what wizardType it is
   public stageMeta: IStageMeta;
+
+  // view of the currently active stage
   public view: string;
+
+  // view model of the currently active stage
   public viewModel: string;
+
   private stages: IWizardStage[] = [];
   private registrationData = new DealRegistrationData();
+  private proposalStage: IWizardStage = {
+    name: "Proposal",
+    valid: false,
+    route: "proposal",
+    moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
+  };
+  private proposalLeadStage: IWizardStage = {
+    name: "Lead Details",
+    valid: false,
+    route: "proposal-lead",
+    moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
+  };
+  private primaryDaoStage: IWizardStage = {
+    name: "Primary DAO",
+    valid: false,
+    route: "primary-dao",
+    moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
+  };
+  private partnerDaoStage: IWizardStage = {
+    name: "Partner DAO",
+    valid: false,
+    route: "partner-dao",
+    moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
+  };
+  private openProposalStages: IWizardStage[] = [
+    this.proposalStage,
+    this.proposalLeadStage,
+    this.primaryDaoStage,
+  ];
+  private partneredDealStages: IWizardStage[] = [
+    this.proposalStage,
+    this.proposalLeadStage,
+    this.primaryDaoStage,
+    this.partnerDaoStage,
+  ];
 
   constructor(public wizardService: WizardService) {}
 
@@ -51,21 +66,22 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
     const parentRoutePath = routeConfig.route as string;
 
-    if (!this.wizardService.hasWizard(this)) {
-      this.stages = this.configureStages(wizardType, parentRoutePath);
-    }
+    this.stages = this.configureStages(wizardType, parentRoutePath);
 
     this.stageMeta = {
       wizardType,
       wizardManager: this,
     };
 
-    const indexOfActive = this.stages.findIndex(stage => stage.route.includes(stageRoute));
-    const targetStage = this.stages[indexOfActive];
-    this.view = `${targetStage.moduleId}.html`;
-    this.viewModel = targetStage.moduleId;
+    // Getting the index of currently active stage route.
+    // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
+    const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
 
-    this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActive, this.registrationData);
+    const activeStage = this.stages[indexOfActiveStage];
+    this.view = `${activeStage.moduleId}.html`;
+    this.viewModel = activeStage.moduleId;
+
+    this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActiveStage, this.registrationData);
   }
 
   public onClick(index: number): void {
@@ -77,11 +93,11 @@ export class WizardManager {
     switch (wizardType) {
       case WizardType.partneredDeal:
       case WizardType.makeAnOffer:
-        stages = this.getPartneredDealStages();
+        stages = this.partneredDealStages;
         break;
 
       default:
-        stages = this.getOpenProposalStages();
+        stages = this.openProposalStages;
         break;
     }
 
@@ -95,22 +111,5 @@ export class WizardManager {
       ...stage,
       route: parentRoute.replace(`*${STAGE_ROUTE_PARAMETER}`, stage.route),
     }));
-  }
-
-  private getOpenProposalStages(): IWizardStage[] {
-    return [
-      proposalStage,
-      proposalLeadStage,
-      primaryDaoStage,
-    ];
-  }
-
-  private getPartneredDealStages(): IWizardStage[] {
-    return [
-      proposalStage,
-      proposalLeadStage,
-      primaryDaoStage,
-      partnerDaoStage,
-    ];
   }
 }
