@@ -1,9 +1,9 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizardTypes";
-import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IWizardState, WizardErrors, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationData, IProposalLead } from "entities/DealRegistrationData";
-import { ValidationController } from "aurelia-validation";
+import { ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { proposalLeadValidationRules, validateWizardState } from "../../validation";
 
 @autoinject

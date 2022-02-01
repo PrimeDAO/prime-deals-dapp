@@ -1,10 +1,10 @@
 import { autoinject } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
-import { IBaseWizardStage } from "../../dealWizard.types";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { ValidationController, ValidationControllerFactory } from "aurelia-validation";
-import { IDealRegistrationData } from "../../../entities/Deal";
 import { proposalLeadValidationRules, validateWizardState } from "../../validation";
+import { IBaseWizardStage } from "../../dealWizardTypes";
+import { IDealRegistrationData } from "../../../entities/DealRegistrationData";
 
 @autoinject
 export class PartneredDealProposalLeadStage implements IBaseWizardStage {
@@ -23,9 +23,10 @@ export class PartneredDealProposalLeadStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
   }
 
-  async validateInputs(): Promise<boolean> {
+  async validate(): Promise<boolean> {
     const [formResult, errors] = await validateWizardState(this.form, this.wizardState.registrationData.proposalLead, proposalLeadValidationRules);
     this.errors = errors;
 

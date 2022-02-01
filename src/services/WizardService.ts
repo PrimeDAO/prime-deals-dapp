@@ -15,8 +15,8 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
-  settings?: {[key: string]: any};
-  validate?: () => boolean;
+  settings?: { [key: string]: any };
+  validate?: () => Promise<boolean>;
 }
 
 @autoinject
@@ -86,7 +86,7 @@ export class WizardService {
 
   public registerStageValidateFunction(
     wizardManager: any,
-    validate: () => boolean,
+    validate: () => Promise<boolean>,
   ) {
     const stage = this.getActiveStage(wizardManager);
     stage.validate = validate;
@@ -96,10 +96,10 @@ export class WizardService {
     this.router.parent.navigate("home");
   }
 
-  public proceed(wizardManager: any): void {
+  public async proceed(wizardManager: any): Promise<void> {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
-    wizardState.stages[indexOfActive].valid = wizardState.stages[indexOfActive].validate();
+    wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
 
     if (!wizardState.stages[indexOfActive].valid) {
       return;

@@ -1,5 +1,5 @@
 import { ControllerValidateResult, Rule, ValidationController, ValidationRules } from "aurelia-validation";
-import { IProposalLead } from "../entities/Deal";
+import { IProposalLead } from "../entities/DealRegistrationData";
 
 export const proposalLeadValidationRules = ValidationRules
   .ensure<IProposalLead, string>(proposalLead => proposalLead.address)
