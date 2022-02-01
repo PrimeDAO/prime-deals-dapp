@@ -1,9 +1,10 @@
 import { ControllerValidateResult, Rule, ValidationController, ValidationRules } from "aurelia-validation";
 import { IProposalLead } from "../entities/DealRegistrationData";
+import { Validation } from "../validation";
 
 export const proposalLeadValidationRules = ValidationRules
   .ensure<IProposalLead, string>(proposalLead => proposalLead.address)
-  .satisfiesRule("isETHAddress")
+  .satisfiesRule(Validation.isETHAddress)
   .ensure<string>(data => data.email)
   .email()
   .withMessage("Please enter a valid e-mail")

@@ -17,8 +17,7 @@ import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { Deal } from "entities/Deal";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
-import { ValidationRules } from "aurelia-validation";
-import { Utils } from "./services/utils";
+import "./validation";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -74,8 +73,6 @@ export function configure(aurelia: Aurelia): void {
       const dealService = aurelia.container.get(DealService);
       dealService.initialize();
 
-      addCustomValidationRulesToAurelia();
-
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));
@@ -83,13 +80,4 @@ export function configure(aurelia: Aurelia): void {
     }
     aurelia.setRoot(PLATFORM.moduleName("app"));
   });
-}
-
-function addCustomValidationRulesToAurelia() {
-  ValidationRules.customRule(
-    "isETHAddress",
-    // We need to cast it to a boolean because `Utils.isAddress` returns `undefined`
-    (value) => Boolean(Utils.isAddress(value)),
-    "Please enter a valid wallet address",
-  );
 }
