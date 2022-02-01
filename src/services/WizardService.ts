@@ -1,5 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
+import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -100,7 +101,16 @@ export class WizardService {
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
     wizardState.indexOfActive = index;
-    this.router.navigate(wizardState.stages[index].route);
+
+    const params = {
+      ...this.router.currentInstruction.params,
+      [STAGE_ROUTE_PARAMETER]: wizardState.stages[index].route,
+    };
+
+    this.router.navigateToRoute(
+      this.router.currentInstruction.config.name,
+      params,
+    );
   }
   public hasWizard(wizardManager: any): boolean {
     return this.wizardsStates.has(wizardManager);

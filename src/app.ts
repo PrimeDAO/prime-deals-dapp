@@ -175,7 +175,7 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: `/make-an-offer/*${STAGE_ROUTE_PARAMETER}`,
+        route: `/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
         title: "Submit a Proposal",
         settings: {
           wizardType: WizardType.makeAnOffer,

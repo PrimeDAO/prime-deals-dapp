@@ -49,10 +49,9 @@ export class WizardManager {
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
-    const parentRoutePath = routeConfig.route as string;
 
     if (!this.wizardService.hasWizard(this)) {
-      this.stages = this.configureStages(wizardType, parentRoutePath);
+      this.stages = this.configureStages(wizardType);
     }
 
     this.stageMeta = {
@@ -72,7 +71,7 @@ export class WizardManager {
     this.wizardService.goToStage(this, index);
   }
 
-  private configureStages(wizardType: WizardType, parentRoutePath: string) {
+  private configureStages(wizardType: WizardType) {
     let stages: IWizardStage[];
     switch (wizardType) {
       case WizardType.partneredDeal:
@@ -85,16 +84,7 @@ export class WizardManager {
         break;
     }
 
-    stages = this.updateStagesWithFullRoutePath(stages, parentRoutePath);
-
     return stages;
-  }
-
-  private updateStagesWithFullRoutePath(stages: IWizardStage[], parentRoute) {
-    return stages.map(stage => ({
-      ...stage,
-      route: parentRoute.replace(`*${STAGE_ROUTE_PARAMETER}`, stage.route),
-    }));
   }
 
   private getOpenProposalStages(): IWizardStage[] {
