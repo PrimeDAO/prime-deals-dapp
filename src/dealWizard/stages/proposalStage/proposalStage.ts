@@ -1,5 +1,5 @@
+import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
 import { IDealRegistrationData, IProposal } from "entities/DealRegistrationData";
@@ -12,8 +12,8 @@ export class ProposalStage implements IBaseWizardStage {
 
   constructor(public wizardService: WizardService) {}
 
-  activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
+  activate(stageMeta: IStageMeta): void {
+    this.wizardManager = stageMeta.wizardManager;
   }
 
   attached(): void {
