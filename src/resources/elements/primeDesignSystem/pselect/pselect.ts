@@ -1,4 +1,4 @@
-import { bindable, customElement } from "aurelia-framework";
+import { bindable, bindingMode, customElement } from "aurelia-framework";
 import SlimSelect from "slim-select";
 import "./pselect.scss";
 
@@ -34,18 +34,19 @@ export interface IPSelectItemConfig {
 @customElement("pselect")
 export class PButton {
   @bindable disabled = false;
-  @bindable data: Array<IPSelectItemConfig>;
+  @bindable data: Array<IPSelectItemConfig> = [];
   @bindable placeholder = "Please Select...";
   @bindable searchText = "No result found.";
   @bindable searchPlaceholder ="Type to search...";
   @bindable isSearchable = false;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) value?: string | string[];
 
   refSelectInput: HTMLSelectElement;
   select: SlimSelect;
   isOpen = false;
 
   attached(): void {
-    const selectConfig = {
+    this.select = new SlimSelect({
       placeholder: "<span class=\"loading\"><i class=\"fas fa-circle-notch\"></i> Loading...</span>",
       select: this.refSelectInput,
       isEnabled: !this.disabled,
@@ -53,17 +54,13 @@ export class PButton {
       searchPlaceholder: this.searchPlaceholder,
       hideSelectedOption: true,
       showSearch: this.isSearchable,
-      data: undefined,
-    };
-
-    if (this.data) {
-      selectConfig.data = [
+      data: [
         {text: this.placeholder, placeholder: true},
         ...this.data,
-      ];
-    }
-
-    this.select = new SlimSelect(selectConfig);
+      ],
+      onChange: info => this.value = info instanceof Array ? info.map(item => item.value) : info.value,
+    });
+    this.select.set(this.value);
   }
 
   dataChanged(): void {

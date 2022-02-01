@@ -1,7 +1,10 @@
 <template>
   <section class="demo">
     <h1>Simple Dropdown</h1>
-    <pselect data.bind="simpleData"></pselect>
+    --${test}--
+    <pselect data.bind="simpleData" value.bind="test"></pselect>
+    <h1>Simple Dropdown with default selected value</h1>
+    <pselect data.bind="simpleData" value="4"></pselect>
     <h1>Searchable Dropdown</h1>
     <pselect is-searchable data.bind="simpleData"></pselect>
     <h2>With custom search placeholder</h2>
