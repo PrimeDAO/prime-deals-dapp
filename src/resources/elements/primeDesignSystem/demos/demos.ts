@@ -1,5 +1,5 @@
-import {PLATFORM} from "aurelia-pal";
-import {Router, RouterConfiguration} from "aurelia-router";
+import { PLATFORM } from "aurelia-pal";
+import { Router, RouterConfiguration } from "aurelia-router";
 
 export class Demos {
 
@@ -76,6 +76,13 @@ export class Demos {
         moduleId: PLATFORM.moduleName("./pToggleDemo.html"),
         name: "ptoggle",
         title: "ptoggle Demo",
+      },
+      {
+        route: ["pinput-group"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pInputGroupDemo.html"),
+        name: "pinput-group",
+        title: "pinput-group Demo",
       },
     ];
 

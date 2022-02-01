@@ -1,0 +1,16 @@
+<template class="
+    ${$slots.before.projections ? 'hasBeforeAddon' : ''}
+    ${$slots.after.projections ? 'hasAfterAddon' : ''}
+  "
+>
+  <div class="addon" show.bind="$slots.before.projections">
+    <slot name="before"></slot>
+  </div>
+
+  <slot></slot>
+
+  <div class="addon" show.bind="$slots.after.projections">
+    <slot name="after"></slot>
+  </div>
+
+</template>
