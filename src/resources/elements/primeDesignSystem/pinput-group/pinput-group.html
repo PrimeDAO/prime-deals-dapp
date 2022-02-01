@@ -1,15 +1,15 @@
 <template class="
-    ${$slots.before.projections ? 'hasBeforeAddon' : ''}
-    ${$slots.after.projections ? 'hasAfterAddon' : ''}
+    ${beforeSlot ? 'hasBeforeAddon' : ''}
+    ${afterSlot ? 'hasAfterAddon' : ''}
   "
 >
-  <div class="addon" show.bind="$slots.before.projections">
+  <div class="addon" show.bind="beforeSlot">
     <slot name="before"></slot>
   </div>
 
   <slot></slot>
 
-  <div class="addon" show.bind="$slots.after.projections">
+  <div class="addon" show.bind="afterSlot">
     <slot name="after"></slot>
   </div>
 
