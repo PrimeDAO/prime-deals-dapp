@@ -1,3 +1,4 @@
+import { DealService } from "services/DealService";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
@@ -42,33 +43,49 @@ export class WizardManager {
   private stages: IWizardStage[] = [];
   private registrationData = new DealRegistrationData();
 
-  constructor(public wizardService: WizardService) {}
+  constructor(public wizardService: WizardService, private dealService: DealService) {}
 
-  activate(params: {[STAGE_ROUTE_PARAMETER]: string}, routeConfig: RouteConfig): void {
+  activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig) {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
-    const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
-
     if (!this.wizardService.hasWizard(this)) {
       this.stages = this.configureStages(wizardType);
     }
 
-    this.stageMeta = {
-      wizardType,
-      wizardManager: this,
-    };
+    const dealId = params.id;
+    let registrationData: unknown;
 
+    if (dealId) {
+      registrationData = this.getDeal(dealId);
+    }
+
+    console.log(registrationData);
+
+    const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const indexOfActive = this.stages.findIndex(stage => stage.route.includes(stageRoute));
-    const targetStage = this.stages[indexOfActive];
-    this.view = `${targetStage.moduleId}.html`;
-    this.viewModel = targetStage.moduleId;
+    this.setupStageComponent(indexOfActive, wizardType);
 
     this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActive, this.registrationData);
   }
 
   public onClick(index: number): void {
     this.wizardService.goToStage(this, index);
+  }
+
+  private setupStageComponent(indexOfActive: number, wizardType: WizardType) {
+    this.stageMeta = {
+      wizardType,
+      wizardManager: this,
+    };
+
+    const targetStage = this.stages[indexOfActive];
+    this.view = `${targetStage.moduleId}.html`;
+    this.viewModel = targetStage.moduleId;
+  }
+
+  private getDeal(id: string): unknown {
+    return this.dealService.deals.get(id).rootData.registration as unknown;
   }
 
   private configureStages(wizardType: WizardType) {
