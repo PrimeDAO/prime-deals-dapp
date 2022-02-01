@@ -13,7 +13,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
-import { WizardType } from "dealWizard/dealWizardTypes";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "dealWizard/dealWizardTypes";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -153,7 +153,7 @@ export class App {
       },
       {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
-        route: "/initiate/token-swap/open-proposal/*stageRoute",
+        route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
         name: "createOpenProposal",
         title: "Create an Open Proposal",
@@ -163,7 +163,7 @@ export class App {
       },
       {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
-        route: "/initiate/token-swap/partnered-deal/*stageRoute",
+        route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
         name: "partneredDealWizard",
         title: "Create a Partnered Deal",
@@ -175,7 +175,7 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: "/make-an-offer/*stageRoute",
+        route: `/make-an-offer/*${STAGE_ROUTE_PARAMETER}`,
         title: "Submit a Proposal",
         settings: {
           wizardType: WizardType.makeAnOffer,

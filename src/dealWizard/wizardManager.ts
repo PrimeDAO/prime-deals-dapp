@@ -3,7 +3,35 @@ import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
 import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
-import { IStageMeta, WizardType } from "./dealWizardTypes";
+import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
+
+const proposalStage: IWizardStage = {
+  name: "Proposal",
+  valid: false,
+  route: "proposal",
+  moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
+};
+
+const proposalLeadStage: IWizardStage = {
+  name: "Lead Details",
+  valid: false,
+  route: "proposal-lead",
+  moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
+};
+
+const primaryDaoStage: IWizardStage = {
+  name: "Primary DAO",
+  valid: false,
+  route: "primary-dao",
+  moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
+};
+
+const partnerDaoStage: IWizardStage = {
+  name: "Partner DAO",
+  valid: false,
+  route: "partner-dao",
+  moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
+};
 
 @autoinject
 export class WizardManager {
@@ -11,35 +39,20 @@ export class WizardManager {
   public stageMeta: IStageMeta;
   public view: string;
   public viewModel: string;
-  private stages: IWizardStage[] = [{
-    name: "Proposal",
-    valid: false,
-    route: "stage1",
-    moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
-  }, {
-    name: "Lead Details",
-    valid: false,
-    route: "stage2",
-    moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
-  }, {
-    name: "Primary DAO",
-    valid: false,
-    route: "stage3",
-    moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
-  }];
+  private stages: IWizardStage[] = [];
   private registrationData = new DealRegistrationData();
 
   constructor(public wizardService: WizardService) {}
 
-  activate(params: any, routeConfig: RouteConfig): void {
-    if (!params.stageRoute) return;
+  activate(params: {[STAGE_ROUTE_PARAMETER]: string}, routeConfig: RouteConfig): void {
+    if (!params[STAGE_ROUTE_PARAMETER]) return;
 
-    const { stageRoute } = params;
+    const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
     const parentRoutePath = routeConfig.route as string;
 
     if (!this.wizardService.hasWizard(this)) {
-      this.configureStages(wizardType, parentRoutePath);
+      this.stages = this.configureStages(wizardType, parentRoutePath);
     }
 
     this.stageMeta = {
@@ -60,28 +73,44 @@ export class WizardManager {
   }
 
   private configureStages(wizardType: WizardType, parentRoutePath: string) {
+    let stages: IWizardStage[];
     switch (wizardType) {
       case WizardType.partneredDeal:
       case WizardType.makeAnOffer:
-        this.stages.push({
-          name: "Partner DAO",
-          valid: false,
-          route: "stage4",
-          moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
-        });
+        stages = this.getPartneredDealStages();
         break;
 
       default:
+        stages = this.getOpenProposalStages();
         break;
     }
 
-    this.stages = this.updateStagesWithFullRoutePath(parentRoutePath);
+    stages = this.updateStagesWithFullRoutePath(stages, parentRoutePath);
+
+    return stages;
   }
 
-  private updateStagesWithFullRoutePath(parentRoute) {
-    return this.stages.map(stage => ({
+  private updateStagesWithFullRoutePath(stages: IWizardStage[], parentRoute) {
+    return stages.map(stage => ({
       ...stage,
-      route: parentRoute.replace("*stageRoute", stage.route),
+      route: parentRoute.replace(`*${STAGE_ROUTE_PARAMETER}`, stage.route),
     }));
+  }
+
+  private getOpenProposalStages(): IWizardStage[] {
+    return [
+      proposalStage,
+      proposalLeadStage,
+      primaryDaoStage,
+    ];
+  }
+
+  private getPartneredDealStages(): IWizardStage[] {
+    return [
+      proposalStage,
+      proposalLeadStage,
+      primaryDaoStage,
+      partnerDaoStage,
+    ];
   }
 }

@@ -14,3 +14,5 @@ export interface IStageMeta {
   wizardManager: any;
   wizardType: WizardType;
 }
+
+export const STAGE_ROUTE_PARAMETER = "stageRoute";
