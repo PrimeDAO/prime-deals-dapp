@@ -1,8 +1,7 @@
 import { autoinject } from "aurelia-framework";
-import { RouteConfig } from "aurelia-router";
 import { IDealRegistrationData } from "entities/DealRegistrationData";
 import { WizardService, IWizardState } from "services/WizardService";
-import { IBaseWizardStage } from "../../dealWizardTypes";
+import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
 
 @autoinject
 export class PrimaryDaoStage implements IBaseWizardStage {
@@ -13,9 +12,9 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
   constructor(public wizardService: WizardService) {}
 
-  activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
-    this.disabled = routeConfig.settings.disabled;
+  activate(stageMeta: IStageMeta): void {
+    this.wizardManager = stageMeta.wizardManager;
+    this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
   }
 
   attached(): void {
