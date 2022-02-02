@@ -1,9 +1,9 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
+import { IWizardStage, IWizardState, WizardService } from "services/WizardService";
 import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
-import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
+import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 
 @autoinject
 export class WizardManager {
@@ -27,11 +27,17 @@ export class WizardManager {
     route: "proposal",
     moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
   };
-  private proposalLeadStage: IWizardStage = {
+  private openProposalLeadStage: IWizardStage = {
     name: "Lead Details",
     valid: false,
     route: "proposal-lead",
     moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
+  };
+  private partneredDealProposalLeadStage: IWizardStage = {
+    name: "Lead Details",
+    valid: false,
+    route: "proposal-lead",
+    moduleId: PLATFORM.moduleName("./partneredDealWizard/partneredDealProposalLeadStage/partneredDealProposalLeadStage"),
   };
   private primaryDaoStage: IWizardStage = {
     name: "Primary DAO",
@@ -47,12 +53,12 @@ export class WizardManager {
   };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
-    this.proposalLeadStage,
+    this.openProposalLeadStage,
     this.primaryDaoStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
-    this.proposalLeadStage,
+    this.partneredDealProposalLeadStage,
     this.primaryDaoStage,
     this.partnerDaoStage,
   ];

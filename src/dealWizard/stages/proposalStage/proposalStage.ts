@@ -1,7 +1,6 @@
-import { IStageMeta } from "./../../dealWizardTypes";
+import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { IBaseWizardStage } from "../../dealWizardTypes";
-import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IWizardState, WizardErrors, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationData, IProposal } from "entities/DealRegistrationData";
 
 @autoinject

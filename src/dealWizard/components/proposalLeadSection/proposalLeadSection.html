@@ -17,14 +17,14 @@
         validation-state.bind="errors.address ? 'error' : ''"
         validation-message.bind="errors.address"
       >
-        <pinput-text disabled.bind="disabled" placeholder="0x..." value.bind="data.address"></pinput-text>
-        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!address">
+        <pinput-text disabled.bind="disabled" placeholder="0x..." value.bind="address"></pinput-text>
+        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress">
           Connect your wallet
         </pbutton>
         <pbutton
           class="walletButton"
-          click.delegate="data.address = address"
-          if.bind="address && data.address !== address"
+          click.delegate="address = ethAddress"
+          if.bind="ethAddress && address !== ethAddress"
         >
           Make me an admin
         </pbutton>
@@ -37,7 +37,7 @@
         validation-message.bind="errors.email"
         validation-state.bind="errors.email ? 'error' : ''"
       >
-        <pinput-text value.bind="data.email" disabled.bind="disabled"></pinput-text>
+        <pinput-text disabled.bind="disabled" value.bind="email"></pinput-text>
       </pform-input>
     </div>
   </div>

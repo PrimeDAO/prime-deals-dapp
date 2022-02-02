@@ -14,7 +14,7 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
-  validate?: () => Promise<boolean>;
+  validate?: () => Promise<boolean> | boolean;
 }
 
 @autoinject

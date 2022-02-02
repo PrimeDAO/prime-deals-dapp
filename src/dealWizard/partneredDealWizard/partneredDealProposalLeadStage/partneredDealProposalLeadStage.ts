@@ -1,9 +1,8 @@
 import { autoinject } from "aurelia-framework";
-import { RouteConfig } from "aurelia-router";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { ValidationController, ValidationControllerFactory } from "aurelia-validation";
-import { proposalLeadValidationRules, validateWizardState } from "../../validation";
-import { IBaseWizardStage } from "../../dealWizardTypes";
+import { validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
+import { getErrorsFromValidateResults, proposalLeadValidationRules, validateWizardState } from "../../validation";
+import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
 import { IDealRegistrationData } from "../../../entities/DealRegistrationData";
 
 @autoinject
@@ -15,18 +14,24 @@ export class PartneredDealProposalLeadStage implements IBaseWizardStage {
 
   constructor(public wizardService: WizardService, validationFactory: ValidationControllerFactory) {
     this.form = validationFactory.createForCurrentScope();
+    this.form.validateTrigger = validateTrigger.changeOrBlur
   }
 
-  activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
+  activate(stageMeta: IStageMeta): void {
+    this.wizardManager = stageMeta.wizardManager;
   }
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
+    this.form.addObject(this.wizardState.registrationData.proposalLead, proposalLeadValidationRules)
+    this.form.subscribe(event => {
+      console.log('validation event triggered ->', event)
+      this.errors = getErrorsFromValidateResults(event.results)
+    })
+    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validateOnSubmit.bind(this));
   }
 
-  async validate(): Promise<boolean> {
+  async validateOnSubmit(): Promise<boolean> {
     const [formResult, errors] = await validateWizardState(this.form, this.wizardState.registrationData.proposalLead, proposalLeadValidationRules);
     this.errors = errors;
 

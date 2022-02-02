@@ -1,4 +1,10 @@
-import { ControllerValidateResult, Rule, ValidationController, ValidationRules } from "aurelia-validation";
+import {
+  ControllerValidateResult,
+  Rule,
+  ValidateResult,
+  ValidationController,
+  ValidationRules,
+} from "aurelia-validation";
 import { IProposalLead } from "../entities/DealRegistrationData";
 import { Validation } from "../validation";
 
@@ -16,12 +22,16 @@ export async function validateWizardState<T>(form: ValidationController, data: o
     rules,
   });
 
-  const errors = formResult.results
+  const errors = getErrorsFromValidateResults(formResult.results);
+
+  return [formResult, errors];
+}
+
+export function getErrorsFromValidateResults(validateResults: ValidateResult[] = []) {
+  return validateResults
     .filter(item => !item.valid)
     .reduce((errors, item) => {
       errors[item.propertyName] = item.message;
       return errors;
     }, {});
-
-  return [formResult, errors];
 }
