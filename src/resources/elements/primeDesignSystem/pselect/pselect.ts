@@ -1,5 +1,6 @@
-import { bindable, bindingMode, customElement } from "aurelia-framework";
+import { bindingMode, customElement } from "aurelia-framework";
 import SlimSelect from "slim-select";
+import { bindable } from "aurelia-typed-observable-plugin";
 import "./pselect.scss";
 
 export interface IPSelectItemConfig {
@@ -34,11 +35,12 @@ export interface IPSelectItemConfig {
 @customElement("pselect")
 export class PButton {
   @bindable disabled = false;
-  @bindable data: Array<IPSelectItemConfig> = [];
+  @bindable data?: Array<IPSelectItemConfig> = [];
   @bindable placeholder = "Please Select...";
   @bindable searchText = "No result found.";
   @bindable searchPlaceholder ="Type to search...";
   @bindable isSearchable = false;
+  @bindable.booleanAttr multiple = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) value?: string | string[];
 
   refSelectInput: HTMLSelectElement;
@@ -56,7 +58,7 @@ export class PButton {
       showSearch: this.isSearchable,
       data: [
         {text: this.placeholder, placeholder: true},
-        ...this.data,
+        ...this.data ?? [],
       ],
       onChange: info => this.value = Array.isArray(info) ? info.map(item => item.value) : info.value,
     });
