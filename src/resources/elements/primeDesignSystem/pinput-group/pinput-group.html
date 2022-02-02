@@ -1,0 +1,16 @@
+<template class="
+    ${beforeSlot ? 'hasBeforeAddon' : ''}
+    ${afterSlot ? 'hasAfterAddon' : ''}
+  "
+>
+  <div class="addon" show.bind="beforeSlot">
+    <slot name="before"></slot>
+  </div>
+
+  <slot></slot>
+
+  <div class="addon" show.bind="afterSlot">
+    <slot name="after"></slot>
+  </div>
+
+</template>

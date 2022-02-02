@@ -2,6 +2,7 @@ import "./documentation.scss";
 import { PLATFORM } from "aurelia-pal";
 import { singleton } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
+import {activationStrategy } from "aurelia-router";
 
 @singleton(false)
 export class Documentation {
@@ -10,13 +11,18 @@ export class Documentation {
   configureRouter(config: RouterConfiguration, router: Router): void {
     config.title = "Documentation";
 
+    /**
+     * activationStrategy is so baseDocument will be reactivated on each change
+     * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
+     */
+
     const routes = [
       {
         route: ["", "overview"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document1"),
-        name: "document1",
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         title: "Overview",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/overview.md").default,
         },
@@ -24,9 +30,9 @@ export class Documentation {
       {
         route: ["deal-launch"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document2"),
-        name: "document2",
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         title: "Deal Details & Benefits",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/dealLaunch.md").default,
         },
@@ -34,49 +40,13 @@ export class Documentation {
       {
         route: ["liquid-launch-lbp"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document3"),
-        name: "document3",
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         title: "Liquid Launch Details and Benefits",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/liquidLaunch.md").default,
         },
       },
-      // {
-      //   route: ["document4"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document4.html"),
-      //   name: "document4",
-      //   title: "Contribute to a Launch",
-      // },
-      // {
-      //   route: ["document5"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document5.html"),
-      //   name: "document5",
-      //   title: "Apply to Host a Launch",
-      // },
-      // {
-      //   route: ["document6"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document6.html"),
-      //   name: "document6",
-      //   title: "Prime support and services",
-      // },
-      // {
-      //   route: ["document7"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document7.html"),
-      //   name: "document7",
-      //   title: "FAQ",
-      // },
-
-      // {
-      //   route: ["document8"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document8.html"),
-      //   name: "document8",
-      //   title: "Host your own LBP",
-      // },
     ];
 
     config.map(routes);

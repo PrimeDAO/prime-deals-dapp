@@ -13,6 +13,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "dealWizard/dealWizardTypes";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -151,25 +152,34 @@ export class App {
         title: "Contribute",
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
-        name: "openProposalWizard",
-        route: "/initiate/token-swap/open-proposal",
-        title: "Initiate an Open Proposal",
+        name: "createOpenProposal",
+        title: "Create an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposal,
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/partneredDealWizard/partneredDealWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
         name: "partneredDealWizard",
-        route: "/initiate/token-swap/partnered-deal",
         title: "Create a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDeal,
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/makeOfferWizard/makeOfferWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: "/make-an-offer",
+        route: `/make-an-offer/*${STAGE_ROUTE_PARAMETER}`,
         title: "Submit a Proposal",
+        settings: {
+          wizardType: WizardType.makeAnOffer,
+        },
       },
       {
         moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
