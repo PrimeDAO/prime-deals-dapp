@@ -14,7 +14,7 @@ export class Documentation {
       {
         route: ["", "overview"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document1"),
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         name: "document1",
         title: "Overview",
         settings: {
@@ -24,7 +24,7 @@ export class Documentation {
       {
         route: ["deal-launch"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document2"),
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         name: "document2",
         title: "Deal Details & Benefits",
         settings: {
@@ -34,49 +34,13 @@ export class Documentation {
       {
         route: ["liquid-launch-lbp"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./document3"),
+        moduleId: PLATFORM.moduleName("./baseDocument"),
         name: "document3",
         title: "Liquid Launch Details and Benefits",
         settings: {
           content: require("/src/documentation/liquidLaunch.md").default,
         },
       },
-      // {
-      //   route: ["document4"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document4.html"),
-      //   name: "document4",
-      //   title: "Contribute to a Launch",
-      // },
-      // {
-      //   route: ["document5"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document5.html"),
-      //   name: "document5",
-      //   title: "Apply to Host a Launch",
-      // },
-      // {
-      //   route: ["document6"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document6.html"),
-      //   name: "document6",
-      //   title: "Prime support and services",
-      // },
-      // {
-      //   route: ["document7"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document7.html"),
-      //   name: "document7",
-      //   title: "FAQ",
-      // },
-
-      // {
-      //   route: ["document8"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./document8.html"),
-      //   name: "document8",
-      //   title: "Host your own LBP",
-      // },
     ];
 
     config.map(routes);
