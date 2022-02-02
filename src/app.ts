@@ -165,7 +165,7 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
-        name: "partneredDealWizard",
+        name: "createPartneredDeal",
         title: "Create a Partnered Deal",
         settings: {
           wizardType: WizardType.partneredDeal,
@@ -175,10 +175,30 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: `/make-an-offer/*${STAGE_ROUTE_PARAMETER}`,
-        title: "Submit a Proposal",
+        route: `/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Make an offer",
         settings: {
           wizardType: WizardType.makeAnOffer,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        nav: false,
+        name: "editOpenProposal",
+        route: `/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposalEdit,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        nav: false,
+        name: "editPartneredDeal",
+        route: `/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDealEdit,
         },
       },
       {
