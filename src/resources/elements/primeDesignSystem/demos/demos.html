@@ -1,3 +1,12 @@
 <template>
-  <router-view></router-view>
+  <div class="demosContainer">
+    <div class="links">
+      <a repeat.for="demo of router.navigation"
+        class="${demo.isActive ? 'active' : ''}"
+        href.to-view="demo.href">${demo.title}</a>
+    </div>
+    <div>
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
