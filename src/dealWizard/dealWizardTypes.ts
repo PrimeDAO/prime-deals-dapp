@@ -1,6 +1,6 @@
 import { IWizardState } from "services/WizardService";
 
-export enum WizardType {openProposal, partneredDeal, makeAnOffer}
+export enum WizardType {openProposal, openProposalEdit, partneredDeal, partneredDealEdit, makeAnOffer}
 
 export interface IBaseWizardStage {
   wizardManager: any;

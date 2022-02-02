@@ -4,6 +4,7 @@ import { RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
 import { DealRegistrationData, IDealRegistrationData } from "entities/DealRegistrationData";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
+import { DealService } from "services/DealService";
 
 @autoinject
 export class WizardManager {
@@ -57,29 +58,26 @@ export class WizardManager {
     this.partnerDaoStage,
   ];
 
-  constructor(public wizardService: WizardService) {}
+  constructor(public wizardService: WizardService, private dealService: DealService) {}
 
-  activate(params: {[STAGE_ROUTE_PARAMETER]: string}, routeConfig: RouteConfig): void {
+  activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
-    const parentRoutePath = routeConfig.route as string;
 
-    this.stages = this.configureStages(wizardType, parentRoutePath);
+    // if we are accessing an already existing deal, get its registration data
+    if (params.id) {
+      this.registrationData = this.getDeal(params.id);
+    }
 
-    this.stageMeta = {
-      wizardType,
-      wizardManager: this,
-    };
+    this.stages = this.configureStages(wizardType);
 
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
 
-    const activeStage = this.stages[indexOfActiveStage];
-    this.view = `${activeStage.moduleId}.html`;
-    this.viewModel = activeStage.moduleId;
+    this.setupStageComponent(indexOfActiveStage, wizardType);
 
     this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActiveStage, this.registrationData);
   }
@@ -88,11 +86,23 @@ export class WizardManager {
     this.wizardService.goToStage(this, index);
   }
 
-  private configureStages(wizardType: WizardType, parentRoutePath: string) {
+  private setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
+    this.stageMeta = {
+      wizardType,
+      wizardManager: this,
+    };
+
+    const activeStage = this.stages[indexOfActiveStage];
+    this.view = `${activeStage.moduleId}.html`;
+    this.viewModel = activeStage.moduleId;
+  }
+
+  private configureStages(wizardType: WizardType) {
     let stages: IWizardStage[];
     switch (wizardType) {
       case WizardType.partneredDeal:
       case WizardType.makeAnOffer:
+      case WizardType.partneredDealEdit:
         stages = this.partneredDealStages;
         break;
 
@@ -101,15 +111,10 @@ export class WizardManager {
         break;
     }
 
-    stages = this.updateStagesWithFullRoutePath(stages, parentRoutePath);
-
     return stages;
   }
 
-  private updateStagesWithFullRoutePath(stages: IWizardStage[], parentRoute) {
-    return stages.map(stage => ({
-      ...stage,
-      route: parentRoute.replace(`*${STAGE_ROUTE_PARAMETER}`, stage.route),
-    }));
+  private getDeal(id: string): DealRegistrationData {
+    return this.dealService.deals.get(id).rootData.registration as any;
   }
 }
