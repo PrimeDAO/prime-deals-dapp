@@ -58,7 +58,7 @@ export class PButton {
         {text: this.placeholder, placeholder: true},
         ...this.data,
       ],
-      onChange: info => this.value = info instanceof Array ? info.map(item => item.value) : info.value,
+      onChange: info => this.value = Array.isArray(info) ? info.map(item => item.value) : info.value,
     });
     this.select.set(this.value);
   }
