@@ -2,6 +2,7 @@ import "./documentation.scss";
 import { PLATFORM } from "aurelia-pal";
 import { singleton } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
+import {activationStrategy } from "aurelia-router";
 
 @singleton(false)
 export class Documentation {
@@ -10,13 +11,18 @@ export class Documentation {
   configureRouter(config: RouterConfiguration, router: Router): void {
     config.title = "Documentation";
 
+    /**
+     * activationStrategy is so baseDocument will be reactivated on each change
+     * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
+     */
+
     const routes = [
       {
         route: ["", "overview"],
         nav: true,
         moduleId: PLATFORM.moduleName("./baseDocument"),
-        name: "document1",
         title: "Overview",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/overview.md").default,
         },
@@ -25,8 +31,8 @@ export class Documentation {
         route: ["deal-launch"],
         nav: true,
         moduleId: PLATFORM.moduleName("./baseDocument"),
-        name: "document2",
         title: "Deal Details & Benefits",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/dealLaunch.md").default,
         },
@@ -35,8 +41,8 @@ export class Documentation {
         route: ["liquid-launch-lbp"],
         nav: true,
         moduleId: PLATFORM.moduleName("./baseDocument"),
-        name: "document3",
         title: "Liquid Launch Details and Benefits",
+        activationStrategy: activationStrategy.replace,
         settings: {
           content: require("/src/documentation/liquidLaunch.md").default,
         },
