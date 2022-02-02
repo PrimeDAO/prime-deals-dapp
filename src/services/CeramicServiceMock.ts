@@ -2,7 +2,7 @@ import { DealRegistrationData, IDAO } from "entities/DealRegistrationData";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
 const MOCK_DATA = {
-  "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id"],
+  "root_stream_id": ["open_deals_stream_id", "partner_deals_stream_id", "open_deals_stream_id_2"],
   "open_deals_stream_id": {
     registration: {
       daos: [
@@ -11,7 +11,18 @@ const MOCK_DATA = {
     },
   },
   "open_deals_stream_id_2": {
-    registration: new DealRegistrationData(),
+    registration: {
+      ...new DealRegistrationData(),
+      proposal: {
+        title: "First Proposal",
+        summary: "Quick summary",
+        description: "Long description lorem ipsum",
+      },
+      proposalLead: {
+        address: "0x123123123",
+        email: "",
+      },
+    },
   },
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   "partner_deals_stream_id": {
