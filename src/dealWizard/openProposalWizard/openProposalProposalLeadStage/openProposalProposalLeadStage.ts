@@ -1,5 +1,5 @@
+import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { RouteConfig } from "aurelia-router";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardErrors, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationData, IProposalLead } from "entities/DealRegistrationData";
@@ -18,8 +18,8 @@ export class OpenProposalProposalLeadStage implements IBaseWizardStage {
     this.form = validationFactory.createForCurrentScope();
   }
 
-  activate(_params: unknown, routeConfig: RouteConfig): void {
-    this.wizardManager = routeConfig.settings.wizardManager;
+  activate(stageMeta: IStageMeta): void {
+    this.wizardManager = stageMeta.wizardManager;
   }
 
   attached(): void {

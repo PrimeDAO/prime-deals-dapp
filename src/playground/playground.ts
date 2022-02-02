@@ -1,5 +1,5 @@
-import { PLATFORM } from "aurelia-pal";
-import { RouterConfiguration } from "aurelia-router";
+import {PLATFORM} from "aurelia-pal";
+import {RouterConfiguration} from "aurelia-router";
 
 export class Playground {
   private configureRouter(config: RouterConfiguration): void {
