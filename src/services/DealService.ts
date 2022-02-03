@@ -4,7 +4,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
 export interface IDaoPartner {
   daoId: string,
@@ -141,6 +141,15 @@ export class DealService {
     }
   }
 
+  public createRegistration(_registration: any): Promise<IKey> {
+    /**
+     * this should create the root CID for a Deal, populated with empty votes and discussions,
+     * and populate the registration with what is given.  Should return the root CID for the
+     * Deal.
+     */
+    throw new Error("Not implemented");
+  }
+
   /**
    * TODO: move this to a `DaosService`
    */
@@ -166,14 +175,4 @@ export class DealService {
   //   const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
   //   return dao;
   // }
-
-  private asciiToHex(str = ""): string {
-    const res = [];
-    const { length: len } = str;
-    for (let n = 0, l = len; n < l; n++) {
-      const hex = Number(str.charCodeAt(n)).toString(16);
-      res.push(hex);
-    }
-    return `0x${res.join("")}`;
-  }
 }

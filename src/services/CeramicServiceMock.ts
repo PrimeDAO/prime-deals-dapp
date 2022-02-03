@@ -46,12 +46,12 @@ export class CeramicServiceMock extends IDataSourceDeals {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public create(parent: IKey): Promise<string> {
+  public create(parent: IKey): Promise<IKey> {
     throw new Error("Method not implemented.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(id: IKey, data: string): Promise<IKey> {
+  public update(id: IKey, data: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

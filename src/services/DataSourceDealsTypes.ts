@@ -18,10 +18,13 @@ export abstract class IDataSourceDeals {
   get<T>(id?: IKey): T {
     throw new Error("Method not implemented.");
   }
-  create(idParent: IKey, data: string): Promise<string> {
+  /**
+   * returns the new CID
+   */
+  create(idParent: IKey, data: string): Promise<IKey> {
     throw new Error("Method not implemented.");
   }
-  update(id: IKey, data: string): Promise<string> {
+  update(id: IKey, data: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

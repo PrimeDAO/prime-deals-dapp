@@ -5,25 +5,7 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IDeal } from "entities/IDealTypes";
-
-export interface IDealsData {
-  votes: IKey;
-  /**
-   * CID to json that looks like:
-   *
-   * {
-   *   "clauseId1": "discussionsKey1",
-   *   "clauseId2": "discussionsKey4",
-   *   "clauseId3": "discussionsKey3",
-   * }
-   */
-  discussions: IKey;
-  /**
-   * CID to json that confirms to IDealRegistrationTokenSwap
-   */
-  registration: IKey;
-}
+import { IDeal, IDealsData } from "entities/IDealTypes";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -31,7 +13,6 @@ export class DealTokenSwap implements IDeal {
   private subscriptions = new DisposableCollection();
   private rootData: IDealsData;
 
-  public contract: any;
   public id: IKey;
   public dealInitialized: boolean;
 
@@ -48,7 +29,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * key is the clauseId, value is the discussion key
    */
-  public discussions: Map<string, string>;
+  public clauseDiscussions: Map<string, string>;
 
   public get isOpen(): boolean {
     return !this.registrationData.partnerDAO;
@@ -102,7 +83,7 @@ export class DealTokenSwap implements IDeal {
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string>>(this.rootData.discussions);
-      this.discussions = new Map(Object.entries(discussionsMap));
+      this.clauseDiscussions = new Map(discussionsMap ? Object.entries(discussionsMap) : []);
     }
     catch (error) {
       this.corrupt = true;
@@ -124,15 +105,13 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public async createRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
-    this.dataSourceDeals.create(this.rootData.registration, JSON.stringify(registration));
+  public updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
+    return this.dataSourceDeals.update(this.id, JSON.stringify(registration));
   }
 
-  public async updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
-    this.dataSourceDeals.update(this.id, JSON.stringify(registration));
-  }
-
-  public async createClauseDiscussionMap(clauseId: string, discussionKey: string): Promise<void> {
-    this.dataSourceDeals.create(this.rootData.discussions, JSON.stringify({ [clauseId]: discussionKey }));
+  public addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void> {
+    this.clauseDiscussions.set(clauseId, discussionKey);
+    const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
+    return this.dataSourceDeals.update(this.rootData.discussions, JSON.stringify(clauseDiscussionsObject));
   }
 }
