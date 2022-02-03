@@ -79,7 +79,25 @@ export class WizardManager {
 
     this.setupStageComponent(indexOfActiveStage, wizardType);
 
-    this.wizardState = this.wizardService.registerWizard(this, this.stages, indexOfActiveStage, this.registrationData);
+    this.wizardState = this.wizardService.registerWizard({
+      wizardManager: this,
+      stages: this.stages,
+      indexOfActive: indexOfActiveStage,
+      registrationData: this.registrationData,
+      cancelRoute: "home",
+      previousRoute: this.getPreviousRoute(wizardType),
+    });
+  }
+
+  private getPreviousRoute(wizardType: WizardType) {
+    switch (wizardType) {
+      case WizardType.openProposal:
+      case WizardType.partneredDeal:
+        return "initiate/token-swap";
+
+      default:
+        return "home";
+    }
   }
 
   public onClick(index: number): void {

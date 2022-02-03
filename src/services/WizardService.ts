@@ -6,6 +6,8 @@ export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
   indexOfActive: number;
   registrationData: Data;
+  cancelRoute: string;
+  previousRoute: string;
 }
 
 export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
@@ -24,12 +26,21 @@ export class WizardService {
 
   constructor(private router: Router){}
 
-  public registerWizard<Data>(
-    wizardManager: any,
-    stages: Array<IWizardStage>,
-    indexOfActive: number,
-    registrationData: Data,
-  ): IWizardState<Data> {
+  public registerWizard<Data>({
+    wizardManager,
+    stages,
+    indexOfActive,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }:{
+    wizardManager: any;
+    stages: Array<IWizardStage>;
+    indexOfActive: number;
+    registrationData: Data;
+    cancelRoute: string;
+    previousRoute: string;
+  }): IWizardState<Data> {
     if (!this.hasWizard(wizardManager)) {
       this.wizardsStates.set(
         wizardManager,
@@ -37,6 +48,8 @@ export class WizardService {
           stages,
           indexOfActive: indexOfActive,
           registrationData,
+          cancelRoute,
+          previousRoute,
         },
       );
     }
@@ -65,8 +78,8 @@ export class WizardService {
     stage.validate = validate;
   }
 
-  public cancel(): void {
-    this.router.parent.navigate("home");
+  public cancel(wizardManager: any): void {
+    this.router.navigate(this.getWizardState(wizardManager).cancelRoute);
   }
 
   public proceed(wizardManager: any): void {
@@ -84,12 +97,13 @@ export class WizardService {
   }
 
   public previous(wizardManager: any): void {
-    const indexOfActive = this.getWizardState(wizardManager).indexOfActive;
+    const wizardState = this.getWizardState(wizardManager);
+    const indexOfActive = wizardState.indexOfActive;
 
     if (indexOfActive > 0) {
       this.goToStage(wizardManager, indexOfActive - 1);
     } else {
-      this.router.navigate("initiate/token-swap");
+      this.router.navigate(wizardState.previousRoute);
     }
   }
 
