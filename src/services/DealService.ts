@@ -146,6 +146,7 @@ export class DealService {
    * TODO: move this to a `DaosService`
    */
   public async getDAOsInformation(): Promise<void> {
+    return;
     // TODO
     const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
 
