@@ -71,7 +71,7 @@ export interface IDealRegistrationData {
   modifiedAt: Date | null;
   createdByAddress: string | null;
   executionPeriodInDays: number;
-  dealType: "token-swap" | "joint-venture"; // @TODO do we need dealType?
+  dealType: "token-swap"/* | "joint-venture"*/;
 }
 
 export class DealRegistrationData implements IDealRegistrationData {
@@ -88,7 +88,7 @@ export class DealRegistrationData implements IDealRegistrationData {
   public modifiedAt: Date | null;
   public createdByAddress: string | null;
   public executionPeriodInDays: number;
-  public dealType: "token-swap" | "joint-venture"; // do we need this??
+  public dealType: "token-swap"/* | "joint-venture" */;
 
   constructor() {
     this.clearState();
