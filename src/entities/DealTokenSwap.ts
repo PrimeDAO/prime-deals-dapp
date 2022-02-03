@@ -4,7 +4,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
-import { IDealTokenSwapRegistration } from "entities/DealTokenSwapRegistration";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDeal } from "entities/IDealTypes";
 
 export interface IDealsData {
@@ -26,7 +26,7 @@ export class DealTokenSwap implements IDeal {
   public initializing = true;
   public corrupt = false;
 
-  public registrationData: IDealTokenSwapRegistration;
+  public registrationData: IDealRegistrationTokenSwap;
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
@@ -100,7 +100,7 @@ export class DealTokenSwap implements IDeal {
        */
 
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      this.registrationData = await this.dataSourceDeals.get<IDealTokenSwapRegistration>(this.rootData.registration);
+      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
     }
     catch (error) {
       this.corrupt = true;
@@ -122,11 +122,11 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public async createRegistration(registration: IDealTokenSwapRegistration): Promise<void> {
+  public async createRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
     this.dataSourceDeals.create("key", JSON.stringify(registration));
   }
 
-  public async updateRegistration(registration: IDealTokenSwapRegistration): Promise<void> {
+  public async updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
     this.dataSourceDeals.update("key", JSON.stringify(registration));
   }
 }

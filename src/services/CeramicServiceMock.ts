@@ -1,4 +1,4 @@
-import { DealTokenSwapRegistration, IDAO } from "entities/DealTokenSwapRegistration";
+import { DealRegistrationTokenSwap, IDAO } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
 const MOCK_DATA = {
@@ -12,7 +12,7 @@ const MOCK_DATA = {
   },
   "open_deals_stream_id_2": {
     registration: {
-      ...new DealTokenSwapRegistration(),
+      ...new DealRegistrationTokenSwap(),
       proposal: {
         title: "First Proposal",
         summary: "Quick summary",

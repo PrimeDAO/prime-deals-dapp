@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
-import { IDealTokenSwapRegistration } from "entities/DealTokenSwapRegistration";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { WizardService, IWizardState } from "services/WizardService";
 import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
 
 @autoinject
 export class PartnerDaoStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizardState: IWizardState<IDealTokenSwapRegistration>;
+  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   public errors: Record<string, string> = {};
   public disabled: boolean;
 

@@ -57,7 +57,7 @@ export interface ITerms {
   previousDiscussionURL: string,
 }
 
-export interface IDealTokenSwapRegistration {
+export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
@@ -74,7 +74,7 @@ export interface IDealTokenSwapRegistration {
   dealType: "token-swap"/* | "joint-venture"*/;
 }
 
-export class DealTokenSwapRegistration implements IDealTokenSwapRegistration {
+export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public version: string;
   public proposal: IProposal;
   public primaryDAO: IDAO;

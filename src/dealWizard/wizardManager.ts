@@ -2,13 +2,13 @@ import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
-import { DealTokenSwapRegistration, IDealTokenSwapRegistration } from "entities/DealTokenSwapRegistration";
+import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 
 @autoinject
 export class WizardManager {
-  public wizardState: IWizardState<IDealTokenSwapRegistration>;
+  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
   // a meta configuration passed to each stage component in the view
   // for stage components to know which wizardManger they belong to and what wizardType it is
@@ -21,7 +21,7 @@ export class WizardManager {
   public viewModel: string;
 
   private stages: IWizardStage[] = [];
-  private registrationData = new DealTokenSwapRegistration();
+  private registrationData = new DealRegistrationTokenSwap();
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
@@ -132,7 +132,7 @@ export class WizardManager {
     return stages;
   }
 
-  private getDeal(id: string): DealTokenSwapRegistration {
+  private getDeal(id: string): DealRegistrationTokenSwap {
     return this.dealService.deals.get(id).registrationData as any;
   }
 }
