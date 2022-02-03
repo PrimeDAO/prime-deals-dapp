@@ -133,6 +133,6 @@ export class WizardManager {
   }
 
   private getDeal(id: string): DealRegistrationData {
-    return this.dealService.deals.get(id).rootData.registration as any;
+    return this.dealService.deals.get(id).registrationData as any;
   }
 }

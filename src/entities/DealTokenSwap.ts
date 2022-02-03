@@ -13,17 +13,17 @@ export interface IDealsData {
 }
 
 @autoinject
-export class Deal {
+export class DealTokenSwap {
+  private initializedPromise: Promise<void>;
+  private subscriptions = new DisposableCollection();
+  private rootData: IDealsData;
+
   public contract: any;
-  public id: Hash;
-  public rootData: IDealsData;
+  public id: IKey;
   public dealInitialized: boolean;
 
   public initializing = true;
   public corrupt = false;
-
-  private initializedPromise: Promise<void>;
-  private subscriptions = new DisposableCollection();
 
   public registrationData: IDealRegistrationData;
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
@@ -50,7 +50,7 @@ export class Deal {
   ) {
   }
 
-  public create(id: Hash): Deal {
+  public create(id: Hash): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.id = id;
     return this;
@@ -77,7 +77,7 @@ export class Deal {
     catch (error) {
       this.corrupt = true;
       this.initializing = false;
-      this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
+      this.consoleLogService.logMessage(`DealTokenSwap: Error initializing deal ${error?.message}`, "error");
     }
   }
 

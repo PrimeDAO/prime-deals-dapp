@@ -1,7 +1,6 @@
-import axios from "axios";
 import { Address, Hash } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
-import { Deal } from "entities/Deal";
+import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
@@ -24,22 +23,22 @@ export interface IDaoPartner {
   thumbName: string
 }
 
-export interface IDaoAPIObject {
-  daoName: string,
-  organizationId: string,
-  daoId: string,
-  logo: string,
-  daosArr: Array<IDaoPartner>,
-  totalNumMembers: number,
-  totalNumProposals: number,
-  totalNumVoters: number,
-  totalValueUSD: number,
-  totalInUSD: number,
-  totalOutUSD: number,
-  votersParticipation: number,
-  thumbName: string,
-  platform: number,
-}
+// export interface IDaoAPIObject {
+//   daoName: string,
+//   organizationId: string,
+//   daoId: string,
+//   logo: string,
+//   daosArr: Array<IDaoPartner>,
+//   totalNumMembers: number,
+//   totalNumProposals: number,
+//   totalNumVoters: number,
+//   totalValueUSD: number,
+//   totalInUSD: number,
+//   totalOutUSD: number,
+//   votersParticipation: number,
+//   thumbName: string,
+//   platform: number,
+// }
 
 @autoinject
 export class DealService {
@@ -47,24 +46,24 @@ export class DealService {
   /**
    * key is a ceramic Hash
    */
-  public deals: Map<Hash, Deal>;
+  public deals: Map<Hash, DealTokenSwap>;
   @computedFrom("seeds.size")
-  public get dealsArray(): Array<Deal> {
+  public get dealsArray(): Array<DealTokenSwap> {
     return this.deals ? Array.from(this.deals.values()) : [];
   }
   public initializing = true;
   private initializedPromise: Promise<void>;
 
   public get openDeals(): Array<any> {
-    return this.dealsArray.filter((deal: Deal) => deal.isOpen );
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpen );
   }
 
   public get partneredDeals(): Array<any> {
-    return this.dealsArray.filter((deal: Deal) => deal.isPartnered );
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered );
   }
 
   // public dealsObject: any = {};
-  public DAOs: Array<IDaoAPIObject>;
+  // public DAOs: Array<IDaoAPIObject>;
 
   constructor(
     private dataSourceDeals: IDataSourceDeals,
@@ -80,7 +79,7 @@ export class DealService {
      * deals will take care of themselves on account changes
      */
     this.getDeals();
-    this.getDAOsInformation();
+    // this.getDAOsInformation();
   }
 
   private async getDeals(): Promise<void> {
@@ -89,7 +88,7 @@ export class DealService {
         reject: (reason?: any) => void): void => {
         if (!this.deals?.size) {
           try {
-            const dealsMap = new Map<Address, Deal>();
+            const dealsMap = new Map<Address, DealTokenSwap>();
 
             /**
              * rootId is just some way of identifying where in Ceramic to search for this list of Deal ids.
@@ -126,8 +125,8 @@ export class DealService {
     );
   }
 
-  private createSeedFromConfig(dealId: Hash): Deal {
-    const deal = this.container.get(Deal);
+  private createSeedFromConfig(dealId: Hash): DealTokenSwap {
+    const deal = this.container.get(DealTokenSwap);
     return deal.create(dealId);
   }
 
@@ -145,28 +144,28 @@ export class DealService {
   /**
    * TODO: move this to a `DaosService`
    */
-  public async getDAOsInformation(): Promise<void> {
-    // TODO
-    const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
+  // public async getDAOsInformation(): Promise<void> {
+  //   // TODO
+  //   const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
 
-    this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
-      organizationId: dao.organizationId,
-      daoId: dao.daoId,
-      name: dao.daoName,
-      logo: (dao.logo)
-        ? (dao.logo.toLocaleLowerCase().startsWith("http"))
-          ? dao.logo
-          : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
-        : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
-    }));
-  }
+  //   this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
+  //     organizationId: dao.organizationId,
+  //     daoId: dao.daoId,
+  //     name: dao.daoName,
+  //     logo: (dao.logo)
+  //       ? (dao.logo.toLocaleLowerCase().startsWith("http"))
+  //         ? dao.logo
+  //         : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
+  //       : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
+  //   }));
+  // }
 
-  public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
-    if (!this.DAOs) await this.getDAOsInformation;
+  // public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
+  //   if (!this.DAOs) await this.getDAOsInformation;
 
-    const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
-    return dao;
-  }
+  //   const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
+  //   return dao;
+  // }
 
   private asciiToHex(str = ""): string {
     const res = [];
