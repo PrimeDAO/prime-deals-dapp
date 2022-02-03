@@ -45,8 +45,8 @@ export interface IProposalLead {
 }
 
 export interface IClause {
+  id: string,
   text: string,
-  tag: string,
 }
 
 export interface ITerms {
