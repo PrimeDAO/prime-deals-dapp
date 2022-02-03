@@ -1,17 +1,17 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <require from="../../components/proposalLeadSection/proposalLeadSection"></require>
-    --${wizardState.registrationData.proposalLead.address}--
   <stage-wrapper
     title="Proposal Lead"
     wizard-manager.bind="wizardManager">
 
-    <input id="firstName" placeholder="First Name" type="text"
-           value.bind="wizardState.registrationData.proposalLead.address & validate">
+    This is a native input and validation works here ->
+    <input type="text" value.bind="wizardState.registrationData.proposalLead.address & validate">
+    <-
 
     <proposal-lead-section
       address.bind="wizardState.registrationData.proposalLead.address & validate"
-      email.bind="wizardState.registrationData.proposalLead.email "
+      email.bind="wizardState.registrationData.proposalLead.email & validate"
       errors.bind="errors">
     </proposal-lead-section>
 

@@ -17,7 +17,8 @@
         validation-state.bind="errors.address ? 'error' : ''"
         validation-message.bind="errors.address"
       >
-        <pinput-text disabled.bind="disabled" placeholder="0x..." value.bind="address"></pinput-text>
+        <pinput-text disabled.bind="disabled" placeholder="0x..." validation-state.bind="errors.address ? 'error' : ''"
+                     value.bind="address"></pinput-text>
         <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress">
           Connect your wallet
         </pbutton>
