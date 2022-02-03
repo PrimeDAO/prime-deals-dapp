@@ -10,17 +10,18 @@
       </div>
       <hgroup class="title">
         <h2 class="heading topic">${dealDiscussion.topic}</h2>
-        <span if.bind="dealDiscussion && dealDiscussion.createdBy">
+        <span if.bind="dealDiscussion && dealDiscussion.createdByAddress">
           <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
           <h3 class="subtext">
-            Created by ${dealDiscussion.createdBy | smallHexString}
-            at ${ dateService.formattedTime(dealDiscussion.createdOn).short() }</h3>
+            Created by ${dealDiscussion.createdByAddress | smallHexString}
+            at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }</h3>
         </span>
       </hgroup>
     </section>
     <div class="sticky-area">
       <section class="comments container">
         <div if.bind="isLoading === 'isFetching'" class="comment isLoading">
+          <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
         <div if.bind="!threadComments.length && isLoading !== 'isFetching'" class="no comment">
@@ -30,25 +31,30 @@
           if.bind="isLoading !== 'isFetching' && threadComments.length"
           repeat.for="comment of threadComments"
           id="${comment._id}"
-          class="comment ${isReply && comment._id === replyToOriginalMessage._id ? 'isReply' : ''}">
+          class="comment">
           <single-comment
             callback.call="doAction(action, args)"
             discussionId.bind="discussionId"
             author.bind="dealDiscussion.createdBy"
             loading.bind="isLoading"
-            replies-to.bind="threadDictionary[comment.replyTo]"
+            highlighted.bind="isReply && comment._id === replyToOriginalMessage._id"
+            index="${$index}"
+            replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             comment.bind="comment">
           </single-comment>
         </div>
       </section>
-      <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton>
+      <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton> -->
 
       <!-- Comment Input -->
       <section if.bind="isAuthorized" class="action container">
-        <div if.bind="isReply">
+        <div if.bind="isReply" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
-            <span if.bind="dealDiscussion && dealDiscussion.createdBy">
+            <span if.bind="replyToOriginalMessage && replyToOriginalMessage.authorName">
+              Reply to ${replyToOriginalMessage.authorName}
+            </span>
+            <span else if.bind="replyToOriginalMessage && replyToOriginalMessage.author">
               Reply to ${replyToOriginalMessage.author | smallHexString}
             </span>
             <button click.delegate="closeReply()">

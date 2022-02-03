@@ -1,3 +1,4 @@
+import { Hash } from "services/EthereumService";
 export interface IProposal {
   title: string,
   summary: string,
@@ -47,6 +48,7 @@ export interface IProposalLead {
 export interface IClause {
   text: string,
   tag: string,
+  key?: Hash,
 }
 
 export interface ITerms {

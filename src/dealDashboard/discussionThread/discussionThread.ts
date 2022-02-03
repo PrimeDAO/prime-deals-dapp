@@ -1,58 +1,55 @@
+import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DiscussionsService, IDiscussion, IComment, EVote } from "dealDashboard/discussionsService";
+import { DiscussionsService } from "dealDashboard/discussionsService";
+import { IDiscussion, IComment, IProfile, VoteType, TCommentDictionary } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./discussionThread.scss";
 
-type TCommentDictionary = {
-  [key: string]: IComment
-}
-
 @autoinject
 export class DiscussionThread {
-  dealDiscussion: IDiscussion;
-  dealDiscussionComments: IComment[];
   @bindable discussionId: string;
+  private comment = "";
   private isReply = false;
   private replyToOriginalMessage: IComment;
-
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
-  private comment = "";
+  private threadProfiles: IProfile[] = [];
   private isLoading = "";
   private isAuthorized: boolean;
+  private dealDiscussion: IDiscussion;
+  private dealDiscussionComments: IComment[];
+  private deletedComment: IComment = {
+    _id: "",
+    text: "This message has been removed.",
+    author: "",
+    authorName: "",
+    metadata: {
+      isDeleted: true,
+    },
+    replyTo: "",
+    upvotes: [""],
+    downvotes: [""],
+    timestamp: 0,
+  };
 
   constructor(
     private router: Router,
+    private deal: DealService,
     private dateService: DateService,
+    private dealService: DealService,
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
   ) {}
 
-  attached(): void {
+  async attached(): Promise<void> {
     this.isLoading = "isFetching";
     this.isAuthorized = this.checkIsAuthorized;
     this.discussionId = this.router.currentInstruction.params.discussionId;
     this.ensureDealDiscussion();
-    this.discussionsService.loadDiscussion(this.discussionId).then(
-      (comments: IComment[]) => {
-        this.threadComments = comments;
-        // Dictionary is used for replies, to easily find the comment by its id
-        this.threadDictionary = comments.reduce(function(r, e) {
-          r[e._id] = e;
-          return r;
-        }, {});
 
-        // Subscribe for new comments and update the thread once a new comment is posted
-        this.discussionsService.subscribeToDiscussion(this.discussionId);
-
-        // Update the discussion status
-        // Todo
-        this.discussionsService.updateDiscussionListStatus(this.discussionId);
-
-        this.isLoading = "";
-      });
+    this.dealDiscussion = Object.values(await this.dealService.getDiscussions([this.discussionId]))[0];
   }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -65,21 +62,38 @@ export class DiscussionThread {
   }
 
   private async ensureDealDiscussion() {
-    this.dealDiscussion = await this.discussionsService.getDiscussionInfo(this.discussionId);
+    this.discussionsService.loadDiscussionComments(this.discussionId).then(
+      (comments: IComment[]) => {
+        if (!comments || !Object.keys(comments).length) {
+          this.isLoading = "";
+          return {};
+        }
+
+        // Dictionary is used for replies, to easily find the comment by its id
+        this.threadDictionary = comments.reduce(function(r, e) {
+          r[e._id] = e;
+          return r;
+        }, {});
+        this.threadComments = comments;
+
+        // Subscribe for new comments and update the thread once a new comment is posted
+        this.discussionsService.subscribeToDiscussion(this.discussionId);
+
+        // Update the discussion status
+        // Todo
+        this.discussionsService.updateDiscussionListStatus(this.discussionId);
+
+        this.isLoading = "";
+      });
   }
 
   loadMoreComments() {
     // TODO
   }
 
-  async dealClauseIdChanged() {
-    await this.discussionsService.loadDiscussion(this.discussionId);
-    this.threadComments = this.discussionsService.comments;
-  }
-
   async addComment(): Promise<void> {
     this.isLoading = "commenting";
-    this.threadComments = await this.discussionsService.postCommentToConvo(
+    this.threadComments = await this.discussionsService.addComment(
       this.discussionId,
       this.comment,
       this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
@@ -90,15 +104,13 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    // console.log("replyComment");
     this.isReply = !this.isReply;
     this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
-    // console.log(this.threadComments, this.replyToOriginalMessage);
   }
 
-  async voteComment(_id: string, type: EVote): Promise<void> {
+  async voteComment(_id: string, type: VoteType): Promise<void> {
     this.isLoading = `isVoting ${_id}`;
-    this.threadComments = await this.discussionsService.voteMessage(this.discussionId, _id, type);
+    this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
     this.isLoading = "";
   }
 

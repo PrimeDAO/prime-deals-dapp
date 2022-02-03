@@ -1,31 +1,56 @@
 <template>
-  <div class="single comment">
-    <header>
+  <div class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
+    <header class="header">
       <figure class="avatar">
         <img src="/genericToken.svg" alt="">
       </figure>
-      <h3 if.bind="comment.author">${comment.author | smallHexString}</h3>
+      <span if.bind="comment.author.name">${comment.author.name}</span>
+      <span if.bind="!comment.author.name">
+        <etherscanlink 
+          text="${comment.author | smallHexString}" 
+          address="${comment.author}" 
+          type="tx">
+        </etherscanlink>
+      </span>
+      <span else>
+        ${comment.author}
+      </span>
       <span if.bind="comment.author === author">(Author)</span>
       <time class="lastActivity">${dateService.formattedTime(comment.createdOn * 1).diff()}</time>
     </header>
-    <main>
-      <section if.bind="repliesTo" class="reply">
-        <div>
-          <figure>
-            <img src="/genericToken.svg" alt="">
-          </figure>
-          <span>
-            ${repliesTo.author | smallHexString} 
-            <span if.bind="comment.author === author">(Author)</span>
-          </span>
-        </div>
-        <p>
-          ${repliesTo.text}
-        </p>
-      </section>
+    <section class="body">
+      <div if.bind="repliesTo" class="replyContainer">
+        <figure>
+          <img src="/reply.svg" alt="">
+        </figure>
+        <article class="reply ${bgType}">
+          <div if.bind="!repliesTo.metadata.isDeleted">
+            <figure>
+              <img src="/genericToken.svg" alt="">
+            </figure>
+            <div class="identity">
+              <span if.bind="repliesTo.authorName" class="name">
+                ${repliesTo.authorName} 
+                <span if.bind="comment.author === author">(Author)</span>
+              </span>
+              <div class="${!repliesTo.authorName ? 'only': ''} address">
+                <etherscanlink 
+                  text="${repliesTo.author | smallHexString}" 
+                  address="${repliesTo.author}" 
+                  type="tx">
+                </etherscanlink>
+                <span if.bind="comment.author === author && !repliesTo.authorName">(Author)</span>
+              </div>
+            </div>
+          </div>
+          <p>
+            ${repliesTo.text}
+          </p>
+        </article>
+      </div>
       ${comment.text}
-    </main>
-    <footer>
+    </section>
+    <footer class="footer">
       <div if.bind="comment.author !== connectedAddress && isConnected" class="vote action">
         <pbutton type="tertiary" click.delegate="vote('toggleUpvote')"><i class="fas fa-thumbs-up"></i></pbutton>
         <pbutton type="tertiary" click.delegate="vote('toggleDownvote')"><i class="fas fa-thumbs-down"></i></pbutton>
@@ -38,7 +63,7 @@
         </div>
       </div>
       <div else class="vote count ${isConnected ? 'isConnected' : ''}">
-        <div type="tertiary"><i class="fas fa-thumbs-up"></i> <i class="spinner fas fa-circle-notch"></i></div>
+        <div type="tertiary"><i class="fas fa-thumbs-up"></i> <i class="spinner fas fa-circle-notch fa-spin"></i></div>
       </div>
       <div if.bind="comment.author === connectedAddress && isConnected" class="vote action">
         <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>

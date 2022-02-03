@@ -1,7 +1,7 @@
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DiscussionsService, IComment } from "dealDashboard/discussionsService";
+import { IComment } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
@@ -11,15 +11,15 @@ export class SingleComment {
   @bindable private repliesTo: IComment;
   @bindable private author: string;
   @bindable private loading: string;
+  @bindable private highlighted: number;
+  @bindable private index: number;
   @bindable callback;
 
-  private isConnected = false;
-  private dealClauseId: string;
   private connectedAddress: string;
-  // private votes: number;
+  private dealClauseId: string;
+  private isConnected = false;
 
   constructor(
-    private discussionsService: DiscussionsService,
     private dateService: DateService,
     private ethereumService: EthereumService,
     private router: Router,
@@ -36,12 +36,18 @@ export class SingleComment {
     return this.comment.upvotes.length - this.comment.downvotes.length;
   }
 
+  @computedFrom("index", "highlighted")
+  private get bgType(): string {
+    if (this.highlighted) return "highlighted";
+    return this.index % 2 === 0 ? "even" : "odd";
+  }
+
   @computedFrom ("votes")
   private get voteDirection(): string {
     return this.votes > 0 ? "up" : this.votes < 0 ? "down": "no";
   }
 
-  delete() {
+  private delete() {
     this.callback({
       action: "delete",
       args: {
@@ -50,7 +56,7 @@ export class SingleComment {
     });
   }
 
-  reply() {
+  private reply() {
     this.callback({
       action: "reply",
       args: {
@@ -59,7 +65,7 @@ export class SingleComment {
     });
   }
 
-  vote(vote: string) {
+  private vote(vote: string) {
     this.callback({
       action: "vote",
       args: {

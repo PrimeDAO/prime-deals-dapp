@@ -1,47 +1,14 @@
+import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { autoinject, bindable } from "aurelia-framework";
+import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
 import { EthereumService, AllowedNetworks, Networks} from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
-import axios from "axios";
 import { ethers } from "ethers";
 import { Realtime } from "ably/promises";
 import { Types } from "ably";
-
-export interface IDiscussion {
-  createdBy: string,
-  createdOn: Date,
-  admins: Array<string>,
-  members: Array<string>,
-  isPublic: boolean,
-  clauseId: number | null,
-  topic: string,
-  replies: number,
-  lastActivity: Date,
-}
-
-export interface IComment {
-  _id: string,
-  text: string,
-  author: string,
-  metadata: any,
-  replyTo?: string,
-  upvotes: Array<string>,
-  downvotes: Array<string>,
-  timestamp: number,
-}
-
-export interface IProfile {
-  address: string,
-  image: string,
-  name: string,
-}
-
-export enum EVote {
-  upvote,
-  downvote
-}
+import { DealDiscussions, IComment, VoteType } from "entities/DealDiscussions";
 
 @autoinject
 export class DiscussionsService {
@@ -49,7 +16,7 @@ export class DiscussionsService {
   public comments: Array<IComment> = [];
   private discussionCommentsStream: Types.RealtimeChannelPromise;
   private convo = new Convo(process.env.CONVO_API_KEY);
-  private convoURI = "https://theconvo.space/api";
+  private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
   @bindable public discussions = null;
   @bindable private comment: string;
@@ -58,10 +25,13 @@ export class DiscussionsService {
     private ethereumService: EthereumService,
     private consoleLogService: ConsoleLogService,
     private eventAggregator: EventAggregator,
+    private dealDiscussion: DealDiscussions,
+    private dealService: DealService,
   ) { }
 
-  private getConvoEndPoint(endpoint: string): string {
-    return `${this.convoURI}/${endpoint}?apikey=${process.env.CONVO_API_KEY}`;
+  @computedFrom("ethereumService.defaultAccountAddress")
+  private get currentWalletAddress(): string {
+    return this.ethereumService.defaultAccountAddress;
   }
 
   private async isValidAuth(): Promise<boolean> {
@@ -70,29 +40,23 @@ export class DiscussionsService {
     } else {
 
       try {
-        const validation = await (await axios.post(
-          this.getConvoEndPoint("validateAuth"),
-          {
-            signerAddress: this.ethereumService.defaultAccountAddress,
-            token: localStorage.getItem("discussionToken"),
-          },
-        )).data;
+        const validation = await this.convo.auth.validate(
+          this.ethereumService.defaultAccountAddress,
+          localStorage.getItem("discussionToken"),
+        );
         return validation.success;
       } catch (error) {
         this.consoleLogService.logMessage(error.message);
         return false;
       }
-      // const validation = await this.convo.auth.validate(
-      //   this.ethereumService.defaultAccountAddress,
-      //   localStorage.getItem("discussionToken"),
-      // );
     }
   }
 
   private authenticateSession = async (): Promise<boolean> => {
     const timestamp = Date.now();
-    const wallet = this.ethereumService.defaultAccountAddress;
     localStorage.removeItem("discussionToken");
+
+    if (!this.ethereumService.walletProvider) return false;
 
     const signerAddress = await this.ethereumService.walletProvider.getSigner().getAddress();
     const data = `I allow this site to access my data on The Convo Space using the account ${signerAddress}. Timestamp:${timestamp}`;
@@ -102,26 +66,16 @@ export class DiscussionsService {
         ethers.utils.hexlify(
           ethers.utils.toUtf8Bytes(data),
         ),
-        wallet,
+        this.currentWalletAddress,
       ],
     );
 
-    const {message, success } = (await axios.post(
-      this.getConvoEndPoint("auth"),
-      {
-        "signature": signature,
-        "signerAddress": wallet,
-        "timestamp": timestamp,
-        "chain": "ethereum",
-      },
-    )).data;
-
-    // const {message, success } = await this.convo.auth.authenticate(
-    //   this.ethereumService.defaultAccountAddress,
-    //   signature,
-    //   timestamp,
-    //   "ethereum",
-    // );
+    const {message, success } = await this.convo.auth.authenticate(
+      this.currentWalletAddress,
+      signature,
+      timestamp,
+      "ethereum",
+    );
 
     if (success) {
       localStorage.setItem("discussionToken", message);
@@ -131,68 +85,94 @@ export class DiscussionsService {
     return false;
   };
 
-  public getDiscussions = async (): Promise<IDiscussion> => {
-    try {
-      // TODO: Fetch from Data-Storage service
-      const discussions = JSON.parse(localStorage.getItem("discussions"));
-      if (discussions) if ( Object.keys(discussions).length) {
-        return discussions;
-      }
-    } catch (error) {
-      this.consoleLogService.logMessage(error);
-    }
-  };
-
   // Hashing using SHA-1 for shorter output length
-  private hashString(string) {
+  public async hashString(string): Promise<string> {
     const utf8 = new TextEncoder().encode(string);
-    return crypto.subtle.digest("SHA-1", utf8).then((hashBuffer) => {
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray
-        .map((bytes) => bytes.toString(16).padStart(2, "0"))
-        .join("");
-      return hashHex;
-    });
+    const digest = await crypto.subtle.digest("SHA-1", utf8);
+    const hashArray = Array.from(new Uint8Array(digest));
+    const hashString = hashArray
+      .map((bytes) => bytes.toString(16).padStart(2, "0"))
+      .join("");
+    return hashString;
   }
 
-  public async createDiscussion(args: {
-    topic: string,
-    clauseId: number | null,
-    isPublic: boolean,
-    members?: Array<string>,
-    admins?: Array<string>,
-  }): Promise<string> {
+  public async createDiscussion(
+    dealId: string,
+    args: {
+      topic: string,
+      clauseId: number | null,
+      isPublic: boolean,
+      members?: Array<string>,
+      admins?: Array<string>,
+    }): Promise<string> {
     const discussionId = await this.hashString(args.topic);
 
-    const discussions = JSON.parse(localStorage.getItem("discussions")) || {};
+    const discussions = this.dealDiscussion.items || {};
     const createdBy = this.ethereumService.defaultAccountAddress;
+
+    // Don't create a new discussion if it already exists
+    if (discussions[discussionId]) return discussionId;
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
       return null;
     } else {
       discussions[discussionId] = {
-        ...args,
-        createdBy,
-        createdOn: new Date(),
+        version: "0.0.1",
+        discussionId,
+        topic: args.topic,
+        clauseId: args.clauseId,
+        createdByAddress: createdBy,
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+        replies: 0,
+        isPrivate: !args.isPublic,
+        members: [...new Set([...args.members, createdBy])] || [createdBy],
+        admins: [...new Set([...args.admins, createdBy])] || [createdBy],
       };
-      localStorage.setItem("discussions", JSON.stringify(discussions));
+
+      const dealData = await this.dealService.deals.get(dealId);
+      dealData.rootData.discussions.push(discussionId);
+      this.dealService.deals.set(dealId, dealData);
+      // TODO: Save discussion object using ceramicService
 
       return discussionId;
     }
   }
 
-  public async getDiscussionInfo(discussionId: string): Promise<IDiscussion> {
-    this.subscribeToDiscussion(discussionId);
-    return JSON.parse(localStorage.getItem("discussions"))[discussionId];
+  public updateDiscussionListStatus(discussionId: string, timestamp?: Date): void {
+    const discussions = this.dealDiscussion.items || {};
+    discussions[discussionId].replies = this.comments.length;
+    if (timestamp) discussions[discussionId].modifiedAt = timestamp;
   }
 
-  public updateDiscussionListStatus(discussionId: string, timestamp?: number): void {
-    const discussions = JSON.parse(localStorage.getItem("discussions"));
-    discussions[discussionId].replies = this.comments.length;
-    if (timestamp) discussions[discussionId].lastActivity = timestamp;
-    localStorage.setItem("discussions", JSON.stringify(discussions));
-  }
+  // public async toggleThreadPrivacy(threadId: string): Promise<void> {
+  //   const token = localStorage.getItem("discussionToken");
+
+  //   if (!token || !await this.isValidAuth()) await this.authenticateSession();
+  //   if (!token || !await this.isValidAuth()) return;
+
+  //   const thread = await this.convo.threads.createPrivate(
+  //     this.currentWalletAddress,
+  //     token,
+  //     "title",
+  //     "description",
+  //     "https://deals.prime.xyz",
+  //     [this.currentWalletAddress],
+  //     [this.currentWalletAddress],
+  //     [""],
+  //     {},
+  //     threadId,
+  //   );
+
+  //   // await this.convo.threads.togglePublicRead(
+  //   //   this.currentWalletAddress,
+  //   //   token,
+  //   //   threadId,
+  //   // );
+  //   // const thread = await this.convo.threads.getThreads([threadId]);
+  //   console.log({thread});
+  // }
 
   public async subscribeToDiscussion(discussionId: string): Promise<void> {
     const channelName = `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
@@ -208,32 +188,31 @@ export class DiscussionsService {
       if (!this.comments.some(item => item._id === comment.data._id)) {
         this.comments.push(comment.data);
       }
-      this.updateDiscussionListStatus(discussionId, comment.timestamp);
+      this.updateDiscussionListStatus(discussionId, new Date(comment.timestamp));
     });
   }
 
   public unsubscribeFromDiscussion(): void {
-    this.discussionCommentsStream.unsubscribe();
+    if (this.discussionCommentsStream) {
+      this.discussionCommentsStream.unsubscribe();
+    }
   }
 
-  public async loadDiscussion(discussionId: string): Promise<IComment[]> {
+  public async loadDiscussionComments(discussionId: string, pageIdx = 0): Promise<IComment[]> {
     try {
-      this.comments = (await axios.get(
-        this.getConvoEndPoint("comments") + `&threadId=${ discussionId }:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      )).data;
-      // this.comments = await this.convo.comments.query({
-      //   threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      //   // url,        // Origin URL
-      //   // author,     // Blockchain Wallet Address
-      //   // tag1,       // Custom Tag
-      //   // tag2,       // Custom Tag
-      //   // replyTo: "", // CommentId of the original Comment
-      //   latestFirst: "false", // Return Newer on the top
-      //   page: `${pageIdx}`,
-      //   pageSize: "15",
-      // });
+      this.comments = await this.convo.comments.query({
+        threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+        // url,        // Origin URL
+        // author,     // Blockchain Wallet Address
+        // tag1,       // Custom Tag
+        // tag2,       // Custom Tag
+        // replyTo: "", // CommentId of the original Comment
+        latestFirst: "false", // Return Newer on the top
+        page: `${pageIdx}`,
+        // pageSize: "15",
+      });
 
-      return [...this.comments];
+      return this.comments ? [...this.comments]: null;
     } catch (error) {
       this.consoleLogService.logMessage(error);
     }
@@ -245,7 +224,7 @@ export class DiscussionsService {
     if (network === Networks.Kovan) return 42;
   }
 
-  public async postCommentToConvo(discussionId: string, comment: string, replyTo: string): Promise<IComment[]> {
+  public async addComment(discussionId: string, comment: string, replyTo: string): Promise<IComment[]> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -261,25 +240,16 @@ export class DiscussionsService {
     }
 
     try {
-      const data = (await axios.post(
-        this.getConvoEndPoint("comments"),
-        {
-          "token": localStorage.getItem("discussionToken"),
-          "signerAddress": this.ethereumService.defaultAccountAddress,
-          "comment": comment,
-          "threadId": `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-          "url": "https://deals.prime.xyz",
-          "replyTo": replyTo,
-        },
-      )).data;
-      // const data = await this.convo.comments.create(
-      //   this.ethereumService.defaultAccountAddress,
-      //   localStorage.getItem("discussionToken"),
-      //   comment,
-      //   `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      //   "https://deals.prime.xyz",
-      //   replyTo,
-      // );
+      const data = await this.convo.comments.create(
+        this.ethereumService.defaultAccountAddress,
+        localStorage.getItem("discussionToken"),
+        comment,
+        `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+        "https://deals.prime.xyz",
+        {},
+        // @ts-ignore: Unreachable code error
+        replyTo,
+      );
       this.comments.push(data);
       return this.comments;
     } catch (error) {
@@ -309,34 +279,22 @@ export class DiscussionsService {
     }
 
     try {
-      // await axios.delete(
-      //   this.getConvoEndPoint("delete"),
-      //   {
-      //     headers: {
-      //       "token": localStorage.getItem("discussionToken"),
-      //     },
-      //     data: {
-      //       "commentId": commentId,
-      //     },
-      //   },
-      // );
       await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         commentId,
       );
       this.comments = this.comments.filter(comment => comment._id !== commentId);
-      this.updateDiscussionListStatus(discussionId, Date.now());
+      this.updateDiscussionListStatus(discussionId, new Date());
     } catch (error) {
       this.consoleLogService.logMessage(error);
     }
     return this.comments;
   }
 
-  public async voteMessage(discussionId: string, commentId: string, type: EVote): Promise<IComment[]> {
-    const walletAddress = this.ethereumService.defaultAccountAddress;
+  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<IComment[]> {
 
-    if (!walletAddress) {
+    if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to vote a comment"),
@@ -355,12 +313,10 @@ export class DiscussionsService {
       }
     }
 
-    // const url = this.getConvoEndPoint("vote");
-    const url = "https://theconvo.space/api/vote?apikey=CONVO"; // Temporary, until the API bug is fixed
     const token = localStorage.getItem("discussionToken");
 
     try {
-      const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${commentId}`)).data;
+      const message = await this.convoVote.comments.getComment(commentId);
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -369,26 +325,24 @@ export class DiscussionsService {
        * If a voter up-vote after already down-voted, we need to remove
        * the voter address from the list of down-votes (and vice versa)
        */
-      if (message[endpoints[typeInverse]].includes(walletAddress)) {
-        await axios.post(url, {
-          "token": token,
-          "signerAddress": walletAddress,
-          "commentId": message._id,
-          "type": typeInverse,
-        });
+      if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
+        await this.convoVote.comments[typeInverse](this.currentWalletAddress, token, commentId);
       }
 
-      const res = await axios.post(url, {
-        "token": token,
-        "signerAddress": walletAddress,
-        "commentId": message._id,
-        "type": type,
-      });
-      if (res.data.success) {
-        const message = await (await axios.get(this.getConvoEndPoint("comment") + `&commentId=${commentId}`)).data;
+      const success = (await this.convoVote.comments[type](this.currentWalletAddress, token, commentId)).success;
+
+      // Toggle vote locally
+      if (!message[endpoints[type]].includes(this.currentWalletAddress)) {
+        message[endpoints[type]].push(this.currentWalletAddress);
+        message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== this.currentWalletAddress);
+      } else {
+        message[endpoints[type]] = message[endpoints[type]].filter(address => address !== this.currentWalletAddress);
+      }
+
+      if (success) {
         const commentIndex = this.comments.findIndex(comment => comment._id === message._id);
         this.comments[commentIndex] = message;
-        this.updateDiscussionListStatus(discussionId, Date.now());
+        this.updateDiscussionListStatus(discussionId, new Date());
         return [...this.comments];
       }
 
@@ -396,6 +350,7 @@ export class DiscussionsService {
       throw error.message;
     }
   }
+
   // get user profile
   // get threads list by deal id
   // edit comment by id?

@@ -1,7 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { DiscussionsService, IDiscussion } from "../discussionsService";
+import { IDiscussion } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
+import { DealService } from "services/DealService";
 import "./discussionsList.scss";
 
 @autoinject
@@ -14,24 +15,31 @@ export class DiscussionsList{
     maxVisiblePages: 5,
   };
 
-  private discussions: Array<IDiscussion> = [];
+  private discussionsArray: Array<IDiscussion> = [];
+  private discussionsHashes: string[];
   private hasDiscussions: boolean;
 
   constructor(
     private router: Router,
     private dateService: DateService,
-    private discussionsService: DiscussionsService,
+    private dealService: DealService,
   ) {}
 
-  attached(): void {
-    this.dealId = this.router.parent.currentInstruction.params.address;
-    this.discussionsService.getDiscussions().then(discussions => {
-      this.discussions = Object.keys(discussions).map(key => (
-        {id: key, ...discussions[key]}
-      ));
+  async attached(): Promise<void> {
 
-      this.hasDiscussions = !!this.discussions.length;
-    });
+    //"open_deals_stream_id_2";
+    this.dealId = this.router.currentInstruction.parentInstruction.params.address;
+
+    const dealData = await this.dealService.deals.get(this.dealId);
+
+    this.discussionsHashes = dealData?.rootData.discussions || [];
+    const discussions = await this.dealService.getDiscussions(this.discussionsHashes);
+
+    this.discussionsArray = Object.keys(discussions).map(key => (
+      {id: key, ...discussions[key]}
+    ));
+
+    this.hasDiscussions = !!this.discussionsArray.length;
   }
 
   private navigateTo(page) {

@@ -8,12 +8,12 @@ import { IDealRegistrationData } from "entities/DealRegistrationData";
 
 export interface IDealsData {
   // votes: Hash; // Array<IVoteInfo>;
-  // discussions: Hash; // Array<IClause, Hash>;
-  registration: Hash; // RegistrationData;
+  registrationData: IDealRegistrationData; // RegistrationData;
+  discussions: Hash[];
 }
 
 @autoinject
-export class Deal {
+export class Deal implements IDealsData {
   public contract: any;
   public id: Hash;
   public rootData: IDealsData;
@@ -26,6 +26,7 @@ export class Deal {
   private subscriptions = new DisposableCollection();
 
   public registrationData: IDealRegistrationData;
+  public discussions: Hash[];
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
@@ -98,8 +99,22 @@ export class Deal {
        * Find appending --> bottleneck
        */
 
-      this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationData>(this.rootData.registration);
+      const dealsData = await this.dataSourceDeals.get<IDealsData>(this.id);
+      // dealsData.terms.clauses.map(async (clause) => {
+      //   clause.text
+      // })
+      // this.discussions = await this.dataSourceDeals.get<IDealDiscussions>(this.rootData.registrationData.id);
+
+      // this.registrationData = await this.dataSourceDeals.get<IDealRegistrationData>(this.rootData.registration);
+      // this.discussions = await this.rootData.discussions.map(discussion => this.dataSourceDeals.get<IDealDiscussion>(discussion).discussionId);
+      // this.discussions = await this.dataSourceDeals.get<IDealDiscussions>(this.id);
+      // console.log("discussion items", this.discussions.items);
+
+      this.rootData = {
+        registrationData: dealsData.registrationData,
+        discussions: dealsData.discussions,
+      };
+
     }
     catch (error) {
       this.corrupt = true;

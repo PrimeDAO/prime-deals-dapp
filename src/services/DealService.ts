@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Address, Hash } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { Deal } from "entities/Deal";
@@ -6,6 +5,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDiscussion } from "entities/DealDiscussions";
 
 export interface IDaoPartner {
   daoId: string,
@@ -126,6 +126,17 @@ export class DealService {
     );
   }
 
+  public async getDiscussions(hashes: Hash[]): Promise<Record<Hash, IDiscussion>> {
+    const discussions = {};
+
+    hashes.forEach(async (hash: Hash) => {
+      const result = await this.dataSourceDeals.get<IDiscussion>(hash);
+
+      discussions[hash]= { ...result };
+    });
+    return discussions;
+  }
+
   private createSeedFromConfig(dealId: Hash): Deal {
     const deal = this.container.get(Deal);
     return deal.create(dealId);
@@ -147,18 +158,18 @@ export class DealService {
    */
   public async getDAOsInformation(): Promise<void> {
     // TODO
-    const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
+    // const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
 
-    this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
-      organizationId: dao.organizationId,
-      daoId: dao.daoId,
-      name: dao.daoName,
-      logo: (dao.logo)
-        ? (dao.logo.toLocaleLowerCase().startsWith("http"))
-          ? dao.logo
-          : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
-        : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
-    }));
+    // this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
+    //   organizationId: dao.organizationId,
+    //   daoId: dao.daoId,
+    //   name: dao.daoName,
+    //   logo: (dao.logo)
+    //     ? (dao.logo.toLocaleLowerCase().startsWith("http"))
+    //       ? dao.logo
+    //       : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
+    //     : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
+    // }));
   }
 
   public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
