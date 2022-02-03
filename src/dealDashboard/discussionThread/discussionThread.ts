@@ -1,10 +1,10 @@
-import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { IDiscussion, IComment, IProfile, VoteType, TCommentDictionary } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
+import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./discussionThread.scss";
 
 @autoinject
@@ -36,9 +36,8 @@ export class DiscussionThread {
 
   constructor(
     private router: Router,
-    private deal: DealService,
+    private deal: DealTokenSwap,
     private dateService: DateService,
-    private dealService: DealService,
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
   ) {}
@@ -49,7 +48,7 @@ export class DiscussionThread {
     this.discussionId = this.router.currentInstruction.params.discussionId;
     this.ensureDealDiscussion();
 
-    this.dealDiscussion = Object.values(await this.dealService.getDiscussions([this.discussionId]))[0];
+    this.dealDiscussion = this.deal.discussions[this.discussionId];
   }
 
   @computedFrom("ethereumService.defaultAccountAddress")

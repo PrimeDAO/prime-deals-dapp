@@ -6,7 +6,7 @@ import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { IClause } from "entities/DealRegistrationData";
-import { Deal } from "entities/Deal";
+import { DealTokenSwap } from "entities/DealTokenSwap";
 // import { IDealRegistrationData } from "entities/DealRegistrationData";
 import "./dealDashboard.scss";
 
@@ -36,7 +36,7 @@ export class DealDashboard {
     private discussionsService: DiscussionsService,
     private eventAggregator: EventAggregator,
     private router: Router,
-    private deal: Deal,
+    private deal: DealTokenSwap,
     private dealService: DealService,
   ) {
     this.connected = !!this.ethereumService.defaultAccountAddress;
@@ -48,9 +48,7 @@ export class DealDashboard {
       this.setThreadIdFromRoute(response.instruction);
     });
 
-    this.dealId = navigationInstruction.params.address;
-    const dealData = this.dealService.deals.get(this.dealId);
-    this.clauses = dealData?.rootData.registrationData.terms.clauses || [];
+    this.clauses = this.deal.registrationData.terms.clauses || [];
     this.clauses.forEach(clause => {
       this.discussionsService.hashString(clause.text).then( hash => {
         clause.key = hash;
