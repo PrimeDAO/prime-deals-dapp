@@ -9,7 +9,19 @@ import { IDeal } from "entities/IDealTypes";
 
 export interface IDealsData {
   votes: IKey;
+  /**
+   * CID to json that looks like:
+   *
+   * {
+   *   "clauseId1": "discussionsKey1",
+   *   "clauseId2": "discussionsKey4",
+   *   "clauseId3": "discussionsKey3",
+   * }
+   */
   discussions: IKey;
+  /**
+   * CID to json that confirms to IDealRegistrationTokenSwap
+   */
   registration: IKey;
 }
 
@@ -27,14 +39,16 @@ export class DealTokenSwap implements IDeal {
   public corrupt = false;
 
   public registrationData: IDealRegistrationTokenSwap;
+
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
 
-  // public get discussions(): Array<Array<IClause, Hash>> {
-  //   return this.rootData.discussions;
-  // }
+  /**
+   * key is the clauseId, value is the discussion key
+   */
+  public discussions: Map<string, string>;
 
   public get isOpen(): boolean {
     return !this.registrationData.partnerDAO;
@@ -85,22 +99,10 @@ export class DealTokenSwap implements IDeal {
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
-      // RootOfRoot is stream of Deal cids (which will become Deal.id)
-
-      // rootOfRoot - immutable cid
-      /**
-       * Collection of                  DealCids
-       *    ^                ^              ^           ^
-       *    |                |              |           |
-       *   appending      registration    votes    discussion
-       *                        ^
-       *                        |
-       *
-       * Find appending --> bottleneck
-       */
-
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
+      const discussionsMap = await this.dataSourceDeals.get<Record<string, string>>(this.rootData.discussions);
+      this.discussions = new Map(Object.entries(discussionsMap));
     }
     catch (error) {
       this.corrupt = true;
@@ -123,10 +125,14 @@ export class DealTokenSwap implements IDeal {
   }
 
   public async createRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
-    this.dataSourceDeals.create("key", JSON.stringify(registration));
+    this.dataSourceDeals.create(this.rootData.registration, JSON.stringify(registration));
   }
 
   public async updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
-    this.dataSourceDeals.update("key", JSON.stringify(registration));
+    this.dataSourceDeals.update(this.id, JSON.stringify(registration));
+  }
+
+  public async createClauseDiscussionMap(clauseId: string, discussionKey: string): Promise<void> {
+    this.dataSourceDeals.create(this.rootData.discussions, JSON.stringify({ [clauseId]: discussionKey }));
   }
 }
