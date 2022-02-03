@@ -1,71 +1,60 @@
 import { autoinject } from "aurelia-framework";
-import { Router, RouterConfiguration, NavigationInstruction, RouterEvent } from "aurelia-router";
-import { EventAggregator } from "aurelia-event-aggregator";
+import { Router } from "aurelia-router";
+import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
   indexOfActive: number;
   registrationData: Data;
+  cancelRoute: string;
+  previousRoute: string;
 }
+
+export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
 
 export interface IWizardStage {
   name: string;
   valid: boolean;
-  route: any;
+  route: string;
   moduleId: any
-  settings?: {[key: string]: any};
+  validate?: () => boolean;
 }
 
 @autoinject
 export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
-  private router: Router;
 
-  constructor(private eventAggregator: EventAggregator){}
+  constructor(private router: Router){}
 
-  public registerWizard<Data>(
-    wizardManager: any,
-    stages: Array<IWizardStage>,
-    registrationData: Data,
-  ): IWizardState<Data> {
-    this.wizardsStates.set(
-      wizardManager,
-      {
-        stages,
-        indexOfActive: 0,
-        registrationData,
-      },
-    );
+  public registerWizard<Data>({
+    wizardManager,
+    stages,
+    indexOfActive,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }:{
+    wizardManager: any;
+    stages: Array<IWizardStage>;
+    indexOfActive: number;
+    registrationData: Data;
+    cancelRoute: string;
+    previousRoute: string;
+  }): IWizardState<Data> {
+    if (!this.hasWizard(wizardManager)) {
+      this.wizardsStates.set(
+        wizardManager,
+        {
+          stages,
+          indexOfActive: indexOfActive,
+          registrationData,
+          cancelRoute,
+          previousRoute,
+        },
+      );
+    }
 
     return this.getWizardState(wizardManager);
-  }
-
-  public configureRouter(
-    wizardManager: any,
-    config: RouterConfiguration,
-    router: Router,
-  ): void {
-    const stageConfig = this.wizardsStates.get(wizardManager);
-
-    const routes = stageConfig.stages.map(stage => ({
-      route: [stage.route],
-      nav: true,
-      moduleId: stage.moduleId,
-      name: stage.name,
-      settings: {
-        wizardManager: wizardManager,
-        ...stage.settings,
-      },
-    }));
-
-    config.map(routes);
-
-    this.router = router;
-
-    this.eventAggregator.subscribeOnce(RouterEvent.Complete, (event: { instruction: NavigationInstruction }) => {
-      this.updateIndexOfActiveBaseOnRoute(wizardManager, event.instruction.params.childRoute);
-    });
-
   }
 
   public getWizardState<Data>(wizardManager: any): IWizardState<Data> {
@@ -81,16 +70,26 @@ export class WizardService {
     this.getActiveStage(wizardManager).valid = valid;
   }
 
-  public cancel(): void {
-    this.router.parent.navigate("home");
+  public registerStageValidateFunction(
+    wizardManager: any,
+    validate: () => boolean,
+  ) {
+    const stage = this.getActiveStage(wizardManager);
+    stage.validate = validate;
   }
 
-  public proceed(wizardManager: any, valid: boolean): void {
-    if (!valid) {
-      return;
-    }
+  public cancel(wizardManager: any): void {
+    this.router.navigate(this.getWizardState(wizardManager).cancelRoute);
+  }
+
+  public proceed(wizardManager: any): void {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
+    wizardState.stages[indexOfActive].valid = wizardState.stages[indexOfActive].validate();
+
+    if (!wizardState.stages[indexOfActive].valid) {
+      return;
+    }
 
     if (indexOfActive < wizardState.stages.length - 1) {
       this.goToStage(wizardManager, indexOfActive + 1);
@@ -98,12 +97,13 @@ export class WizardService {
   }
 
   public previous(wizardManager: any): void {
-    const indexOfActive = this.getWizardState(wizardManager).indexOfActive;
+    const wizardState = this.getWizardState(wizardManager);
+    const indexOfActive = wizardState.indexOfActive;
 
     if (indexOfActive > 0) {
       this.goToStage(wizardManager, indexOfActive - 1);
     } else {
-      this.router.parent.navigate("initiate/token-swap");
+      this.router.navigate(wizardState.previousRoute);
     }
   }
 
@@ -114,15 +114,20 @@ export class WizardService {
 
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
-    this.router.navigate(wizardState.stages[index].route);
     wizardState.indexOfActive = index;
-  }
 
-  private updateIndexOfActiveBaseOnRoute(wizardManager: any, stageRoute: string): void {
-    const wizardState = this.getWizardState(wizardManager);
-    wizardState.indexOfActive = wizardState.stages.findIndex(
-      stage => stage.route === stageRoute,
+    const params = {
+      ...this.router.currentInstruction.params,
+      [STAGE_ROUTE_PARAMETER]: wizardState.stages[index].route,
+    };
+
+    this.router.navigateToRoute(
+      this.router.currentInstruction.config.name,
+      params,
     );
+  }
+  public hasWizard(wizardManager: any): boolean {
+    return this.wizardsStates.has(wizardManager);
   }
 
   private getWizardStage(wizardManager: any, stageName: string): IWizardStage{

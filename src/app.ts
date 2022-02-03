@@ -13,6 +13,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "dealWizard/dealWizardTypes";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -95,8 +96,10 @@ export class App {
 
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      const blockDate = this.ethereumService.lastBlockDate;
-      this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      const blockDate = this.ethereumService.lastBlock?.blockDate;
+      if (blockDate) {
+        this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      }
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
@@ -151,25 +154,54 @@ export class App {
         title: "Contribute",
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/openProposalWizard/openProposalWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
-        name: "openProposalWizard",
-        route: "/initiate/token-swap/open-proposal",
-        title: "Initiate an Open Proposal",
+        name: "createOpenProposal",
+        title: "Create an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposal,
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/partneredDealWizard/partneredDealWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
-        name: "partneredDealWizard",
-        route: "/initiate/token-swap/partnered-deal",
+        name: "createPartneredDeal",
         title: "Create a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDeal,
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/makeOfferWizard/makeOfferWizardManager"),
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
-        route: "/make-an-offer",
-        title: "Submit a Proposal",
+        route: `/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Make an offer",
+        settings: {
+          wizardType: WizardType.makeAnOffer,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        nav: false,
+        name: "editOpenProposal",
+        route: `/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposalEdit,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        nav: false,
+        name: "editPartneredDeal",
+        route: `/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDealEdit,
+        },
       },
       {
         moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
@@ -212,6 +244,16 @@ export class App {
         name: "comingSoon",
         route: ["comingSoon"],
         title: "Coming Soon!",
+      },
+      {
+        moduleId: PLATFORM.moduleName("./playground/playground"),
+        nav: false,
+        name: "playground",
+        route: ["playground"],
+        title: "Playground",
+      },
+      {
+        route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
       },
       {
         moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),

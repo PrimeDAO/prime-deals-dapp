@@ -6,16 +6,16 @@
     <pbutton
       if.bind="!showSubmit"
       type="primary"
-      click.delegate="wizardService.proceed(wizardManager, validate())">
+      click.delegate="wizardService.proceed(wizardManager)">
       Proceed
     </pbutton>
     <pbutton
       if.bind="showSubmit"
       type="primary"
-      click.delegate="wizardService.submit(wizardManager, validate())">
+      click.delegate="wizardService.submit(wizardManager)">
       Submit
     </pbutton>
-    <pbutton class="cancel" type="tertiary" click.delegate="wizardService.cancel()">
+    <pbutton class="cancel" type="tertiary" click.delegate="wizardService.cancel(wizardManager)">
       Cancel
     </pbutton>
   </div>

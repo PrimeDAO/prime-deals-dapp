@@ -3,27 +3,27 @@ import { EthereumService, Hash } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
-import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { IDealRegistrationData } from "entities/DealRegistrationData";
 
 export interface IDealsData {
-  // votes: Hash; // Array<IVoteInfo>;
-  registrationData: IDealRegistrationData; // RegistrationData;
-  discussions: Hash[];
+  // votes: IKey; // Array<IVoteInfo>;
+  discussions: Array<IKey>; // Array<IClause, Hash>;
+  registration: IKey; // RegistrationData;
 }
 
 @autoinject
-export class Deal implements IDealsData {
+export class DealTokenSwap {
+  private initializedPromise: Promise<void>;
+  private subscriptions = new DisposableCollection();
+  private rootData: IDealsData;
+
   public contract: any;
-  public id: Hash;
-  public rootData: IDealsData;
+  public id: IKey;
   public dealInitialized: boolean;
 
   public initializing = true;
   public corrupt = false;
-
-  private initializedPromise: Promise<void>;
-  private subscriptions = new DisposableCollection();
 
   public registrationData: IDealRegistrationData;
   public discussions: Hash[];
@@ -51,7 +51,7 @@ export class Deal implements IDealsData {
   ) {
   }
 
-  public create(id: Hash): Deal {
+  public create(id: Hash): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.id = id;
     return this;
@@ -78,7 +78,7 @@ export class Deal implements IDealsData {
     catch (error) {
       this.corrupt = true;
       this.initializing = false;
-      this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
+      this.consoleLogService.logMessage(`DealTokenSwap: Error initializing deal ${error?.message}`, "error");
     }
   }
 
@@ -111,7 +111,7 @@ export class Deal implements IDealsData {
       // console.log("discussion items", this.discussions.items);
 
       this.rootData = {
-        registrationData: dealsData.registrationData,
+        registration: dealsData.registration,
         discussions: dealsData.discussions,
       };
 

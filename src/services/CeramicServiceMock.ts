@@ -80,8 +80,17 @@ const MOCK_DATA = {
     },
   },
   "open_deals_stream_id_2": {
-    registrationData: {
+    registration: {
       ...new DealRegistrationData(),
+      proposal: {
+        title: "First Proposal",
+        summary: "Quick summary",
+        description: "Long description lorem ipsum",
+      },
+      proposalLead: {
+        address: "0x123123123",
+        email: "",
+      },
       terms: {
         clauses: [
           {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna", tag: "tag1"},

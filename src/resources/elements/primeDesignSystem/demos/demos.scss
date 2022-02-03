@@ -1,0 +1,21 @@
+@import "../styles";
+
+.demosContainer {
+  display: flex;
+  flex-direction: row;
+  column-gap: 32px;
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+
+    a {
+      color: $Neutral03;
+
+      &.active {
+        color: $Secondary01;
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
-import {PLATFORM} from "aurelia-pal";
-import {Router, RouterConfiguration} from "aurelia-router";
+import { PLATFORM } from "aurelia-pal";
+import { Router, RouterConfiguration } from "aurelia-router";
+import "./demos.scss";
 
 export class Demos {
 
@@ -8,7 +9,7 @@ export class Demos {
   private configureRouter(config: RouterConfiguration, router: Router) {
     const routes = [
       {
-        route: ["pbutton"],
+        route: ["", "pbutton"],
         nav: true,
         moduleId: PLATFORM.moduleName("./pbuttonDemo"),
         name: "pbutton",
@@ -77,6 +78,20 @@ export class Demos {
         name: "ptoggle",
         title: "ptoggle Demo",
       },
+      {
+        route: ["pinput-group"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pInputGroupDemo.html"),
+        name: "pinput-group",
+        title: "pinput-group Demo",
+      },
+      // {
+      //   route: ["pcountdown-circular"],
+      //   nav: true,
+      //   moduleId: PLATFORM.moduleName("./pCountdownCircularDemo.html"),
+      //   name: "pcountdown-circular",
+      //   title: "pcountdown-circular",
+      // },
     ];
 
     config.map(routes);
