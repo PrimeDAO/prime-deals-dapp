@@ -1,19 +1,20 @@
 import { autoinject } from "aurelia-framework";
-import { EthereumService, Hash } from "services/EthereumService";
+import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
-import { IDealRegistrationData } from "entities/DealRegistrationData";
+import { IDealTokenSwapRegistration } from "entities/DealTokenSwapRegistration";
+import { IDeal } from "entities/IDealTypes";
 
 export interface IDealsData {
-  // votes: IKey; // Array<IVoteInfo>;
-  // discussions: IKey; // Array<IClause, Hash>;
-  registration: IKey; // RegistrationData;
+  votes: IKey;
+  discussions: IKey;
+  registration: IKey;
 }
 
 @autoinject
-export class DealTokenSwap {
+export class DealTokenSwap implements IDeal {
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
   private rootData: IDealsData;
@@ -25,7 +26,7 @@ export class DealTokenSwap {
   public initializing = true;
   public corrupt = false;
 
-  public registrationData: IDealRegistrationData;
+  public registrationData: IDealTokenSwapRegistration;
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
@@ -50,7 +51,7 @@ export class DealTokenSwap {
   ) {
   }
 
-  public create(id: Hash): DealTokenSwap {
+  public create(id: IKey): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.id = id;
     return this;
@@ -99,7 +100,7 @@ export class DealTokenSwap {
        */
 
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationData>(this.rootData.registration);
+      this.registrationData = await this.dataSourceDeals.get<IDealTokenSwapRegistration>(this.rootData.registration);
     }
     catch (error) {
       this.corrupt = true;
@@ -121,14 +122,11 @@ export class DealTokenSwap {
     }
   }
 
-  public async createRegistration(registration: IDealRegistrationData): Promise<void> {
+  public async createRegistration(registration: IDealTokenSwapRegistration): Promise<void> {
     this.dataSourceDeals.create("key", JSON.stringify(registration));
   }
 
-  /**
-   * has to be able to update individual parts of the registration or any other data (votes, discussions)
-   */
-  public async updateDealRegistration(registration: IDealRegistrationData): Promise<void> {
+  public async updateRegistration(registration: IDealTokenSwapRegistration): Promise<void> {
     this.dataSourceDeals.update("key", JSON.stringify(registration));
   }
 }
