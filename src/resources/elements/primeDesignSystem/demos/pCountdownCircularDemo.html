@@ -1,0 +1,36 @@
+<template>
+  <style>
+    h1 {
+      font-size: 20px;
+      margin: 24px 0 18px 0;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      row-gap: 20px;
+    }
+
+    .ticked {
+      display: inline-block;
+    }
+  </style>
+  <h1>Countdown from 10 seconds, toggle paused on click</h1>
+  <div class="row">
+    <pcountdown-circular
+      start-at.bind="startAt"
+      running.bind="running"
+      paused.bind="paused"
+      click.delegate="clicked()"
+      stopped.call="stopped(cancelled)"
+      ticked.call="ticked(secondsLeft)">
+    </pcountdown-circular>
+
+    <pbutton type="secondary" click.delegate="toggleRunning()">${ running ? 'Stop' : 'Start'}</pbutton>
+
+    <div class="paused">paused: ${paused}</div>
+    <div class="running">running: ${running ? 'yes' : 'no'}</div>
+    <div class="ticked">Current second: ${currentValue}</div>
+  </div>
+
+</template>
