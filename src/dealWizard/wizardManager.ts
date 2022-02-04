@@ -21,7 +21,7 @@ export class WizardManager {
   public viewModel: string;
 
   private stages: IWizardStage[] = [];
-  private registrationData = new DealRegistrationTokenSwap();
+  private registrationData: IDealRegistrationTokenSwap;
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
@@ -69,9 +69,7 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    if (params.id) {
-      this.registrationData = this.getDeal(params.id);
-    }
+    this.registrationData = params.id ? this.getDeal(params.id) : new DealRegistrationTokenSwap();
 
     this.stages = this.configureStages(wizardType);
 
