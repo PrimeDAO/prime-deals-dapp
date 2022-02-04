@@ -46,11 +46,13 @@ export class DealService {
   /**
    * key is a ceramic Hash
    */
-  public deals: Map<Hash, DealTokenSwap>;
-  @computedFrom("seeds.size")
+  public deals: Map<IKey, DealTokenSwap>;
+
+  @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
     return this.deals ? Array.from(this.deals.values()) : [];
   }
+
   public initializing = true;
   private initializedPromise: Promise<void>;
 

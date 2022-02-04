@@ -21,7 +21,7 @@ export class WizardManager {
   public viewModel: string;
 
   private stages: IWizardStage[] = [];
-  private registrationData = new DealRegistrationTokenSwap();
+  private registrationData: IDealRegistrationTokenSwap;
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
@@ -58,7 +58,9 @@ export class WizardManager {
     this.partnerDaoStage,
   ];
 
-  constructor(public wizardService: WizardService, private dealService: DealService) {}
+  constructor(
+    private wizardService: WizardService,
+    private dealService: DealService) {}
 
   activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
@@ -67,9 +69,7 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    if (params.id) {
-      this.registrationData = this.getDeal(params.id);
-    }
+    this.registrationData = params.id ? this.getDeal(params.id) : new DealRegistrationTokenSwap();
 
     this.stages = this.configureStages(wizardType);
 
@@ -132,7 +132,7 @@ export class WizardManager {
     return stages;
   }
 
-  private getDeal(id: string): DealRegistrationTokenSwap {
-    return this.dealService.deals.get(id).registrationData as any;
+  private getDeal(id: string): IDealRegistrationTokenSwap {
+    return this.dealService.deals.get(id).registrationData;
   }
 }
