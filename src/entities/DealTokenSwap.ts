@@ -1,40 +1,35 @@
 import { autoinject } from "aurelia-framework";
-import { EthereumService, Hash } from "services/EthereumService";
+import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
-import { IDealRegistrationData } from "entities/DealRegistrationData";
-
-export interface IDealsData {
-  // votes: IKey; // Array<IVoteInfo>;
-  discussions: Array<IKey>; // Array<IClause, Hash>;
-  registration: IKey; // RegistrationData;
-}
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IDeal, IDealsData } from "entities/IDealTypes";
 
 @autoinject
-export class DealTokenSwap {
+export class DealTokenSwap implements IDeal {
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
   private rootData: IDealsData;
 
-  public contract: any;
   public id: IKey;
   public dealInitialized: boolean;
 
   public initializing = true;
   public corrupt = false;
 
-  public registrationData: IDealRegistrationData;
-  public discussions: Hash[];
+  public registrationData: IDealRegistrationTokenSwap;
+
   public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
 
-  // public get discussions(): Array<Array<IClause, Hash>> {
-  //   return this.rootData.discussions;
-  // }
+  /**
+   * key is the clauseId, value is the discussion key
+   */
+  public clauseDiscussions: Map<string, string>;
 
   public get isOpen(): boolean {
     return !this.registrationData.partnerDAO;
@@ -51,7 +46,7 @@ export class DealTokenSwap {
   ) {
   }
 
-  public create(id: Hash): DealTokenSwap {
+  public create(id: IKey): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.id = id;
     return this;
@@ -85,36 +80,10 @@ export class DealTokenSwap {
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
-      // RootOfRoot is stream of Deal cids (which will become Deal.id)
-
-      // rootOfRoot - immutable cid
-      /**
-       * Collection of                  DealCids
-       *    ^                ^              ^           ^
-       *    |                |              |           |
-       *   appending      registration    votes    discussion
-       *                        ^
-       *                        |
-       *
-       * Find appending --> bottleneck
-       */
-
-      const dealsData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      // dealsData.terms.clauses.map(async (clause) => {
-      //   clause.text
-      // })
-      // this.discussions = await this.dataSourceDeals.get<IDealDiscussions>(this.rootData.registrationData.id);
-
-      // this.registrationData = await this.dataSourceDeals.get<IDealRegistrationData>(this.rootData.registration);
-      // this.discussions = await this.rootData.discussions.map(discussion => this.dataSourceDeals.get<IDealDiscussion>(discussion).discussionId);
-      // this.discussions = await this.dataSourceDeals.get<IDealDiscussions>(this.id);
-      // console.log("discussion items", this.discussions.items);
-
-      this.rootData = {
-        registration: dealsData.registration,
-        discussions: dealsData.discussions,
-      };
-
+      this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
+      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
+      const discussionsMap = await this.dataSourceDeals.get<Record<string, string>>(this.rootData.discussions);
+      this.clauseDiscussions = new Map(discussionsMap ? Object.entries(discussionsMap) : []);
     }
     catch (error) {
       this.corrupt = true;
@@ -137,14 +106,13 @@ export class DealTokenSwap {
     }
   }
 
-  public async createRegistration(registration: IDealRegistrationData): Promise<void> {
-    this.dataSourceDeals.create("key", JSON.stringify(registration));
+  public updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
+    return this.dataSourceDeals.update(this.id, JSON.stringify(registration));
   }
 
-  /**
-   * has to be able to update individual parts of the registration or any other data (votes, discussions)
-   */
-  public async updateDealRegistration(registration: IDealRegistrationData): Promise<void> {
-    this.dataSourceDeals.update("key", JSON.stringify(registration));
+  public addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void> {
+    this.clauseDiscussions.set(clauseId, discussionKey);
+    const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
+    return this.dataSourceDeals.update(this.rootData.discussions, JSON.stringify(clauseDiscussionsObject));
   }
 }
