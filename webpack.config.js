@@ -248,7 +248,25 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
         issuer: /\.html?$/i
       },
       { test: /\.html$/i, loader: 'html-loader' },
-      { test: /\.ts$/, loader: "ts-loader" },
+      {
+        test: /\.ts$/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: [
+                '@babel/plugin-proposal-object-rest-spread',
+                '@babel/plugin-proposal-nullish-coalescing-operator',
+              ]
+            }
+          },
+          {
+            loader: "ts-loader",
+          }
+        ],
+        exclude: "/node_modules/"
+      },
       // embed small images and fonts as Data Urls and larger ones as files:
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
       { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff2' } },
