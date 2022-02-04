@@ -19,3 +19,8 @@ Feature: Choose Deal type
     Given I select Token Swap
     And I select Open Proposal
     Then I can view the Open Proposal wizard
+
+  Scenario: Select Partnered Deal
+    Given I select Token Swap
+    And I select Partnered Deal
+    Then I can view the Partnered Deal wizard
