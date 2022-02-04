@@ -45,8 +45,8 @@ export interface IProposalLead {
 }
 
 export interface IClause {
+  id: string,
   text: string,
-  tag: string,
 }
 
 export interface ITerms {
@@ -57,7 +57,7 @@ export interface ITerms {
   previousDiscussionURL: string,
 }
 
-export interface IDealRegistrationData {
+export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
@@ -71,10 +71,10 @@ export interface IDealRegistrationData {
   modifiedAt: Date | null;
   createdByAddress: string | null;
   executionPeriodInDays: number;
-  dealType: "token-swap" | "joint-venture"; // @TODO do we need dealType?
+  dealType: "token-swap"/* | "joint-venture"*/;
 }
 
-export class DealRegistrationData implements IDealRegistrationData {
+export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public version: string;
   public proposal: IProposal;
   public primaryDAO: IDAO;
@@ -88,7 +88,7 @@ export class DealRegistrationData implements IDealRegistrationData {
   public modifiedAt: Date | null;
   public createdByAddress: string | null;
   public executionPeriodInDays: number;
-  public dealType: "token-swap" | "joint-venture"; // do we need this??
+  public dealType: "token-swap"/* | "joint-venture" */;
 
   constructor() {
     this.clearState();

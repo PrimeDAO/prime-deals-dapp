@@ -12,16 +12,19 @@ export abstract class IDataSourceDeals {
    * If id is not set, then will use rootId
    * @param id
    */
-  initialize(rootId?: string): void {
+  initialize(rootId?: IKey): void {
     throw new Error("Method not implemented.");
   }
-  get<T>(id?: string): T {
+  get<T>(id?: IKey): T {
     throw new Error("Method not implemented.");
   }
-  create(idParent: string, data: string): Promise<string> {
+  /**
+   * returns the new CID
+   */
+  create(idParent: IKey, data: string): Promise<IKey> {
     throw new Error("Method not implemented.");
   }
-  update(id: string, data: string): Promise<string> {
+  update(id: IKey, data: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

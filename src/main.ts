@@ -15,7 +15,7 @@ import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvide
 import { TimingService } from "services/TimingService";
 import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
-import { Deal } from "entities/Deal";
+import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 
 export function configure(aurelia: Aurelia): void {
@@ -48,7 +48,7 @@ export function configure(aurelia: Aurelia): void {
     aurelia.container.get(ConsoleLogService);
     try {
 
-      aurelia.container.registerTransient(Deal);
+      aurelia.container.registerTransient(DealTokenSwap);
 
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
