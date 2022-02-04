@@ -4,7 +4,7 @@ import { WizardErrors } from "services/WizardService";
 import "./proposalLeadSection.scss";
 import { autoinject, bindingMode } from "aurelia-framework";
 import { EthereumService } from "../../../services/EthereumService";
-import { EventAggregator } from "aurelia-event-aggregator";
+import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 
 @autoinject
 export class ProposalLeadSection {
@@ -15,15 +15,24 @@ export class ProposalLeadSection {
 
   ethAddress?: string;
 
+  private accountSubscription: Subscription;
+
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
   ) {
     this.ethAddress = this.ethereumService.defaultAccountAddress;
-    this.eventAggregator.subscribe("Network.Changed.Account", address => this.ethAddress = address);
+    this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
+      this.ethAddress = address;
+    });
+
   }
 
   async connectToWallet() {
     await this.ethereumService.connect();
+  }
+
+  detached() {
+    this.accountSubscription.dispose();
   }
 }

@@ -5,10 +5,6 @@
     title="Proposal Lead"
     wizard-manager.bind="wizardManager">
 
-    This is a native input and validation works here ->
-    <input type="text" value.bind="wizardState.registrationData.proposalLead.address & validate">
-    <-
-
     <proposal-lead-section
       address.bind="wizardState.registrationData.proposalLead.address & validate"
       email.bind="wizardState.registrationData.proposalLead.email & validate"

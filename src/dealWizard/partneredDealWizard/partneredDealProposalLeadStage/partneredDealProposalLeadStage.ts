@@ -24,14 +24,14 @@ export class PartneredDealProposalLeadStage implements IBaseWizardStage {
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.form.addObject(this.wizardState.registrationData.proposalLead, proposalLeadValidationRules.rules);
-    // proposalLeadValidationRules.on(this.wizardState.registrationData.proposalLead);
     this.form.subscribe(event => {
       this.errors = getErrorsFromValidateResults(event.results);
     });
+
     // This is a small hack used to "activate" the validation on custom inputs
-    // this.form.validate().then(() => {
-    //   this.form.reset();
-    // });
+    this.form.validate().then(() => {
+      this.form.reset();
+    });
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, this.validateOnSubmit.bind(this));
   }
