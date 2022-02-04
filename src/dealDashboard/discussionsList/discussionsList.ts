@@ -30,7 +30,7 @@ export class DiscussionsList{
     //"open_deals_stream_id_2";
     this.dealId = this.router.currentInstruction.parentInstruction.params.address;
 
-    const discussions = await this.deal.discussions;
+    const discussions = await this.deal.clauseDiscussions;
 
     this.discussionsArray = Object.keys(discussions).map(key => (
       {id: key, ...discussions[key]}

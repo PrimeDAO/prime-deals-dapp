@@ -132,7 +132,7 @@ export class DiscussionsService {
       };
 
       const dealData = await this.dealService.deals.get(dealId);
-      dealData.discussions.push(discussionId);
+      dealData.addClauseDiscussion(args.clauseId.toString(), discussionId);
       this.dealService.deals.set(dealId, dealData);
       // TODO: Save discussion object using ceramicService
 

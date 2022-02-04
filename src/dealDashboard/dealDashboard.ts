@@ -5,7 +5,7 @@ import { PLATFORM } from "aurelia-pal";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { IClause } from "entities/DealRegistrationData";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 // import { IDealRegistrationData } from "entities/DealRegistrationData";
 import "./dealDashboard.scss";
@@ -48,12 +48,12 @@ export class DealDashboard {
       this.setThreadIdFromRoute(response.instruction);
     });
 
-    this.clauses = this.deal.registrationData.terms.clauses || [];
-    this.clauses.forEach(clause => {
-      this.discussionsService.hashString(clause.text).then( hash => {
-        clause.key = hash;
-      });
-    });
+    // this.clauses = this.deal.registrationData.terms.clauses || [];
+    // this.clauses.forEach(clause => {
+    //   this.discussionsService.hashString(clause.text).then( hash => {
+    //     clause.id = hash;
+    //   });
+    // });
   }
 
   deactivate() {

@@ -48,7 +48,7 @@ export class DiscussionThread {
     this.discussionId = this.router.currentInstruction.params.discussionId;
     this.ensureDealDiscussion();
 
-    this.dealDiscussion = this.deal.discussions[this.discussionId];
+    this.dealDiscussion = this.deal.clauseDiscussions[this.discussionId];
   }
 
   @computedFrom("ethereumService.defaultAccountAddress")
