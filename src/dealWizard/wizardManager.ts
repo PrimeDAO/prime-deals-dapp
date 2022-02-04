@@ -58,7 +58,9 @@ export class WizardManager {
     this.partnerDaoStage,
   ];
 
-  constructor(public wizardService: WizardService, private dealService: DealService) {}
+  constructor(
+    private wizardService: WizardService,
+    private dealService: DealService) {}
 
   activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
@@ -132,7 +134,7 @@ export class WizardManager {
     return stages;
   }
 
-  private getDeal(id: string): DealRegistrationTokenSwap {
-    return this.dealService.deals.get(id).registrationData as any;
+  private getDeal(id: string): IDealRegistrationTokenSwap {
+    return this.dealService.deals.get(id).registrationData;
   }
 }
