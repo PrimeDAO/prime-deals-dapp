@@ -96,8 +96,10 @@ export class App {
 
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      const blockDate = this.ethereumService.lastBlock.blockDate;
-      this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      const blockDate = this.ethereumService.lastBlock?.blockDate;
+      if (blockDate) {
+        this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      }
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });

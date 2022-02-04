@@ -27,9 +27,9 @@ Then("I can see Open Proposal and Partnered Deal", () => {
 })
 
 And('I select Open Proposal', () => {
-  cy.get("[data-test='button-initiate/token-swap/open-proposal/stage1']").click()
+  cy.get("[data-test='button-initiate/token-swap/open-proposal/proposal']").click()
 })
 
 Then("I can view the Open Proposal wizard", () => {
-  cy.url().should("include", "initiate/token-swap/open-proposal/stage1")
+  cy.url().should("include", "initiate/token-swap/open-proposal/proposal")
 })

@@ -1,4 +1,4 @@
-import { DealRegistrationData, IDAO } from "entities/DealRegistrationData";
+import { DealRegistrationTokenSwap, IDAO } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 
 const MOCK_DATA = {
@@ -12,7 +12,7 @@ const MOCK_DATA = {
   },
   "open_deals_stream_id_2": {
     registration: {
-      ...new DealRegistrationData(),
+      ...new DealRegistrationTokenSwap(),
       proposal: {
         title: "First Proposal",
         summary: "Quick summary",
@@ -46,12 +46,12 @@ export class CeramicServiceMock extends IDataSourceDeals {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public create(registration: IKey): Promise<string> {
+  public create(parent: IKey): Promise<IKey> {
     throw new Error("Method not implemented.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(id: IKey, data: string): Promise<IKey> {
+  public update(id: IKey, data: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }
