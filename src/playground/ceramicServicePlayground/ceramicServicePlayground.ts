@@ -1,7 +1,7 @@
 import * as LitJsSdk from "lit-js-sdk";
 import { CeramicApi } from "@ceramicnetwork/common";
 import { CeramicService } from "./ceramic-backend/ceramic-core";
-import { Integration } from "lit-ceramic-sdk";
+// import { Integration } from "lit-ceramic-sdk";
 
 const STREAM_ID = "kjzl6cwe1jw14b1pqb9k16eioymrcmrxeo04fihvf1zfrv6hxz3tru9ttf4i304";
 
@@ -105,20 +105,20 @@ export class CeramicServicePlayground {
  */
   async initLitClient(window: Window) {
     console.log("Starting Lit Client...");
-    const litCeramicIntegration = new Integration();
-    await litCeramicIntegration.startLitClient(window);
+    // const litCeramicIntegration = new Integration();
+    // await litCeramicIntegration.startLitClient(window);
     // const client = new LitJsSdk.LitNodeClient();
     // client.connect();
     // window.litNodeClient = client;
 
-    return litCeramicIntegration;
+    // return litCeramicIntegration;
   }
 
   async attached(): Promise<void> {
     const litCeramic = await this.initLitClient(window);
     // litCeramic.encryptAndWrite(toEncrypt, accessControlConditions)
-    const response = await litCeramic.readAndDecrypt(STREAM_ID);
-    console.log("TCL: CeramicServicePlayground -> response", response);
+    // const response = await litCeramic.readAndDecrypt(STREAM_ID);
+    // console.log("TCL: CeramicServicePlayground -> response", response);
 
     // const ceramicService = await CeramicService.create();
     // ceramicService.createAndEncrypt();
