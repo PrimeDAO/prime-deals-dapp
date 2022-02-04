@@ -2,7 +2,7 @@ import { Given, Then, When, And } from "@badeball/cypress-cucumber-preprocessor/
 
 Given("I navigate to the initiate a deal page", () => {
   cy.get("[data-test='initiate-deal-button']").click();
-  cy.url().should("include", "initiate");
+  cy.url().should("match", /(initiate$)/)
 });
 
 Then("I can see Token Swap deal type", () => {
@@ -17,10 +17,6 @@ When("I select Token Swap", () => {
   cy.get("[data-test='button-initiate/token-swap']").click()
 });
 
-Then("I am presented the option to choose a partner", () => {
-  cy.url().should("include", "token-swap")
-})
-
 Then("I can see Open Proposal and Partnered Deal", () => {
   cy.contains("[data-test='initiate-deal-type-title']", "Open Proposal").should("be.visible")
   cy.contains("[data-test='initiate-deal-type-title']", "Partnered Deal").should("be.visible")
@@ -32,4 +28,12 @@ And('I select Open Proposal', () => {
 
 Then("I can view the Open Proposal wizard", () => {
   cy.url().should("include", "initiate/token-swap/open-proposal/proposal")
+})
+
+And('I select Partnered Deal', () => {
+  cy.get("[data-test='button-initiate/token-swap/partnered-deal/proposal']").click()
+})
+
+Then("I can view the Partnered Deal wizard", () => {
+  cy.url().should("include", "initiate/token-swap/partnered-deal/proposal")
 })
