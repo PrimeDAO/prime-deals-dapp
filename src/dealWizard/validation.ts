@@ -11,8 +11,6 @@ export const proposalLeadValidationRules = ValidationRules
   .email()
   .withMessage("Please enter a valid e-mail");
 
-// .rules;
-
 export function getErrorsFromValidateResults(validateResults: ValidateResult[] = []) {
   return validateResults
     .filter(item => !item.valid)
