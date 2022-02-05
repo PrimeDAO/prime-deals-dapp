@@ -1,12 +1,13 @@
-import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
+import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { IWizardState, WizardErrors, WizardService } from "../../../services/WizardService";
-import { IDealRegistrationData, IProposal } from "entities/DealRegistrationData";
+import { IBaseWizardStage } from "../../dealWizardTypes";
+import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizardState: IWizardState<IDealRegistrationData>;
+  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   public errors: WizardErrors<IProposal> = {};
 
   constructor(public wizardService: WizardService) {}

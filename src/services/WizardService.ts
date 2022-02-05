@@ -1,10 +1,13 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
+import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
   indexOfActive: number;
   registrationData: Data;
+  cancelRoute: string;
+  previousRoute: string;
 }
 
 export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
@@ -23,12 +26,21 @@ export class WizardService {
 
   constructor(private router: Router){}
 
-  public registerWizard<Data>(
-    wizardManager: any,
-    stages: Array<IWizardStage>,
-    indexOfActive: number,
-    registrationData: Data,
-  ): IWizardState<Data> {
+  public registerWizard<Data>({
+    wizardManager,
+    stages,
+    indexOfActive,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }:{
+    wizardManager: any;
+    stages: Array<IWizardStage>;
+    indexOfActive: number;
+    registrationData: Data;
+    cancelRoute: string;
+    previousRoute: string;
+  }): IWizardState<Data> {
     if (!this.hasWizard(wizardManager)) {
       this.wizardsStates.set(
         wizardManager,
@@ -36,6 +48,8 @@ export class WizardService {
           stages,
           indexOfActive: indexOfActive,
           registrationData,
+          cancelRoute,
+          previousRoute,
         },
       );
     }
@@ -64,8 +78,8 @@ export class WizardService {
     stage.validate = validate;
   }
 
-  public cancel(): void {
-    this.router.parent.navigate("home");
+  public cancel(wizardManager: any): void {
+    this.router.navigate(this.getWizardState(wizardManager).cancelRoute);
   }
 
   public async proceed(wizardManager: any): Promise<void> {
@@ -83,12 +97,13 @@ export class WizardService {
   }
 
   public previous(wizardManager: any): void {
-    const indexOfActive = this.getWizardState(wizardManager).indexOfActive;
+    const wizardState = this.getWizardState(wizardManager);
+    const indexOfActive = wizardState.indexOfActive;
 
     if (indexOfActive > 0) {
       this.goToStage(wizardManager, indexOfActive - 1);
     } else {
-      this.router.parent.navigate("initiate/token-swap");
+      this.router.navigate(wizardState.previousRoute);
     }
   }
 
@@ -100,7 +115,16 @@ export class WizardService {
   public goToStage(wizardManager: any, index: number): void {
     const wizardState = this.getWizardState(wizardManager);
     wizardState.indexOfActive = index;
-    this.router.navigate(wizardState.stages[index].route);
+
+    const params = {
+      ...this.router.currentInstruction.params,
+      [STAGE_ROUTE_PARAMETER]: wizardState.stages[index].route,
+    };
+
+    this.router.navigateToRoute(
+      this.router.currentInstruction.config.name,
+      params,
+    );
   }
   public hasWizard(wizardManager: any): boolean {
     return this.wizardsStates.has(wizardManager);
