@@ -3,13 +3,13 @@ import { IWizardState, WizardService } from "../../../services/WizardService";
 import { validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { getErrorsFromValidateResults, proposalLeadValidationRules } from "../../validation";
 import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
-import { IDealRegistrationData } from "../../../entities/DealRegistrationData";
 import { PrimeRenderer } from "../../../resources/elements/primeDesignSystem/validation/renderer";
+import { IDealRegistrationTokenSwap } from "../../../entities/DealRegistrationTokenSwap";
 
 @autoinject
 export class PartneredDealProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
-  public wizardState: IWizardState<IDealRegistrationData>;
+  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   public errors: Record<string, string> = {};
   public form: ValidationController;
 

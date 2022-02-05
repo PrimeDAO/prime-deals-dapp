@@ -1,16 +1,24 @@
 import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
 import { IBaseWizardStage } from "../../dealWizardTypes";
-import { WizardService, IWizardState, WizardErrors } from "../../../services/WizardService";
+import { IWizardState, WizardErrors, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "entities/DealRegistrationTokenSwap";
+import { validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
+import { PrimeRenderer } from "../../../resources/elements/primeDesignSystem/validation/renderer";
+import { getErrorsFromValidateResults, proposalLeadValidationRules } from "../../validation";
 
 @autoinject
 export class OpenProposalProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   public errors: WizardErrors<IProposalLead> = {};
+  public form: ValidationController;
 
-  constructor(public wizardService: WizardService) {}
+  constructor(public wizardService: WizardService, validationFactory: ValidationControllerFactory) {
+    this.form = validationFactory.createForCurrentScope();
+    this.form.addRenderer(new PrimeRenderer);
+    this.form.validateTrigger = validateTrigger.changeOrFocusout;
+  }
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
@@ -18,16 +26,14 @@ export class OpenProposalProposalLeadStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.wizardService.registerStageValidateFunction(this.wizardManager, this.validate.bind(this));
-  }
+    this.form.addObject(this.wizardState.registrationData.proposalLead, proposalLeadValidationRules.rules);
 
-  validate(): boolean {
-    this.errors = {};
+    this.form.subscribe(event => {
+      this.errors = getErrorsFromValidateResults(event.results);
+    });
 
-    if (!this.wizardState.registrationData.proposalLead.address) {
-      this.errors.address = "Required Input";
-    }
-
-    return !Object.keys(this.errors).length;
+    this.wizardService.registerStageValidateFunction(this.wizardManager, () => {
+      return this.form.validate().then(result => result.valid);
+    });
   }
 }
