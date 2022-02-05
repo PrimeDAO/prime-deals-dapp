@@ -17,7 +17,8 @@
           validation-state.bind="errors.title ? 'error' : ''"
           validation-message.bind="errors.title"
           show-counter
-          max-length="50">
+          max-length="50"
+          data-test="proposal-title-field">
           <pinput-text value.bind="wizardState.registrationData.proposal.title"></pinput-text>
         </pform-input>
 
@@ -28,7 +29,8 @@
           validation-state.bind="errors.summary ? 'error' : ''"
           validation-message.bind="errors.summary"
           show-counter
-          max-length="250">
+          max-length="250"
+          data-test="proposal-summary-field">
           <ptextarea value.bind="wizardState.registrationData.proposal.summary" rows="7"></ptextarea>
         </pform-input>
 
@@ -39,7 +41,8 @@
           validation-state.bind="errors.description ? 'error' : ''"
           validation-message.bind="errors.description"
           show-counter
-          max-length="1000">
+          max-length="1000"
+          data-test="proposal-description-field">
           <ptextarea value.bind="wizardState.registrationData.proposal.description" rows="7"></ptextarea>
         </pform-input>
       </div>
