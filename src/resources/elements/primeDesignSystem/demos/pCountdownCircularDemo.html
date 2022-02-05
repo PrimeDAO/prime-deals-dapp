@@ -14,23 +14,52 @@
     .ticked {
       display: inline-block;
     }
+
+    .clickable {
+      cursor: pointer;
+    }
   </style>
-  <h1>Countdown from 10 seconds, toggle paused on click</h1>
+  <h1>Countdown from 10 seconds</h1>
   <div class="row">
     <pcountdown-circular
       start-at.bind="startAt"
       running.bind="running"
-      paused.bind="paused"
-      click.delegate="clicked()"
       stopped.call="stopped(cancelled)"
       ticked.call="ticked(secondsLeft)">
     </pcountdown-circular>
 
     <pbutton type="secondary" click.delegate="toggleRunning()">${ running ? 'Stop' : 'Start'}</pbutton>
 
-    <div class="paused">paused: ${paused}</div>
     <div class="running">running: ${running ? 'yes' : 'no'}</div>
     <div class="ticked">Current second: ${currentValue}</div>
-  </div>
+
+    <h1>Toggle paused on click</h1>
+    <div class="row">
+      <pcountdown-circular
+        class="clickable"
+        radius="80px"
+        start-at.bind="startAt2"
+        running.bind="running2"
+        paused.bind="paused"
+        click.delegate="clicked()">
+      </pcountdown-circular>
+
+      <div class="paused">paused: ${paused}</div>
+
+      <pbutton type="secondary" click.delegate="toggleRunning2()">${ running ? 'Stop' : 'Start'}</pbutton>
+
+      <h1>Could be nise to do better at font size with larger numbers</h1>
+      <div class="row">
+        <pcountdown-circular
+          class="clickable"
+          radius="160px"
+          start-at.bind="startAt3"
+          running.bind="running3"
+          paused.bind="paused"
+          click.delegate="clicked()">
+        </pcountdown-circular>
+
+        <pbutton type="secondary" click.delegate="toggleRunning3()">${ running ? 'Stop' : 'Start'}</pbutton>
+      </div>
 
 </template>

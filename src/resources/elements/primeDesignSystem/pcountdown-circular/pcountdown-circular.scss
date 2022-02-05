@@ -3,17 +3,27 @@
 pcountdown-circular {
   .circle {
     font-family: Inter;
-    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0px;
     text-align: center;
     color: $Secondary05;
     border: 2px solid $Secondary05;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /**
+     * forces circle shape
+     */
+    &::before {
+      content: "";
+      margin-top: 100%;
+    }
+
+    .secondsLeft {
+      font-size: 12px;
+      color: $Secondary05;
+    }
   }
 }

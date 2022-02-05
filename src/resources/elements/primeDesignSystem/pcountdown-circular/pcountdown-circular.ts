@@ -29,6 +29,8 @@ export class PCountdownCircular {
    */
   @bindable ticked: ({ secondsLeft: number }) => void;
 
+  @bindable radius = "24px";
+
   timerId: any;
   secondsLeft = 0;
   startTime: number;

@@ -1,8 +1,12 @@
 export class PCountdownCircularDemo {
 
-  startAt = 10;
-  currentValue = 10;
+  startAt = 9;
+  startAt2 = 15;
+  startAt3 = 777;
+  currentValue = 9;
   running = true;
+  running2 = true;
+  running3 = true;
   paused = false;
 
   clicked(): void {
@@ -14,6 +18,13 @@ export class PCountdownCircularDemo {
     this.currentValue = this.running ? this.startAt : 0;
   }
 
+  toggleRunning2(): void {
+    this.running2 = !this.running2;
+  }
+
+  toggleRunning3(): void {
+    this.running3 = !this.running3;
+  }
   ticked(secondsLeft: number) {
     this.currentValue = secondsLeft;
   }
