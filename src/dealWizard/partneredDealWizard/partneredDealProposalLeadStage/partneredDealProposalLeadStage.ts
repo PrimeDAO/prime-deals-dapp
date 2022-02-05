@@ -4,6 +4,7 @@ import { validateTrigger, ValidationController, ValidationControllerFactory } fr
 import { getErrorsFromValidateResults, proposalLeadValidationRules } from "../../validation";
 import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
 import { IDealRegistrationData } from "../../../entities/DealRegistrationData";
+import { PrimeRenderer } from "../../../resources/elements/primeDesignSystem/validation/renderer";
 
 @autoinject
 export class PartneredDealProposalLeadStage implements IBaseWizardStage {
@@ -14,8 +15,8 @@ export class PartneredDealProposalLeadStage implements IBaseWizardStage {
 
   constructor(public wizardService: WizardService, validationFactory: ValidationControllerFactory) {
     this.form = validationFactory.createForCurrentScope();
-    // this.form.addRenderer(new PrimeRenderer);
-    this.form.validateTrigger = validateTrigger.change;
+    this.form.addRenderer(new PrimeRenderer);
+    this.form.validateTrigger = validateTrigger.changeOrFocusout;
   }
 
   activate(stageMeta: IStageMeta): void {
