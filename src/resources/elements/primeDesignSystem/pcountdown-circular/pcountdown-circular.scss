@@ -9,7 +9,8 @@ pcountdown-circular {
     color: $Secondary05;
     border: 2px solid $Secondary05;
     border-radius: 50%;
-    display: flex;
+    // inline so div fits the circle and component can be properly centered
+    display: inline-flex;
     justify-content: center;
     align-items: center;
 
