@@ -1,8 +1,8 @@
+import { DealService } from "services/DealService";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { IDiscussion } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
-import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./discussionsList.scss";
 
 @autoinject
@@ -22,15 +22,14 @@ export class DiscussionsList{
   constructor(
     private router: Router,
     private dateService: DateService,
-    private deal: DealTokenSwap,
+    private dealService: DealService,
   ) {}
 
   async attached(): Promise<void> {
 
     //"open_deals_stream_id_2";
     this.dealId = this.router.currentInstruction.parentInstruction.params.address;
-
-    const discussions = await this.deal.clauseDiscussions;
+    const discussions = await this.dealService.deals.get(this.dealId).clauseDiscussions;
 
     this.discussionsArray = Object.keys(discussions).map(key => (
       {id: key, ...discussions[key]}
