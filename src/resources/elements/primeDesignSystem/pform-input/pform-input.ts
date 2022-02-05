@@ -1,8 +1,8 @@
-import {BindingEngine, child, customElement} from "aurelia-framework";
+import { BindingEngine, child, customElement } from "aurelia-framework";
 import "./pform-input.scss";
-import {bindable, observable} from "aurelia-typed-observable-plugin";
-import {ValidationState} from "../types";
-import {Disposable} from "aurelia-binding";
+import { bindable, observable } from "aurelia-typed-observable-plugin";
+import { ValidationState } from "../types";
+import { Disposable } from "aurelia-binding";
 import tippy from "tippy.js";
 
 @customElement("pform-input")
