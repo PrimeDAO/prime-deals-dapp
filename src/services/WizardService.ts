@@ -1,6 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
+import { ValidationController } from "aurelia-validation";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -17,6 +18,7 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
+  form?: ValidationController;
   validate?: () => Promise<boolean> | boolean;
 }
 

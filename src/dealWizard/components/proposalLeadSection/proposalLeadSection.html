@@ -14,11 +14,14 @@
       <pform-input
         class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
         label="Proposal Lead Address"
-        validation-state.bind="errors.address ? 'error' : ''"
-        validation-message.bind="errors.address"
+        input-reference.bind="input"
       >
-        <pinput-text disabled.bind="disabled" placeholder="0x..." validation-state.bind="errors.address ? 'error' : ''"
-                     value.bind="address"></pinput-text>
+        <pinput-text
+          disabled.bind="disabled"
+          placeholder="0x..."
+          value.bind="address & validate"
+          view-model.ref="input"
+        ></pinput-text>
         <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress">
           Connect your wallet
         </pbutton>
@@ -31,14 +34,8 @@
         </pbutton>
       </pform-input>
 
-
-      <pform-input
-        class="wizardFormInput wizardFormInputNarrow"
-        label="Contact E-mail (optional)"
-        validation-message.bind="errors.email"
-        validation-state.bind="errors.email ? 'error' : ''"
-      >
-        <pinput-text disabled.bind="disabled" value.bind="email"></pinput-text>
+      <pform-input class="wizardFormInput wizardFormInputNarrow" label="Contact E-mail (optional)">
+        <pinput-text disabled.bind="disabled" value.bind="email & validate"></pinput-text>
       </pform-input>
     </div>
   </div>

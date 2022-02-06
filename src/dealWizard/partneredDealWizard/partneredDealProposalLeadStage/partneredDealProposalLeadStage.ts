@@ -1,22 +1,16 @@
 import { autoinject } from "aurelia-framework";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
-import { getErrorsFromValidateResults, proposalLeadValidationRules } from "../../validation";
 import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
-import { PrimeRenderer } from "../../../resources/elements/primeDesignSystem/validation/renderer";
 import { IDealRegistrationTokenSwap } from "../../../entities/DealRegistrationTokenSwap";
+import { ValidationController } from "aurelia-validation";
 
 @autoinject
 export class PartneredDealProposalLeadStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
-  public errors: Record<string, string> = {};
-  public form: ValidationController;
+  proposalLeadForm: ValidationController;
 
-  constructor(public wizardService: WizardService, validationFactory: ValidationControllerFactory) {
-    this.form = validationFactory.createForCurrentScope();
-    this.form.addRenderer(new PrimeRenderer);
-    this.form.validateTrigger = validateTrigger.changeOrFocusout;
+  constructor(public wizardService: WizardService) {
   }
 
   activate(stageMeta: IStageMeta): void {
@@ -25,14 +19,9 @@ export class PartneredDealProposalLeadStage implements IBaseWizardStage {
 
   attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.form.addObject(this.wizardState.registrationData.proposalLead, proposalLeadValidationRules.rules);
 
-    this.form.subscribe(event => {
-      this.errors = getErrorsFromValidateResults(event.results);
-    });
-
-    this.wizardService.registerStageValidateFunction(this.wizardManager, () => {
-      return this.form.validate().then(result => result.valid);
+    this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
+      return this.proposalLeadForm.validate().then(result => result.valid);
     });
   }
 }

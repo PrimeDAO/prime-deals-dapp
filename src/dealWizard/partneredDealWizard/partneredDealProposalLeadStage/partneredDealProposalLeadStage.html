@@ -6,9 +6,10 @@
     wizard-manager.bind="wizardManager">
 
     <proposal-lead-section
-      address.bind="wizardState.registrationData.proposalLead.address & validate"
-      email.bind="wizardState.registrationData.proposalLead.email & validate"
-      errors.bind="errors">
+      address.bind="wizardState.registrationData.proposalLead.address"
+      email.bind="wizardState.registrationData.proposalLead.email"
+      form.bind="proposalLeadForm"
+    >
     </proposal-lead-section>
 
     <div class="stageSection">

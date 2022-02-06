@@ -8,8 +8,8 @@ export const proposalLeadValidationRules = ValidationRules
   .withMessage("Wallet address is required")
   .satisfiesRule(Validation.isETHAddress)
   .ensure<string>(data => data.email)
-  .email()
-  .withMessage("Please enter a valid e-mail");
+  .satisfiesRule(Validation.email)
+;
 
 export function getErrorsFromValidateResults(validateResults: ValidateResult[] = []) {
   return validateResults

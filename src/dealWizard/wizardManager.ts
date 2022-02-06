@@ -1,10 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
+import { IWizardStage, IWizardState, WizardService } from "services/WizardService";
 import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
+import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
+import { validateTrigger, ValidationControllerFactory } from "aurelia-validation";
+import { PrimeRenderer } from "../resources/elements/primeDesignSystem/validation/renderer";
 
 @autoinject
 export class WizardManager {
@@ -66,7 +68,10 @@ export class WizardManager {
 
   constructor(
     private wizardService: WizardService,
-    private dealService: DealService) {}
+    private dealService: DealService,
+    private validationFactory: ValidationControllerFactory,
+  ) {
+  }
 
   activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
@@ -135,7 +140,17 @@ export class WizardManager {
         break;
     }
 
-    return stages;
+    return stages.map(stage => {
+      if (stage.form) {
+        return stage;
+      }
+      stage.form = this.validationFactory.createForCurrentScope();
+      stage.form.validateTrigger = validateTrigger.changeOrFocusout;
+      stage.form.addRenderer(new PrimeRenderer);
+      stage.validate = () => stage.form.validate().then(result => result.valid);
+
+      return stage;
+    });
   }
 
   private getDeal(id: string): IDealRegistrationTokenSwap {

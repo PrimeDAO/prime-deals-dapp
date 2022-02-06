@@ -8,11 +8,17 @@ import { PFormInput } from "../pform-input/pform-input";
 * */
 export class PrimeRenderer implements ValidationRenderer {
   render(instruction: RenderInstruction) {
-    const unrenderResult = instruction.unrender.filter(item => !item.result.valid)[0];
-    unrenderResult?.elements.forEach(element => this.remove(element));
+    instruction.unrender
+      .filter(item => !item.result.valid)
+      .forEach(result => {
+        result.elements.forEach(element => this.remove(element));
+      });
 
-    const renderResult = instruction.render.filter(item => !item.result.valid)[0];
-    renderResult?.elements.forEach(element => this.add(element, renderResult.result));
+    instruction.render
+      .filter(item => !item.result.valid)
+      .forEach(result => {
+        result.elements.forEach(element => this.add(element, result.result));
+      });
   }
 
   add(element: Element, result: ValidateResult) {

@@ -15,6 +15,8 @@ export class PFormInput {
   @bindable.string helperMessage = "";
   @bindable validationMessage = "";
   @bindable.string @observable validationState?: ValidationState;
+  @bindable inputReference;
+
   /**
    * This "child" selector is used to select any input used within the "pform-input" element.
    *  With it, we can get the character length used in the "max characters" counter section.
@@ -22,37 +24,38 @@ export class PFormInput {
   @child("*") input;
 
   private labelInfoIcon: HTMLElement;
-
   private inputValueObserverSubscription?: Disposable;
 
   constructor(private element: Element, private bindingEngine: BindingEngine) {
   }
 
   attached() {
+    this.inputReference = this.inputReference ?? this.input;
+
     if (this.labelInfoIcon) {
       tippy(this.labelInfoIcon);
     }
 
     this.validationStateChanged(this.validationState);
 
-    if (this.input && this.showCounter) {
+    if (this.inputReference && this.showCounter) {
       this.limitInputCharacterLength();
     }
   }
 
-  private limitInputCharacterLength() {
-    const inputValueObserver = this.bindingEngine.propertyObserver(this.input, "value");
-    this.inputValueObserverSubscription = inputValueObserver.subscribe(newValue => {
-      if (newValue?.length > this.maxLength) {
-        this.input.value = newValue.substring(0, this.maxLength);
-      }
-    });
+  validationStateChanged(newValue?: ValidationState) {
+    if (this.inputReference) {
+      this.inputReference.validationState = newValue;
+    }
   }
 
-  validationStateChanged(newValue?: ValidationState) {
-    if (this.input) {
-      this.input.validationState = newValue;
-    }
+  private limitInputCharacterLength() {
+    const inputValueObserver = this.bindingEngine.propertyObserver(this.inputReference, "value");
+    this.inputValueObserverSubscription = inputValueObserver.subscribe(newValue => {
+      if (newValue?.length > this.maxLength) {
+        this.inputReference.value = newValue.substring(0, this.maxLength);
+      }
+    });
   }
 
   validationStateExists(state: ValidationState) {
