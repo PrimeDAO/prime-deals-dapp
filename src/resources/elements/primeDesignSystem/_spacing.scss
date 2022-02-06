@@ -1,0 +1,58 @@
+@import "utils";
+$spacing-multiplier: 4px;
+$spaces: (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96);
+
+@each $space in $spaces {
+ $name: str-replace(quote($space), '.', '\\.');
+
+ /* Padding classes */
+ .p-#{$name} {
+  padding: $space * $spacing-multiplier;
+ }
+ .px-#{$name} {
+  padding-left: $space * $spacing-multiplier;
+  padding-right: $space * $spacing-multiplier;
+ }
+ .py-#{$name} {
+  padding-left: $space * $spacing-multiplier;
+  padding-right: $space * $spacing-multiplier;
+ }
+ .pl-#{$name} {
+  padding-left: $space * $spacing-multiplier;
+ }
+ .pr-#{$name} {
+  padding-right: $space * $spacing-multiplier;
+ }
+ .pt-#{$name} {
+  padding-top: $space * $spacing-multiplier;
+ }
+ .pb-#{$name} {
+  padding-bottom: $space * $spacing-multiplier;
+ }
+
+ /* Margin classes */
+ .m-#{$name} {
+  margin: $space * $spacing-multiplier;
+ }
+ .mx-#{$name} {
+  margin-left: $space * $spacing-multiplier;
+  margin-right: $space * $spacing-multiplier;
+ }
+ .my-#{$name} {
+  margin-left: $space * $spacing-multiplier;
+  margin-right: $space * $spacing-multiplier;
+ }
+ .ml-#{$name} {
+  margin-left: $space * $spacing-multiplier;
+ }
+ .mr-#{$name} {
+  margin-right: $space * $spacing-multiplier;
+ }
+ .mt-#{$name} {
+  margin-top: $space * $spacing-multiplier;
+ }
+ .mb-#{$name} {
+  margin-bottom: $space * $spacing-multiplier;
+ }
+}
+
