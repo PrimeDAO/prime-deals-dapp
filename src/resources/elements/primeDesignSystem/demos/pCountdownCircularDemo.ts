@@ -30,7 +30,6 @@ export class PCountdownCircularDemo {
   }
 
   stopped(cancelled: boolean): void {
-    this.currentValue = 0;
     setTimeout(() => alert(`Stopped, cancelled = ${cancelled}`), 0);
   }
 }
