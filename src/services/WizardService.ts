@@ -34,13 +34,13 @@ export class WizardService {
   }
 
   public registerWizard<Data>({
-                                wizardManager,
-                                stages,
-                                indexOfActive,
-                                registrationData,
-                                cancelRoute,
-                                previousRoute,
-                              }: {
+    wizardManager,
+    stages,
+    indexOfActive,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }: {
     wizardManager: any;
     stages: Array<IWizardStage>;
     indexOfActive: number;
