@@ -1,5 +1,11 @@
 @import "styles/styles.scss";
+
+.inProgress {
+  text-align: center;
+}
+
 .page.dealDashboardContainer {
+
   .dealDashboard {
     display: grid;
     grid-template-columns: 50% 40%;
