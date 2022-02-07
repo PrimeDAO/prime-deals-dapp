@@ -1,7 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig } from "aurelia-router";
-import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
+import { WizardService, IWizardState, IWizardStage } from "wizards/services/WizardService";
 import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
 import { DealService } from "services/DealService";

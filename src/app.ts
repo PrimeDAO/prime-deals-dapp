@@ -13,7 +13,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
-import { STAGE_ROUTE_PARAMETER, WizardType } from "dealWizard/dealWizardTypes";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -154,7 +154,7 @@ export class App {
         title: "Contribute",
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
         route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
         name: "createOpenProposal",
@@ -164,7 +164,7 @@ export class App {
         },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
         route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
         nav: false,
         name: "createPartneredDeal",
@@ -174,7 +174,7 @@ export class App {
         },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
         nav: false,
         name: "makeOfferWizard",
         route: `/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
@@ -184,7 +184,7 @@ export class App {
         },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
         nav: false,
         name: "editOpenProposal",
         route: `/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
@@ -194,7 +194,7 @@ export class App {
         },
       },
       {
-        moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
         nav: false,
         name: "editPartneredDeal",
         route: `/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
