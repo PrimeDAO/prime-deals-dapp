@@ -1,7 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
-import { ValidationController } from "aurelia-validation";
+import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
+import { PrimeRenderer } from "../resources/elements/primeDesignSystem/validation/renderer";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -26,16 +27,20 @@ export interface IWizardStage {
 export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
 
-  constructor(private router: Router){}
+  constructor(
+    private router: Router,
+    private validationFactory: ValidationControllerFactory,
+  ) {
+  }
 
   public registerWizard<Data>({
-    wizardManager,
-    stages,
-    indexOfActive,
-    registrationData,
-    cancelRoute,
-    previousRoute,
-  }:{
+                                wizardManager,
+                                stages,
+                                indexOfActive,
+                                registrationData,
+                                cancelRoute,
+                                previousRoute,
+                              }: {
     wizardManager: any;
     stages: Array<IWizardStage>;
     indexOfActive: number;
@@ -44,6 +49,19 @@ export class WizardService {
     previousRoute: string;
   }): IWizardState<Data> {
     if (!this.hasWizard(wizardManager)) {
+
+      stages = stages.map(stage => {
+        if (stage.form) {
+          return stage;
+        }
+        stage.form = this.validationFactory.createForCurrentScope();
+        stage.form.validateTrigger = validateTrigger.changeOrFocusout;
+        stage.form.addRenderer(new PrimeRenderer);
+        stage.validate = () => stage.form.validate().then(result => result.valid);
+
+        return stage;
+      });
+
       this.wizardsStates.set(
         wizardManager,
         {
@@ -128,11 +146,17 @@ export class WizardService {
       params,
     );
   }
+
   public hasWizard(wizardManager: any): boolean {
     return this.wizardsStates.has(wizardManager);
   }
 
-  private getWizardStage(wizardManager: any, stageName: string): IWizardStage{
+  private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
     return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  }
+
+  registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
+    const wizardStage = this.getActiveStage(wizardManager);
+    wizardStage.form.addObject(data, rules);
   }
 }

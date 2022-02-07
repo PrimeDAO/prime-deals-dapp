@@ -30,7 +30,10 @@ export class ProposalStage implements IBaseWizardStage {
       .minLength(10)
       .rules;
 
-    const wizardStage = this.wizardService.getActiveStage(this.wizardManager);
-    wizardStage.form.addObject(this.wizardState.registrationData.proposal, validationRules);
+    this.wizardService.registerValidationRules(
+      this.wizardManager,
+      this.wizardState.registrationData.proposal,
+      validationRules,
+    );
   }
 }
