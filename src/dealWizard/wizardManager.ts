@@ -1,10 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
-import { RouteConfig } from "aurelia-router";
+import { Router, RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "services/WizardService";
 import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
+import { EthereumService } from "services/EthereumService";
+import { Utils } from "services/utils";
 
 @autoinject
 export class WizardManager {
@@ -60,7 +62,10 @@ export class WizardManager {
 
   constructor(
     private wizardService: WizardService,
-    private dealService: DealService) {}
+    private dealService: DealService,
+    private ethereumService: EthereumService,
+    private router: Router,
+  ) {}
 
   async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
@@ -70,6 +75,8 @@ export class WizardManager {
 
     // if we are accessing an already existing deal, get its registration data
     this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
+
+    await this.ensureAccess(wizardType);
 
     this.stages = this.configureStages(wizardType);
 
@@ -87,6 +94,23 @@ export class WizardManager {
       cancelRoute: "home",
       previousRoute: this.getPreviousRoute(wizardType),
     });
+  }
+
+  private async ensureAccess(wizardType: any): Promise<void> {
+    if (wizardType !== WizardType.openProposalEdit && wizardType !== WizardType.partneredDealEdit) {
+      return;
+    }
+
+    try {
+      await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
+
+      if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
+        throw new Error();
+      }
+    } catch (error) {
+      this.router.navigate("home");
+      throw new Error();
+    }
   }
 
   private getPreviousRoute(wizardType: WizardType) {
