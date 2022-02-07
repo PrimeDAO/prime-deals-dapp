@@ -1,30 +1,43 @@
 @import "../styles";
 
 pcountdown-circular {
-  .circle {
-    font-family: Inter;
-    font-weight: 700;
-    letter-spacing: 0px;
-    text-align: center;
-    color: $Secondary05;
+  .pie {
     border: 2px solid $Secondary05;
     border-radius: 50%;
     // inline so div fits the circle and component can be properly centered
     display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    // so circle inside will be perfect
+    box-sizing: content-box;
 
-    /**
+    .circle {
+      font-family: Inter;
+      font-weight: 700;
+      letter-spacing: 0px;
+      text-align: center;
+      color: $Secondary05;
+      border: 2px solid $Border01;
+      border-radius: 50%;
+      // inline so div fits the circle and component can be properly centered
+      display: inline-flex;
+      box-sizing: content-box;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      top: -2px;
+      left: -2px;
+
+      /**
      * forces circle shape
      */
-    &::before {
-      content: "";
-      margin-top: 100%;
-    }
+      &::before {
+        content: "";
+        margin-top: 100%;
+      }
 
-    .secondsLeft {
-      font-size: 12px;
-      color: $Secondary05;
+      .secondsLeft {
+        font-size: 12px;
+        color: $Secondary05;
+      }
     }
   }
 }

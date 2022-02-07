@@ -28,8 +28,10 @@ export class PCountdownCircular {
    * for more than a second.
    */
   @bindable ticked: ({ secondsLeft: number }) => void;
-
-  @bindable radius = "24px";
+  /**
+   * radius in pixels.
+   */
+  @bindable.number radius = 24;
 
   timerId: any;
   secondsLeft = 0;
