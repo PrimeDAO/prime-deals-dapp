@@ -5,7 +5,11 @@ Then("I am presented the option to choose a partner", () => {
 })
 
 When("I go to previous step", () => {
-  cy.get("[data-test='wizard-previous-button']").click();
+  cy.url().then(url => {
+    const oldUrl = url;
+    cy.get("[data-test='wizard-previous-button']").click();
+    cy.url().should('not.equal', oldUrl);
+  })
 })
 
 When("I try to proceed to next step", () => {
@@ -38,31 +42,31 @@ When("I try to navigate to partner dao stage via stepper", () => {
 
 When("I fill in proposal title correctly", () => {
   cy.get("[data-test='proposal-title-field']").within(() => {
-    cy.get('input').type('Test proposal')
+    cy.get('input').type('Test proposal').invoke('val').should('have.length.at.least', 1)
   })
 })
 
 When("I fill in proposal summary with text that is too short", () => {
   cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('textarea').type('asd')
+    cy.get('textarea').type('asd').invoke('val').should('have.length.at.most', 9);
   })
 })
 
 When("I fill in proposal description with text that is too short", () => {
   cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('textarea').type('asd')
+    cy.get('textarea').type('asd123asd').invoke('val').should('have.length.at.most', 9);
   })
 })
 
 When("I fill in proposal summary with text that meets requirements", () => {
   cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('textarea').type('Test summary')
+    cy.get('textarea').type('Test summary').invoke('val').should('have.length.at.least', 10);
   })
 })
 
 When("I fill in proposal description with text that meets requirements", () => {
   cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('textarea').type('Test description')
+    cy.get('textarea').type('Test description').invoke('val').should('have.length.at.least', 10);
   })
 })
 
