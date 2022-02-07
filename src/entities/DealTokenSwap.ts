@@ -82,8 +82,8 @@ export class DealTokenSwap implements IDeal {
     try {
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
-      const discussionsMap = await this.dataSourceDeals.get<Record<string, string>>(this.rootData.discussions);
-      this.clauseDiscussions = new Map(discussionsMap ? Object.entries(discussionsMap) : []);
+      const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
+      this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
     }
     catch (error) {
       this.corrupt = true;
@@ -100,8 +100,8 @@ export class DealTokenSwap implements IDeal {
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
-    // eslint-disable-next-line no-empty
     if (account) {
+      // TODO- Is it necessary?
     }
   }
 
@@ -112,6 +112,6 @@ export class DealTokenSwap implements IDeal {
   public addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void> {
     this.clauseDiscussions.set(clauseId, discussionKey);
     const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
-    return this.dataSourceDeals.update(this.rootData.discussions, JSON.stringify(clauseDiscussionsObject));
+    return this.dataSourceDeals.update(discussionKey, JSON.stringify(clauseDiscussionsObject)); // TODO check if this line works correctly
   }
 }
