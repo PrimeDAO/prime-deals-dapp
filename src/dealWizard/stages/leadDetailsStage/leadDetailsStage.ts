@@ -1,21 +1,22 @@
-import { IStageMeta } from "./../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
-import { IBaseWizardStage } from "../../dealWizardTypes";
-import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { ValidationController } from "aurelia-validation";
+import { IWizardState, WizardService } from "../../../services/WizardService";
+import { IDealRegistrationTokenSwap } from "../../../entities/DealRegistrationTokenSwap";
+import { IStageMeta, WizardType } from "../../dealWizardTypes";
 
 @autoinject
-export class OpenProposalProposalLeadStage implements IBaseWizardStage {
+export class LeadDetailsStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   proposalLeadForm: ValidationController;
+  isOpenProposalPage = false;
 
   constructor(public wizardService: WizardService) {
   }
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
+    this.isOpenProposalPage = stageMeta.wizardType === WizardType.openProposal;
   }
 
   attached(): void {

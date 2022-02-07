@@ -30,17 +30,11 @@ export class WizardManager {
     route: "proposal",
     moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
   };
-  private openProposalLeadStage: IWizardStage = {
+  private leadDetailsStage: IWizardStage = {
     name: "Lead Details",
     valid: false,
-    route: "proposal-lead",
-    moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
-  };
-  private partneredDealProposalLeadStage: IWizardStage = {
-    name: "Lead Details",
-    valid: false,
-    route: "proposal-lead",
-    moduleId: PLATFORM.moduleName("./partneredDealWizard/partneredDealProposalLeadStage/partneredDealProposalLeadStage"),
+    route: "lead-details",
+    moduleId: PLATFORM.moduleName("./stages/leadDetailsStage/leadDetailsStage"),
   };
   private primaryDaoStage: IWizardStage = {
     name: "Primary DAO",
@@ -56,12 +50,12 @@ export class WizardManager {
   };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
-    this.openProposalLeadStage,
+    this.leadDetailsStage,
     this.primaryDaoStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
-    this.partneredDealProposalLeadStage,
+    this.leadDetailsStage,
     this.primaryDaoStage,
     this.partnerDaoStage,
   ];

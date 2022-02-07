@@ -12,14 +12,16 @@
     >
     </proposal-lead-section>
 
-    <div class="stageSection">
+    <div class="stageSection" if.bind="isOpenProposalPage">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Keep Admin Rights?</h2>
         <p class="subtext">
-          Select “keep admin rights” if you would like to the proposal lead to keep the rights to editing, discussion, funding initiation and token swap execution for all incoming offers to collaborate.
-          <br />
-          <br />
-          We suggest transferring your admin rights if you anticipate a lot of proposals, and won’t have time to manage all of them.
+          Select “keep admin rights” if you would like to the proposal lead to keep the rights to editing, discussion,
+          funding initiation and token swap execution for all incoming offers to collaborate.
+          <br/>
+          <br/>
+          We suggest transferring your admin rights if you anticipate a lot of proposals, and won’t have time to manage
+          all of them.
         </p>
       </div>
       <div class="stageSectionContent">
@@ -31,11 +33,12 @@
       </div>
     </div>
 
-    <div class="stageSection">
+    <div class="stageSection" if.bind="isOpenProposalPage">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Make Offers Private?</h2>
         <p class="subtext">
-          Select "make offers private" if you would like the offers you receive from this Open Proposal to be private. Private deals will only be accessible to the proposal lead and deal representatives.
+          Select "make offers private" if you would like the offers you receive from this Open Proposal to be private.
+          Private deals will only be accessible to the proposal lead and deal representatives.
         </p>
       </div>
       <div class="stageSectionContent">
@@ -43,6 +46,22 @@
           class="wizardFormInput"
           label="Make Offers Private">
           <ptoggle value.bind="wizardState.registrationData.offersPrivate"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+    <div class="stageSection" if.bind="!isOpenProposalPage">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Make Deal Private?</h2>
+        <p class="subtext">
+          Making a deal private will make it visible to only the proposal lead and deal representatives from both DAOs.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Make Deal Private">
+          <ptoggle value.bind="wizardState.registrationData.isPrivate"></ptoggle>
         </pform-input>
       </div>
     </div>
