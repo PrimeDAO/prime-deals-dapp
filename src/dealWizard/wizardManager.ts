@@ -62,14 +62,14 @@ export class WizardManager {
     private wizardService: WizardService,
     private dealService: DealService) {}
 
-  activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
+  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? this.getDeal(params.id) : new DealRegistrationTokenSwap();
+    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
 
     this.stages = this.configureStages(wizardType);
 
@@ -132,7 +132,10 @@ export class WizardManager {
     return stages;
   }
 
-  private getDeal(id: string): IDealRegistrationTokenSwap {
-    return this.dealService.deals.get(id).registrationData;
+  private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
+    await this.dealService.ensureInitialized();
+    const deal = this.dealService.deals.get(id);
+    await deal.ensureInitialized();
+    return deal.registrationData;
   }
 }
