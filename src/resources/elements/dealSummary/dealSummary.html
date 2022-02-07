@@ -1,5 +1,5 @@
 <template>
-  <pcard>
+  <pcard click.delegate="navigate('deal/123')">
     <div if.to-view="!loading" class="dealSummary">
       <div class="countdown">
         <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
@@ -29,9 +29,7 @@
               <div if.to-view="deal.dao.partner" class="name ellipses">${deal.dao.partner ? deal.dao.partner : ''}</div>
             </div>
           </div>
-          <pbutton click.delegate="navigate('deal/123')" type="secondary">
-            View
-          </pbutton>
+          <pbutton type="secondary">View</pbutton>
         </div>
       </div>
     </div>
