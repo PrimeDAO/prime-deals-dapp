@@ -179,7 +179,7 @@ export class Utils {
     value: string,
     documentElement = document.documentElement): void {
 
-    documentElement.style.setProperty(varName, value);
+    documentElement?.style.setProperty(varName, value);
   }
 
 }
