@@ -5,9 +5,7 @@ export enum WizardType {openProposal, openProposalEdit, partneredDeal, partnered
 export interface IBaseWizardStage {
   wizardManager: any;
   wizardState: IWizardState;
-
   activate;
-  attached: () => void;
 }
 
 export interface IStageMeta {

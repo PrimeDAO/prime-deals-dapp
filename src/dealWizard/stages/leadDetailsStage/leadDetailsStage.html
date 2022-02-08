@@ -1,16 +1,48 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
-  <require from="../../components/proposalLeadSection/proposalLeadSection"></require>
   <stage-wrapper
     title="Proposal Lead"
     wizard-manager.bind="wizardManager">
 
-    <proposal-lead-section
-      address.bind="wizardState.registrationData.proposalLead.address"
-      email.bind="wizardState.registrationData.proposalLead.email"
-      form.bind="proposalLeadForm"
-    >
-    </proposal-lead-section>
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Proposal Lead</h2>
+        <div class="subtext">
+          <p class="proposalLeadSubtext">Provide the Ethereum address for the proposal lead who will gain admin rights of
+            the deal.</p>
+          Proposal leads will be responsible for editing the deal during negotiation, initiating the funding phase once a
+          deal is approved, and executing the token swap. You don’t need to be part of a DAO to be the lead proposal.
+        </div>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
+          label="Proposal Lead Address"
+          input-reference.bind="input"
+        >
+          <pinput-text
+            disabled.bind="disabled"
+            placeholder="0x..."
+            value.bind="wizardState.registrationData.proposalLead.address & validate:form"
+            view-model.ref="input"
+          ></pinput-text>
+          <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress">
+            Connect your wallet
+          </pbutton>
+          <pbutton
+            class="walletButton"
+            click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
+            if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress"
+          >
+            Make me an admin
+          </pbutton>
+        </pform-input>
+
+        <pform-input class="wizardFormInput wizardFormInputNarrow" label="Contact E-mail (optional)">
+          <pinput-text disabled.bind="disabled" value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
+        </pform-input>
+      </div>
+    </div>
 
     <div class="stageSection" if.bind="isOpenProposalPage">
       <div class="stageSectionSidebar">

@@ -49,19 +49,6 @@ export class WizardService {
     previousRoute: string;
   }): IWizardState<Data> {
     if (!this.hasWizard(wizardManager)) {
-
-      stages = stages.map(stage => {
-        if (stage.form) {
-          return stage;
-        }
-        stage.form = this.validationFactory.createForCurrentScope();
-        stage.form.validateTrigger = validateTrigger.changeOrFocusout;
-        stage.form.addRenderer(new PrimeRenderer);
-        stage.validate = () => stage.form.validate().then(result => result.valid);
-
-        return stage;
-      });
-
       this.wizardsStates.set(
         wizardManager,
         {
@@ -156,7 +143,14 @@ export class WizardService {
   }
 
   registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
-    const wizardStage = this.getActiveStage(wizardManager);
-    wizardStage.form.addObject(data, rules);
+    const stage = this.getActiveStage(wizardManager);
+
+    stage.form = this.validationFactory.createForCurrentScope();
+    stage.form.validateTrigger = validateTrigger.changeOrFocusout;
+    stage.form.addRenderer(new PrimeRenderer);
+    stage.validate = () => stage.form.validate().then(result => result.valid);
+    stage.form.addObject(data, rules);
+
+    return stage.form;
   }
 }

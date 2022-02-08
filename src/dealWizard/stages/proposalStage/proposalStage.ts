@@ -3,20 +3,20 @@ import { autoinject } from "aurelia-framework";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
-import { ValidationRules } from "aurelia-validation";
+import { ValidationController, ValidationRules } from "aurelia-validation";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
+  form: ValidationController;
 
-  constructor(public wizardService: WizardService) {}
+  constructor(
+    public wizardService: WizardService,
+  ) {}
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
-  }
-
-  attached(): void {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     const validationRules = ValidationRules
@@ -30,7 +30,7 @@ export class ProposalStage implements IBaseWizardStage {
       .minLength(10)
       .rules;
 
-    this.wizardService.registerValidationRules(
+    this.form = this.wizardService.registerValidationRules(
       this.wizardManager,
       this.wizardState.registrationData.proposal,
       validationRules,
