@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
+import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;

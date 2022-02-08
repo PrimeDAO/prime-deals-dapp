@@ -4,7 +4,7 @@
 1. Create new route (for example in `app.ts`) for example:
   ```
   {
-    moduleId: PLATFORM.moduleName("./dealWizard/wizardManager"),
+    moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
     route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
     nav: false,
     name: "createOpenProposal",

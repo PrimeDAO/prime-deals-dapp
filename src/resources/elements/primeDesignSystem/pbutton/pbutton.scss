@@ -20,12 +20,12 @@
   font-style: normal;
   font-weight: 700;
   line-height: 19px;
-  letter-spacing: 0.6000000238418579px;
+  letter-spacing: 0.6px;
   text-align: center;
   text-transform: uppercase;
   border-radius: 50px;
   cursor: pointer;
-  background: transparent;
+  background-color: transparent;
   transform: translateY(0);
   user-select: none;
   color: $Neutral04;
@@ -34,7 +34,7 @@
   display: inline-flex;
   justify-content: center;
 
-  &>.icon {
+  & > .icon {
     width: 0;
     padding-left: 0px;
     opacity: 0;
@@ -43,7 +43,8 @@
     &.is-loading {
       width: 16px;
       opacity: 1;
-      padding-left: 6px;
+      padding-left: 14px;
+      padding-right: 18px;
     }
     .spinner {
       width: auto;
@@ -85,8 +86,10 @@ button {
     &.disabled:hover,
     &:disabled,
     &:disabled:hover {
-      background: $Neutral02;
+      background-color: $Neutral02;
+      background-image: unset;
     }
+
     &:hover:not(.disabled):not(:disabled):not(.no-animation) {
       background-position: right center;
     }
@@ -109,8 +112,31 @@ button {
     &:disabled,
     &:disabled:hover {
       border-color: $Neutral02;
-      background: transparent;
+      background-color: transparent;
       color: $Neutral02;
+    }
+
+    // the button is down
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
+      @include standardBackground;
+      border: 2px solid transparent;
+    }
+  }
+
+  &.tertiary {
+    @include standardButton;
+
+    &:hover {
+      background-color: $Border01;
+    }
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      color: $Neutral02;
+      background-color: transparent;
     }
 
     // the button is down
@@ -120,25 +146,29 @@ button {
     }
   }
 
-  &.tertiary {
+  &.formfield {
     @include standardButton;
+    border-radius: 10px;
+    background-color: $Border01;
+    font-weight: 500;
+    padding: 12px 16px;
+    font-size: $font-size3;
+    line-height: 22px;
+
+    &:active {
+      background-color: $Border02;
+      color: $Neutral03;
+    }
 
     &:hover {
-      background: $Border01;
+      background-color: $Secondary05;
     }
 
     &.disabled,
     &.disabled:hover,
     &:disabled,
     &:disabled:hover {
-      color: $Neutral02;
-      background: transparent;
-    }
-
-    // the button is down
-    &:hover:active:not(.disabled):not(:disabled),
-    &:focus:active:not(.disabled):not(:disabled) {
-      @include standardBackground;
+      background-color: $Neutral02;
     }
   }
 }

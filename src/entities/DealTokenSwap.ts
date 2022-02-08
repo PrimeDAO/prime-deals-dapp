@@ -100,9 +100,8 @@ export class DealTokenSwap implements IDeal {
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
-    // eslint-disable-next-line no-empty
     if (account) {
-      //
+      // TODO- Is it necessary?
     }
   }
 

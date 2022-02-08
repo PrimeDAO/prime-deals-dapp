@@ -1,4 +1,4 @@
-import { IWizardState } from "services/WizardService";
+import { IWizardState } from "wizards/services/WizardService";
 
 export enum WizardType {openProposal, openProposalEdit, partneredDeal, partneredDealEdit, makeAnOffer}
 
