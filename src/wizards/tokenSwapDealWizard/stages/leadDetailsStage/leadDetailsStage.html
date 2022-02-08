@@ -26,11 +26,11 @@
             value.bind="wizardState.registrationData.proposalLead.address & validate:form"
             view-model.ref="input"
           ></pinput-text>
-          <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress">
+          <pbutton click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
             Connect your wallet
           </pbutton>
           <pbutton
-            class="walletButton"
+            type="formfield"
             click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
             if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress"
           >

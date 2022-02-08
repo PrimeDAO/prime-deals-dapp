@@ -7,23 +7,6 @@
   align-items: center;
 }
 
-.walletButton button {
-  background: $Border01;
-  border-radius: 10px;
-  font-weight: 500;
-  padding: 12px 16px;
-  white-space: nowrap;
-  font-size: $font-size3;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:active {
-    background: $Border02;
-    color: $Neutral03;
-  }
-}
-
 .proposalLeadSubtext {
   margin-bottom: 20px;
 }
