@@ -20,12 +20,12 @@
   font-style: normal;
   font-weight: 700;
   line-height: 19px;
-  letter-spacing: 0.6000000238418579px;
+  letter-spacing: 0.6px;
   text-align: center;
   text-transform: uppercase;
   border-radius: 50px;
   cursor: pointer;
-  background: transparent;
+  background-color: transparent;
   transform: translateY(0);
   user-select: none;
   color: $Neutral04;
@@ -41,7 +41,7 @@
     overflow: hidden;
     transition: width 0.5s linear, opacity 0.75s linear, padding-left 0.5s linear;
     &.is-loading {
-      width: 16px;
+      width: 22px;
       opacity: 1;
       padding-left: 6px;
     }
@@ -85,7 +85,7 @@ button {
     &.disabled:hover,
     &:disabled,
     &:disabled:hover {
-      background: $Neutral02;
+      background-color: $Neutral02;
     }
     &:hover:not(.disabled):not(:disabled):not(.no-animation) {
       background-position: right center;
@@ -109,7 +109,7 @@ button {
     &:disabled,
     &:disabled:hover {
       border-color: $Neutral02;
-      background: transparent;
+      background-color: transparent;
       color: $Neutral02;
     }
 
@@ -125,7 +125,7 @@ button {
     @include standardButton;
 
     &:hover {
-      background: $Border01;
+      background-color: $Border01;
     }
 
     &.disabled,
@@ -133,13 +133,39 @@ button {
     &:disabled,
     &:disabled:hover {
       color: $Neutral02;
-      background: transparent;
+      background-color: transparent;
     }
 
     // the button is down
     &:hover:active:not(.disabled):not(:disabled),
     &:focus:active:not(.disabled):not(:disabled) {
       @include standardBackground;
+    }
+  }
+
+  &.formfield {
+    @include standardButton;
+    border-radius: 10px;
+    background-color: $Border01;
+    font-weight: 500;
+    padding: 12px 16px;
+    font-size: $font-size3;
+    line-height: 22px;
+
+    &:active {
+      background-color: $Border02;
+      color: $Neutral03;
+    }
+
+    &:hover {
+      background-color: $Secondary05;
+    }
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      background-color: $Neutral02;
     }
   }
 }

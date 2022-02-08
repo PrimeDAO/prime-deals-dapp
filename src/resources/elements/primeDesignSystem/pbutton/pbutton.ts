@@ -14,7 +14,7 @@ import "./pbutton.scss";
  *    <pbutton type="primary" no-animation>Not Animated</pbutton>
  *    <pbutton ... full-width>Full-Width</pbutton>
 */
-export type ButtonType = "primary" | "secondary" | "tertiary";
+export type ButtonType = "primary" | "secondary" | "tertiary" | "formfield";
 
 @customElement("pbutton")
 export class PButton {
