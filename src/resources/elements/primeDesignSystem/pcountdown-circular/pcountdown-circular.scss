@@ -1,9 +1,9 @@
 @import "../styles";
 
 .pcountdown-circular {
-  $pieBorderColor: $BG01;
+  $pieBorderColor: $Neutral03;
   $pieBorderThickness: 2px;
-  $piePercentage: 45;
+  --perc: 0;
 
   position: relative; // so position absolute will work right below
 
@@ -17,7 +17,7 @@
       position: absolute;
       border-radius: 50%;
       inset: 0;
-      background: conic-gradient(#{$pieBorderColor} calc(#{$piePercentage} * 1%), #0000 0);
+      background: conic-gradient(#{$pieBorderColor} calc(var(--perc) * 1%), #0000 0);
       -webkit-mask: radial-gradient(
         farthest-side,
         #0000 calc(99% - #{$pieBorderThickness}),
@@ -28,6 +28,10 @@
         #0000 calc(99% - #{$pieBorderThickness}),
         #000 calc(100% - #{$pieBorderThickness})
       );
+    }
+
+    .animate {
+      animation: --perc 1s 0.5s both;
     }
   }
 

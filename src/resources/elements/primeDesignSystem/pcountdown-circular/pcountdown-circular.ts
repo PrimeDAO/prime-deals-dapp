@@ -1,4 +1,4 @@
-import { customElement, bindingMode } from "aurelia-framework";
+import { customElement, bindingMode, computedFrom } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { Utils } from "services/utils";
 import "./pcountdown-circular.scss";
@@ -40,12 +40,36 @@ export class PCountdownCircular {
   pausedDuration = 0;
   // canvas: HTMLCanvasElement;
   isAttached = false;
+  pie: HTMLElement;
+
+  // get percSccVariable(): number {
+  //   return Number.parseInt(Utils.getCssVariable("perc", this.pie));
+  // }
+
+  @computedFrom("startAt", "secondsLeft")
+  get percentageLeft(): number {
+    return this.startAt ? ((this.startAt - this.secondsLeft) / this.startAt) * 100 : 0;
+  }
+
+  private storePercentageLeftChanged(): void {
+    Utils.setCssVariable("--perc", this.percentageLeft.toString(), this.pie);
+  }
+
+  private setSecondsLeft(left: number): number {
+    this.secondsLeft = left;
+    this.storePercentageLeftChanged();
+    return left;
+  }
 
   attached() {
     this.isAttached = true;
     if (this.running) {
       this.runningChanged(this.running);
     }
+  }
+
+  detached() {
+    this.stop(false);
   }
 
   pausedChanged(nowPaused: boolean) {
@@ -60,7 +84,7 @@ export class PCountdownCircular {
 
     if (this.isAttached) {
       if (running) {
-        this.secondsLeft = this.startAt;
+        this.setSecondsLeft(this.startAt);
         this.startTime = Date.now();
 
         // const ctx = this.canvas.getContext("2d");
@@ -84,13 +108,11 @@ export class PCountdownCircular {
               let stop = false;
               if (secondsLeft !== this.secondsLeft) {
                 if (secondsLeft > 0) {
-                  this.secondsLeft = secondsLeft;
+                  this.setSecondsLeft(secondsLeft);
                 } else { // <= zero
                   stop = true;
                 }
-                if (this.ticked) {
-                  setTimeout(() => this.ticked( { secondsLeft: this.secondsLeft }), 100 );
-                }
+                setTimeout(() => {if (this.ticked) { this.ticked( { secondsLeft: this.secondsLeft }); } }, 100 );
                 if (stop) {
                   this.stop(false);
                 }
@@ -109,11 +131,11 @@ export class PCountdownCircular {
   stop(cancelled: boolean): void {
     clearTimeout(this.timerId);
     this.timerId = null;
-    this.pausedDuration = this.secondsLeft = 0;
+    this.pausedDuration = 0;
+    this.setSecondsLeft(this.startAt);
+    this.storePercentageLeftChanged();
     this.paused = this.running = false;
-    if (this.stopped) {
-      setTimeout(() => this.stopped({ cancelled }), 100);
-    }
+    setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
   }
 
   // private polarToCartesian(
