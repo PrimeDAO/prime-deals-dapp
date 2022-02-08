@@ -3,6 +3,9 @@
 .pcountdown-circular {
   $pieBorderColor: $Neutral03;
   $pieBorderThickness: 2px;
+  /**
+   * this is set in pcountdown-circular.ts
+   */
   --perc: 0;
 
   position: relative; // so position absolute will work right below
@@ -49,13 +52,6 @@
     position: absolute;
     left: 0;
     z-index: -1;
-    /**
-     * forces circle shape
-     */
-    // &::before {
-    //   content: "";
-    //   margin-top: 100%;
-    // }
 
     .secondsLeft {
       font-size: 12px;

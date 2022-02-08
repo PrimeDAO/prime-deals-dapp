@@ -1,4 +1,4 @@
-import { customElement, bindingMode, computedFrom } from "aurelia-framework";
+import { customElement, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { Utils } from "services/utils";
 import "./pcountdown-circular.scss";
@@ -38,15 +38,9 @@ export class PCountdownCircular {
   startTime: number;
   pausedTime: number;
   pausedDuration = 0;
-  // canvas: HTMLCanvasElement;
   isAttached = false;
   pie: HTMLElement;
 
-  // get percSccVariable(): number {
-  //   return Number.parseInt(Utils.getCssVariable("perc", this.pie));
-  // }
-
-  @computedFrom("startAt", "secondsLeft")
   get percentageLeft(): number {
     return this.startAt ? ((this.startAt - this.secondsLeft) / this.startAt) * 100 : 0;
   }
@@ -86,13 +80,6 @@ export class PCountdownCircular {
       if (running) {
         this.setSecondsLeft(this.startAt);
         this.startTime = Date.now();
-
-        // const ctx = this.canvas.getContext("2d");
-        // ctx.strokeStyle = "white"; // "#64557d";
-        // ctx.beginPath();
-        // ctx.lineWidth = 2;
-        // ctx.arc(this.radius, this.radius, this.radius, 0, 2*Math.PI);
-        // ctx.stroke();
 
         if (!this.timerId) {
           this.paused = false;
@@ -137,32 +124,4 @@ export class PCountdownCircular {
     this.paused = this.running = false;
     setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
   }
-
-  // private polarToCartesian(
-  //   centerX: number,
-  //   centerY: number,
-  //   radius: number,
-  //   angleInDegrees: number): { x: number, y: number} {
-  //   const angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
-
-  //   return {
-  //     x: centerX + (radius * Math.cos(angleInRadians)),
-  //     y: centerY + (radius * Math.sin(angleInRadians)),
-  //   };
-  // }
-
-  // private describeArc(x, y, radius, startAngle, endAngle): Array<string> {
-
-  //   const start = this.polarToCartesian(x, y, radius, endAngle);
-  //   const end = this.polarToCartesian(x, y, radius, startAngle);
-
-  //   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  //   const d = [
-  //     "M", start.x, start.y,
-  //     "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
-  //   ].join(" ");
-
-  //   return d;
-  // }
 }
