@@ -1,14 +1,14 @@
-<template class="pcountdown-circular">
-  <div class="pie" style="max-width:${radius}px; max-height:${radius}px">
-    <div class="circle"
-      style="min-width:${radius}px; min-height:${radius}px">
-      <svg viewBox="0 0 22 22">
-        <text class="secondsLeft"
-          x="50%" y="50%"
-          fill="currentColor"
-          text-anchor="middle"
-          dominant-baseline="central">${secondsLeft}</text>
-      </svg>
-    </div>
+<template class="pcountdown-circular"
+  style="width:${radius*2}px; height:${radius*2}px">
+  <div class="pie" style="width:${radius*2}px; height:${radius*2}px"></div>
+  <div class="center"
+    style="width:${radius*2}px; height:${radius*2}px">
+    <svg viewBox="0 0 18 16">
+      <text class="secondsLeft"
+        x="50%" y="50%"
+        fill="currentColor"
+        text-anchor="middle"
+        dominant-baseline="central">${secondsLeft}</text>
+    </svg>
   </div>
 </template>

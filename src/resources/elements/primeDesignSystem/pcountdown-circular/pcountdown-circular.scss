@@ -1,43 +1,61 @@
 @import "../styles";
 
-pcountdown-circular {
+.pcountdown-circular {
+  $pieBorderColor: $BG01;
+  $pieBorderThickness: 2px;
+  $piePercentage: 45;
+
+  position: relative; // so position absolute will work right below
+
   .pie {
+    display: inline-flex;
+    aspect-ratio: 1;
+
+    &::before {
+      content: "";
+
+      position: absolute;
+      border-radius: 50%;
+      inset: 0;
+      background: conic-gradient(#{$pieBorderColor} calc(#{$piePercentage} * 1%), #0000 0);
+      -webkit-mask: radial-gradient(
+        farthest-side,
+        #0000 calc(99% - #{$pieBorderThickness}),
+        #000 calc(100% - #{$pieBorderThickness})
+      );
+      mask: radial-gradient(
+        farthest-side,
+        #0000 calc(99% - #{$pieBorderThickness}),
+        #000 calc(100% - #{$pieBorderThickness})
+      );
+    }
+  }
+
+  .center {
+    font-family: Inter;
+    font-weight: 700;
+    letter-spacing: 0px;
+    text-align: center;
+    color: $Secondary05;
     border: 2px solid $Secondary05;
     border-radius: 50%;
-    // inline so div fits the circle and component can be properly centered
     display: inline-flex;
-    // so circle inside will be perfect
-    box-sizing: content-box;
-
-    .circle {
-      font-family: Inter;
-      font-weight: 700;
-      letter-spacing: 0px;
-      text-align: center;
-      color: $Secondary05;
-      border: 2px solid $Border01;
-      border-radius: 50%;
-      // inline so div fits the circle and component can be properly centered
-      display: inline-flex;
-      box-sizing: content-box;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      top: -2px;
-      left: -2px;
-
-      /**
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    z-index: -1;
+    /**
      * forces circle shape
      */
-      &::before {
-        content: "";
-        margin-top: 100%;
-      }
+    // &::before {
+    //   content: "";
+    //   margin-top: 100%;
+    // }
 
-      .secondsLeft {
-        font-size: 12px;
-        color: $Secondary05;
-      }
+    .secondsLeft {
+      font-size: 12px;
+      color: $Secondary05;
     }
   }
 }
