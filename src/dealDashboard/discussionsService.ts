@@ -2,31 +2,29 @@ import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, AllowedNetworks, Networks} from "services/EthereumService";
+import { EthereumService, Networks, AllowedNetworks} from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
-import { Realtime } from "ably/promises";
-import { Types } from "ably";
-import { DealDiscussions, IComment, VoteType } from "entities/DealDiscussions";
+import { IDealDiscussion, IComment, VoteType } from "entities/DealDiscussions";
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 
 @autoinject
 export class DiscussionsService {
 
   public comments: Array<IComment> = [];
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
   private convo = new Convo(process.env.CONVO_API_KEY);
   private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
-  @bindable public discussions = null;
+  @bindable public discussions: Record<string, IDealDiscussion> = {};
   @bindable private comment: string;
 
   constructor(
     private ethereumService: EthereumService,
     private consoleLogService: ConsoleLogService,
     private eventAggregator: EventAggregator,
-    private dealDiscussion: DealDiscussions,
     private dealService: DealService,
+    private dataSourceDeals: IDataSourceDeals,
   ) { }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -96,30 +94,36 @@ export class DiscussionsService {
     return hashString;
   }
 
+  public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
+    for (const [, value] of clauseDiscussions.entries()) {
+      this.discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
+    }
+  }
+
   public async createDiscussion(
     dealId: string,
     args: {
+      discussionId: string,
       topic: string,
       clauseId: number | null,
       isPublic: boolean,
       members?: Array<string>,
       admins?: Array<string>,
     }): Promise<string> {
-    const discussionId = await this.hashString(args.topic);
 
-    const discussions = this.dealDiscussion.items || {};
+    const discussions = this.discussions || {};
     const createdBy = this.ethereumService.defaultAccountAddress;
 
     // Don't create a new discussion if it already exists
-    if (discussions[discussionId]) return discussionId;
+    if (this.discussions[args.discussionId]) return args.discussionId;
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
       return null;
     } else {
-      discussions[discussionId] = {
+      discussions[args.discussionId] = {
         version: "0.0.1",
-        discussionId,
+        discussionId: args.discussionId,
         topic: args.topic,
         clauseId: args.clauseId,
         createdByAddress: createdBy,
@@ -132,18 +136,17 @@ export class DiscussionsService {
       };
 
       const dealData = await this.dealService.deals.get(dealId);
-      dealData.addClauseDiscussion(args.clauseId.toString(), discussionId);
+      dealData.addClauseDiscussion(args.clauseId.toString(), args.discussionId);
       this.dealService.deals.set(dealId, dealData);
       // TODO: Save discussion object using ceramicService
 
-      return discussionId;
+      return args.discussionId;
     }
   }
 
-  public updateDiscussionListStatus(discussionId: string, timestamp?: Date): void {
-    const discussions = this.dealDiscussion.items || {};
-    discussions[discussionId].replies = this.comments.length;
-    if (timestamp) discussions[discussionId].modifiedAt = timestamp;
+  public async updateDiscussionListStatus(discussionId: string, timestamp?: Date): Promise<void> {
+    this.discussions[discussionId].replies = this.comments.length;
+    if (timestamp) this.discussions[discussionId].modifiedAt = timestamp;
   }
 
   // public async toggleThreadPrivacy(threadId: string): Promise<void> {
@@ -174,30 +177,6 @@ export class DiscussionsService {
   //   console.log({thread});
   // }
 
-  public async subscribeToDiscussion(discussionId: string): Promise<void> {
-    const channelName = `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-
-    this.discussionCommentsStream = await ably.channels.get(channelName);
-
-    this.discussionCommentsStream.subscribe((comment: Types.Message) => {
-      /**
-       * If a new comment is added to the thread, it is added at the
-       * end of the comments array.
-       * */
-      if (!this.comments.some(item => item._id === comment.data._id)) {
-        this.comments.push(comment.data);
-      }
-      this.updateDiscussionListStatus(discussionId, new Date(comment.timestamp));
-    });
-  }
-
-  public unsubscribeFromDiscussion(): void {
-    if (this.discussionCommentsStream) {
-      this.discussionCommentsStream.unsubscribe();
-    }
-  }
-
   public async loadDiscussionComments(discussionId: string, pageIdx = 0): Promise<IComment[]> {
     try {
       this.comments = await this.convo.comments.query({
@@ -218,7 +197,7 @@ export class DiscussionsService {
     }
   }
 
-  private getNetworkId(network: AllowedNetworks): number {
+  public getNetworkId(network: AllowedNetworks): number {
     if (network === Networks.Mainnet) return 1;
     if (network === Networks.Rinkeby) return 4;
     if (network === Networks.Kovan) return 42;
@@ -239,6 +218,10 @@ export class DiscussionsService {
       }
     }
 
+    if (!this.ethereumService.defaultAccountAddress) {
+      //
+    }
+
     try {
       const data = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
@@ -247,7 +230,6 @@ export class DiscussionsService {
         `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
         "https://deals.prime.xyz",
         {},
-        // @ts-ignore: Unreachable code error
         replyTo,
       );
       this.comments.push(data);

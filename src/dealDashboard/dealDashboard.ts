@@ -5,9 +5,9 @@ import { PLATFORM } from "aurelia-pal";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { IClause } from "entities/DealRegistrationTokenSwap";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-// import { IDealRegistrationData } from "entities/DealRegistrationData";
+import { IClause } from "entities/DealRegistrationTokenSwap";
+import { IDealDiscussion } from "entities/DealDiscussions";
 import "./dealDashboard.scss";
 
 // export interface IDealData {
@@ -24,36 +24,36 @@ export class DealDashboard {
   // loading = true;
   connected = false;
   private routeChangeEvent: Subscription;
-  private activeClause: string;
-  private clauses: IClause[];
-
-  // TODO: get from Deal entity
 
   private dealId: string;
+  private deal: DealTokenSwap;
+
+  private clauses: IClause[];
+  private activeClause: string;
+
+  private discussions: IDealDiscussion;
 
   constructor(
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
     private eventAggregator: EventAggregator,
     private router: Router,
-    private deal: DealTokenSwap,
     private dealService: DealService,
   ) {
     this.connected = !!this.ethereumService.defaultAccountAddress;
   }
 
-  activate(_, __, navigationInstruction) {
+  async activate(_, __, navigationInstruction) {
     this.setThreadIdFromRoute(navigationInstruction);
     this.routeChangeEvent = this.eventAggregator.subscribe("router:navigation:complete", (response) => {
       this.setThreadIdFromRoute(response.instruction);
     });
 
-    // this.clauses = this.deal.registrationData.terms.clauses || [];
-    // this.clauses.forEach(clause => {
-    //   this.discussionsService.hashString(clause.text).then( hash => {
-    //     clause.id = hash;
-    //   });
-    // });
+    this.dealId = navigationInstruction.params.address;
+    await this.dealService.ensureInitialized();
+    this.deal = this.dealService.deals.get(this.dealId);
+    await this.deal.ensureInitialized();
+    this.clauses = this.deal.registrationData.terms.clauses;
   }
 
   deactivate() {
@@ -76,10 +76,11 @@ export class DealDashboard {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private addOrReadDiscussion = async (topic: string, id: number | null = null): Promise<void> => {
+  private addOrReadDiscussion = async (topic: string, hash: string, id: number | null = null): Promise<void> => {
     const discussionId = await this.discussionsService.createDiscussion(
       this.dealId,
       {
+        discussionId: hash,
         topic,
         clauseId: id,
         admins: [this.ethereumService.defaultAccountAddress],
