@@ -158,7 +158,7 @@ export class WizardManager {
         throw new Error();
       }
     } catch (error) {
-      this.getPreviousRoute(wizardType);
+      this.router.navigate(this.getPreviousRoute(wizardType));
       throw new Error();
     }
   }
