@@ -1,12 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { ValidationController, ValidationRules } from "aurelia-validation";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IDealRegistrationTokenSwap, IProposalLead } from "../../../entities/DealRegistrationTokenSwap";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
-import { EthereumService } from "../../../services/EthereumService";
-import { Validation } from "../../../validation";
 import "./leadDetailsStage.scss";
+import { Validation } from "../../../../validation";
+import { EthereumService } from "../../../../services/EthereumService";
+import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
 
 @autoinject
 export class LeadDetailsStage {

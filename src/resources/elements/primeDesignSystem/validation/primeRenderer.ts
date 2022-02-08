@@ -10,12 +10,14 @@ export class PrimeRenderer implements ValidationRenderer {
   render(instruction: RenderInstruction) {
     instruction.unrender
       .filter(item => !item.result.valid)
+      .reverse()
       .forEach(result => {
         result.elements.forEach(element => this.remove(element));
       });
 
     instruction.render
       .filter(item => !item.result.valid)
+      .reverse()
       .forEach(result => {
         result.elements.forEach(element => this.add(element, result.result));
       });
