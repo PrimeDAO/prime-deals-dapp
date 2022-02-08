@@ -1,10 +1,12 @@
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
-import { RouteConfig } from "aurelia-router";
+import { Router, RouteConfig } from "aurelia-router";
 import { WizardService, IWizardState, IWizardStage } from "wizards/services/WizardService";
 import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
+import { EthereumService } from "services/EthereumService";
+import { Utils } from "services/utils";
 
 @autoinject
 export class WizardManager {
@@ -60,16 +62,21 @@ export class WizardManager {
 
   constructor(
     private wizardService: WizardService,
-    private dealService: DealService) {}
+    private dealService: DealService,
+    private ethereumService: EthereumService,
+    private router: Router,
+  ){}
 
-  activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): void {
+  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? this.getDeal(params.id) : new DealRegistrationTokenSwap();
+    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
+
+    await this.ensureAccess(wizardType);
 
     this.stages = this.configureStages(wizardType);
 
@@ -132,7 +139,27 @@ export class WizardManager {
     return stages;
   }
 
-  private getDeal(id: string): IDealRegistrationTokenSwap {
-    return this.dealService.deals.get(id).registrationData;
+  private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
+    await this.dealService.ensureInitialized();
+    const deal = this.dealService.deals.get(id);
+    await deal.ensureInitialized();
+    return deal.registrationData;
+  }
+
+  private async ensureAccess(wizardType: any): Promise<void> {
+    if (wizardType !== WizardType.openProposalEdit && wizardType !== WizardType.partneredDealEdit) {
+      return;
+    }
+
+    try {
+      await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
+
+      if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
+        throw new Error();
+      }
+    } catch (error) {
+      this.router.navigate(this.getPreviousRoute(wizardType));
+      throw new Error();
+    }
   }
 }
