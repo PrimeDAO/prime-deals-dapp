@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { STAGE_ROUTE_PARAMETER } from "dealWizard/dealWizardTypes";
+import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { PrimeRenderer } from "../resources/elements/primeDesignSystem/validation/renderer";
 

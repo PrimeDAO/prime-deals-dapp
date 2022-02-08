@@ -1,4 +1,4 @@
-import { IStageMeta } from "./../../dealWizardTypes";
+import { IStageMeta } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
