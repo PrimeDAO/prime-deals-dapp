@@ -32,10 +32,6 @@
         #000 calc(100% - #{$pieBorderThickness})
       );
     }
-
-    .animate {
-      animation: --perc 1s 0.5s both;
-    }
   }
 
   .center {
