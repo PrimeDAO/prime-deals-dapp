@@ -1,3 +1,4 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouteConfig } from "aurelia-router";
@@ -30,11 +31,11 @@ export class WizardManager {
     route: "proposal",
     moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
   };
-  private proposalLeadStage: IWizardStage = {
+  private leadDetailsStage: IWizardStage = {
     name: "Lead Details",
     valid: false,
-    route: "proposal-lead",
-    moduleId: PLATFORM.moduleName("./openProposalWizard/openProposalProposalLeadStage/openProposalProposalLeadStage"),
+    route: "lead-details",
+    moduleId: PLATFORM.moduleName("./stages/leadDetailsStage/leadDetailsStage"),
   };
   private primaryDaoStage: IWizardStage = {
     name: "Primary DAO",
@@ -50,12 +51,12 @@ export class WizardManager {
   };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
-    this.proposalLeadStage,
+    this.leadDetailsStage,
     this.primaryDaoStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
-    this.proposalLeadStage,
+    this.leadDetailsStage,
     this.primaryDaoStage,
     this.partnerDaoStage,
   ];
@@ -65,7 +66,9 @@ export class WizardManager {
     private dealService: DealService,
     private ethereumService: EthereumService,
     private router: Router,
-  ){}
+    private eventAggregator: EventAggregator,
+  ) {
+  }
 
   async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
@@ -142,6 +145,12 @@ export class WizardManager {
   private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
     await this.dealService.ensureInitialized();
     const deal = this.dealService.deals.get(id);
+
+    if (!deal) {
+      this.eventAggregator.publish("handleFailure", "Deal does not exist");
+      throw new Error("Deal does not exist");
+    }
+
     await deal.ensureInitialized();
     return deal.registrationData;
   }

@@ -1,4 +1,16 @@
-import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+
+const wizardTitlesToURLs = {
+  'Open proposal': 'open-proposal',
+  'Partnered Deal': 'partnered-deal',
+  'Make an offer': 'make-an-offer',
+} as const
+
+const stageTitlesToURLs = {
+  'Proposal': 'proposal',
+  'Lead Details': 'lead-details',
+  'Primary DAO': 'primary-dao',
+} as const
 
 Then("I am presented the option to choose a partner", () => {
   cy.url().should("match", /(initiate\/token-swap$)/)
@@ -16,80 +28,40 @@ When("I try to proceed to next step", () => {
   cy.get("[data-test='wizard-proceed-button']").click();
 })
 
-When("I try to navigate to proposal stage via stepper", () => {
+When("I try to navigate to the {string} stage via stepper", (stageTitle: string) => {
   cy.get("[data-test='wizard-manager-stepper']").within(() => {
-    cy.contains("[data-test='pstepper-step']", "Proposal").click();
+    cy.contains("[data-test='pstepper-step']", stageTitle).click();
   });
 })
 
-When("I try to navigate to proposal lead stage via stepper", () => {
-  cy.get("[data-test='wizard-manager-stepper']").within(() => {
-    cy.contains("[data-test='pstepper-step']", "Lead Details").click();
+Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
+  if (!wizardTitlesToURLs[wizardTitle]) {
+    throw new Error(`Wizard ${wizardTitle} does not exist in the list`)
+  }
+  if (!stageTitlesToURLs[stageTitle]) {
+    throw new Error(`Stage  ${stageTitle} does not exist in the list`)
+  }
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+});
+
+Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
+  if (!wizardTitlesToURLs[wizardTitle]) {
+    throw new Error(`Wizard ${wizardTitle} does not exist in the list`)
+  }
+  if (!stageTitlesToURLs[stageTitle]) {
+    throw new Error(`Stage ${stageTitle} does not exist in the list`)
+  }
+  cy.url().should("contain", `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+});
+
+When("I fill in the {string} field with {string}", (field: string, value: string) => {
+  cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+    cy.get("input, textarea").type(value);
   });
-})
+});
 
-When("I try to navigate to primary dao stage via stepper", () => {
-  cy.get("[data-test='wizard-manager-stepper']").within(() => {
-    cy.contains("[data-test='pstepper-step']", "Primary DAO").click();
+Then("I am presented with the {string} error message for the {string} field", (message: string, field: string) => {
+  cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+    cy.get(".errorMessage").should("contain.text", message);
   });
-})
-
-When("I try to navigate to partner dao stage via stepper", () => {
-  cy.get("[data-test='wizard-manager-stepper']").within(() => {
-    cy.contains("[data-test='pstepper-step']", "Partner DAO").click();
-  });
-})
-
-When("I fill in proposal title correctly", () => {
-  cy.get("[data-test='proposal-title-field']").within(() => {
-    cy.get('input').type('Test proposal').invoke('val').should('have.length.at.least', 1)
-  })
-})
-
-When("I fill in proposal summary with text that is too short", () => {
-  cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('textarea').type('asd').invoke('val').should('have.length.at.most', 9);
-  })
-})
-
-When("I fill in proposal description with text that is too short", () => {
-  cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('textarea').type('asd123asd').invoke('val').should('have.length.at.most', 9);
-  })
-})
-
-When("I fill in proposal summary with text that meets requirements", () => {
-  cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('textarea').type('Test summary').invoke('val').should('have.length.at.least', 10);
-  })
-})
-
-When("I fill in proposal description with text that meets requirements", () => {
-  cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('textarea').type('Test description').invoke('val').should('have.length.at.least', 10);
-  })
-})
-
-Then("I am presented with errors proposal stage required errors", () => {
-  cy.get("[data-test='proposal-title-field']").within(() => {
-    cy.get('.errorMessage').should('contain.text', 'Required Input')
-  })
-  cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('.errorMessage').should('contain.text', 'Required Input')
-  })
-  cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('.errorMessage').should('contain.text', 'Required Input')
-  })
-})
-
-Then("I am presented with too short input errors for proposal summary and description", () => {
-  cy.get("[data-test='proposal-title-field']").within(() => {
-    cy.get('.errorMessage').should('not.exist')
-  })
-  cy.get("[data-test='proposal-summary-field']").within(() => {
-    cy.get('.errorMessage').should('contain.text', 'Input is too short')
-  })
-  cy.get("[data-test='proposal-description-field']").within(() => {
-    cy.get('.errorMessage').should('contain.text', 'Input is too short')
-  })
-})
+});

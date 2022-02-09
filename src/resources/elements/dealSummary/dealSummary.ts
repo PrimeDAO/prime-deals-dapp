@@ -2,8 +2,8 @@ import {autoinject} from "aurelia-framework";
 import {Router} from "aurelia-router";
 import {bindable} from "aurelia-typed-observable-plugin";
 import {Address} from "services/EthereumService";
+import { IDeal } from "entities/IDealTypes";
 import "./dealSummary.scss";
-import {IDummyDeal} from "../../../entities/IDummyDeal";
 
 @autoinject
 export class DealSummary {
@@ -11,7 +11,7 @@ export class DealSummary {
   @bindable address: Address;
   @bindable name: string;
   @bindable logo: string;
-  @bindable deal: IDummyDeal;
+  @bindable deal: IDeal;
   loading = true;
   container: HTMLElement;
 
@@ -23,7 +23,7 @@ export class DealSummary {
     this.loading = false;
   }
 
-  navigate(href: string): void {
-    this.router.navigate(href);
+  navigate(): void {
+    this.router.navigate("deal/" + this.deal.id);
   }
 }
