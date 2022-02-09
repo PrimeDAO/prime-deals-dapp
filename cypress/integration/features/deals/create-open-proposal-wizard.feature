@@ -45,6 +45,11 @@ Feature: Create Open Proposal
     When I try to navigate to proposal stage via stepper
     When I am presented with Open Proposal proposal stage
 
+  
+  ###################
+  # Primary DAO stage
+  ###################
+
   Scenario: Primary DAO stage allows to add information about DAO and its representatives
     Given I navigate create open proposal wizard Primary DAO stage
     Then I can see Primary DAO section with inputs for collecting its details
@@ -66,6 +71,7 @@ Feature: Create Open Proposal
 
   Scenario: Try to proceed from Primary DAO stage after filling the required DAO details fields
     Given I navigate create open proposal wizard Primary DAO stage
+    When I fill in DAO details
     And I try to proceed to next step
     Then No errors for DAO details fields are visible
 

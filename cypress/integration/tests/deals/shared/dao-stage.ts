@@ -1,15 +1,9 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Then('I am presented with errors for DAO details fields', () => {
-  cy.get('[data-test="dao-name-field"]').within(() => {
-    cy.get('.errorMessage').should('have.text', 'Required Input')
-  })
-  cy.get('[data-test="dao-treasury-field"]').within(() => {
-    cy.get('.errorMessage').should('have.text', 'Required Input')
-  })
-  cy.get('[data-test="dao-avatar-url-field"]').within(() => {
-    cy.get('.errorMessage').should('have.text', 'Required Input')
-  })
+  cy.get('[data-test="dao-name-field"] .errorMessage').should('have.text', 'Required Input');
+  cy.get('[data-test="dao-treasury-field"] .errorMessage').should('have.text', 'Required Input');
+  cy.get('[data-test="dao-avatar-url-field"] .errorMessage').should('have.text', 'Required Input');
 })
 
 Then('I can add link to DAO avatar', () => {
@@ -60,16 +54,16 @@ Then('I can remove all social media', () => {
   cy.get('[data-test="remove-social-media"]').should('not.exist')
 })
 
+When('I fill in DAO details', () => {
+  cy.get('[data-test="dao-name-field"] input').type('Dao name')
+  cy.get('[data-test="dao-treasury-field"] input').type('0xc0ffee254729296a45a3885639AC7E10F9d54979')
+  cy.get('[data-test="dao-avatar-url-field"] input').type('https://example.com/image.png')
+})
+
 Then('No errors for DAO details fields are visible', () => {
-  cy.get('[data-test="dao-name-field"]').within(() => {
-    cy.get('.errorMessage').should('not.exist')
-  })
-  cy.get('[data-test="dao-treasury-field"]').within(() => {
-    cy.get('.errorMessage').should('not.exist')
-  })
-  cy.get('[data-test="dao-avatar-url-field"]').within(() => {
-    cy.get('.errorMessage').should('not.exist')
-  })
+  cy.get('[data-test="dao-name-field"] .errorMessage').should('not.exist')
+  cy.get('[data-test="dao-treasury-field"] .errorMessage').should('not.exist')
+  cy.get('[data-test="dao-avatar-url-field"] .errorMessage').should('not.exist')
 })
 
 Then('I can add up to 5 DAO representatives', () => {
