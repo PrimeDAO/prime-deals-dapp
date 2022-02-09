@@ -85,13 +85,13 @@ export class Demos {
         name: "pinput-group",
         title: "pinput-group Demo",
       },
-      // {
-      //   route: ["pcountdown-circular"],
-      //   nav: true,
-      //   moduleId: PLATFORM.moduleName("./pCountdownCircularDemo.html"),
-      //   name: "pcountdown-circular",
-      //   title: "pcountdown-circular",
-      // },
+      {
+        route: ["pcountdown-circular"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pCountdownCircularDemo"),
+        name: "pcountdown-circular",
+        title: "pcountdown-circular",
+      },
     ];
 
     config.map(routes);
