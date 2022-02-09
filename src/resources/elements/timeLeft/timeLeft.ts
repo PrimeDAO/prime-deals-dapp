@@ -1,7 +1,7 @@
-import { DateService } from "./../../../services/DateService";
 import { computedFrom, autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
-// import { Deal } from "entities/Deal";
+import { DateService } from "services/DateService";
+import { DealStatus } from "entities/IDealTypes";
 import "./timeLeft.scss";
 import tippy from "tippy.js";
 
@@ -15,6 +15,15 @@ export class TimeLeft {
 
   timeLeft: HTMLElement;
   tippyInstance: any;
+  status: string;
+
+  attached(): void {
+    const reversedEnum = {};
+    Object.keys(DealStatus).forEach(key => {
+      reversedEnum[DealStatus[key]] = key;
+    });
+    this.status = reversedEnum[this.deal.status];
+  }
 
   constructor(
     private dateService: DateService,
