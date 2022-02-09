@@ -45,13 +45,9 @@ export class PCountdownCircular {
     return this.startAt ? ((this.startAt - this.secondsLeft) / this.startAt) * 100 : 0;
   }
 
-  private storePercentageLeftChanged(): void {
-    Utils.setCssVariable("--perc", this.percentageLeft.toString(), this.pie);
-  }
-
   private setSecondsLeft(left: number): number {
     this.secondsLeft = left;
-    this.storePercentageLeftChanged();
+    Utils.setCssVariable("--perc", this.percentageLeft.toString(), this.pie);
     return left;
   }
 
@@ -120,7 +116,6 @@ export class PCountdownCircular {
     this.timerId = null;
     this.pausedDuration = 0;
     this.setSecondsLeft(this.startAt);
-    this.storePercentageLeftChanged();
     this.paused = this.running = false;
     setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
   }
