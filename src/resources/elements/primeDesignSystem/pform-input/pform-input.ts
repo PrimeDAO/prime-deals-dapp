@@ -20,6 +20,12 @@ export class PFormInput {
   /*
   * By default, "pform-input" will select its first child as the "input" property.
   * When the "pform-input" has more children, you can pass a custom selector that can be used to select the "input" property
+  * The value of this property must be a 'view-model' reference of the input.
+  * Example:
+  *   <pform-input input-reference.bind="myInputReference">
+  *     <pinput-text view-model.ref="myInputReference"></pinput-text>
+  *     <div>some random child</div>
+  *   </pform-input>
   * */
   @bindable inputReference;
 
