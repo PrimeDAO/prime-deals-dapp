@@ -41,3 +41,26 @@ $Gradient08: linear-gradient(45deg, $Secondary02 0%, $Shade01 50%, $Shade06 100%
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+$completedColor: #18bab0; // Status
+$completedBackground: #2b3239;  // Status
+$swappingColor: #FF52CF;  // Status
+$swappingBackground: #38263E;  // Status
+$negotiatingColor: #38DE67;  // Status
+$negotiatingBackground: #2B3139;  // Status
+$failedColor: #CECECE;  // Status
+$failedBackground: #30343E;  // Status
+$openColor: #38DE67;  // Status
+$openBackground: #2B3139;  // Status
+$liveColor: #38DE67;  // Status
+$liveBackground: #2b3139;  // Status
+$targetReachedColor: #38DE67;  // Status
+$targetReachedBackground: #2B3139;  // Status
+$swapCompleteColor: #18bab0;  // Status
+$swapCompleteBackground: #2b3239;  // Status
+$targetNotReachedColor: #FF5252;  // Status
+$targetNotReachedBackground: #3E263C;  // Status
+$fundingInProgressColor: #FF52CF;  // Status
+$fundingInProgressBackground: #38263E;  // Status
+$closedColor: #CECECE;  // Status
+$closedBackground: #30343E;  // Status
