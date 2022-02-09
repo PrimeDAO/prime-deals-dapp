@@ -1,9 +1,10 @@
-import { BindingEngine, child, customElement } from "aurelia-framework";
+import { child, customElement } from "aurelia-framework";
 import "./pform-input.scss";
-import { bindable, observable } from "aurelia-typed-observable-plugin";
+import { bindable } from "aurelia-typed-observable-plugin";
 import { ValidationState } from "../types";
 import { Disposable } from "aurelia-binding";
 import tippy from "tippy.js";
+import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 
 @customElement("pform-input")
 export class PFormInput {
@@ -14,7 +15,12 @@ export class PFormInput {
   @bindable.number maxLength = 0;
   @bindable.string helperMessage = "";
   @bindable validationMessage = "";
-  @bindable.string @observable validationState?: ValidationState;
+  @bindable.string validationState?: ValidationState;
+
+  /*
+  * By default, "pform-input" will select its first child as the "input" property.
+  * When the "pform-input" has more children, you can pass a custom selector that can be used to select the "input" property
+  * */
   @bindable inputReference;
 
   /**
@@ -26,7 +32,10 @@ export class PFormInput {
   private labelInfoIcon: HTMLElement;
   private inputValueObserverSubscription?: Disposable;
 
-  constructor(private element: Element, private bindingEngine: BindingEngine) {
+  constructor(
+    private element: Element,
+    private aureliaHelperService: AureliaHelperService,
+  ) {
   }
 
   attached() {
@@ -50,12 +59,14 @@ export class PFormInput {
   }
 
   private limitInputCharacterLength() {
-    const inputValueObserver = this.bindingEngine.propertyObserver(this.inputReference, "value");
-    this.inputValueObserverSubscription = inputValueObserver.subscribe(newValue => {
-      if (newValue?.length > this.maxLength) {
-        this.inputReference.value = newValue.substring(0, this.maxLength);
-      }
-    });
+    this.inputValueObserverSubscription = this.aureliaHelperService.createPropertyWatch(
+      this.inputReference,
+      "value",
+      newValue => {
+        if (newValue?.length > this.maxLength) {
+          this.inputReference.value = newValue.substring(0, this.maxLength);
+        }
+      });
   }
 
   validationStateExists(state: ValidationState) {
