@@ -10,7 +10,7 @@
   "homepage": "./",
   "license": "MIT",
   "scripts": {
-    "build": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --extractCss",
+    "build": "cross-env DOTENV_CONFIG_PATH=.env.production webpack",
     "build-kovan": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=kovan webpack --env.production  --extractCss",
     "build-rinkeby": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=rinkeby webpack --env.production  --extractCss",
     "build-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack --env.development --extractCss",
@@ -106,7 +106,7 @@
     "typescript": "^4.0.3",
     "url-loader": "^4.1.0",
     "wallaby-webpack": "^3.9.16",
-    "webpack": "^4.44.2",
+    "webpack": "^5.66.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"
