@@ -1,0 +1,9 @@
+<template class="pcountdown-closebutton">
+  <pcountdown-circular
+    start-at="5"
+    running="true"
+    click.delegate="countdownClicked()"
+    stopped.call="countDownStopped(cancelled)"
+    paused.bind="countdownPaused">
+  </pcountdown-circular>
+</template>

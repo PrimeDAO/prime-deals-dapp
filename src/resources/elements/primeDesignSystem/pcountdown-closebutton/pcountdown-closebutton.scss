@@ -1,0 +1,6 @@
+@import "../styles";
+
+.pcountdown-closebutton {
+  display: flex; // for some reason contains the pcountdown-circular better.
+  cursor: pointer;
+}

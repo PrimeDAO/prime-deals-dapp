@@ -92,6 +92,13 @@ export class Demos {
         name: "pcountdown-circular",
         title: "pcountdown-circular",
       },
+      {
+        route: ["pCountdown-closebuttonDemo"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pCountdownClosebuttonDemo"),
+        name: "pcountdown-closebutton",
+        title: "pcountdown-closebutton",
+      },
     ];
 
     config.map(routes);
