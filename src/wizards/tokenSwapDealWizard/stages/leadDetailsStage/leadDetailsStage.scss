@@ -1,0 +1,12 @@
+@import "src/resources/elements/primeDesignSystem/colors";
+@import "src/resources/elements/primeDesignSystem/variables";
+
+.proposalLeadAddress .inputContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.proposalLeadSubtext {
+  margin-bottom: 20px;
+}

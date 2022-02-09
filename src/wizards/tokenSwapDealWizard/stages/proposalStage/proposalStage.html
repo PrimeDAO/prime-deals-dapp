@@ -14,36 +14,30 @@
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Title"
-          validation-state.bind="errors.title ? 'error' : ''"
-          validation-message.bind="errors.title"
           show-counter
           max-length="50"
           data-test="proposal-title-field">
-          <pinput-text value.bind="wizardState.registrationData.proposal.title"></pinput-text>
+          <pinput-text value.bind="wizardState.registrationData.proposal.title & validate:form"></pinput-text>
         </pform-input>
 
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Summary"
           label-info="Give a brief outline of the Token swap deal."
-          validation-state.bind="errors.summary ? 'error' : ''"
-          validation-message.bind="errors.summary"
           show-counter
           max-length="250"
           data-test="proposal-summary-field">
-          <ptextarea value.bind="wizardState.registrationData.proposal.summary" rows="7"></ptextarea>
+          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.summary & validate:form"></ptextarea>
         </pform-input>
 
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Description"
           label-info="Give a precise idea of the Token swap, its background, uniqueness, and features."
-          validation-state.bind="errors.description ? 'error' : ''"
-          validation-message.bind="errors.description"
           show-counter
           max-length="1000"
           data-test="proposal-description-field">
-          <ptextarea value.bind="wizardState.registrationData.proposal.description" rows="7"></ptextarea>
+          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.description & validate:form"></ptextarea>
         </pform-input>
       </div>
     </div>
