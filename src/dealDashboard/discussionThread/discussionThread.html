@@ -24,9 +24,15 @@
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
-        <div if.bind="!threadComments.length && isLoading !== 'isFetching'" class="no comment">
+
+        <div if.bind="!threadComments.length && isMember && isLoading !== 'isFetching'" class="no comment">
           This discussion has no comments yet.
         </div>
+
+        <div if.bind="!threadComments.length && !isMember && isLoading !== 'isFetching'" class="no comment">
+          This discussion is private.
+        </div>
+
         <div 
           if.bind="isLoading !== 'isFetching' && threadComments.length"
           repeat.for="comment of threadComments"
