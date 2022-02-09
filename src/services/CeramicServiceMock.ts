@@ -1,7 +1,6 @@
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { Platforms } from "entities/DealRegistrationTokenSwap";
-import { DealStatus } from "entities/IDealTypes";
 
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
@@ -282,37 +281,31 @@ const MOCK_DATA = {
     registration: "registration-hash-1",
     discussions: "clause-discussions-hash-1",
     votes: "votes-hash-1",
-    status: DealStatus.targetNotReached,
   },
   "open_deals_stream_hash_2": {
     registration: "registration-hash-2",
     discussions: "clause-discussions-hash-2",
     votes: "votes-hash-2",
-    status: DealStatus.failed,
   },
   "open_deals_stream_hash_3": {
     registration: "registration-hash-3",
     discussions: "clause-discussions-hash-3",
     votes: "votes-hash-3",
-    status: DealStatus.closed,
   },
   "partnered_deals_stream_hash_1": {
     registration: "registration-hash-4",
     discussions: "clause-discussions-hash-4",
     votes: "votes-hash-4",
-    status: DealStatus.completed,
   },
   "partnered_deals_stream_hash_2": {
     registration: "registration-hash-5",
     discussions: "clause-discussions-hash-5",
     votes: "votes-hash-5",
-    status: DealStatus.negotiating,
   },
   "partnered_deals_stream_hash_3": {
     registration: "registration-hash-6",
     discussions: "clause-discussions-hash-6",
     votes: "votes-hash-6",
-    status: DealStatus.live,
   },
 
   // Registration Mock
