@@ -66,6 +66,7 @@ module.exports = (
         "node_modules/aurelia-binding"
       ),
       styles: path.resolve(__dirname, "src/styles"),
+      static: path.resolve(__dirname, "src/static"),
     },
     fallback: {
       stream: require.resolve("stream-browserify"),
@@ -295,10 +296,10 @@ module.exports = (
       // { test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'file-loader' },
 
       // embed small images and fonts as Data Urls and larger ones as files:
-      { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: "asset" },
+      { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: "asset/resource" },
       {
         test: /\.(woff|woff2|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i,
-        type: "asset",
+        type: "asset/resource",
       },
 
       {
