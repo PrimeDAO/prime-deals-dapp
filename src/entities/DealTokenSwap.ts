@@ -5,7 +5,7 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IDeal, IDealsData } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -21,7 +21,7 @@ export class DealTokenSwap implements IDeal {
 
   public registrationData: IDealRegistrationTokenSwap;
 
-  public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
+  public status: DealStatus;
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
@@ -84,6 +84,7 @@ export class DealTokenSwap implements IDeal {
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
+      this.status = this.rootData.status;
     }
     catch (error) {
       this.corrupt = true;
