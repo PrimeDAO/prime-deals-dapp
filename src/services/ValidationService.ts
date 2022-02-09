@@ -1,5 +1,5 @@
 import { ValidationRules } from "aurelia-validation";
-import { Utils } from "./services/utils";
+import { Utils } from "./utils";
 
 export enum Validation {
   isETHAddress = "isETHAddress",

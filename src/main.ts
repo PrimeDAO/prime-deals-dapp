@@ -17,7 +17,7 @@ import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
-import "./validation";
+import "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
