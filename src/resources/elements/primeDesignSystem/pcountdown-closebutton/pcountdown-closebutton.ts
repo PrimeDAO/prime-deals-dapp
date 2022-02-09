@@ -8,14 +8,18 @@ export class PCountdownClosebutton {
    * invoked when countdown ends
    */
   @bindable stopped: ({ cancelled: boolean }) => void;
+  @bindable.booleanAttr paused = false;
+  running = true;
 
-  countdownPaused = false;
+  // pauseChanged(newValue) {
+  //   this.countdownPaused = newValue;
+  // }
 
-  countdownClicked(): void {
-    this.countdownPaused = !this.countdownPaused;
+  countdownStopped(cancelled: boolean): void {
+    setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
   }
 
-  countDownStopped(cancelled: boolean): void {
-    setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
+  close(): void {
+    this.running = false;
   }
 }

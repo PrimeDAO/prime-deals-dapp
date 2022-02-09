@@ -1,6 +1,7 @@
 @import "../styles";
 
 .pcountdown-circular {
+  display: inline-flex; // for some reason contains itself better.
   $pieBorderColor: $BG01;
   $pieBorderThickness: 2px;
   /**

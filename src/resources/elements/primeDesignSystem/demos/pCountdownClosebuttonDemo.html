@@ -5,6 +5,11 @@
       margin: 36px 0 20px 0;
     }
 
+    .pCountdownCloseButtonDemo {
+      height: 24px;
+      width: 24px;
+    }
+
     .circularCloseButtonDemoContent {
       display: inline-flex;
       flex-direction: column;
@@ -18,9 +23,11 @@
     }
   </style>
   <h1>Countdown from default</h1>
-  <div class="circularCloseButtonDemoContent" ref="countdownButton">
+  <div class="circularCloseButtonDemoContent" ref="countdownPanel">
     <pcountdown-closebutton
-      stopped.call="countDownStopped(cancelled)">
+      class="pCountdownCloseButtonDemo"
+      stopped.call="countDownStopped(cancelled)"
+      paused.bind="countdownPaused">
     </pcountdown-closebutton>
     <div class="complete" if.bind="countdownComplete">countdown complete</div>
     <div class="closed" if.bind="countdownClosed">closed</div>

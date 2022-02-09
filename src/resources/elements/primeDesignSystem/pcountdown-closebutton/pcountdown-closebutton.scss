@@ -1,6 +1,33 @@
 @import "../styles";
 
 .pcountdown-closebutton {
-  display: flex; // for some reason contains the pcountdown-circular better.
   cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+
+  &.isPaused {
+    .countdowner {
+      display: none;
+    }
+
+    .closeButton {
+      display: inline-flex;
+    }
+  }
+
+  .countdowner {
+    display: inline-flex;
+  }
+
+  .closeButton {
+    display: none;
+    align-items: center;
+    // position: relative;
+    // bottom: 4px;
+    // left: 4px;
+
+    color: $White;
+    font-size: 32px;
+  }
 }

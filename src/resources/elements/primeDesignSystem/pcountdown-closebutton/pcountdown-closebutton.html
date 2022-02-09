@@ -1,9 +1,12 @@
-<template class="pcountdown-closebutton">
-  <pcountdown-circular
-    start-at="5"
-    running="true"
-    click.delegate="countdownClicked()"
-    stopped.call="countDownStopped(cancelled)"
-    paused.bind="countdownPaused">
-  </pcountdown-circular>
+<template>
+  <div class="pcountdown-closebutton  ${ paused ? 'isPaused' : ''}">
+    <pcountdown-circular
+      class="countdowner"
+      start-at="5"
+      running.bind="running"
+      paused.bind="paused"
+      stopped.call="countdownStopped(cancelled)">
+    </pcountdown-circular>
+    <div class="closeButton" click.trigger="close()">&times;</div>
+  </div>
 </template>
