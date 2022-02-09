@@ -231,7 +231,7 @@ module.exports = (
   },
   performance: { hints: false },
   devServer: {
-    contentBase: outDir,
+    static: outDir,
     // serve index.html for all 404 (required for push-state)
     historyApiFallback: true,
     open: project.platform.open,
