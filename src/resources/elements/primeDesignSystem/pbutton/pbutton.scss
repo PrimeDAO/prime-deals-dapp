@@ -87,7 +87,9 @@ button {
     &:disabled,
     &:disabled:hover {
       background-color: $Neutral02;
+      background-image: unset;
     }
+
     &:hover:not(.disabled):not(:disabled):not(.no-animation) {
       background-position: right center;
     }
