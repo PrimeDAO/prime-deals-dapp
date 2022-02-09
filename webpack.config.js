@@ -65,6 +65,8 @@ module.exports = (
         __dirname,
         "node_modules/aurelia-binding"
       ),
+      process: "process/browser",
+      buffer: "buffer",
       styles: path.resolve(__dirname, "src/styles"),
       static: path.resolve(__dirname, "src/static"),
     },
@@ -73,6 +75,7 @@ module.exports = (
       os: require.resolve("os-browserify/browser"),
       http: require.resolve("stream-http"),
       https: require.resolve("https-browserify"),
+      buffer: require.resolve('buffer/'),
     },
   },
   entry: {
@@ -322,7 +325,13 @@ module.exports = (
     ],
   },
   plugins: [
-    ...when(!tests, new DuplicatePackageCheckerPlugin()),
+    // ...when(!tests, new DuplicatePackageCheckerPlugin()),
+    // Work around for Buffer is undefined:
+    // https://github.com/webpack/changelog-v5/issues/10
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer'],
+    }),
     new AureliaPlugin(),
     new ModuleDependenciesPlugin({
       "aurelia-testing": ["./compile-spy", "./view-spy"],
