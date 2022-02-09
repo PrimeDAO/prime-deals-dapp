@@ -19,9 +19,10 @@
           class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
           label="Proposal Lead Address"
           input-reference.bind="input"
+          data-test="proposal-wallet-address-field"
         >
           <pinput-text
-            disabled.bind="disabled"
+            disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             placeholder="0x..."
             value.bind="wizardState.registrationData.proposalLead.address & validate:form"
             view-model.ref="input"
@@ -38,13 +39,15 @@
           </pbutton>
         </pform-input>
 
-        <pform-input class="wizardFormInput wizardFormInputNarrow" label="Contact E-mail (optional)">
-          <pinput-text disabled.bind="disabled" value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
+        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="proposal-email-field"
+                     label="Contact E-mail (optional)">
+          <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
+                       value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
         </pform-input>
       </div>
     </div>
 
-    <div class="stageSection" if.bind="isOpenProposalPage">
+    <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Keep Admin Rights?</h2>
         <p class="subtext">
@@ -65,7 +68,7 @@
       </div>
     </div>
 
-    <div class="stageSection" if.bind="isOpenProposalPage">
+    <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Make Offers Private?</h2>
         <p class="subtext">
@@ -82,7 +85,7 @@
       </div>
     </div>
 
-    <div class="stageSection" if.bind="!isOpenProposalPage">
+    <div class="stageSection" if.bind="!isOpenProposalWizard">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Make Deal Private?</h2>
         <p class="subtext">
@@ -93,7 +96,10 @@
         <pform-input
           class="wizardFormInput"
           label="Make Deal Private">
-          <ptoggle value.bind="wizardState.registrationData.isPrivate"></ptoggle>
+          <ptoggle
+            disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
+            value.bind="wizardState.registrationData.isPrivate"
+          ></ptoggle>
         </pform-input>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { ValidationController, ValidationRules } from "aurelia-validation";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
@@ -12,7 +12,8 @@ import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/
 export class LeadDetailsStage {
   wizardManager: any;
   wizardState: IWizardState<IDealRegistrationTokenSwap>;
-  isOpenProposalPage = false;
+  isOpenProposalWizard = false;
+  isMakeAnOfferWizard = false;
   ethAddress?: string;
   form: ValidationController;
   private accountSubscription: Subscription;
@@ -24,9 +25,30 @@ export class LeadDetailsStage {
   ) {
   }
 
+  @computedFrom("wizardState.registrationData.keepAdminRights", "isMakeAnOfferWizard")
+  get isMakeAnOfferWizardAndKeepsAdminRights() {
+    return this.wizardState.registrationData.keepAdminRights && this.isMakeAnOfferWizard;
+  }
+
+  attached(): void {
+    this.ethAddress = this.ethereumService.defaultAccountAddress;
+    this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
+      this.ethAddress = address;
+    });
+  }
+
+  connectToWallet() {
+    this.ethereumService.ensureConnected();
+  }
+
+  detached() {
+    this.accountSubscription.dispose();
+  }
+
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
-    this.isOpenProposalPage = stageMeta.wizardType === WizardType.openProposal;
+    this.isOpenProposalWizard = stageMeta.wizardType === WizardType.openProposal;
+    this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
 
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
@@ -44,20 +66,5 @@ export class LeadDetailsStage {
       this.wizardState.registrationData.proposalLead,
       validationRules,
     );
-  }
-
-  attached(): void {
-    this.ethAddress = this.ethereumService.defaultAccountAddress;
-    this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
-      this.ethAddress = address;
-    });
-  }
-
-  connectToWallet() {
-    this.ethereumService.ensureConnected();
-  }
-
-  detached() {
-    this.accountSubscription.dispose();
   }
 }
