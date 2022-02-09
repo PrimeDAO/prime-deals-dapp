@@ -16,6 +16,21 @@ export interface IDealsData {
    * CID for json that confirms to IDealRegistrationTokenSwap
    */
   registration: IKey;
+  status: DealStatus;
+}
+
+export enum DealStatus {
+  completed = "Completed",
+  swapping = "Swapping",
+  negotiating = "Negotiating",
+  failed = "Failed",
+  open = "Open",
+  live = "Live",
+  targetReached = "Target reached",
+  swapCompleted = "Swap completed",
+  targetNotReached = "Target not reached",
+  fundingInProgress = "Funding in progress",
+  closed = "Closed",
 }
 
 export interface IDeal {

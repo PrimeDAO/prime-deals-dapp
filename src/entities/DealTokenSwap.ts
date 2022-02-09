@@ -5,7 +5,7 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { Utils } from "services/utils";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IDeal, IDealsData } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -21,7 +21,7 @@ export class DealTokenSwap implements IDeal {
 
   public registrationData: IDealRegistrationTokenSwap;
 
-  public status: "Completed" | "Swapping" | "Negotiating" | "Failed" | "Open" | "Live" | "Target reached" | "Swap completed" | "Target not reached" | "Funding in progress" | "Closed";
+  public status: DealStatus;
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
@@ -77,6 +77,16 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
+  /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
+  private statuses = Object.values(DealStatus);
+  private shuffleArray(array): void {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+  /* ++++ ------------------------------------------ ++++ */
+
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
@@ -84,6 +94,11 @@ export class DealTokenSwap implements IDeal {
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
+
+      /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
+      if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses);}
+      this.status = this.statuses.shift();
+      /* ++++ ------------------------------------------ ++++ */
     }
     catch (error) {
       this.corrupt = true;
