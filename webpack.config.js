@@ -45,10 +45,7 @@ const sassRules = [
   },
 ];
 
-module.exports = (
-  { production } = {},
-  { extractCss, analyze, tests, hmr, port, host } = {}
-) => ({
+module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } = {}) => ({
   resolve: {
     extensions: [".ts", ".js"],
     modules: [srcDir, "node_modules"],
@@ -75,7 +72,7 @@ module.exports = (
       os: require.resolve("os-browserify/browser"),
       http: require.resolve("stream-http"),
       https: require.resolve("https-browserify"),
-      buffer: require.resolve('buffer/'),
+      buffer: require.resolve("buffer/"),
     },
   },
   entry: {
@@ -288,7 +285,11 @@ module.exports = (
       },
       // Skip minimize in production build to avoid complain on unescaped < such as
       // <span>${ c < 5 ? c : 'many' }</span>
-      { test: /\.html$/i, loader: "html-loader", options: { minimize: false } },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+        options: { minimize: false },
+      },
       { test: /\.ts$/, loader: "ts-loader" },
 
       // // embed small images and fonts as Data Urls and larger ones as files:
@@ -329,8 +330,8 @@ module.exports = (
     // Work around for Buffer is undefined:
     // https://github.com/webpack/changelog-v5/issues/10
     new webpack.ProvidePlugin({
-      process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
+      process: "process/browser",
+      Buffer: ["buffer", "Buffer"],
     }),
     new AureliaPlugin(),
     new ModuleDependenciesPlugin({
