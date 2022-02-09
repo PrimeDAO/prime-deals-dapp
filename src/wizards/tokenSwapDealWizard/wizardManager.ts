@@ -1,3 +1,4 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { Router, RouteConfig } from "aurelia-router";
@@ -7,7 +8,6 @@ import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
-import { ValidationControllerFactory } from "aurelia-validation";
 
 @autoinject
 export class WizardManager {
@@ -66,7 +66,7 @@ export class WizardManager {
     private dealService: DealService,
     private ethereumService: EthereumService,
     private router: Router,
-    private validationFactory: ValidationControllerFactory,
+    private eventAggregator: EventAggregator,
   ) {
   }
 
@@ -145,6 +145,12 @@ export class WizardManager {
   private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
     await this.dealService.ensureInitialized();
     const deal = this.dealService.deals.get(id);
+
+    if (!deal) {
+      this.eventAggregator.publish("handleFailure", "Deal does not exist");
+      throw new Error("Deal does not exist");
+    }
+
     await deal.ensureInitialized();
     return deal.registrationData;
   }
