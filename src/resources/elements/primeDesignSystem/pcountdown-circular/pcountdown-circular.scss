@@ -1,7 +1,7 @@
 @import "../styles";
 
 .pcountdown-circular {
-  $pieBorderColor: $Neutral03;
+  $pieBorderColor: $BG01;
   $pieBorderThickness: 2px;
   /**
    * this is set in pcountdown-circular.ts
@@ -13,10 +13,12 @@
   .pie {
     display: inline-flex;
     aspect-ratio: 1;
+    z-index: 2;
 
     &::before {
       content: "";
 
+      z-index: 2;
       position: absolute;
       border-radius: 50%;
       inset: 0;
@@ -47,11 +49,10 @@
     align-items: center;
     position: absolute;
     left: 0;
-    z-index: -1;
+    z-index: 1;
 
     .secondsLeft {
       font-size: 12px;
-      color: $Secondary05;
     }
   }
 }
