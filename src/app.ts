@@ -11,6 +11,11 @@ import { BindingSignaler } from "aurelia-templating-resources";
 import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
+import { AlertService } from "services/AlertService";
+import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
+
+export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
 @autoinject
 export class App {
@@ -19,6 +24,7 @@ export class App {
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
+    private alertService: AlertService,
     private storageService: BrowserStorageService) { }
 
   router: Router;
@@ -27,12 +33,13 @@ export class App {
   modalMessage: string;
   initializing = true;
   showingMobileMenu = false;
+  showingWalletMenu = false;
   intervalId: any;
 
   errorHandler = (ex: unknown): boolean => {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
-  }
+  };
 
   public attached(): void {
     // so all elements with data-tippy-content will automatically have a tooltip
@@ -67,13 +74,40 @@ export class App {
       this.handleOnOff(false);
     });
 
+    this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
+
+      let notChanged = true;
+      const connect = await this.alertService.showAlert(
+        `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
+        // eslint-disable-next-line no-bitwise
+        ShowButtonsEnum.OK | ShowButtonsEnum.Cancel);
+
+      if (!connect.wasCancelled && !connect.output) {
+        if (await this.ethereumService.switchToTargetedNetwork(info.provider)) {
+          notChanged = false;
+        }
+      }
+
+      if (notChanged) {
+        this.ethereumService.disconnect({ code: -1, message: "wrong network" });
+        this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
+      }
+    });
+
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
-      const blockDate = this.ethereumService.lastBlockDate;
-      this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      const blockDate = this.ethereumService.lastBlock?.blockDate;
+      if (blockDate) {
+        this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+      }
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
+
+    /**
+     * undo stuff from base.css now that we don't need it
+     */
+    document.querySelector("body").classList.remove("loading");
 
     this.ethereumService.connectToConnectedProvider();
   }
@@ -93,7 +127,7 @@ export class App {
 
   private configureRouter(config: RouterConfiguration, router: Router) {
 
-    config.title = "PrimeLaunch";
+    config.title = "Prime Deals";
     config.options.pushState = true;
     // const isIpfs = (window as any).IS_IPFS;
     // if (isIpfs) {
@@ -118,6 +152,63 @@ export class App {
         name: "contribute",
         route: "/contribute",
         title: "Contribute",
+      },
+      {
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
+        route: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
+        nav: false,
+        name: "createOpenProposal",
+        title: "Create an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposal,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
+        route: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
+        nav: false,
+        name: "createPartneredDeal",
+        title: "Create a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDeal,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
+        nav: false,
+        name: "makeOfferWizard",
+        route: `/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Make an offer",
+        settings: {
+          wizardType: WizardType.makeAnOffer,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
+        nav: false,
+        name: "editOpenProposal",
+        route: `/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit an Open Proposal",
+        settings: {
+          wizardType: WizardType.openProposalEdit,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./wizards/tokenSwapDealWizard/wizardManager"),
+        nav: false,
+        name: "editPartneredDeal",
+        route: `/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+        title: "Edit a Partnered Deal",
+        settings: {
+          wizardType: WizardType.partneredDealEdit,
+        },
+      },
+      {
+        moduleId: PLATFORM.moduleName("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
+        nav: false,
+        name: "tokenSwapTypeSelection",
+        route: "/initiate/token-swap",
+        title: "Select Token Swap Type",
       },
       {
         moduleId: PLATFORM.moduleName("./initiate/initiate"),
@@ -148,20 +239,29 @@ export class App {
         title: "DEAL Dashboard",
       },
       {
-        moduleId: PLATFORM.moduleName("./registry-wizard/registry-wizard"),
+        moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
-        name: "newDeal",
-        route: "/initiate/new/:type",
-        title: "Initiate a New Deal",
+        name: "comingSoon",
+        route: ["comingSoon"],
+        title: "Coming Soon!",
       },
       {
-        moduleId: PLATFORM.moduleName("./selectPackage/selectPackage"),
+        moduleId: PLATFORM.moduleName("./playground/playground"),
         nav: false,
-        name: "selectPackage",
-        route: "/selectPackage",
-        title: "Select Your Package",
+        name: "playground",
+        route: ["playground"],
+        title: "Playground",
       },
-
+      {
+        route: "playground/*componentName", moduleId: PLATFORM.moduleName("./playground/playgroundWelcome/playgroundWelcome"),
+      },
+      {
+        moduleId: PLATFORM.moduleName("./resources/elements/primeDesignSystem/demos/demos"),
+        nav: false,
+        name: "storybook",
+        route: ["storybook"],
+        title: "Storybook",
+      },
     ]);
 
     config.fallbackRoute("home");
@@ -231,5 +331,9 @@ export class App {
   navigate(href: string): void {
     this.onNavigate();
     this.router.navigate(href);
+  }
+
+  handleShowWalletMenu(): void {
+    this.showingWalletMenu = true;
   }
 }

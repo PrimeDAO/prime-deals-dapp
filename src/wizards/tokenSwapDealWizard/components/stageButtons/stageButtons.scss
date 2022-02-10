@@ -1,0 +1,21 @@
+.stageButtons {
+  display: flex;
+  flex-flow: row wrap;
+  column-gap: 30px;
+  margin-left: 475px;
+  padding-top: 40px;
+
+  .cancel {
+    margin-left: auto;
+  }
+
+  @media screen and (max-width: 1068px) {
+    margin-left: 320px;
+    padding-top: 20px;
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0px;
+    padding-top: 20px;
+  }
+}

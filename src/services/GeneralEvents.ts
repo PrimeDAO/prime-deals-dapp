@@ -127,7 +127,7 @@ export class EventConfigTransaction extends EventConfig {
     message: string,
     public receipt: TransactionReceipt,
   ) {
-    super(message);
+    super(message, EventMessageType.Transaction);
     /**
      * automatically disappear after 5 seconds
      */
@@ -162,4 +162,6 @@ export enum EventMessageType {
   Warning = 2,
   Info = 3,
   Debug = 4,
+  Success = 5,
+  Transaction = 6,
 }

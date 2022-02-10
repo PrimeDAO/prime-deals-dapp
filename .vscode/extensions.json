@@ -5,6 +5,7 @@
     "steoates.autoimport",
     "EditorConfig.EditorConfig",
     "christian-kohler.path-intellisense",
-    "behzad88.Aurelia"
+    "behzad88.Aurelia",
+    "alexkrechik.cucumberautocomplete"
   ]
 }

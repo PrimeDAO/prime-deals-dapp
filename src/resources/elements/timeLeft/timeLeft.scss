@@ -1,6 +1,39 @@
-@import "styles/colors.scss";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+
+$soonColor: $Red;
+$soonBackground: #3e2638;
+$comingUpColor: $Orange;
+$comingUpBackground: #3e3038;
+$farOffColor: #cecece;
+$farOffBackground: #30343e;
+
+$completedColor: #18bab0;
+$completedBackground: #2b3239;
+$swappingColor: #FF52CF;
+$swappingBackground: #38263E;
+$negotiatingColor: #38DE67;
+$negotiatingBackground: #2B3139;
+$failedColor: #CECECE;
+$failedBackground: #30343E;
+$openColor: #38DE67;
+$openBackground: #2B3139;
+$liveColor: #38DE67;
+$liveBackground: #2b3139;
+$targetReachedColor: #38DE67;
+$targetReachedBackground: #2B3139;
+$swapCompleteColor: #18bab0;
+$swapCompleteBackground: #2b3239;
+$targetNotReachedColor: #FF5252;
+$targetNotReachedBackground: #3E263C;
+$fundingInProgressColor: #FF52CF;
+$fundingInProgressBackground: #38263E;
+$closedColor: #CECECE;
+$closedBackground: #30343E;
+
 .timeLeftContainer {
-  font-size: 16px;
+  font-size: $font-size1;
+
   > div.mainStatus > div,
   > div.adminStatus > div {
     font-family: Inter;
@@ -24,42 +57,59 @@
   > div.mainStatus > div {
     &.timeLeft {
       &.soon {
-        color: $AlertRed;
+        color: $soonColor;
       }
 
       &.comingUp {
-        color: $AlertOrange;
+        color: $comingUpColor;
       }
 
       &.farOff {
-        color: $White;
+        color: $farOffColor;
       }
+    }
+    
+    &.completed {
+      color: $completedColor;
     }
 
     &.live {
-      color: $AlertGreen;
+      color: $liveColor;
+    }
+    &.swapping {
+      color: $swappingColor;
     }
 
-    &.complete {
-      color: #18bab0;
+    &.negotiating {
+      color: $negotiatingColor;
     }
 
-    &.incomplete {
-      color: #da6511;
+    &.failed {
+      color: $failedColor;
     }
 
-    &.uninitialized {
-      color: #717171;
+    &.open {
+      color: $openColor;
     }
-  }
 
-  > div.adminStatus > div {
-    &.paused {
-      color: #ff52cf;
+    &.targetReached {
+      color: $targetReachedColor;
+    }
+
+    &.swapCompleted {
+      color: $swapCompleteColor;
+    }
+
+    &.targetNotReached {
+      color: $targetNotReachedColor;
+    }
+
+    &.fundingInProgress {
+      color: $fundingInProgressColor;
     }
 
     &.closed {
-      color: #848484;
+      color: $closedColor;
     }
   }
 
@@ -71,48 +121,65 @@
     > div.mainStatus > div,
     > div.adminStatus > div {
       border-radius: 87px;
-      padding: 2px 9px;
+      padding: 4px 8px;
     }
 
     > div.mainStatus > div {
       &.timeLeft {
         &.soon {
-          background-color: #3e2638;
+          background-color: $soonBackground;
         }
 
         &.comingUp {
-          background-color: #3e3038;
+          background-color: $comingUpBackground;
         }
 
         &.farOff {
-          background-color: #3e263c;
+          background-color: $farOffBackground;
         }
       }
 
+      &.completed {
+        background-color: $completedBackground;
+      }
+
       &.live {
-        background-color: #2b3139;
+        background-color: $liveBackground;
+      }
+      &.swapping {
+        background-color: $swappingBackground;
       }
 
-      &.complete {
-        background-color: #2b3239;
+      &.negotiating {
+        background-color: $negotiatingBackground;
       }
 
-      &.incomplete {
-        background-color: #3e2c27;
+      &.failed {
+        background-color: $failedBackground;
       }
 
-      &.uninitialized {
-        background-color: $Black;
+      &.open {
+        background-color: $openBackground;
       }
-    }
 
-    > div.adminStatus > div {
-      &.paused {
-        background-color: #38263e;
+      &.targetReached {
+        background-color: $targetReachedBackground;
+      }
+
+      &.swapCompleted {
+        background-color: $swapCompleteBackground;
+      }
+
+      &.targetNotReached {
+        background-color: $targetNotReachedBackground;
+      }
+
+      &.fundingInProgress {
+        background-color: $fundingInProgressBackground;
       }
 
       &.closed {
-        background-color: #2d3131;
+        background-color: $closedBackground;
       }
     }
   }

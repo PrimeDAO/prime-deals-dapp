@@ -9,9 +9,15 @@ import { ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { DealService } from "services/DealService";
 import { IpfsService } from "services/IpfsService";
-// import { GeoBlockService } from "services/GeoBlockService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
+import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+import { TimingService } from "services/TimingService";
+import { TokenService } from "services/TokenService";
+import { CeramicServiceMock } from "services/CeramicServiceMock";
+import { DealTokenSwap } from "entities/DealTokenSwap";
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -19,16 +25,21 @@ export function configure(aurelia: Aurelia): void {
     .feature(PLATFORM.moduleName("resources/index"))
     .feature(PLATFORM.moduleName("resources/elements/primeDesignSystem/index"))
     .plugin(PLATFORM.moduleName("aurelia-animator-css"))
+    .plugin(PLATFORM.moduleName("aurelia-validation"))
     .plugin(PLATFORM.moduleName("aurelia-dialog"), (configuration) => {
       // custom configuration
       configuration.settings.keyboard = false;
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
+  aurelia.use.singleton(IDataSourceDeals, CeramicServiceMock);
 
-  if (process.env.NODE_ENV === "development") {
+  const network = process.env.NETWORK as AllowedNetworks;
+  const inDev = process.env.NODE_ENV === "development";
+
+  if (inDev) {
     aurelia.use.developmentLogging(); // everything
   } else {
-    aurelia.use.developmentLogging("warning"); // only errors and warnings
+    aurelia.use.developmentLogging("warn"); // only errors and warnings
   }
 
   if (environment.testing) {
@@ -38,22 +49,29 @@ export function configure(aurelia: Aurelia): void {
   aurelia.start().then(async () => {
     aurelia.container.get(ConsoleLogService);
     try {
+
+      aurelia.container.registerTransient(DealTokenSwap);
+
       const ethereumService = aurelia.container.get(EthereumService);
-      ethereumService.initialize(
-        process.env.NETWORK as AllowedNetworks ??
-          (process.env.NODE_ENV === "development" ? Networks.Rinkeby : Networks.Mainnet));
+      ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
+
+      ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
 
-      const dealService = aurelia.container.get(DealService);
-      dealService.initialize();
-      dealService.getDAOsInformation();
+      const ceramicService = aurelia.container.get(CeramicServiceMock);
+      ceramicService.initialize();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
 
-      // const geoBlockService = aurelia.container.get(GeoBlockService);
-      // geoBlockService.initialize();
+      TimingService.start("TokenService Initialization");
+      const tokenService = aurelia.container.get(TokenService);
+      await tokenService.initialize();
+      TimingService.end("TokenService Initialization");
+
+      const dealService = aurelia.container.get(DealService);
+      dealService.initialize();
 
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);

@@ -1,17 +1,17 @@
 import detectEthereumProvider from "@metamask/detect-provider";
-// import { BrowserStorageService } from "./BrowserStorageService";
+import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { BigNumber, ethers, Signer } from "ethers";
-import { BaseProvider, Web3Provider } from "@ethersproject/providers";
+import { BigNumber, BigNumberish, ethers, Signer } from "ethers";
+import { BaseProvider, ExternalProvider, Web3Provider, Network } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
-import { EventConfigFailure } from "services/GeneralEvents";
-import { formatEther, getAddress, parseEther } from "ethers/lib/utils";
+import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
+import { Utils } from "services/utils";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -69,15 +69,14 @@ export class EthereumService {
     private eventAggregator: EventAggregator,
     private disclaimerService: DisclaimerService,
     private consoleLogService: ConsoleLogService,
-    // private storageService: BrowserStorageService,
+    private storageService: BrowserStorageService,
   ) { }
 
-  private static ProviderEndpoints = {
+  public static ProviderEndpoints = {
     "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
     "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
-    // "kovan": `https://${process.env.RIVET_ID}.kovan.rpc.rivet.cloud/`,
     "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-  }
+  };
   private static providerOptions = {
     torus: {
       package: Torus, // required
@@ -106,8 +105,8 @@ export class EthereumService {
     },
   };
 
-  public targetedNetwork: AllowedNetworks;
-  public targetedChainId: number;
+  public static targetedNetwork: AllowedNetworks;
+  public static targetedChainId: number;
 
   /**
    * provided by ethers
@@ -118,9 +117,9 @@ export class EthereumService {
 
   private handleNewBlock = async (blockNumber: number): Promise<void> => {
     const block = await this.getBlock(blockNumber);
-    this._lastBlockDate = block.blockDate;
+    this.lastBlock = block;
     this.eventAggregator.publish("Network.NewBlock", block);
-  }
+  };
 
   public initialize(network: AllowedNetworks): void {
 
@@ -128,18 +127,17 @@ export class EthereumService {
       throw new Error("Ethereum.initialize: `network` must be specified");
     }
 
-    this.targetedNetwork = network;
-    this.targetedChainId = this.chainIdByName.get(network);
-
+    EthereumService.targetedNetwork = network;
+    EthereumService.targetedChainId = this.chainIdByName.get(network);
     EthereumService.providerOptions.torus.options.network = network;
 
-    const readonlyEndPoint = EthereumService.ProviderEndpoints[this.targetedNetwork];
+    const readonlyEndPoint = EthereumService.ProviderEndpoints[EthereumService.targetedNetwork];
     if (!readonlyEndPoint) {
-      throw new Error(`Please connect to either ${Networks.Mainnet} or ${Networks.Kovan}`);
+      throw new Error(`Please connect to either ${Networks.Mainnet} or ${Networks.Rinkeby}`);
     }
 
     // comment out to run DISCONNECTED
-    this.readOnlyProvider = ethers.getDefaultProvider(EthereumService.ProviderEndpoints[this.targetedNetwork]);
+    this.readOnlyProvider = ethers.getDefaultProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]);
     this.readOnlyProvider.pollingInterval = 15000;
 
     if (!this.blockSubscribed) {
@@ -152,7 +150,7 @@ export class EthereumService {
   /**
    * provided by Web3Modal
    */
-  private web3ModalProvider: Web3Provider & IEIP1193;
+  private web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider;
 
   private chainNameById = new Map<number, AllowedNetworks>([
     [1, Networks.Mainnet],
@@ -165,10 +163,6 @@ export class EthereumService {
     [Networks.Rinkeby, 4],
     [Networks.Kovan, 42],
   ]);
-
-  private async getChainId(provider: Web3Provider): Promise<number> {
-    return Number((await provider.send("net_version", [])));
-  }
 
   private async getCurrentAccountFromProvider(provider: Web3Provider): Promise<Signer | string> {
     let account: Signer | string;
@@ -188,7 +182,7 @@ export class EthereumService {
 
   private async fireAccountsChangedHandler(account: Address) {
     if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({ code: -1, message: "User declined the PrimeLAUNCH disclaimer" });
+      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
       account = null;
     }
     console.info(`account changed: ${account}`);
@@ -223,14 +217,17 @@ export class EthereumService {
    */
   private defaultAccount: Signer | Address;
 
+  public getDefaultSigner(): Signer {
+    return this.walletProvider.getSigner(this.defaultAccountAddress);
+  }
+
   /**
    * provided by ethers given provider from Web3Modal
    */
   public walletProvider: Web3Provider;
   public defaultAccountAddress: Address;
 
-  public async connect(): Promise<void> {
-
+  private async connect(): Promise<void> {
     if (!this.walletProvider) {
       this.ensureWeb3Modal();
       const web3ModalProvider = await this.web3Modal.connect();
@@ -259,7 +256,7 @@ export class EthereumService {
 
     this.ensureWeb3Modal();
 
-    const provider = (await detectEthereumProvider()) as any;
+    const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
 
     /**
      * at this writing, `_metamask.isUnlocked` is "experimental", according to MetaMask.
@@ -269,7 +266,7 @@ export class EthereumService {
      */
     if (provider && provider._metamask.isUnlocked && (await provider._metamask.isUnlocked())) {
       const chainId = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
-      if (chainId === this.targetedNetwork) {
+      if (chainId === EthereumService.targetedNetwork) {
         const accounts = await provider.request({ method: "eth_accounts" });
         if (accounts?.length) {
           const account = getAddress(accounts[0]);
@@ -300,15 +297,23 @@ export class EthereumService {
     }
   }
 
-  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193): Promise<void> {
+  private async getNetwork(provider: Web3Provider): Promise<Network> {
+    let network = await provider.getNetwork();
+    network = Object.assign({}, network);
+    if (network.name === "homestead") {
+      network.name = "mainnet";
+    }
+    return network;
+  }
+
+  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
     try {
       if (web3ModalProvider) {
         const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
         (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
-        const chainId = await this.getChainId(walletProvider);
-        const chainName = this.chainNameById.get(chainId);
-        if (chainName !== this.targetedNetwork) {
-          this.eventAggregator.publish("handleFailure", new EventConfigFailure(`Please connect to ${this.targetedNetwork}`));
+        const network = await this.getNetwork(walletProvider);
+        if (network.name !== EthereumService.targetedNetwork) {
+          this.eventAggregator.publish("Network.wrongNetwork", { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
           return;
         }
         /**
@@ -322,7 +327,7 @@ export class EthereumService {
         /**
            * because the events aren't fired on first connection
            */
-        this.fireConnectHandler({ chainId, chainName, provider: this.walletProvider });
+        this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
         this.fireAccountsChangedHandler(this.defaultAccountAddress);
 
         this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
@@ -373,23 +378,23 @@ export class EthereumService {
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
     this.fireAccountsChangedHandler(accounts?.[0]);
-  }
+  };
 
-  private handleChainChanged = (chainId: number) => {
-    const chainName = this.chainNameById.get(chainId);
-    if (chainName !== this.targetedNetwork) {
-      this.disconnect({ code: -1, message: "wrong network" });
-      this.eventAggregator.publish("handleFailure", new EventConfigFailure(`Please connect to ${this.targetedNetwork}`));
+  private handleChainChanged = async (chainId: number) => {
+    const network = ethers.providers.getNetwork(Number(chainId));
+
+    if (network.name !== EthereumService.targetedNetwork) {
+      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
       return;
     }
     else {
-      this.fireChainChangedHandler({ chainId, chainName, provider: this.walletProvider });
+      this.fireChainChangedHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
     }
-  }
+  };
 
   private handleDisconnect = (error: { code: number; message: string }) => {
     this.disconnect(error);
-  }
+  };
 
   public disconnect(error: { code: number; message: string }): void {
     // this.cachedProvider = null;
@@ -406,11 +411,98 @@ export class EthereumService {
     this.fireDisconnectHandler(error);
   }
 
-  private _lastBlockDate: Date;
-
-  public get lastBlockDate(): Date {
-    return this._lastBlockDate;
+  /**
+   *
+   * @param provider should be a Web3Provider
+   * @returns
+   */
+  public async switchToTargetedNetwork(provider: ExternalProvider): Promise<boolean> {
+    const hexChainId = `0x${EthereumService.targetedChainId.toString(16)}`;
+    try {
+      if (provider.request) {
+        /**
+         * note this will simply throw an exception when the website is running on localhost
+         */
+        await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: hexChainId }],
+        });
+        this.setProvider(provider as any);
+        return true;
+      }
+    } catch (err) {
+      // user rejected request
+      if (err.code === 4001) {
+        // return false;
+      }
+      // chain does not exist, let's add it (see balancer)
+      // if (err.code === 4902) {
+      //   return importNetworkDetailsToWallet(provider);
+      // }
+    }
+    return false;
   }
+
+  public async addTokenToMetamask(
+    tokenAddress: Address,
+    tokenSymbol: string,
+    tokenDecimals: number,
+    tokenImage: string,
+  ): Promise<boolean> {
+
+    let wasAdded = false;
+
+    if (this.walletProvider) {
+
+      if (this.getMetamaskHasToken(tokenAddress)) {
+        return true;
+      }
+
+      try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        wasAdded = await (this.web3ModalProvider as any).request({
+          method: "wallet_watchAsset",
+          params: {
+            type: "ERC20", // Initially only supports ERC20, but eventually more!
+            options: {
+              address: tokenAddress, // The address that the token is at.
+              symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+              decimals: tokenDecimals, // The number of decimals in the token
+              image: tokenImage, // A string url of the token logo
+            },
+          },
+        });
+
+        if (wasAdded) {
+          this.setMetamaskHasToken(tokenAddress);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return wasAdded;
+  }
+
+  public getMetamaskHasToken(tokenAddress: Address): boolean {
+    if (!this.defaultAccountAddress) {
+      throw new Error("metamaskHasToken: no account");
+    }
+    return !!this.storageService.lsGet(this.getKeyForMetamaskHasToken(tokenAddress));
+  }
+
+  private getKeyForMetamaskHasToken(tokenAddress: Address): string {
+    return `${this.defaultAccountAddress}_${tokenAddress}`;
+  }
+
+  private setMetamaskHasToken(tokenAddress: Address): void {
+    if (!this.defaultAccountAddress) {
+      throw new Error("metamaskHasToken: no account");
+    }
+    this.storageService.lsSet(this.getKeyForMetamaskHasToken(tokenAddress), true);
+  }
+
+  public lastBlock: IBlockInfo;
 
   /**
    * so unit tests will be able to complete
@@ -419,15 +511,14 @@ export class EthereumService {
     this.readOnlyProvider.off("block", (blockNumber: number) => this.handleNewBlock(blockNumber));
   }
 
-  public async getBlock(blockNumber: number): Promise<IBlockInfo> {
+  private async getBlock(blockNumber: number): Promise<IBlockInfo> {
     const block = await this.readOnlyProvider.getBlock(blockNumber) as unknown as IBlockInfo;
     block.blockDate = new Date(block.timestamp * 1000);
     return block;
   }
 
-
   public getEtherscanLink(addressOrHash: Address | Hash, tx = false): string {
-    let targetedNetwork = this.targetedNetwork as string;
+    let targetedNetwork = EthereumService.targetedNetwork as string;
     if (targetedNetwork === Networks.Mainnet) {
       targetedNetwork = "";
     } else {
@@ -438,12 +529,41 @@ export class EthereumService {
   }
 }
 
-export const toWei = (ethValue: BigNumber | string | number): BigNumber => {
-  return parseEther(ethValue.toString());
+/**
+ * @param ethValue
+ * @param decimals Default is 18.  Can be decimal count or:
+ *  "wei",
+ *  "kwei",
+ *  "mwei",
+ *  "gwei",
+ *  "szabo",
+ *  "finney",
+ *  "ether",
+ * @returns
+ */
+export const toWei = (ethValue: BigNumberish, decimals: string | number = 18): BigNumber => {
+  const t = typeof ethValue;
+  if (t === "string" || t === "number") {
+    // avoid underflows
+    ethValue = Utils.truncateDecimals(Number(ethValue), Number(decimals));
+  }
+  return parseUnits(ethValue.toString(), decimals);
 };
 
-export const fromWei = (weiValue: BigNumber | string): string => {
-  return formatEther(weiValue.toString());
+/**
+ * @param weiValue
+ * @param decimals Default is 18.  Can be decimal count or:
+ *  "wei",
+ *  "kwei",
+ *  "mwei",
+ *  "gwei",
+ *  "szabo",
+ *  "finney",
+ *  "ether",
+ * @returns
+ */
+export const fromWei = (weiValue: BigNumberish, decimals: string | number = 18): string => {
+  return formatUnits(weiValue.toString(), decimals);
 };
 
 export const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";

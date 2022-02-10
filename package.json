@@ -1,16 +1,16 @@
 {
-  "name": "@primedao/prime-d2d-dapp",
+  "name": "@primedao/prime-deals-dapp",
   "version": "0.0.0",
   "description": "The PrimeDAO’s Home for DAO to DAO Deals",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PrimeDAO/prime-d2d-dapp"
+    "url": "https://github.com/PrimeDAO/prime-deals-dapp"
   },
   "author": "CL Cybernetix GmbH",
   "homepage": "./",
   "license": "MIT",
   "scripts": {
-    "build": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=mainnet webpack --env.production --extractCss",
+    "build": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --extractCss",
     "build-kovan": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=kovan webpack --env.production  --extractCss",
     "build-rinkeby": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=rinkeby webpack --env.production  --extractCss",
     "build-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack --env.development --extractCss",
@@ -21,12 +21,14 @@
     "start-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env.development --open",
     "analyze": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env.production --analyze",
     "test": "au test",
-    "ipfs-deploy": "ipfs-deploy dist --pinner pinata --no-open --no-clipboard",
+    "e2e": "npx cypress open",
+    "e2e-run": "npx cypress run",
     "lint": "eslint --ext .ts ./src ./test",
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js"
   },
   "dependencies": {
+    "@makerdao/multicall": "^0.12.0",
     "@metamask/detect-provider": "^1.2.0",
     "@toruslabs/torus-embed": "1.8.6",
     "@walletconnect/web3-provider": "^1.3.6",
@@ -35,7 +37,8 @@
     "aurelia-dialog": "^2.0.0",
     "aurelia-event-aggregator": "^1.0.3",
     "aurelia-typed-observable-plugin": "^0.4.2",
-    "axios": "^0.21.1",
+    "aurelia-validation": "^2.0.0-rc2",
+    "axios": "^0.21.4",
     "bignumber.js": "^9.0.1",
     "cids": "^1.1.7",
     "dompurify": "^2.2.9",
@@ -46,15 +49,19 @@
     "moment-timezone": "^0.5.31",
     "numeral": "^2.0.6",
     "rxjs": "^6.6.3",
+    "slim-select": "^1.27.1",
+    "the-new-css-reset": "^1.4.4",
     "tippy.js": "^6.2.7",
     "web3modal": "^1.9.0"
   },
   "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^6.0.0",
+    "@cypress/webpack-preprocessor": "^5.11.0",
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.2",
     "@types/webpack": "^4.41.22",
-    "@typescript-eslint/eslint-plugin": "^4.3.0",
-    "@typescript-eslint/parser": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
     "app-settings-loader": "^1.0.6",
     "aurelia-cli": "^2.0.2",
     "aurelia-loader-nodejs": "^1.1.0",
@@ -66,9 +73,11 @@
     "copy-webpack-plugin": "^6.1.1",
     "cross-env": "^7.0.3",
     "css-loader": "^4.3.0",
+    "cypress": "^9.2.0",
     "dotenv": "^8.2.0",
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
-    "eslint": "^7.10.0",
+    "eslint": "^8.6.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-rxjs": "^2.1.2",
     "expose-loader": "^1.0.0",
     "file-loader": "^6.1.0",
@@ -96,13 +105,14 @@
     "ts-loader": "^8.0.4",
     "typescript": "^4.0.3",
     "url-loader": "^4.1.0",
+    "wallaby-webpack": "^3.9.16",
     "webpack": "^4.44.2",
     "webpack-bundle-analyzer": "^3.9.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
   "engines": {
-    "node": ">=14.11.0"
+    "node": ">=14.11.0 <15"
   },
   "browser": {
     "http": false
@@ -142,6 +152,14 @@
       "lcov",
       "text",
       "html"
+    ]
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/integration/[filepath]/**/*.{js,ts}",
+      "cypress/integration/[filepath].{js,ts}",
+      "cypress/integration/**/*.{js,ts}",
+      "cypress/integration/common/**/*.{js,ts}"
     ]
   }
 }

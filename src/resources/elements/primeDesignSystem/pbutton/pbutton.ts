@@ -11,11 +11,16 @@ import "./pbutton.scss";
  *    <pbutton type="secondary" disabled>Secondary - Disabled</pbutton>
  *    <pbutton type="tertiary" disabled>Tertiary - Disabled</pbutton>
  *    <pbutton type="primary" click.delegate="message('Hi!')">Clickable</pbutton>
+ *    <pbutton type="primary" no-animation>Not Animated</pbutton>
+ *    <pbutton ... full-width>Full-Width</pbutton>
 */
-export type ButtonType = "primary" | "secondary" | "tertiary";
+export type ButtonType = "primary" | "secondary" | "tertiary" | "formfield";
 
 @customElement("pbutton")
 export class PButton {
   @bindable.string type: ButtonType;
   @bindable.booleanAttr disabled = false;
+  @bindable.booleanAttr noAnimation = false;
+  @bindable.booleanAttr isLoading = false;
+  @bindable.booleanAttr fullWidth = false;
 }

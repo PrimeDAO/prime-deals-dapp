@@ -1,45 +1,45 @@
 @import "styles/colors.scss";
 
-@property --colorPrimary {
-  syntax: '<color>';
-  initial-value: #00000000;
-  inherits: false;
-}
-
-@property --colorSecondary {
-  syntax: '<color>';
-  initial-value: #00000000;
-  inherits: false;
-}
-
-@property --colorTertiary {
-  syntax: '<color>';
-  initial-value: #00000000;
-  inherits: false;
-}
-
 .connectButtonContainer {
   display: inline-block;
   padding: 0;
-  border-radius: 0.75rem;
-  border: 1px solid transparent;
   z-index: 1000; // stay over modal mask
   font-family: Inter;
+  color: $Neutral02;
 
   .connectButton {
-    display: inline-block;
-    padding: 0.6rem 0.9rem;
-    border-radius: 0.75rem;
-    white-space: nowrap;
-    color: $Secondary05;
-    background-color: $BG01;
-    border: $BG05;
-    cursor: pointer;
-    font-weight: 500;
+    > pbutton > button {
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 17px;
+      font-weight: 400;
+      padding: 10px 14px;
+      text-transform: none;
+      transition: none;
+      color: $Neutral03;
 
-    &:hover,
-    &:focus {
-      color: $Secondary06;
+      &:focus {
+        box-shadow: none;
+      }
+
+      &:hover:enabled,
+      &:hover:active:not(.disabled):not(:disabled),
+      &:focus:active:not(.disabled):not(:disabled) {
+        background: $Gradient01;
+        border: none;
+        transform: none;
+        padding: 10px 14px;
+        &.connect {
+          padding: 12px 16px;
+        }
+      }
+
+      .address {
+        .caret {
+          display: inline-block;
+          padding-left: 4px;
+        }
+      }
     }
   }
 
@@ -51,10 +51,11 @@
     .ethBalanceContainer {
       display: inline-block;
       white-space: nowrap;
-      color: $Neutral02;
+      font-size: 14px;
+      margin-right: 20px;
 
       &.ETH {
-        margin-right: 0.5em;
+        margin-right: 12px;
       }
     }
   }
@@ -65,30 +66,24 @@
     padding-top: 1px;
     padding-bottom: 1px;
 
-    .separator {
-      display: inline-block;
-      margin: 0 10px;
-      position: relative;
-      bottom: 1px;
-      color: $Border01;
-    }
+    // .separator {
+    //   display: inline-block;
+    //   margin-left: 0.5em;
+    //   margin-right: 0.5em;
+    //   position: relative;
+    //   bottom: 1px;
+    //   color: $White;
+    // }
 
     .connectedButtons {
       .connectButton {
         cursor: default;
         text-align: center;
-        color: $Neutral03;
-        background-color: $Border01;
-        // transition: all 2s ease-in-out 2s;
-        background-repeat: no-repeat;
-        border-radius: 6px;
-        background-image: linear-gradient(45deg, var(--colorPrimary) 0%, var(--colorSecondary) 50%, var(--colorTertiary) 100%);
-        transition: --colorPrimary 0.3s, --colorSecondary 1.6s, --colorTertiary 2.9s;
-        &:hover, &:active {
-          --colorPrimary: #A258A7FF;
-          --colorSecondary: #FF497AFF;
-          --colorTertiary: #8668FCFF;
-        }
+        // color: white;
+        // background-color: $BG05;
+        // border-color: transparent;
+        // border-radius: 0.75rem;
+        // border: 1px solid;
 
         .pending {
           .phase {
@@ -96,7 +91,7 @@
             margin-right: 6px;
           }
           i {
-            color: $Secondary05;
+            color: $Neutral03;
           }
           &.confirming {
             cursor: pointer;
@@ -124,7 +119,7 @@
   }
 }
 
-@media screen and (max-width: 1368px) {
+@media screen and (max-width: 1068px) {
   .connectButtonContainer {
     &.connected {
       padding-left: 0;
@@ -132,8 +127,8 @@
         .connectButton {
           margin-left: 0;
         }
-        .ethBalanceContainer,
-        .separator {
+        //.separator,
+        .ethBalanceContainer {
           display: none;
         }
       }

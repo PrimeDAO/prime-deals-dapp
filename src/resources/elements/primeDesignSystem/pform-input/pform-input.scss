@@ -1,0 +1,61 @@
+@import "../styles";
+
+pform-input {
+  display: block;
+  .formInputLabel {
+    display: flex;
+    color: $Secondary02;
+    margin-bottom: $spacing-normal;
+    align-items: center;
+    justify-content: space-between;
+
+    .formInputLabelTitle {
+      font-size: $font-size3;
+      font-weight: 700;
+    }
+
+    .formInputLabelExtra {
+      color: $Neutral02;
+      font-size: $font-size1;
+    }
+
+    .labelInfoIcon {
+      color: $Neutral02;
+    }
+  }
+
+  .labelDescription {
+    color: $Neutral02;
+  }
+
+  .inputContainer {
+    margin-top: 10px;
+  }
+
+  .helperMessage {
+    color: $Neutral02;
+    font-size: $font-size1;
+  }
+
+  .feedbackMessage {
+    margin-top: $spacing-small;
+    opacity: 0;
+    transition: all ease-in-out 0.2s;
+    height: 1rem;
+    transform: translateY(-10px);
+
+    &.feedbackMessageVisible {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    &.errorMessage {
+      color: $Red;
+    }
+
+    &.warningMessage {
+      color: $Orange;
+    }
+  }
+
+}

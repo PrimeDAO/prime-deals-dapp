@@ -1,0 +1,87 @@
+<template>
+  <style>
+      h1 {
+          margin: 40px 0 10px 0;
+      }
+  </style>
+
+  <h1>Simple</h1>
+  <pform-input label="Name">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+
+  <h1>Label info</h1>
+  <pform-input label="Name" label-info="This is some label info">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Label description</h1>
+  <pform-input label="Name"
+               label-description="This section describes some interesting facts about this input field. It might clear some confusing if any.">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Character counter</h1>
+  <pform-input label="Name" show-counter max-length="26">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Helper message</h1>
+  <pform-input label="Name" helper-message="This is a helper message">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Helper text and validation message</h1>
+  <pform-input label="Name" helper-message="This is a helper message" validation-message="This is an error"
+               validation-state="error">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Error</h1>
+  <pform-input label="Name" validation-message="Error message" validation-state="error">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Warning</h1>
+  <pform-input label="Name" validation-message="Warning message" validation-state="warning">
+    <pinput-text></pinput-text>
+  </pform-input>
+
+  <h1>Dynamic state (write "warning", "validating" or "error" in the input to see how it will update)</h1>
+  <pform-input label="Name" show-counter max-length="23" validation-message="This is a validation message"
+               validation-state.bind="field2">
+    <pinput-text value.bind="field2"></pinput-text>
+  </pform-input>
+
+  <h1>Custom label template</h1>
+  <pform-input>
+    <div slot="label">
+      This is my <b style="color: red">Custom</b> label
+    </div>
+    <pinput-text></pinput-text>
+  </pform-input>
+
+
+  <h1>Custom label template and custom helper template</h1>
+  <pform-input>
+    <div slot="label">
+      This is my <b style="color: red">Custom</b> label
+    </div>
+    <pinput-text></pinput-text>
+
+    <div slot="helper">
+      <div style="font-style: italic"><i class="far fa-trash-alt"></i> This is my <b style="color: orange">Custom</b> helper</div>
+    </div>
+  </pform-input>
+
+  <h1>Custom validation message (write "warning", "validating" or "error" in the input to see how it will update)</h1>
+  <pform-input label="Name" validation-state.bind="field3">
+    <pinput-text value.bind="field3"></pinput-text>
+
+    <div slot="validation">
+      <b style="color: orange"><i class="far fa-trash-alt"></i> This is my Custom validation </b> message
+    </div>
+  </pform-input>
+
+</template>

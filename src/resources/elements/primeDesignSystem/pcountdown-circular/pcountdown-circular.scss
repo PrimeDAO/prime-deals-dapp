@@ -1,0 +1,58 @@
+@import "../styles";
+
+.pcountdown-circular {
+  $pieBorderColor: $BG01;
+  $pieBorderThickness: 2px;
+  /**
+   * this is set in pcountdown-circular.ts
+   */
+  --perc: 0;
+
+  position: relative; // so position absolute will work right below
+
+  .pie {
+    display: inline-flex;
+    aspect-ratio: 1;
+    z-index: 2;
+
+    &::before {
+      content: "";
+
+      z-index: 2;
+      position: absolute;
+      border-radius: 50%;
+      inset: 0;
+      background: conic-gradient(#{$pieBorderColor} calc(var(--perc) * 1%), #0000 0);
+      -webkit-mask: radial-gradient(
+        farthest-side,
+        #0000 calc(99% - #{$pieBorderThickness}),
+        #000 calc(100% - #{$pieBorderThickness})
+      );
+      mask: radial-gradient(
+        farthest-side,
+        #0000 calc(99% - #{$pieBorderThickness}),
+        #000 calc(100% - #{$pieBorderThickness})
+      );
+    }
+  }
+
+  .center {
+    font-family: Inter;
+    font-weight: 700;
+    letter-spacing: 0px;
+    text-align: center;
+    color: $Secondary05;
+    border: 2px solid $Secondary05;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    z-index: 1;
+
+    .secondsLeft {
+      font-size: 12px;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
+
+  <textarea
+    class="pInput ${ validationState ? 'pInput-' + validationState : '' } ${resizable ? 'resizable': ''}"
+    disabled.bind="disabled"
+    value.bind="value"
+    focus.bind="inFocus"
+    rows.bind="rows"
+    placeholder.to-view="placeholder"
+    autocomplete.to-view="autocomplete"
+  ></textarea>
+
+  <i if.bind="validationState === 'warning'" class="fas fa-exclamation-circle feedback-icon"></i>
+  <i if.bind="validationState === 'error'" class="fas fa-exclamation-triangle feedback-icon"></i>
+  <i if.bind="validationState === 'validating'" class="fas fa-circle-notch feedback-icon loading"></i>
+
+</template>

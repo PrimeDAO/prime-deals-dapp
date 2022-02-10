@@ -1,17 +1,18 @@
-@import "../colors";
+@import "../styles";
 
 @mixin standardBackground {
   border: none;
-  padding: 14px 28px;
-  background: $Gradient01;
+  background-image: $Gradient08;
+  background-size: 200% auto;
   color: $Neutral04;
 }
 
 @mixin standardButton {
   /**
     * note one benefit of all: is to set box-sizing: border-box
+    * This resets all of the selected element’s properties to their initial values as defined in the CSS spec.
     */
-  all: unset;
+  all: initial;
   outline: none;
   padding: 14px 28px;
   font-family: Inter;
@@ -19,14 +20,37 @@
   font-style: normal;
   font-weight: 700;
   line-height: 19px;
-  letter-spacing: 0.6000000238418579px;
+  letter-spacing: 0.6px;
   text-align: center;
   text-transform: uppercase;
   border-radius: 50px;
   cursor: pointer;
-  background: transparent;
-  transform: none;
+  background-color: transparent;
+  transform: translateY(0);
   user-select: none;
+  color: $Neutral04;
+  white-space: nowrap;
+
+  display: inline-flex;
+  justify-content: center;
+
+  & > .icon {
+    width: 0;
+    padding-left: 0px;
+    opacity: 0;
+    overflow: hidden;
+    transition: width 0.5s linear, opacity 0.75s linear, padding-left 0.5s linear;
+    &.is-loading {
+      width: 16px;
+      opacity: 1;
+      padding-left: 14px;
+      padding-right: 18px;
+    }
+    .spinner {
+      width: auto;
+      animation: spin 2s linear infinite;
+    }
+  }
 
   &:focus {
     box-shadow: 0 0 10px $Shade06;
@@ -45,10 +69,12 @@
     transform: translateY(-1px);
   }
 
-  // transition: 0.5s;
-  // &:hover {
-  //   background-position: right center;
-  // }
+  &.full-width {
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
+
+  transition: background 0.25s ease-in, transform 0.1s ease-in;
 }
 
 button {
@@ -60,7 +86,12 @@ button {
     &.disabled:hover,
     &:disabled,
     &:disabled:hover {
-      background: $Neutral02;
+      background-color: $Neutral02;
+      background-image: unset;
+    }
+
+    &:hover:not(.disabled):not(:disabled):not(.no-animation) {
+      background-position: right center;
     }
   }
 
@@ -70,8 +101,10 @@ button {
     border: 2px solid $Shade01;
     padding: 12px 26px;
 
-    &:hover {
-      background: $Border01;
+    &:hover:not(.disabled):not(:disabled) {
+      background-color: $Secondary05;
+      border-color: $Primary01;
+      color: $Neutral04;
     }
 
     &.disabled,
@@ -79,8 +112,31 @@ button {
     &:disabled,
     &:disabled:hover {
       border-color: $Neutral02;
-      background: transparent;
+      background-color: transparent;
       color: $Neutral02;
+    }
+
+    // the button is down
+    &:hover:active:not(.disabled):not(:disabled),
+    &:focus:active:not(.disabled):not(:disabled) {
+      @include standardBackground;
+      border: 2px solid transparent;
+    }
+  }
+
+  &.tertiary {
+    @include standardButton;
+
+    &:hover {
+      background-color: $Border01;
+    }
+
+    &.disabled,
+    &.disabled:hover,
+    &:disabled,
+    &:disabled:hover {
+      color: $Neutral02;
+      background-color: transparent;
     }
 
     // the button is down
@@ -90,25 +146,38 @@ button {
     }
   }
 
-  &.tertiary {
+  &.formfield {
     @include standardButton;
+    border-radius: 10px;
+    background-color: $Border01;
+    font-weight: 500;
+    padding: 12px 16px;
+    font-size: $font-size3;
+    line-height: 22px;
+
+    &:active {
+      background-color: $Border02;
+      color: $Neutral03;
+    }
 
     &:hover {
-      background: $Border01;
+      background-color: $Secondary05;
     }
 
     &.disabled,
     &.disabled:hover,
     &:disabled,
     &:disabled:hover {
-      color: $Neutral02;
-      background: transparent;
+      background-color: $Neutral02;
     }
+  }
+}
 
-    // the button is down
-    &:hover:active:not(.disabled):not(:disabled),
-    &:focus:active:not(.disabled):not(:disabled) {
-      @include standardBackground;
-    }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

@@ -1,82 +1,137 @@
-@import "styles/colors.scss";
+@import "styles/styles.scss";
+
+$bannerWidth: 336px;
 
 .bannerContainer {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon title countdown"
+    ". body .";
   position: fixed;
-  max-width: 95vw;
-  // max-height: 43px;
-  margin: auto;
-  right: 0;
-  left: 0;
-  z-index: 10001; // stay over modal mask
-  text-align: center;
-  pointer-events: none;
-}
+  width: fit-content;
+  max-width: $bannerWidth;
+  right: -$bannerWidth - 20px;
+  top: 58px;
+  z-index: 10001; // stay over modal mask and wallet popup
+  background-color: $Border01;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  border-radius: $border-radius-normal;
+  padding: $spacing-normal; // only if there is no padding on the parent
+  align-items: center;
+  row-gap: 8px;
+  column-gap: 12px;
 
-.bannerContainer .body {
-  display: flex;
-  max-width: 100%;
-  padding-top: 0.6rem;
-  padding-right: 1.25rem;
-  padding-bottom: 0.6rem;
-  padding-left: 1.25rem;
-  border-radius: 0px 0px 10px 10px;
-  -moz-border-radius: 0px 0px 10px 10px;
-  -webkit-border-radius: 0px 0px 10px 10px;
-  pointer-events: auto;
+  -webkit-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -moz-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-  .message {
-    overflow: hidden;
-    // white-space: nowrap;
-    margin-right: 12px;
+  &.showing {
+    left: unset;
+    right: 20px;
   }
 
-  button.close {
-    flex-shrink: 2;
-    color: $White;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    font-size: 18px;
-    padding: 0;
-    outline: none;
+  &:hover {
+    grid-template-areas:
+      "icon title closebutton"
+      ". body .";
+
+    .closeButton {
+      display: unset;
+    }
+
+    .countdown {
+      display: none;
+    }
+  }
+
+  .icon {
+    grid-area: icon;
+    font-size: 22px;
+    display: flex; // causes good vertical centering
+  }
+
+  .title {
+    grid-area: title;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .countdown {
+    grid-area: countdown;
+  }
+
+  .error {
+    color: $AlertRed;
+  }
+  .warning {
+    color: $AlertOrange;
+  }
+  .info,
+  .success,
+  .transaction {
+    color: $AlertGreen;
+  }
+
+  .closeButton {
+    grid-area: closebutton;
+    display: none;
+
+    button.close {
+      color: $White;
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      font-size: 18px;
+      padding: 0;
+      outline: none;
+    }
+  }
+
+  .body {
+    grid-area: body;
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: $Neutral04;
   }
 }
 
-.bannerContainer.warning .body {
-  color: $Shade01;
-  background-color: $BG02;
-  border-color: $Border01;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-}
+// .bannerContainer.warning .body {
+//   color: $Shade01;
+//   background-color: $BG02;
+//   border-color: $Border01;
+//   border-left-width: 1px;
+//   border-right-width: 1px;
+//   border-bottom-width: 1px;
+// }
 
-.bannerContainer.failure .body {
-  color: $AlertRed;
-  background-color: $BG02;
-  border-color: $Border01;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-}
+// .bannerContainer.failure .body {
+//   color: $AlertRed;
+//   background-color: $BG02;
+//   border-color: $Border01;
+//   border-left-width: 1px;
+//   border-right-width: 1px;
+//   border-bottom-width: 1px;
+// }
 
-.bannerContainer.info .body {
-  color: $White;
-  background-color: $Secondary06;
-}
+// .bannerContainer.info .body {
+//   // color: $White;
+//   // background-color: $Secondary06;
+// }
 
-.bannerContainer.info .body a {
-  margin-left: 0.5rem;
-  color: $White;
-  text-transform: uppercase;
-}
+// .bannerContainer.info .body a {
+//   margin-left: 0.5rem;
+//   color: $White;
+//   text-transform: uppercase;
+// }
 
-.bannerContainer.info .body .copy-to-clip-button {
-  margin-left: 0.5rem;
-  color: $Shade02;
-}
+// .bannerContainer.info .body .copy-to-clip-button {
+//   margin-left: 0.5rem;
+//   color: $Shade02;
+// }
 
 // .bannerContainer.info button.close {
 //   background-color: $color-green;
@@ -94,32 +149,32 @@
 //   color: $color-darkblue;
 // }
 
-.bannerContainer.au-enter-active {
-  animation: slideDown 1s;
-}
+// .bannerContainer.au-enter-active {
+//   animation: slideDown 1s;
+// }
 
-.bannerContainer.au-leave-active {
-  animation: slideUp 0.6s;
-}
+// .bannerContainer.au-leave-active {
+//   animation: slideUp 0.6s;
+// }
 
-.bannerContainer.au-stagger {
-  animation-delay: 50ms;
-}
+// .bannerContainer.au-stagger {
+//   animation-delay: 50ms;
+// }
 
-@keyframes slideDown {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
+// @keyframes slideDown {
+//   0% {
+//     transform: translateX(-100%);
+//   }
+//   100% {
+//     transform: translateX(0%);
+//   }
+// }
 
-@keyframes slideUp {
-  0% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(-100%);
-  }
-}
+// @keyframes slideUp {
+//   0% {
+//     transform: translateX(0%);
+//   }
+//   100% {
+//     transform: translateX(-100%);
+//   }
+// }

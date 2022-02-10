@@ -1,54 +1,56 @@
 @import "./animations";
+@import "../resources/elements/primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/colors";
 @import "./colors";
 @import "tippy.js/dist/tippy.css"; // TODO: use CDN?
-
-@mixin standardTextGradient {
-  background-image: $Gradient08;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+@import "the-new-css-reset/css/reset.css";
 
 @mixin tokenIcon {
   width: 19px;
   border-radius: 9px;
 }
 
+$MinContentBodyWidth: 250px;
+
+$MinContentBodyPaddingLeftRight: 160px;
+$MaxContentBodyWidth: 1120px;
+
+$ContentBodyWidth: clamp(
+  $MinContentBodyWidth,
+  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+  $MaxContentBodyWidth
+);
+
+$BodyPaddingLeftRight: calc((100% - #{$ContentBodyWidth}) / 2);
+
+$ContentBodyPaddingLeftRightMobile: 20px;
+$MaxContentBodyWidthMobile: calc(100% - (#{$ContentBodyPaddingLeftRightMobile} * 2));
+
+$ContentBodyWidthMobile: minmax(
+  $MinContentBodyWidth,
+  calc(100vw - (#{$ContentBodyPaddingLeftRightMobile} * 2)),
+  $MaxContentBodyWidthMobile
+);
+
+$BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
+
+/**
+ * this is to sync with when the navbar controls start to break
+ */
+$PageBreakWidth: 900px;
+
 html {
   body {
     font-size: 16px;
+    margin: 0;
     background-color: $BG01;
     color: $White;
-    font-family: "Aeonik";
+    font-family: Aeonik;
     min-height: 100vh;
-    width: clamp(250px, calc(100% - 40px), 1084px);
-    margin: 0 auto;
-    padding: 0 20px;
-    // padding-left: 160px;
-    // padding-right: 160px;
-    overflow-x: hidden;
 
-    input,
-    textarea {
-      font-family: "Inter";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 23px;
-      border: 1px solid $Neutral02;
-      background: $BG04;
-      color: $White;
-      border-radius: 10px;
-      outline: none;
-      padding: 12px;
-      box-sizing: border-box;
-
-      &::placeholder {
-        color: $Neutral03;
-        mix-blend-mode: normal;
-        opacity: 0.43;
-      }
-      &:focus::placeholder {
-        color: transparent;
+    &:not(.loading) {
+      > .prepage {
+        display: none;
       }
     }
 
@@ -114,7 +116,7 @@ html {
     }
 
     .subtitle {
-      color: $Gradient08;
+      color: $Gradient01;
       font-size: 20px;
       line-height: 24px;
       font-weight: 700;
@@ -186,9 +188,6 @@ html {
 @media screen and (max-width: 1072px) {
   html {
     body {
-      padding-left: 20px;
-      padding-right: 20px;
-
       .heading {
         &.heading0 {
           font-size: 48px;

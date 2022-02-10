@@ -1,0 +1,20 @@
+<template>
+  <style>
+      h1 {
+          font-size: 20px;
+          margin: 24px 0 8px 0;
+      }
+  </style>
+  <h1>Input group with content "before" the actual input</h1>
+  <pinput-group>
+    <span slot="before">https://</span>
+    <pinput-text placeholder="Your url"></pinput-text>
+  </pinput-group>
+
+  <h1>Input group with content "after" the actual input</h1>
+  <pinput-group>
+    <pinput-numeric placeholder="Tokens vester for"></pinput-numeric>
+    <span slot="after">months</span>
+  </pinput-group>
+
+</template>

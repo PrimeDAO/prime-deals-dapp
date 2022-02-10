@@ -1,0 +1,14 @@
+<template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
+  <input
+    class="pInput ${ validationState ? 'pInput-' + validationState : '' }"
+    disabled.bind="disabled"
+    value.bind="value"
+    placeholder.to-view="placeholder"
+    autocomplete.to-view="autocomplete"
+  />
+
+  <i if.bind="validationState === 'warning'" class="feedback-icon fas fa-exclamation-circle"></i>
+  <i if.bind="validationState === 'error'" class="feedback-icon fas fa-exclamation-triangle"></i>
+  <i if.bind="validationState === 'validating'" class=" feedback-icon fas fa-circle-notch loading"></i>
+
+</template>

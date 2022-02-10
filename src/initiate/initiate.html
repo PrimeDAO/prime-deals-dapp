@@ -1,42 +1,8 @@
 <template>
-  <div class="page animated-page au-animate initiate">
-    <img class="bg-image" src="/prime-d2d-initiate-bg.svg" alt="" role = "presentation">
-    <div class="banner">
-      <div class="gradient heading heading1">
-        Choose Deal Type
-      </div>
-      <div class="subtext">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
-        eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </div>
-    </div>
-    <div class="initiateBoxes">
-      <template repeat.for="box of boxes">
-        <div class="initiate-box-container">
-          <div class="topSection">
-            <div class="heading heading3 title">${box.name}</div>
-            <div class="subtext">
-              Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat.
-            </div>
-          </div>
-          <div class="buttonContainer">
-            <d2d-button
-              class="button full-width ${box.isDisabled && 'disabled'}"
-              click.delegate="!box.isDisabled && navigate('newDeal', {type: box.slug})"
-            >
-              ${box.isDisabled ? "Coming Soon" : "Select"}
-            </d2d-button>
-          </div>
-        </div>
-      </template>
-    </div>
-    <div class="noPartner">
-      <div class="subtitle1">Don't have a partner yet?</div>
-      <d2d-button 
-        class="button outline" 
-        click.delegate="navigate('newDeal', {type: 'open'})">
-        Create an Open Deal
-      </d2d-button>
-    </div>
-  </div>
+  <require from="./dealTypeSelector/dealTypeSelector"></require>
+  <deal-type-selector
+    title="Choose Deal Type"
+    description="Prime Deals assists the DAO owners to create exciting deals in collaboration with other DAOs."
+    boxes.bind="boxes">
+  </deal-type-selector>
 </template>
