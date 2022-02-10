@@ -5,7 +5,7 @@
   display: flex;
   flex-flow: column wrap;
   position: relative;
-  &>.bg-image {
+  & > .bg-image {
     position: absolute;
     z-index: -1;
     top: -135px;
@@ -20,7 +20,7 @@
     flex-flow: column;
     padding-bottom: 84px;
     height: 218px;
-  
+
     > .subtext {
       font-family: Inter;
       font-weight: 700;
@@ -38,10 +38,10 @@
     flex: 1;
     gap: 24px;
     justify-content: center;
-  
+
     .dealTypeBox {
       background-color: $BG02;
-      border-radius: 16px;
+      border-radius: 24px;
       max-width: 368px;
       height: 295px;
       padding-top: 20px;
@@ -62,16 +62,15 @@
 
 @media screen and (min-width: 1070px) {
   .selectDealTypePage {
-      &>.bg-image {
-        right: -160px;
-      }
+    & > .bg-image {
+      right: -160px;
+    }
   }
 }
-  
-@media screen and (max-width: 900px) {
 
+@media screen and (max-width: 900px) {
   .selectDealTypePage {
-    &>.bg-image {
+    & > .bg-image {
       display: none;
     }
     .banner {
@@ -89,4 +88,3 @@
     }
   }
 }
-
