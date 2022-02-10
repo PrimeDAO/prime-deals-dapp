@@ -5,7 +5,7 @@ import { Utils } from "../../../../services/utils";
 
 @customElement("prange-slider")
 export class PRangeSlider {
-  @bindable({defaultBindingMode: bindingMode.twoWay}) value: number = 50;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) value = 50;
   @bindable.booleanAttr disabled = false;
   @bindable leftLabel?: string;
   @bindable rightLabel?: string;
@@ -17,36 +17,36 @@ export class PRangeSlider {
 
   @computedFrom("value")
   get percentage() {
-    this.updateCssVariables()
+    this.updateCssVariables();
     return this.value ?? 0;
   }
 
   @computedFrom("value", "maxValue")
   get leftValue() {
-    return this.percentageToAbsoluteValue(this.value)
+    return this.percentageToAbsoluteValue(this.value);
   }
 
   set leftValue(value: number) {
-    this.value = this.absoluteValueToPercentage(value ?? 0)
+    this.value = this.absoluteValueToPercentage(value ?? 0);
   }
 
   @computedFrom("value", "maxValue")
   get rightValue() {
-    return this.percentageToAbsoluteValue(100 - this.value)
+    return this.percentageToAbsoluteValue(100 - this.value);
   }
 
   set rightValue(value: number) {
-    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0))
+    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0));
   }
 
   attached() {
-    this.updateCssVariables()
+    this.updateCssVariables();
   }
 
   updateCssVariables() {
     const maxErrorCorrection = 25;
-    Utils.setCssVariable('--thumb-position', `${this.value}%`, this.element as HTMLElement)
-    Utils.setCssVariable('--thumb-position-correction', `-${this.value / 100 * maxErrorCorrection}px`, this.element as HTMLElement)
+    Utils.setCssVariable("--thumb-position", `${this.value}%`, this.element as HTMLElement);
+    Utils.setCssVariable("--thumb-position-correction", `-${this.value / 100 * maxErrorCorrection}px`, this.element as HTMLElement);
   }
 
   private absoluteValueToPercentage(value: number) {
