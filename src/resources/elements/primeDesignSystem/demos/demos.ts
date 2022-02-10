@@ -92,6 +92,13 @@ export class Demos {
         name: "pcountdown-circular",
         title: "pcountdown-circular",
       },
+      {
+        route: ["prange-slider"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./prangeSliderDemo.html"),
+        name: "prange-slider",
+        title: "prange-slider",
+      },
     ];
 
     config.map(routes);
