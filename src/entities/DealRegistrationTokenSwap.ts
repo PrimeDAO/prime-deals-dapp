@@ -41,7 +41,7 @@ export interface IDAO {
 export interface IProposalLead {
   address: string,
   email?: string;
-  dao?: IDAO
+  // dao?: IDAO /* Deprecated: Proposal lead does not need to be part of the a DAO */
 }
 
 export interface IClause {
@@ -51,8 +51,8 @@ export interface IClause {
 
 export interface ITerms {
   clauses: Array<IClause>,
-  period: number,
-  representatives: string,
+  // period: number, /* Deprecated: Is provided as executionPeriodInDays */
+  // representatives: string, /* Deprecated: Is provided in IDAO information as members */
   coreTeamChatURL: string,
   previousDiscussionURL: string,
 }

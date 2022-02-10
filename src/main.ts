@@ -17,6 +17,7 @@ import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -24,6 +25,7 @@ export function configure(aurelia: Aurelia): void {
     .feature(PLATFORM.moduleName("resources/index"))
     .feature(PLATFORM.moduleName("resources/elements/primeDesignSystem/index"))
     .plugin(PLATFORM.moduleName("aurelia-animator-css"))
+    .plugin(PLATFORM.moduleName("aurelia-validation"))
     .plugin(PLATFORM.moduleName("aurelia-dialog"), (configuration) => {
       // custom configuration
       configuration.settings.keyboard = false;

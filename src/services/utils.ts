@@ -166,4 +166,20 @@ export class Utils {
     const parts = num.toString().split(".");
     return Number(`${parts[0]}.${parts[1].slice(0, decimals)}`);
   }
+
+  public static getCssVariable(
+    varName: string,
+    documentElement = document.documentElement): string {
+
+    return getComputedStyle(documentElement)?.getPropertyValue(varName);
+  }
+
+  public static setCssVariable(
+    varName: string,
+    value: string,
+    documentElement = document.documentElement): void {
+
+    documentElement?.style.setProperty(varName, value);
+  }
+
 }
