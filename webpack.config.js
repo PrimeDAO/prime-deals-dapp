@@ -68,6 +68,7 @@ module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } =
       static: path.resolve(__dirname, "src/static"),
     },
     fallback: {
+      crypto: require.resolve("crypto-browserify"),
       stream: require.resolve("stream-browserify"),
       os: require.resolve("os-browserify/browser"),
       http: require.resolve("stream-http"),
