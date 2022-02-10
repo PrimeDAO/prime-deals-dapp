@@ -39,6 +39,7 @@
     "aurelia-dialog": "^2.0.0",
     "aurelia-event-aggregator": "^1.0.3",
     "aurelia-typed-observable-plugin": "^0.4.2",
+    "aurelia-validation": "^2.0.0-rc2",
     "axios": "^0.21.4",
     "bignumber.js": "^9.0.1",
     "cids": "^1.1.7",

@@ -1,6 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
+import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
+import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -17,14 +19,19 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
-  validate?: () => boolean;
+  form?: ValidationController;
+  validate?: () => Promise<boolean> | boolean;
 }
 
 @autoinject
 export class WizardService {
   private wizardsStates = new Map<any, IWizardState>();
 
-  constructor(private router: Router){}
+  constructor(
+    private router: Router,
+    private validationFactory: ValidationControllerFactory,
+  ) {
+  }
 
   public registerWizard<Data>({
     wizardManager,
@@ -33,7 +40,7 @@ export class WizardService {
     registrationData,
     cancelRoute,
     previousRoute,
-  }:{
+  }: {
     wizardManager: any;
     stages: Array<IWizardStage>;
     indexOfActive: number;
@@ -72,7 +79,7 @@ export class WizardService {
 
   public registerStageValidateFunction(
     wizardManager: any,
-    validate: () => boolean,
+    validate: () => Promise<boolean>,
   ) {
     const stage = this.getActiveStage(wizardManager);
     stage.validate = validate;
@@ -82,10 +89,10 @@ export class WizardService {
     this.router.navigate(this.getWizardState(wizardManager).cancelRoute);
   }
 
-  public proceed(wizardManager: any): void {
+  public async proceed(wizardManager: any): Promise<void> {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
-    wizardState.stages[indexOfActive].valid = wizardState.stages[indexOfActive].validate();
+    wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
 
     if (!wizardState.stages[indexOfActive].valid) {
       return;
@@ -126,11 +133,24 @@ export class WizardService {
       params,
     );
   }
+
   public hasWizard(wizardManager: any): boolean {
     return this.wizardsStates.has(wizardManager);
   }
 
-  private getWizardStage(wizardManager: any, stageName: string): IWizardStage{
+  private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
     return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  }
+
+  registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
+    const stage = this.getActiveStage(wizardManager);
+
+    stage.form = this.validationFactory.createForCurrentScope();
+    stage.form.validateTrigger = validateTrigger.changeOrFocusout;
+    stage.form.addRenderer(new PrimeRenderer);
+    stage.validate = () => stage.form.validate().then(result => result.valid);
+    stage.form.addObject(data, rules);
+
+    return stage.form;
   }
 }
