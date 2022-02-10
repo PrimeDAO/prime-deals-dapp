@@ -75,15 +75,15 @@ export class DiscussionThread {
     this.isMember = (
       [
         this.deal.registrationData.proposalLead.address,
-        ...this.deal.registrationData.primaryDAO.members,
-        ...this.deal.registrationData.partnerDAO.members,
+        ...this.deal.registrationData.primaryDAO?.members || "",
+        ...this.deal.registrationData.partnerDAO?.members || "",
       ].includes(this.ethereumService.defaultAccountAddress)
     );
 
     // Only members should see the discussion if is private
     this.isAuthorized = (
-      this.deal.registrationData.isPrivate &&
-      this.isMember
+      !this.deal.registrationData.isPrivate ||
+      this.deal.registrationData.isPrivate && this.isMember
     );
 
     if (this.isAuthorized) {
