@@ -93,6 +93,13 @@ export class Demos {
         title: "pcountdown-circular",
       },
       {
+        route: ["prange-slider"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./prangeSliderDemo.html"),
+        name: "prange-slider",
+        title: "prange-slider",
+      },
+      {
         route: ["pCountdown-closebuttonDemo"],
         nav: true,
         moduleId: PLATFORM.moduleName("./pCountdownClosebuttonDemo"),
