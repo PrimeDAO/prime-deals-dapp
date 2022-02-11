@@ -2,44 +2,52 @@
   <div class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
     <header class="header">
       <figure class="avatar">
-        <img src="/genericToken.svg" alt="">
+        <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${profile.address}.svg" alt="">
+        <img else src.bind="profile.image" alt.bind="profile.name">
       </figure>
-      <span if.bind="comment.author.name">${comment.author.name}</span>
-      <span if.bind="!comment.author.name">
-        <etherscanlink 
-          text="${comment.author | smallHexString}" 
-          address="${comment.author}" 
-          type="tx">
-        </etherscanlink>
-      </span>
-      <span else>
-        ${comment.author}
-      </span>
-      <span if.bind="comment.author === author">(Author)</span>
-      <time class="lastActivity">${dateService.formattedTime(comment.createdOn * 1).diff()}</time>
+      <div class="identity ${loading.profiles ? 'loading' : ''}">
+        <div if.bind="loading.profiles" class="placeholder"></div>
+        <div else>
+          <span if.bind="profile.name" class="name">
+            ${profile.name} 
+            <span if.bind="profile.address === author">(Author)</span>
+          </span>
+          <div class="${!profile.name ? 'only': ''} address">
+            <etherscanlink 
+              text="${profile.address | smallHexString}" 
+              address="${profile.address}" 
+              type="tx">
+            </etherscanlink>
+          </div>
+        </div>
+      </div>
+      <time class="lastActivity">${lastActivity(comment.createdOn)}</time>
     </header>
+
     <section class="body">
       <div if.bind="repliesTo" class="replyContainer">
         <figure>
           <img src="/reply.svg" alt="">
         </figure>
-        <article class="reply ${bgType}">
+        <article if.bind="loading.profiles">profile is loading</article>
+        <article else class="reply ${bgType}">
           <div if.bind="!repliesTo.metadata.isDeleted">
-            <figure>
-              <img src="/genericToken.svg" alt="">
+            <figure class="avatar">
+              <img if.to-view="!repliesToProfile.image" src="https://avatars.dicebear.com/api/bottts/${repliesToProfile.address}.svg" alt="">
+              <img else src.bind="repliesToProfile.image" alt.bind="repliesToProfile.name">
             </figure>
+
             <div class="identity">
-              <span if.bind="repliesTo.authorName" class="name">
-                ${repliesTo.authorName} 
-                <span if.bind="comment.author === author">(Author)</span>
+              <span if.bind="repliesToProfile.name" class="name">
+                ${repliesToProfile.name} 
+                <span if.bind="repliesToProfile.address === author">(Author)</span>
               </span>
-              <div class="${!repliesTo.authorName ? 'only': ''} address">
+              <div class="${!repliesToProfile.name ? 'only': ''} address">
                 <etherscanlink 
-                  text="${repliesTo.author | smallHexString}" 
-                  address="${repliesTo.author}" 
+                  text="${repliesToProfile.address | smallHexString}" 
+                  address="${repliesToProfile.address}" 
                   type="tx">
                 </etherscanlink>
-                <span if.bind="comment.author === author && !repliesTo.authorName">(Author)</span>
               </div>
             </div>
           </div>
@@ -50,13 +58,14 @@
       </div>
       ${comment.text}
     </section>
+
     <footer class="footer">
       <div if.bind="comment.author !== connectedAddress && isConnected" class="vote action">
         <pbutton type="tertiary" click.delegate="vote('toggleUpvote')"><i class="fas fa-thumbs-up"></i></pbutton>
         <pbutton type="tertiary" click.delegate="vote('toggleDownvote')"><i class="fas fa-thumbs-down"></i></pbutton>
         <pbutton type="tertiary" click.delegate="reply()">Reply&nbsp;<i class="fas fa-reply"></i></pbutton>
       </div>
-      <div if.bind="loading !== 'isVoting ' + comment._id" class="vote count ${isConnected ? 'isConnected' : ''}">
+      <div if.bind="!loading['isVoting ' + comment._id]" class="vote count ${isConnected ? 'isConnected' : ''}">
         <div class="${voteDirection}Vote">
           <i class="fas fa-thumbs-${voteDirection === 'no'? 'up':voteDirection}"></i>
           ${voteDirection === 'down' ? -votes : votes}

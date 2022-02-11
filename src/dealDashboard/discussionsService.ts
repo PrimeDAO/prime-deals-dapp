@@ -6,8 +6,10 @@ import { EthereumService, Networks, AllowedNetworks} from "services/EthereumServ
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
-import { IDealDiscussion, IComment, VoteType } from "entities/DealDiscussions";
+import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDX, getLegacy3BoxProfileAsBasicProfile } from "@ceramicstudio/idx";
+import CeramicClient from "@ceramicnetwork/http-client";
 
 @autoinject
 export class DiscussionsService {
@@ -15,6 +17,7 @@ export class DiscussionsService {
   public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
   private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
+  private idx: IDX;
 
   @bindable public discussions: Record<string, IDealDiscussion> = {};
   @bindable private comment: string;
@@ -334,7 +337,53 @@ export class DiscussionsService {
   }
 
   // get user profile
-  // get threads list by deal id
+  public async loadProfile(authorWalletAddress: string): Promise<IProfile> {
+    // Get the IDX profile
+    try {
+      const ceramic = new CeramicClient("https://gateway.ceramic.network");
+      this.idx = new IDX({ ceramic });
+      const profile:any = await this.idx.get("basicProfile", authorWalletAddress + "@eip155:" + this.getNetworkId(process.env.NETWORK as AllowedNetworks));
+      // Currently IDX.get returns Promise<unknown>
+      // Follow changes on: https://developers.idx.xyz/reference/idx/#get
+      if (profile !== null) {
+        return {
+          address: authorWalletAddress,
+          image: profile.image.original.src.replace("ipfs://", "https://ipfs.io/ipfs/"),
+          name: profile.name,
+        };
+      }
+
+      return {
+        address: authorWalletAddress,
+        image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
+        name: "Anonymous",
+      };
+    } catch (error) {
+      console.error("No DID Profile. Fallback to 3Box.", error.message);
+    }
+
+    // Retrieve profile info from (legacy) 3Box
+    try {
+      return await getLegacy3BoxProfileAsBasicProfile(authorWalletAddress).then(profile => {
+
+        if (profile !== null) {
+          return {
+            address: authorWalletAddress,
+            image: profile.image.original.src.replace("ipfs://", "https://ipfs.io/ipfs/"),
+            name: profile.name,
+          };
+        } else {
+          return {
+            address: authorWalletAddress,
+            image: null,
+            name: null,
+          };
+        }
+      });
+    } catch (error) {
+      console.error("No 3Box Profile.", error.message);
+    }
+  }
+
   // edit comment by id?
-  // delete comment by id?
 }

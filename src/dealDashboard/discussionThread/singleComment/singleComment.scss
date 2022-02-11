@@ -4,14 +4,14 @@
 .single.comment {
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 30px 1fr auto;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas: "header" "comment" "footer";
   height: auto;
   grid-gap: $spacing-normal;
 
   justify-content: flex-start;
   align-items: center;
-  padding: $spacing-normal * 2 $spacing-normal;
+  padding: 0 $spacing-normal;
 
   &.odd{
     background-color: $BG00;
@@ -30,15 +30,97 @@
     width: auto;
     align-items: center;
     justify-content: flex-start;
-    gap: $spacing-normal * 2;
-    .avatar {
-      img {
-        height: 30px;
-        vertical-align: middle;
-      }
-    }
+    gap: $spacing-normal;
+    margin-top: 19px;
+    margin-bottom: 27px;
     .lastActivity {
       margin-left: auto;
+    }
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    overflow: hidden;
+    &>img {
+      padding: 2px;
+      background-color: $BG05;
+      vertical-align: middle;
+    }
+  }
+
+  .identity {
+    vertical-align: middle;
+
+    .address {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 17px;
+      a, i {
+        color: $Neutral02 !important;
+      }
+    }
+
+    .name, .only.address {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 700;
+      a, i {
+        color: $White !important;
+      }
+    }
+
+    &.loading {
+      background-color: $BG02;
+      overflow: hidden;
+      width: 60%;
+    }
+
+    .placeholder {
+      // background-color: red;
+      animation: shading 1s infinite;
+      height: 30px;
+      width: 100%;
+
+      &,
+      *,
+      ::after,
+      ::before {
+        box-sizing: border-box;
+      }
+
+      background-color: $BG02;
+      border-radius: 2px;
+
+      &::before {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 50%;
+          z-index: 1;
+          width: 500%;
+          margin-left: -250%;
+          background: linear-gradient(
+            to right, 
+            rgba(255,255,255, 0) 46%, 
+            rgba(255,255,255, 0.35) 50%, 
+            rgba(255,255,255, 0) 54%) 50% 50%;
+          animation: slider 0.8s linear infinite;
+          content: " ";
+          pointer-events: none;
+      }
+
+      // > * {
+      //     display: flex;
+      //     flex: 1 1 auto;
+      //     flex-flow: column;
+      //     margin-bottom: 0;
+      //     padding-right: 0;
+      //     padding-left: 0;
+      // }
+
     }
   }
 
@@ -48,7 +130,7 @@
     .replyContainer {
       display: flex;
       align-items: center;
-      margin-left: -$spacing-normal;
+      margin-left: -$spacing-normal * 2;
       .reply {
         width: 100%;
         &.odd{
@@ -63,27 +145,18 @@
           gap: $spacing-small;
           margin-bottom: $spacing-normal;
 
-          &>figure {
-            height: 22.5px;
+          .avatar {
             width: 22.5px;
+            height: 22.5px;
           }
           &>.identity {
-            vertical-align: middle;
             .address {
               font-size: 8px;
               line-height: 9.5px;
-              font-weight: 400;
-              a, i {
-                color: $Neutral02 !important;
-              }
             }
             .name, .only.address {
               font-size: 9px;
-              font-weight: 700;
               line-height: 13.5px;
-              a, i {
-                color: $White !important;
-              }
             }
           }
         }
@@ -145,5 +218,15 @@
     .footer>.vote.action {
       display: inherit;
     }
+  }
+}
+
+@keyframes shading {
+  0% {
+    transform: translate3d(-30%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(30%, 0, 0);
   }
 }

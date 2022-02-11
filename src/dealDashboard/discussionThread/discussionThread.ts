@@ -21,8 +21,8 @@ export class DiscussionThread {
   private replyToOriginalMessage: IComment;
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
-  private threadProfiles: IProfile[] = [];
-  private isLoading = "";
+  private threadProfiles: Record<string, IProfile> = {};
+  private isLoading: Record<string, boolean> = {};
   private isAuthorized: boolean;
   private isMember = false;
   private dealDiscussion: IDealDiscussion;
@@ -61,7 +61,7 @@ export class DiscussionThread {
   }
 
   async attached(): Promise<void> {
-    this.isLoading = "isFetching";
+    this.isLoading.discussions = true;
 
     this.isAuthorized = this.checkIsAuthorized;
     this.dealId = this.router.currentInstruction.parentInstruction.params.address;
@@ -94,7 +94,7 @@ export class DiscussionThread {
       // Ensures comment fetching and subscription
       this.ensureDealDiscussion(this.discussionId);
     } else {
-      this.isLoading = "";
+      this.isLoading.discussions = false;
     }
   }
 
@@ -135,15 +135,23 @@ export class DiscussionThread {
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     const comments = await this.discussionsService.loadDiscussionComments(discussionId);
-    this.isLoading = "";
+    this.isLoading.discussions = false;
+
     this.subscribeToDiscussion(this.discussionId);
 
     if (!comments || !Object.keys(comments).length) return;
 
     this.threadComments = comments;
     // Dictionary is used for replies, to easily find the comment by its id
-    this.threadDictionary = comments.reduce(function(r, e) {
+    this.threadDictionary = await comments.reduce((r, e): Record<string, IComment> => {
       r[e._id] = e;
+      if (!this.threadProfiles[e.author]) {
+        this.isLoading.profiles = true;
+        this.discussionsService.loadProfile(e.author).then((profile:IProfile) => {
+          this.threadProfiles[profile.address] = profile;
+          this.isLoading.profiles = false;
+        });
+      }
       return r;
     }, {});
 
@@ -156,14 +164,14 @@ export class DiscussionThread {
   }
 
   async addComment(): Promise<void> {
-    this.isLoading = "commenting";
+    this.isLoading.commenting = true;
     this.threadComments = await this.discussionsService.addComment(
       this.discussionId,
       this.comment,
       this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
     );
     this.comment = "";
-    this.isLoading = "";
+    this.isLoading.commenting = false;
     this.isReply = false;
   }
 
@@ -173,9 +181,9 @@ export class DiscussionThread {
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
-    this.isLoading = `isVoting ${_id}`;
+    this.isLoading[`isVoting ${_id}`] = true;
     this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
-    this.isLoading = "";
+    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {

@@ -20,32 +20,34 @@
     </section>
     <div class="sticky-area">
       <section class="comments container">
-        <div if.bind="isLoading === 'isFetching'" class="comment isLoading">
+        <div if.bind="isLoading.discussions" class="comment isLoading">
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
 
-        <div if.bind="!threadComments.length && isMember && isLoading !== 'isFetching'" class="no comment">
+        <div if.bind="!threadComments.length && isMember && !isLoading.discussions" class="no comment">
           This discussion has no comments yet.
         </div>
 
-        <div if.bind="!threadComments.length && !isMember && isLoading !== 'isFetching'" class="no comment">
+        <div if.bind="!threadComments.length && !isMember && !isLoading.discussions" class="no comment">
           This discussion is private.
         </div>
 
         <div 
-          if.bind="isLoading !== 'isFetching' && threadComments.length"
+          if.bind="!isLoading.discussions" && threadComments.length"
           repeat.for="comment of threadComments"
           id="${comment._id}"
           class="comment">
           <single-comment
             callback.call="doAction(action, args)"
             discussionId.bind="discussionId"
-            author.bind="dealDiscussion.createdBy"
+            author.bind="dealDiscussion.createdByAddress"
+            profile.bind="threadProfiles[comment.author]"
             loading.bind="isLoading"
             highlighted.bind="isReply && comment._id === replyToOriginalMessage._id"
             index="${$index}"
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
+            replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
             comment.bind="comment">
           </single-comment>
         </div>
@@ -80,15 +82,15 @@
           enter.delegate="addComment()"
           focus.delegate="focus()"
           blur.delegate="blur()"
-          validation-state="${isLoading === 'commenting' ? 'validating' : ''}"
-          disabled.bind="isLoading === 'commenting'">
+          validation-state="${isLoading.commenting ? 'validating' : ''}"
+          disabled.bind="isLoading.commenting">
           class="comment-input"></ptextarea>
         <pbutton
           class="action do"
           type="primary"
           full-width
-          disabled.bind="isLoading === 'commenting'"
-          loading.bind="isLoading === 'commenting'"
+          disabled.bind="isLoading.commenting"
+          loading.bind="isLoading.commenting"
           click.delegate="addComment()">
           ${isReply ? "Reply" : "Comment"}
         </pbutton>

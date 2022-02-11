@@ -1,6 +1,10 @@
 .etherscanlink {
-  display: inline-block;
+  display: inline-flex;
   .text {
     display: inline-block;
+  }
+  img {
+    height: 20px;
+    width: 17px;
   }
 }

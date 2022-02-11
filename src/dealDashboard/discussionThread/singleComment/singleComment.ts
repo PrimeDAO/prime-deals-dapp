@@ -1,7 +1,7 @@
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { IComment } from "entities/DealDiscussions";
+import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
@@ -9,7 +9,9 @@ import "./singleComment.scss";
 export class SingleComment {
   @bindable private comment: IComment;
   @bindable private repliesTo: IComment;
+  @bindable private repliesToProfile: IProfile;
   @bindable private author: string;
+  @bindable private profile: IProfile;
   @bindable private loading: string;
   @bindable private highlighted: number;
   @bindable private index: number;
@@ -73,5 +75,10 @@ export class SingleComment {
         vote,
       },
     });
+  }
+
+  private lastActivity(time: number | string): string {
+    const timeNumber = (typeof time === "string") ? parseInt(time) : time;
+    return this.dateService.formattedTime(timeNumber).diff();
   }
 }

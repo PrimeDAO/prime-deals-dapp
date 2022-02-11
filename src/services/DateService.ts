@@ -438,7 +438,7 @@ export class DateService {
         if (diff.asWeeks() <= 1)
           return diff.asDays().toFixed(0) + "d";
         if (diff.asMonths() <= 12)
-          return diff.asHours().toFixed(0) + "w";
+          return diff.asWeeks().toFixed(0) + "w";
 
         return diff.asMonths().toFixed(0) + "y";
       },

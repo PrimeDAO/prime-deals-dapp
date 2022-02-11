@@ -2,6 +2,7 @@
 import { autoinject, bindingMode, customElement, computedFrom } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./EtherscanLink.scss";
+import tippy from "tippy.js";
 
 @autoinject
 @customElement("etherscanlink")
@@ -21,8 +22,8 @@ export class EtherscanLink {
 
   private copyMessage: string;
   private internal = false;
-  // private coldElement: HTMLElement;
-  // private hotElement: HTMLElement;
+  private coldElement: HTMLElement;
+  private hotElement: HTMLElement;
 
   @computedFrom("address")
   private get networkExplorerUri(): string {
@@ -34,6 +35,8 @@ export class EtherscanLink {
   ) { }
 
   public attached(): void {
+    tippy(this.hotElement);
+    tippy(this.coldElement);
     if (this.type === "tx") {
       this.copyMessage = "Hash has been copied to the clipboard";
     } else {

@@ -1,11 +1,17 @@
 <template>
   <div class="etherscanlink ${css}">
-    <a ref="hotElement" class="text" if.to-view="networkExplorerUri" href.to-view="networkExplorerUri"
+    <a ref="hotElement"
+      data-tippy-content.bind="address"
+      class="text" if.to-view="networkExplorerUri" 
+      href.to-view="networkExplorerUri"
       target='${internal ? "" : "_blank"}' rel="noopener noreferrer">
       ${text || address}
     </a>
 
-    <div else ref="coldElement" class="text">
+    <div else 
+      ref="coldElement"
+      data-tippy-content.bind="address"
+      class="text">
       ${text || address}
     </div>
 
