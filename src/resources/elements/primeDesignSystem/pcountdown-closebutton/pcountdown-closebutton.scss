@@ -22,12 +22,16 @@
 
   .closeButton {
     display: none;
-    align-items: center;
-    // position: relative;
-    // bottom: 4px;
-    // left: 4px;
+    font-size: 20px;
+    padding-left: 4px;
+    color: $Secondary05;
 
-    color: $White;
-    font-size: 32px;
+    &::after {
+      content: "\2715";
+    }
+
+    &:hover {
+      color: $White;
+    }
   }
 }

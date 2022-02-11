@@ -20,16 +20,22 @@
       border-radius: 10px;
       /* $Border01, simulate popup notifications */
       background-color: #403453;
+      margin-bottom: 18px;
     }
   </style>
-  <h1>Countdown from default</h1>
+  <h1>Countdown from default, mouse hover pauses</h1>
   <div class="circularCloseButtonDemoContent" ref="countdownPanel">
     <pcountdown-closebutton
       class="pCountdownCloseButtonDemo"
+      running.bind="running"
       stopped.call="countDownStopped(cancelled)"
       paused.bind="countdownPaused">
     </pcountdown-closebutton>
-    <div class="complete" if.bind="countdownComplete">countdown complete</div>
-    <div class="closed" if.bind="countdownClosed">closed</div>
+    <div class="complete" if.bind="!running && countdownComplete">countdown complete</div>
+    <div class="closed" if.bind="!running && countdownClosed">closed</div>
   </div>
+
+  <p class="restartButton">
+    <pbutton type="secondary" click.delegate="restart()">Restart</pbutton>
+  </p>
 </template>

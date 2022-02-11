@@ -5,6 +5,7 @@ export class PCountdownClosebuttonDemo {
 
   countdownComplete = false;
   countdownClosed = false;
+  running = true;
 
   attached(): void {
     this.countdownPanel.addEventListener("mouseenter", ( _event ) => this.pause(true), false);
@@ -23,6 +24,10 @@ export class PCountdownClosebuttonDemo {
   countDownStopped(cancelled: boolean): void {
     this.countdownComplete = !cancelled;
     this.countdownClosed = cancelled;
-    // this.countdownButton.style.display = "none";
+  }
+
+  restart() {
+    this.running = false;
+    setTimeout(() => this.running = true, 0);
   }
 }
