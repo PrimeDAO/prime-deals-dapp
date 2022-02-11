@@ -219,7 +219,10 @@ module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } =
     open: project.platform.open,
     hot: hmr || project.platform.hmr,
     port: port || project.platform.port,
-    host: host
+    host: host,
+    client: {
+      overlay: false,
+    },
   },
   devtool: production ? undefined : 'cheap-module-source-map',
   module: {
