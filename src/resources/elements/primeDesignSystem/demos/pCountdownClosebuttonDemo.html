@@ -31,8 +31,8 @@
       stopped.call="countDownStopped(cancelled)"
       paused.bind="countdownPaused">
     </pcountdown-closebutton>
-    <div class="complete" if.bind="!running && countdownComplete">countdown complete</div>
-    <div class="closed" if.bind="!running && countdownClosed">closed</div>
+    <div class="complete" if.bind="!running && countdownComplete & debounce">countdown complete</div>
+    <div class="closed" if.bind="!running && countdownClosed & debounce">closed</div>
   </div>
 
   <p class="restartButton">
