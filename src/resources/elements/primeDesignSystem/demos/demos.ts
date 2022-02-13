@@ -99,6 +99,13 @@ export class Demos {
         name: "prange-slider",
         title: "prange-slider",
       },
+      {
+        route: ["pCountdown-closebuttonDemo"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pCountdownClosebuttonDemo"),
+        name: "pcountdown-closebutton",
+        title: "pcountdown-closebutton",
+      },
     ];
 
     config.map(routes);

@@ -16,5 +16,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pinput-group/pinput-group"),
     PLATFORM.moduleName("./pcountdown-circular/pcountdown-circular"),
     PLATFORM.moduleName("./prange-slider/prange-slider"),
+    PLATFORM.moduleName("./pcountdown-closebutton/pcountdown-closebutton"),
   ]);
 }
