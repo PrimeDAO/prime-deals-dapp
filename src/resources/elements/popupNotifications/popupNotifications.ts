@@ -38,8 +38,8 @@ export class PopupNotifications {
     this.subscriptions.push(eventAggregator
       .subscribe("showMessage", (config: EventConfig | string) => this.handleInfo(config)));
 
-    eventAggregator.subscribe("transaction.failed", (ex) => this.handleException(ex));
-    eventAggregator.subscribe("transaction.confirmed", (config: EventConfigTransaction) => this.handleTransaction(config));
+    this.subscriptions.push(eventAggregator.subscribe("transaction.failed", (ex) => this.handleException(ex)));
+    this.subscriptions.push(eventAggregator.subscribe("transaction.confirmed", (config: EventConfigTransaction) => this.handleTransaction(config)));
 
     this.queue = new Subject<IBannerConfig>();
     /**
