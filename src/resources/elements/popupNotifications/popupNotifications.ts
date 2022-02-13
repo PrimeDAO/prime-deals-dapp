@@ -50,7 +50,7 @@ export class PopupNotifications {
     this.queue.pipe(concatMap((config: IBannerConfig) => {
       return from(new Promise((resolve: (value: unknown) => void) => {
         // with timeout, give a cleaner buffer in between consecutive snacks
-        setTimeout(() => this.showBanner(config, () => resolve(0)), 200);
+        setTimeout(() => this.showNotification(config, () => resolve(0)), 200);
       }));
     }))
       // this will initiate the execution of the promises
@@ -58,7 +58,7 @@ export class PopupNotifications {
       .subscribe();
   }
 
-  private async showBanner(config: IBannerConfig, resolve: () => void) {
+  private async showNotification(config: IBannerConfig, resolve: () => void) {
     this.message = config.message;
     this.submessage = config.submessage;
     this.type = config.type;
