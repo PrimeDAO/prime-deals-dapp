@@ -115,7 +115,7 @@ export class PCountdownCircular {
     clearTimeout(this.timerId);
     this.timerId = null;
     this.pausedDuration = 0;
-    this.setSecondsLeft(this.startAt);
+    this.setSecondsLeft(0);
     this.paused = this.running = false;
     setTimeout(() => { if (this.stopped) { this.stopped({ cancelled }); } }, 100);
   }

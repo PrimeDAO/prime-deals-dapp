@@ -1,9 +1,5 @@
 import { ConsoleLogService } from "services/ConsoleLogService";
-import {
-  autoinject,
-  bindingMode,
-  computedFrom,
-} from "aurelia-framework";
+import { autoinject, bindingMode, computedFrom } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { BigNumber } from "ethers";
 import { fromWei, toWei } from "services/EthereumService";
@@ -93,7 +89,11 @@ export class NumericInput {
     this.valueChanged(this.value, null);
   }
 
-  private valueChanged(newValue: string | BigNumber | number, oldValue: string | BigNumber | number ) {
+  notWeiChanged() {
+    this.valueChanged(this.value, "");
+  }
+
+  private valueChanged(newValue: string | BigNumber | number, oldValue: string | BigNumber | number) {
 
     if (this.ignoreValueChanged) {
       this.ignoreValueChanged = false;

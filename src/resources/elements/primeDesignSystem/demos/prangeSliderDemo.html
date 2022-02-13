@@ -1,0 +1,21 @@
+<template>
+  <style>
+      h1 {
+          font-size: 20px;
+          margin: 24px 0 8px 0;
+      }
+  </style>
+
+  <h1>Simple range slider</h1>
+  <prange-slider max-value="100" value="20"></prange-slider>
+
+  <h1>Range slider with labels</h1>
+  <prange-slider left-label="Instant" max-value="200" right-label="Vesting"></prange-slider>
+
+  <h1>Range slider within a form input</h1>
+  <pform-input label="Slider with input fields"
+               label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ">
+    <prange-slider left-label="Instant" max-value="200" right-label="Vesting"></prange-slider>
+  </pform-input>
+
+</template>

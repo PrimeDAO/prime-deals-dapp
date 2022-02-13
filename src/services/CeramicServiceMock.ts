@@ -1,6 +1,5 @@
-import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IDealRegistrationTokenSwap, Platforms } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
-import { Platforms } from "entities/DealRegistrationTokenSwap";
 
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
@@ -19,7 +18,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   },
   partnerDAO: null,
   proposalLead: {
-    address: "0x0",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {
@@ -57,7 +56,7 @@ const _registration2: IDealRegistrationTokenSwap = {
   },
   partnerDAO: null,
   proposalLead: {
-    address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {
@@ -98,7 +97,7 @@ const _registration3: IDealRegistrationTokenSwap = {
   },
   partnerDAO: null,
   proposalLead: {
-    address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {
@@ -145,7 +144,7 @@ const _registration4: IDealRegistrationTokenSwap = {
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
   },
   proposalLead: {
-    address: "0x0",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {
@@ -194,7 +193,7 @@ const _registration5: IDealRegistrationTokenSwap = {
     platform: Platforms.Moloch,
   },
   proposalLead: {
-    address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {
@@ -243,7 +242,7 @@ const _registration6: IDealRegistrationTokenSwap = {
     platform: Platforms.Moloch,
   },
   proposalLead: {
-    address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
     email: "",
   },
   terms: {

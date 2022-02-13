@@ -47,7 +47,7 @@ export class LeadDetailsStage {
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
-    this.isOpenProposalWizard = stageMeta.wizardType === WizardType.openProposal;
+    this.isOpenProposalWizard = [WizardType.openProposal, WizardType.openProposalEdit].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
 
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
