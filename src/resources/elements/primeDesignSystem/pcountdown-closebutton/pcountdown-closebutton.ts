@@ -28,6 +28,10 @@ export class PCountdownClosebutton {
    * @param cancelled
    */
   countdownStopped(cancelled: boolean): void {
+    /**
+     * timeout because in this specific situation
+     * other prior events tend to occur that need to proceed first
+     */
     setTimeout(() => {
       if (this.stopped) {
         this.stopped({ cancelled });
@@ -40,6 +44,10 @@ export class PCountdownClosebutton {
    * The container can manually stop the countdown by setting `running` to false
    */
   close(): void {
+    /**
+     * timeout because in this specific situation
+     * other prior events tend to occur that need to proceed first
+     */
     setTimeout(() => {
       if (this.closed) {
         this.closed();
