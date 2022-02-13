@@ -1,0 +1,12 @@
+<template>
+  <div class="bannerContainer ${ showing ? 'showing' : '' }">
+    <ppopup-notification
+      type.bind="type"
+      message.bind="message"
+      submessage.bind="submessage"
+      stopped.call="countdownStopped(cancelled)"
+      closed.call="countdownClosed()"
+      running.bind="countdownRunning">
+    </ppopup-notification>
+  </div>
+</template>

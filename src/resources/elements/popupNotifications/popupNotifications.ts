@@ -1,32 +1,25 @@
 import { EventAggregator } from "aurelia-event-aggregator";
-import { computedFrom, autoinject, containerless } from "aurelia-framework";
+import { autoinject, containerless } from "aurelia-framework";
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "../../../services/GeneralEvents";
 import { from, Subject } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { AureliaHelperService } from "services/AureliaHelperService";
 import { DisposableCollection } from "services/DisposableCollection";
-import "./banner.scss";
-import { Utils } from "services/utils";
+import "./popupNotifications.scss";
 
 @containerless
 @autoinject
-export class Banner {
+export class PopupNotifications {
 
   private resolveToClose: () => void;
   private showing = false;
-  // private banner: HTMLElement;
-  private elMessage: HTMLElement;
+  private body: HTMLElement;
+  private subbody: HTMLElement;
   private subscriptions: DisposableCollection = new DisposableCollection();
   private queue: Subject<IBannerConfig>;
-  private timeoutId: any;
-  private stdTimeout = 6000;
   private type: EventMessageType;
-  // private etherScanTooltipConfig = {
-  //   placement: "bottom",
-  //   title: "Click to go to etherscan.io transaction information page",
-  //   toggle: "tooltip",
-  //   trigger: "hover",
-  // };
+  private message: string;
+  private submessage: string;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -36,6 +29,8 @@ export class Banner {
       .subscribe("handleException", (config: EventConfigException | any) => this.handleException(config)));
     this.subscriptions.push(eventAggregator
       .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+    this.subscriptions.push(eventAggregator
+      .subscribe("handleWarning", (config: EventConfig | string) => this.handleWarning(config)));
     this.subscriptions.push(eventAggregator
       .subscribe("handleValidationError", (config: EventConfig | string) => this.handleValidationError(config)));
     this.subscriptions.push(eventAggregator
@@ -64,46 +59,43 @@ export class Banner {
   }
 
   private async showBanner(config: IBannerConfig, resolve: () => void) {
-    // switch (config.type) {
-    //   case EventMessageType.Info:
-    //     this.banner.classList.remove("failure");
-    //     this.banner.classList.remove("warning");
-    //     this.banner.classList.add("info");
-    //     break;
-    //   case EventMessageType.Warning:
-    //     this.banner.classList.remove("info");
-    //     this.banner.classList.remove("failure");
-    //     this.banner.classList.add("warning");
-    //     break;
-    //   default:
-    //     this.banner.classList.remove("warning");
-    //     this.banner.classList.remove("info");
-    //     this.banner.classList.add("failure");
-    //     break;
-    // }
-    this.elMessage.innerHTML = config.message;
-    this.aureliaHelperService.enhanceElement(this.elMessage, this, true);
+    this.message = config.message;
+    this.submessage = config.submessage;
     this.type = config.type;
     this.resolveToClose = resolve;
-    if (config.timer) {
-      this.timeoutId = setInterval(() => this.close(), config.timer);
-    }
     this.showing = true;
+    this.countdownRunning = true;
   }
 
   public dispose(): void {
     this.subscriptions.dispose();
   }
 
-  private async close(): Promise<void> {
+  private countdownRunning = false;
+
+  /**
+   * countdown got to zero.  Also invoked as side-effect
+   * of setting `this.countdownRunning = false` after the user clicked
+   * the close button
+   */
+  countdownStopped(cancelled: boolean): void {
+    if (!cancelled) { // else we closed after the user clicked the close button
+      this.close();
+    }
+  }
+
+  /**
+   * user clicked the close button
+   */
+  countdownClosed(): void {
+    this.close();
+  }
+
+  private close(): void {
     if (this.resolveToClose) {
-      this.showing = false;
+      this.showing = this.countdownRunning = false;
       this.resolveToClose();
       this.resolveToClose = null;
-      if (this.timeoutId) {
-        clearInterval(this.timeoutId);
-        this.timeoutId = 0;
-      }
     }
   }
 
@@ -112,12 +104,13 @@ export class Banner {
       return;
     }
 
-    const message = `${config.message}: <span class="transactionHash"><etherscanlink text="${Utils.smallHexString(config.receipt.transactionHash)}" address="${config.receipt.transactionHash}" type="tx"></etherscanlink></span>`;
+    const message = config.message;
+    const submessage = `<etherscanlink text="View on Etherscan" address="${config.receipt.transactionHash}" hide-clipboard-button type="tx"></etherscanlink><div class='arrow'></div>`;
 
     this.queueEventConfig({
       message,
-      type: EventMessageType.Info,
-      timer: 10000,
+      submessage,
+      type: EventMessageType.Transaction,
     });
   }
 
@@ -137,7 +130,10 @@ export class Banner {
       message = config.message;
     }
 
-    this.queueEventConfig({ message: `${message ? `${message}: ` : ""}${ex?.reason ?? ex?.message ?? ex}`, type: EventMessageType.Exception });
+    this.queueEventConfig({
+      message: `${message ? `${message}: ` : ""}${ex?.reason ?? ex?.message ?? ex}`,
+      submessage: null,
+      type: EventMessageType.Exception });
   }
 
   private handleFailure(config: EventConfig | string): void {
@@ -149,7 +145,24 @@ export class Banner {
     const bannerConfig = {
       message: (typeof config === "string")
         ? config as string : config.message,
+      submessage: null,
       type: EventMessageType.Failure,
+    };
+
+    this.queueEventConfig(bannerConfig);
+  }
+
+  private handleWarning(config: EventConfig | string): void {
+
+    if ((config as any).originatingUiElement) {
+      return;
+    }
+
+    const bannerConfig = {
+      message: (typeof config === "string")
+        ? config as string : config.message,
+      submessage: null,
+      type: EventMessageType.Warning,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -165,7 +178,7 @@ export class Banner {
       message: (typeof config === "string")
         ? config as string : config.message,
       type: EventMessageType.Warning,
-      timer: this.stdTimeout,
+      submessage: null,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -181,7 +194,7 @@ export class Banner {
       message: (typeof config === "string")
         ? config as string : config.message,
       type: EventMessageType.Info,
-      timer: this.stdTimeout,
+      submessage: null,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -191,61 +204,10 @@ export class Banner {
     // TODO: enable these to stack vertically
     this.queue.next(config);
   }
-
-  @computedFrom("type")
-  private get iconClass(): string {
-    switch (this.type) {
-      case EventMessageType.Failure:
-      case EventMessageType.Exception:
-        return "fa-exclamation-triangle";
-      case EventMessageType.Warning:
-        return "fa-exclamation-circle";
-      case EventMessageType.Info:
-        return "fa-info-circle";
-      case EventMessageType.Success:
-        return "fa-check-circle";
-      case EventMessageType.Transaction:
-        return "fa-check-circle";
-    }
-  }
-
-  @computedFrom("type")
-  private get typeClass(): string {
-    switch (this.type) {
-      case EventMessageType.Failure:
-      case EventMessageType.Exception:
-        return "error";
-      case EventMessageType.Warning:
-        return "warning";
-      case EventMessageType.Info:
-        return "info";
-      case EventMessageType.Success:
-        return "success";
-      case EventMessageType.Transaction:
-        return "transaction";
-    }
-  }
-
-  @computedFrom("type")
-  private get title(): string {
-    switch (this.type) {
-      case EventMessageType.Failure:
-      case EventMessageType.Exception:
-        return "Error";
-      case EventMessageType.Warning:
-        return "Warning";
-      case EventMessageType.Info:
-        return "Information";
-      case EventMessageType.Success:
-        return "Success";
-      case EventMessageType.Transaction:
-        return "Completed";
-    }
-  }
 }
 
 interface IBannerConfig {
   type: EventMessageType;
   message: string;
-  timer?: number;
+  submessage?: string;
 }
