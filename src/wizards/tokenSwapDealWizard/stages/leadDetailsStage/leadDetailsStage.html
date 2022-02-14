@@ -80,7 +80,7 @@
         <pform-input
           class="wizardFormInput"
           label="Make Offers Private">
-          <ptoggle value.bind="wizardState.registrationData.offersPrivate || false"></ptoggle>
+          <ptoggle value.bind="wizardState.registrationData.offersPrivate"></ptoggle>
         </pform-input>
       </div>
     </div>
@@ -98,7 +98,7 @@
           label="Make Deal Private">
           <ptoggle
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            value.bind="wizardState.registrationData.isPrivate || false"
+            value.bind="wizardState.registrationData.isPrivate"
           ></ptoggle>
         </pform-input>
       </div>
