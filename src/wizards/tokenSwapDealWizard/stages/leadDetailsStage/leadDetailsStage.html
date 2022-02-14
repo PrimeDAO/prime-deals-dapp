@@ -98,7 +98,7 @@
           label="Make Deal Private">
           <ptoggle
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            value.bind="wizardState.registrationData.isPrivate"
+            value.bind="wizardState.registrationData.isPrivate || false"
           ></ptoggle>
         </pform-input>
       </div>
