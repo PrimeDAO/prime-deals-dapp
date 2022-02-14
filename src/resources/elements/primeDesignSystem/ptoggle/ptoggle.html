@@ -1,7 +1,9 @@
 <template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
   <label class="pToggle">
     <input
+      data-test="pToggleInput"
       checked.bind="value"
+      value.bind="value"
       class="pToggleInput ${ validationState ? 'pInput-' + validationState : '' }"
       disabled.bind="disabled"
       type="checkbox"
