@@ -13,7 +13,12 @@
         <span if.bind="dealDiscussion && dealDiscussion.createdByAddress">
           <h3 class="subtext">Clause #${dealDiscussion.clauseId + 1}</h3>
           <h3 class="subtext">
-            Created by ${dealDiscussion.createdByAddress | smallHexString}
+            <span if.bind="dealDiscussion.createdByName">
+              Created by ${dealDiscussion.createdByName}
+            </span>
+            <span else>
+              Created by ${dealDiscussion.createdByAddress | smallHexString}
+            </span>
             at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }</h3>
         </span>
       </hgroup>
@@ -34,7 +39,7 @@
         </div>
 
         <div 
-          if.bind="!isLoading.discussions" && threadComments.length"
+          if.bind="!isLoading.discussions && threadComments.length"
           repeat.for="comment of threadComments"
           id="${comment._id}"
           class="comment">

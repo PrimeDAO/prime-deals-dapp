@@ -27,7 +27,7 @@
       </section>
 
       <!-- Clauses List -->
-      <section class="clauses">
+      <section if.to-view="authorized" class="clauses">
         <header>
           <h2 class="subtitle heading heading3">Deal Clauses</h2>
         </header>
@@ -45,7 +45,7 @@
     </section>
 
     <!-- Discussions / Discussion Comments Thread -->
-    <section class="discussion">
+    <section class="discussion" show.bind="authorized">
       <router-view>
         <!-- discussions-list -->
         <!-- deal-thread -->

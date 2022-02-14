@@ -12,11 +12,10 @@
             ${profile.name} 
             <span if.bind="profile.address === author">(Author)</span>
           </span>
-          <div class="${!profile.name ? 'only': ''} address">
+          <div if.bind="profile.address" class="${!profile.name ? 'only': ''} address">
             <etherscanlink 
               text="${profile.address | smallHexString}" 
-              address="${profile.address}" 
-              type="tx">
+              address.bind="profile.address">
             </etherscanlink>
           </div>
         </div>
@@ -42,11 +41,10 @@
                 ${repliesToProfile.name} 
                 <span if.bind="repliesToProfile.address === author">(Author)</span>
               </span>
-              <div class="${!repliesToProfile.name ? 'only': ''} address">
+              <div if.to-view="repliesToProfile.address" class="${!repliesToProfile.name ? 'only': ''} address">
                 <etherscanlink 
                   text="${repliesToProfile.address | smallHexString}" 
-                  address="${repliesToProfile.address}" 
-                  type="tx">
+                  address="${repliesToProfile.address}">
                 </etherscanlink>
               </div>
             </div>

@@ -1,10 +1,13 @@
-import { DiscussionsService } from "./../discussionsService";
-import { DealTokenSwap } from "entities/DealTokenSwap";
-import { DealService } from "services/DealService";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { IDealDiscussion } from "entities/DealDiscussions";
+
+import { DiscussionsService } from "./../discussionsService";
+import { DealService } from "services/DealService";
 import { DateService } from "services/DateService";
+
+import { DealTokenSwap } from "entities/DealTokenSwap";
+import { IDealDiscussion } from "entities/DealDiscussions";
+
 import "./discussionsList.scss";
 
 @autoinject
@@ -40,8 +43,18 @@ export class DiscussionsList{
     this.discussionsArray = Object
       .keys(this.discussionsService.discussions)
       .map(key => (
-        {id: key, ...this.discussionsService.discussions[key]}
+        {
+          id: key,
+          ...this.discussionsService.discussions[key],
+        }
       ));
+
+    this.discussionsArray.forEach(discussion => {
+      this.discussionsService.loadProfile(discussion.createdByAddress)
+        .then(profile => {
+          if (profile.name) discussion.createdByName = profile.name;
+        });
+    });
 
     this.hasDiscussions = !!this.discussionsArray.length;
   }

@@ -22,8 +22,15 @@
               ${discussion.topic}
             </p>
             <p class="creator">
+              ${discussion.profile.address}
               <i class="fas fa-pencil-alt"></i>
-              Created by ${discussion.createdBy | smallHexString} on ${dateService.formattedTime(discussion.createdOn).short()}
+              <span if.bind="discussion.createdByName">
+                Created by ${discussion.createdByName} 
+              </span>
+              <span else>
+                Created by ${discussion.createdByAddress | smallHexString} 
+              </span>
+              on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </td>
           <td class="h-centered v-centered">${discussion.replies || 0}</td>

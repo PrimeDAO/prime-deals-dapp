@@ -1,28 +1,21 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
 import { PLATFORM } from "aurelia-pal";
 import { DealService } from "services/DealService";
-import { EthereumService } from "services/EthereumService";
+import { EthereumService, Address } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { IDealDiscussion } from "entities/DealDiscussions";
 import "./dealDashboard.scss";
 
-// export interface IDealData {
-//   isPrivate: boolean,
-//   isPublicReadOnly: boolean,
-//   members: string[],
-//   admins: string[],
-//   clauses: string[],
-//   discussions: { [key: string]: IDiscussion },
-// }
-
 @autoinject
 export class DealDashboard {
   // loading = true;
-  connected = false;
+  private connected = false;
+  private accountAddress: Address;
+
   private routeChangeEvent: Subscription;
 
   private dealId: string;
@@ -33,6 +26,19 @@ export class DealDashboard {
 
   private discussions: IDealDiscussion;
 
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.registrationData")
+  get authorized(): boolean {
+    return !this.deal.registrationData.isPrivate ||
+      (
+        this.ethereumService.defaultAccountAddress &&
+        [
+          this.deal.registrationData.proposalLead?.address,
+          ...this.deal.registrationData.primaryDAO?.members || "",
+          ...this.deal.registrationData.partnerDAO?.members || "",
+        ].includes(this.ethereumService.defaultAccountAddress)
+      );
+  }
+
   constructor(
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
@@ -40,7 +46,12 @@ export class DealDashboard {
     private router: Router,
     private dealService: DealService,
   ) {
-    this.connected = !!this.ethereumService.defaultAccountAddress;
+    this.accountAddress = "";
+    this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
+      if (account !== this.accountAddress) {
+        this.accountAddress = account;
+      }
+    });
   }
 
   async activate(_, __, navigationInstruction) {
@@ -58,6 +69,16 @@ export class DealDashboard {
 
   deactivate() {
     this.routeChangeEvent.dispose();
+  }
+
+  accountAddressChanged(newAddress: Address){
+    console.log({newAddress});
+
+    this.connected = this.deal && ([
+      this.deal.registrationData.proposalLead,
+      ...this.deal.registrationData.primaryDAO.members,
+      ...this.deal.registrationData.partnerDAO.members,
+    ].includes(newAddress));
   }
 
   private setThreadIdFromRoute(navigationInstruction): void {

@@ -35,19 +35,13 @@ export class EtherscanLink {
   ) { }
 
   public attached(): void {
-    tippy(this.hotElement);
-    tippy(this.coldElement);
+    if (this.hotElement) {tippy(this.hotElement);}
+    if (this.coldElement) {tippy(this.coldElement);}
+
     if (this.type === "tx") {
       this.copyMessage = "Hash has been copied to the clipboard";
     } else {
       this.copyMessage = "Address has been copied to the clipboard";
     }
-    /** timeout so setting of this.networkExplorerUri takes effect in DOM */
-    // setTimeout(() => {
-    //   if (this.tooltip) {
-    //     ($(this.hotElement) as any).tooltip(this.tooltip);
-    //     ($(this.coldElement) as any).tooltip(this.tooltip);
-    //   }
-    // }, 0);
   }
 }

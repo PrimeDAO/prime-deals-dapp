@@ -39,12 +39,12 @@
   }
 
   .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 30px;
+    width: 32px;
+    height: 32px;
+    border-radius: 32px;
     overflow: hidden;
     &>img {
-      padding: 2px;
+      // padding: 2px;
       background-color: $BG05;
       vertical-align: middle;
     }
@@ -60,6 +60,12 @@
       a, i {
         color: $Neutral02 !important;
       }
+      .copy-to-clip-button {
+        height: 14px;
+        & path {
+          fill: $Neutral02;
+        }
+      }
     }
 
     .name, .only.address {
@@ -68,6 +74,11 @@
       font-weight: 700;
       a, i {
         color: $White !important;
+      }
+      .copy-to-clip-button {
+        & path {
+          fill: $White;
+        }
       }
     }
 
@@ -111,16 +122,6 @@
           content: " ";
           pointer-events: none;
       }
-
-      // > * {
-      //     display: flex;
-      //     flex: 1 1 auto;
-      //     flex-flow: column;
-      //     margin-bottom: 0;
-      //     padding-right: 0;
-      //     padding-left: 0;
-      // }
-
     }
   }
 
@@ -157,6 +158,9 @@
             .name, .only.address {
               font-size: 9px;
               line-height: 13.5px;
+            }
+            .copy-to-clip-button {
+              height: 9px;
             }
           }
         }
@@ -195,10 +199,10 @@
       display: inherit;
       align-items: center;
       .upVote {
-        color: $AlertGreen;
+        color: $Green;
       }
       .downVote {
-        color: $AlertRed;
+        color: $Red;
       }
       .spinner {
         color: $Primary01;

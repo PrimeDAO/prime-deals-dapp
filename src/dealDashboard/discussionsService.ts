@@ -2,7 +2,7 @@ import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, Networks, AllowedNetworks} from "services/EthereumService";
+import { EthereumService, Networks, AllowedNetworks } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -359,7 +359,7 @@ export class DiscussionsService {
         name: "Anonymous",
       };
     } catch (error) {
-      console.error("No DID Profile. Fallback to 3Box.", error.message);
+      this.consoleLogService.logMessage(`No DID Profile. Fallback to 3Box. ${error.message}`, "warn");
     }
 
     // Retrieve profile info from (legacy) 3Box
@@ -381,7 +381,7 @@ export class DiscussionsService {
         }
       });
     } catch (error) {
-      console.error("No 3Box Profile.", error.message);
+      this.consoleLogService.logMessage(`No 3Box Profile. ${ error.message }`, "error");
     }
   }
 

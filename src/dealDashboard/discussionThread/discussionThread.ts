@@ -1,12 +1,17 @@
-import { EthereumService, AllowedNetworks } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
+
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { IDealDiscussion, IComment, IProfile, VoteType, TCommentDictionary } from "entities/DealDiscussions";
+import { EthereumService, AllowedNetworks, Address } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
+
+import { IDealDiscussion, IComment, IProfile, VoteType, TCommentDictionary } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+
 import "./discussionThread.scss";
+
 // import { Convo } from "@theconvospace/sdk";
 import { Realtime } from "ably/promises";
 import { Types } from "ably";
@@ -25,6 +30,7 @@ export class DiscussionThread {
   private isLoading: Record<string, boolean> = {};
   private isAuthorized: boolean;
   private isMember = false;
+  private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
   private discussionCommentsStream: Types.RealtimeChannelPromise;
@@ -48,7 +54,8 @@ export class DiscussionThread {
     private dealService: DealService,
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
-  ) {}
+    private eventAggregator: EventAggregator,
+  ) { }
 
   @computedFrom("discussionsService.comments")
   private get comments(): Array<IComment> {
@@ -145,15 +152,22 @@ export class DiscussionThread {
     // Dictionary is used for replies, to easily find the comment by its id
     this.threadDictionary = await comments.reduce((r, e): Record<string, IComment> => {
       r[e._id] = e;
-      if (!this.threadProfiles[e.author]) {
-        this.isLoading.profiles = true;
-        this.discussionsService.loadProfile(e.author).then((profile:IProfile) => {
-          this.threadProfiles[profile.address] = profile;
-          this.isLoading.profiles = false;
-        });
-      }
       return r;
     }, {});
+
+    this.discussionsService.loadProfile(this.dealDiscussion.createdByAddress)
+      .then(profile => {
+        this.dealDiscussion.createdByName = profile.name;
+      });
+
+    this.threadComments.forEach(async (comment: IComment) => {
+      if (!this.threadProfiles[comment.author]) {
+        this.isLoading.profiles = true;
+        const profile = await this.discussionsService.loadProfile(comment.author);
+        this.threadProfiles[profile.address] = profile;
+        this.isLoading.profiles = false;
+      }
+    });
 
     // Update the discussion status
     this.discussionsService.updateDiscussionListStatus(discussionId);
