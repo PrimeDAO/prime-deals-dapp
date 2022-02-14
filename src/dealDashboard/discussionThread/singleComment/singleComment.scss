@@ -5,7 +5,7 @@
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: auto 1fr auto;
-  grid-template-areas: "header" "comment" "footer";
+  grid-template-areas: "header" "comment";
   height: auto;
   grid-gap: $spacing-normal;
 
@@ -32,9 +32,9 @@
     justify-content: flex-start;
     gap: $spacing-normal;
     margin-top: 19px;
-    margin-bottom: 27px;
+    // margin-bottom: 27px;
     .lastActivity {
-      margin-left: auto;
+      // margin-left: auto;
     }
   }
 
@@ -127,13 +127,14 @@
 
   .body {
     grid-area: comment;
-    padding-left: $spacing-normal * 2 + 30px;
+    padding-left: $spacing-normal + 30px;
     .replyContainer {
       display: flex;
       align-items: center;
-      margin-left: -$spacing-normal * 2;
+      margin-left: -$spacing-normal;
       .reply {
-        width: 100%;
+        min-width: 200px;
+        max-width: 50%;
         &.odd{
           background-color: $BG01;
         }
@@ -185,10 +186,12 @@
     }
   }
 
+  .actions,
   .footer {
-    grid-area: footer;
+    // grid-area: footer;
     display: flex;
-    height: 29px;
+    // height: 29px;
+    margin-left: auto;
     justify-content: flex-end;
     gap: $spacing-normal;
     pbutton>button {
@@ -216,11 +219,20 @@
   }
 
   &:hover {
+    .actions>.vote.count.isConnected,
+    .lastActivity,
     .footer>.vote.count.isConnected {
       display: none;
     }
+    .actions>.vote.action,
     .footer>.vote.action {
       display: inherit;
+      .isThumbUp {
+        color: $Green;
+      }
+      .isThumbDown {
+        color: $Red;
+      }
     }
   }
 }

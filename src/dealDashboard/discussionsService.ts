@@ -206,7 +206,7 @@ export class DiscussionsService {
     if (network === Networks.Kovan) return 42;
   }
 
-  public async addComment(discussionId: string, comment: string, replyTo: string): Promise<IComment[]> {
+  public async addComment(discussionId: string, comment: string, isPrivate: boolean, replyTo: string): Promise<IComment[]> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -222,7 +222,8 @@ export class DiscussionsService {
     }
 
     if (!this.ethereumService.defaultAccountAddress) {
-      //
+      throw new Error("Wallet is not connected. Message has not been added to the thread.");
+      return;
     }
 
     try {
@@ -232,7 +233,9 @@ export class DiscussionsService {
         comment,
         `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
         "https://deals.prime.xyz",
-        {},
+        {
+          isPrivate,
+        },
         replyTo,
       );
       this.comments.push(data);

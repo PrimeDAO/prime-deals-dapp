@@ -6,6 +6,9 @@
   background-color: $BG01;
   .head.container {
     background-color: inherit;
+    position: sticky;
+    top: 35px;
+    z-index: 1;
 
     .title {
       padding-bottom: $spacing-medium-small + $spacing-normal;

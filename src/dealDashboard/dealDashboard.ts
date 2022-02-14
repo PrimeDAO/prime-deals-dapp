@@ -72,8 +72,6 @@ export class DealDashboard {
   }
 
   accountAddressChanged(newAddress: Address){
-    console.log({newAddress});
-
     this.connected = this.deal && ([
       this.deal.registrationData.proposalLead,
       ...this.deal.registrationData.primaryDAO.members,
@@ -111,6 +109,13 @@ export class DealDashboard {
     );
 
     if (discussionId !== null) {
+      setTimeout(() => {
+        window.scrollTo({
+          left: 0,
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 1000);
       this.router.navigate(`discussion/${discussionId}`, { replace: true, trigger: true });
     }
   };

@@ -15,11 +15,16 @@ export class SingleComment {
   @bindable private loading: string;
   @bindable private highlighted: number;
   @bindable private index: number;
+  @bindable private isReply?: boolean = false;
   @bindable callback;
 
   private connectedAddress: string;
   private dealClauseId: string;
   private isConnected = false;
+  private pressed = {
+    up: false,
+    down: false,
+  };
 
   constructor(
     private dateService: DateService,
@@ -35,7 +40,17 @@ export class SingleComment {
 
   @computedFrom("comment.upvotes", "comment.downvotes")
   private get votes(): number {
-    return this.comment.upvotes.length - this.comment.downvotes.length;
+    return this.comment?.upvotes.length - this.comment?.downvotes.length;
+  }
+
+  @computedFrom("comment.upvotes", "ethereumService.defaultAccountAddress")
+  private get isThumbUp(): string {
+    return this.comment?.upvotes.includes(this.ethereumService.defaultAccountAddress) ? "isThumbUp" : "";
+  }
+
+  @computedFrom("comment.downvotes", "ethereumService.defaultAccountAddress")
+  private get isThumbDown(): string {
+    return this.comment?.downvotes.includes(this.ethereumService.defaultAccountAddress) ? "isThumbDown" : "";
   }
 
   @computedFrom("index", "highlighted")
@@ -68,6 +83,7 @@ export class SingleComment {
   }
 
   private vote(vote: string) {
+    this.pressed[vote.toLowerCase().indexOf("up")>0 ? "up" : "down"] = true;
     this.callback({
       action: "vote",
       args: {

@@ -19,6 +19,7 @@ import { Types } from "ably";
 @autoinject
 export class DiscussionThread {
   @bindable discussionId: string;
+  private thread: HTMLElement;
   private deal: DealTokenSwap;
   private dealId: string;
   private comment = "";
@@ -155,22 +156,52 @@ export class DiscussionThread {
       return r;
     }, {});
 
+    // Author profile for the discussion header
     this.discussionsService.loadProfile(this.dealDiscussion.createdByAddress)
       .then(profile => {
         this.dealDiscussion.createdByName = profile.name;
       });
 
+    // Comments author profiles
+    this.isLoading.profiles = true;
     this.threadComments.forEach(async (comment: IComment) => {
       if (!this.threadProfiles[comment.author]) {
-        this.isLoading.profiles = true;
         const profile = await this.discussionsService.loadProfile(comment.author);
         this.threadProfiles[profile.address] = profile;
-        this.isLoading.profiles = false;
       }
     });
+    this.isLoading.profiles = false;
+
+    if (this.threadIsInView()) {
+      setTimeout(() => {
+        window.scrollTo({
+          left: 0,
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 1000);
+    }
 
     // Update the discussion status
     this.discussionsService.updateDiscussionListStatus(discussionId);
+  }
+
+  threadIsInView() {
+    const rect = this.thread.getBoundingClientRect();
+    const vWidth = window.innerWidth || document.documentElement.clientWidth;
+    const vHeight = window.innerHeight || document.documentElement.clientHeight;
+    const efp = (x, y) => document.elementFromPoint(x, y);
+
+    if (rect.height < 0 || rect.bottom < 0 ||
+        rect.left > vWidth || rect.top > vHeight)
+      return false;
+
+    return (
+      this.thread.contains(efp(rect.left, rect.top)) ||
+      this.thread.contains(efp(rect.right, rect.top)) ||
+      this.thread.contains(efp(rect.right, rect.bottom)) ||
+      this.thread.contains(efp(rect.left, rect.bottom))
+    );
   }
 
   loadMoreComments() {
@@ -182,6 +213,7 @@ export class DiscussionThread {
     this.threadComments = await this.discussionsService.addComment(
       this.discussionId,
       this.comment,
+      this.deal.registrationData.isPrivate,
       this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
     );
     this.comment = "";
