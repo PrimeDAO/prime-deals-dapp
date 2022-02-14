@@ -1,18 +1,23 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
-  <require from="../../components/daoDetailsSection/daoDetailsSection"></require>
+  <require from="../../components/daoStageContent/daoStageContent"></require>
   <stage-wrapper
     title="Partner DAO Details"
     wizard-manager.bind="wizardManager">
-    <dao-details-section
+    <dao-stage-content
       title="Partner DAO"
-      description="Please fill in the details of the partner DAO who will be participating in the deal."
-      name-field-label="Partner DAO Name"
-      avatar-field-label="Partner DAO Avatar"
-      representatives-label="Partner DAO - Representatives Addresses (Max. 5)"
-      errors.bind="errors"
+      disabled.bind="disabled"
       data.bind="wizardState.registrationData.partnerDAO"
-      disabled.bind="disabled">
-    </dao-details-section>
+      form.bind="form"
+      wizard-manager.bind="wizardManager">
+      <div slot="details-description">
+        Please fill in the details of the partner DAO who will be participating in the deal.
+      </div>
+      <div slot="representatives-description">
+        Representatives of the selected DAOs can cast votes, either to accept or reject the deal. The deal gets accepted if more than half of the representatives of involved DAO's vote agree.
+        <br /><br />
+        Representatives also have access to discuss clauses on the deal. They can also fund the deal, as well as withdraw and claim tokens.
+      </div>
+    </dao-stage-content>
   </stage-wrapper>
 </template>

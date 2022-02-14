@@ -1,0 +1,12 @@
+<template>
+  <pform-input>
+    <pselect data.bind="availableSocialMedias" value.bind="socialMedia.name & validate:form"></pselect>
+  </pform-input>
+  <pform-input>
+    <pinput-text
+      placeholder="https://"
+      value.bind="socialMedia.url & validate:form"
+      disabled.bind="disabled">
+    </pinput-text>
+  </pform-input>
+</template>

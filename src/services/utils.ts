@@ -182,4 +182,23 @@ export class Utils {
     documentElement?.style.setProperty(varName, value);
   }
 
+  // @TODO discuss using library like lodash or underscore
+  public static isUniqueSimpleCollection(collection: Record<string, string | number>[]): boolean {
+    let valid = true;
+    const allValues = [];
+    collection.forEach(item => {
+      const values = Object.values(item);
+
+      values.forEach(value => {
+        if (allValues.indexOf(value) > -1) {
+          valid = false;
+        }
+      });
+
+      allValues.push(...values);
+    });
+
+    return valid;
+  }
+
 }

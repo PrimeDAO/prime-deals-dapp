@@ -14,7 +14,8 @@ const _registration1: IDealRegistrationTokenSwap = {
     name: "Creator",
     tokens: [],
     social_medias: [],
-    members: [],
+    representatives: [{address: ""}],
+    treasury_address: "",
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: null,
@@ -50,8 +51,13 @@ const _registration2: IDealRegistrationTokenSwap = {
     id: "primary-dao-hash-2",
     name: "MyDAO",
     tokens: [],
+    treasury_address: "",
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
+    representatives: [{
+      address: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    }, {
+      address: "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E",
+    }],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
   },
@@ -92,9 +98,14 @@ const _registration3: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
+    representatives: [{
+      address: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    }, {
+      address: "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E",
+    }],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
   partnerDAO: null,
   proposalLead: {
@@ -133,7 +144,8 @@ const _registration4: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: [],
+    representatives: [{address: ""}],
+    treasury_address: "",
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: {
@@ -141,7 +153,8 @@ const _registration4: IDealRegistrationTokenSwap = {
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
+    treasury_address: "",
+    representatives: [{address: ""}],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
   },
   proposalLead: {
@@ -180,18 +193,24 @@ const _registration5: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
+    representatives: [{
+      address: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    }, {
+      address: "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E",
+    }],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
   partnerDAO: {
     id: "partner-dao-hash-1",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
+    representatives: [{address: ""}],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
+    treasury_address: "",
   },
   proposalLead: {
     address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
@@ -229,18 +248,24 @@ const _registration6: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
+    representatives: [{
+      address: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    }, {
+      address: "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E",
+    }],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
   partnerDAO: {
     id: "partner-dao-hash-1",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
+    representatives: [{address: ""}],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
+    treasury_address: "",
   },
   proposalLead: {
     address: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
@@ -345,7 +370,7 @@ const MOCK_DATA = {
     admins: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
-    members: [
+    representatives: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
     isPrivate: false,
@@ -362,7 +387,7 @@ const MOCK_DATA = {
     admins: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
-    members: [
+    representatives: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
     isPrivate: true,
@@ -379,7 +404,7 @@ const MOCK_DATA = {
     admins: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
-    members: [
+    representatives: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
     isPrivate: true,
@@ -396,7 +421,7 @@ const MOCK_DATA = {
     admins: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
-    members: [
+    representatives: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
     isPrivate: true,

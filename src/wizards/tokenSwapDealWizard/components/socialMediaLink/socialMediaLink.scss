@@ -1,0 +1,13 @@
+social-media-link {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  grid-column-gap: 20px;
+
+  pselect {
+    width: 100%;
+  }
+
+  pform-input .inputContainer {
+    margin-top: 0px;
+  }
+}

@@ -28,14 +28,16 @@ export interface ISocialMedia {
   name: string,
   url: string,
 }
+
 export interface IDAO {
-  id: string,
-  name: string,
-  tokens: Array<IToken>
-  social_medias: Array<ISocialMedia>
-  members: Array<string>,
-  logo_url: string,
-  platform?: Platforms,
+  name: string;
+  treasury_address: string;
+  logo_url: string;
+  social_medias: Array<ISocialMedia>;
+  representatives: Array<{address: string}>;
+  id?: string;
+  tokens?: Array<IToken>;
+  platform?: Platforms;
 }
 
 export interface IProposalLead {
@@ -110,7 +112,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
         balance: "",
         address: "",
       }],
-      social_medias: [{name: undefined, url: undefined}],
+      representatives: [{address: ""}],
+      social_medias: [{name: "", url: ""}],
       logo_url: null,
     } as IDAO;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -122,7 +125,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
         balance: "",
         address: "",
       }],
-      social_medias: [{name: undefined, url: undefined}],
+      representatives: [{address: ""}],
+      social_medias: [{name: "", url: ""}],
       logo_url: null,
     } as IDAO;
     this.proposalLead = {

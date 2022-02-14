@@ -1,0 +1,63 @@
+@import "styles/styles.scss";
+
+dao-stage-content {
+  .daoRepresentative, .daoSocialMedia {
+    display: grid;
+    grid-template-columns: 1fr 50px;
+  }
+  
+  .removeButton {
+    margin-left: auto;
+    cursor: pointer;
+    height: 66px;
+  }
+
+  .daoSocialMedia .removeButton {
+    height: 46px;
+  }
+  
+  .addButton {
+    cursor: pointer;
+    color: $Neutral02;
+    border-bottom: 1px solid;
+  }
+
+  .multiFieldHeader {
+    display: grid;
+    grid-template-rows: auto auto;
+  }
+
+  .multiFieldTitle {
+    color: $Secondary02;
+    margin-bottom: $spacing-normal;
+    font-size: $font-size3;
+    font-weight: 700;
+  }
+
+  .multiFieldError {
+    color: $Red;
+  }
+
+  .daoStageAvatar {
+    display: grid;
+    grid-template-columns: auto 88px;
+    max-width: 593px;
+  }
+
+  .daoAvatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background-color: $Border02;
+    color: $Secondary05;
+    font-size: 18px;
+    align-self: center;
+    justify-self: end;
+    margin-bottom: 6px;
+    background-position: center;
+    background-size: cover;
+  }
+}
