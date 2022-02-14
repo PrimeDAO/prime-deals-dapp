@@ -33,16 +33,17 @@ $font-size3: 18px;
 @mixin spin {
   @keyframes spin {
     from {
-        transform:rotate(0deg);
+      transform: rotate(0deg);
     }
     to {
-        transform:rotate(360deg);
+      transform: rotate(360deg);
     }
   }
 }
 
 @mixin loading-icon {
-  .loading > i, i.loading {
+  .loading > i,
+  i.loading {
     animation-name: spin;
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
@@ -52,3 +53,5 @@ $font-size3: 18px;
 
   @include spin;
 }
+
+$pPopupNotificationWidth: 336px;

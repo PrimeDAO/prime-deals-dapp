@@ -42,11 +42,7 @@ export class ConsoleLogService {
   }
 
   private handleTransaction(config: EventConfigTransaction | string) {
-    if (typeof config === "string") {
-      this.logMessage(config, "debug");
-    } else {
-      this.logMessage(`${config.message}: ${config.address}`, "debug");
-    }
+    this.logMessage(this.getMessage(config), "debug");
   }
 
   private getMessage(config: EventConfig | string): string {

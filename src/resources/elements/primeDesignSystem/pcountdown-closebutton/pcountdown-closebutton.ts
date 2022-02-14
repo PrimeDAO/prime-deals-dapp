@@ -23,8 +23,8 @@ export class PCountdownClosebutton {
   @bindable.booleanAttr({ defaultBindingMode: bindingMode.twoWay}) running = true;
 
   /**
-   * Is `cancelled` when the container manually stops the countdown, otherwise when
-   * the countdown hits 0.
+   * Is `cancelled` when the container manually stops the countdown by setting `running` to false,
+   * otherwise when the countdown hits 0.
    * @param cancelled
    */
   countdownStopped(cancelled: boolean): void {
@@ -41,7 +41,8 @@ export class PCountdownClosebutton {
 
   /**
    * invoked when the user clicks the close button.
-   * The container can manually stop the countdown by setting `running` to false
+   * The container can manually stop the countdown by setting `running` to false,
+   * but in that case this isn't invoked.
    */
   close(): void {
     /**

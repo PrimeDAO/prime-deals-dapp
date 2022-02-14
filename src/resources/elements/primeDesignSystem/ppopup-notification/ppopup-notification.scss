@@ -1,0 +1,85 @@
+@import "../colors.scss";
+@import "../variables.scss";
+
+.pPopupNotification {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon title countdown"
+    ". body ."
+    ". subbody .";
+  width: fit-content;
+  max-width: $pPopupNotificationWidth;
+  background-color: $Border01;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  border-radius: $border-radius-normal;
+  padding: $spacing-normal; // only if there is no padding on the parent
+  align-items: center;
+  row-gap: 8px;
+  column-gap: 12px;
+
+  -webkit-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -moz-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  .icon {
+    grid-area: icon;
+    font-size: 22px;
+    display: flex; // causes good vertical centering
+  }
+
+  .title {
+    grid-area: title;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .countdown {
+    grid-area: countdown;
+    display: inline-flex; // for some reason contains the control better
+  }
+
+  .error,
+  .failed {
+    color: $Red;
+  }
+  .warning {
+    color: $Orange;
+  }
+  .info,
+  .success,
+  .transaction {
+    color: $Green;
+  }
+
+  .bodyContainer {
+    grid-area: body;
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16.94px;
+    color: $Neutral04;
+  }
+
+  .subbodyContainer {
+    grid-area: subbody;
+
+    a {
+      font-family: Inter;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 33px;
+      color: $Neutral02;
+    }
+
+    .arrow {
+      display: inline-block;
+      margin-left: 4px;
+      color: $Secondary05;
+      &::after {
+        content: "\2197";
+      }
+    }
+  }
+}

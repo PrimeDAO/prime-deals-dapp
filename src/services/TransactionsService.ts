@@ -1,3 +1,4 @@
+import { EventConfigTransaction } from "./GeneralEvents";
 import { Utils } from "services/utils";
 import { TransactionResponse, TransactionReceipt } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -24,7 +25,8 @@ export default class TransactionsService {
       receipt = await response.wait(1);
       this.eventAggregator.publish("transaction.mined", { message: "Transaction was mined", receipt });
       receipt = await response.wait(TransactionsService.blocksToConfirm);
-      this.eventAggregator.publish("transaction.confirmed", { message: "Transaction was confirmed", receipt });
+      this.eventAggregator.publish("transaction.confirmed", new EventConfigTransaction("Transaction was confirmed", receipt),
+      );
       return receipt;
     } catch (ex) {
       this.eventAggregator.publish("transaction.failed", ex);

@@ -106,6 +106,13 @@ export class Demos {
         name: "pcountdown-closebutton",
         title: "pcountdown-closebutton",
       },
+      {
+        route: ["ppopup-notification"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./ppopupNotificationDemo"),
+        name: "ppopup-notification",
+        title: "ppopup-notification",
+      },
     ];
 
     config.map(routes);
