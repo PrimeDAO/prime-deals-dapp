@@ -22,6 +22,14 @@ export class PRangeSlider {
     return this.left = this.percentageToAbsoluteValue(this.value);
   }
 
+  set leftValue(value: number) {
+    this.value = this.absoluteValueToPercentage(value ?? 0);
+  }
+
+  set rightValue(value: number) {
+    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0));
+  }
+
   @computedFrom("value", "maxValue")
   get rightValue() {
     return this.right = this.percentageToAbsoluteValue(100 - this.value);
@@ -37,16 +45,8 @@ export class PRangeSlider {
     this.value = this.absoluteValueToPercentage(this.left ?? this.maxValue / 2);
   }
 
-  set leftValue(value: number) {
-    this.value = this.absoluteValueToPercentage(value ?? 0);
-  }
-
   attached() {
     this.updateCssVariables();
-  }
-
-  set rightValue(value: number) {
-    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0));
   }
 
   updateCssVariables() {
