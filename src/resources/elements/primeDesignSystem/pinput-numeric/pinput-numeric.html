@@ -10,8 +10,10 @@
     autocomplete.to-view="autocomplete"
   ></numeric-input>
 
-  <i class="feedback-icon fas fa-exclamation-circle" if.bind="!disabled && validationState === 'warning'"></i>
-  <i class="feedback-icon fas fa-exclamation-triangle" if.bind="!disabled && validationState === 'error'"></i>
-  <i class="feedback-icon fas fa-circle-notch loading" if.bind="!disabled && validationState === 'validating'"></i>
+<template if.bind="!disabled">
+  <i class="feedback-icon fas fa-exclamation-circle" if.bind="validationState === 'warning'"></i>
+  <i class="feedback-icon fas fa-exclamation-triangle" if.bind="validationState === 'error'"></i>
+  <i class="feedback-icon fas fa-circle-notch loading" if.bind="validationState === 'validating'"></i>
+</template>
 
 </template>
