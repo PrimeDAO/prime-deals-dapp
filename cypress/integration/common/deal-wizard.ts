@@ -65,3 +65,16 @@ Then("I am presented with the {string} error message for the {string} field", (m
     cy.get(".errorMessage").should("contain.text", message);
   });
 });
+
+
+When("I'm in the {string} section", (sectionHeading: string) => {
+  cy.contains(".stageSectionSidebar .heading.title", sectionHeading)
+   .should("be.visible")
+})
+
+Then("the {string} option should be turned off", (optionText: string) => {
+  cy.get(`pform-input[label='${optionText}']`).within(formComponent => {
+    cy.contains(optionText).should("be.visible")
+    cy.get("[data-test='pToggleInput']").invoke("val").should("equal", "false")
+  })
+})
