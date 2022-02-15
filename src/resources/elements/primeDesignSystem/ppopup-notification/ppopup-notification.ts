@@ -73,15 +73,15 @@ export class PPopupNotification {
     switch (this.type) {
       case EventMessageType.Failure:
       case EventMessageType.Exception:
-        return "fa-exclamation-triangle";
+        return "fas fa-times-circle";
       case EventMessageType.Warning:
-        return "fa-exclamation-circle";
+        return "fas fa-exclamation-triangle";
       case EventMessageType.Info:
-        return "fa-info-circle";
+        return "fas fa-info-circle";
       case EventMessageType.Success:
-        return "fa-check-circle";
+        return "fas fa-check-circle";
       case EventMessageType.Transaction:
-        return "fa-check-circle";
+        return "fas fa-check-circle";
     }
   }
 
