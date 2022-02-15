@@ -1,0 +1,35 @@
+<template>
+  <pcard>
+    <!-- View -->
+    <template class="cardEditing" if.bind="viewMode === 'view'">
+      <template replaceable part="view">This part is replaceable.</template>
+
+      <div class="cardFooter">
+        <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
+      </div>
+    </template>
+
+    <!-- Edit -->
+    <template class="cardEditing" if.bind="viewMode === 'edit'">
+      <template replaceable part="edit">This part is replaceable.</template>
+
+      <!-- Editing footer -->
+      <div class="cardFooter">
+        <pbutton
+          class="deleteButton"
+          click.delegate="onDelete()"
+          type="tertiary"
+        >
+          Delete
+          <i class="fa fa-trash"></i>
+        </pbutton>
+        <pbutton
+          click.delegate="viewMode = 'view' "
+          is-loading.bind="saving"
+          type="primary"
+          >Save</pbutton
+        >
+      </div>
+    </template>
+  </pcard>
+</template>
