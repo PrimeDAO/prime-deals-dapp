@@ -1,0 +1,49 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <stage-wrapper
+    title="Terms"
+    wizard-manager.bind="wizardManager">
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2
+          data-test="stageSectionSidebarTitle"
+          class="heading heading3 title"
+        >Deal Clauses</h2>
+        <p class="subtext">
+          Provide all the important clauses of the proposed deal in detail for a clear understanding of the terms of the agreement between the parties and as a single source of truth for future reference.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <h1>Hello</h1>
+        <!-- <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Title"
+          show-counter
+          max-length="50"
+          data-test="proposal-title-field">
+          <pinput-text value.bind="wizardState.registrationData.proposal.title & validate:form"></pinput-text>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Summary"
+          label-info="Give a brief outline of the Token swap deal."
+          show-counter
+          max-length="250"
+          data-test="proposal-summary-field">
+          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.summary & validate:form"></ptextarea>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          label="Proposal Description"
+          label-info="Give a precise idea of the Token swap, its background, uniqueness, and features."
+          show-counter
+          max-length="1000"
+          data-test="proposal-description-field">
+          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.description & validate:form"></ptextarea>
+        </pform-input> -->
+      </div>
+    </div>
+  </stage-wrapper>
+</template>

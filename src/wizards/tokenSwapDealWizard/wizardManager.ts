@@ -49,10 +49,17 @@ export class WizardManager {
     route: "partner-dao",
     moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
   };
+  private termsStage: IWizardStage = {
+    name: "Terms",
+    valid: false,
+    route: "terms",
+    moduleId: PLATFORM.moduleName("./stages/termsStage/termsStage"),
+  };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
     this.leadDetailsStage,
     this.primaryDaoStage,
+    this.termsStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
