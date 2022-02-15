@@ -18,10 +18,18 @@ export enum Platforms {
 }
 
 export interface IToken {
-  name: string,
-  symbol: string,
-  balance: string,
   address: string,
+
+  name?: string,
+  symbol?: string,
+  decimals?: number,
+  logoURI?: string,
+
+  amount?: number;
+  instantTransfer: number
+  vestedTransfer: number
+  vestedFor?: number
+  cliffOf?: number
 }
 
 export interface ISocialMedia {
@@ -105,10 +113,12 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.primaryDAO = {
       name: "",
       tokens: [{
-        name: "",
-        symbol: "",
-        balance: "",
         address: "",
+        amount: undefined,
+        instantTransfer: 0,
+        vestedTransfer: 0,
+        vestedFor: undefined,
+        cliffOf: undefined,
       }],
       social_medias: [{name: undefined, url: undefined}],
       logo_url: null,
@@ -117,10 +127,12 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.partnerDAO = {
       name: "",
       tokens: [{
-        name: "",
-        symbol: "",
-        balance: "",
         address: "",
+        amount: undefined,
+        instantTransfer: 0,
+        vestedTransfer: 0,
+        vestedFor: undefined,
+        cliffOf: undefined,
       }],
       social_medias: [{name: undefined, url: undefined}],
       logo_url: null,

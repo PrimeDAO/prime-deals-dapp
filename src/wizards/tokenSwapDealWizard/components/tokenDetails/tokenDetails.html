@@ -1,0 +1,158 @@
+<template>
+  <pcard if.bind="viewMode === 'edit'">
+    <pform-input
+      helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
+      input-reference.bind="addressInput"
+      label="Token Address"
+      label-info="Some info here"
+    >
+      <pinput-text
+        input.trigger="getTokenInfo(token.address)"
+        placeholder="0x..."
+        validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
+        value.bind="token.address & validate"
+        view-model.ref="addressInput"
+      ></pinput-text>
+    </pform-input>
+    <div if.bind="infoSearched">
+      <table class="detailsTable">
+        <tr>
+          <td>
+            <p>Name</p>
+            <p if.bind="token.name">${token.name}</p>
+            <pinput-text if.bind="!token.name" value.bind="token.name"></pinput-text>
+          </td>
+          <td>
+            <p>Symbol</p>
+            <p if.bind="token.symbol">${token.symbol}</p>
+            <pinput-text if.bind="!token.symbol" value.bind="token.symbol"></pinput-text>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Decimals</p>
+            <p if.bind="token.decimals">${token.decimals}</p>
+            <pinput-numeric if.bind="!token.decimals" value.bind="token.decimals"></pinput-numeric>
+          </td>
+          <td>
+            <p>Logo <img height="24" src.bind="token.logoURI"></p>
+            <pinput-text value.bind="token.logoURI"></pinput-text>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <pform-input input-reference.bind="amountInput"
+                 label="Amount"
+                 label-description="You are able to edit the amount of tokens to be swapped before the execution phase."
+    >
+      <pinput-numeric
+        not-wei.bind="true"
+        placeholder="500.000"
+        value.bind="token.amount & validate"
+        view-model.ref="amountInput"></pinput-numeric>
+    </pform-input>
+    <pform-input
+      label="Instant Transfer Set-up"
+      label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+      label-info="some handy info"
+    >
+      <prange-slider
+        left-label="Instant"
+        left.bind="token.instantTransfer"
+        max-value.bind="token.amount"
+        right-label="Vested"
+        right.bind="token.vestedTransfer"
+      ></prange-slider>
+    </pform-input>
+
+    <pform-input label="Vesting Set-up"
+                 label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit "
+                 label-info="some handy info"
+    >
+      <div class="vesting">
+        <div class="vesting-input">
+          <p>Tokens vested for</p>
+          <pform-input input-reference.bind="vestedForInput">
+            <pinput-group disabled.bind="token.amount === token.instantTransfer">
+              <pinput-numeric
+                disabled.bind="token.amount === token.instantTransfer"
+                not-wei
+                value.bind="token.vestedFor & validate"
+                view-model.ref="vestedForInput"
+              ></pinput-numeric>
+              <span slot="after">days</span>
+            </pinput-group>
+          </pform-input>
+        </div>
+        <div class="vesting-input">
+          <p>with a cliff of</p>
+          <pform-input input-reference.bind="cliffOfInput">
+            <pinput-group disabled.bind="token.amount === token.instantTransfer">
+              <pinput-numeric
+                disabled.bind="token.amount === token.instantTransfer"
+                not-wei
+                value.bind="token.cliffOf & validate"
+                view-model.ref="cliffOfInput"></pinput-numeric>
+              <span slot="after">days</span>
+            </pinput-group>
+          </pform-input>
+        </div>
+      </div>
+    </pform-input>
+
+    <div class="tokenDetailsFooter">
+      <pbutton class="deleteButton" click.delegate="onDelete()" type="tertiary">
+        Delete
+        <i class="fa fa-trash"></i>
+      </pbutton>
+      <pbutton click.delegate="save()" is-loading.bind="saving" type="primary">Save</pbutton>
+    </div>
+  </pcard>
+
+  <pcard class="tokenDetailsView" if.bind="viewMode === 'view'">
+    <p class="tokenName">
+      <img height="32" src.bind="token.logoURI">
+      ${token.name}
+    </p>
+    <table class="detailsTable">
+      <tr>
+        <td>
+          <p>Token address</p>
+          <p>${token.address | smallHexString}</p>
+        </td>
+        <td colspan="3">
+          <p>Amount tokens</p>
+          <p>
+            <formatted-number thousands-separated value.to-view="token.amount"></formatted-number>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>Instant transfer</p>
+          <p>
+            <formatted-number thousands-separated value.to-view="token.instantTransfer"></formatted-number>
+          </p>
+        </td>
+        <td>
+          <p>Vested transfer</p>
+          <p>
+            <formatted-number thousands-separated value.to-view="token.vestedTransfer"></formatted-number>
+          </p>
+        </td>
+        <td>
+          <p>Vested for</p>
+          <p>${token.vestedFor} days</p>
+        </td>
+        <td>
+          <p>Cliff of</p>
+          <p>${token.cliffOf} days</p>
+        </td>
+      </tr>
+    </table>
+
+    <div class="tokenDetailsFooter">
+      <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
+    </div>
+  </pcard>
+</template>

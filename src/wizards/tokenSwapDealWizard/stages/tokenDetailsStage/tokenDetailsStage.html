@@ -1,0 +1,62 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="../../components/tokenDetails/tokenDetails"></require>
+  <stage-wrapper
+    title="Proposal Lead"
+    wizard-manager.bind="wizardManager">
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Tokens</h2>
+        <div class="subtext">
+          Please fill in the Ethereum native token address and swapping details of the primary DAO.
+        </div>
+      </div>
+      <div class="stageSectionContent">
+        <token-details
+          form.from-view="tokenDetailsForms[$index]"
+          on-delete.call="deleteToken(token)"
+          repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
+          token.bind="token"
+        ></token-details>
+
+        <pbutton class="addTokenButton" click.delegate="addToken()"
+                 if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
+                 type="primary"
+        >
+          Add token
+          <i class="fa fa-plus"></i>
+        </pbutton>
+
+        <p class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
+          A partnered deal needs to have at least one token detail
+        </p>
+      </div>
+    </div>
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Execution Period</h2>
+        <p class="subtext">
+          This is the period that comes after the initial discussions, when both parties are aligned on the deal. Within
+          this period the on-chain execution needs to be executed by both parties.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          input-reference.bind="executionPeriodInput"
+          label="On-Chain Execution Period"
+        >
+          <pinput-group>
+            <pinput-numeric value.bind="wizardState.registrationData.executionPeriodInDays & validate:form"
+                            view-model.ref="executionPeriodInput"></pinput-numeric>
+            <span slot="after">days</span>
+          </pinput-group>
+        </pform-input>
+
+      </div>
+    </div>
+
+  </stage-wrapper>
+</template>

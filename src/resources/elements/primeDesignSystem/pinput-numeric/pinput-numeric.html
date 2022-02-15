@@ -1,7 +1,7 @@
-<template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
+<template class="pInput-parent ${ !disabled && validationState ? 'pInput-parent-' + validationState : '' }">
 
   <numeric-input
-    css="pInput ${ validationState ? 'pInput-' + validationState : '' }"
+    css="pInput ${ !disabled && validationState ? 'pInput-' + validationState : '' }"
     disabled.bind="disabled"
     output-as-string.bind="outputAsString"
     value.bind="value"
@@ -10,8 +10,8 @@
     autocomplete.to-view="autocomplete"
   ></numeric-input>
 
-  <i if.bind="validationState === 'warning'" class="feedback-icon fas fa-exclamation-circle"></i>
-  <i if.bind="validationState === 'error'" class="feedback-icon fas fa-exclamation-triangle"></i>
-  <i if.bind="validationState === 'validating'" class="feedback-icon fas fa-circle-notch loading"></i>
+  <i class="feedback-icon fas fa-exclamation-circle" if.bind="!disabled && validationState === 'warning'"></i>
+  <i class="feedback-icon fas fa-exclamation-triangle" if.bind="!disabled && validationState === 'error'"></i>
+  <i class="feedback-icon fas fa-circle-notch loading" if.bind="!disabled && validationState === 'validating'"></i>
 
 </template>

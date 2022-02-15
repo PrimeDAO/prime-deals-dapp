@@ -5,6 +5,7 @@ pinput-group {
   flex-direction: row;
   align-items: stretch;
 
+
   .addon {
     display: flex;
     align-items: center;
@@ -13,6 +14,12 @@ pinput-group {
     font-weight: 400;
     font-size: $font-size3;
     border-radius: $border-radius-normal;
+  }
+
+  &.disabled {
+    .addon {
+      opacity: 0.43; // from the design system mock
+    }
   }
 
   &.hasBeforeAddon {

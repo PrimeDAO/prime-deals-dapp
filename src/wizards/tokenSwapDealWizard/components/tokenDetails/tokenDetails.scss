@@ -1,0 +1,100 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
+token-details {
+  display: block;
+
+  pform-input {
+    margin-bottom: $spacing-normal;
+  }
+
+
+  pcard {
+    display: block;
+    padding: 20px;
+
+    .vesting {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+
+      .vesting-input {
+        p {
+          font-size: $font-size1;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
+      }
+
+      pinput-group {
+        width: 180px;
+
+      }
+    }
+
+    prange-slider {
+      .value {
+        min-width: 120px;
+      }
+    }
+
+    .tokenDetailsFooter {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-top: 50px;
+
+      .deleteButton {
+
+        button {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        }
+
+        .fa {
+          margin-left: 16px;
+        }
+      }
+    }
+  }
+
+  .tokenDetailsView {
+    .tokenName {
+      display: flex;
+      align-items: center;
+      gap: $spacing-normal
+    }
+  }
+
+  .detailsTable {
+    margin-top: $spacing-normal;
+    margin-bottom: 30px;
+    width: 100%;
+    border-spacing: $spacing-normal;
+
+    p:first-child {
+      color: $Secondary02;
+      margin-bottom: $spacing-small;
+      display: flex;
+      align-items: center;
+      gap: $spacing-medium-small;
+    }
+
+    tr {
+      width: 50%;
+    }
+
+    td {
+      padding: $spacing-normal;
+    }
+
+    td:first-child {
+      padding-left: 0;
+    }
+
+    td:last-child {
+      padding-right: 0;
+    }
+  }
+}
