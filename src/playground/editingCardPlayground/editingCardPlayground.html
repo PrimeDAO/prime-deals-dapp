@@ -1,0 +1,22 @@
+<template>
+  <require from="../../resources/elements/editingCard/editingCard"></require>
+
+  <style>
+    .playground1 pcard {
+      display: block;
+      width: 600px;
+    }
+  </style>
+
+  <div class="playground1" style="margin-top: 20px;">
+    <editing-card>
+      <!-- View -->
+      <template replace-part="view">
+        <h2>View</h2>
+      </template>
+      <template replace-part="edit">
+        <h2>Edit</h2>
+      </template>
+    </editing-card>
+  </div>
+</template>
