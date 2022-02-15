@@ -4,8 +4,14 @@
     <template class="cardEditing" if.bind="viewMode === 'view'">
       <template replaceable part="view">This part is replaceable.</template>
 
-      <div class="cardFooter">
-        <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
+      <div
+        data-test="cardFooter"
+        class="cardFooter"
+      >
+        <pbutton
+          click.delegate="edit()"
+          type="tertiary"
+        >Edit</pbutton>
       </div>
     </template>
 
@@ -14,17 +20,20 @@
       <template replaceable part="edit">This part is replaceable.</template>
 
       <!-- Editing footer -->
-      <div class="cardFooter">
+      <div
+        data-test="cardFooter"
+        class="cardFooter"
+      >
         <pbutton
           class="deleteButton"
-          click.delegate="onDelete()"
+          click.delegate="delete()"
           type="tertiary"
         >
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
         <pbutton
-          click.delegate="viewMode = 'view' "
+          click.delegate="save()"
           is-loading.bind="saving"
           type="primary"
           >Save</pbutton
