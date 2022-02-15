@@ -10,6 +10,7 @@ const stageTitlesToURLs = {
   'Proposal': 'proposal',
   'Lead Details': 'lead-details',
   'Primary DAO': 'primary-dao',
+  'Terms': 'terms',
 } as const
 
 Then("I am presented the option to choose a partner", () => {
