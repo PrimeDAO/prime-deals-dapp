@@ -85,7 +85,7 @@
                 <pinput-numeric
                   disabled.bind="token.amount === token.instantTransfer"
                   not-wei
-                  value.bind="token.vestedFor & validate"
+                  value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"
                 ></pinput-numeric>
                 <span slot="after">days</span>
@@ -99,7 +99,7 @@
                 <pinput-numeric
                   disabled.bind="token.amount === token.instantTransfer"
                   not-wei
-                  value.bind="token.cliffOf & validate"
+                  value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
                 <span slot="after">days</span>
               </pinput-group>

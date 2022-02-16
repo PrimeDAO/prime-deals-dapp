@@ -34,6 +34,8 @@ export class TokenDetailsStage {
       .ensure<IDealRegistrationTokenSwap, number>(data => data.executionPeriodInDays)
       .required()
       .withMessage("Execution period is required")
+      .min(0)
+      .withMessage("Execution period should be greater or equal to zero")
       .rules;
 
     this.form = this.wizardService.registerValidationRules(

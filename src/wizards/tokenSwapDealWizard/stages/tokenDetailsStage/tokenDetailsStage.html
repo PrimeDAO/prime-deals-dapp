@@ -51,7 +51,8 @@
         >
           <pinput-group>
             <pinput-numeric
-              value.bind="wizardState.registrationData.executionPeriodInDays & validate:form"
+              not-wei
+              value.bind="wizardState.registrationData.executionPeriodInDays | secondsDays & validate:form"
               view-model.ref="executionPeriodInput"
             ></pinput-numeric>
             <span slot="after">days</span>
