@@ -1,20 +1,61 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
-  <stage-wrapper
-    title="Terms"
-    wizard-manager.bind="wizardManager">
+  <require
+    from="../../../../resources/elements/editingCard/editingCard"
+  ></require>
+
+  <stage-wrapper title="Terms" wizard-manager.bind="wizardManager">
     <div class="stageSection">
+      <!-- Sidebar -->
       <div class="stageSectionSidebar">
-        <h2
-          data-test="stageSectionSidebarTitle"
-          class="heading heading3 title"
-        >Deal Clauses</h2>
+        <h2 data-test="stageSectionSidebarTitle" class="heading heading3 title">
+          Deal Clauses
+        </h2>
         <p class="subtext">
-          Provide all the important clauses of the proposed deal in detail for a clear understanding of the terms of the agreement between the parties and as a single source of truth for future reference.
+          Provide all the important clauses of the proposed deal in detail for a
+          clear understanding of the terms of the agreement between the parties
+          and as a single source of truth for future reference.
         </p>
       </div>
+
+      <!-- Content -->
       <div class="stageSectionContent">
-        <h1>Hello</h1>
+        <!-- Terms Card -->
+        <editing-card
+          on-edit.call="onEdit()"
+          on-save.call="onSave()"
+          on-delete.call="onDelete()"
+        >
+          <!-- View -->
+          <template replace-part="view"> </template>
+
+          <!-- Edit -->
+          <template replace-part="edit">
+            <pform-input
+              class="wizardFormInput"
+              label="Clause 1"
+              show-counter
+              max-length="250"
+              data-test="clause-input"
+            >
+              <ptextarea
+                rows="4"
+                value.bind="wizardState.registrationData.proposal.summary"
+                placeholder="Some placeholder"
+              ></ptextarea>
+            </pform-input>
+          </template>
+        </editing-card>
+
+        <pbutton
+          class="addClauseButton"
+          click.delegate="addToken()"
+          type="primary"
+        >
+          Add Clause
+          <i class="fa fa-plus"></i>
+        </pbutton>
+
         <!-- <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Title"

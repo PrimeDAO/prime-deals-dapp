@@ -2,13 +2,18 @@ import { IStageMeta } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
-import { ValidationController, ValidationRules } from "aurelia-validation";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { ValidationController } from "aurelia-validation";
+import "./termsStage.scss";
 
 @autoinject
 export class TermsStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
+
+  private viewContent = "View";
+  private editContent = "Edit";
+
   form: ValidationController;
 
   constructor(
@@ -35,5 +40,17 @@ export class TermsStage implements IBaseWizardStage {
     //   this.wizardState.registrationData.proposal,
     //   validationRules,
     // );
+  }
+
+  onEdit() {
+    this.editContent = "Edit (changed)";
+  }
+
+  onSave() {
+    this.viewContent = "View (changed)";
+  }
+
+  onDelete() {
+    this.editContent = "(deleted)";
   }
 }

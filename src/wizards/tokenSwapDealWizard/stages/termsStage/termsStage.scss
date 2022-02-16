@@ -1,0 +1,14 @@
+.stageSectionContent {
+  .addClauseButton {
+    button {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-top: 32px;
+    }
+
+    .fa {
+      margin-left: 16px;
+    }
+  }
+}
