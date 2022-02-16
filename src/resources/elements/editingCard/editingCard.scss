@@ -1,15 +1,17 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 
+$termsCardMinHeight: 276px;
+
 pcard {
   display: block;
   padding: 20px;
+  min-height: $termsCardMinHeight;
 
   .cardFooter {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     gap: 20px;
-    margin-top: 50px;
 
     .deleteButton {
       button {
@@ -22,5 +24,11 @@ pcard {
         margin-left: 16px;
       }
     }
+  }
+}
+
+.wizardStage {
+  .wizardFormInput {
+    margin-bottom: unset;
   }
 }
