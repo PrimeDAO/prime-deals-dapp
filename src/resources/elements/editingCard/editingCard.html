@@ -2,7 +2,9 @@
   <pcard>
     <!-- View -->
     <template class="cardEditing" if.bind="viewMode === 'view'">
-      <template replaceable part="view">This part is replaceable.</template>
+      <span data-test="editingCardViewContent">
+        <template replaceable part="view">This part is replaceable.</template>
+      </span>
 
       <div
         data-test="cardFooter"
@@ -17,7 +19,9 @@
 
     <!-- Edit -->
     <template class="cardEditing" if.bind="viewMode === 'edit'">
-      <template replaceable part="edit">This part is replaceable.</template>
+      <span data-test="editingCardEditContent">
+        <template replaceable part="edit">This part is replaceable.</template>
+      </span>
 
       <!-- Editing footer -->
       <div

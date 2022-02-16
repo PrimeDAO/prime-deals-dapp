@@ -8,30 +8,49 @@ const playgroundRoute = "/playground";
 const CHANGED_TEXT = "(changed)";
 const DELETED_TEXT = "(deleted)";
 
+type EditincCardButtonTypes = "Edit" | "Save" | "Delete";
+
+export class EditingCard {
+  static button = "[data-test='cardFooter'] pbutton";
+  static viewContent = "[data-test=editingCardViewContent]";
+  static editContent = "[data-test=editingCardEditContent]";
+
+  static assert(selector: string, expected: string) {
+    cy.contains(selector, expected).should("be.visible");
+  }
+  static assertView(expected: string) {
+    this.assert(this.viewContent, expected);
+  }
+  static assertEdit(expected: string) {
+    this.assert(this.editContent, expected);
+  }
+  static click(buttonType: EditincCardButtonTypes) {
+    cy.contains(EditingCard.button, buttonType).click();
+  }
+}
+
 Given("I navigate to the {string} component", (componentName: string) => {
   const url = `${playgroundRoute}/${componentName}Playground`;
   cy.visit(url);
 });
 
-When("I {string} the card", (buttonType: string) => {
-  cy.contains("[data-test='cardFooter'] pbutton", buttonType).click();
+When("I {string} the card", (buttonType: EditincCardButtonTypes) => {
+  EditingCard.click(buttonType);
 });
 
 Then("the content of the card should be save", () => {
-  cy.contains("[data-test=viewText]", CHANGED_TEXT).should("be.visible");
-})
+  EditingCard.assertView(CHANGED_TEXT);
+});
 
 Then("I can edit the content of the card", () => {
-  cy.contains("[data-test=editText]", CHANGED_TEXT).should("be.visible");
+  EditingCard.assertEdit(CHANGED_TEXT);
 });
 
 Then("I get into the {string} mode", (cardMode: string) => {
-  cy.contains("[data-test='cardFooter'] pbutton", cardMode).should(
-    "be.visible"
-  );
+  EditingCard.assert(EditingCard.button, cardMode);
 });
 
 Then("the card should be deleted", () => {
-  cy.contains("[data-test='cardFooter'] pbutton", "Delete").click();
-  cy.contains("[data-test=editText]", DELETED_TEXT).should("be.visible");
+  EditingCard.click("Delete");
+  EditingCard.assertEdit(DELETED_TEXT);
 });
