@@ -68,12 +68,15 @@ token-details {
   }
 
   .detailsTable {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     margin-top: $spacing-normal;
     margin-bottom: 30px;
     width: 100%;
     border-spacing: $spacing-normal;
 
-    p:first-child {
+    .detailsCell p:first-child {
       color: $Secondary02;
       margin-bottom: $spacing-small;
       display: flex;
@@ -81,20 +84,12 @@ token-details {
       gap: $spacing-medium-small;
     }
 
-    tr {
-      width: 50%;
-    }
+    &.detailsTableInViewMode {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
 
-    td {
-      padding: $spacing-normal;
-    }
-
-    td:first-child {
-      padding-left: 0;
-    }
-
-    td:last-child {
-      padding-right: 0;
+      .detailsCellAmount {
+        grid-column: span 3;
+      }
     }
   }
 }

@@ -17,13 +17,19 @@ import { Utils } from "../../../../services/utils";
 @autoinject
 export class TokenDetails {
   @bindable token: IToken;
-  @bindable.string() viewMode: "edit" | "view" = "edit";
   @bindable({defaultBindingMode: bindingMode.fromView}) onDelete: () => void;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
 
+  viewMode: "edit" | "view" = "edit";
   tokenInfoLoading = false;
-  infoSearched = false;
+  showTokenDetails = false;
   saving = false;
+  validTokenLogoURI = true;
+  tokenDetailsNotFound = {
+    name: false,
+    symbol: false,
+    decimals: false,
+  };
 
   constructor(
     private aureliaHelperService: AureliaHelperService,
@@ -37,6 +43,77 @@ export class TokenDetails {
   }
 
   attached() {
+    this.addValidation();
+    this.watchVestedAmount();
+  }
+
+  async getTokenInfo(address: string) {
+    this.showTokenDetails = false;
+    this.tokenInfoLoading = true;
+
+    if (!Utils.isAddress(address) || !await this.tokenService.isERC20Token(address)) {
+      this.tokenInfoLoading = false;
+      return;
+    }
+
+    try {
+      const tokenInfo = await this.tokenService
+        .getTokenInfoFromAddress(address)
+        .finally(() => this.tokenInfoLoading = false);
+
+      if (tokenInfo.logoURI === TokenService.DefaultLogoURI) {
+        tokenInfo.logoURI = "";
+      }
+
+      if (!tokenInfo.logoURI) {
+        await this.tokenService.getTokenGeckoInfo(tokenInfo);
+      }
+
+      this.token.name = tokenInfo.name;
+      this.token.symbol = tokenInfo.symbol;
+      this.token.decimals = tokenInfo.decimals;
+      this.token.logoURI = tokenInfo.logoURI;
+
+      this.tokenDetailsNotFound.name = !tokenInfo.name;
+      this.tokenDetailsNotFound.symbol = !tokenInfo.symbol;
+      this.tokenDetailsNotFound.decimals = !tokenInfo.decimals;
+    } catch (error) {
+      this.token.name = undefined;
+      this.token.logoURI = undefined;
+      this.token.symbol = undefined;
+      this.token.decimals = undefined;
+    }
+
+    this.showTokenDetails = true;
+  }
+
+  async save(): Promise<void> {
+    this.saving = true;
+    const result = await this.form.validate().finally(() => this.saving = false);
+    if (!result.valid) {
+      return;
+    }
+    this.viewMode = "view";
+  }
+
+  logoLoaded(valid: boolean) {
+    this.validTokenLogoURI = valid;
+  }
+
+  checkURL() {
+    this.logoLoaded(Utils.isValidUrl(encodeURI(this.token.logoURI)));
+  }
+
+  private watchVestedAmount() {
+    this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransfer", newValue => {
+      if (newValue === 0) {
+        this.token.vestedFor = undefined;
+        this.token.cliffOf = undefined;
+      }
+    });
+  }
+
+  private addValidation() {
     ValidationRules.customRule(
       "isValidIERC20Address",
       (value) => this.tokenService.isERC20Token(value),
@@ -67,56 +144,5 @@ export class TokenDetails {
       .rules;
 
     this.form.addObject(this.token, rules);
-    this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransfer", newValue => {
-      if (newValue === 0) {
-        this.token.vestedFor = undefined;
-        this.token.cliffOf = undefined;
-      }
-    });
-  }
-
-  async getTokenInfo(address: string) {
-    this.infoSearched = false;
-    this.tokenInfoLoading = true;
-
-    if (!Utils.isAddress(address) || !await this.tokenService.isERC20Token(address)) {
-      this.tokenInfoLoading = false;
-      return;
-    }
-
-    try {
-      const tokenInfo = await this.tokenService
-        .getTokenInfoFromAddress(address)
-        .finally(() => this.tokenInfoLoading = false);
-
-      if (tokenInfo.logoURI === TokenService.DefaultLogoURI) {
-        tokenInfo.logoURI = "";
-      }
-
-      if (!tokenInfo.logoURI) {
-        await this.tokenService.getTokenGeckoInfo(tokenInfo);
-      }
-
-      this.token.name = tokenInfo.name;
-      this.token.logoURI = tokenInfo.logoURI;
-      this.token.symbol = tokenInfo.symbol;
-      this.token.decimals = tokenInfo.decimals;
-    } catch (error) {
-      this.token.name = undefined;
-      this.token.logoURI = undefined;
-      this.token.symbol = undefined;
-      this.token.decimals = undefined;
-    }
-
-    this.infoSearched = true;
-  }
-
-  async save() {
-    this.saving = true;
-    const result = await this.form.validate().finally(() => this.saving = false);
-    if (!result.valid) {
-      return;
-    }
-    this.viewMode = "view";
   }
 }

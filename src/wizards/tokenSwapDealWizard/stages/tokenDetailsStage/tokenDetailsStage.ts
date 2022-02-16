@@ -15,12 +15,12 @@ export class TokenDetailsStage {
   tokenDetailsForms: ValidationController[] = [];
 
   constructor(
-    public wizardService: WizardService,
+    private wizardService: WizardService,
   ) {
   }
 
   @computedFrom("isOpenDealWizard", "wizardState.registrationData.primaryDAO.tokens.length")
-  get hasValidTokensDetailsCount() {
+  get hasValidTokensDetailsCount(): boolean {
     return !this.isOpenDealWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
   }
 
@@ -57,7 +57,7 @@ export class TokenDetailsStage {
     });
   }
 
-  addToken() {
+  addToken(): void {
     this.wizardState.registrationData.primaryDAO.tokens.push({
       address: "",
       amount: undefined,
@@ -68,7 +68,7 @@ export class TokenDetailsStage {
     });
   }
 
-  deleteToken(token: IToken) {
+  deleteToken(token: IToken): void {
     const index = this.wizardState.registrationData.primaryDAO.tokens.indexOf(token);
     if (index !== -1) {
       this.tokenDetailsForms.splice(index, 1);

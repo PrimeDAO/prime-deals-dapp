@@ -14,32 +14,34 @@
         view-model.ref="addressInput"
       ></pinput-text>
     </pform-input>
-    <div if.bind="showTokenDetails">
-      <table class="detailsTable">
-        <tr>
-          <td>
-            <p>Name</p>
-            <p if.bind="token.name">${token.name}</p>
-            <pinput-text if.bind="!token.name" value.bind="token.name"></pinput-text>
-          </td>
-          <td>
-            <p>Symbol</p>
-            <p if.bind="token.symbol">${token.symbol}</p>
-            <pinput-text if.bind="!token.symbol" value.bind="token.symbol"></pinput-text>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <p>Decimals</p>
-            <p if.bind="token.decimals">${token.decimals}</p>
-            <pinput-numeric if.bind="!token.decimals" value.bind="token.decimals"></pinput-numeric>
-          </td>
-          <td>
-            <p>Logo <img height="24" src.bind="token.logoURI"></p>
-            <pinput-text value.bind="token.logoURI"></pinput-text>
-          </td>
-        </tr>
-      </table>
+    <div class="detailsTable" if.bind="showTokenDetails">
+      <div class="detailsCell">
+        <p>Name</p>
+        <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>
+        <pinput-text if.bind="tokenDetailsNotFound.name" value.bind="token.name"></pinput-text>
+      </div>
+      <div class="detailsCell">
+
+        <p>Symbol</p>
+        <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
+        <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
+      </div>
+      <div class="detailsCell">
+        <p>Decimals</p>
+        <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
+        <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>
+      </div>
+      <div class="detailsCell">
+        <p>
+          Logo
+          <img error.trigger="logoLoaded(false)" height="24" if.bind="validTokenLogoURI" load.trigger="logoLoaded(true)"
+               src.bind="token.logoURI">
+        </p>
+        <pinput-text input.trigger="checkURL()" value.bind="token.logoURI"></pinput-text>
+        <span class="feedbackMessage ${!validTokenLogoURI ? 'feedbackMessageVisible' : ''} errorMessage">
+          No valid image found at the provided logo URL
+        </span>
+      </div>
     </div>
     <pform-input input-reference.bind="amountInput"
                  label="Amount"
@@ -114,42 +116,43 @@
       <img height="32" src.bind="token.logoURI">
       ${token.name}
     </p>
-    <table class="detailsTable">
-      <tr>
-        <td>
-          <p>Token address</p>
-          <p>${token.address | smallHexString}</p>
-        </td>
-        <td colspan="3">
-          <p>Amount tokens</p>
-          <p>
-            <formatted-number thousands-separated value.to-view="token.amount"></formatted-number>
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>Instant transfer</p>
-          <p>
-            <formatted-number thousands-separated value.to-view="token.instantTransfer"></formatted-number>
-          </p>
-        </td>
-        <td>
-          <p>Vested transfer</p>
-          <p>
-            <formatted-number thousands-separated value.to-view="token.vestedTransfer"></formatted-number>
-          </p>
-        </td>
-        <td>
-          <p>Vested for</p>
-          <p>${token.vestedFor} days</p>
-        </td>
-        <td>
-          <p>Cliff of</p>
-          <p>${token.cliffOf} days</p>
-        </td>
-      </tr>
-    </table>
+    <div class="detailsTable detailsTableInViewMode">
+      <div class="detailsCell">
+        <p>Token address</p>
+        <p>${token.address | smallHexString}</p>
+      </div>
+
+      <div class="detailsCell detailsCellAmount">
+        <p>Amount tokens</p>
+        <p>
+          <formatted-number thousands-separated value.to-view="token.amount"></formatted-number>
+        </p>
+      </div>
+
+      <div class="detailsCell">
+        <p>Instant transfer</p>
+        <p>
+          <formatted-number thousands-separated value.to-view="token.instantTransfer"></formatted-number>
+        </p>
+      </div>
+
+      <div class="detailsCell">
+        <p>Vested transfer</p>
+        <p>
+          <formatted-number thousands-separated value.to-view="token.vestedTransfer"></formatted-number>
+        </p>
+      </div>
+
+      <div class="detailsCell">
+        <p>Vested for</p>
+        <p>${token.vestedFor} days</p>
+      </div>
+
+      <div class="detailsCell">
+        <p>Cliff of</p>
+        <p>${token.cliffOf} days</p>
+      </div>
+    </div>
 
     <div class="tokenDetailsFooter">
       <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
