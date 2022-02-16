@@ -2,7 +2,10 @@ import { IStageMeta } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
 import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import {
+  IClause,
+  IDealRegistrationTokenSwap,
+} from "entities/DealRegistrationTokenSwap";
 import { ValidationController } from "aurelia-validation";
 import "./termsStage.scss";
 
@@ -11,18 +14,13 @@ export class TermsStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
-  private viewContent = "View";
-  private editContent = "Edit";
-
   form: ValidationController;
 
-  constructor(
-    public wizardService: WizardService,
-  ) {}
+  constructor(public wizardService: WizardService) {}
 
   activate(stageMeta: IStageMeta): void {
-    // this.wizardManager = stageMeta.wizardManager;
-    // this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+    this.wizardManager = stageMeta.wizardManager;
+    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     // const validationRules = ValidationRules
     //   .ensure<IProposal, string>(proposal => proposal.title)
@@ -42,15 +40,19 @@ export class TermsStage implements IBaseWizardStage {
     // );
   }
 
-  onEdit() {
-    this.editContent = "Edit (changed)";
+  onEdit() {}
+
+  onSave() {}
+
+  onDelete(deleteIndex: number) {
+    this.wizardState.registrationData.terms.clauses.splice(deleteIndex, 1);
   }
 
-  onSave() {
-    this.viewContent = "View (changed)";
-  }
-
-  onDelete() {
-    this.editContent = "(deleted)";
+  addClauseButton() {
+    const emptyClause: IClause = {
+      id: "",
+      text: "",
+    };
+    this.wizardState.registrationData.terms.clauses.push(emptyClause);
   }
 }

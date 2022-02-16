@@ -20,36 +20,44 @@
 
       <!-- Content -->
       <div class="stageSectionContent">
-        <!-- Terms Card -->
-        <editing-card
-          on-edit.call="onEdit()"
-          on-save.call="onSave()"
-          on-delete.call="onDelete()"
-        >
-          <!-- View -->
-          <template replace-part="view"> </template>
+        <template repeat.for="clause of wizardState.registrationData.terms.clauses">
+          <!-- Terms Card -->
+          <editing-card
+            data-test="termsClause"
+            on-edit.call="onEdit()"
+            on-save.call="onSave()"
+            on-delete.call="onDelete($index)"
+          >
+            <!-- View -->
+            <template replace-part="view">
+              ${clause.text}
+            </template>
 
-          <!-- Edit -->
-          <template replace-part="edit">
-            <pform-input
-              class="wizardFormInput"
-              label="Clause 1"
-              show-counter
-              max-length="250"
-              data-test="clause-input"
-            >
-              <ptextarea
-                rows="4"
-                value.bind="wizardState.registrationData.proposal.summary"
-                placeholder="Some placeholder"
-              ></ptextarea>
-            </pform-input>
-          </template>
-        </editing-card>
+            <!-- Edit -->
+            <template replace-part="edit">
+              <pform-input
+                class="wizardFormInput"
+                label="${`Clause ${$index + 1}`}"
+                show-counter
+                max-length="250"
+                data-test="clause-input"
+              >
+                <ptextarea
+                  data-test="clauseTextarea"
+                  rows="4"
+                  value.bind="clause.text"
+                  placeholder="Some placeholder"
+                ></ptextarea>
+              </pform-input>
+            </template>
+          </editing-card>
+        </template>
 
         <pbutton
+          data-test="addClauseButton"
           class="addClauseButton"
-          click.delegate="addToken()"
+          if.bind="wizardState.registrationData.terms.clauses.length < 10"
+          click.delegate="addClauseButton()"
           type="primary"
         >
           Add Clause

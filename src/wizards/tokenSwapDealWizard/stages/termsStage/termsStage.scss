@@ -1,10 +1,15 @@
 .stageSectionContent {
+  editing-card {
+    pcard {
+      margin-bottom: 32px;
+    }
+  }
+
   .addClauseButton {
     button {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-top: 32px;
     }
 
     .fa {
