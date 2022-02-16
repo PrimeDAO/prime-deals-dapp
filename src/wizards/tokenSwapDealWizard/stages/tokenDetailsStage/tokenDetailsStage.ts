@@ -43,7 +43,6 @@ export class TokenDetailsStage {
     );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-
       const tokenDetailsValidationResults = await Promise.all(
         this.tokenDetailsForms.map(form => form.validate().then(result => result.valid)),
       );

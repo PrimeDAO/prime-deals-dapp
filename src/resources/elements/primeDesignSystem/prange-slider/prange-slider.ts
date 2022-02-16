@@ -12,33 +12,8 @@ export class PRangeSlider {
   @bindable maxValue = 100;
   @bindable({defaultBindingMode: bindingMode.twoWay}) left: number;
   @bindable({defaultBindingMode: bindingMode.twoWay}) right: number;
-  @bindable.ref rangeInput: HTMLInputElement;
 
   constructor(public element: Element) {
-  }
-
-  @computedFrom("value", "maxValue")
-  get leftValue() {
-    return this.left = this.percentageToAbsoluteValue(this.value);
-  }
-
-  set leftValue(value: number) {
-    this.value = this.absoluteValueToPercentage(value ?? 0);
-  }
-
-  set rightValue(value: number) {
-    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0));
-  }
-
-  @computedFrom("value", "maxValue")
-  get rightValue() {
-    return this.right = this.percentageToAbsoluteValue(100 - this.value);
-  }
-
-  @computedFrom("value")
-  get percentage() {
-    this.updateCssVariables();
-    return this.value ?? 0;
   }
 
   bind() {
@@ -47,6 +22,21 @@ export class PRangeSlider {
 
   attached() {
     this.updateCssVariables();
+  }
+
+  @computedFrom("value")
+  get percentage() {
+    this.updateCssVariables();
+    return this.value ?? 0;
+  }
+
+  valueChanged(newValue: number) {
+    this.left = this.percentageToAbsoluteValue(newValue);
+    this.right = this.percentageToAbsoluteValue(100 - this.value);
+  }
+
+  maxValueChanged() {
+    this.valueChanged(this.value);
   }
 
   updateCssVariables() {

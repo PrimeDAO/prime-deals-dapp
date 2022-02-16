@@ -31,6 +31,8 @@ export class TokenDetails {
     decimals: false,
   };
 
+  valid = true;
+
   constructor(
     private aureliaHelperService: AureliaHelperService,
     private tokenService: TokenService,
@@ -45,6 +47,12 @@ export class TokenDetails {
   attached() {
     this.addValidation();
     this.watchVestedAmount();
+
+    this.form.subscribe(result => {
+      if (result.type === "validate") {
+        this.valid = result.controllerValidateResult.valid;
+      }
+    });
   }
 
   async getTokenInfo(address: string) {

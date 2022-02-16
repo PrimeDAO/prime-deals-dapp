@@ -47,10 +47,13 @@
           class="wizardFormInput"
           input-reference.bind="executionPeriodInput"
           label="On-Chain Execution Period"
+          data-test="proposal-execution-period-field"
         >
           <pinput-group>
-            <pinput-numeric value.bind="wizardState.registrationData.executionPeriodInDays & validate:form"
-                            view-model.ref="executionPeriodInput"></pinput-numeric>
+            <pinput-numeric
+              value.bind="wizardState.registrationData.executionPeriodInDays & validate:form"
+              view-model.ref="executionPeriodInput"
+            ></pinput-numeric>
             <span slot="after">days</span>
           </pinput-group>
         </pform-input>
