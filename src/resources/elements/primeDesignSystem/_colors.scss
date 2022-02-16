@@ -17,9 +17,6 @@ $BG04: #151318; // Background
 $Border01: #403453; // Border
 $Border02: #292236; // Border
 $Border03: #372a4b; // Border
-$Red: #ff5252; // Fail
-$Orange: #ffb155; // Warning
-$Green: #38de67; // Success
 $Shade01: #ff497a; // Graph
 $Shade02: #fc4d92; // Graph
 $Shade03: #f149ad; // Graph
@@ -42,20 +39,20 @@ $Gradient08: linear-gradient(45deg, $Secondary02 0%, $Shade01 50%, $Shade06 100%
   background-clip: text;
 }
 
-$Red: #ff5252;
+$Red: #ff5252; // Fail
 $Red-BG: #3e263c;
-$Orange: #ffb155;
+$Orange: #ffb155; // Warning
 $Orange-BG: #3e3038;
 $Grey: #cecece;
 $Grey-BG: #30343e;
-$Green: #38de67;
+$Green: #38de67; // Success
 $Green-BG: #2b3139;
 $Magenta: #ff52cf;
 $Magenta-BG: #38263e;
-$GreyAlt: #848484;
-$GreyAlt-BG: #2d3131;
-$Orange: #da6511;
-$Orange-BG: #3e2c27;
+$DarkGrey: #848484;
+$DarkGrey-BG: #2d3131;
+$DarkOrange: #da6511;
+$DarkOrange-BG: #3e2c27;
 $Teal: #18bab0;
 $Teal-BG: #2b3239;
 $Black: #717171;

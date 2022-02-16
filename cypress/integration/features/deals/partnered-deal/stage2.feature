@@ -24,3 +24,8 @@ Feature: "Lead details" stage (Stage 2)
     When I fill in the 'Wallet address' field with '0x0DA7fB6eeDdBcc5A5EBe388783aD5cA99a556677'
     And I try to proceed to next step
     Then I am presented with the 'Partnered Deal' 'Primary DAO' stage
+
+  Scenario: Private Deal option should be turned off by default
+    When I'm in the "Make Deal Private?" section
+    Then the "Make Deal Private" option should be turned off
+
