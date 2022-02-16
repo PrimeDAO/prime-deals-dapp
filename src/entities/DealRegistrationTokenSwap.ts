@@ -129,6 +129,14 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       address: "",
       email: "",
     };
+    this.terms = {
+      clauses: [{
+        id: "",
+        text: "",
+      }],
+      coreTeamChatURL: "",
+      previousDiscussionURL: "",
+    };
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
