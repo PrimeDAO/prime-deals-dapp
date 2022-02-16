@@ -10,7 +10,6 @@ import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDisc
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDX, getLegacy3BoxProfileAsBasicProfile } from "@ceramicstudio/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
-import { IDealsData } from "entities/IDealTypes";
 
 @autoinject
 export class DiscussionsService {
