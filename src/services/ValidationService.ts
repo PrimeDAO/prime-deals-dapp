@@ -6,6 +6,7 @@ export enum Validation {
   email = "email",
   url = "url",
   uniqueCollection = "uniqueCollection",
+  imageUrl = "imageUrl"
 }
 
 ValidationRules.customRule(
@@ -31,4 +32,10 @@ ValidationRules.customRule(
   Validation.uniqueCollection,
   (value) => Utils.isUniqueSimpleCollection(value),
   "Please enter unique values",
+);
+
+ValidationRules.customRule(
+  Validation.imageUrl,
+  (value) => Utils.isLogoUrl(value),
+  "Please enter valid image URL",
 );

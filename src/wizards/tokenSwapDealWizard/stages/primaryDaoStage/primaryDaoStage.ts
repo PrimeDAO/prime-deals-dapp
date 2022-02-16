@@ -32,7 +32,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
       .ensure<string>(dao => dao.logo_url)
       .required()
       .withMessage("Primary DAO avatar is required")
-      .satisfiesRule(Validation.url)
+      .satisfiesRule(Validation.imageUrl)
       .ensure<ISocialMedia[]>(dao => dao.social_medias)
       .required()
       .satisfiesRule(Validation.uniqueCollection)
