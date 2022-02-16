@@ -340,7 +340,8 @@ const MOCK_DATA = {
     version: "0.0.1",
     discussionId: "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
     topic: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
-    clauseId: 0,
+    clauseHash: "clause-hash-1",
+    clauseIdx: 0,
     admins: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
@@ -357,7 +358,8 @@ const MOCK_DATA = {
     version: "0.0.1",
     discussionId: "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
     topic: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostr",
-    clauseId: 1,
+    clauseHash: "clause-hash-2",
+    clauseIdx: 1,
     admins: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
@@ -374,7 +376,8 @@ const MOCK_DATA = {
     version: "0.0.1",
     discussionId: "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
     topic: "Excepteur sint occaecat cupidatat id est laborum.",
-    clauseId: 2,
+    clauseHash: "clause-hash-3",
+    clauseIdx: 2,
     admins: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
@@ -391,7 +394,8 @@ const MOCK_DATA = {
     version: "0.0.1",
     discussionId: "18a416630e1ab87c7d24d960bfd3a0f72a61b9e0",
     topic: "Clause without a discussion.",
-    clauseId: 3,
+    clauseHash: "clause-hash-4",
+    clauseIdx: 3,
     admins: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
@@ -423,6 +427,6 @@ export class CeramicServiceMock extends IDataSourceDeals {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public update(id: IKey, data: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    return MOCK_DATA[id] = JSON.parse(data);
   }
 }

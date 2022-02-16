@@ -95,13 +95,14 @@ export class DealDashboard {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private addOrReadDiscussion = async (topic: string, hash: string, id: number | null = null): Promise<void> => {
+  private addOrReadDiscussion = async (topic: string, hash: string, id: string | null, idx: number | null): Promise<void> => {
     const discussionId = await this.discussionsService.createDiscussion(
       this.dealId,
       {
         discussionId: hash,
         topic,
-        clauseId: id,
+        clauseHash: id,
+        clauseIdx: idx,
         admins: [this.ethereumService.defaultAccountAddress],
         members: [this.ethereumService.defaultAccountAddress],
         isPublic: true,
@@ -115,7 +116,7 @@ export class DealDashboard {
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
-      }, 1000);
+      }, 200); // Bypass page transaction repositioning
       this.router.navigate(`discussion/${discussionId}`, { replace: true, trigger: true });
     }
   };

@@ -66,7 +66,7 @@ export class DiscussionsList{
         top: document.body.scrollHeight,
         behavior: "smooth",
       });
-    }, 1000);
+    }, 100);
     this.router.navigate(page);
   }
 }

@@ -179,7 +179,7 @@ export class DiscussionThread {
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
-      }, 1000);
+      }, 250);
     }
 
     // Update the discussion status

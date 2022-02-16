@@ -10,6 +10,7 @@ import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDisc
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDX, getLegacy3BoxProfileAsBasicProfile } from "@ceramicstudio/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
+import { IDealsData } from "entities/IDealTypes";
 
 @autoinject
 export class DiscussionsService {
@@ -107,8 +108,9 @@ export class DiscussionsService {
     dealId: string,
     args: {
       discussionId: string,
+      clauseHash: string | null,
       topic: string,
-      clauseId: number | null,
+      clauseIdx: number | null,
       isPublic: boolean,
       members?: Array<string>,
       admins?: Array<string>,
@@ -120,15 +122,18 @@ export class DiscussionsService {
     // Don't create a new discussion if it already exists
     if (this.discussions[args.discussionId]) return args.discussionId;
 
+    const discussionId = (await args.discussionId) || (await this.hashString(`${dealId}-${args.topic}-${new Date().getTime()}`));
+
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
       return null;
     } else {
-      discussions[args.discussionId] = {
+      discussions[discussionId] = {
         version: "0.0.1",
         discussionId: args.discussionId,
         topic: args.topic,
-        clauseId: args.clauseId,
+        clauseHash: args.clauseHash,
+        clauseIdx: args.clauseIdx,
         createdByAddress: createdBy,
         createdAt: new Date(),
         modifiedAt: new Date(),
@@ -139,11 +144,34 @@ export class DiscussionsService {
       };
 
       const dealData = await this.dealService.deals.get(dealId);
-      dealData.addClauseDiscussion(args.clauseId.toString(), args.discussionId);
-      this.dealService.deals.set(dealId, dealData);
-      // TODO: Save discussion object using ceramicService
+      // this.convo.threads.create(
+      //   this.ethereumService.defaultAccountAddress,
+      //   localStorage.getItem("discussionToken"),
+      //   args.topic,
+      //   "https://deals.prime.xyz/deal/${dealId}",
+      //   "",
+      //   !dealData.registrationData.isPrivate,
+      //   !dealData.registrationData.isPrivate,
+      //   [
+      //     dealData.registrationData.proposalLead.address,
+      //     ...(dealData.registrationData.primaryDAO?.members || []),
+      //     ...(dealData.registrationData.partnerDAO?.members || []),
+      //   ],
+      //   [dealData.registrationData.proposalLead.address],
+      //   [""],
+      //   {},
+      //   args.discussionId,
+      // );
 
-      return args.discussionId;
+      await dealData.addClauseDiscussion(
+        args.clauseHash,
+        discussionId,
+      );
+
+      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
+      this.dealService.deals.set(dealId, dealData);
+
+      return discussionId;
     }
   }
 
@@ -180,18 +208,10 @@ export class DiscussionsService {
   //   console.log({thread});
   // }
 
-  public async loadDiscussionComments(discussionId: string, pageIdx = 0): Promise<IComment[]> {
+  public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     try {
       this.comments = await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-        // url,        // Origin URL
-        // author,     // Blockchain Wallet Address
-        // tag1,       // Custom Tag
-        // tag2,       // Custom Tag
-        // replyTo: "", // CommentId of the original Comment
-        latestFirst: "false", // Return Newer on the top
-        page: `${pageIdx}`,
-        // pageSize: "15",
       });
 
       return this.comments ? [...this.comments]: null;

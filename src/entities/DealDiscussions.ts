@@ -6,7 +6,8 @@ export interface IDiscussion {
   admins: Array<string>,
   members: Array<string>,
   isPublic: boolean,
-  clauseId: number | null,
+  clauseHash: string | null,
+  clauseIdx: number | null,
   topic: string,
   replies: number,
   modifiedAt: Date,
@@ -50,7 +51,8 @@ export interface IDealDiscussion {
   members: Array<string>;
   admins: Array<string>;
   topic: string;
-  clauseId: number | null;
+  clauseHash: string | null;
+  clauseIdx: number | null;
   replies: number;
 }
 
@@ -64,6 +66,7 @@ export class DealDiscussion implements IDealDiscussion {
   public members: Array<string>;
   public admins: Array<string>;
   public topic: string;
-  public clauseId: number | null;
+  public clauseHash: string | null;
+  public clauseIdx: number | null;
   public replies: number;
 }

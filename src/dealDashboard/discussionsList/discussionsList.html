@@ -16,7 +16,7 @@
           id="${discussion.id}"
           click.delegate="navigateTo(`discussion/${discussion.id}`)"
           repeat.for="discussion of discussionsArray">
-          <td class="h-centered">${discussion.clauseId + 1 || "-" }</td>
+          <td class="h-centered">${discussion.clauseIdx + 1 || "-" }</td>
           <td>
             <p>
               ${discussion.topic}

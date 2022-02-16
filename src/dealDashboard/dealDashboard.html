@@ -38,7 +38,7 @@
             <span class="body">
               ${clause.text}
             </span>
-            <span class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), $index)">Discuss<img src="/comment.svg"></img></span>
+            <span class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">Discuss<img src="/comment.svg"></img></span>
           </div>
         </ol>
       </section>
