@@ -8,7 +8,10 @@
   transition: .4s;
 
   .pToggleInput {
-    display: none;
+    display: inline;
+    opacity: 0;
+    height: 0;
+    width: 0;
   }
 
   .pToggleSlider {
@@ -36,7 +39,8 @@
     border-radius: 50%;
   }
 
-  .checkedIcon, .uncheckedIcon {
+  .checkedIcon,
+  .uncheckedIcon {
     transition: .4s;
     color: $BG01;
   }
@@ -46,7 +50,7 @@
   }
 
   .pToggleInput:checked {
-    + .pToggleSlider {
+    +.pToggleSlider {
       background: $Gradient01;
 
       .checkedIcon {
@@ -59,13 +63,13 @@
     }
   }
 
-  .pToggleInput:checked + .pToggleSlider:before {
+  .pToggleInput:checked+.pToggleSlider:before {
     transform: translateX(calc(100% + 2px));
   }
 
   .pToggleInput:disabled {
 
-    + .pToggleSlider {
+    +.pToggleSlider {
       cursor: not-allowed;
       background: transparent;
       border: 1px solid $Neutral02;
@@ -74,7 +78,8 @@
         background-color: $Neutral02;
       }
 
-      .checkedIcon, .uncheckedIcon {
+      .checkedIcon,
+      .uncheckedIcon {
         color: $Neutral02;
       }
     }

@@ -142,8 +142,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       email: "",
     };
     this.keepAdminRights = true;
-    this.offersPrivate = true;
-    this.isPrivate = true;
+    this.offersPrivate = false;
+    this.isPrivate = false;
     this.createdAt = null;
     this.modifiedAt = null;
     this.createdByAddress = null;
