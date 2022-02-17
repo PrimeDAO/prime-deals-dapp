@@ -46,7 +46,7 @@ export class TokenDetails {
 
   attached() {
     this.addValidation();
-    this.watchVestedAmount();
+    this.watchTokenProperties();
 
     this.form.subscribe(result => {
       if (result.type === "validate") {
@@ -58,6 +58,7 @@ export class TokenDetails {
   async getTokenInfo(address: string) {
     this.showTokenDetails = false;
     this.tokenInfoLoading = true;
+    this.validTokenLogoURI = true;
 
     if (!Utils.isAddress(address) || !await this.tokenService.isERC20Token(address)) {
       this.tokenInfoLoading = false;
@@ -74,17 +75,14 @@ export class TokenDetails {
       }
 
       if (!tokenInfo.logoURI) {
-        await this.tokenService.getTokenGeckoInfo(tokenInfo);
+        this.tokenInfoLoading = true;
+        await this.tokenService.getTokenGeckoInfo(tokenInfo).finally(() => this.tokenInfoLoading = false);
       }
 
       this.token.name = tokenInfo.name;
       this.token.symbol = tokenInfo.symbol;
       this.token.decimals = tokenInfo.decimals;
       this.token.logoURI = tokenInfo.logoURI;
-
-      this.tokenDetailsNotFound.name = !tokenInfo.name;
-      this.tokenDetailsNotFound.symbol = !tokenInfo.symbol;
-      this.tokenDetailsNotFound.decimals = !tokenInfo.decimals;
     } catch (error) {
       this.token.name = undefined;
       this.token.logoURI = undefined;
@@ -92,6 +90,11 @@ export class TokenDetails {
       this.token.decimals = undefined;
     }
 
+    this.tokenDetailsNotFound.name = !this.token.name;
+    this.tokenDetailsNotFound.symbol = !this.token.symbol;
+    this.tokenDetailsNotFound.decimals = !this.token.decimals;
+
+    this.tokenInfoLoading = false;
     this.showTokenDetails = true;
   }
 
@@ -112,12 +115,15 @@ export class TokenDetails {
     this.logoLoaded(Utils.isValidUrl(encodeURI(this.token.logoURI)));
   }
 
-  private watchVestedAmount() {
+  private watchTokenProperties() {
     this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransfer", newValue => {
       if (newValue === 0) {
         this.token.vestedFor = undefined;
         this.token.cliffOf = undefined;
       }
+    });
+    this.aureliaHelperService.createPropertyWatch(this.token, "address", () => {
+      this.token.amount = undefined;
     });
   }
 
@@ -136,17 +142,17 @@ export class TokenDetails {
       .satisfiesRule(Validation.isETHAddress)
       .then()
       .satisfiesRule("isValidIERC20Address")
-      .ensure<number>(data => data.amount)
+      .ensure<string>(data => data.amount)
       .required()
       .min(0)
       .ensure<number>(data => data.vestedFor)
       .required()
-      .when(data => data.vestedTransfer !== 0)
+      .when(data => data.vestedTransferAmount !== undefined)
       .withMessage("Please select a vested period")
       .min(0)
       .ensure<number>(data => data.cliffOf)
       .required()
-      .when(data => data.vestedTransfer !== 0)
+      .when(data => data.vestedTransferAmount !== undefined)
       .withMessage("Please select a cliff period (can be 0)")
       .min(0)
       .rules;

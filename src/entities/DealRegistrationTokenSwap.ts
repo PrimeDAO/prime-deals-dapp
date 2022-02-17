@@ -25,9 +25,9 @@ export interface IToken {
   decimals?: number,
   logoURI?: string,
 
-  amount?: number;
-  instantTransfer: number
-  vestedTransfer: number
+  amount?: string;
+  instantTransferAmount?: string
+  vestedTransferAmount?: string
   vestedFor?: number
   cliffOf?: number
 }
@@ -115,8 +115,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       tokens: [{
         address: "",
         amount: undefined,
-        instantTransfer: 0,
-        vestedTransfer: 0,
+        instantTransferAmount: undefined,
+        vestedTransferAmount: undefined,
         vestedFor: undefined,
         cliffOf: undefined,
       }],
@@ -129,8 +129,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       tokens: [{
         address: "",
         amount: undefined,
-        instantTransfer: 0,
-        vestedTransfer: 0,
+        instantTransferAmount: undefined,
+        vestedTransferAmount: undefined,
         vestedFor: undefined,
         cliffOf: undefined,
       }],

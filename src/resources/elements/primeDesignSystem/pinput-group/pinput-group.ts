@@ -5,7 +5,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 @customElement("pinput-group")
 export class PInputGroup {
   element: Element;
-  @bindable.booleanAttr() disabled = false;
+  @bindable.booleanAttr disabled = false;
   @child("[slot='before']") beforeSlot;
   @child("[slot='after']") afterSlot;
 

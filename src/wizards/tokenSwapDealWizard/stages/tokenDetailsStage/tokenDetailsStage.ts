@@ -62,8 +62,8 @@ export class TokenDetailsStage {
     this.wizardState.registrationData.primaryDAO.tokens.push({
       address: "",
       amount: undefined,
-      instantTransfer: 0,
-      vestedTransfer: 0,
+      instantTransferAmount: undefined,
+      vestedTransferAmount: undefined,
       vestedFor: undefined,
       cliffOf: undefined,
     });

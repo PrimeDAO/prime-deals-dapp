@@ -2,6 +2,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import { bindingMode, computedFrom, customElement } from "aurelia-framework";
 import "./prange-slider.scss";
 import { Utils } from "../../../../services/utils";
+import { IToStringOptions, NumberService } from "../../../../services/NumberService";
 
 @customElement("prange-slider")
 export class PRangeSlider {
@@ -10,14 +11,17 @@ export class PRangeSlider {
   @bindable leftLabel?: string;
   @bindable rightLabel?: string;
   @bindable maxValue = 100;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) left: number;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) right: number;
+  @bindable.booleanAttr notWei = true;
+  @bindable.booleanAttr disabledInputs = false;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
 
-  constructor(public element: Element) {
+  constructor(public element: Element, private numberService: NumberService) {
   }
 
   bind() {
-    this.value = this.absoluteValueToPercentage(this.left ?? this.maxValue / 2);
+    this.updateValue();
+    this.valueChanged(this.value);
   }
 
   attached() {
@@ -30,9 +34,11 @@ export class PRangeSlider {
     return this.value ?? 0;
   }
 
-  valueChanged(newValue: number) {
-    this.left = this.percentageToAbsoluteValue(newValue);
-    this.right = this.percentageToAbsoluteValue(100 - this.value);
+  valueChanged(newValue: number, oldValue?: number) {
+    this.value = newValue ?? oldValue;
+    const formatOptions: IToStringOptions = {};
+    this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), formatOptions);
+    this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), formatOptions);
   }
 
   maxValueChanged() {
@@ -52,4 +58,9 @@ export class PRangeSlider {
   private percentageToAbsoluteValue(value: number) {
     return this.maxValue ? Math.round(value / 100 * this.maxValue) : undefined;
   }
+
+  private updateValue() {
+    this.value = this.left ? this.absoluteValueToPercentage(Number(this.left)) : this.value;
+  }
+
 }

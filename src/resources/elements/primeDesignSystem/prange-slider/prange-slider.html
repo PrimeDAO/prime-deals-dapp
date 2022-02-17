@@ -9,11 +9,13 @@
     </div>
   </div>
   <div class="rangeSlider">
-    <pinput-numeric class="value" not-wei value.bind="left"></pinput-numeric>
+    <pinput-numeric class="value" disabled.bind="disabledInputs" not-wei.bind="notWei"
+                    value.bind="left"></pinput-numeric>
     <div class="inputContainer">
       <output class="currentValue">${percentage}%</output>
       <input type="range" value.bind="value"/>
     </div>
-    <pinput-numeric class="value" not-wei value.bind="right"></pinput-numeric>
+    <pinput-numeric class="value" disabled.bind="disabledInputs" not-wei.bind="notWei"
+                    value.bind="right"></pinput-numeric>
   </div>
 </template>

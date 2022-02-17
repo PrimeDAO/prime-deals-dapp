@@ -43,8 +43,9 @@
           </p>
           <pinput-text input.trigger="checkURL()" value.bind="token.logoURI"></pinput-text>
           <span class="feedbackMessage ${!validTokenLogoURI ? 'feedbackMessageVisible' : ''} errorMessage">
-          No valid image found at the provided logo URL
-        </span>
+            <template if.bind="token.logoURI">No valid image found at the provided logo URL</template>
+            <template else>Image logo is required</template>
+          </span>
         </div>
       </div>
       <pform-input data-test="proposal-token-amount-field"
@@ -53,9 +54,9 @@
                    label-description="You are able to edit the amount of tokens to be swapped before the execution phase."
       >
         <pinput-numeric
-          not-wei.bind="true"
           placeholder="500.000"
           value.bind="token.amount & validate"
+          decimals.bind="token.decimals"
           view-model.ref="amountInput"
         ></pinput-numeric>
       </pform-input>
@@ -66,10 +67,12 @@
       >
         <prange-slider
           left-label="Instant"
-          left.bind="token.instantTransfer"
-          max-value.bind="token.amount"
+          disabled-inputs.bind="!token.amount"
+          left.bind="token.instantTransferAmount"
           right-label="Vested"
-          right.bind="token.vestedTransfer"
+          max-value.bind="token.amount | ethwei"
+          not-wei
+          right.bind="token.vestedTransferAmount"
         ></prange-slider>
       </pform-input>
 
@@ -81,9 +84,9 @@
           <div class="vesting-input">
             <p>Tokens vested for</p>
             <pform-input data-test="proposal-vested-period-field" input-reference.bind="vestedForInput">
-              <pinput-group disabled.bind="token.amount === token.instantTransfer">
+              <pinput-group disabled.bind="token.amount === token.instantTransferAmount">
                 <pinput-numeric
-                  disabled.bind="token.amount === token.instantTransfer"
+                  disabled.bind="token.amount === token.instantTransferAmount"
                   not-wei
                   value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"
@@ -95,9 +98,9 @@
           <div class="vesting-input">
             <p>with a cliff of</p>
             <pform-input data-test="proposal-cliff-period-field" input-reference.bind="cliffOfInput">
-              <pinput-group disabled.bind="token.amount === token.instantTransfer">
+              <pinput-group disabled.bind="token.amount === token.instantTransferAmount">
                 <pinput-numeric
-                  disabled.bind="token.amount === token.instantTransfer"
+                  disabled.bind="token.amount === token.instantTransferAmount"
                   not-wei
                   value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
@@ -132,7 +135,7 @@
           <p>Amount tokens</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
-                              value.to-view="token.amount"></formatted-number>
+                              value.to-view="token.amount | ethwei"></formatted-number>
             <span else>
              -
           </span>
@@ -142,33 +145,35 @@
         <div class="detailsCell">
           <p>Instant transfer</p>
           <p>
-            <formatted-number if.bind="token.instantTransfer >= 0" thousands-separated
-                              value.to-view="token.instantTransfer"></formatted-number>
-            <span else>
-             -
-          </span>
+            <template if.bind="token.vestedTransferAmount">${token.instantTransferAmount}</template>
+            <template else>
+              -
+            </template>
           </p>
         </div>
 
         <div class="detailsCell">
           <p>Vested transfer</p>
           <p>
-            <formatted-number if.bind="token.vestedTransfer >= 0" thousands-separated
-                              value.to-view="token.vestedTransfer"></formatted-number>
-            <span else>
-             -
-          </span>
+            <template if.bind="token.vestedTransferAmount">${token.vestedTransferAmount}</template>
+            <template else>
+              -
+            </template>
           </p>
         </div>
 
         <div class="detailsCell">
           <p>Vested for</p>
-          <p>${token.vestedFor ? token.vestedFor + ' days' : '-'}</p>
+          <p>
+            <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
+            <template else>-</template>
+          </p>
         </div>
 
         <div class="detailsCell">
           <p>Cliff of</p>
-          <p>${token.cliffOf ? token.cliffOf + ' days' : '-'}</p>
+          <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
+          <template else>-</template>
         </div>
       </div>
 
