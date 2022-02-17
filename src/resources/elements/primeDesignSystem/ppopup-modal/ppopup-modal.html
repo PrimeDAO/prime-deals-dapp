@@ -1,0 +1,10 @@
+<template>
+  <section class="dialog">
+    <p class="header">${header}</p>
+    <p class="body">${message}</p>
+    <p class="footer">
+      <pbutton type="tertiary" if.bind="showCancelButton" ref="secondarButton" click.trigger="controller.cancel()">${buttonTextSecondary}</pbutton>
+      <pbutton type="primary" if.bind="showOkButton" ref="primaryButton" click.trigger="controller.ok()">${buttonTextPrimary}</pbutton>
+    </p>
+  </section>
+</template>

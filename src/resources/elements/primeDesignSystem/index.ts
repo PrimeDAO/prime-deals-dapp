@@ -18,5 +18,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./prange-slider/prange-slider"),
     PLATFORM.moduleName("./pcountdown-closebutton/pcountdown-closebutton"),
     PLATFORM.moduleName("./ppopup-notification/ppopup-notification"),
+    PLATFORM.moduleName("./ppopup-modal/ppopup-modal"),
   ]);
 }
