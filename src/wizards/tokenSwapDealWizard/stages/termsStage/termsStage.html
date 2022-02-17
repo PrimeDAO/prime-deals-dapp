@@ -1,8 +1,6 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
-  <require
-    from="../../../../resources/elements/editingCard/editingCard"
-  ></require>
+  <require from="./termClause/termClause"></require>
 
   <stage-wrapper title="Terms" wizard-manager.bind="wizardManager">
     <div class="stageSection">
@@ -20,38 +18,13 @@
 
       <!-- Content -->
       <div class="stageSectionContent">
-        <template repeat.for="clause of wizardState.registrationData.terms.clauses">
-          <!-- Terms Card -->
-          <editing-card
-            data-test="termsClause"
-            on-edit.call="onEdit()"
-            on-save.call="onSave()"
-            on-delete.call="onDelete($index)"
-          >
-            <!-- View -->
-            <template replace-part="view">
-              ${clause.text}
-            </template>
-
-            <!-- Edit -->
-            <template replace-part="edit">
-              <pform-input
-                class="wizardFormInput"
-                label="${`Clause ${$index + 1}`}"
-                show-counter
-                max-length="250"
-                data-test="clause-input"
-              >
-                <ptextarea
-                  data-test="clauseTextarea"
-                  rows="4"
-                  value.bind="clause.text"
-                  placeholder="Some placeholder"
-                ></ptextarea>
-              </pform-input>
-            </template>
-          </editing-card>
-        </template>
+        <term-clause
+          repeat.for="clause of wizardState.registrationData.terms.clauses"
+          clause.bind="clause"
+          index.bind="$index"
+          form.from-view="termsForms[$index]"
+          on-delete.call="onDelete($index)"
+        ></term-clause>
 
         <pbutton
           data-test="addClauseButton"
@@ -63,35 +36,6 @@
           Add Clause
           <i class="fa fa-plus"></i>
         </pbutton>
-
-        <!-- <pform-input
-          class="wizardFormInput wizardFormInputNarrow"
-          label="Proposal Title"
-          show-counter
-          max-length="50"
-          data-test="proposal-title-field">
-          <pinput-text value.bind="wizardState.registrationData.proposal.title & validate:form"></pinput-text>
-        </pform-input>
-
-        <pform-input
-          class="wizardFormInput wizardFormInputNarrow"
-          label="Proposal Summary"
-          label-info="Give a brief outline of the Token swap deal."
-          show-counter
-          max-length="250"
-          data-test="proposal-summary-field">
-          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.summary & validate:form"></ptextarea>
-        </pform-input>
-
-        <pform-input
-          class="wizardFormInput wizardFormInputNarrow"
-          label="Proposal Description"
-          label-info="Give a precise idea of the Token swap, its background, uniqueness, and features."
-          show-counter
-          max-length="1000"
-          data-test="proposal-description-field">
-          <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.description & validate:form"></ptextarea>
-        </pform-input> -->
       </div>
     </div>
   </stage-wrapper>
