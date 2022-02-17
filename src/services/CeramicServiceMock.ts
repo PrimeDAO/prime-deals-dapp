@@ -23,7 +23,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   },
   terms: {
     clauses: [
-
+      {id: "", text: "lorem"},
     ],
     coreTeamChatURL: "",
     previousDiscussionURL: "",

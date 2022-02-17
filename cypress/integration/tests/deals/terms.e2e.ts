@@ -18,13 +18,16 @@ class Terms {
   static getClauses() {
     return cy.get("[data-test='termsClause']");
   }
+  static getClausesTextarea() {
+    return cy.get("[data-test='clauseTextarea'] textarea");
+  }
   static getClauseError() {
     return cy.get("[data-test='clauseFormInput']");
   }
 }
 
 Given("I add content to a Clause", () => {
-  cy.get("[data-test='clauseTextarea'] textarea").type(UPDATED);
+  Terms.getClausesTextarea().type(UPDATED);
 });
 
 Given("I have {int} existing Clauses", (numOfClauses: number) => {
@@ -78,4 +81,9 @@ Then("I have {int} Clauses", (numOfClauses: number) => {
 
 Then("I should get an error message", () => {
   Terms.getClauseError().should("be.visible");
+});
+
+Then("I can see my existing Clauses", () => {
+  const CLAUSE_TEXT = "lorem";
+  Terms.getClausesTextarea().invoke("val").should("equal", CLAUSE_TEXT);
 });

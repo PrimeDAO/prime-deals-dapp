@@ -1,4 +1,4 @@
-Feature: Terms
+Feature: Terms - Open Proposal
   Background:
     Given I navigate to the "Open proposal" "Terms" stage
 
