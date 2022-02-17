@@ -50,7 +50,7 @@ const _registration2: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E", "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F"],
+    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E", "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F", "0x3E4Ae4e8968C88B24E4A8090863f1AE8733f412B"],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
   },
@@ -112,7 +112,7 @@ const _registration3: IDealRegistrationTokenSwap = {
   },
   keepAdminRights: true,
   offersPrivate: true,
-  isPrivate: true,
+  isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
   createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
@@ -322,7 +322,9 @@ const MOCK_DATA = {
     "clause-hash-2": "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
     "clause-hash-3": "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
   },
-  "clause-discussions-hash-3": {},
+  "clause-discussions-hash-3": {
+    "clause-hash-1": "db02f024d31f4484af725d2740395c1d04e13de7",
+  },
   "clause-discussions-hash-4": {},
   "clause-discussions-hash-5": {},
   "clause-discussions-hash-6": {},
@@ -348,7 +350,6 @@ const MOCK_DATA = {
     members: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
-    isPrivate: false,
     createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     createdAt: new Date("2022-01-23T15:38:16.528Z"),
     modifiedAt: new Date(1643031030746),
@@ -366,7 +367,6 @@ const MOCK_DATA = {
     members: [
       "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     ],
-    isPrivate: true,
     createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
     createdAt: new Date("2022-01-21T15:48:32.753Z"),
     modifiedAt: new Date(1642846275332),
@@ -384,7 +384,6 @@ const MOCK_DATA = {
     members: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
-    isPrivate: true,
     createdByAddress: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     createdAt: new Date("2022-01-22T20:57:43.707Z"),
     modifiedAt: null,
@@ -402,7 +401,23 @@ const MOCK_DATA = {
     members: [
       "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     ],
-    isPrivate: true,
+    createdByAddress: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    createdAt: new Date("2022-01-22T20:57:43.707Z"),
+    modifiedAt: null,
+    replies: 0,
+  },
+  "db02f024d31f4484af725d2740395c1d04e13de7": {
+    version: "0.0.1",
+    discussionId: "18a416630e1ab87c7d24d960bfd3a0f72a61b9e0",
+    topic: "Clause without a discussion.",
+    clauseHash: "clause-hash-4",
+    clauseIdx: 3,
+    admins: [
+      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    ],
+    members: [
+      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    ],
     createdByAddress: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
     createdAt: new Date("2022-01-22T20:57:43.707Z"),
     modifiedAt: null,
