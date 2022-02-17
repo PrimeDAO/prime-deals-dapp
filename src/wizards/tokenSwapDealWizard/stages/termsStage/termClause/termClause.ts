@@ -17,6 +17,7 @@ export class TermClause {
   @bindable.number index: number;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
   @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: EditingCard["viewMode"] = "edit";
+  @bindable.boolean hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
 

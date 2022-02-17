@@ -26,6 +26,7 @@
           on-saved.call="checkedForUnsavedChanges()"
           view-model.ref="termClauses[$index]"
           view-mode.bind="stageMetadata.termsViewModes[$index]"
+          hide-delete-button.bind="wizardState.registrationData.terms.clauses.length === 1"
         ></term-clause>
 
         <pbutton
