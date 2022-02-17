@@ -31,9 +31,7 @@ export class TermClause {
   addValidationRules() {
     const rules = ValidationRules.ensure<IClause, string>(
       (clause) => clause.text,
-    )
-      .required()
-      .minLength(1).rules;
+    ).required().rules;
 
     this.form.addObject(this.clause, rules);
   }

@@ -23,6 +23,8 @@ export class EditingCard {
 
     if (typeof this.onSave === "function") {
       const canSave = await this.onSave();
+
+      this.saving = false;
       if (!canSave) return;
     }
 
