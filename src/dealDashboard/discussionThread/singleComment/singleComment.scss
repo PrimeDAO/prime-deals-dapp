@@ -20,8 +20,11 @@
     background-color: $BG01;
   }
 
-  &.highlighted {
-    background-color: $BG05;
+  &.highlighted:not(.isReply, .reply) {
+    background-color: $BG02;
+  }
+  &.isReply .highlighted {
+    background-color: darken($BG02, 3%);
   }
 
   .header {
@@ -33,9 +36,9 @@
     gap: $spacing-normal;
     margin-top: 19px;
     // margin-bottom: 27px;
-    .lastActivity {
-      // margin-left: auto;
-    }
+    // .lastActivity {
+    //   margin-left: auto;
+    // }
   }
 
   .avatar {
@@ -220,7 +223,7 @@
 
   &:hover {
     .actions>.vote.count.isConnected,
-    .lastActivity,
+    .lastActivity.isConnected,
     .footer>.vote.count.isConnected {
       display: none;
     }
