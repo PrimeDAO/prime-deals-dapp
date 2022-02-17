@@ -66,6 +66,7 @@ export class WizardManager {
     this.leadDetailsStage,
     this.primaryDaoStage,
     this.partnerDaoStage,
+    this.termsStage,
   ];
 
   constructor(
