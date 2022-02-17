@@ -1,3 +1,19 @@
 @import "./pinput";
 @import "./typography";
 
+.pcard {
+  padding: $spacing-normal; // only if there is no padding on the parent
+  border-radius: $border-radius-small;
+  background: $BG02;
+  height: inherit;
+  width: inherit;
+
+  &.gradient {
+    background: /* this is the card background: */
+      linear-gradient($BG02, $BG02) padding-box,
+      /* this is the gradient on the left side: */
+      linear-gradient(to bottom, $Primary01, $Secondary02) border-box;
+    border-left: $border-radius-small solid transparent;
+    border-right: $border-radius-small solid $BG02;
+  }
+}
