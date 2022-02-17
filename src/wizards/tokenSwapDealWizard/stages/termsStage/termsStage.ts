@@ -6,7 +6,10 @@ import {
   IClause,
   IDealRegistrationTokenSwap,
 } from "entities/DealRegistrationTokenSwap";
-import { ValidationController } from "aurelia-validation";
+import {
+  ValidationController,
+  ValidationControllerFactory,
+} from "aurelia-validation";
 import "./termsStage.scss";
 
 @autoinject
@@ -14,38 +17,24 @@ export class TermsStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
-  form: ValidationController;
+  private termsForms: ValidationController[] = [];
+  private form: ValidationController;
 
-  constructor(public wizardService: WizardService) {}
+  constructor(
+    public wizardService: WizardService,
+    private validationControllerFactory: ValidationControllerFactory,
+  ) {}
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
-    // const validationRules = ValidationRules
-    //   .ensure<IProposal, string>(proposal => proposal.title)
-    //   .required()
-    //   .ensure<string>(proposal => proposal.summary)
-    //   .required()
-    //   .minLength(10)
-    //   .ensure<string>(proposal => proposal.description)
-    //   .required()
-    //   .minLength(10)
-    //   .rules;
-
-    // this.form = this.wizardService.registerValidationRules(
-    //   this.wizardManager,
-    //   this.wizardState.registrationData.proposal,
-    //   validationRules,
-    // );
+    this.addValidation();
   }
 
-  onEdit() {}
-
-  onSave() {}
-
-  onDelete(deleteIndex: number) {
-    this.wizardState.registrationData.terms.clauses.splice(deleteIndex, 1);
+  onDelete(index: number) {
+    this.termsForms.splice(index, 1);
+    this.wizardState.registrationData.terms.clauses.splice(index, 1);
   }
 
   addClauseButton() {
@@ -54,5 +43,28 @@ export class TermsStage implements IBaseWizardStage {
       text: "",
     };
     this.wizardState.registrationData.terms.clauses.push(emptyClause);
+  }
+
+  addValidation() {
+    this.form = this.validationControllerFactory.createForCurrentScope();
+
+    this.wizardService.registerStageValidateFunction(
+      this.wizardManager,
+      async () => {
+        const termsValidationResults = await Promise.all(
+          this.termsForms.map((form) =>
+            form.validate().then((result) => result.valid),
+          ),
+        );
+
+        return this.form
+          .validate()
+          .then(
+            (result) =>
+              result.valid &&
+              Boolean(termsValidationResults.filter(Boolean).length),
+          );
+      },
+    );
   }
 }
