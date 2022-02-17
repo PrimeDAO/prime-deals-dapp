@@ -1,12 +1,17 @@
 import { ValidationRules } from "aurelia-validation";
 import { Utils } from "./utils";
+import { ImageService } from "./ImageService";
 
 export enum Validation {
   isETHAddress = "isETHAddress",
   email = "email",
   url = "url",
   uniqueCollection = "uniqueCollection",
-  imageUrl = "imageUrl"
+  imageUrl = "imageUrl",
+  imageSize = "imageSize",
+  imageSquare = "imageSquare",
+  imageDimensions = "imageDimensions",
+  imageExtension = "imageExtension",
 }
 
 ValidationRules.customRule(
@@ -36,6 +41,34 @@ ValidationRules.customRule(
 
 ValidationRules.customRule(
   Validation.imageUrl,
-  (value) => Utils.isLogoUrl(value),
+  (value) => ImageService.isImageUrl(value),
   "Please enter valid image URL",
+);
+
+ValidationRules.customRule(
+  Validation.imageSize,
+  (value, obj, maxSize) => ImageService.validateImageSize(value, maxSize),
+  "Maximum image size is ${$config.maxSize > 1000000 ? $config.maxSize / 1000000 + 'MB' : $config.maxSize / 1000 + 'KB'}",
+  (maxSize) => ({maxSize}),
+);
+
+ValidationRules.customRule(
+  Validation.imageSquare,
+  (value) => ImageService.isSquareImage(value),
+  "Image should be square",
+);
+
+ValidationRules.customRule(
+  Validation.imageDimensions,
+  (value, obj, dimensions) => ImageService.validateImageDimensions(value, dimensions),
+  `\${$config.dimensions.minWidth}px <= width <= \${$config.dimensions.maxWidth}px 
+  and \${$config.dimensions.minHeight}px <= height <= \${$config.dimensions.maxHeight}px.`,
+  (dimensions) => ({dimensions}),
+);
+
+ValidationRules.customRule(
+  Validation.imageExtension,
+  (value, obj, extensions) => ImageService.validateImageExtension(value, extensions),
+  "Image should have one of the extensions: ${$config.extensions.join(', ')}",
+  (extensions) => ({extensions}),
 );

@@ -17,15 +17,25 @@
 
       <pform-input
         class="wizardFormInput wizardFormInputNarrow"
-        label.bind="title +' Treasury Address'">
-        <pinput-text value.bind="data.treasury_address & validate:form" disabled.bind="disabled"></pinput-text>
+        label.bind="title +' Treasury Address'"
+        label-info="This address will receive tokens from the Primary DAO/Partner DAO">
+        <pinput-text
+          value.bind="data.treasury_address & validate:form"
+          placeholder="0x..."
+          disabled.bind="disabled">
+        </pinput-text>
       </pform-input>
 
       <div class="daoStageAvatar">
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
-          label.bind="title + ' Avatar'">
-          <pinput-text value.bind="data.logo_url & validate:form" disabled.bind="disabled"></pinput-text>
+          label.bind="title + ' Avatar'"
+          label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size">
+          <pinput-text
+            value.bind="data.logo_url & validate:form"
+            placeholder="Image URL..."
+            disabled.bind="disabled">
+          </pinput-text>
         </pform-input>
         <div class="daoAvatar" style.bind="`background-image: url(${data.logo_url})`">
           <i if.bind="!data.logo_url" class="fas fa-image"></i>
