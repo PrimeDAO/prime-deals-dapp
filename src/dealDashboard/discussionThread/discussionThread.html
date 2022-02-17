@@ -1,6 +1,6 @@
 <template>
   <require from="./singleComment/singleComment"></require>
-  <section class="thread" ref="thread">
+  <section class="thread" ref="refThread">
     <section class="head container">
       <div class="header">
         <h1 class="subtitle heading heading1 gradient">
@@ -82,14 +82,14 @@
           </p>
         </div>
         <ptextarea
+          ref="refCommentInput"
           placeholder="${isReply? 'Type your reply here...' : 'Type your comment here...'}"
           value.two-way="comment"
-          enter.delegate="addComment()"
-          focus.delegate="focus()"
-          blur.delegate="blur()"
+          rows="2"
           validation-state="${isLoading.commenting ? 'validating' : ''}"
-          disabled.bind="isLoading.commenting">
-          class="comment-input"></ptextarea>
+          disabled.bind="isLoading.commenting"
+          class="comment-input">
+        </ptextarea>
         <pbutton
           class="action do"
           type="primary"
@@ -100,6 +100,7 @@
           ${isReply ? "Reply" : "Comment"}
         </pbutton>
       </section>
+      <span ref="refThreadEnd"></span>
     </div>
   </section>
 </template>

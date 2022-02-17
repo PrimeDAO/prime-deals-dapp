@@ -19,7 +19,9 @@ import { Types } from "ably";
 @autoinject
 export class DiscussionThread {
   @bindable discussionId: string;
-  private thread: HTMLElement;
+  private refThread: HTMLElement;
+  private refThreadEnd: HTMLSpanElement;
+  private refCommentInput: HTMLTextAreaElement;
   private deal: DealTokenSwap;
   private dealId: string;
   private comment = "";
@@ -110,7 +112,7 @@ export class DiscussionThread {
     this.unsubscribeFromDiscussion();
   }
 
-  private updateCommentsThreadUponMessageArrival(comment: Types.Message) {
+  private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
     // If a new comment is added to the thread, it is added at the end of the comments array.
     if (!this.comments.some(item => item._id === comment.name)) {
       this.threadComments.push(comment.data);
@@ -121,6 +123,10 @@ export class DiscussionThread {
         return r;
       }, {});
     }
+    this.refThreadEnd.scrollIntoView({
+      behavior: "smooth",
+    });
+    this.isLoading.commenting = false;
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
@@ -187,7 +193,7 @@ export class DiscussionThread {
   }
 
   threadIsInView() {
-    const rect = this.thread.getBoundingClientRect();
+    const rect = this.refThread.getBoundingClientRect();
     const vWidth = window.innerWidth || document.documentElement.clientWidth;
     const vHeight = window.innerHeight || document.documentElement.clientHeight;
     const efp = (x, y) => document.elementFromPoint(x, y);
@@ -197,10 +203,10 @@ export class DiscussionThread {
       return false;
 
     return (
-      this.thread.contains(efp(rect.left, rect.top)) ||
-      this.thread.contains(efp(rect.right, rect.top)) ||
-      this.thread.contains(efp(rect.right, rect.bottom)) ||
-      this.thread.contains(efp(rect.left, rect.bottom))
+      this.refThread.contains(efp(rect.left, rect.top)) ||
+      this.refThread.contains(efp(rect.right, rect.top)) ||
+      this.refThread.contains(efp(rect.right, rect.bottom)) ||
+      this.refThread.contains(efp(rect.left, rect.bottom))
     );
   }
 
