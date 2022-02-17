@@ -18,13 +18,16 @@ class Terms {
   static getClauses() {
     return cy.get("[data-test='termsClause']");
   }
+  static getClauseError() {
+    return cy.get("[data-test='clauseFormInput']");
+  }
 }
 
 Given("I add content to a Clause", () => {
   cy.get("[data-test='clauseTextarea'] textarea").type(UPDATED);
 });
 
-Given("I have {int} Clauses", (numOfClauses: number) => {
+Given("I have {int} existing Clauses", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", 1);
 
   for (let i = 1; i < numOfClauses; i += 1) {
@@ -67,4 +70,12 @@ Then("the new Clause should appear", () => {
 Then("I am not able to add another Clause", () => {
   Terms.getClauses().should("have.length", MAX_NUMBER_OF_CLAUSES);
   Terms.addClauseButton().should("not.exist");
+});
+
+Then("I have {int} Clauses", (numOfClauses: number) => {
+  Terms.getClauses().should("have.length", numOfClauses);
+});
+
+Then("I should get an error message", () => {
+  Terms.getClauseError().should("be.visible");
 });
