@@ -10,12 +10,14 @@
     </div>
     <div class="stageSectionContent">
       <pform-input
+        data-test="dao-name-field"
         class="wizardFormInput wizardFormInputNarrow"
         label.bind="title + ' Name'">
         <pinput-text value.bind="data.name & validate:form" disabled.bind="disabled"></pinput-text>
       </pform-input>
 
       <pform-input
+        data-test="dao-treasury-field"
         class="wizardFormInput wizardFormInputNarrow"
         label.bind="title +' Treasury Address'"
         label-info="This address will receive tokens from the Primary DAO/Partner DAO">
@@ -26,8 +28,9 @@
         </pinput-text>
       </pform-input>
 
-      <div class="daoStageAvatar">
+      <div class="daoStageAvatar" data-test="dao-avatar-section">
         <pform-input
+          data-test="dao-avatar-url-field"
           class="wizardFormInput wizardFormInputNarrow"
           label.bind="title + ' Avatar'"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size">
@@ -37,48 +40,56 @@
             disabled.bind="disabled">
           </pinput-text>
         </pform-input>
-        <div class="daoAvatar" style.bind="`background-image: url(${data.logo_url})`">
+        <div
+          class="daoAvatar"
+          style.bind="`background-image: url(${data.logo_url})`"
+          data-test="dao-avatar">
           <i if.bind="!data.logo_url" class="fas fa-image"></i>
         </div>
       </div>
 
-      <div class="multiFieldHeader">
-        <span class="multiFieldTitle">
-          Social media (optional)
-        </span>
-        <span class="multiFieldError">
-          ${socialMediasError.message}
-        </span>
-      </div>
+      <div data-test="dao-social-media">
+        <div class="multiFieldHeader">
+          <span class="multiFieldTitle">
+            Social media (optional)
+          </span>
+          <span class="multiFieldError">
+            ${socialMediasError.message}
+          </span>
+        </div>
 
-      <div
-        repeat.for="socialMedia of data.social_medias"
-        class="wizardFormInput daoSocialMedia">
-        <social-media-link
-          available-social-medias.bind="availableSocialMedias"
-          social-media.bind="socialMedia"
-          disabled.bind="disabled"
-          form.bind="form">
-        </social-media-link>
+        <div
+          repeat.for="socialMedia of data.social_medias"
+          data-test="dao-social-media-item"
+          class="wizardFormInput daoSocialMedia">
+          <social-media-link
+            available-social-medias.bind=" availableSocialMedias"
+            social-media.bind="socialMedia"
+            disabled.bind="disabled"
+            form.bind="form">
+          </social-media-link>
+          <button
+            data-test="remove-social-media"
+            class="removeButton"
+            click.delegate="removeSocialMedia($index)">
+            <i class="far fa-trash-alt"></i>
+          </button>
+        </div>
         <button
-          class="removeButton"
-          click.delegate="removeSocialMedia($index)">
-          <i class="far fa-trash-alt"></i>
+          data-test="add-social-media"
+          class="addButton"
+          if.bind="data.social_medias.length < 5"
+          click.delegate="addSocialMedia()">
+          + Add social media
         </button>
       </div>
-      <button
-        class="addButton"
-        if.bind="data.social_medias.length < 5"
-        click.delegate="addSocialMedia()">
-        + Add social media
-      </button>
 
     </div>
   </div>
-  <div class="stageSection stageSectionNoBorder">
+  <div class="stageSection stageSectionNoBorder" data-test="dao-representatives-section">
     <div class="stageSectionSidebar">
-      <h2 class="heading heading3 title">Representatives</h2>
-      <p class="subtext">
+      <h2 class="heading heading3 title" data-test="section-title">Representatives</h2>
+      <p class="subtext" data-test="section-description">
         <slot name="representatives-description"></slot>
       </p>
     </div>
@@ -95,11 +106,13 @@
         repeat.for="representative of data.representatives"
         class="wizardFormInput wizardFormInputNarrow daoRepresentative">
         <dao-representative-address
+          data-test="dao-representative"
           representative.bind="representative"
           disabled.bind="disabled"
           form.bind="form">
         </dao-representative-address>
         <button
+          data-test="remove-dao-representative"
           class="removeButton"
           if.bind="data.representatives.length > 1"
           click.delegate="removeRepresentative($index)">
@@ -107,6 +120,7 @@
         </button>
       </div>
       <button
+        data-test="add-dao-representative"
         class="addButton"
         if.bind="data.representatives.length < 5"
         click.delegate="addRepresentative()">

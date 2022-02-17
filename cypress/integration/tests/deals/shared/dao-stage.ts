@@ -1,9 +1,9 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Then('I am presented with errors for DAO details fields', () => {
-  cy.get('[data-test="dao-name-field"] .errorMessage').should('have.text', 'Required Input');
-  cy.get('[data-test="dao-treasury-field"] .errorMessage').should('have.text', 'Required Input');
-  cy.get('[data-test="dao-avatar-url-field"] .errorMessage').should('have.text', 'Required Input');
+  cy.get('[data-test="dao-name-field"] .errorMessage').should('contain.text', 'DAO name is required');
+  cy.get('[data-test="dao-treasury-field"] .errorMessage').should('contain.text', 'Treasury address is required');
+  cy.get('[data-test="dao-avatar-url-field"] .errorMessage').should('contain.text', 'DAO avatar is required');
 })
 
 Then('I can add link to DAO avatar', () => {
@@ -13,33 +13,31 @@ Then('I can add link to DAO avatar', () => {
       cy.get('input').type(avatarUrl)
     })
 
-    cy.get('[data-test="dao-avatar"]').should('have.attr', 'src', avatarUrl)
+    cy.get('[data-test="dao-avatar"]').should('have.css', 'background-image', `url("${avatarUrl}")`)
   })
 })
 
 Then('I can add up to 5 social media', () => {
-  cy.get('[data-test="dao-social-media-list"]').within(() => {
-    cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
-      expect($socialMedias).to.have.length(1);
-    });
-    cy.get('[data-test="add-social-media"]').click();
-    cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
-      expect($socialMedias).to.have.length(2);
-    });
-    cy.get('[data-test="add-social-media"]').click();
-    cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
-      expect($socialMedias).to.have.length(3);
-    });
-    cy.get('[data-test="add-social-media"]').click();
-    cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
-      expect($socialMedias).to.have.length(4);
-    });
-    cy.get('[data-test="add-social-media"]').click();
-    cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
-      expect($socialMedias).to.have.length(5);
-    });
-    cy.get('[data-test="add-social-media"]').should('not.exist')
+  cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
+    expect($socialMedias).to.have.length(1);
   });
+  cy.get('[data-test="add-social-media"]').click();
+  cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
+    expect($socialMedias).to.have.length(2);
+  });
+  cy.get('[data-test="add-social-media"]').click();
+  cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
+    expect($socialMedias).to.have.length(3);
+  });
+  cy.get('[data-test="add-social-media"]').click();
+  cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
+    expect($socialMedias).to.have.length(4);
+  });
+  cy.get('[data-test="add-social-media"]').click();
+  cy.get('[data-test="dao-social-media-item"]').should(($socialMedias) => {
+    expect($socialMedias).to.have.length(5);
+  });
+  cy.get('[data-test="add-social-media"]').should('not.exist')
 })
 
 Then('I can remove all social media', () => {
@@ -51,18 +49,19 @@ Then('I can remove all social media', () => {
   cy.get('[data-test="remove-social-media"]').last().click();
   cy.get('[data-test="remove-social-media"]').last().click();
   cy.get('[data-test="remove-social-media"]').last().click();
-  cy.get('[data-test="remove-social-media"]').should('not.exist')
+  cy.get('[data-test="dao-social-media-item"]').should('not.exist')
 })
 
 When('I fill in DAO details', () => {
   cy.get('[data-test="dao-name-field"] input').type('Dao name')
   cy.get('[data-test="dao-treasury-field"] input').type('0xc0ffee254729296a45a3885639AC7E10F9d54979')
-  cy.get('[data-test="dao-avatar-url-field"] input').type('https://example.com/image.png')
+  cy.get('[data-test="dao-avatar-url-field"] input').type('https://picsum.photos/seed/picsum/400/400')
 })
 
 Then('No errors for DAO details fields are visible', () => {
   cy.get('[data-test="dao-name-field"] .errorMessage').should('not.exist')
   cy.get('[data-test="dao-treasury-field"] .errorMessage').should('not.exist')
+  cy.wait(6000)
   cy.get('[data-test="dao-avatar-url-field"] .errorMessage').should('not.exist')
 })
 
@@ -104,7 +103,7 @@ Then('I can remove all but one DAO representative', () => {
 
 Then('I am presented with error about missing representative address', () => {
   cy.get('[data-test="dao-representative"] pform-input').within(() => {
-    cy.get('.errorMessage').should('have.text', 'Required Input')
+    cy.get('.errorMessage').should('contain.text', 'Please enter a valid wallet address')
   })
 })
 
@@ -117,6 +116,6 @@ When('I add 2 incorrect representative addresses', () => {
 
 Then('I am presented with errors about incorrect representative addresses', () => {
   cy.get('[data-test="dao-representative"] pform-input .errorMessage').each(($el) => {
-    cy.wrap($el).should('have.text', 'Please enter a valid wallet address')
+    cy.wrap($el).should('contain.text', 'Please enter a valid wallet address')
   })
 })

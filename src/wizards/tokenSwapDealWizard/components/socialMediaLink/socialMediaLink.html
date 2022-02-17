@@ -2,8 +2,9 @@
   <pform-input>
     <pselect data.bind="availableSocialMedias" value.bind="socialMedia.name & validate:form"></pselect>
   </pform-input>
-  <pform-input>
+  <pform-input input-reference.bind="input">
     <pinput-text
+      view-model.ref="input"
       placeholder="https://"
       value.bind="socialMedia.url & validate:form"
       disabled.bind="disabled">
