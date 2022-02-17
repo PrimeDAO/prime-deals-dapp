@@ -2,7 +2,7 @@ import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, Networks, AllowedNetworks } from "services/EthereumService";
+import { EthereumService, Networks, AllowedNetworks, Address } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -70,6 +70,7 @@ export class DiscussionsService {
         this.currentWalletAddress,
       ],
     );
+    if (!signature) return false;
 
     const {message, success } = await this.convo.auth.authenticate(
       this.currentWalletAddress,
@@ -143,25 +144,6 @@ export class DiscussionsService {
       };
 
       const dealData = await this.dealService.deals.get(dealId);
-      // this.convo.threads.create(
-      //   this.ethereumService.defaultAccountAddress,
-      //   localStorage.getItem("discussionToken"),
-      //   args.topic,
-      //   "https://deals.prime.xyz/deal/${dealId}",
-      //   "",
-      //   !dealData.registrationData.isPrivate,
-      //   !dealData.registrationData.isPrivate,
-      //   [
-      //     dealData.registrationData.proposalLead.address,
-      //     ...(dealData.registrationData.primaryDAO?.members || []),
-      //     ...(dealData.registrationData.partnerDAO?.members || []),
-      //   ],
-      //   [dealData.registrationData.proposalLead.address],
-      //   [""],
-      //   {},
-      //   args.discussionId,
-      // );
-
       await dealData.addClauseDiscussion(
         args.clauseHash,
         discussionId,
@@ -179,38 +161,20 @@ export class DiscussionsService {
     if (timestamp) this.discussions[discussionId].modifiedAt = timestamp;
   }
 
-  // public async toggleThreadPrivacy(threadId: string): Promise<void> {
-  //   const token = localStorage.getItem("discussionToken");
-
-  //   if (!token || !await this.isValidAuth()) await this.authenticateSession();
-  //   if (!token || !await this.isValidAuth()) return;
-
-  //   const thread = await this.convo.threads.createPrivate(
-  //     this.currentWalletAddress,
-  //     token,
-  //     "title",
-  //     "description",
-  //     "https://deals.prime.xyz",
-  //     [this.currentWalletAddress],
-  //     [this.currentWalletAddress],
-  //     [""],
-  //     {},
-  //     threadId,
-  //   );
-
-  //   // await this.convo.threads.togglePublicRead(
-  //   //   this.currentWalletAddress,
-  //   //   token,
-  //   //   threadId,
-  //   // );
-  //   // const thread = await this.convo.threads.getThreads([threadId]);
-  //   console.log({thread});
-  // }
-
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     try {
       this.comments = await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+      });
+
+      this.comments = this.comments.filter(comment => {
+        return !(
+          comment.metadata.isPrivate === "true" &&
+          ![
+            comment.author,
+            ...JSON.parse(comment.metadata.allowedMembers || "[]"),
+          ].includes(this.ethereumService.defaultAccountAddress)
+        );
       });
 
       return this.comments ? [...this.comments]: null;
@@ -225,7 +189,16 @@ export class DiscussionsService {
     if (network === Networks.Kovan) return 42;
   }
 
-  public async addComment(discussionId: string, comment: string, isPrivate: boolean, replyTo: string): Promise<IComment[]> {
+  /*
+  * Add a new comment to thread. Must validate the connection to a wallet before.
+  * @param {string} discussionId - The ID of the discussion to create the comment in
+  * @param {string} comment - The comment to create
+  * @param {boolean} isPrivate - Mark comment as private, if the thread is currently private
+  * @param {Array<string>} allowedMembers - An array of addresses that are allowed to view the comment if private
+  * @param
+  * returns void
+  */
+  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment[]> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -253,10 +226,12 @@ export class DiscussionsService {
         `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
         "https://deals.prime.xyz",
         {
-          isPrivate,
+          isPrivate: isPrivate.toString(),
+          allowedMembers: JSON.stringify(allowedMembers),
         },
         replyTo,
       );
+
       this.comments.push(data);
       return this.comments;
     } catch (error) {
@@ -311,7 +286,7 @@ export class DiscussionsService {
 
     if (!await this.isValidAuth()) {
       await this.authenticateSession();
-      if (!await this.isValidAuth()) {
+      if (!(await this.isValidAuth())) {
         this.eventAggregator.publish(
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
@@ -319,7 +294,6 @@ export class DiscussionsService {
         return this.comments;
       }
     }
-
     const token = localStorage.getItem("discussionToken");
 
     try {

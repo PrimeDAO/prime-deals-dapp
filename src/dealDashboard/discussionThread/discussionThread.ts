@@ -93,7 +93,7 @@ export class DiscussionThread {
     // Only members should see the discussion if is private
     this.isAuthorized = (
       !this.deal.registrationData.isPrivate ||
-      this.deal.registrationData.isPrivate && this.isMember
+      (this.deal.registrationData.isPrivate && this.isMember)
     );
 
     if (this.isAuthorized) {
@@ -216,30 +216,60 @@ export class DiscussionThread {
 
   async addComment(): Promise<void> {
     this.isLoading.commenting = true;
-    this.threadComments = await this.discussionsService.addComment(
-      this.discussionId,
-      this.comment,
-      this.deal.registrationData.isPrivate,
-      this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
-    );
-    this.comment = "";
-    this.isLoading.commenting = false;
-    this.isReply = false;
+    try {
+      this.threadComments = await this.discussionsService.addComment(
+        this.discussionId,
+        this.comment,
+        this.deal.registrationData.isPrivate,
+        [
+          this.deal.registrationData.proposalLead.address,
+          ...this.deal.registrationData.primaryDAO?.members || "",
+          ...this.deal.registrationData.partnerDAO?.members || "",
+        ],
+        this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
+      );
+      this.comment = "";
+
+      setTimeout(() => {
+        this.isLoading.commenting = false;
+      }, 5000);
+      this.refThreadEnd.scrollIntoView({
+        behavior: "smooth",
+      });
+      this.isReply = false;
+    } catch (err) {
+      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.isLoading.commenting = false;
+    }
   }
 
   async replyComment(_id: string): Promise<void> {
     this.isReply = !this.isReply;
+    if (this.isReply) {
+      this.refCommentInput.querySelector("textarea").focus();
+    }
+
     this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
     this.isLoading[`isVoting ${_id}`] = true;
-    this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
-    this.isLoading[`isVoting ${_id}`] = false;
+    try {
+      this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
+    }
+    catch (err) {
+      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+    } finally {
+      this.isLoading[`isVoting ${_id}`] = false;
+    }
   }
 
   async deleteComment(_id: string): Promise<void> {
-    this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
+    try {
+      this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
+    } catch (err) {
+      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+    }
   }
 
   async doAction(action: string, args: any): Promise<void> {
