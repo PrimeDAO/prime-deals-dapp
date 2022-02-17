@@ -1,4 +1,5 @@
-import { autoinject, bindable, bindingMode } from "aurelia-framework";
+import { autoinject, bindingMode } from "aurelia-framework";
+import { bindable } from "aurelia-typed-observable-plugin";
 import {
   validateTrigger,
   ValidationController,
@@ -11,10 +12,11 @@ import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/p
 @autoinject
 export class TermClause {
   @bindable clause: IClause;
-  @bindable index: number;
+  @bindable.number index: number;
   @bindable({ defaultBindingMode: bindingMode.fromView })
     form: ValidationController;
   @bindable onDelete: () => void;
+  @bindable.boolean disableDeleteButton: boolean;
 
   constructor(
     private validationControllerFactory: ValidationControllerFactory,
