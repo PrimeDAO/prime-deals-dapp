@@ -60,7 +60,7 @@
           </pbutton>
         </div>
       </div>
-      <time class="lastActivity">${lastActivity(comment.createdOn)}</time>
+      <time class="lastActivity ${isConnected ? 'isConnected' : ''}">${lastActivity(comment.createdOn)}</time>
     </header>
 
     <section class="body">
