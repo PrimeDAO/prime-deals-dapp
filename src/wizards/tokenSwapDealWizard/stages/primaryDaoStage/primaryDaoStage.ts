@@ -1,9 +1,8 @@
 import { autoinject } from "aurelia-framework";
-import { ValidationController, ValidationRules } from "aurelia-validation";
-import { IDealRegistrationTokenSwap, IDAO, ISocialMedia } from "entities/DealRegistrationTokenSwap";
-import { Validation } from "services/ValidationService";
+import { ValidationController } from "aurelia-validation";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IWizardState, WizardService } from "wizards/services/WizardService";
-import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
+import { daoStageValidationRules, IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
 
 @autoinject
 export class PrimaryDaoStage implements IBaseWizardStage {
@@ -21,32 +20,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
 
-    const validationRules = ValidationRules
-      .ensure<IDAO, string>(dao => dao.name)
-      .required()
-      .withMessage("Primary DAO name is required")
-      .ensure<string>(dao => dao.treasury_address)
-      .required()
-      .withMessage("Treasury address is required")
-      .satisfiesRule(Validation.isETHAddress)
-      .ensure<string>(dao => dao.logo_url)
-      .required()
-      .withMessage("Primary DAO avatar is required")
-      .satisfiesRule(Validation.imageUrl)
-      .satisfiesRule(Validation.imageSize, 5000000)
-      .satisfiesRule(Validation.imageSquare)
-      .satisfiesRule(Validation.imageDimensions, {minWidth: 64, maxWidth: 1000, minHeight: 64, maxHeight: 1000})
-      .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
-      .ensure<ISocialMedia[]>(dao => dao.social_medias)
-      .required()
-      .satisfiesRule(Validation.uniqueCollection)
-      .maxItems(5)
-      .ensure<{address: string}[]>(dao => dao.representatives)
-      .required()
-      .satisfiesRule(Validation.uniqueCollection)
-      .minItems(1)
-      .maxItems(5)
-      .rules;
+    const validationRules = daoStageValidationRules("Primary DAO");
 
     this.form = this.wizardService.registerValidationRules(
       this.wizardManager,

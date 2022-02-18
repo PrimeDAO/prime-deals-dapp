@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <div data-test="dao-social-media">
+      <div data-test="dao-social-media" if.bind="disabled && data.social_medias.length > 0 || !disabled">
         <div class="multiFieldHeader">
           <span class="multiFieldTitle">
             Social media (optional)
@@ -69,6 +69,7 @@
             form.bind="form">
           </social-media-link>
           <button
+            if.bind="!disabled"
             data-test="remove-social-media"
             class="removeButton"
             click.delegate="removeSocialMedia($index)">
@@ -78,7 +79,7 @@
         <button
           data-test="add-social-media"
           class="addButton"
-          if.bind="data.social_medias.length < 5"
+          if.bind="data.social_medias.length < 5 && !disabled"
           click.delegate="addSocialMedia()">
           + Add social media
         </button>
@@ -96,7 +97,7 @@
     <div class="stageSectionContent">
       <div class="multiFieldHeader">
         <span class="multiFieldTitle">
-          Primary DAO - Representatives Addresses (Max. 5)
+          ${title} - Representatives Addresses (Max. 5)
         </span>
         <span class="multiFieldError">
           ${representativesError.message}
@@ -114,7 +115,7 @@
         <button
           data-test="remove-dao-representative"
           class="removeButton"
-          if.bind="data.representatives.length > 1"
+          if.bind="data.representatives.length > 1 && !disabled"
           click.delegate="removeRepresentative($index)">
           <i class="far fa-trash-alt"></i>
         </button>
@@ -122,7 +123,7 @@
       <button
         data-test="add-dao-representative"
         class="addButton"
-        if.bind="data.representatives.length < 5"
+        if.bind="data.representatives.length < 5 && !disabled"
         click.delegate="addRepresentative()">
         + Additional representative
       </button>

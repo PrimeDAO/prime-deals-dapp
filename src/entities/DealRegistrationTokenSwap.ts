@@ -112,10 +112,11 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
         balance: "",
         address: "",
       }],
+      treasury_address: "",
       representatives: [{address: ""}],
       social_medias: [{name: "", url: ""}],
       logo_url: null,
-    } as IDAO;
+    };
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.partnerDAO = {
       name: "",
@@ -125,10 +126,11 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
         balance: "",
         address: "",
       }],
+      treasury_address: "",
       representatives: [{address: ""}],
       social_medias: [{name: "", url: ""}],
       logo_url: null,
-    } as IDAO;
+    };
     this.proposalLead = {
       address: "",
       email: "",

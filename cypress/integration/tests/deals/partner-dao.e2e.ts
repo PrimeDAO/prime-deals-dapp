@@ -7,7 +7,7 @@ Given("I navigate to create partnered deal wizard Partner DAO stage", () => {
 Then('I can see Partner DAO section with inputs for collecting its details', () => {
   cy.get('[data-test="dao-details-section"]').within(() => {
     cy.get('[data-test="section-title"]').should('have.text', 'Partner DAO')
-    cy.get('[data-test="section-description"]').should('have.text', 'Please fill in the details of the partner DAO who will be participating in the deal.')
+    cy.get('[data-test="section-description"]').should('contain.text', 'Please fill in the details of the partner DAO who will be participating in the deal.')
 
     cy.contains('pform-input', 'Partner DAO Name').within(() => {
       cy.get('input').should('be.visible')
@@ -29,7 +29,7 @@ Then('I can see Partner DAO section with inputs for collecting its details', () 
 
     cy.get('[data-test="dao-social-media"]').within(() => {
       cy.contains('div', 'Social media (optional)');
-      cy.get('[data-test="add-social-media"]').should('have.text', '+ Add social media')
+      cy.get('[data-test="add-social-media"]').should('contain.text', '+ Add social media')
       cy.get('pselect').within(() => {
         cy.contains('.ss-option', 'Twitter')
         cy.contains('.ss-option', 'Discord')
@@ -49,6 +49,6 @@ Then('I can see Partner DAO Representatives section', () => {
     cy.get('[data-test="dao-representative"]').should(($item) => {
       expect($item).to.have.length(1);
     });
-    cy.get('[data-test="add-dao-representative"]').should('have.text', '+ Additional representative')
+    cy.get('[data-test="add-dao-representative"]').should('contain.text', '+ Additional representative')
   })
 })
