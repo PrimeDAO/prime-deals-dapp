@@ -70,7 +70,18 @@ export class DiscussionThread {
     return !!this.ethereumService.defaultAccountAddress;
   }
 
-  async attached(): Promise<void> {
+  attached(): void {
+    this.initialize();
+    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+      this.initialize();
+    });
+  }
+
+  detached(): void {
+    this.unsubscribeFromDiscussion();
+  }
+
+  private async initialize(): Promise<void> {
     this.isLoading.discussions = true;
 
     this.isAuthorized = this.checkIsAuthorized;
@@ -106,10 +117,6 @@ export class DiscussionThread {
     } else {
       this.isLoading.discussions = false;
     }
-  }
-
-  detached(): void {
-    this.unsubscribeFromDiscussion();
   }
 
   private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {

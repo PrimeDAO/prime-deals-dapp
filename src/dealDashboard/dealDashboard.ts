@@ -14,7 +14,7 @@ import "./dealDashboard.scss";
 export class DealDashboard {
   // loading = true;
   private connected = false;
-  private accountAddress: Address;
+  private connectedAddress: Address;
 
   private routeChangeEvent: Subscription;
 
@@ -46,10 +46,10 @@ export class DealDashboard {
     private router: Router,
     private dealService: DealService,
   ) {
-    this.accountAddress = "";
+    this.connectedAddress = "";
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
-      if (account !== this.accountAddress) {
-        this.accountAddress = account;
+      if (account !== this.connectedAddress) {
+        this.connectedAddress = account;
       }
     });
   }

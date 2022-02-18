@@ -19,8 +19,8 @@ export class DiscussionsService {
   private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
   private idx: IDX;
 
-  @bindable public discussions: Record<string, IDealDiscussion> = {};
-  @bindable private comment: string;
+  public discussions: Record<string, IDealDiscussion> = {};
+  private comment: string;
 
   constructor(
     private ethereumService: EthereumService,
@@ -87,7 +87,13 @@ export class DiscussionsService {
     return false;
   };
 
-  // Hashing using SHA-1 for shorter output length
+  /**
+   * Hash a string using SHA-1 for constant length output
+   * Used for generating a unique ID for a discussion
+   *
+   * @param string String to convert to hash
+   * @returns hash string
+   */
   public async hashString(string): Promise<string> {
     const utf8 = new TextEncoder().encode(string);
     const digest = await crypto.subtle.digest("SHA-1", utf8);
@@ -98,12 +104,27 @@ export class DiscussionsService {
     return hashString;
   }
 
+  /**
+   * Sets a discussions object from the deal data.
+   * Reads the discussions ID's from the clause-discussions mapping of a deal and stores the discussion meta data for each discussion as key/value pairs to the service `discussions` object.
+   * @param clauseDiscussions A map of clause discussions
+   * @returns void
+   */
   public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
+    const discussions = {};
     for (const [, value] of clauseDiscussions.entries()) {
-      this.discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
+      discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
     }
+    this.discussions = discussions;
   }
 
+  /**
+   * Creates a new discussion (if not already exists) stores it in the data storage and updates the discussion object.
+   * If the discussion already exists, it returns the existing discussion ID.
+   * @param dealId string
+   * @param args discussion metadata object
+   * @returns Promise<string> discussionId
+   */
   public async createDiscussion(
     dealId: string,
     args: {
@@ -148,26 +169,44 @@ export class DiscussionsService {
         args.clauseHash,
         discussionId,
       );
-
-      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
       this.dealService.deals.set(dealId, dealData);
+      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
+      this.updateDiscussionListStatus(discussionId, new Date());
 
       return discussionId;
     }
   }
 
+  /**
+   * Update the reply count and the last activity date of a discussion
+   * @param discussionId string
+   * @param timestamp Date
+   * @returns void
+   */
   public async updateDiscussionListStatus(discussionId: string, timestamp?: Date): Promise<void> {
-    this.discussions[discussionId].replies = this.comments.length;
-    if (timestamp) this.discussions[discussionId].modifiedAt = timestamp;
+    if (
+      this.discussions[discussionId]?.replies === this.comments.length &&
+      new Date(this.discussions[discussionId].modifiedAt).getTime() <= timestamp?.getTime()
+    ) return;
+
+    if (this.comments.length)
+      this.discussions[discussionId].replies = this.comments.length;
+    if (timestamp)
+      this.discussions[discussionId].modifiedAt = timestamp;
+
+    this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
   }
 
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
+    let latestTimestamp = 0;
     try {
       this.comments = await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
       });
+      if (!this.comments) return null;
 
-      this.comments = this.comments.filter(comment => {
+      this.comments = this.comments.filter((comment: any) => {
+        if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
         return !(
           comment.metadata.isPrivate === "true" &&
           ![
@@ -177,7 +216,9 @@ export class DiscussionsService {
         );
       });
 
-      return this.comments ? [...this.comments]: null;
+      latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
+      this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp));
+      return this.comments;
     } catch (error) {
       this.consoleLogService.logMessage(error);
     }
@@ -189,14 +230,14 @@ export class DiscussionsService {
     if (network === Networks.Kovan) return 42;
   }
 
-  /*
+  /**
   * Add a new comment to thread. Must validate the connection to a wallet before.
-  * @param {string} discussionId - The ID of the discussion to create the comment in
-  * @param {string} comment - The comment to create
-  * @param {boolean} isPrivate - Mark comment as private, if the thread is currently private
-  * @param {Array<string>} allowedMembers - An array of addresses that are allowed to view the comment if private
-  * @param
-  * returns void
+  * @param discussionId string - The ID of the discussion to create the comment in
+  * @param comment string - The comment to create
+  * @param isPrivate boolean - Mark comment as private, if the thread is currently private
+  * @param allowedMembers Array<string> - An array of addresses that are allowed to view the comment if private
+  * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
+  * @returns void
   */
   public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment[]> {
     const isValidAuth = await this.isValidAuth();
@@ -233,9 +274,10 @@ export class DiscussionsService {
       );
 
       this.comments.push(data);
+      this.updateDiscussionListStatus(discussionId);
       return this.comments;
     } catch (error) {
-      this.consoleLogService.logMessage(error);
+      this.consoleLogService.logMessage(error.message);
     }
   }
 

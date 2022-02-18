@@ -1,4 +1,5 @@
 import { autoinject } from "aurelia-framework";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
 import { DiscussionsService } from "./../discussionsService";
@@ -26,6 +27,7 @@ export class DiscussionsList{
   private deal: DealTokenSwap;
 
   constructor(
+    private eventAggregator: EventAggregator,
     private router: Router,
     private dateService: DateService,
     private dealService: DealService,
@@ -39,7 +41,15 @@ export class DiscussionsList{
     this.deal = this.dealService.deals.get(this.dealId);
     await this.deal.ensureInitialized();
 
+    this.initialize();
+    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+      this.initialize();
+    });
+  }
+
+  private initialize() {
     this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
+
     this.discussionsArray = Object
       .keys(this.discussionsService.discussions)
       .map(key => (

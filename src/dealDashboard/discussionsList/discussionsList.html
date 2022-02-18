@@ -34,7 +34,7 @@
             </p>
           </td>
           <td class="h-centered v-centered">${discussion.replies || 0}</td>
-          <td class="h-centered v-centered">${dateService.formattedTime(discussion.lastActivity).diff()}</td>
+          <td class="h-centered v-centered">${dateService.formattedTime(discussion.modifiedAt).diff()}</td>
         </tr>
       </tbody>
     </table>
