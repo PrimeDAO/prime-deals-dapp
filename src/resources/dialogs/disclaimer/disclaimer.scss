@@ -1,0 +1,68 @@
+@import "../../elements/primeDesignSystem/dialogs.scss";
+@import "styles/styles.scss";
+
+body > ux-dialog-container.pcard.disclaimer {
+  > div > div {
+    > .dialog {
+      > .body {
+        white-space: pre-wrap;
+        word-break: break-word;
+
+        img {
+          max-width: 100%;
+        }
+
+        &.loading {
+          text-align: center;
+          padding-top: 32px;
+          i {
+            color: $Primary01;
+            font-size: 28px;
+          }
+        }
+      }
+
+      > .header {
+        font-size: 22px;
+      }
+
+      > .footer {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: right;
+        column-gap: 10px;
+        padding-right: 72px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+
+        .checkbox {
+          display: inline-flex;
+          align-items: flex-end;
+          column-gap: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 680px) {
+  body > ux-dialog-container.pcard.disclaimer {
+    > div > div {
+      > .dialog {
+        > .footer {
+          flex-direction: column;
+          align-items: unset;
+          row-gap: 8px;
+          padding-right: 40px;
+
+          .checkbox {
+            display: initial;
+            align-items: unset;
+            column-gap: unset;
+          }
+        }
+      }
+    }
+  }
+}

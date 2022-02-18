@@ -53,7 +53,7 @@ export class AlertService {
      * hack we gotta go through because of how the gradient border, size
      * and position of the dialog is defined in ux-dialog-container.
      * See ppopup-model.scss.  We have no other way to selectively
-     * alter the css of that element.  Once alert.scss is loaded, it forever overrides
+     * alter the css of that element.  Once ppopup-model.scss is loaded, it forever overrides
      * the default styling on ux-dialog-container.
      */
     let theContainer: Element;

@@ -38,7 +38,7 @@ export class DisclaimerService {
       disclaimed = true;
     } else {
       const response = await this.showDisclaimer(
-        "https://raw.githubusercontent.com/PrimeDAO/prime-deals-dapp/master/README.md",
+        "https://raw.githubusercontent.com/PrimeDAO/prime-launch-dapp/master/src/documentation/officialDocs/TermsOfService.md",
         "Prime Deals Disclaimer",
       );
 
@@ -96,9 +96,26 @@ export class DisclaimerService {
   }
 
   public showDisclaimer(disclaimerUrl: string, title: string): Promise<DialogCloseResult> {
-    return this.dialogService.open(Disclaimer, { disclaimerUrl, title }, { keyboard: true })
+    /**
+     * hack we gotta go through because of how the gradient border, size
+     * and position of the dialog is defined in ux-dialog-container.
+     * See ppopup-model.scss.  We have no other way to selectively
+     * alter the css of that element.  Once ppopup-model.scss is loaded, it forever overrides
+     * the default styling on ux-dialog-container.
+     */
+    let theContainer: Element;
+    return this.dialogService.open(Disclaimer, { disclaimerUrl, title },
+      { keyboard: true,
+        position: (modalContainer: Element, _modalOverlay: Element): void => {
+          theContainer = modalContainer;
+          modalContainer.classList.add("disclaimer", "pcard", "gradient");
+        },
+      })
       .whenClosed(
-        (result: DialogCloseResult) => result,
+        (result: DialogCloseResult) => {
+          theContainer.classList.remove("disclaimer", "pcard", "gradient");
+          return result;
+        },
         (error: string) => { return { output: error, wasCancelled: false }; });
   }
 }

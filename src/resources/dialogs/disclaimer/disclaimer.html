@@ -1,18 +1,18 @@
 <template>
-  <ux-dialog class="dialog disclaimer">
-    <ux-dialog-header>
-      <div class="heading heading2 ellipses">${model.title}</div>
-    </ux-dialog-header>
-    <ux-dialog-body if.to-view="loading" class="loading"><i class="fas fa-circle-notch fa-spin"></i></ux-dialog-body>
-    <ux-dialog-body else>
-      <div class="bodyContainer" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></div>
-    </ux-dialog-body>
-    <ux-dialog-footer>
-      <label><input type="checkbox" class="checkbox" checked.bind="checked">I acknowledge that I have fully read and understood this disclaimer</label>
-      <div class="action-buttons">
-        <div role="button" class="button2" click.trigger="controller.cancel(false)">Decline</div>
-        <button class="button1" disabled.to-view="!checked" ref="okButton" click.trigger="controller.ok(true)">Accept</button>
-      </div>
-    </ux-dialog-footer>
-  </ux-dialog>
+  <section class="dialog">
+    <p class="header ellipses">${model.title}</p>
+    <p class="body loading" if.to-view="loading"><i class="fas fa-circle-notch fa-spin"></i></p>
+    <p else class="body" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
+    <p class="footer">
+      <pform-input
+        class="checkbox"
+        click.delegate="toggleAccepted()"
+        label="I acknowledge that I have fully read and understood this disclaimer">
+        <ptoggle value.bind="checked"></ptoggle>
+      </pform-input>
+
+      <pbutton type="tertiary" click.trigger="controller.cancel(false)">Decline</pbutton>
+      <pbutton type="primary" disabled.to-view="!checked" ref="okButton" click.trigger="controller.ok(true)">Accept</pbutton>
+    </p>
+  </section>
 </template>

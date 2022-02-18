@@ -6,14 +6,12 @@ import {
   DialogSettings,
 } from "aurelia-dialog";
 import { autoinject } from "aurelia-framework";
-import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DialogService {
 
   constructor(
-    private dialogService: AureliaDialogService,
-    private consoleLogService: ConsoleLogService) {
+    private dialogService: AureliaDialogService) {
   }
 
   public open(

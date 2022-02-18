@@ -4,6 +4,7 @@ import axios from "axios";
 import { AxiosService } from "services/axiosService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 const marked = require("marked");
+import "./disclaimer.scss";
 
 @autoinject
 export class Disclaimer {
@@ -52,6 +53,10 @@ export class Disclaimer {
 
   get disclaimerHtml(): string {
     return this.disclaimer ? marked(this.disclaimer) : "";
+  }
+
+  toggleAccepted() {
+    this.checked = !this.checked;
   }
 }
 
