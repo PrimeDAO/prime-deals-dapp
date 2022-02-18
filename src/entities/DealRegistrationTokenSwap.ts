@@ -103,7 +103,6 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       summary: "",
       description: "",
     };
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.primaryDAO = {
       name: "",
       tokens: [{
@@ -117,7 +116,6 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       social_medias: [{name: "", url: ""}],
       logo_url: null,
     };
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.partnerDAO = {
       name: "",
       tokens: [{

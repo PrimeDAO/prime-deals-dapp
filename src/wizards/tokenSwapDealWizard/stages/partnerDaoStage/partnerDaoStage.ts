@@ -2,7 +2,7 @@ import { autoinject } from "aurelia-framework";
 import { ValidationController } from "aurelia-validation";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IWizardState, WizardService } from "wizards/services/WizardService";
-import { daoStageValidationRules, IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
+import { daoStageValidationRules, IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
 
 @autoinject
 export class PartnerDaoStage implements IBaseWizardStage {
