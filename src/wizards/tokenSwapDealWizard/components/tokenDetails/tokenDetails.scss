@@ -12,10 +12,6 @@ token-details {
       margin-bottom: 30px;
     }
 
-    &.invalidTokenDetails {
-      outline: 1px solid $Red;
-    }
-
     .vesting {
       display: flex;
       flex-direction: row;
