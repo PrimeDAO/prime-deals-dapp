@@ -1,0 +1,17 @@
+@import "../../../../resources/elements/primeDesignSystem/_variables.scss";
+@import "../../../../resources/elements/primeDesignSystem/_colors.scss";
+
+
+stage-wrapper[title="Submit"] {
+  .submitLabel {
+    font-size: $font-size3;
+    font-weight: $font-bold;
+    color: $Secondary02;
+  }
+
+  .submitLabel-sm {
+    font-size: $font-size2;
+    font-weight: $font-bold;
+    color: $Secondary02;
+  }
+}

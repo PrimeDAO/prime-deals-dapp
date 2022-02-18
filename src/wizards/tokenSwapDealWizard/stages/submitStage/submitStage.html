@@ -1,1 +1,45 @@
-<template></template>
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+
+  <stage-wrapper title="Submit" wizard-manager.bind="wizardManager">
+    <div class="stageSection">
+      <!-- Sidebar -->
+      <div class="stageSectionSidebar">
+        <h2 data-test="stageSectionSidebarTitle" class="heading heading3 title">
+          Deal Clauses
+        </h2>
+        <p class="subtext">
+          Provide all the important clauses of the proposed deal in detail for a
+          clear understanding of the terms of the agreement between the parties
+          and as a single source of truth for future reference.
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div class="stageSectionContent">
+        <div class="submitLabel">Proposal Title</div>
+        <p class="submitContent">${submitData.proposal.title}</p>
+
+        <div class="submitLabel">Proposal Summary</div>
+        <p class="submitContent">${submitData.proposal.summary}</p>
+
+        <div class="submitLabel">Proposal Description</div>
+        <p class="submitContent">${submitData.proposal.description}</p>
+
+        <div class="submitLabel">Proposal Lead</div>
+        <p class="submitContent">${submitData.proposalLead.address}</p>
+        <p class="submitContent">${submitData.proposalLead.email}</p>
+
+        <div class="submitLabel">Keep Admin Rights With All Incoming Offers</div>
+        <ptoggle value.bind="submitData.keepAdminRights"></ptoggle>
+
+        <div class="submitLabel">Private Offers</div>
+        <ptoggle value.bind="submitData.isPrivate"></ptoggle>
+
+        <div class="submitLabel-sm">Private Execution Period</div>
+        <p class="submitContent">${submitData.executionPeriodInDays} days</p>
+
+      </div>
+    </div>
+  </stage-wrapper>
+</template>
