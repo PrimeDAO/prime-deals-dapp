@@ -61,12 +61,19 @@ export class WizardManager {
     route: "terms",
     moduleId: PLATFORM.moduleName("./stages/termsStage/termsStage"),
   };
+  private submitStage: IWizardStage = {
+    name: "Submit",
+    valid: false,
+    route: "submit",
+    moduleId: PLATFORM.moduleName("./stages/submitStage/submitStage"),
+  };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
     this.leadDetailsStage,
     this.primaryDaoStage,
     this.tokenDetailsStage,
     this.termsStage,
+    this.submitStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
