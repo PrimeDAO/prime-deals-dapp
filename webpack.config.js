@@ -1,3 +1,14 @@
+/**
+ * ! Note: Required dependency in package.json to have webpack successfully built:
+ *     "ajv": "^8.8.2"
+ *   Still an open issue, whether there is a "cleaner" fix
+ *
+ *   Links:
+ *   - https://stackoverflow.com/questions/70020046/quasar-error-cannot-find-module-ajv-dist-compile-codegen
+ *   - PR, that introduced webpack5 (comment): https://github.com/PrimeDAO/prime-deals-dapp/pull/138#discussion_r806202525
+ */
+
+
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
