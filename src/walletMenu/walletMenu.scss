@@ -93,13 +93,13 @@ $walletMenuWidth: 360px;
     color: $Neutral02;
 
     .dot {
-      color: $AlertGreen;
+      color: $Green;
       font-size: 18px;
     }
 
     .testnet {
       .dot {
-        color: $AlertRed;
+        color: $Red;
       }
     }
   }

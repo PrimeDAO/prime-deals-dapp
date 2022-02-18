@@ -1,0 +1,37 @@
+@import "../styles";
+
+.pcountdown-closebutton {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+
+  &.isPaused {
+    .countdowner {
+      display: none;
+    }
+
+    .closeButton {
+      display: inline-flex;
+    }
+  }
+
+  .countdowner {
+    display: inline-flex;
+  }
+
+  .closeButton {
+    display: none;
+    font-size: 20px;
+    padding-left: 4px;
+    color: $Secondary05;
+
+    &::after {
+      content: "\2715";
+    }
+
+    &:hover {
+      color: $White;
+    }
+  }
+}

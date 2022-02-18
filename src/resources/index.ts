@@ -3,7 +3,7 @@ import { PLATFORM } from "aurelia-pal";
 
 export function configure(config: FrameworkConfiguration): void {
   config.globalResources([
-    PLATFORM.moduleName("./elements/banner/banner"),
+    PLATFORM.moduleName("./elements/popupNotifications/popupNotifications"),
     PLATFORM.moduleName("./elements/EtherscanLink/EtherscanLink"),
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
     PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
@@ -19,12 +19,9 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/horizontal-scroller/horizontal-scroller"),
     PLATFORM.moduleName("./elements/timeLeft/timeLeft"),
     PLATFORM.moduleName("./elements/dealSummary/dealSummary"),
-    PLATFORM.moduleName("./elements/circledNumber/circledNumber"),
     PLATFORM.moduleName("./elements/questionMark/questionMark"),
     PLATFORM.moduleName("./elements/tokenPair/tokenPair"),
     PLATFORM.moduleName("./elements/markdown/markdown"),
-    PLATFORM.moduleName("./elements/tokenSelect/tokenSelect"),
-    PLATFORM.moduleName("./elements/dropdown/dropdown"),
     PLATFORM.moduleName("./value-converters/number"),
     PLATFORM.moduleName("./value-converters/ethwei"),
     PLATFORM.moduleName("./value-converters/date"),

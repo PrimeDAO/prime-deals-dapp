@@ -252,21 +252,23 @@ export class TokenService {
       tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
     }
 
-    const uri = `https://pro-api.coingecko.com/api/v3/coins/${tokenInfo.id}?market_data=true&localization=false&community_data=false&developer_data=false&sparkline=false&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+    if (tokenInfo.id) { // else is not in coingecko
+      const uri = `https://pro-api.coingecko.com/api/v3/coins/${tokenInfo.id}?market_data=true&localization=false&community_data=false&developer_data=false&sparkline=false&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
 
-    return axios.get(uri)
-      .then((response) => {
-        tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
-        // tokenInfo.priceChangePercentage_24h = response.data.market_data.price_change_percentage_24h ?? 0;
-        if (!tokenInfo.logoURI || (tokenInfo.logoURI === TokenService.DefaultLogoURI)) {
-          tokenInfo.logoURI = response.data.image.thumb;
-        }
-        return tokenInfo;
-      })
-      .catch((ex) => {
-        this.consoleLogService.logMessage(`PriceService: Error fetching token price ${this.axiosService.axiosErrorHandler(ex)}`, "error");
-        return tokenInfo;
-      });
+      return axios.get(uri)
+        .then((response) => {
+          tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
+          // tokenInfo.priceChangePercentage_24h = response.data.market_data.price_change_percentage_24h ?? 0;
+          if (!tokenInfo.logoURI || (tokenInfo.logoURI === TokenService.DefaultLogoURI)) {
+            tokenInfo.logoURI = response.data.image.thumb;
+          }
+          return tokenInfo;
+        })
+        .catch((ex) => {
+          this.consoleLogService.logMessage(`PriceService: Error fetching token price ${this.axiosService.axiosErrorHandler(ex)}`, "error");
+          return tokenInfo;
+        });
+    }
   }
 
   public async isERC20Token(tokenAddress: Address): Promise<boolean> {

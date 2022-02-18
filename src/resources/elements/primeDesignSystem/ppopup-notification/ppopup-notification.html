@@ -1,0 +1,22 @@
+<template>
+  <div class="pPopupNotification" ref="container">
+    <div class="icon">
+      <i class="${typeClass} ${iconClass}"></i>
+    </div>
+    <div class="title ${typeClass}">${title}</div>
+    <div class="countdown">
+      <pcountdown-closebutton
+        stopped.call="countDownStopped(cancelled)"
+        paused.bind="paused"
+        closed.call="countdownClosed()"
+        running.bind="running">
+      </pcountdown-closebutton>
+    </div>
+    <div class="bodyContainer">
+      <div ref="body" class="message"></div>
+    </div>
+    <div class="subbodyContainer">
+      <div ref="subbody" class="submessage"></div>
+    </div>
+  </div>
+</template>

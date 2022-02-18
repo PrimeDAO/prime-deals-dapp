@@ -5,7 +5,6 @@
 }
 
 .page.dealDashboardContainer {
-
   .dealDashboard {
     display: grid;
     grid-template-columns: 50% 40%;
@@ -60,7 +59,7 @@
         }
 
         .timer {
-          color: $AlertOrange;
+          color: $Orange;
           font-size: 22px;
           font-weight: bold;
         }

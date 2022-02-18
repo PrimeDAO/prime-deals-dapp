@@ -1,6 +1,6 @@
 import { bindable } from "aurelia-typed-observable-plugin";
 import { customElement } from "aurelia-framework";
-import "./pcard.scss";
+import "../_styles.scss";
 
 /**
  * Usage:

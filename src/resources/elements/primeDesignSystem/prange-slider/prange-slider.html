@@ -1,0 +1,26 @@
+<template>
+  <div class="rangeLabels">
+    <div class="value">
+      <span if.bind="leftLabel">${leftLabel}</span>
+    </div>
+    <div class="valueSpace"></div>
+    <div class="value">
+      <span if.bind="rightLabel">${rightLabel}</span>
+    </div>
+  </div>
+  <div class="rangeSlider">
+    <pinput-numeric class="value" not-wei value.bind="leftValue"></pinput-numeric>
+    <div class="inputContainer">
+      <output class="currentValue">${percentage}%</output>
+      <input id.bind="name"
+             max.bind="max"
+             min.bind="min"
+             ref="rangeInput"
+             step.bind="step"
+             type="range"
+             value.bind="value"
+      />
+    </div>
+    <pinput-numeric class="value" not-wei value.bind="rightValue"></pinput-numeric>
+  </div>
+</template>
