@@ -26,15 +26,20 @@ $input-text-color-disabled: $Secondary05;
 
 $scroll-bar-thumb-color: $Neutral02;
 
+/* Fonts Sizes */
 $font-size1: 14px;
 $font-size2: 16px;
-$font-size3: 18px;
+$font-size3: 18px; // TODO: Should rename to "text-lg" (Figma)
+
+/* Font Weights */
+$font-bold: 700;
 
 @mixin spin {
   @keyframes spin {
     from {
       transform: rotate(0deg);
     }
+
     to {
       transform: rotate(360deg);
     }
@@ -42,7 +47,8 @@ $font-size3: 18px;
 }
 
 @mixin loading-icon {
-  .loading > i,
+
+  .loading>i,
   i.loading {
     animation-name: spin;
     animation-duration: 1.5s;
