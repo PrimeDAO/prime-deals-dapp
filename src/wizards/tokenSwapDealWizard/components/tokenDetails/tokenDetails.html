@@ -67,12 +67,12 @@
       >
         <prange-slider
           left-label="Instant"
-          disabled-inputs.bind="!token.amount"
-          left.bind="token.instantTransferAmount & validate"
+          disabled.bind="!token.amount"
+          left.bind="token.instantTransferAmount | ethwei & validate"
           right-label="Vested"
           max-value.bind="token.amount | ethwei"
           not-wei
-          right.bind="token.vestedTransferAmount & validate"
+          right.bind="token.vestedTransferAmount | ethwei & validate"
         ></prange-slider>
       </pform-input>
 
