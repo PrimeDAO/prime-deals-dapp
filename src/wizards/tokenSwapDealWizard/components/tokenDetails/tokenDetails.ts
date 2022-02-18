@@ -13,6 +13,7 @@ import {
 import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 import { Validation } from "../../../../services/ValidationService";
 import { Utils } from "../../../../services/utils";
+import { formatEther } from "ethers/lib/utils";
 
 @autoinject
 export class TokenDetails {
@@ -145,6 +146,12 @@ export class TokenDetails {
       .ensure<string>(data => data.amount)
       .required()
       .min(0)
+      .ensure<string>(data => data.instantTransferAmount)
+      .satisfies((value, data) => Number(value) <= Number(formatEther(data.amount.toString())))
+      .withMessage("Instant transfer amount can't ge bigger than Token Amount")
+      .ensure<string>(data => data.vestedTransferAmount)
+      .satisfies((value, data) => Number(value) <= Number(formatEther(data.amount.toString())))
+      .withMessage("Vested transfer amount can't ge bigger than Token Amount")
       .ensure<number>(data => data.vestedFor)
       .required()
       .when(data => data.vestedTransferAmount !== undefined)
@@ -154,6 +161,9 @@ export class TokenDetails {
       .required()
       .when(data => data.vestedTransferAmount !== undefined)
       .withMessage("Please select a cliff period (can be 0)")
+      .satisfies((value: number, data) => value < data.vestedFor)
+      .when(data => data.vestedFor >= 0)
+      .withMessage("Cliff period needs to be smaller than vested period")
       .min(0)
       .rules;
 

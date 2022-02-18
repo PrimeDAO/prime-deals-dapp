@@ -3,13 +3,14 @@
 token-details {
   display: block;
 
-  pform-input {
-    margin-bottom: $spacing-normal;
-  }
 
-  pcard {
+  pcard.pcard {
     display: block;
     padding: 20px;
+
+    > div > pform-input {
+      margin-bottom: 30px;
+    }
 
     &.invalidTokenDetails {
       outline: 1px solid $Red;
@@ -46,7 +47,6 @@ token-details {
       justify-content: space-between;
       align-items: center;
       gap: 20px;
-      margin-top: 50px;
 
       .deleteButton {
 

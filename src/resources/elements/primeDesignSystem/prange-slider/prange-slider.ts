@@ -2,7 +2,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import { bindingMode, computedFrom, customElement } from "aurelia-framework";
 import "./prange-slider.scss";
 import { Utils } from "../../../../services/utils";
-import { IToStringOptions, NumberService } from "../../../../services/NumberService";
+import { NumberService } from "../../../../services/NumberService";
 
 @customElement("prange-slider")
 export class PRangeSlider {
@@ -15,6 +15,7 @@ export class PRangeSlider {
   @bindable.booleanAttr disabledInputs = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
   @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
+  alreadyUpdated = false;
 
   constructor(public element: Element, private numberService: NumberService) {
   }
@@ -35,10 +36,14 @@ export class PRangeSlider {
   }
 
   valueChanged(newValue: number, oldValue?: number) {
+    if (this.alreadyUpdated || Number(newValue) === Number(oldValue)) {
+      this.alreadyUpdated = false;
+      return;
+    }
     this.value = newValue ?? oldValue;
-    const formatOptions: IToStringOptions = {};
-    this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), formatOptions);
-    this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), formatOptions);
+
+    this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
+    this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
   }
 
   maxValueChanged() {
@@ -55,12 +60,41 @@ export class PRangeSlider {
     return this.maxValue ? Math.min(Math.max(0, value), this.maxValue) / this.maxValue * 100 : undefined;
   }
 
-  private percentageToAbsoluteValue(value: number) {
-    return this.maxValue ? Math.round(value / 100 * this.maxValue) : undefined;
+  leftChanged(newValue: number) {
+    if (this.alreadyUpdated) {
+      this.alreadyUpdated = false;
+      return;
+    }
+    this.alreadyUpdated = true;
+    this.value = this.absoluteValueToPercentage(newValue);
+    this.alreadyUpdated = true;
+    const right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
+    if (right !== this.right) {
+      this.alreadyUpdated = true;
+      this.right = right;
+    }
   }
 
   private updateValue() {
     this.value = this.left ? this.absoluteValueToPercentage(Number(this.left)) : this.value;
+  }
+
+  rightChanged(newValue: number) {
+    if (this.alreadyUpdated) {
+      this.alreadyUpdated = false;
+      return;
+    }
+    this.alreadyUpdated = true;
+    this.value = 100 - this.absoluteValueToPercentage(newValue);
+    const left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
+    if (left !== this.left) {
+      this.alreadyUpdated = true;
+      this.left = left;
+    }
+  }
+
+  private percentageToAbsoluteValue(value: number) {
+    return this.maxValue ? value / 100 * this.maxValue : undefined;
   }
 
 }
