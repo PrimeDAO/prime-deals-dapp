@@ -45,7 +45,7 @@ export class TokenDetails {
     this.form.addRenderer(new PrimeRenderer);
   }
 
-  attached() {
+  async attached() {
     this.addValidation();
     this.watchTokenProperties();
 
@@ -54,6 +54,10 @@ export class TokenDetails {
         this.valid = result.controllerValidateResult.valid;
       }
     });
+
+    if (this.token.address) {
+      await this.getTokenInfo(this.token.address);
+    }
   }
 
   async getTokenInfo(address: string) {
