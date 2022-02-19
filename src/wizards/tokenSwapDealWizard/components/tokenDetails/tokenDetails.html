@@ -37,7 +37,7 @@
         <div class="detailsCell">
           <p>
             Logo
-            <img error.trigger="logoLoaded(false)" height="24" if.bind="validTokenLogoURI"
+            <img error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
                  load.trigger="logoLoaded(true)"
                  src.bind="token.logoURI">
           </p>
@@ -136,16 +136,17 @@
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
                               value.to-view="token.amount | ethwei"></formatted-number>
-            <span else>
-             -
-          </span>
+            <template else>
+              -
+            </template>
           </p>
         </div>
 
         <div class="detailsCell">
           <p>Instant transfer</p>
           <p>
-            <template if.bind="token.vestedTransferAmount">${token.instantTransferAmount}</template>
+            <formatted-number if.bind="token.instantTransferAmount" thousands-separated
+                              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
             <template else>
               -
             </template>
@@ -155,7 +156,8 @@
         <div class="detailsCell">
           <p>Vested transfer</p>
           <p>
-            <template if.bind="token.vestedTransferAmount">${token.vestedTransferAmount}</template>
+            <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
+                              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
             <template else>
               -
             </template>

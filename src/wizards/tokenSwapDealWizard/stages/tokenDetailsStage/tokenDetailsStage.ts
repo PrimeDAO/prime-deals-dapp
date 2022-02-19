@@ -61,11 +61,16 @@ export class TokenDetailsStage {
   addToken(): void {
     this.wizardState.registrationData.primaryDAO.tokens.push({
       address: "",
-      amount: undefined,
-      instantTransferAmount: undefined,
-      vestedTransferAmount: undefined,
-      vestedFor: undefined,
-      cliffOf: undefined,
+      amount: "",
+      instantTransferAmount: "",
+      vestedTransferAmount: "",
+      vestedFor: 0,
+      cliffOf: 0,
+
+      name: "",
+      symbol: "",
+      decimals: 18,
+      logoURI: "",
     });
   }
 

@@ -3,6 +3,7 @@ import { bindingMode, computedFrom, customElement } from "aurelia-framework";
 import "./prange-slider.scss";
 import { Utils } from "../../../../services/utils";
 import { NumberService } from "../../../../services/NumberService";
+import tippy, { Instance } from "tippy.js";
 
 @customElement("prange-slider")
 export class PRangeSlider {
@@ -14,7 +15,12 @@ export class PRangeSlider {
   @bindable.booleanAttr notWei = true;
   @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
   @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
+
   alreadyUpdated = false;
+  leftInput: HTMLElement;
+  leftInputToolTip?: Instance;
+  rightInput: HTMLElement;
+  rightInputToolTip?: Instance;
 
   constructor(public element: Element, private numberService: NumberService) {
   }
@@ -26,6 +32,11 @@ export class PRangeSlider {
 
   attached() {
     this.updateCssVariables();
+
+    this.leftInputToolTip = tippy(this.leftInput);
+    this.rightInputToolTip = tippy(this.rightInput);
+    this.leftInputToolTip.disable();
+    this.rightInputToolTip.disable();
   }
 
   @computedFrom("value")
@@ -41,6 +52,8 @@ export class PRangeSlider {
     }
     this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
     this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
+
+    this.updateTooltips();
   }
 
   maxValueChanged() {
@@ -55,6 +68,7 @@ export class PRangeSlider {
 
   updateRight() {
     this.right = this.numberService.toString(this.clamp(this.maxValue - Number(this.left)), {});
+    this.updateTooltips();
     this.alreadyUpdated = true;
     this.updateValue();
   }
@@ -69,6 +83,7 @@ export class PRangeSlider {
 
   updateLeft() {
     this.left = this.numberService.toString(this.maxValue - this.clamp(this.right), {});
+    this.updateTooltips();
     this.alreadyUpdated = true;
     this.updateValue();
   }
@@ -79,5 +94,21 @@ export class PRangeSlider {
 
   private clamp(value: number | string) {
     return value ? Math.min(Math.max(0, Number(value)), this.maxValue) : 0;
+  }
+
+  updateTooltips() {
+    if (this.left) {
+      this.leftInputToolTip?.enable();
+      this.leftInputToolTip?.setContent(String(this.left));
+    } else {
+      this.leftInputToolTip?.disable();
+    }
+
+    if (this.right) {
+      this.rightInputToolTip?.enable();
+      this.rightInputToolTip?.setContent(String(this.right));
+    } else {
+      this.rightInputToolTip?.disable();
+    }
   }
 }

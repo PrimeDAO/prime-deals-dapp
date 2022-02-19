@@ -20,16 +20,16 @@ export enum Platforms {
 export interface IToken {
   address: string,
 
-  name?: string,
-  symbol?: string,
-  decimals?: number,
-  logoURI?: string,
+  name: string,
+  symbol: string,
+  decimals: number,
+  logoURI: string,
 
-  amount?: string;
-  instantTransferAmount?: string
-  vestedTransferAmount?: string
-  vestedFor?: number
-  cliffOf?: number
+  amount: string;
+  instantTransferAmount: string
+  vestedTransferAmount: string
+  vestedFor: number
+  cliffOf: number
 }
 
 export interface ISocialMedia {

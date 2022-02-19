@@ -8,8 +8,8 @@ token-details {
     display: block;
     padding: 20px;
 
-    > div > pform-input {
-      margin-bottom: 30px;
+    > div > pform-input:not(:first-child) {
+      margin-top: 30px;
     }
 
     .vesting {
@@ -71,8 +71,6 @@ token-details {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 15px;
-    margin-top: $spacing-normal;
-    margin-bottom: 30px;
     width: 100%;
     border-spacing: $spacing-normal;
 
@@ -86,6 +84,7 @@ token-details {
 
     &.detailsTableInViewMode {
       grid-template-columns: 1fr 1fr 1fr 1fr;
+      margin: 30px 0;
 
       .detailsCellAmount {
         grid-column: span 3;

@@ -50,6 +50,7 @@ export class TokenDetails {
     this.watchTokenProperties();
 
     this.form.subscribe(result => {
+      console.log("res ->", result);
       if (result.type === "validate") {
         this.valid = result.controllerValidateResult.valid;
       }
@@ -123,6 +124,10 @@ export class TokenDetails {
         this.token.cliffOf = undefined;
       }
     });
+    this.aureliaHelperService.createPropertyWatch(this.token, "vestedFor", () => {
+      this.form.revalidateErrors();
+      this.token.cliffOf = this.token.cliffOf ? Math.min(this.token.vestedFor, this.token.cliffOf) : this.token.cliffOf;
+    });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", () => {
       this.token.amount = undefined;
     });
@@ -163,9 +168,9 @@ export class TokenDetails {
       .required()
       .when(data => data.vestedTransferAmount !== undefined)
       .withMessage("Please select a cliff period (can be 0)")
-      .satisfies((value: number, data) => value < data.vestedFor)
+      .satisfies((value: number, data) => value <= data.vestedFor)
       .when(data => data.vestedFor >= 0)
-      .withMessage("Cliff period needs to be smaller than vested period")
+      .withMessage("Cliff period needs to be smaller or equal to vested period")
       .min(0)
       .rules;
 
