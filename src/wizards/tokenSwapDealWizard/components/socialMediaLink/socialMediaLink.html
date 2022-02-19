@@ -1,6 +1,7 @@
 <template>
-  <pform-input>
+  <pform-input input-reference.bind="select">
     <pselect
+      view-model.ref="select"
       data.bind="availableSocialMedias"
       value.bind="socialMedia.name & validate:form"
       disabled.bind="disabled">

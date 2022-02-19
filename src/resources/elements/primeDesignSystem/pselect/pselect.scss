@@ -3,6 +3,13 @@
 
 .ss-main {
   width: inherit;
+
+  &.validation-error {
+    .ss-single-selected, .ss-multi-selected {
+      border-color: $Red;
+    }
+  }
+
   .ss-single-selected, .ss-multi-selected {
     border: 1px solid $input-border-color-default;
     background-color: $input-background-color-default;

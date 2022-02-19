@@ -18,20 +18,11 @@ dao-stage-content {
     border-bottom: 1px solid;
   }
 
-  .multiFieldHeader {
-    display: grid;
-    grid-template-rows: auto auto;
-  }
-
   .multiFieldTitle {
     color: $Secondary02;
     margin-bottom: $spacing-normal;
     font-size: $font-size3;
     font-weight: 700;
-  }
-
-  .multiFieldError {
-    color: $Red;
   }
 
   .daoStageAvatar {

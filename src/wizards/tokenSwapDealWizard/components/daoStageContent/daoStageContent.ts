@@ -41,12 +41,4 @@ export class DaoStageContent {
   removeSocialMedia(index: number) {
     this.data.social_medias.splice(index, 1);
   }
-
-  get representativesError() {
-    return this.form.errors.find(error => error.propertyName === "representatives");
-  }
-
-  get socialMediasError() {
-    return this.form.errors.find(error => error.propertyName === "social_medias");
-  }
 }

@@ -49,13 +49,8 @@
       </div>
 
       <div data-test="dao-social-media" if.bind="disabled && data.social_medias.length > 0 || !disabled">
-        <div class="multiFieldHeader">
-          <span class="multiFieldTitle">
-            Social media (optional)
-          </span>
-          <span class="multiFieldError">
-            ${socialMediasError.message}
-          </span>
+        <div class="multiFieldTitle">
+          Social media (optional)
         </div>
 
         <div
@@ -66,7 +61,8 @@
             available-social-medias.bind=" availableSocialMedias"
             social-media.bind="socialMedia"
             disabled.bind="disabled"
-            form.bind="form">
+            form.bind="form"
+            data.bind="data">
           </social-media-link>
           <button
             if.bind="!disabled"
@@ -95,13 +91,8 @@
       </p>
     </div>
     <div class="stageSectionContent">
-      <div class="multiFieldHeader">
-        <span class="multiFieldTitle">
-          ${name} - Representatives Addresses (Max. 5)
-        </span>
-        <span class="multiFieldError">
-          ${representativesError.message}
-        </span>
+      <div class="multiFieldTitle">
+        ${name} - Representatives Addresses (Max. 5)
       </div>
       <div
         repeat.for="representative of data.representatives"
@@ -110,7 +101,8 @@
           data-test="dao-representative"
           representative.bind="representative"
           disabled.bind="disabled"
-          form.bind="form">
+          form.bind="form"
+          data.bind="data">
         </dao-representative-address>
         <button
           data-test="remove-dao-representative"
