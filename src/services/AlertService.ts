@@ -1,10 +1,10 @@
-import { IPopupModalModel, PPopupModal } from "./../resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
 import { autoinject } from "aurelia-framework";
 import { EventConfig, EventConfigException } from "./GeneralEvents";
 import { DialogCloseResult, DialogService } from "./DialogService";
 import { DisposableCollection } from "./DisposableCollection";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Utils } from "services/utils";
+import { Alert, IAlertModel } from "resources/dialogs/alert/alert";
 
 @autoinject
 export class AlertService {
@@ -37,42 +37,20 @@ export class AlertService {
       message = config.message;
     }
 
-    this.showPopup({message: `${message ? `${message}: ` : ""}${Utils.extractExceptionMessage(ex)}`});
+    this.showAlert({message: `${message ? `${message}: ` : ""}${Utils.extractExceptionMessage(ex)}`});
   }
 
   private handleFailure(config: EventConfig | string) {
-    this.showPopup({ message: this.getMessage(config) });
+    this.showAlert({ message: this.getMessage(config) });
   }
 
   private getMessage(config: EventConfig | string): string {
     return (typeof config === "string") ? config : config.message;
   }
 
-  public showPopup(config: IPopupModalModel): Promise<DialogCloseResult> {
-    /**
-     * hack we gotta go through because of how the gradient border, size
-     * and position of the dialog is defined in ux-dialog-container.
-     * See ppopup-model.scss.  We have no other way to selectively
-     * alter the css of that element.  Once ppopup-model.scss is loaded, it forever overrides
-     * the default styling on ux-dialog-container.
-     */
-    let theContainer: Element;
-
-    return this.dialogService.open(PPopupModal, config, {
-      keyboard: true,
-      position: (modalContainer: Element, _modalOverlay: Element): void => {
-        theContainer = modalContainer;
-        modalContainer.classList.add("pPopupModal", "pcard", "gradient");
-      },
-    })
-      .whenClosed(
-        (result: DialogCloseResult) => {
-          theContainer.classList.remove("pPopupModal", "pcard", "gradient");
-          return result;
-        },
-        // not sure if this works for PPopupModal
-        (error: string) => { return { output: error, wasCancelled: false }; });
+  public showAlert(config: IAlertModel): Promise<DialogCloseResult> {
+    return this.dialogService.open(Alert, config, { keyboard: true });
   }
 }
 
-export { IPopupModalModel } from "./../resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
+export { ShowButtonsEnum, IAlertModel } from "resources/dialogs/alert/alert";

@@ -1,5 +1,12 @@
 @import "./colors.scss";
 
+/**
+ * These classes apply to Aurelia dialogs whose container element has the class `dialog`.
+ * These are the default styles for the ppopup-modal dialog.
+ * To customize, give ux-dialog-container and the container element an additional class and
+ * write styles against that.
+ */
+
 body > ux-dialog-overlay.active {
   opacity: 0.4;
   background-color: $Black;
@@ -11,13 +18,12 @@ body.ux-dialog-open {
 
 body > ux-dialog-container {
   overflow: hidden;
-  top: 10vh;
-  right: 10vw;
-  bottom: 10vh;
-  left: 10vw;
-  background-color: $Border01;
-  box-shadow: $shadow-lg;
   padding: 0;
+  top: 50%;
+  right: unset;
+  bottom: unset;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   > div {
     margin: 0 !important;
@@ -27,14 +33,19 @@ body > ux-dialog-container {
       height: 100%;
       width: 100%;
 
-      > .dialog {
+      /**
+       * this is what we refer to above as the "container element"
+       */
+      .dialog {
         height: 100%;
         width: 100%;
         display: flex;
-        box-shadow: none;
         flex-direction: column;
         min-width: 160px;
-        border: none;
+
+        // &.pcard {
+        //   background: $Border01;
+        // }
 
         > .header,
         > .body,
@@ -52,14 +63,14 @@ body > ux-dialog-container {
           line-height: 28px;
           letter-spacing: 0;
           text-align: left;
-          padding: 34px 36px 0 40px;
-          min-height: 80px;
+          padding: 28px 30px 12px 34px;
+          overflow-y: hidden;
         }
 
         > .body {
           overflow: auto;
           flex-grow: 2;
-          padding: 12px 36px 24px 40px;
+          padding: 0 30px 28px 34px;
           font-family: Inter;
           font-size: 16px;
           font-style: normal;
@@ -70,27 +81,24 @@ body > ux-dialog-container {
         }
 
         > .footer {
-          padding-right: 40px;
-          padding-top: 8px;
+          padding-top: 12px;
+          padding-bottom: 12px;
+          padding-right: 20px;
+          text-align: right;
         }
       }
     }
   }
 }
 
-body > .dialog-overlay {
-  background-color: $BG01;
-}
-
 @media screen and (max-width: 680px) {
   body > ux-dialog-container {
-    top: 0;
     right: 0;
-    bottom: 0;
     left: 0;
+    transform: translate(0, -50%);
 
     > div > div {
-      > .dialog {
+      .dialog {
         min-width: 0;
 
         > .header {
@@ -107,10 +115,10 @@ body > .dialog-overlay {
         > .footer {
           display: flex;
           flex-direction: column;
+          border-top-width: 0;
+          padding: 14px 34px 14px 34px;
+          row-gap: 8px;
           text-align: center;
-          .action-buttons {
-            justify-content: center;
-          }
         }
       }
     }

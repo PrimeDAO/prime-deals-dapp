@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
-import { DialogController } from "aurelia-dialog";
-import { autoinject } from "aurelia-framework";
+import { autoinject, customElement } from "aurelia-framework";
+import { bindable } from "aurelia-typed-observable-plugin";
 import "./ppopup-modal.scss";
 
 export enum ShowButtonsEnum {
@@ -9,32 +9,26 @@ export enum ShowButtonsEnum {
 }
 
 @autoinject
+@customElement("ppopup-modal")
 export class PPopupModal {
 
-  // private model: IPopupModalModel;
-  private buttons: ShowButtonsEnum;
+  @bindable buttons: ShowButtonsEnum;
+  @bindable message: string;
+  @bindable header: string;
+  @bindable buttonTextPrimary?: string;
+  @bindable buttonTextSecondary?: string;
+  @bindable primaryClick: () => void;
+  @bindable secondaryClick: () => void;
+
   private primaryButton: HTMLElement;
-  private secondaryButton: HTMLElement;
   showCancelButton: boolean;
   showOkButton: boolean;
-  buttonTextPrimary?: string;
-  buttonTextSecondary?: string;
-  message: string;
-  header: string;
-
-  constructor(private controller: DialogController) { }
-
-  public activate(model: IPopupModalModel): void {
-    this.buttons = model.buttons ?? ShowButtonsEnum.Primary;
-    this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
-    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
-    this.buttonTextPrimary = model.buttonTextPrimary ?? "OK";
-    this.buttonTextSecondary = model.buttonTextSecondary ?? "CANCEL";
-    this.message = model.message;
-    this.header = model.header ?? "Prime Deals";
-  }
 
   public attached(): void {
+    this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
+    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
+    this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
+    this.buttonTextSecondary = this.buttonTextSecondary ?? "CANCEL";
     // attach-focus doesn't work
     if (this.buttons & ShowButtonsEnum.Primary) {
       this.primaryButton.focus();

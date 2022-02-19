@@ -1,10 +1,10 @@
 <template>
-  <section class="dialog">
+  <section class="dialog pPopupModal pcard gradient">
     <p class="header">${header}</p>
     <p class="body">${message}</p>
     <p class="footer">
-      <pbutton type="tertiary" if.bind="showCancelButton" ref="secondarButton" click.trigger="controller.cancel()">${buttonTextSecondary}</pbutton>
-      <pbutton type="primary" if.bind="showOkButton" ref="primaryButton" click.trigger="controller.ok()">${buttonTextPrimary}</pbutton>
+      <pbutton type="tertiary" show.bind="showCancelButton" click.trigger="secondaryClick()">${buttonTextSecondary}</pbutton>
+      <pbutton type="primary" show.bind="showOkButton" ref="primaryButton" click.trigger="primaryClick()">${buttonTextPrimary}</pbutton>
     </p>
   </section>
 </template>

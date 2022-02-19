@@ -1,0 +1,10 @@
+<template>
+  <ppopup-modal
+    buttons.bind="buttons"
+    header.bind="header"
+    message.bind="message"
+    button-text-primary.bind="buttonTextPrimary"
+    button-text-secondary.bind="buttonTextSecondary"
+    primary-click.call="controller.ok()"
+    secondary-click.call="controller.cancel()"></ppopup-modal>
+</template>

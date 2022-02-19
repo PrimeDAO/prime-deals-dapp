@@ -1,5 +1,5 @@
 <template>
-  <section class="dialog">
+  <section class="dialog disclaimer pcard gradient">
     <p class="header ellipses">${model.title}</p>
     <p class="body loading" if.to-view="loading"><i class="fas fa-circle-notch fa-spin"></i></p>
     <p else class="body" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
