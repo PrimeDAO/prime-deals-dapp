@@ -1,6 +1,6 @@
 import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { autoinject, bindable, computedFrom } from "aurelia-framework";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
 import { EthereumService, Networks, AllowedNetworks, Address } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
