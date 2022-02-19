@@ -1,8 +1,4 @@
-import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-
-Given("I navigate to create partnered deal wizard Partner DAO stage", () => {
-  cy.visit("/initiate/token-swap/partnered-deal/partner-dao");
-});
+import { Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Then("I can see Partner DAO section with inputs for collecting its details", () => {
   cy.get("[data-test=\"dao-details-section\"]").within(() => {

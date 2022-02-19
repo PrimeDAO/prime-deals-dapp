@@ -1,9 +1,5 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
-Given("I navigate create open proposal wizard Primary DAO stage", () => {
-  cy.visit("/initiate/token-swap/open-proposal/primary-dao");
-});
-
 Given("I navigate to create partnered deal wizard Primary DAO stage", () => {
   cy.visit("/initiate/token-swap/partnered-deal/primary-dao");
 });
