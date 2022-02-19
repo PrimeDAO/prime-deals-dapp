@@ -50,7 +50,6 @@ export class TokenDetails {
     this.watchTokenProperties();
 
     this.form.subscribe(result => {
-      console.log("res ->", result);
       if (result.type === "validate") {
         this.valid = result.controllerValidateResult.valid;
       }
