@@ -50,7 +50,7 @@ const _registration2: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E", "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F", "0x3E4Ae4e8968C88B24E4A8090863f1AE8733f412B"],
+    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
   },
@@ -188,7 +188,7 @@ const _registration5: IDealRegistrationTokenSwap = {
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
+    members: ["0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F", "0x3E4Ae4e8968C88B24E4A8090863f1AE8733f412B"],
     logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
   },
@@ -283,7 +283,7 @@ const MOCK_DATA = {
   },
   "open_deals_stream_hash_2": {
     registration: "registration-hash-2",
-    discussions: "clause-discussions-hash-2",
+    discussions: "clause-discussions-hash-5",
     votes: "votes-hash-2",
   },
   "open_deals_stream_hash_3": {
@@ -298,7 +298,7 @@ const MOCK_DATA = {
   },
   "partnered_deals_stream_hash_2": {
     registration: "registration-hash-5",
-    discussions: "clause-discussions-hash-5",
+    discussions: "clause-discussions-hash-2",
     votes: "votes-hash-5",
   },
   "partnered_deals_stream_hash_3": {

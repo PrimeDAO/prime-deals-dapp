@@ -27,25 +27,25 @@
       </section>
 
       <!-- Clauses List -->
-      <section if.to-view="authorized" class="clauses">
+      <section if.to-view="authorized || !isPrivate" class="clauses">
         <header>
           <h2 class="subtitle heading heading3">Deal Clauses</h2>
         </header>
         <p>Start a discussion below by selecting a specific clause.</p>
         <ol>
-          <div repeat.for="clause of clauses" class="clause ${activeClause && activeClause === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
+          <div repeat.for="clause of clauses" class="clause ${authorized ? 'isPrivate' : ''} ${activeClause && activeClause === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
             <li></li>
             <span class="body">
               ${clause.text}
             </span>
-            <span class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">Discuss<img src="/static/comment.svg"></img></span>
+            <span if.to-view="authorized" class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">Discuss<img src="/static/comment.svg"></img></span>
           </div>
         </ol>
       </section>
     </section>
 
     <!-- Discussions / Discussion Comments Thread -->
-    <section class="discussion" show.bind="authorized">
+    <section class="discussion" show.bind="authorized || !isPrivate">
       <router-view>
         <!-- discussions-list -->
         <!-- deal-thread -->

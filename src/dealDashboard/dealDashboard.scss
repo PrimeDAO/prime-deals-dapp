@@ -83,7 +83,7 @@ $hover-transition-speed-slow: 0.4s;
               }
               cursor: pointer;
             }
-            &:hover, &.active {
+            &.isPrivate:hover, &.isPrivate.active {
               transition-delay: 0s;
               &:not(.active) span {
                 transition-delay: $hover-transition-speed-fast / 2;

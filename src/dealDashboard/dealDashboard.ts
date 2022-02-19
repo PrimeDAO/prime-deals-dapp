@@ -12,7 +12,6 @@ import "./dealDashboard.scss";
 
 @autoinject
 export class DealDashboard {
-  // loading = true;
   private connected = false;
   private connectedAddress: Address;
 
@@ -27,16 +26,20 @@ export class DealDashboard {
   private discussions: IDealDiscussion;
 
   @computedFrom("ethereumService.defaultAccountAddress", "deal.registrationData")
+  get isPrivate(): boolean {
+    return this.deal.registrationData.isPrivate;
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.registrationData")
   get authorized(): boolean {
-    return !this.deal.registrationData.isPrivate ||
-      (
-        this.ethereumService.defaultAccountAddress &&
-        [
-          this.deal.registrationData.proposalLead?.address,
-          ...this.deal.registrationData.primaryDAO?.members || "",
-          ...this.deal.registrationData.partnerDAO?.members || "",
-        ].includes(this.ethereumService.defaultAccountAddress)
-      );
+    return (
+      this.ethereumService.defaultAccountAddress &&
+      [
+        this.deal.registrationData.proposalLead?.address,
+        ...this.deal.registrationData.primaryDAO?.members || "",
+        ...this.deal.registrationData.partnerDAO?.members || "",
+      ].includes(this.ethereumService.defaultAccountAddress)
+    );
   }
 
   constructor(
