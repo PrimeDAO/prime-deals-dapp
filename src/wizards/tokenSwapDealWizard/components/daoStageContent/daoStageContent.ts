@@ -4,7 +4,7 @@ import { IDAO } from "entities/DealRegistrationTokenSwap";
 import "./daoStageContent.scss";
 
 export class DaoStageContent {
-  @bindable title: string;
+  @bindable name: string;
   @bindable disabled = false;
   @bindable data: IDAO;
   @bindable form: ValidationController;

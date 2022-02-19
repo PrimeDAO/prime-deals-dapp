@@ -3,7 +3,7 @@
   <require from="../socialMediaLink/socialMediaLink"></require>
   <div class="stageSection" data-test="dao-details-section">
     <div class="stageSectionSidebar">
-      <h2 class="heading heading3 title" data-test="section-title">${title}</h2>
+      <h2 class="heading heading3 title" data-test="section-title">${name}</h2>
       <p class="subtext" data-test="section-description">
         <slot name="details-description"></slot>
       </p>
@@ -12,14 +12,14 @@
       <pform-input
         data-test="dao-name-field"
         class="wizardFormInput wizardFormInputNarrow"
-        label.bind="title + ' Name'">
+        label.bind="name + ' Name'">
         <pinput-text value.bind="data.name & validate:form" disabled.bind="disabled"></pinput-text>
       </pform-input>
 
       <pform-input
         data-test="dao-treasury-field"
         class="wizardFormInput wizardFormInputNarrow"
-        label.bind="title +' Treasury Address'"
+        label.bind="name +' Treasury Address'"
         label-info="This address will receive tokens from the Primary DAO/Partner DAO">
         <pinput-text
           value.bind="data.treasury_address & validate:form"
@@ -32,7 +32,7 @@
         <pform-input
           data-test="dao-avatar-url-field"
           class="wizardFormInput wizardFormInputNarrow"
-          label.bind="title + ' Avatar'"
+          label.bind="name + ' Avatar'"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size">
           <pinput-text
             value.bind="data.logo_url & validate:form"
@@ -97,7 +97,7 @@
     <div class="stageSectionContent">
       <div class="multiFieldHeader">
         <span class="multiFieldTitle">
-          ${title} - Representatives Addresses (Max. 5)
+          ${name} - Representatives Addresses (Max. 5)
         </span>
         <span class="multiFieldError">
           ${representativesError.message}

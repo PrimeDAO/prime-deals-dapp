@@ -32,8 +32,6 @@ export const daoStageValidationRules = (title: string) =>
     .withMessage(`${title} avatar is required`)
     .satisfiesRule(Validation.imageUrl)
     .satisfiesRule(Validation.imageSize, 5000000)
-    .satisfiesRule(Validation.imageSquare)
-    .satisfiesRule(Validation.imageDimensions, {minWidth: 64, maxWidth: 1000, minHeight: 64, maxHeight: 1000})
     .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
     .ensure<ISocialMedia[]>(dao => dao.social_medias)
     .required()
