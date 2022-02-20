@@ -1,126 +1,82 @@
 @import "./colors.scss";
 
 /**
- * These classes apply to Aurelia dialogs whose container element has the class `dialog`.
- * These are the default styles for the ppopup-modal dialog.
- * To customize, give ux-dialog-container and the container element an additional class and
- * write styles against that.
+ * These are the default styles for a ppopup-modal dialog.
  */
+.ppopup-dialog {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
 
-body > ux-dialog-overlay.active {
-  opacity: 0.4;
-  background-color: $Black;
-}
+  // &.pcard {
+  //   background: $Border01;
+  // }
 
-body.ux-dialog-open {
-  overflow: initial; // so scrollbars don't get hidden
-}
+  > .header,
+  > .body,
+  > .footer {
+    border: none;
+  }
 
-body > ux-dialog-container {
-  overflow: hidden;
-  padding: 0;
-  top: 50%;
-  right: unset;
-  bottom: unset;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  > .header {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: 0;
+    text-align: left;
+    padding: 28px 30px 12px 34px;
+    overflow-y: hidden;
+  }
 
-  > div {
-    margin: 0 !important;
-    padding: 0;
-    height: 100%;
-    > div {
-      height: 100%;
-      width: 100%;
+  > .body {
+    overflow: auto;
+    flex-grow: 2;
+    padding: 0 30px 28px 34px;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
+    text-align: left;
+  }
 
-      /**
-       * this is what we refer to above as the "container element"
-       */
-      .dialog {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        min-width: 160px;
-
-        // &.pcard {
-        //   background: $Border01;
-        // }
-
-        > .header,
-        > .body,
-        > .footer {
-          border: none;
-        }
-
-        > .header {
-          white-space: pre-wrap;
-          word-break: break-word;
-          font-family: Inter;
-          font-size: 18px;
-          font-style: normal;
-          font-weight: 700;
-          line-height: 28px;
-          letter-spacing: 0;
-          text-align: left;
-          padding: 28px 30px 12px 34px;
-          overflow-y: hidden;
-        }
-
-        > .body {
-          overflow: auto;
-          flex-grow: 2;
-          padding: 0 30px 28px 34px;
-          font-family: Inter;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: 24px;
-          letter-spacing: 0;
-          text-align: left;
-        }
-
-        > .footer {
-          padding-top: 12px;
-          padding-bottom: 12px;
-          padding-right: 20px;
-          text-align: right;
-        }
-      }
-    }
+  > .footer {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-right: 20px;
+    text-align: right;
   }
 }
 
 @media screen and (max-width: 680px) {
-  body > ux-dialog-container {
-    right: 0;
-    left: 0;
-    transform: translate(0, -50%);
+  .ppopup-dialog {
+    min-width: 0;
 
-    > div > div {
-      .dialog {
-        min-width: 0;
+    > .header {
+      white-space: normal;
+      text-align: center;
+      line-height: 44px;
+    }
 
-        > .header {
-          white-space: normal;
-          text-align: center;
-          line-height: 44px;
-        }
+    > .body {
+      border-radius: 0;
+      padding: 28px;
+    }
 
-        > .body {
-          border-radius: 0;
-          padding: 28px;
-        }
-
-        > .footer {
-          display: flex;
-          flex-direction: column;
-          border-top-width: 0;
-          padding: 14px 34px 14px 34px;
-          row-gap: 8px;
-          text-align: center;
-        }
-      }
+    > .footer {
+      display: flex;
+      flex-direction: column;
+      border-top-width: 0;
+      padding: 14px 34px 14px 34px;
+      row-gap: 8px;
+      text-align: center;
     }
   }
 }

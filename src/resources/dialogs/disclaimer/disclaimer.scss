@@ -1,5 +1,4 @@
-@import "styles/styles.scss";
-@import "../../elements/primeDesignSystem/dialogs.scss";
+@import "../dialogs.scss";
 
 body > ux-dialog-container.disclaimer {
   top: 10vh;
@@ -9,7 +8,7 @@ body > ux-dialog-container.disclaimer {
   transform: none;
 
   > div > div {
-    .disclaimer {
+    .ppopup-dialog.disclaimer {
       > .header {
         font-size: 22px;
         padding-top: 40px;
@@ -63,7 +62,7 @@ body > ux-dialog-container.disclaimer {
     transform: none;
 
     > div > div {
-      .disclaimer {
+      .ppopup-dialog.disclaimer {
         > .footer {
           flex-direction: column;
           align-items: unset;

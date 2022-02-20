@@ -1,0 +1,43 @@
+@import "../elements/primeDesignSystem/dialogs.scss";
+
+/**
+ * These classes apply to Aurelia dialogs.
+ * To customize, give ux-dialog-container and the container element an additional class and
+ * write styles against that.
+ */
+body > ux-dialog-overlay.active {
+  opacity: 0.4;
+  background-color: $Black;
+}
+
+body.ux-dialog-open {
+  overflow: initial; // so scrollbars don't get hidden
+}
+
+body > ux-dialog-container {
+  overflow: hidden;
+  padding: 0;
+  top: 50%;
+  right: unset;
+  bottom: unset;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  > div {
+    margin: 0 !important;
+    padding: 0;
+    height: 100%;
+    > div {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (max-width: 680px) {
+  body > ux-dialog-container {
+    right: 0;
+    left: 0;
+    transform: translate(0, -50%);
+  }
+}

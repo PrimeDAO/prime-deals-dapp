@@ -2,18 +2,50 @@
   <style>
     .ppopup-modal-demo>p.row {
       margin-bottom: 18px;
+      max-width: 800px;
     }
   </style>
 
   <section class="ppopup-modal-demo">
     <p class="row">
+      <ppopup-modal
+        id="1"
+        header="Modal Popup With all Defaults"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula massa et massa aliquet facilisis. Nulla egestas id arcu at luctus. In a sem magna. Praesent placerat tortor neque, quis dapibus massa volutpat ut. Morbi fringilla dui vel orci hendrerit, quis imperdiet velit fermentum."
+        primary-click.call="handlePrimaryClick('1')"></ppopup-modal>
     </p>
     <p class="row">
+      <ppopup-modal
+        id="2"
+        header="Modal Popup With Two Default Buttons"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula massa et massa aliquet facilisis. Nulla egestas id arcu at luctus. In a sem magna. Praesent placerat tortor neque, quis dapibus massa volutpat ut. Morbi fringilla dui vel orci hendrerit, quis imperdiet velit fermentum."
+        buttons="3"
+        primary-click.call="handlePrimaryClick('2')"
+        secondary-click.call="handlePrimaryClick('2')"></ppopup-modal>
     </p>
     <p class="row">
+      <ppopup-modal
+        id="3"
+        header="Modal Popup With Custom Button Text"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula massa et massa aliquet facilisis. Nulla egestas id arcu at luctus. In a sem magna. Praesent placerat tortor neque, quis dapibus massa volutpat ut. Morbi fringilla dui vel orci hendrerit, quis imperdiet velit fermentum."
+        buttons="3"
+        button-text-primary="No thanks"
+        button-text-secondary="yes please"
+        primary-click.call="handlePrimaryClick('3')"
+        secondary-click.call="handlePrimaryClick('3')"></ppopup-modal>
     </p>
     <p class="row">
+      <ppopup-modal
+        id="4"
+        header="Modal Popup With Dynamic Body"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula massa et massa aliquet facilisis. Nulla egestas id arcu at luctus. In a sem magna. Praesent placerat tortor neque, quis dapibus massa volutpat ut. Morbi fringilla dui vel orci hendrerit, quis imperdiet velit fermentum."
+        primary-click.call="handlePrimaryClick('4')"></ppopup-modal>
     </p>
     <p class="row">
+      <ppopup-modal
+        id="5"
+        header="Modal Popup With Confetti"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula massa et massa aliquet facilisis. Nulla egestas id arcu at luctus. In a sem magna. Praesent placerat tortor neque, quis dapibus massa volutpat ut. Morbi fringilla dui vel orci hendrerit, quis imperdiet velit fermentum."
+        primary-click.call="handlePrimaryClick('5')"></ppopup-modal>
     </p>
 </template>
