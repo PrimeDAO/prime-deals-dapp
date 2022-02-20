@@ -3,6 +3,7 @@ import { autoinject, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./ppopup-modal.scss";
 import "@stackoverflow/stacks/dist/css/stacks.min.css";
+import { AureliaHelperService } from "services/AureliaHelperService";
 
 export enum ShowButtonsEnum {
   Primary = 0x1,
@@ -25,7 +26,9 @@ export class PPopupModal {
   private primaryButton: HTMLElement;
   showCancelButton: boolean;
   showOkButton: boolean;
-  container: HTMLElement;
+  body: HTMLElement;
+
+  constructor(private aureliaHelperService: AureliaHelperService) {}
 
   public attached(): void {
     this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
@@ -37,6 +40,9 @@ export class PPopupModal {
     if (this.buttons & ShowButtonsEnum.Primary) {
       this.primaryButton.focus();
     }
+
+    this.body.innerHTML= this.message;
+    this.aureliaHelperService.enhanceElement(this.body, this, true);
   }
 }
 
