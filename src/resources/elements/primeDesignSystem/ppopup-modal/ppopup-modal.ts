@@ -2,6 +2,7 @@
 import { autoinject, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./ppopup-modal.scss";
+import "@stackoverflow/stacks/dist/css/stacks.min.css";
 
 export enum ShowButtonsEnum {
   Primary = 0x1,
@@ -19,10 +20,12 @@ export class PPopupModal {
   @bindable buttonTextSecondary?: string;
   @bindable primaryClick: () => void;
   @bindable secondaryClick: () => void;
+  @bindable.booleanAttr confetti = false;
 
   private primaryButton: HTMLElement;
   showCancelButton: boolean;
   showOkButton: boolean;
+  container: HTMLElement;
 
   public attached(): void {
     this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
