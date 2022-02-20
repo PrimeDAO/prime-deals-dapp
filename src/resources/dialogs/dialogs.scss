@@ -3,7 +3,7 @@
 /**
  * These classes apply to Aurelia dialogs.
  * To customize, give ux-dialog-container and the container element an additional class and
- * write styles against that.
+ * write styles against that.  See how Alert and disclaimer dialogs are created.
  */
 body > ux-dialog-overlay.active {
   opacity: 0.4;

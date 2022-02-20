@@ -1,7 +1,7 @@
 @import "./colors.scss";
 
 /**
- * These are the default styles for a ppopup-modal dialog.
+ * These are the default styles for ppopup-modal dialogs.
  */
 .ppopup-dialog {
   height: 100%;
@@ -10,9 +10,9 @@
   flex-direction: column;
   min-width: 160px;
 
-  // &.pcard {
-  //   background: $Border01;
-  // }
+  &.pcard.gradient {
+    background: $Border01;
+  }
 
   > .header,
   > .body,
