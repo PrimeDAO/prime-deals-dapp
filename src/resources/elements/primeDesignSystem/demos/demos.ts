@@ -95,7 +95,7 @@ export class Demos {
       {
         route: ["prange-slider"],
         nav: true,
-        moduleId: PLATFORM.moduleName("./pangeSliderDemo.html"),
+        moduleId: PLATFORM.moduleName("./prangeSliderDemo.html"),
         name: "prange-slider",
         title: "prange-slider",
       },
