@@ -164,15 +164,15 @@ export class TokenDetails {
       .ensure<number>(data => data.vestedFor)
       .required()
       .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
-      .withMessage("Please select a vested period")
+      .withMessage("Please provide a vesting period")
       .min(0)
       .ensure<number>(data => data.cliffOf)
       .required()
       .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
-      .withMessage("Please select a cliff period (can be 0)")
+      .withMessage("Please provide a cliff period")
       .satisfies((value: number, data) => value <= data.vestedFor)
       .when(data => data.vestedFor >= 0)
-      .withMessage("Cliff period needs to be smaller or equal to vested period")
+      .withMessage("Cliff period needs to be smaller or equal to vesting period")
       .min(0)
       .rules;
 
