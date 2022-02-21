@@ -1,4 +1,4 @@
-@import "./colors.scss";
+@import "./styles.scss";
 
 /**
  * These are the default styles for ppopup-modal dialogs.
@@ -11,7 +11,7 @@
   min-width: 160px;
 
   &.pcard.gradient {
-    background: $Border01;
+    @include pcardBgAndGradient($backgroundColor: $Border01);
   }
 
   > .header,
