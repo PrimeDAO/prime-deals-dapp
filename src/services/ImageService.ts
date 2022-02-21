@@ -9,8 +9,6 @@ export interface IDimensionRange {
   maxHeight: number;
 }
 
-const RequestError = "Request Error";
-
 @autoinject
 export class ImageService {
   private static imagesByUrls: Map<string, HTMLImageElement> = new Map();
@@ -42,7 +40,12 @@ export class ImageService {
         };
         reader.readAsDataURL(response.data);
       }).catch(() => {
-        reject(RequestError);
+        const imageUrl = new URL(url);
+        const mimeType = this.extensionToMimeType(imageUrl.pathname.substring(imageUrl.pathname.lastIndexOf(".") + 1));
+        resolve({
+          mimeType,
+          fileSize: null,
+        });
       });
     });
   }
@@ -97,10 +100,6 @@ export class ImageService {
         throw new Error("File size is too big");
       }
     } catch (error) {
-      // If there was an issue with the http request, don't show error to the user
-      if (error === RequestError) {
-        return true;
-      }
       return false;
     }
 
@@ -148,10 +147,6 @@ export class ImageService {
         throw new Error("Incorrect mimeType");
       }
     } catch (error) {
-      // If there was an issue with the http request, don't show error to the user
-      if (error === RequestError) {
-        return true;
-      }
       return false;
     }
 
@@ -174,7 +169,27 @@ export class ImageService {
         return "bmp";
 
       default:
-        break;
+        return undefined;
+    }
+  }
+
+  public static extensionToMimeType(extension: string): string {
+    switch (extension) {
+      case "png":
+        return "image/png";
+
+      case "jpg":
+      case "jpeg":
+        return "image/jpeg";
+
+      case "gif":
+        return "image/gif";
+
+      case "bmp":
+        return "image/bmp";
+
+      default:
+        return undefined;
     }
   }
 }
