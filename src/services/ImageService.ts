@@ -9,6 +9,22 @@ export interface IDimensionRange {
   maxHeight: number;
 }
 
+const mimeTypeToExtension = {
+  "image/jpeg": "jpg",
+  "image/pjpeg": "jpg",
+  "image/png": "png",
+  "image/gif": "gif",
+  "image/bmp": "bmp",
+};
+
+const extensionToMimeType = {
+  "png": "image/png",
+  "jpg": "image/jpeg",
+  "jpeg": "image/jpeg",
+  "gif": "image/gif",
+  "bmp": "image/bmp",
+};
+
 @autoinject
 export class ImageService {
   private static imagesByUrls: Map<string, HTMLImageElement> = new Map();
@@ -41,7 +57,7 @@ export class ImageService {
         reader.readAsDataURL(response.data);
       }).catch(() => {
         const imageUrl = new URL(url);
-        const mimeType = this.extensionToMimeType(imageUrl.pathname.substring(imageUrl.pathname.lastIndexOf(".") + 1));
+        const mimeType = extensionToMimeType[imageUrl.pathname.substring(imageUrl.pathname.lastIndexOf(".") + 1)];
         resolve({
           mimeType,
           fileSize: null,
@@ -142,7 +158,7 @@ export class ImageService {
       const fileDetails = await this.getFileDetails(url);
       if (
         extensions.map(item => item.toLowerCase())
-          .indexOf(this.mimeTypeToExtension(fileDetails.mimeType)) === -1
+          .indexOf(mimeTypeToExtension[fileDetails.mimeType]) === -1
       ) {
         throw new Error("Incorrect mimeType");
       }
@@ -151,45 +167,5 @@ export class ImageService {
     }
 
     return true;
-  }
-
-  public static mimeTypeToExtension(mimeType: string): string {
-    switch (mimeType) {
-      case "image/jpeg":
-      case "image/pjpeg":
-        return "jpg";
-
-      case "image/png":
-        return "png";
-
-      case "image/gif":
-        return "gif";
-
-      case "image/bmp":
-        return "bmp";
-
-      default:
-        return undefined;
-    }
-  }
-
-  public static extensionToMimeType(extension: string): string {
-    switch (extension) {
-      case "png":
-        return "image/png";
-
-      case "jpg":
-      case "jpeg":
-        return "image/jpeg";
-
-      case "gif":
-        return "image/gif";
-
-      case "bmp":
-        return "image/bmp";
-
-      default:
-        return undefined;
-    }
   }
 }
