@@ -20,7 +20,11 @@
 
     .ppopup-modal-demo>p.row .body .tweetlink a::before {
       content: '\2192';
-      margin-right: 6px;
+      margin-right: 8px;
+    }
+
+    .ppopup-modal-demo>p.row .body .tweetlink a>i {
+      margin-left: 4px;
     }
   </style>
 
@@ -52,12 +56,13 @@
         primary-click.call="handlePrimaryClick('3')"
         secondary-click.call="handlePrimaryClick('3')"></ppopup-modal>
     </p>
+    <i class="fab fa-twitter"></i>
     <p class="row">
       <ppopup-modal
         id="4"
         header="Modal Popup With Dynamic Body"
         message="<p class='excitement'>Share your new deal proposal with your community!</p>
-        <p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET</a></p>"
+        <p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>"
         primary-click.call="handlePrimaryClick('4')"></ppopup-modal>
     </p>
     <p class="row">
@@ -66,7 +71,7 @@
         header="Time to Party!"
         confetti
         message="<p class='excitement'>Share your new deal proposal with your community!</p>
-        <p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET</a></p>"
+        <p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>"
         primary-click.call="handlePrimaryClick('5')"></ppopup-modal>
     </p>
 </template>
