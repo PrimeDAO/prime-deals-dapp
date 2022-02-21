@@ -8,10 +8,10 @@
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Proposal Lead</h2>
         <div class="subtext">
-          <p class="proposalLeadSubtext">Provide the Ethereum address for the proposal lead who will gain admin rights of
-            the deal.</p>
-          Proposal leads will be responsible for editing the deal during negotiation, initiating the funding phase once a
-          deal is approved, and executing the token swap. You don’t need to be part of a DAO to be the lead proposal.
+          <p class="proposalLeadSubtext">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
+          <p class="proposalLeadSubtext">The Proposal Lead is the account that is responsible for the negotiation and execution of the deal.</p>
+          <p class="proposalLeadSubtext">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and they can execute the token swap.</p>
+          <p class="proposalLeadSubtext">The Proposal Lead can be changed at any time until the deal is approved. You don't need to be part of DAO to be a Proposal Lead.</p>
         </div>
       </div>
       <div class="stageSectionContent">
@@ -50,14 +50,10 @@
     <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Keep Admin Rights?</h2>
-        <p class="subtext">
-          Select “keep admin rights” if you would like to the proposal lead to keep the rights to editing, discussion,
-          funding initiation and token swap execution for all incoming offers to collaborate.
-          <br/>
-          <br/>
-          We suggest transferring your admin rights if you anticipate a lot of proposals, and won’t have time to manage
-          all of them.
-        </p>
+        <div class="subtext">
+          <p class="proposalLeadSubtext">This will transfer the full admin rights to another account.  You will no longer be able to edit, initiate funds, discuss incoming offers or execute token swaps.</p>
+          <p class="proposalLeadSubtext">We suggest transferring your admin rights if you anticipate many incoming offers for this proposal and won't have time to manage them.</p>
+        </div>
       </div>
       <div class="stageSectionContent">
         <pform-input
@@ -70,11 +66,10 @@
 
     <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Make Offers Private?</h2>
-        <p class="subtext">
-          Select "make offers private" if you would like the offers you receive from this Open Proposal to be private.
-          Private deals will only be accessible to the proposal lead and deal representatives.
-        </p>
+        <h2 class="heading heading3 title">Make offers to this proposal private</h2>
+        <div class="subtext">
+          <p class="proposalLeadSubtext">Toggle this option if you don't want the public to see what is being discussed in the discussion page. This will make all the offers you receive to your proposal visible only to the Proposal Lead and the Deal Representatives.</p>
+        </div>
       </div>
       <div class="stageSectionContent">
         <pform-input
