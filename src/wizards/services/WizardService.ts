@@ -68,11 +68,6 @@ export class WizardService {
     return this.wizardsStates.get(wizardManager);
   }
 
-  public getActiveStage(wizardManager: any): IWizardStage {
-    const wizardState = this.getWizardState(wizardManager);
-    return wizardState.stages[wizardState.indexOfActive];
-  }
-
   public updateStageValidity(wizardManager: any, valid: boolean) {
     this.getActiveStage(wizardManager).valid = valid;
   }
@@ -138,11 +133,16 @@ export class WizardService {
     return this.wizardsStates.has(wizardManager);
   }
 
-  private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
-    return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  // private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
+  //   return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  // }
+
+  private getActiveStage(wizardManager: any): IWizardStage {
+    const wizardState = this.getWizardState(wizardManager);
+    return wizardState.stages[wizardState.indexOfActive];
   }
 
-  registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
+  public registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
     const stage = this.getActiveStage(wizardManager);
 
     stage.form = this.validationFactory.createForCurrentScope();
