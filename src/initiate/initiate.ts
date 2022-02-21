@@ -12,7 +12,7 @@ export class Initiate {
       name: "Joint Venture",
       slug: "joint-venture",
       isDisabled: true,
-      description: "Collaborate with other DAOs to spin off a new DAO",
+      description: "Collaborate with other DAOs to spin off a new DAO.",
     },
   ];
 }
