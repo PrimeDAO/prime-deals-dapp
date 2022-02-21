@@ -46,9 +46,41 @@
 
     <h2>Gradient Card</h2>
     <p>
-      Optional: <code>type="gradient"</code> to provide gradient left border.
+      Optional: <code>type="gradient"</code>/<code>class="... gradient"</code> to provide gradient left border.
     </p>
     <pcard class="card4" type="gradient">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    </pcard>
+
+    <h2>Custom Background for Gradient Card</h2>
+    <p>
+      Overriding the default card background color or the gradient border color.
+    </p>
+    <h3>Syntax</h3>
+    <code>
+      &.gradient {<br>
+      &ensp;@include pcardBgAndGradient($backgroundColor, $grColor01, $grColor02);<br>
+      }
+    </code>
+
+    <h3>Example 1</h3>
+    <code>
+      &.gradient {<br>
+      &ensp;@include pcardBgAndGradient($backgroundColor: $Neutral02);<br>
+      &ensp;color: black;<br>
+      }
+    </code>
+    <pcard class="card5" type="gradient">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    </pcard>
+
+    <h3>Example 2</h3>
+    <code>
+      &.gradient {<br>
+      &ensp;@include pcardBgAndGradient($grColor01: $Green, $grColor02: $Red);<br>
+      }
+    </code>
+    <pcard class="card6" type="gradient">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     </pcard>
   </section>

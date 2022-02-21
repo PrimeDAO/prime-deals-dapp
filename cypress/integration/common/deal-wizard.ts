@@ -11,6 +11,7 @@ const stageTitlesToURLs = {
   "Lead Details": "lead-details",
   "Primary DAO": "primary-dao",
   "Partner DAO": "partner-dao",
+  "Token Details": "token-details",
 } as const;
 
 Then("I am presented the option to choose a partner", () => {
@@ -63,6 +64,7 @@ When("I fill in the {string} field with {string}", (field: string, value: string
 
 Then("I am presented with the {string} error message for the {string} field", (message: string, field: string) => {
   cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+    cy.get(".errorMessage").should("be.visible");
     cy.get(".errorMessage").should("contain.text", message);
   });
 });
