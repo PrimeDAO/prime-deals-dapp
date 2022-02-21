@@ -1,4 +1,5 @@
 import { autoinject } from "aurelia-framework";
+import axios from "axios";
 import { Utils } from "services/utils";
 
 export interface IDimensionRange {
@@ -7,6 +8,8 @@ export interface IDimensionRange {
   maxWidth: number;
   maxHeight: number;
 }
+
+const corsError = "CORS Error";
 
 @autoinject
 export class ImageService {
@@ -20,13 +23,16 @@ export class ImageService {
 
     return new Promise((resolve, reject) => {
       if (!Utils.isValidUrl(url)) {
-        reject();
+        reject("Invalid URL");
       }
-      const xhr = new XMLHttpRequest();
-      xhr.onload = () => {
+      axios({
+        url,
+        method: "GET",
+        responseType: "blob",
+      }).then((response) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          const fileSize = parseInt(xhr.getResponseHeader("Content-Length"), 10);
+          const fileSize = parseInt(response.headers["content-length"], 10);
           const result = {
             mimeType: this.getMimeType(reader.result as string),
             fileSize,
@@ -34,14 +40,10 @@ export class ImageService {
           this.imagesDetailsByUrls.set(url, result);
           resolve(result);
         };
-        reader.readAsDataURL(xhr.response);
-      };
-      xhr.onerror = () => {
-        reject("corsError");
-      };
-      xhr.open("GET", url);
-      xhr.responseType = "blob";
-      xhr.send();
+        reader.readAsDataURL(response.data);
+      }).catch(() => {
+        reject(corsError);
+      });
     });
   }
 
@@ -92,10 +94,10 @@ export class ImageService {
     try {
       const fileDetails = await this.getFileDetails(url);
       if (fileDetails.fileSize > maxSize) {
-        throw new Error();
+        throw new Error("File size is too big");
       }
     } catch (error) {
-      if (error === "corsError") {
+      if (error === corsError) {
         return true;
       }
       return false;
@@ -108,7 +110,7 @@ export class ImageService {
     try {
       const image = await this.getImageFromUrl(url);
       if (image.naturalWidth !== image.naturalHeight) {
-        throw new Error();
+        throw new Error("Image is not squared.");
       }
     } catch {
       return false;
@@ -126,7 +128,7 @@ export class ImageService {
         image.naturalHeight < dimensions.minHeight ||
         image.naturalHeight > dimensions.maxHeight
       ) {
-        throw new Error();
+        throw new Error("Incorrect image dimensions");
       }
     } catch {
       return false;
@@ -142,10 +144,10 @@ export class ImageService {
         extensions.map(item => item.toLowerCase())
           .indexOf(this.mimeTypeToExtension(fileDetails.mimeType)) === -1
       ) {
-        throw new Error();
+        throw new Error("Incorrect mimeType");
       }
     } catch (error) {
-      if (error === "corsError") {
+      if (error === corsError) {
         return true;
       }
       return false;

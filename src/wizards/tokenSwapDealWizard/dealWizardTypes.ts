@@ -27,7 +27,7 @@ export const daoStageValidationRules = (title: string) =>
     .required()
     .withMessage("Treasury address is required")
     .satisfiesRule(Validation.isETHAddress)
-    .ensure<string>(dao => dao.logo_url)
+    .ensure<string>(dao => dao.logoURI)
     .required()
     .withMessage(`${title} avatar is required`)
     .satisfiesRule(Validation.imageUrl)

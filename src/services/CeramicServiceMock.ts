@@ -22,7 +22,7 @@ const _registration1: IDealRegistrationTokenSwap = {
     social_medias: [],
     representatives: [{address: address1}],
     treasury_address: address2,
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: {
     name: "",
@@ -35,7 +35,7 @@ const _registration1: IDealRegistrationTokenSwap = {
     treasury_address: "",
     representatives: [{address: ""}],
     social_medias: [{name: "", url: ""}],
-    logo_url: null,
+    logoURI: null,
   },
   proposalLead: {
     address: proposalLeadAddress1,
@@ -79,7 +79,7 @@ const _registration2: IDealRegistrationTokenSwap = {
     }, {
       address: address6,
     }],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
   },
   partnerDAO: {
@@ -93,7 +93,7 @@ const _registration2: IDealRegistrationTokenSwap = {
     treasury_address: "",
     representatives: [{address: ""}],
     social_medias: [{name: "", url: ""}],
-    logo_url: null,
+    logoURI: null,
   },
   proposalLead: {
     address: proposalLeadAddress1,
@@ -136,7 +136,7 @@ const _registration3: IDealRegistrationTokenSwap = {
     }, {
       address: address6,
     }],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
     treasury_address: "",
   },
@@ -151,7 +151,7 @@ const _registration3: IDealRegistrationTokenSwap = {
     treasury_address: "",
     representatives: [{address: ""}],
     social_medias: [{name: "", url: ""}],
-    logo_url: null,
+    logoURI: null,
   },
   proposalLead: {
     address: proposalLeadAddress1,
@@ -191,7 +191,7 @@ const _registration4: IDealRegistrationTokenSwap = {
     social_medias: [],
     representatives: [{address: address1}],
     treasury_address: address2,
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: {
     id: "dao-hash-5",
@@ -200,7 +200,7 @@ const _registration4: IDealRegistrationTokenSwap = {
     social_medias: [],
     treasury_address: address3,
     representatives: [{address: address4}],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
   },
   proposalLead: {
     address: proposalLeadAddress1,
@@ -243,7 +243,7 @@ const _registration5: IDealRegistrationTokenSwap = {
     }, {
       address: address6,
     }],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
     treasury_address: "",
   },
@@ -253,7 +253,7 @@ const _registration5: IDealRegistrationTokenSwap = {
     tokens: [],
     social_medias: [],
     representatives: [{address: ""}],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
     treasury_address: "",
   },
@@ -298,7 +298,7 @@ const _registration6: IDealRegistrationTokenSwap = {
     }, {
       address: address6,
     }],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
     treasury_address: "",
   },
@@ -308,7 +308,7 @@ const _registration6: IDealRegistrationTokenSwap = {
     tokens: [],
     social_medias: [],
     representatives: [{address: ""}],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
     treasury_address: "",
   },

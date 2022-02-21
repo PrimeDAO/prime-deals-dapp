@@ -35,16 +35,16 @@
           label.bind="name + ' Avatar'"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size">
           <pinput-text
-            value.bind="data.logo_url & validate:form"
+            value.bind="data.logoURI & validate:form"
             placeholder="Image URL..."
             disabled.bind="disabled">
           </pinput-text>
         </pform-input>
         <div
           class="daoAvatar"
-          style.bind="`background-image: url(${data.logo_url})`"
+          style.bind="`background-image: url(${data.logoURI})`"
           data-test="dao-avatar">
-          <i if.bind="!data.logo_url" class="fas fa-image"></i>
+          <i if.bind="!data.logoURI" class="fas fa-image"></i>
         </div>
       </div>
 

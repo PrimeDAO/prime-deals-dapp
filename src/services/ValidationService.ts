@@ -35,7 +35,7 @@ ValidationRules.customRule(
 ValidationRules.customRule(
   Validation.imageUrl,
   (value) => ImageService.isImageUrl(value),
-  "Please enter valid image URL",
+  "The URL does not point to an image",
 );
 
 ValidationRules.customRule(

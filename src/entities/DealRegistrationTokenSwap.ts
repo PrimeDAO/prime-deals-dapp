@@ -32,7 +32,7 @@ export interface ISocialMedia {
 export interface IDAO {
   name: string;
   treasury_address: string;
-  logo_url: string;
+  logoURI: string;
   social_medias: Array<ISocialMedia>;
   representatives: Array<{address: string}>;
   id?: string;
@@ -114,7 +114,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       treasury_address: "",
       representatives: [{address: ""}],
       social_medias: [{name: "", url: ""}],
-      logo_url: null,
+      logoURI: null,
     };
     this.partnerDAO = {
       name: "",
@@ -127,7 +127,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       treasury_address: "",
       representatives: [{address: ""}],
       social_medias: [{name: "", url: ""}],
-      logo_url: null,
+      logoURI: null,
     };
     this.proposalLead = {
       address: "",
