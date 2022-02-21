@@ -39,7 +39,6 @@ export class TokenDetails {
     private tokenService: TokenService,
     private validationControllerFactory: ValidationControllerFactory,
   ) {
-
     this.form = this.validationControllerFactory.createForCurrentScope();
     this.form.validateTrigger = validateTrigger.change;
     this.form.addRenderer(new PrimeRenderer);
@@ -121,8 +120,8 @@ export class TokenDetails {
   }
 
   private watchTokenProperties() {
-    this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransfer", newValue => {
-      if (newValue === 0) {
+    this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransferAmount", newValue => {
+      if (Number(newValue?.toString() ?? 0) === 0) {
         this.token.vestedFor = undefined;
         this.token.cliffOf = undefined;
       }
@@ -164,12 +163,12 @@ export class TokenDetails {
       .withMessage("Vested transfer amount can't ge bigger than Token Amount")
       .ensure<number>(data => data.vestedFor)
       .required()
-      .when(data => data.vestedTransferAmount !== undefined)
+      .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
       .withMessage("Please select a vested period")
       .min(0)
       .ensure<number>(data => data.cliffOf)
       .required()
-      .when(data => data.vestedTransferAmount !== undefined)
+      .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
       .withMessage("Please select a cliff period (can be 0)")
       .satisfies((value: number, data) => value <= data.vestedFor)
       .when(data => data.vestedFor >= 0)

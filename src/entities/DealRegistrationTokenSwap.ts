@@ -25,7 +25,7 @@ export interface IToken {
   decimals: number,
   logoURI: string,
 
-  amount: string;
+  amount: string
   instantTransferAmount: string
   vestedTransferAmount: string
   vestedFor: number

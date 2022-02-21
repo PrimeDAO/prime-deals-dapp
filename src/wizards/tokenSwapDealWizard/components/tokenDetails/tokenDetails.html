@@ -84,9 +84,9 @@
           <div class="vesting-input">
             <p>Tokens vested for</p>
             <pform-input data-test="proposal-vested-period-field" input-reference.bind="vestedForInput">
-              <pinput-group disabled.bind="token.amount === token.instantTransferAmount">
+              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric
-                  disabled.bind="token.amount === token.instantTransferAmount"
+                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
                   not-wei
                   value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"
@@ -98,9 +98,9 @@
           <div class="vesting-input">
             <p>with a cliff of</p>
             <pform-input data-test="proposal-cliff-period-field" input-reference.bind="cliffOfInput">
-              <pinput-group disabled.bind="token.amount === token.instantTransferAmount">
+              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric
-                  disabled.bind="token.amount === token.instantTransferAmount"
+                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
                   not-wei
                   value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
@@ -157,7 +157,7 @@
           <p>Vested transfer</p>
           <p>
             <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-                              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+                              value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
             <template else>
               -
             </template>
@@ -168,14 +168,14 @@
           <p>Vested for</p>
           <p>
             <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
-            <template else>-</template>
+            <template else>0 days</template>
           </p>
         </div>
 
         <div class="detailsCell">
           <p>Cliff of</p>
           <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
-          <template else>-</template>
+          <template else>0 days</template>
         </div>
       </div>
 
