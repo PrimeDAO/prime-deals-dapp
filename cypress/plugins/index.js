@@ -12,6 +12,7 @@
 // the project's config changing)
 
 /* eslint-disable */
+const { ProvidePlugin } = require("webpack");
 const webpack = require("@cypress/webpack-preprocessor");
 
 module.exports = (on, config) => {
@@ -22,9 +23,17 @@ module.exports = (on, config) => {
   on("file:preprocessor", webpack({
     webpackOptions: {
       resolve: {
-        extensions: [".ts", ".js"]
+        extensions: [".ts", ".js"],
+        alias: {
+          process: 'process/browser',
+        }
       },
-      devtool: 'eval-source-map',
+      devtool: 'cheap-module-source-map',
+      devServer: {
+        client: {
+          overlay: false,
+        },
+      },
       module: {
         rules: [
           {
@@ -46,7 +55,13 @@ module.exports = (on, config) => {
             ]
           }
         ]
-      }
+      },
+      plugins: [
+        new ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
+        }),
+      ]
     }
   }));
 };

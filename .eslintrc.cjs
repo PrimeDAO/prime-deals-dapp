@@ -1,4 +1,4 @@
-{
+module.exports = {
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -8,7 +8,9 @@
     "ecmaVersion": 2019,
     "sourceType": "module",
     "project": "./tsconfig.json",
-    "tsconfigRootDir": "."
+    "tsconfigRootDir": ".",
+    extraFileExtensions: ['.cjs']
+
   },
   "extends": [
     "eslint:recommended",

@@ -9,8 +9,10 @@
     <pbutton
       if.bind="!showSubmit"
       type="primary"
-      click.delegate="wizardService.proceed(wizardManager)"
-      data-test="wizard-proceed-button">
+      click.delegate="proceed()"
+      data-test="wizard-proceed-button"
+      is-loading.bind="validating"
+    >
       Proceed
     </pbutton>
     <pbutton

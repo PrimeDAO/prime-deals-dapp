@@ -94,6 +94,11 @@ prange-slider {
           border-radius: 6px;
         }
 
+        &:disabled {
+          filter: saturate(0);
+          opacity: 0.5;
+        }
+
         &::-webkit-slider-thumb {
           -webkit-appearance: none;
           @include thumb-style;

@@ -1,15 +1,31 @@
 import { bindable } from "aurelia-typed-observable-plugin";
 import { customElement } from "aurelia-framework";
-import "./pcard.scss";
+import "../_styles.scss";
 
 /**
  * Usage:
  *    <pcard>Default</pcard>
- *    <pcard type="success">Success</pcard>
- *    <pcard type="alert">Alert</pcard>
- *    <pcard type="warning">Warning</pcard>
+ *    <pcard type="gradient">Gradient left border</pcard>
  *    <pcard ... click.delegate="message('Hi!')">Clickable</pcard>
  *    <pcard ... width="100%">Fix Size</pcard>
+ *
+ *    <div class="pcard">As a div</div>
+ *    <div class="pcard gradient">As a div with gradient border</div>
+ *
+ * Options:
+ *  type: "gradient" (optional)
+ *
+ *  Override background color on a gradient pcard:
+ *  use:
+ *  ```scss
+ *  &.gradient {
+ *    @include pcardBgAndGradient($backgroundColor, $grColor01, $grColor02);
+ *  }
+ * ```
+ * Defaults:
+ * $backgroundColor: $BG02
+ * $grColor01: $Primary01
+ * $grColor02: $Secondary02
 */
 export type CardType = "gradient" | "";
 

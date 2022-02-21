@@ -12,6 +12,14 @@
   h1 {
     font-size: 24px;
     margin-bottom: 10px;
+    color: $Secondary05;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-weight: 700;
   }
 
   p {
@@ -24,8 +32,9 @@
   }
 
   code {
-    background-color: $Neutral02;
-    padding: 2px;
+    background-color: $BG03;
+    padding: 1px $spacing-small;
+    color: $Orange;
     border-radius: $border-radius-small;
   }
 
@@ -39,5 +48,17 @@
 
   .card4 {
     height: 75px;
+  }
+
+  .card5 {
+    &.gradient {
+      @include pcardBgAndGradient($backgroundColor: $Neutral02);
+      color: black;
+    }
+  }
+  .card6 {
+    &.gradient {
+      @include pcardBgAndGradient($grColor01: $Green, $grColor02: $Red);
+    }
   }
 }
