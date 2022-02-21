@@ -1,18 +1,25 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
-  <require from="../../components/daoDetailsSection/daoDetailsSection"></require>
+  <require from="../../components/daoStageContent/daoStageContent"></require>
   <stage-wrapper
     title="Primary DAO Details"
     wizard-manager.bind="wizardManager">
-    <dao-details-section
-      title="Primary DAO"
-      description="Please fill in the details of the first DAO who will be initiating the deal."
-      name-field-label="Primary DAO Name"
-      avatar-field-label="Primary DAO Avatar"
-      representatives-label="Primary DAO - Representatives Addresses (Max. 5)"
-      errors.bind="errors"
+    <dao-stage-content
+      name="Primary DAO"
+      disabled.bind="disabled"
       data.bind="wizardState.registrationData.primaryDAO"
-      disabled.bind="disabled">
-    </dao-details-section>
+      form.bind="form"
+      wizard-manager.bind="wizardManager">
+      <div slot="details-description">
+        Please fill in the details of the first DAO who will be initiating the deal.
+      </div>
+      <div slot="representatives-description">
+        Representatives of the selected DAOs can cast votes, either to accept or reject the deal. The deal gets accepted if more than half of the representatives of involved DAO's vote agree.
+        <br /><br />
+        Representatives also have access to discuss clauses on the deal. They can also fund the deal, as well as withdraw and claim tokens.
+        <br /><br />
+        Please put the address of the lead proposal if they are part of the Primary DAO, and wish to partake in the voting process.
+      </div>
+    </dao-stage-content>
   </stage-wrapper>
 </template>

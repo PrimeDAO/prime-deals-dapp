@@ -17,10 +17,10 @@
         <div>
           <div class="icons ${ deal.registrationData.partnerDAO ? 'running' : 'open' }">
             <div if.to-view="deal.registrationData.primaryDAO" class="icon">
-              <img src="${deal.registrationData.primaryDAO.logo_url}"/>
+              <img src="${deal.registrationData.primaryDAO.logoURI}" />
             </div>
             <div if.to-view="deal.registrationData.partnerDAO" class="icon">
-              <img src="${deal.registrationData.partnerDAO.logo_url}"/>
+              <img src="${deal.registrationData.partnerDAO.logoURI}" />
             </div>
             <div class="dao">
               <div if.to-view="deal.registrationData.primaryDAO" class="name ellipses">
