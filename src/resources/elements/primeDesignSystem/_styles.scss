@@ -1,6 +1,15 @@
 @import "./pinput";
 @import "./typography";
 
+@mixin pcardBgAndGradient($backgroundColor: $BG02, $grColor01: $Primary01, $grColor02: $Secondary02) {
+  background: /* this is the card background: */
+    linear-gradient($backgroundColor, $backgroundColor) padding-box,
+    /* this is the gradient on the left side: */
+    linear-gradient(to bottom, $grColor01, $grColor02) border-box;
+  border-left: $border-radius-small solid transparent;
+  border-right: $border-radius-small solid $backgroundColor;
+}
+
 .pcard {
   padding: $spacing-normal; // only if there is no padding on the parent
   border-radius: $border-radius-small;
@@ -9,11 +18,6 @@
   width: inherit;
 
   &.gradient {
-    background: /* this is the card background: */
-      linear-gradient($BG02, $BG02) padding-box,
-      /* this is the gradient on the left side: */
-      linear-gradient(to bottom, $Primary01, $Secondary02) border-box;
-    border-left: $border-radius-small solid transparent;
-    border-right: $border-radius-small solid $BG02;
+    @include pcardBgAndGradient();
   }
 }
