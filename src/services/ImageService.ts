@@ -9,7 +9,7 @@ export interface IDimensionRange {
   maxHeight: number;
 }
 
-const corsError = "CORS Error";
+const RequestError = "Request Error";
 
 @autoinject
 export class ImageService {
@@ -42,7 +42,7 @@ export class ImageService {
         };
         reader.readAsDataURL(response.data);
       }).catch(() => {
-        reject(corsError);
+        reject(RequestError);
       });
     });
   }
@@ -97,7 +97,8 @@ export class ImageService {
         throw new Error("File size is too big");
       }
     } catch (error) {
-      if (error === corsError) {
+      // If there was an issue with the http request, don't show error to the user
+      if (error === RequestError) {
         return true;
       }
       return false;
@@ -147,7 +148,8 @@ export class ImageService {
         throw new Error("Incorrect mimeType");
       }
     } catch (error) {
-      if (error === corsError) {
+      // If there was an issue with the http request, don't show error to the user
+      if (error === RequestError) {
         return true;
       }
       return false;
