@@ -28,8 +28,8 @@ Feature: "Token Details" stage (Stage 5)
     When I fill in the "Token amount" field with "123"
     And I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
-    And I am presented with the "Please select a vested period" error message for the "Vested Period" field
-    And I am presented with the "Please select a cliff period (can be 0)" error message for the "Cliff Period" field
+    And I am presented with the "Please provide a vesting period" error message for the "Vested Period" field
+    And I am presented with the "Please provide a cliff period" error message for the "Cliff Period" field
 
 
 #  This scenario needs the next stage in order to be tested. (replace "<Next stage>" with the proper next stage name)
