@@ -126,9 +126,13 @@ export class TokenDetails {
         this.token.cliffOf = undefined;
       }
     });
-    this.aureliaHelperService.createPropertyWatch(this.token, "vestedFor", () => {
+    this.aureliaHelperService.createPropertyWatch(this.token, "vestedFor", newValue => {
       this.form.revalidateErrors();
-      this.token.cliffOf = this.token.cliffOf ? Math.min(this.token.vestedFor, this.token.cliffOf) : this.token.cliffOf;
+      if (newValue >= 0) {
+        this.token.cliffOf = this.token.cliffOf ? Math.min(newValue, this.token.cliffOf) : this.token.cliffOf;
+      } else {
+        this.token.cliffOf = undefined;
+      }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", () => {
       this.token.amount = undefined;
