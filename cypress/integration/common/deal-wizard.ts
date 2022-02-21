@@ -75,7 +75,7 @@ When("I'm in the {string} section", (sectionHeading: string) => {
 });
 
 Then("the {string} option should be turned off", (optionText: string) => {
-  cy.get(`pform-input[label='${optionText}']`).within(formComponent => {
+  cy.get(`pform-input[label='${optionText}']`).within(() => {
     cy.contains(optionText).should("be.visible");
     cy.get("[data-test='pToggleInput']").invoke("val").should("equal", "false");
   });
