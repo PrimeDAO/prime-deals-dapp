@@ -22,7 +22,7 @@ Feature: "Token Details" stage (Stage 5)
     When I fill in the "Token address" field with "wrong address"
     And I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
-    And I am presented with the "Please enter a valid wallet address" error message for the "Token address" field
+    And I am presented with the "Please enter a valid ethereum address" error message for the "Token address" field
 
   Scenario: Validates vesting periods
     When I fill in the "Token amount" field with "123"
