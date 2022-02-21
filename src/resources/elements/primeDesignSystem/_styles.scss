@@ -21,3 +21,34 @@
     @include pcardBgAndGradient();
   }
 }
+
+/*
+ * Helper classes used to show different types of messages on the page
+ *   These are used by the pform-input component internally,
+ *   and by some pages that display error messages without a pform-input component.
+ */
+.helperMessage {
+  color: $Neutral02;
+  font-size: $font-size1;
+}
+
+.feedbackMessage {
+  margin-top: $spacing-small;
+  opacity: 0;
+  transition: all ease-in-out 0.2s;
+  height: 1rem;
+  transform: translateY(-10px);
+
+  &.feedbackMessageVisible {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+  &.errorMessage {
+    color: $Red;
+  }
+
+  &.warningMessage {
+    color: $Orange;
+  }
+}
