@@ -1,0 +1,191 @@
+<template>
+  <pcard>
+    <div if.bind="viewMode === 'edit'">
+
+      <pform-input
+        data-test="proposal-token-address-field"
+        helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
+        input-reference.bind="addressInput"
+        label="Token Address"
+        label-info="Some info here"
+      >
+        <pinput-text
+          input.trigger="getTokenInfo(token.address)"
+          placeholder="0x..."
+          validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
+          value.bind="token.address & validate"
+          view-model.ref="addressInput"
+        ></pinput-text>
+      </pform-input>
+      <div class="detailsTable" if.bind="showTokenDetails">
+        <div class="detailsCell">
+          <p>Name</p>
+          <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>
+          <pinput-text if.bind="tokenDetailsNotFound.name" value.bind="token.name"></pinput-text>
+        </div>
+        <div class="detailsCell">
+
+          <p>Symbol</p>
+          <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
+          <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
+        </div>
+        <div class="detailsCell">
+          <p>Decimals</p>
+          <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
+          <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>
+        </div>
+        <div class="detailsCell">
+          <p>
+            Logo
+            <img error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
+                 load.trigger="logoLoaded(true)"
+                 src.bind="token.logoURI">
+          </p>
+          <pinput-text input.trigger="checkURL()" value.bind="token.logoURI"></pinput-text>
+          <span class="feedbackMessage ${!validTokenLogoURI ? 'feedbackMessageVisible' : ''} errorMessage">
+            <template if.bind="token.logoURI">No valid image found at the provided logo URL</template>
+            <template else>Image logo is required</template>
+          </span>
+        </div>
+      </div>
+      <pform-input data-test="proposal-token-amount-field"
+                   input-reference.bind="amountInput"
+                   label="Amount"
+                   label-description="You are able to edit the amount of tokens to be swapped before the execution phase."
+      >
+        <pinput-numeric
+          placeholder="500.000"
+          value.bind="token.amount & validate"
+          decimals.bind="token.decimals"
+          view-model.ref="amountInput"
+        ></pinput-numeric>
+      </pform-input>
+      <pform-input
+        label="Instant Transfer Set-up"
+        label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+        label-info="some handy info"
+      >
+        <prange-slider
+          left-label="Instant"
+          disabled.bind="!token.amount"
+          left.bind="token.instantTransferAmount | ethwei & validate"
+          right-label="Vested"
+          max-value.bind="token.amount | ethwei"
+          not-wei
+          right.bind="token.vestedTransferAmount | ethwei & validate"
+        ></prange-slider>
+      </pform-input>
+
+      <pform-input label="Vesting Set-up"
+                   label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit "
+                   label-info="some handy info"
+      >
+        <div class="vesting">
+          <div class="vesting-input">
+            <p>Tokens vested for</p>
+            <pform-input data-test="proposal-vested-period-field" input-reference.bind="vestedForInput">
+              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
+                <pinput-numeric
+                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
+                  not-wei
+                  value.bind="token.vestedFor | secondsDays & validate"
+                  view-model.ref="vestedForInput"
+                ></pinput-numeric>
+                <span slot="after">days</span>
+              </pinput-group>
+            </pform-input>
+          </div>
+          <div class="vesting-input">
+            <p>with a cliff of</p>
+            <pform-input data-test="proposal-cliff-period-field" input-reference.bind="cliffOfInput">
+              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
+                <pinput-numeric
+                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
+                  not-wei
+                  value.bind="token.cliffOf | secondsDays & validate"
+                  view-model.ref="cliffOfInput"></pinput-numeric>
+                <span slot="after">days</span>
+              </pinput-group>
+            </pform-input>
+          </div>
+        </div>
+      </pform-input>
+
+      <div class="tokenDetailsFooter">
+        <pbutton class="deleteButton" click.delegate="onDelete()" type="tertiary">
+          Delete
+          <i class="fa fa-trash"></i>
+        </pbutton>
+        <pbutton click.delegate="save()" is-loading.bind="saving" type="primary">Save</pbutton>
+      </div>
+    </div>
+
+    <div class="tokenDetailsView" if.bind="viewMode === 'view'">
+      <p class="tokenName">
+        <img height="32" src.bind="token.logoURI">
+        ${token.name || '-'}
+      </p>
+      <div class="detailsTable detailsTableInViewMode">
+        <div class="detailsCell">
+          <p>Token address</p>
+          <p>${token.address || '-' | smallHexString }</p>
+        </div>
+
+        <div class="detailsCell detailsCellAmount">
+          <p>Amount tokens</p>
+          <p>
+            <formatted-number if.bind="token.amount >= 0" thousands-separated
+                              value.to-view="token.amount | ethwei"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Instant transfer</p>
+          <p>
+            <formatted-number if.bind="token.instantTransferAmount" thousands-separated
+                              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Vested transfer</p>
+          <p>
+            <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
+                              value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Vested for</p>
+          <p>
+            <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
+            <template else>0 days</template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Cliff of</p>
+          <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
+          <template else>0 days</template>
+        </div>
+      </div>
+
+      <div class="tokenDetailsFooter">
+        <p class="feedbackMessage ${!valid ? 'feedbackMessageVisible' : ''} errorMessage">
+          Token details has invalid information. Please edit them.
+        </p>
+        <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
+      </div>
+    </div>
+  </pcard>
+
+</template>

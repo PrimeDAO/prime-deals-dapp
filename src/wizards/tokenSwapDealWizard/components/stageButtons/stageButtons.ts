@@ -8,6 +8,13 @@ import "./stageButtons.scss";
 export class stageButtons {
   @bindable wizardManager: any;
   @bindable showSubmit = false;
+  validating = false;
 
-  constructor(public wizardService: WizardService) {}
+  constructor(public wizardService: WizardService) {
+  }
+
+  async proceed() {
+    this.validating = true;
+    await this.wizardService.proceed(this.wizardManager).finally(() => this.validating = false);
+  }
 }
