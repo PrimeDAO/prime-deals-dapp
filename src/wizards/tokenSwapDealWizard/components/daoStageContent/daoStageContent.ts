@@ -32,6 +32,7 @@ export class DaoStageContent {
 
   removeRepresentative(index: number) {
     this.data.representatives.splice(index, 1);
+    this.form.revalidateErrors();
   }
 
   addSocialMedia() {
@@ -40,5 +41,6 @@ export class DaoStageContent {
 
   removeSocialMedia(index: number) {
     this.data.social_medias.splice(index, 1);
+    this.form.revalidateErrors();
   }
 }
