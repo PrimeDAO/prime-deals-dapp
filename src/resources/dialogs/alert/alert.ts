@@ -13,6 +13,7 @@ export class Alert {
   buttonTextSecondary?: string;
   message: string;
   header: string;
+  confetti: boolean;
 
   constructor(private controller: DialogController) { }
 
@@ -22,6 +23,7 @@ export class Alert {
     this.buttonTextSecondary = model.buttonTextSecondary ?? "CANCEL";
     this.message = model.message;
     this.header = model.header ?? "Prime Deals";
+    this.confetti = !!model.confetti;
   }
 }
 
