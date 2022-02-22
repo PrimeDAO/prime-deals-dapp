@@ -61,26 +61,36 @@
           <pcard>
             <div class="submitCardContent">
               <h4 class="submitCardHeader">Primary DAO</h4>
-              <h3>Dao logo Dao name</h3>
 
-              <div class="submitContentLabel-sm">Treasury address</div>
-              <div class="submitContent">
-                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              <div class="daoNameAndLogo">
+                <div
+                  class="daoAvatar"
+                  style.bind="`background-image: url(${submitData.primaryDAO.logoURI})`"
+                  data-test="dao-avatar">
+                  <i if.bind="!submitData.primaryDAO.logoURI" class="fas fa-image"></i>
+                </div>
+                <h3>Dao name</h3>
               </div>
 
               <div class="submitContentLabel-sm">Treasury address</div>
               <div class="submitContent">
-                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+                <p class="subtext">${submitData.primaryDAO.treasury_address | smallHexString}</p>
               </div>
 
               <div class="submitContentLabel-sm">Social Media</div>
               <div class="submitContent">
-                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              <template repeat.for="socialMedia of submitData.primaryDAO.social_medias">
+                <div>
+                  <span class="subtext">${socialMedia.name}</span> - <span class="subtext">${socialMedia.url}</span>
+                </div>
+                </template>
               </div>
 
               <div class="submitContentLabel-sm">Representatives</div>
               <div class="submitContent">
-                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+                <template repeat.for="representative of submitData.primaryDAO.representatives">
+                  <p class="subtext">${representative.address | smallHexString}</p>
+                </template>
               </div>
 
               <div class="submitContentLabel-sm">Tokens</div>
@@ -93,7 +103,7 @@
 
         <div class="submitCard submitTermsCard">
           <pcard>
-            <div>
+            <div class="submitCardContent">
               <h4 class="submitCardHeader">Terms</h4>
 
               <template repeat.for="clause of submitData.terms.clauses">
