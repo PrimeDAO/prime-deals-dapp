@@ -1,8 +1,8 @@
 <template>
   <section class="ppopup-dialog pPopupModal pcard gradient">
-    <p class="header ${confetti ? 'bg-confetti-animated' : ''}">${header}</p>
-    <p class="body" ref="body"></p>
-    <p class="footer">
+    <p class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}">${header}</p>
+    <p class="dialogBody" ref="body"></p>
+    <p class="dialogFooter">
       <pbutton type="tertiary" show.bind="showCancelButton" click.trigger="secondaryClick()">${buttonTextSecondary}</pbutton>
       <pbutton type="primary" show.bind="showOkButton" ref="primaryButton" click.trigger="primaryClick()">${buttonTextPrimary}</pbutton>
     </p>

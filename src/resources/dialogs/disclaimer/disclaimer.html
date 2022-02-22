@@ -1,9 +1,9 @@
 <template>
   <section class="ppopup-dialog disclaimer pcard gradient">
-    <p class="header ellipses">${model.title}</p>
-    <p class="body loading" if.to-view="loading"><i class="fas fa-circle-notch fa-spin"></i></p>
-    <p else class="body" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
-    <p class="footer">
+    <p class="dialogHeader ellipses">${model.title}</p>
+    <p class="dialogBody loading" if.to-view="loading"><i class="fas fa-circle-notch fa-spin"></i></p>
+    <p else class="dialogBody" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
+    <p class="dialogFooter">
       <pform-input
         class="checkbox"
         click.delegate="toggleAccepted()"

@@ -14,13 +14,13 @@
     @include pcardBgAndGradient($backgroundColor: $Border01);
   }
 
-  > .header,
-  > .body,
-  > .footer {
+  > .dialogHeader,
+  > .dialogBody,
+  > .dialogFooter {
     border: none;
   }
 
-  > .header {
+  > .dialogHeader {
     white-space: pre-wrap;
     word-break: break-word;
     font-family: Inter;
@@ -35,7 +35,7 @@
     overflow-y: hidden;
   }
 
-  > .body {
+  > .dialogBody {
     overflow: auto;
     flex-grow: 2;
     padding: 0 30px 28px 34px;
@@ -49,7 +49,7 @@
     text-align: left;
   }
 
-  > .footer {
+  > .dialogFooter {
     padding-top: 12px;
     padding-bottom: 12px;
     padding-right: 20px;
@@ -62,18 +62,18 @@
   .ppopup-dialog {
     min-width: 0;
 
-    > .header {
+    > .dialogHeader {
       white-space: normal;
       text-align: center;
       line-height: 44px;
     }
 
-    > .body {
+    > .dialogBody {
       border-radius: 0;
       padding: 28px;
     }
 
-    > .footer {
+    > .dialogFooter {
       display: flex;
       flex-direction: column;
       border-top-width: 0;
