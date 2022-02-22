@@ -87,3 +87,7 @@ Then("I can see my existing Clauses", () => {
   const CLAUSE_TEXT = "lorem";
   Terms.getClausesTextarea().invoke("val").should("equal", CLAUSE_TEXT);
 });
+
+Then("the Clause's content should be cleared", () => {
+  Terms.getClausesTextarea().invoke("val").should("equal", "");
+});
