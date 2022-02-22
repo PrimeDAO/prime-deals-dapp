@@ -17,7 +17,7 @@ ValidationRules.customRule(
   Validation.isETHAddress,
   // We need to cast it to a boolean because `Utils.isAddress` returns `undefined`
   (value) => Boolean(Utils.isAddress(value)),
-  "Please enter a valid wallet address",
+  "Please enter a valid ethereum address",
 );
 
 ValidationRules.customRule(

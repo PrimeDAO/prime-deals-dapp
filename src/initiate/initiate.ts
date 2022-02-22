@@ -6,13 +6,13 @@ export class Initiate {
       name: "Token Swap",
       slug: "initiate/token-swap",
       isDisabled: false,
-      description: "Trustlessly exchange tokens between multiple parties with customized vesting options.",
+      description: "Safely exchange tokens between multiple parties with customized vesting schedules.",
     },
     {
       name: "Joint Venture",
       slug: "joint-venture",
       isDisabled: true,
-      description: "DAO's collaborate to launch new domain-specific DAO's or entities. ",
+      description: "Seed or join into a liquidity pool together with multiple parties.",
     },
   ];
 }
