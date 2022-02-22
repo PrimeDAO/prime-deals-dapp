@@ -94,7 +94,7 @@
           class="action do"
           type="primary"
           full-width
-          disabled.bind="isLoading.commenting"
+          disabled.bind="isLoading.commenting || !comment.length"
           loading.bind="isLoading.commenting"
           click.delegate="addComment()">
           ${isReply ? "Reply" : "Comment"}
