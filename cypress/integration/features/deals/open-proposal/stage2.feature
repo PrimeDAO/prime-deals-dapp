@@ -26,5 +26,5 @@ Feature: "Lead details" stage (Stage 2)
     Then I am presented with the 'Open proposal' 'Primary DAO' stage
 
   Scenario: Private Offers option should be turned off by default
-    When I'm in the "Make Offers Private?" section
+    When I'm in the "Make Incoming Offers Private?" section
     Then the "Make Offers Private" option should be turned off

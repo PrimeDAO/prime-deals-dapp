@@ -41,11 +41,10 @@
                  load.trigger="logoLoaded(true)"
                  src.bind="token.logoURI">
           </p>
-          <pinput-text input.trigger="checkURL()" value.bind="token.logoURI"></pinput-text>
-          <span class="feedbackMessage ${!validTokenLogoURI ? 'feedbackMessageVisible' : ''} errorMessage">
-            <template if.bind="token.logoURI">No valid image found at the provided logo URL</template>
-            <template else>Image logo is required</template>
-          </span>
+          <pform-input input-reference.bind="logoImageInput">
+            <pinput-text input.trigger="checkURL()" value.bind="token.logoURI & validate"
+                         view-model.ref="logoImageInput"></pinput-text>
+          </pform-input>
         </div>
       </div>
       <pform-input data-test="proposal-token-amount-field"
@@ -66,10 +65,12 @@
         label-info="some handy info"
       >
         <prange-slider
-          left-label="Instant"
+          hide-Percentage
+          left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
           disabled.bind="!token.amount"
+          right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
           left.bind="token.instantTransferAmount | ethwei & validate"
-          right-label="Vested"
+          view-model.ref="rangeSlider"
           max-value.bind="token.amount | ethwei"
           not-wei
           right.bind="token.vestedTransferAmount | ethwei & validate"
@@ -122,7 +123,7 @@
 
     <div class="tokenDetailsView" if.bind="viewMode === 'view'">
       <p class="tokenName">
-        <img height="32" src.bind="token.logoURI">
+        <img error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
         ${token.name || '-'}
       </p>
       <div class="detailsTable detailsTableInViewMode">
