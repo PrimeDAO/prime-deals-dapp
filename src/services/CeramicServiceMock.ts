@@ -1,5 +1,12 @@
 import { IDealRegistrationTokenSwap, Platforms } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+const address1 = "0xf525a861391e64d5126414434bFf877285378246";
+const address2 = "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82";
+const address3 = "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276";
+const address4 = "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b";
+const address5 = "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F";
+const address6 = "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E";
+const proposalLeadAddress1 = "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00";
 
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
@@ -13,12 +20,31 @@ const _registration1: IDealRegistrationTokenSwap = {
     name: "Creator",
     tokens: [],
     social_medias: [],
-    members: [],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    representatives: [{address: address1}],
+    treasury_address: address2,
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
-  partnerDAO: null,
+  partnerDAO: {
+    name: "",
+    tokens: [{
+      address: "",
+      name: undefined,
+      symbol: undefined,
+      decimals: undefined,
+      logoURI: undefined,
+      amount: undefined,
+      instantTransferAmount: undefined,
+      vestedTransferAmount: undefined,
+      vestedFor: undefined,
+      cliffOf: undefined,
+    }],
+    treasury_address: "",
+    representatives: [{address: ""}],
+    social_medias: [{name: "", url: ""}],
+    logoURI: null,
+  },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -49,14 +75,40 @@ const _registration2: IDealRegistrationTokenSwap = {
     id: "primary-dao-hash-2",
     name: "MyDAO",
     tokens: [],
-    social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
+    treasury_address: address3,
+    social_medias: [{
+      name: "Twitter",
+      url: "https://twitter.com",
+    }],
+    representatives: [{
+      address: address4,
+    }, {
+      address: address6,
+    }],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
   },
-  partnerDAO: null,
+  partnerDAO: {
+    name: "",
+    tokens: [{
+      address: "",
+      name: undefined,
+      symbol: undefined,
+      decimals: undefined,
+      logoURI: undefined,
+      amount: undefined,
+      instantTransferAmount: undefined,
+      vestedTransferAmount: undefined,
+      vestedFor: undefined,
+      cliffOf: undefined,
+    }],
+    treasury_address: "",
+    representatives: [{address: ""}],
+    social_medias: [{name: "", url: ""}],
+    logoURI: null,
+  },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -74,7 +126,7 @@ const _registration2: IDealRegistrationTokenSwap = {
   isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+  createdByAddress: address5,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -91,13 +143,38 @@ const _registration3: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E", "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F"],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    representatives: [{
+      address: address4,
+    }, {
+      address: address5,
+    }, {
+      address: address6,
+    }],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
-  partnerDAO: null,
+  partnerDAO: {
+    name: "",
+    tokens: [{
+      address: "",
+      name: undefined,
+      symbol: undefined,
+      decimals: undefined,
+      logoURI: undefined,
+      amount: undefined,
+      instantTransferAmount: undefined,
+      vestedTransferAmount: undefined,
+      vestedFor: undefined,
+      cliffOf: undefined,
+    }],
+    treasury_address: "",
+    representatives: [{address: ""}],
+    social_medias: [{name: "", url: ""}],
+    logoURI: null,
+  },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -115,7 +192,7 @@ const _registration3: IDealRegistrationTokenSwap = {
   isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+  createdByAddress: address5,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -132,19 +209,21 @@ const _registration4: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: [],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    representatives: [{address: address1}],
+    treasury_address: address2,
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: {
     id: "dao-hash-5",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
+    treasury_address: address3,
+    representatives: [{address: address4}],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
   },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -179,21 +258,31 @@ const _registration5: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
+    representatives: [{
+      address: address4,
+    }, {
+      address: address6,
+    }],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
   partnerDAO: {
     id: "partner-dao-hash-1",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: ["0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F", "0x3E4Ae4e8968C88B24E4A8090863f1AE8733f412B"],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
+    representatives: [{
+      address: address5,
+    }, {
+      address: address6,
+    }],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
+    treasury_address: "",
   },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -211,7 +300,7 @@ const _registration5: IDealRegistrationTokenSwap = {
   isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+  createdByAddress: address5,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -228,21 +317,27 @@ const _registration6: IDealRegistrationTokenSwap = {
     name: "MyDAO",
     tokens: [],
     social_medias: [],
-    members: ["0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b", "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E"],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
+    representatives: [{
+      address: address4,
+    }, {
+      address: address6,
+    }],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
     platform: Platforms.DAOstack,
+    treasury_address: "",
   },
   partnerDAO: {
     id: "partner-dao-hash-1",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    members: [],
-    logo_url: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
+    representatives: [{address: ""}],
+    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
+    treasury_address: "",
   },
   proposalLead: {
-    address: "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {
@@ -260,7 +355,7 @@ const _registration6: IDealRegistrationTokenSwap = {
   isPrivate: true,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+  createdByAddress: address5,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -345,12 +440,13 @@ const MOCK_DATA = {
     clauseHash: "clause-hash-1",
     clauseIdx: 0,
     admins: [
-      "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+      address5,
     ],
-    members: [
-      "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    representatives: [
+      address5,
     ],
-    createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    isPrivate: false,
+    createdByAddress: address5,
     createdAt: new Date("2022-01-23T15:38:16.528Z"),
     modifiedAt: new Date(1643031030746),
     replies: 6,
@@ -362,12 +458,13 @@ const MOCK_DATA = {
     clauseHash: "clause-hash-2",
     clauseIdx: 1,
     admins: [
-      "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+      address5,
     ],
-    members: [
-      "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    representatives: [
+      address5,
     ],
-    createdByAddress: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+    isPrivate: true,
+    createdByAddress: address5,
     createdAt: new Date("2022-01-21T15:48:32.753Z"),
     modifiedAt: new Date(1642846275332),
     replies: 10,
@@ -379,12 +476,13 @@ const MOCK_DATA = {
     clauseHash: "clause-hash-3",
     clauseIdx: 2,
     admins: [
-      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+      address4,
     ],
-    members: [
-      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    representatives: [
+      address4,
     ],
-    createdByAddress: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    isPrivate: true,
+    createdByAddress: address4,
     createdAt: new Date("2022-01-22T20:57:43.707Z"),
     modifiedAt: null,
     replies: 0,
@@ -413,12 +511,13 @@ const MOCK_DATA = {
     clauseHash: "clause-hash-4",
     clauseIdx: 3,
     admins: [
-      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+      address4,
     ],
-    members: [
-      "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    representatives: [
+      address4,
     ],
-    createdByAddress: "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b",
+    isPrivate: true,
+    createdByAddress: address4,
     createdAt: new Date("2022-01-22T20:57:43.707Z"),
     modifiedAt: null,
     replies: 0,

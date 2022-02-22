@@ -96,8 +96,8 @@ export class DiscussionThread {
     this.isMember = (
       [
         this.deal.registrationData.proposalLead.address,
-        ...this.deal.registrationData.primaryDAO?.members || "",
-        ...this.deal.registrationData.partnerDAO?.members || "",
+        ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
+        ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
       ].includes(this.ethereumService.defaultAccountAddress)
     );
 
@@ -230,8 +230,8 @@ export class DiscussionThread {
         this.deal.registrationData.isPrivate,
         [
           this.deal.registrationData.proposalLead.address,
-          ...this.deal.registrationData.primaryDAO?.members || "",
-          ...this.deal.registrationData.partnerDAO?.members || "",
+          ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
+          ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
         ],
         this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
       );

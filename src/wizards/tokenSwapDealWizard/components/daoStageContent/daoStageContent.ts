@@ -1,0 +1,46 @@
+import { bindable } from "aurelia-typed-observable-plugin";
+import { ValidationController } from "aurelia-validation";
+import { IDAO } from "entities/DealRegistrationTokenSwap";
+import "./daoStageContent.scss";
+
+export class DaoStageContent {
+  @bindable name: string;
+  @bindable disabled = false;
+  @bindable data: IDAO;
+  @bindable form: ValidationController;
+
+  availableSocialMedias = [{
+    text: "Twitter",
+    value: "Twitter",
+  }, {
+    text: "Discord",
+    value: "Discord",
+  }, {
+    text: "Telegram",
+    value: "Telegram",
+  }, {
+    text: "Reddit",
+    value: "Reddit",
+  }, {
+    text: "LinkedIn",
+    value: "LinkedIn",
+  }];
+
+  addRepresentative() {
+    this.data.representatives.push({address: ""});
+  }
+
+  removeRepresentative(index: number) {
+    this.data.representatives.splice(index, 1);
+    this.form.revalidateErrors();
+  }
+
+  addSocialMedia() {
+    this.data.social_medias.push({name: "", url: ""});
+  }
+
+  removeSocialMedia(index: number) {
+    this.data.social_medias.splice(index, 1);
+    this.form.revalidateErrors();
+  }
+}

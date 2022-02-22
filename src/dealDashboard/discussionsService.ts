@@ -133,7 +133,7 @@ export class DiscussionsService {
       topic: string,
       clauseIdx: number | null,
       isPublic: boolean,
-      members?: Array<string>,
+      representatives?: Array<{address: string}>,
       admins?: Array<string>,
     }): Promise<string> {
 
@@ -160,7 +160,7 @@ export class DiscussionsService {
         modifiedAt: new Date(),
         replies: 0,
         isPrivate: !args.isPublic,
-        members: [...new Set([...args.members, createdBy])] || [createdBy],
+        members: [...new Set([...args.representatives.map(item => item.address), createdBy])] || [createdBy],
         admins: [...new Set([...args.admins, createdBy])] || [createdBy],
       };
 

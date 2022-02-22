@@ -36,8 +36,8 @@ export class DealDashboard {
       this.ethereumService.defaultAccountAddress &&
       [
         this.deal.registrationData.proposalLead?.address,
-        ...this.deal.registrationData.primaryDAO?.members || "",
-        ...this.deal.registrationData.partnerDAO?.members || "",
+        ...this.deal.registrationData.primaryDAO?.representatives || "",
+        ...this.deal.registrationData.partnerDAO?.representatives || "",
       ].includes(this.ethereumService.defaultAccountAddress)
     );
   }
@@ -77,8 +77,8 @@ export class DealDashboard {
   accountAddressChanged(newAddress: Address){
     this.connected = this.deal && ([
       this.deal.registrationData.proposalLead,
-      ...this.deal.registrationData.primaryDAO.members,
-      ...this.deal.registrationData.partnerDAO.members,
+      ...this.deal.registrationData.primaryDAO.representatives.map(item => item.address),
+      ...this.deal.registrationData.partnerDAO.representatives.map(item => item.address),
     ].includes(newAddress));
   }
 
@@ -107,7 +107,7 @@ export class DealDashboard {
         clauseHash: id,
         clauseIdx: idx,
         admins: [this.ethereumService.defaultAccountAddress],
-        members: [this.ethereumService.defaultAccountAddress],
+        representatives: [{address: this.ethereumService.defaultAccountAddress}],
         isPublic: true,
       },
     );
