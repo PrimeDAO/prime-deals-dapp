@@ -3,10 +3,11 @@
 
 @mixin commonContentLabel {
   margin: 2px 0;
-  line-height: 33px;
   font-weight: $font-bold;
   color: $Secondary02;
 }
+
+$submitCardWidth: 645px;
 
 stage-wrapper[title="Submit"] {
   .stageSectionContent {
@@ -21,11 +22,41 @@ stage-wrapper[title="Submit"] {
     .submitContentLabel {
       @include commonContentLabel;
       font-size: $font-size3;
+      line-height: 33px;
     }
 
     .submitContentLabel-sm {
       @include commonContentLabel;
       font-size: $font-size2;
+      line-height: 22px;
+    }
+
+    .submitCard {
+      width: $submitCardWidth;
+
+      pcard {
+        display: block;
+        padding: 20px;
+      }
+
+      &.submitTermsCard {
+        margin-top: 30px;
+      }
+
+      .submitCardHeader {
+        font-size: $font-size3;
+        font-weight: $font-bold;
+        border-bottom: 1px $Secondary05 solid;
+        margin-bottom: 20px;
+      }
+
+      .submitContent {
+        margin-bottom: 20px;
+
+        .subtext {
+          font-size: $font-size3
+        }
+      }
     }
   }
 }

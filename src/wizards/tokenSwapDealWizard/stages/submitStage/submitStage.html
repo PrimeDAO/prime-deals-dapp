@@ -34,11 +34,15 @@
 
         <div class="submitContentLabel">Proposal Lead</div>
         <div class="submitContent">
-          <p class="subtext">${submitData.proposalLead.address | smallHexString}</p>
+          <p class="subtext">
+            ${submitData.proposalLead.address | smallHexString}
+          </p>
           <p class="subtext">${submitData.proposalLead.email}</p>
         </div>
 
-        <div class="submitContentLabel">Keep Admin Rights With All Incoming Offers</div>
+        <div class="submitContentLabel">
+          Keep Admin Rights With All Incoming Offers
+        </div>
         <div class="submitContent">
           <ptoggle value.bind="submitData.keepAdminRights" disabled></ptoggle>
         </div>
@@ -53,6 +57,55 @@
           <p class="subtext">${submitData.executionPeriodInDays} days</p>
         </div>
 
+        <div class="submitCard">
+          <pcard>
+            <div class="submitCardContent">
+              <h4 class="submitCardHeader">Primary DAO</h4>
+              <h3>Dao logo Dao name</h3>
+
+              <div class="submitContentLabel-sm">Treasury address</div>
+              <div class="submitContent">
+                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              </div>
+
+              <div class="submitContentLabel-sm">Treasury address</div>
+              <div class="submitContent">
+                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              </div>
+
+              <div class="submitContentLabel-sm">Social Media</div>
+              <div class="submitContent">
+                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              </div>
+
+              <div class="submitContentLabel-sm">Representatives</div>
+              <div class="submitContent">
+                <p class="subtext">${submitData.executionPeriodInDays} days</p>
+              </div>
+
+              <div class="submitContentLabel-sm">Tokens</div>
+              <div class="submitContent">
+                <p class="subtext">TODO: use from Token Details stage</p>
+              </div>
+            </div>
+          </pcard>
+        </div>
+
+        <div class="submitCard submitTermsCard">
+          <pcard>
+            <div>
+              <h4 class="submitCardHeader">Terms</h4>
+
+              <template repeat.for="clause of submitData.terms.clauses">
+              <template if.bind="true">
+                <div class="submitContentLabel">Clause ${$index + 1}</div>
+                <div class="submitContent">
+                  <p class="subtext">${clause.text}</p>
+                </div>
+              </template>
+            </div>
+          </pcard>
+        </div>
       </div>
     </div>
   </stage-wrapper>
