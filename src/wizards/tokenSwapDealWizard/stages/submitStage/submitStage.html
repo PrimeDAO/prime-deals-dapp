@@ -57,7 +57,7 @@
           <p class="subtext">${submitData.executionPeriodInDays} days</p>
         </div>
 
-        <div class="submitCard">
+        <div class="submitCard submitDaoCard">
           <pcard>
             <div class="submitCardContent">
               <h4 class="submitCardHeader">Primary DAO</h4>
@@ -94,8 +94,71 @@
               </div>
 
               <div class="submitContentLabel-sm">Tokens</div>
-              <div class="submitContent">
-                <p class="subtext">TODO: use from Token Details stage</p>
+              <div class="submitContent submitDaoTokenCard">
+                <!-- <p class="subtext">TODO: use from Token Details stage</p> -->
+
+                <pcard repeat.for="token of submitData.primaryDAO.tokens">
+                  <div>
+                    <p class="tokenName">
+                      <img height="32" src.bind="token.logoURI">
+                      ${token.name || '-'}
+                    </p>
+                    <div class="detailsTable detailsTableInViewMode">
+                      <div class="detailsCell">
+                        <p>Token address</p>
+                        <p>${token.address || '-' | smallHexString }</p>
+                      </div>
+
+                      <div class="detailsCell detailsCellAmount">
+                        <p>Amount tokens</p>
+                        <p>
+                          <formatted-number if.bind="token.amount >= 0" thousands-separated
+                                            value.to-view="token.amount | ethwei"></formatted-number>
+                          <template else>
+                            -
+                          </template>
+                        </p>
+                      </div>
+
+                      <div class="detailsCell">
+                        <p>Instant transfer</p>
+                        <p>
+                          <formatted-number if.bind="token.instantTransferAmount" thousands-separated
+                                            value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+                          <template else>
+                            -
+                          </template>
+                        </p>
+                      </div>
+
+                      <div class="detailsCell">
+                        <p>Vested transfer</p>
+                        <p>
+                          <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
+                                            value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
+                          <template else>
+                            -
+                          </template>
+                        </p>
+                      </div>
+
+                      <div class="detailsCell">
+                        <p>Vested for</p>
+                        <p>
+                          <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
+                          <template else>0 days</template>
+                        </p>
+                      </div>
+
+                      <div class="detailsCell">
+                        <p>Cliff of</p>
+                        <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
+                        <template else>0 days</template>
+                      </div>
+                    </div>
+                  </div>
+                </pcard>
+
               </div>
             </div>
           </pcard>

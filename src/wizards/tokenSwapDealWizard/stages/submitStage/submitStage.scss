@@ -71,6 +71,52 @@ stage-wrapper[title="Submit"] {
         }
       }
 
+      &.submitDaoCard {
+        .submitDaoTokenCard {
+          margin-top: 20px;
+
+          pcard {
+            background: $BG01;
+          }
+
+          .tokenName {
+            display: flex;
+            align-items: center;
+            gap: $spacing-normal;
+            font-weight: $font-bold;
+            font-size: $font-size1;
+            line-height: 20px;
+          }
+
+          .detailsTable {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
+            row-gap: 20px;
+            width: 100%;
+            border-spacing: $spacing-normal;
+
+            .detailsCell p:first-child {
+              color: $Secondary02;
+              margin-bottom: $spacing-small;
+              display: flex;
+              align-items: center;
+              gap: $spacing-medium-small;
+              font-weight: $font-bold;
+            }
+
+            &.detailsTableInViewMode {
+              grid-template-columns: 1fr 1fr 1fr 1fr;
+              margin: 30px 0;
+
+              .detailsCellAmount {
+                grid-column: span 3;
+              }
+            }
+          }
+        }
+      }
+
       .submitCardContent {
         .submitCardHeader {
           font-size: $font-size3;
