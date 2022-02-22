@@ -146,8 +146,42 @@ const _registration4: IDealRegistrationTokenSwap = {
   primaryDAO: {
     id: "dao-hash-4",
     name: "MyDAO",
-    tokens: [],
-    social_medias: [],
+    tokens: [
+      {
+        address: "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad",
+        amount: "50000000000000000000",
+        instantTransferAmount: "40000000000000000000",
+        vestedTransferAmount: "10000000000000000000",
+        vestedFor: 5184000,
+        cliffOf: 1728000,
+        name: "Prime",
+        symbol: "D2D",
+        decimals: 18,
+        logoURI: "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
+      },
+      {
+        address: "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad",
+        amount: "50000000000000000000",
+        instantTransferAmount: "40000000000000000000",
+        vestedTransferAmount: "10000000000000000000",
+        vestedFor: 5184000,
+        cliffOf: 1728000,
+        name: "Prime",
+        symbol: "D2D",
+        decimals: 18,
+        logoURI: "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
+      },
+    ],
+    social_medias: [
+      {
+        url: "social.one.io",
+        name: "Twitter",
+      },
+      {
+        url: "two.social.io",
+        name: "Reddit",
+      },
+    ],
     representatives: [{address: address1}],
     treasury_address: address2,
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -174,7 +208,7 @@ const _registration4: IDealRegistrationTokenSwap = {
   },
   proposalLead: {
     address: proposalLeadAddress1,
-    email: "",
+    email: "lorem@ipsum.xyz",
   },
   terms: {
     clauses: [
