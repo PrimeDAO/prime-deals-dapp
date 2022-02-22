@@ -91,7 +91,7 @@ Then("I can remove all but one DAO representative", () => {
 
 Then("I am presented with error about missing representative address", () => {
   cy.get("[data-test=\"dao-representative\"] pform-input").within(() => {
-    cy.get(".errorMessage").should("contain.text", "Please enter a valid wallet address");
+    cy.get(".errorMessage").should("contain.text", "Please enter a valid ethereum address");
   });
 });
 
@@ -104,6 +104,6 @@ When("I add 2 incorrect representative addresses", () => {
 
 Then("I am presented with errors about incorrect representative addresses", () => {
   cy.get("[data-test=\"dao-representative\"] pform-input .errorMessage").each(($el) => {
-    cy.wrap($el).should("contain.text", "Please enter a valid wallet address");
+    cy.wrap($el).should("contain.text", "Please enter a valid ethereum address");
   });
 });

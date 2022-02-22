@@ -177,7 +177,7 @@ export class PopupNotifications {
     const bannerConfig = {
       message: (typeof config === "string")
         ? config as string : config.message,
-      type: EventMessageType.Warning,
+      type: EventMessageType.Failure,
       submessage: null,
     };
 

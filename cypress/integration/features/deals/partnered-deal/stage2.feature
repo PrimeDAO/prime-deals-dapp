@@ -12,7 +12,7 @@ Feature: "Lead details" stage (Stage 2)
     When I fill in the 'Wallet address' field with 'wrong address'
     And I try to proceed to next step
     Then I am presented with the 'Partnered Deal' 'Lead Details' stage
-    And I am presented with the 'Please enter a valid wallet address' error message for the 'Wallet address' field
+    And I am presented with the 'Please enter a valid ethereum address' error message for the 'Wallet address' field
 
   Scenario: Validates if the email address has the correct format
     When I fill in the 'Email' field with 'wrong email'

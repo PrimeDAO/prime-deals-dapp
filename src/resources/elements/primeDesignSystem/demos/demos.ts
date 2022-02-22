@@ -113,6 +113,13 @@ export class Demos {
         name: "ppopup-notification",
         title: "ppopup-notification",
       },
+      {
+        route: ["ppopup-modal"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./ppopupModalDemo"),
+        name: "ppopup-modal",
+        title: "ppopup-modal",
+      },
     ];
 
     config.map(routes);

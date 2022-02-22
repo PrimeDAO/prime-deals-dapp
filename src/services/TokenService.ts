@@ -268,6 +268,8 @@ export class TokenService {
           this.consoleLogService.logMessage(`PriceService: Error fetching token price ${this.axiosService.axiosErrorHandler(ex)}`, "error");
           return tokenInfo;
         });
+    } else {
+      return Promise.resolve(tokenInfo);
     }
   }
 

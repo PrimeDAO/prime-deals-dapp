@@ -37,7 +37,7 @@ export class ImageService {
 
     return new Promise((resolve, reject) => {
       if (!Utils.isValidUrl(url)) {
-        reject("Invalid URL");
+        return reject("Invalid URL");
       }
       axios({
         url,
@@ -77,7 +77,7 @@ export class ImageService {
 
     return await new Promise((resolve, reject) => {
       if (!Utils.isValidUrl(url)) {
-        reject();
+        return reject("Invalid URL");
       }
       const timeout = 5000;
       const img = new Image();

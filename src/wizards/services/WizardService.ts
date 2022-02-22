@@ -1,3 +1,4 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
@@ -29,6 +30,7 @@ export class WizardService {
 
   constructor(
     private router: Router,
+    private eventAggregator: EventAggregator,
     private validationFactory: ValidationControllerFactory,
   ) {
   }
@@ -68,11 +70,6 @@ export class WizardService {
     return this.wizardsStates.get(wizardManager);
   }
 
-  public getActiveStage(wizardManager: any): IWizardStage {
-    const wizardState = this.getWizardState(wizardManager);
-    return wizardState.stages[wizardState.indexOfActive];
-  }
-
   public updateStageValidity(wizardManager: any, valid: boolean) {
     this.getActiveStage(wizardManager).valid = valid;
   }
@@ -95,6 +92,7 @@ export class WizardService {
     wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
 
     if (!wizardState.stages[indexOfActive].valid) {
+      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
 
@@ -138,11 +136,7 @@ export class WizardService {
     return this.wizardsStates.has(wizardManager);
   }
 
-  private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
-    return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
-  }
-
-  registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
+  public registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
     const stage = this.getActiveStage(wizardManager);
 
     stage.form = this.validationFactory.createForCurrentScope();
@@ -152,5 +146,14 @@ export class WizardService {
     stage.form.addObject(data, rules);
 
     return stage.form;
+  }
+
+  // private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
+  //   return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  // }
+
+  private getActiveStage(wizardManager: any): IWizardStage {
+    const wizardState = this.getWizardState(wizardManager);
+    return wizardState.stages[wizardState.indexOfActive];
   }
 }
