@@ -79,7 +79,7 @@ export interface IDealRegistrationTokenSwap {
   modifiedAt: Date | null;
   createdByAddress: string | null;
   executionPeriodInDays: number;
-  dealType: "token-swap"/* | "joint-venture"*/;
+  dealType: "token-swap"/* | "co-liquidity-provision"*/;
 }
 
 export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
@@ -96,7 +96,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public modifiedAt: Date | null;
   public createdByAddress: string | null;
   public executionPeriodInDays: number;
-  public dealType: "token-swap"/* | "joint-venture" */;
+  public dealType: "token-swap"/* | "co-liquidity-provision" */;
 
   constructor() {
     this.clearState();

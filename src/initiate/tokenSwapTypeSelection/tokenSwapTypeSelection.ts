@@ -6,13 +6,13 @@ export class Initiate {
       name: "Open Proposal",
       slug: "initiate/token-swap/open-proposal/proposal",
       isDisabled: false,
-      description: "Don't have a partner DAO yet? Launch a new proposal and find the perfect partner DAO out there.",
+      description: "Launch a new proposal open for any DAO to propose a partnership deal based off of the template you create.",
     },
     {
       name: "Partnered Deal",
       slug: "initiate/token-swap/partnered-deal/proposal",
       isDisabled: false,
-      description: "Already have a DAO partner? Let them join you to refine, finalize and seal your agreement on chain.",
+      description: "Already have a DAO partner or know the DAO you want to propose to? Let them join you to refine, finalize, and seal an agreement on-chain.",
     },
   ];
 }
