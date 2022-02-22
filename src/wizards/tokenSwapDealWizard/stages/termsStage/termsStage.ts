@@ -34,7 +34,8 @@ export class TermsStage implements IBaseWizardStage {
 
   onDelete(index: number) {
     if (this.wizardState.registrationData.terms.clauses.length === 1) {
-      return false;
+      this.wizardState.registrationData.terms.clauses[0].text = "";
+      return true;
     }
 
     this.termsForms.splice(index, 1);
