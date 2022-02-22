@@ -7,10 +7,28 @@
   color: $Secondary02;
 }
 
+@mixin daoAvatar($size: 32px) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  border-radius: 32px;
+  background-color: $Border02;
+  color: $Secondary05;
+  font-size: 18px;
+  align-self: center;
+  justify-self: end;
+  background-position: center;
+  background-size: cover;
+}
+
 $submitCardWidth: 645px;
 
 stage-wrapper[title="Submit"] {
   .stageSectionContent {
+    font-family: Inter;
+
     .submitContent {
       margin-bottom: 30px;
 
@@ -39,22 +57,49 @@ stage-wrapper[title="Submit"] {
         padding: 20px;
       }
 
+      &.submitDaoCard {
+        .submitContent {
+          margin: unset;
+        }
+      }
+
       &.submitTermsCard {
         margin-top: 30px;
-      }
-
-      .submitCardHeader {
-        font-size: $font-size3;
-        font-weight: $font-bold;
-        border-bottom: 1px $Secondary05 solid;
-        margin-bottom: 20px;
-      }
-
-      .submitContent {
-        margin-bottom: 20px;
 
         .subtext {
-          font-size: $font-size3
+          font-size: $font-size3;
+        }
+      }
+
+      .submitCardContent {
+        .submitCardHeader {
+          font-size: $font-size3;
+          font-weight: $font-bold;
+          border-bottom: 1px $Secondary05 solid;
+          margin-bottom: 18px;
+          padding-bottom: 6px;
+          line-height: 28px;
+        }
+
+        .daoNameAndLogo {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 18px;
+
+          h3 {
+            font-size: $font-size4;
+            font-weight: $font-bold;
+            line-height: 28px;
+          }
+        }
+
+        .submitContent {
+          margin-bottom: 20px;
+        }
+
+        .daoAvatar {
+          @include daoAvatar(36px);
         }
       }
     }
