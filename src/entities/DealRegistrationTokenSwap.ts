@@ -18,24 +18,34 @@ export enum Platforms {
 }
 
 export interface IToken {
+  address: string,
+
   name: string,
   symbol: string,
-  balance: string,
-  address: string,
+  decimals: number,
+  logoURI: string,
+
+  amount: string
+  instantTransferAmount: string
+  vestedTransferAmount: string
+  vestedFor: number
+  cliffOf: number
 }
 
 export interface ISocialMedia {
   name: string,
   url: string,
 }
+
 export interface IDAO {
-  id: string,
-  name: string,
-  tokens: Array<IToken>
-  social_medias: Array<ISocialMedia>
-  members: Array<string>,
-  logo_url: string,
-  platform?: Platforms,
+  name: string;
+  treasury_address: string;
+  logoURI: string;
+  social_medias: Array<ISocialMedia>;
+  representatives: Array<{address: string}>;
+  id?: string;
+  tokens?: Array<IToken>;
+  platform?: Platforms;
 }
 
 export interface IProposalLead {
@@ -101,30 +111,44 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       summary: "",
       description: "",
     };
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.primaryDAO = {
       name: "",
       tokens: [{
-        name: "",
-        symbol: "",
-        balance: "",
         address: "",
+        name: undefined,
+        symbol: undefined,
+        decimals: undefined,
+        logoURI: undefined,
+        amount: undefined,
+        instantTransferAmount: undefined,
+        vestedTransferAmount: undefined,
+        vestedFor: undefined,
+        cliffOf: undefined,
       }],
-      social_medias: [{name: undefined, url: undefined}],
-      logo_url: null,
-    } as IDAO;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      treasury_address: "",
+      representatives: [{address: ""}],
+      social_medias: [{name: "", url: ""}],
+      logoURI: null,
+    };
     this.partnerDAO = {
       name: "",
       tokens: [{
-        name: "",
-        symbol: "",
-        balance: "",
         address: "",
+        name: undefined,
+        symbol: undefined,
+        decimals: undefined,
+        logoURI: undefined,
+        amount: undefined,
+        instantTransferAmount: undefined,
+        vestedTransferAmount: undefined,
+        vestedFor: undefined,
+        cliffOf: undefined,
       }],
-      social_medias: [{name: undefined, url: undefined}],
-      logo_url: null,
-    } as IDAO;
+      treasury_address: "",
+      representatives: [{address: ""}],
+      social_medias: [{name: "", url: ""}],
+      logoURI: null,
+    };
     this.proposalLead = {
       address: "",
       email: "",

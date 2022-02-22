@@ -2,6 +2,8 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import { bindingMode, computedFrom, customElement } from "aurelia-framework";
 import "./prange-slider.scss";
 import { Utils } from "../../../../services/utils";
+import { NumberService } from "../../../../services/NumberService";
+import tippy, { Instance } from "tippy.js";
 
 @customElement("prange-slider")
 export class PRangeSlider {
@@ -10,9 +12,31 @@ export class PRangeSlider {
   @bindable leftLabel?: string;
   @bindable rightLabel?: string;
   @bindable maxValue = 100;
-  @bindable.ref rangeInput: HTMLInputElement;
+  @bindable.booleanAttr notWei = true;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
 
-  constructor(public element: Element) {
+  alreadyUpdated = false;
+  leftInput: HTMLElement;
+  leftInputToolTip?: Instance;
+  rightInput: HTMLElement;
+  rightInputToolTip?: Instance;
+
+  constructor(public element: Element, private numberService: NumberService) {
+  }
+
+  bind() {
+    this.updateValue();
+    this.valueChanged(this.value);
+  }
+
+  attached() {
+    this.updateCssVariables();
+
+    this.leftInputToolTip = tippy(this.leftInput);
+    this.rightInputToolTip = tippy(this.rightInput);
+    this.leftInputToolTip.disable();
+    this.rightInputToolTip.disable();
   }
 
   @computedFrom("value")
@@ -21,26 +45,19 @@ export class PRangeSlider {
     return this.value ?? 0;
   }
 
-  @computedFrom("value", "maxValue")
-  get leftValue() {
-    return this.percentageToAbsoluteValue(this.value);
+  valueChanged(newValue: number, oldValue?: number) {
+    if (this.alreadyUpdated || Number(newValue) === Number(oldValue)) {
+      this.alreadyUpdated = false;
+      return;
+    }
+    this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
+    this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
+
+    this.updateTooltips();
   }
 
-  set leftValue(value: number) {
-    this.value = this.absoluteValueToPercentage(value ?? 0);
-  }
-
-  @computedFrom("value", "maxValue")
-  get rightValue() {
-    return this.percentageToAbsoluteValue(100 - this.value);
-  }
-
-  set rightValue(value: number) {
-    this.value = this.absoluteValueToPercentage(this.maxValue - (value ?? 0));
-  }
-
-  attached() {
-    this.updateCssVariables();
+  maxValueChanged() {
+    this.valueChanged(this.value);
   }
 
   updateCssVariables() {
@@ -49,11 +66,49 @@ export class PRangeSlider {
     Utils.setCssVariable("--thumb-position-correction", `-${this.value / 100 * maxErrorCorrection}px`, this.element as HTMLElement);
   }
 
-  private absoluteValueToPercentage(value: number) {
-    return Math.min(Math.max(0, value), this.maxValue) / this.maxValue * 100;
+  updateRight() {
+    this.right = this.numberService.toString(this.clamp(this.maxValue - Number(this.left)), {});
+    this.updateTooltips();
+    this.alreadyUpdated = true;
+    this.updateValue();
+  }
+
+  private updateValue() {
+    this.value = this.left ? this.absoluteValueToPercentage(Number(this.left)) : this.value;
   }
 
   private percentageToAbsoluteValue(value: number) {
-    return Math.round(value / 100 * this.maxValue);
+    return this.maxValue ? value / 100 * this.maxValue : undefined;
+  }
+
+  updateLeft() {
+    this.left = this.numberService.toString(this.maxValue - this.clamp(this.right), {});
+    this.updateTooltips();
+    this.alreadyUpdated = true;
+    this.updateValue();
+  }
+
+  private absoluteValueToPercentage(value: number) {
+    return this.maxValue ? Math.round(Math.min(Math.max(0, value), this.maxValue) / this.maxValue * 100) : this.value;
+  }
+
+  private clamp(value: number | string) {
+    return value ? Math.min(Math.max(0, Number(value)), this.maxValue) : 0;
+  }
+
+  updateTooltips() {
+    if (this.left) {
+      this.leftInputToolTip?.enable();
+      this.leftInputToolTip?.setContent(String(this.left));
+    } else {
+      this.leftInputToolTip?.disable();
+    }
+
+    if (this.right) {
+      this.rightInputToolTip?.enable();
+      this.rightInputToolTip?.setContent(String(this.right));
+    } else {
+      this.rightInputToolTip?.disable();
+    }
   }
 }

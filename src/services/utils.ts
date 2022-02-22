@@ -181,5 +181,4 @@ export class Utils {
 
     documentElement?.style.setProperty(varName, value);
   }
-
 }

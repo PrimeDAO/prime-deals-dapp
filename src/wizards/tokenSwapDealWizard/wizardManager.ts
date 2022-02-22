@@ -1,10 +1,10 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
-import { Router, RouteConfig } from "aurelia-router";
-import { WizardService, IWizardState, IWizardStage } from "wizards/services/WizardService";
+import { RouteConfig, Router } from "aurelia-router";
+import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
 import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IStageMeta, WizardType, STAGE_ROUTE_PARAMETER } from "./dealWizardTypes";
+import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
@@ -49,6 +49,12 @@ export class WizardManager {
     route: "partner-dao",
     moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
   };
+  private tokenDetailsStage: IWizardStage = {
+    name: "Token Details",
+    valid: false,
+    route: "token-details",
+    moduleId: PLATFORM.moduleName("./stages/tokenDetailsStage/tokenDetailsStage"),
+  };
   private termsStage: IWizardStage = {
     name: "Terms",
     valid: false,
@@ -59,6 +65,7 @@ export class WizardManager {
     this.proposalStage,
     this.leadDetailsStage,
     this.primaryDaoStage,
+    this.tokenDetailsStage,
     this.termsStage,
   ];
   private partneredDealStages: IWizardStage[] = [
@@ -66,6 +73,7 @@ export class WizardManager {
     this.leadDetailsStage,
     this.primaryDaoStage,
     this.partnerDaoStage,
+    this.tokenDetailsStage,
     this.termsStage,
   ];
 
