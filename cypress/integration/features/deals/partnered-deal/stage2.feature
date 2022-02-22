@@ -26,6 +26,6 @@ Feature: "Lead details" stage (Stage 2)
     Then I am presented with the 'Partnered Deal' 'Primary DAO' stage
 
   Scenario: Private Deal option should be turned off by default
-    When I'm in the "Make Deal Private?" section
+    When I'm in the "Make this Deal Private?" section
     Then the "Make Deal Private" option should be turned off
 
