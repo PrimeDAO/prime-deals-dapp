@@ -4,16 +4,16 @@ export class EditingCardPlayground {
 
   onEdit() {
     this.editContent = "Edit (changed)";
-    return true
+    return true;
   }
 
   onSave() {
     this.viewContent = "View (changed)";
-    return true
+    return true;
   }
 
   onDelete() {
     this.editContent = "(deleted)";
-    return true
+    return true;
   }
 }
