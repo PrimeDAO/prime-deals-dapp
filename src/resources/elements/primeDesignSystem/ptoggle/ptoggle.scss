@@ -72,15 +72,15 @@
     +.pToggleSlider {
       cursor: not-allowed;
       background: transparent;
-      border: 1px solid $Neutral02;
+      border: 1px solid $Secondary05;
 
       &:before {
-        background-color: $Neutral02;
+        background-color: $Secondary05;
       }
 
       .checkedIcon,
       .uncheckedIcon {
-        color: $Neutral02;
+        color: $Secondary05;
       }
     }
 
