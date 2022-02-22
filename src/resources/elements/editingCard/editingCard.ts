@@ -5,7 +5,6 @@ export class EditingCard {
   @bindable onDelete: () => boolean | Promise<boolean>;
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
-  @bindable.boolean disableDeleteButton: boolean;
 
   private viewMode: "edit" | "view" = "edit";
   saving: boolean;

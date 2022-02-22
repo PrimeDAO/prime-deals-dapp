@@ -24,7 +24,6 @@
           index.bind="$index"
           form.from-view="termsForms[$index]"
           on-delete.call="onDelete($index)"
-          disable-delete-button.bind="wizardState.registrationData.terms.clauses.length === 1"
         ></term-clause>
 
         <pbutton

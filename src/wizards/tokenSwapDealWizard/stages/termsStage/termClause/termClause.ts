@@ -16,7 +16,6 @@ export class TermClause {
   @bindable({ defaultBindingMode: bindingMode.fromView })
     form: ValidationController;
   @bindable onDelete: () => void;
-  @bindable.boolean disableDeleteButton: boolean;
 
   constructor(
     private validationControllerFactory: ValidationControllerFactory,
