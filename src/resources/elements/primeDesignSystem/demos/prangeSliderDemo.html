@@ -7,10 +7,13 @@
   </style>
 
   <h1>Simple range slider</h1>
-  <prange-slider max-value="100" value="20"></prange-slider>
+  MaxValue:
+  <pinput-numeric not-wei placeholder="Write some value here" value.bind="maxValue"></pinput-numeric>
+  <br>
+  <prange-slider max-value.bind="maxValue" not-wei value.to-view="20"></prange-slider>
 
-  <h1>Range slider with labels</h1>
-  <prange-slider left-label="Instant" max-value="200" right-label="Vesting"></prange-slider>
+  <h1>Range slider with labels (with default max value "100")</h1>
+  <prange-slider left-label="Instant" right-label="Vesting"></prange-slider>
 
   <h1>Range slider within a form input</h1>
   <pform-input label="Slider with input fields"

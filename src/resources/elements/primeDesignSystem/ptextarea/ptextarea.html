@@ -10,8 +10,10 @@
     autocomplete.to-view="autocomplete"
   ></textarea>
 
-  <i if.bind="validationState === 'warning'" class="fas fa-exclamation-circle feedback-icon"></i>
-  <i if.bind="validationState === 'error'" class="fas fa-exclamation-triangle feedback-icon"></i>
-  <i if.bind="validationState === 'validating'" class="fas fa-circle-notch feedback-icon loading"></i>
+  <template if.bind="!disabled">
+    <i class="fas fa-exclamation-circle feedback-icon" if.bind="validationState === 'warning'"></i>
+    <i class="fas fa-exclamation-triangle feedback-icon" if.bind="validationState === 'error'"></i>
+    <i class="fas fa-circle-notch feedback-icon loading" if.bind="validationState === 'validating'"></i>
+  </template>
 
 </template>
