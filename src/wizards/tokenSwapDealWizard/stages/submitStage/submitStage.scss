@@ -1,17 +1,31 @@
 @import "../../../../resources/elements/primeDesignSystem/_variables.scss";
 @import "../../../../resources/elements/primeDesignSystem/_colors.scss";
 
+@mixin commonContentLabel {
+  margin: 2px 0;
+  line-height: 33px;
+  font-weight: $font-bold;
+  color: $Secondary02;
+}
 
 stage-wrapper[title="Submit"] {
-  .submitLabel {
-    font-size: $font-size3;
-    font-weight: $font-bold;
-    color: $Secondary02;
-  }
+  .stageSectionContent {
+    .submitContent {
+      margin-bottom: 30px;
 
-  .submitLabel-sm {
-    font-size: $font-size2;
-    font-weight: $font-bold;
-    color: $Secondary02;
+      .subtext {
+        color: $Neutral04;
+      }
+    }
+
+    .submitContentLabel {
+      @include commonContentLabel;
+      font-size: $font-size3;
+    }
+
+    .submitContentLabel-sm {
+      @include commonContentLabel;
+      font-size: $font-size2;
+    }
   }
 }
