@@ -33,13 +33,13 @@
         </header>
         <p>Start a discussion below by selecting a specific clause.</p>
         <ol>
-          <div repeat.for="clause of clauses" class="clause ${authorized ? 'isPrivate' : ''} ${activeClause && activeClause === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
-            <li></li>
+          <li repeat.for="clause of clauses" class="clause ${authorized ? 'isPrivate' : ''} ${activeClause && activeClause === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
+            <span class="marker">${$index + 1}</span>
             <span class="body">
               ${clause.text}
             </span>
             <span if.to-view="authorized" class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">Discuss<img src="/static/comment.svg"></img></span>
-          </div>
+          </li>
         </ol>
       </section>
     </section>
