@@ -17,27 +17,41 @@
 
       <!-- Content -->
       <div class="stageSectionContent">
-        <div class="submitLabel">Proposal Title</div>
-        <p class="submitContent">${submitData.proposal.title}</p>
+        <div class="submitContentLabel">Proposal Title</div>
+        <div class="submitContent">
+          <p class="subtext">${submitData.proposal.title}</p>
+        </div>
 
-        <div class="submitLabel">Proposal Summary</div>
-        <p class="submitContent">${submitData.proposal.summary}</p>
+        <div class="submitContentLabel">Proposal Summary</div>
+        <div class="submitContent">
+          <p class="subtext">${submitData.proposal.summary}</p>
+        </div>
 
-        <div class="submitLabel">Proposal Description</div>
-        <p class="submitContent">${submitData.proposal.description}</p>
+        <div class="submitContentLabel">Proposal Description</div>
+        <div class="submitContent">
+          <p class="subtext">${submitData.proposal.description}</p>
+        </div>
 
-        <div class="submitLabel">Proposal Lead</div>
-        <p class="submitContent">${submitData.proposalLead.address}</p>
-        <p class="submitContent">${submitData.proposalLead.email}</p>
+        <div class="submitContentLabel">Proposal Lead</div>
+        <div class="submitContent">
+          <p class="subtext">${submitData.proposalLead.address | smallHexString}</p>
+          <p class="subtext">${submitData.proposalLead.email}</p>
+        </div>
 
-        <div class="submitLabel">Keep Admin Rights With All Incoming Offers</div>
-        <ptoggle value.bind="submitData.keepAdminRights"></ptoggle>
+        <div class="submitContentLabel">Keep Admin Rights With All Incoming Offers</div>
+        <div class="submitContent">
+          <ptoggle value.bind="submitData.keepAdminRights" disabled></ptoggle>
+        </div>
 
-        <div class="submitLabel">Private Offers</div>
-        <ptoggle value.bind="submitData.isPrivate"></ptoggle>
+        <div class="submitContentLabel">Private Offers</div>
+        <div class="submitContent">
+          <ptoggle value.bind="submitData.isPrivate" disabled></ptoggle>
+        </div>
 
-        <div class="submitLabel-sm">Private Execution Period</div>
-        <p class="submitContent">${submitData.executionPeriodInDays} days</p>
+        <div class="submitContentLabel-sm">Private Execution Period</div>
+        <div class="submitContent">
+          <p class="subtext">${submitData.executionPeriodInDays} days</p>
+        </div>
 
       </div>
     </div>
