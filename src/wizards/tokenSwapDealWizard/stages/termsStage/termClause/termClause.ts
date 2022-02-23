@@ -8,6 +8,7 @@ import {
 } from "aurelia-validation";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
+import "./termClause.scss";
 
 @autoinject
 export class TermClause {
