@@ -165,7 +165,7 @@ export class WizardManager {
     }
 
     await deal.ensureInitialized();
-    return deal.registrationData;
+    return JSON.parse(JSON.stringify(deal.registrationData));
   }
 
   private async ensureAccess(wizardType: any): Promise<void> {
