@@ -1,0 +1,19 @@
+.stageSectionContent {
+  editing-card {
+    pcard {
+      margin-bottom: 32px;
+    }
+  }
+
+  .addClauseButton {
+    button {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .fa {
+      margin-left: 16px;
+    }
+  }
+}

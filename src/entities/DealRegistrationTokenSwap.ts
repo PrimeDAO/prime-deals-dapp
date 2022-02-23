@@ -61,10 +61,6 @@ export interface IClause {
 
 export interface ITerms {
   clauses: Array<IClause>,
-  // period: number, /* Deprecated: Is provided as executionPeriodInDays */
-  // representatives: string, /* Deprecated: Is provided in IDAO information as members */
-  coreTeamChatURL: string,
-  previousDiscussionURL: string,
 }
 
 export interface IDealRegistrationTokenSwap {
@@ -152,6 +148,12 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.proposalLead = {
       address: "",
       email: "",
+    };
+    this.terms = {
+      clauses: [{
+        id: "",
+        text: "",
+      }],
     };
     this.keepAdminRights = true;
     this.offersPrivate = false;

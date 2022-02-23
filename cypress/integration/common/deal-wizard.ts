@@ -12,6 +12,7 @@ const stageTitlesToURLs = {
   "Primary DAO": "primary-dao",
   "Partner DAO": "partner-dao",
   "Token Details": "token-details",
+  "Terms": "terms",
 } as const;
 
 Then("I am presented the option to choose a partner", () => {
@@ -44,6 +45,11 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
     throw new Error(`Stage  ${stageTitle} does not exist in the list`);
   }
   cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+});
+
+Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
+  const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
+  cy.visit(url);
 });
 
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
