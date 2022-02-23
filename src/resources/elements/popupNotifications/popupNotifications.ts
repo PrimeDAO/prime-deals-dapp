@@ -182,6 +182,7 @@ export class PopupNotifications {
     };
 
     this.queueEventConfig(bannerConfig);
+    console.error(bannerConfig.message);
   }
 
   private handleInfo(config: EventConfig | string): void {
