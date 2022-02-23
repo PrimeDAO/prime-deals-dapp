@@ -9,8 +9,8 @@ Then("I can see Token Swap deal type", () => {
   cy.contains("div.title", "Token Swap").should("be.visible")
 })
 
-And("I can see Joint Venture deal type", () => {
-  cy.contains("[data-test='initiate-deal-type-title']", "Joint Venture").should("be.visible")
+And("I can see Co-liquidity deal type", () => {
+  cy.contains("[data-test='initiate-deal-type-title']", "Co-liquidity").should("be.visible")
 })
 
 When("I select Token Swap", () => {

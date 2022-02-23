@@ -68,6 +68,14 @@ When("I fill in the {string} field with {string}", (field: string, value: string
   });
 });
 
+When("I fill in the {string} field with {string} in the {string} section", (field: string, value: string, section: string) => {
+  cy.get(`[data-test='${section.toLowerCase().replaceAll(" ", "-")}']`).within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input, textarea").type(value);
+    });
+  });
+});
+
 Then("I am presented with the {string} error message for the {string} field", (message: string, field: string) => {
   cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
     cy.get(".errorMessage").should("be.visible");

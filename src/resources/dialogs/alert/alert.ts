@@ -1,41 +1,30 @@
 /* eslint-disable no-bitwise */
 import { DialogController } from "aurelia-dialog";
 import { autoinject } from "aurelia-framework";
-import "./alert.scss";
+import { IPopupModalModel, ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
 
-export enum ShowButtonsEnum {
-  OK = 0x1,
-  Cancel = 0x2,
-}
-
+/**
+ * puts up a straight ppopup-modal
+ */
 @autoinject
 export class Alert {
-
-  private model: IAlertModel;
-  private buttons: ShowButtonsEnum;
-  private okButton: HTMLElement;
-  private cancelButton: HTMLElement;
-  showCancelButton: boolean;
-  showOkButton: boolean;
+  buttons: ShowButtonsEnum;
+  buttonTextPrimary?: string;
+  buttonTextSecondary?: string;
+  message: string;
+  header: string;
+  confetti: boolean;
 
   constructor(private controller: DialogController) { }
 
-  public activate(model: IAlertModel): void {
-    this.model = model;
-    this.buttons = model.buttons ?? ShowButtonsEnum.OK;
-    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Cancel);
-    this.showOkButton = !!(this.buttons & ShowButtonsEnum.OK);
-  }
-
-  public attached(): void {
-    // attach-focus doesn't work
-    if (this.buttons & ShowButtonsEnum.OK) {
-      this.okButton.focus();
-    }
+  public activate(model: IPopupModalModel): void {
+    this.buttons = model.buttons ?? ShowButtonsEnum.Primary;
+    this.buttonTextPrimary = model.buttonTextPrimary ?? "OK";
+    this.buttonTextSecondary = model.buttonTextSecondary ?? "CANCEL";
+    this.message = model.message;
+    this.header = model.header ?? "Prime Deals";
+    this.confetti = !!model.confetti;
   }
 }
 
-interface IAlertModel {
-  message: string;
-  buttons?: ShowButtonsEnum;
-}
+export { IPopupModalModel as IAlertModel, ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";

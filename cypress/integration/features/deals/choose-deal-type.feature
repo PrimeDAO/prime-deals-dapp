@@ -2,10 +2,10 @@ Feature: Choose Deal type
   Background:
     Given I navigate to the Deals home page
     And I navigate to the initiate a deal page
-    
+
   Scenario: View deal types
     Then I can see Token Swap deal type
-    And I can see Joint Venture deal type
+    And I can see Co-liquidity deal type
 
   Scenario: Access Token Swap
     When I select Token Swap
@@ -14,7 +14,7 @@ Feature: Choose Deal type
   Scenario: Verify correct Token Swap types
     Given I select Token Swap
     Then I can see Open Proposal and Partnered Deal
-    
+
   Scenario: Select Open Proposal
     Given I select Token Swap
     And I select Open Proposal

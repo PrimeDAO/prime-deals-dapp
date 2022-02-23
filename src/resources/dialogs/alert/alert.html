@@ -1,14 +1,11 @@
 <template>
-  <ux-dialog class="dialog alert">
-    <!-- <ux-dialog-header>
-      <img src="/static/PrimeDeals.svg" />
-    </ux-dialog-header> -->
-    <ux-dialog-body with.bind="model">
-      <div class="body">${message}</div>
-    </ux-dialog-body>
-    <ux-dialog-footer>
-      <pbutton type="primary" if.bind="showOkButton" ref="okButton" click.trigger="controller.ok()">Ok</pbutton>
-      <pbutton type="tertiary" if.bind="showCancelButton" ref="cancelButton" click.trigger="controller.cancel()">Cancel</pbutton>
-    </ux-dialog-footer>
-  </ux-dialog>
+  <ppopup-modal
+    buttons.bind="buttons"
+    header.bind="header"
+    message.bind="message"
+    confetti.bind="confetti"
+    button-text-primary.bind="buttonTextPrimary"
+    button-text-secondary.bind="buttonTextSecondary"
+    primary-click.call="controller.ok()"
+    secondary-click.call="controller.cancel()"></ppopup-modal>
 </template>

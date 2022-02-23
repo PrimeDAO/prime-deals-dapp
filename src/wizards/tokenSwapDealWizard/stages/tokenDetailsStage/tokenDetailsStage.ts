@@ -12,7 +12,8 @@ export class TokenDetailsStage {
   isOpenDealWizard = false;
   form: ValidationController;
 
-  tokenDetailsForms: ValidationController[] = [];
+  primaryDAOTokensForms: ValidationController[] = [];
+  partnerDAOTokensForms: ValidationController[] = [];
 
   constructor(
     private wizardService: WizardService,
@@ -22,6 +23,10 @@ export class TokenDetailsStage {
   @computedFrom("isOpenDealWizard", "wizardState.registrationData.primaryDAO.tokens.length")
   get hasValidTokensDetailsCount(): boolean {
     return !this.isOpenDealWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
+  }
+
+  hasValidTokensDetailsCount2(tokens: IToken[]): boolean {
+    return !this.isOpenDealWizard ? Boolean(tokens.length) : true;
   }
 
   activate(stageMeta: IStageMeta): void {
@@ -45,21 +50,24 @@ export class TokenDetailsStage {
     );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      const tokenDetailsValidationResults = await Promise.all(
-        this.tokenDetailsForms.map(form => form.validate().then(result => result.valid)),
+      const primaryDAOTokenValidation = await Promise.all(
+        this.primaryDAOTokensForms.map(form => form.validate().then(result => result.valid)),
+      );
+      const partnerDAOTokenValidation = await Promise.all(
+        this.partnerDAOTokensForms.map(form => form.validate().then(result => result.valid)),
       );
 
       return this.form.validate()
-        .then(result =>
-          result.valid &&
+        .then(result => result.valid &&
           this.hasValidTokensDetailsCount &&
-          Boolean(tokenDetailsValidationResults.filter(Boolean).length),
+          Boolean(primaryDAOTokenValidation.filter(Boolean).length) &&
+          (this.isOpenDealWizard ? true : Boolean(partnerDAOTokenValidation.filter(Boolean).length)),
         );
     });
   }
 
-  addToken(): void {
-    this.wizardState.registrationData.primaryDAO.tokens.push({
+  addToken(tokens: IToken[]): void {
+    tokens.push({
       address: "",
       amount: "",
       instantTransferAmount: "",
@@ -74,11 +82,11 @@ export class TokenDetailsStage {
     });
   }
 
-  deleteToken(token: IToken): void {
-    const index = this.wizardState.registrationData.primaryDAO.tokens.indexOf(token);
+  deleteToken(token: IToken, tokens: IToken[], forms: ValidationController[]): void {
+    const index = tokens.indexOf(token);
     if (index !== -1) {
-      this.tokenDetailsForms.splice(index, 1);
-      this.wizardState.registrationData.primaryDAO.tokens.splice(index, 1);
+      forms.splice(index, 1);
+      tokens.splice(index, 1);
     }
   }
 }

@@ -13,6 +13,7 @@ export class PRangeSlider {
   @bindable rightLabel?: string;
   @bindable maxValue = 100;
   @bindable.booleanAttr notWei = true;
+  @bindable.booleanAttr hidePercentage = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
   @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
 
@@ -41,17 +42,27 @@ export class PRangeSlider {
 
   @computedFrom("value")
   get percentage() {
-    this.updateCssVariables();
     return this.value ?? 0;
   }
 
+  @computedFrom("value")
+  get leftPercentage() {
+    return 100 - this.value;
+  }
+
+  @computedFrom("value")
+  get rightPercentage() {
+    return this.value;
+  }
+
   valueChanged(newValue: number, oldValue?: number) {
+    this.updateCssVariables();
     if (this.alreadyUpdated || Number(newValue) === Number(oldValue)) {
       this.alreadyUpdated = false;
       return;
     }
-    this.left = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
-    this.right = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
+    this.left = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
+    this.right = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
 
     this.updateTooltips();
   }
@@ -67,25 +78,25 @@ export class PRangeSlider {
   }
 
   updateRight() {
-    this.right = this.numberService.toString(this.clamp(this.maxValue - Number(this.left)), {});
+    this.right = this.numberService.toString(this.maxValue - this.clamp(this.right), {});
     this.updateTooltips();
     this.alreadyUpdated = true;
     this.updateValue();
   }
 
-  private updateValue() {
-    this.value = this.left ? this.absoluteValueToPercentage(Number(this.left)) : this.value;
+  updateLeft() {
+    this.left = this.numberService.toString(this.clamp(this.maxValue - Number(this.left)), {});
+    this.updateTooltips();
+    this.alreadyUpdated = true;
+    this.updateValue();
   }
 
   private percentageToAbsoluteValue(value: number) {
     return this.maxValue ? value / 100 * this.maxValue : undefined;
   }
 
-  updateLeft() {
-    this.left = this.numberService.toString(this.maxValue - this.clamp(this.right), {});
-    this.updateTooltips();
-    this.alreadyUpdated = true;
-    this.updateValue();
+  private updateValue() {
+    this.value = this.left ? 100 - this.absoluteValueToPercentage(Number(this.left)) : this.value;
   }
 
   private absoluteValueToPercentage(value: number) {
