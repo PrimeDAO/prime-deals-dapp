@@ -16,7 +16,8 @@
         label="${`Clause ${index + 1}`}"
         data-test="clause-input"
       >
-        ${clause.text}
+        <!-- Make sure to render new line characters from textarea  -->
+        <pre>${clause.text}</pre>
       </pform-input>
     </template>
 

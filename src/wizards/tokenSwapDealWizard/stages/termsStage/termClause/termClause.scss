@@ -1,11 +1,24 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
 term-clause {
   .formInputLabelTitle {
     line-height: 33px;
   }
 
   pform-input {
+    .pInput {
+      font-size: $font-size3;
+    }
+
     .inputContainer {
       margin-top: unset;
+
+      pre {
+        white-space: pre;
+        font-family: Inter;
+        font-size: $font-size3;
+        line-height: 22px;
+      }
     }
 
     .formInputLabel {
