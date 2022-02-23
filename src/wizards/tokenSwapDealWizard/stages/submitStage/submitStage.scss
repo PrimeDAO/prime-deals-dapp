@@ -73,10 +73,9 @@ stage-wrapper[title="Submit"] {
 
       &.submitDaoCard {
         .submitDaoTokenCard {
-          margin-top: 20px;
-
           pcard {
             background: $BG01;
+            margin-top: 20px;
           }
 
           .tokenName {
