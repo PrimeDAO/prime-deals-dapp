@@ -9,7 +9,16 @@
     on-delete.call="onDelete()"
   >
     <!-- View -->
-    <template replace-part="view"> ${clause.text} </template>
+    <template replace-part="view">
+      <pform-input
+        data-test="clauseFormInput"
+        class="wizardFormInput"
+        label="${`Clause ${index + 1}`}"
+        data-test="clause-input"
+      >
+        ${clause.text}
+      </pform-input>
+    </template>
 
     <!-- Edit -->
     <template replace-part="edit">
