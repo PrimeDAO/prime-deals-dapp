@@ -5,22 +5,25 @@
     title="Token details"
     wizard-manager.bind="wizardManager">
 
-    <div class="stageSection">
+    <div class="stageSection" data-test="primary-dao-tokens">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Tokens</h2>
+        <h2 class="heading heading3 title">
+          <template if.bind="isOpenDealWizard">Tokens</template>
+          <template else>Primary DAO Tokens</template>
+        </h2>
         <div class="subtext">
           Please fill in the Ethereum native token address and swapping details of the primary DAO.
         </div>
       </div>
       <div class="stageSectionContent">
         <token-details
-          form.from-view="tokenDetailsForms[$index]"
-          on-delete.call="deleteToken(token)"
+          form.from-view="primaryDAOTokensForms[$index]"
+          on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
           token.bind="token"
         ></token-details>
 
-        <pbutton class="addTokenButton" click.delegate="addToken()"
+        <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
                  if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
                  type="primary"
         >
@@ -29,6 +32,36 @@
         </pbutton>
 
         <p class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
+          A partnered deal needs to have at least one token detail
+        </p>
+      </div>
+    </div>
+
+    <div class="stageSection" if.bind="!isOpenDealWizard">
+      <div class="stageSectionSidebar">
+        <h2 class="heading heading3 title">Partner DAO Tokens</h2>
+        <div class="subtext">
+          Please fill in the Ethereum native token address and swapping details of the secondary DAO.
+        </div>
+      </div>
+      <div class="stageSectionContent">
+        <token-details
+          form.from-view="partnerDAOTokensForms[$index]"
+          on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokensForms)"
+          repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
+          token.bind="token"
+        ></token-details>
+
+        <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
+                 if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
+                 type="primary"
+        >
+          Add token
+          <i class="fa fa-plus"></i>
+        </pbutton>
+
+        <p
+          class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount2(wizardState.registrationData.partnerDAO.tokens) ? 'feedbackMessageVisible' : ''}">
           A partnered deal needs to have at least one token detail
         </p>
       </div>

@@ -9,8 +9,8 @@ export class Initiate {
       description: "Safely exchange tokens between multiple parties with customized vesting schedules.",
     },
     {
-      name: "Joint Venture",
-      slug: "joint-venture",
+      name: "Co-liquidity",
+      slug: "co-liquidity",
       isDisabled: true,
       description: "Seed or join into a liquidity pool together with multiple parties.",
     },
