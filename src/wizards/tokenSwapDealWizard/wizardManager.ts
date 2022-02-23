@@ -3,7 +3,7 @@ import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig, Router } from "aurelia-router";
 import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
-import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { DealRegistrationTokenSwap, emptyDaoDetails, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
@@ -87,6 +87,10 @@ export class WizardManager {
 
     // if we are accessing an already existing deal, get its registration data
     this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
+
+    if (wizardType === WizardType.makeAnOffer || wizardType === WizardType.partneredDeal) {
+      this.registrationData.partnerDAO = emptyDaoDetails;
+    }
 
     await this.ensureAccess(wizardType);
 

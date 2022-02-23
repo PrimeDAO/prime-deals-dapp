@@ -84,6 +84,26 @@ export interface IDealRegistrationTokenSwap {
   dealType: "token-swap"/* | "co-liquidity"*/;
 }
 
+export const emptyDaoDetails: IDAO = {
+  name: "",
+  tokens: [{
+    address: "",
+    name: undefined,
+    symbol: undefined,
+    decimals: undefined,
+    logoURI: undefined,
+    amount: undefined,
+    instantTransferAmount: undefined,
+    vestedTransferAmount: undefined,
+    vestedFor: undefined,
+    cliffOf: undefined,
+  }],
+  treasury_address: "",
+  representatives: [{address: ""}],
+  social_medias: [{name: "", url: ""}],
+  logoURI: null,
+};
+
 export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public version: string;
   public proposal: IProposal;
@@ -111,44 +131,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       summary: "",
       description: "",
     };
-    this.primaryDAO = {
-      name: "",
-      tokens: [{
-        address: "",
-        name: undefined,
-        symbol: undefined,
-        decimals: undefined,
-        logoURI: undefined,
-        amount: undefined,
-        instantTransferAmount: undefined,
-        vestedTransferAmount: undefined,
-        vestedFor: undefined,
-        cliffOf: undefined,
-      }],
-      treasury_address: "",
-      representatives: [{address: ""}],
-      social_medias: [{name: "", url: ""}],
-      logoURI: null,
-    };
-    this.partnerDAO = {
-      name: "",
-      tokens: [{
-        address: "",
-        name: undefined,
-        symbol: undefined,
-        decimals: undefined,
-        logoURI: undefined,
-        amount: undefined,
-        instantTransferAmount: undefined,
-        vestedTransferAmount: undefined,
-        vestedFor: undefined,
-        cliffOf: undefined,
-      }],
-      treasury_address: "",
-      representatives: [{address: ""}],
-      social_medias: [{name: "", url: ""}],
-      logoURI: null,
-    };
+    this.primaryDAO = emptyDaoDetails;
+    this.partnerDAO = undefined;
     this.proposalLead = {
       address: "",
       email: "",
