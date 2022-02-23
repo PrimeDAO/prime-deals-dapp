@@ -1,5 +1,6 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="./daoInformation/daoInformation"></require>
 
   <stage-wrapper title="Submit" wizard-manager.bind="wizardManager">
     <div class="stageSection">
@@ -57,113 +58,24 @@
           <p class="subtext">${submitData.executionPeriodInDays} days</p>
         </div>
 
+        <!-- DAO Informations -->
         <div class="submitCard submitDaoCard">
           <pcard>
             <div class="submitCardContent">
               <h4 class="submitCardHeader">Primary DAO</h4>
+              <dao-information dao-data.bind="submitData.primaryDAO"></dao-information>
+            </div>
+          </pcard>
 
-              <div class="daoNameAndLogo">
-                <div
-                  class="daoAvatar"
-                  style.bind="`background-image: url(${submitData.primaryDAO.logoURI})`"
-                  data-test="dao-avatar">
-                  <i if.bind="!submitData.primaryDAO.logoURI" class="fas fa-image"></i>
-                </div>
-                <h3>Dao name</h3>
-              </div>
-
-              <div class="submitContentLabel-sm">Treasury address</div>
-              <div class="submitContent">
-                <p class="subtext">${submitData.primaryDAO.treasury_address | smallHexString}</p>
-              </div>
-
-              <div class="submitContentLabel-sm">Social Media</div>
-              <div class="submitContent">
-              <template repeat.for="socialMedia of submitData.primaryDAO.social_medias">
-                <div>
-                  <span class="subtext">${socialMedia.name}</span> - <span class="subtext">${socialMedia.url}</span>
-                </div>
-                </template>
-              </div>
-
-              <div class="submitContentLabel-sm">Representatives</div>
-              <div class="submitContent">
-                <template repeat.for="representative of submitData.primaryDAO.representatives">
-                  <p class="subtext">${representative.address | smallHexString}</p>
-                </template>
-              </div>
-
-              <div class="submitContentLabel-sm">Tokens</div>
-              <div class="submitDaoTokenCard">
-                <!-- <p class="subtext">TODO: use from Token Details stage</p> -->
-
-                <pcard repeat.for="token of submitData.primaryDAO.tokens">
-                  <div>
-                    <p class="tokenName">
-                      <img height="32" src.bind="token.logoURI">
-                      ${token.name || '-'}
-                    </p>
-                    <div class="detailsTable detailsTableInViewMode">
-                      <div class="detailsCell">
-                        <p>Token address</p>
-                        <p>${token.address || '-' | smallHexString }</p>
-                      </div>
-
-                      <div class="detailsCell detailsCellAmount">
-                        <p>Amount tokens</p>
-                        <p>
-                          <formatted-number if.bind="token.amount >= 0" thousands-separated
-                                            value.to-view="token.amount | ethwei"></formatted-number>
-                          <template else>
-                            -
-                          </template>
-                        </p>
-                      </div>
-
-                      <div class="detailsCell">
-                        <p>Instant transfer</p>
-                        <p>
-                          <formatted-number if.bind="token.instantTransferAmount" thousands-separated
-                                            value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
-                          <template else>
-                            -
-                          </template>
-                        </p>
-                      </div>
-
-                      <div class="detailsCell">
-                        <p>Vested transfer</p>
-                        <p>
-                          <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-                                            value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
-                          <template else>
-                            -
-                          </template>
-                        </p>
-                      </div>
-
-                      <div class="detailsCell">
-                        <p>Vested for</p>
-                        <p>
-                          <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
-                          <template else>0 days</template>
-                        </p>
-                      </div>
-
-                      <div class="detailsCell">
-                        <p>Cliff of</p>
-                        <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
-                        <template else>0 days</template>
-                      </div>
-                    </div>
-                  </div>
-                </pcard>
-
-              </div>
+          <pcard if.bind="submitData.partnerDAO">
+            <div class="submitCardContent">
+              <h4 class="submitCardHeader">Partner DAO</h4>
+              <dao-information dao-data.bind="submitData.partnerDAO"></dao-information>
             </div>
           </pcard>
         </div>
 
+        <!-- Terms -->
         <div class="submitCard submitTermsCard">
           <pcard>
             <div class="submitCardContent">

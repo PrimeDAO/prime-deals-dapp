@@ -95,13 +95,22 @@ stage-wrapper[title="Submit"] {
             width: 100%;
             border-spacing: $spacing-normal;
 
-            .detailsCell p:first-child {
-              color: $Secondary02;
-              margin-bottom: $spacing-small;
-              display: flex;
-              align-items: center;
-              gap: $spacing-medium-small;
-              font-weight: $font-bold;
+            .detailsCell {
+              max-width: 130px; // TODO: experimented, until it looks good --> Should ask Design
+
+              p {
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+              }
+
+              p:first-child {
+                color: $Secondary02;
+                margin-bottom: $spacing-small;
+                display: flex;
+                align-items: center;
+                gap: $spacing-medium-small;
+                font-weight: $font-bold;
+              }
             }
 
             &.detailsTableInViewMode {
@@ -124,19 +133,6 @@ stage-wrapper[title="Submit"] {
           margin-bottom: 18px;
           padding-bottom: 6px;
           line-height: 28px;
-        }
-
-        .daoNameAndLogo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 18px;
-
-          h3 {
-            font-size: $font-size4;
-            font-weight: $font-bold;
-            line-height: 28px;
-          }
         }
 
         .submitContent {
