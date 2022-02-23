@@ -10,6 +10,12 @@ export class Playground {
         moduleId: PLATFORM.moduleName("./playgroundWelcome/playgroundWelcome"),
         nav: true,
       },
+      {
+        name: "firestore",
+        route: "",
+        moduleId: PLATFORM.moduleName("./firestore/firestore"),
+        nav: true,
+      },
     ]);
   }
 }

@@ -14,6 +14,15 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
+import { initializeApp } from "firebase/app";
+const firebaseApp = initializeApp({
+  apiKey: "AIzaSyAlB4gsZLjzkotfGvWBtsQ_j4EuBeFRx0I",
+  authDomain: "prime-deals-poc.firebaseapp.com",
+  projectId: "prime-deals-poc",
+  storageBucket: "prime-deals-poc.appspot.com",
+  messagingSenderId: "768323744054",
+  appId: "1:768323744054:web:2ba68336f652bfe4d20397",
+});
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
