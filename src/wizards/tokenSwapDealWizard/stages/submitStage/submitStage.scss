@@ -26,11 +26,15 @@
 $submitCardWidth: 645px;
 
 stage-wrapper[title="Submit"] {
-  .stageSectionContent {
+  .stageSectionContentContainer {
     font-family: Inter;
 
-    .submitContent {
+    .stageSectionContent {
       margin-bottom: 30px;
+
+      &:last-child {
+        margin-bottom: inherit;
+      }
 
       .subtext {
         color: $Neutral04;
