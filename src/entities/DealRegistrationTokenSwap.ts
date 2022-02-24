@@ -116,11 +116,11 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public executionPeriodInDays: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
-  constructor() {
-    this.clearState();
+  constructor(isPartneredDeal = false) {
+    this.clearState(isPartneredDeal);
   }
 
-  clearState(): void {
+  clearState(isPartneredDeal: boolean): void {
     this.version = "0.0.1";
     this.proposal = {
       title: "",
@@ -128,7 +128,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       description: "",
     };
     this.primaryDAO = emptyDaoDetails;
-    this.partnerDAO = undefined;
+    this.partnerDAO = isPartneredDeal ? emptyDaoDetails : undefined;
     this.proposalLead = {
       address: "",
       email: "",

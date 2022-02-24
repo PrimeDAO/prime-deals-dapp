@@ -93,11 +93,9 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
+    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap(wizardType === WizardType.partneredDeal);
 
-    // makeAnOffer and partneredDeal wizard types are adding partnerDao stage
-    // and they need to have partnerDao data initialized with correct structure
-    if (wizardType === WizardType.makeAnOffer || wizardType === WizardType.partneredDeal) {
+    if (wizardType === WizardType.makeAnOffer) {
       this.registrationData.partnerDAO = emptyDaoDetails;
     }
 
