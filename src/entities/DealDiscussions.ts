@@ -7,7 +7,7 @@ export interface IDiscussion {
   members: Array<string>,
   isPublic: boolean,
   clauseHash: string | null,
-  clauseIdx: number | null,
+  clauseIndex: number | null,
   topic: string,
   replies: number,
   modifiedAt: Date,
@@ -43,16 +43,14 @@ export enum VoteType {
 export interface IDealDiscussion {
   version: string;
   discussionId: Hash;
-  isPrivate: boolean;
   createdAt: Date | null;
   modifiedAt: Date | null;
-  createdByAddress: string | null;
+  createdBy: {address: string} | null;
   createdByName?: string | null;
-  members: Array<string>;
-  admins: Array<string>;
+  representatives: Array<{address: string}>;
+  admins: Array<{address: string}>;
   topic: string;
-  clauseHash: string | null;
-  clauseIdx: number | null;
+  clauseIndex: number | null;
   replies: number;
 }
 
@@ -62,11 +60,11 @@ export class DealDiscussion implements IDealDiscussion {
   public isPrivate: boolean;
   public createdAt: Date | null;
   public modifiedAt: Date | null;
-  public createdByAddress: string | null;
-  public members: Array<string>;
-  public admins: Array<string>;
+  public createdBy: {address: string} | null;
+  public representatives: Array<{address: string}>;
+  public admins: Array<{address: string}>;
   public topic: string;
-  public clauseHash: string | null;
-  public clauseIdx: number | null;
+  // public clauseHash: string | null;
+  public clauseIndex: number | null;
   public replies: number;
 }

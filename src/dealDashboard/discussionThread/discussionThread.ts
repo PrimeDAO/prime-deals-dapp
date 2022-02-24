@@ -170,7 +170,7 @@ export class DiscussionThread {
     }, {});
 
     // Author profile for the discussion header
-    this.discussionsService.loadProfile(this.dealDiscussion.createdByAddress)
+    this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
       .then(profile => {
         this.dealDiscussion.createdByName = profile.name;
       });
@@ -186,13 +186,7 @@ export class DiscussionThread {
     this.isLoading.profiles = false;
 
     if (this.threadIsInView()) {
-      setTimeout(() => {
-        window.scrollTo({
-          left: 0,
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 250);
+      this.discussionsService.autoScrollAfter(250);
     }
 
     // Update the discussion status
@@ -237,17 +231,16 @@ export class DiscussionThread {
       );
       this.comment = "";
 
-      setTimeout(() => {
-        this.isLoading.commenting = false;
-      }, 5000);
       this.refThreadEnd.scrollIntoView({
         behavior: "smooth",
       });
       this.isReply = false;
     } catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+    } finally {
       this.isLoading.commenting = false;
     }
+
   }
 
   async replyComment(_id: string): Promise<void> {

@@ -8,8 +8,6 @@ import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
-import { IDX, getLegacy3BoxProfileAsBasicProfile } from "@ceramicstudio/idx";
-import CeramicClient from "@ceramicnetwork/http-client";
 
 @autoinject
 export class DiscussionsService {
@@ -17,7 +15,6 @@ export class DiscussionsService {
   public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
   private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
-  private idx: IDX;
 
   public discussions: Record<string, IDealDiscussion> = {};
   private comment: string;
@@ -128,22 +125,17 @@ export class DiscussionsService {
   public async createDiscussion(
     dealId: string,
     args: {
-      discussionId: string,
       clauseHash: string | null,
       topic: string,
-      clauseIdx: number | null,
+      clauseIndex: number | null,
       isPublic: boolean,
       representatives?: Array<{address: string}>,
       admins?: Array<string>,
     }): Promise<string> {
 
     const discussions = this.discussions || {};
-    const createdBy = this.ethereumService.defaultAccountAddress;
-
-    // Don't create a new discussion if it already exists
-    if (this.discussions[args.discussionId]) return args.discussionId;
-
-    const discussionId = (await args.discussionId) || (await this.hashString(`${dealId}-${args.topic}-${new Date().getTime()}`));
+    const createdBy = {address: this.ethereumService.defaultAccountAddress};
+    const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
@@ -151,17 +143,15 @@ export class DiscussionsService {
     } else {
       discussions[discussionId] = {
         version: "0.0.1",
-        discussionId: args.discussionId,
+        discussionId,
         topic: args.topic,
-        clauseHash: args.clauseHash,
-        clauseIdx: args.clauseIdx,
-        createdByAddress: createdBy,
+        clauseIndex: args.clauseIndex,
+        createdBy,
         createdAt: new Date(),
         modifiedAt: new Date(),
         replies: 0,
-        isPrivate: !args.isPublic,
-        members: [...new Set([...args.representatives.map(item => item.address), createdBy])] || [createdBy],
-        admins: [...new Set([...args.admins, createdBy])] || [createdBy],
+        representatives: [...new Set([...args.representatives])],
+        admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
       };
 
       const dealData = await this.dealService.deals.get(dealId);
@@ -376,52 +366,22 @@ export class DiscussionsService {
 
   // get user profile
   public async loadProfile(authorWalletAddress: string): Promise<IProfile> {
-    // Get the IDX profile
-    try {
-      const ceramic = new CeramicClient("https://gateway.ceramic.network");
-      this.idx = new IDX({ ceramic });
-      const profile:any = await this.idx.get("basicProfile", authorWalletAddress + "@eip155:" + this.getNetworkId(process.env.NETWORK as AllowedNetworks));
-      // Currently IDX.get returns Promise<unknown>
-      // Follow changes on: https://developers.idx.xyz/reference/idx/#get
-      if (profile !== null) {
-        return {
-          address: authorWalletAddress,
-          image: profile.image.original.src.replace("ipfs://", "https://ipfs.io/ipfs/"),
-          name: profile.name,
-        };
-      }
-
-      return {
-        address: authorWalletAddress,
-        image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
-        name: "Anonymous",
-      };
-    } catch (error) {
-      this.consoleLogService.logMessage(`No DID Profile. Fallback to 3Box. ${error.message}`, "warn");
-    }
-
-    // Retrieve profile info from (legacy) 3Box
-    try {
-      return await getLegacy3BoxProfileAsBasicProfile(authorWalletAddress).then(profile => {
-
-        if (profile !== null) {
-          return {
-            address: authorWalletAddress,
-            image: profile.image.original.src.replace("ipfs://", "https://ipfs.io/ipfs/"),
-            name: profile.name,
-          };
-        } else {
-          return {
-            address: authorWalletAddress,
-            image: null,
-            name: null,
-          };
-        }
-      });
-    } catch (error) {
-      this.consoleLogService.logMessage(`No 3Box Profile. ${ error.message }`, "error");
-    }
+    return {
+      address: authorWalletAddress,
+      // image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
+      image: "",
+      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || "",
+    };
   }
 
+  public autoScrollAfter(pauseInMs: number): void {
+    setTimeout(() => {
+      window.scrollTo({
+        left: 0,
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, pauseInMs); // Bypass page transaction repositioning
+  }
   // edit comment by id?
 }

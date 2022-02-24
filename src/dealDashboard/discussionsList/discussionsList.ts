@@ -60,7 +60,7 @@ export class DiscussionsList{
       ));
 
     this.discussionsArray.forEach(discussion => {
-      this.discussionsService.loadProfile(discussion.createdByAddress)
+      this.discussionsService.loadProfile(discussion.createdBy.address)
         .then(profile => {
           if (profile.name) discussion.createdByName = profile.name;
         });
@@ -70,13 +70,7 @@ export class DiscussionsList{
   }
 
   private navigateTo(page) {
-    setTimeout(() => {
-      window.scrollTo({
-        left: 0,
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
-    }, 100);
+    this.discussionsService.autoScrollAfter(100);
     this.router.navigate(page);
   }
 }

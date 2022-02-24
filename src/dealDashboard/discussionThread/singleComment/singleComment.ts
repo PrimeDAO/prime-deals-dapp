@@ -12,7 +12,7 @@ export class SingleComment {
   @bindable private repliesToProfile: IProfile;
   @bindable private author: string;
   @bindable private profile: IProfile;
-  @bindable private loading: string;
+  @bindable private loading: Record<string, boolean>;
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;

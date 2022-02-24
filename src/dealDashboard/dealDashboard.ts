@@ -98,28 +98,22 @@ export class DealDashboard {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private addOrReadDiscussion = async (topic: string, hash: string, id: string | null, idx: number | null): Promise<void> => {
-    const discussionId = await this.discussionsService.createDiscussion(
-      this.dealId,
-      {
-        discussionId: hash,
-        topic,
-        clauseHash: id,
-        clauseIdx: idx,
-        admins: [this.ethereumService.defaultAccountAddress],
-        representatives: [{address: this.ethereumService.defaultAccountAddress}],
-        isPublic: true,
-      },
-    );
+  private addOrReadDiscussion = async (topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> => {
+    const discussionId = discussionHash || // If no discussion hash provided- create a new discussion
+      await this.discussionsService.createDiscussion(
+        this.dealId,
+        {
+          topic,
+          clauseHash,
+          clauseIndex,
+          admins: [this.ethereumService.defaultAccountAddress],
+          representatives: [{address: this.ethereumService.defaultAccountAddress}],
+          isPublic: true,
+        },
+      );
 
     if (discussionId !== null) {
-      setTimeout(() => {
-        window.scrollTo({
-          left: 0,
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 200); // Bypass page transaction repositioning
+      this.discussionsService.autoScrollAfter(200);
       this.router.navigate(`discussion/${discussionId}`, { replace: true, trigger: true });
     }
   };
