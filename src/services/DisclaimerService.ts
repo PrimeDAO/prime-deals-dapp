@@ -38,7 +38,7 @@ export class DisclaimerService {
       disclaimed = true;
     } else {
       const response = await this.showDisclaimer(
-        "https://raw.githubusercontent.com/PrimeDAO/prime-deals-dapp/master/README.md",
+        "https://raw.githubusercontent.com/PrimeDAO/prime-launch-dapp/master/src/documentation/officialDocs/TermsOfService.md",
         "Prime Deals Disclaimer",
       );
 
@@ -96,9 +96,6 @@ export class DisclaimerService {
   }
 
   public showDisclaimer(disclaimerUrl: string, title: string): Promise<DialogCloseResult> {
-    return this.dialogService.open(Disclaimer, { disclaimerUrl, title }, { keyboard: true })
-      .whenClosed(
-        (result: DialogCloseResult) => result,
-        (error: string) => { return { output: error, wasCancelled: false }; });
+    return this.dialogService.open(Disclaimer, { disclaimerUrl, title }, { keyboard: true }, "disclaimer");
   }
 }

@@ -12,8 +12,8 @@ import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
-import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
+import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -77,10 +77,12 @@ export class App {
     this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
 
       let notChanged = true;
-      const connect = await this.alertService.showAlert(
-        `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
+      const connect = await this.alertService.showAlert( {
+        message: `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
         // eslint-disable-next-line no-bitwise
-        ShowButtonsEnum.OK | ShowButtonsEnum.Cancel);
+        buttons: ShowButtonsEnum.Primary | ShowButtonsEnum.Secondary,
+        buttonTextPrimary: "Yes, Please",
+        buttonTextSecondary: "Not Now" });
 
       if (!connect.wasCancelled && !connect.output) {
         if (await this.ethereumService.switchToTargetedNetwork(info.provider)) {
@@ -230,6 +232,13 @@ export class App {
         name: "documentation",
         route: "/documentation",
         title: "Documentation",
+      },
+      {
+        moduleId: PLATFORM.moduleName("./documentation/officialDocs/termsOfService.html"),
+        nav: false,
+        name: "termsOfService",
+        route: ["terms-of-service"],
+        title: "Terms of Service",
       },
       {
         moduleId: PLATFORM.moduleName("./dealDashboard/dealDashboard"),

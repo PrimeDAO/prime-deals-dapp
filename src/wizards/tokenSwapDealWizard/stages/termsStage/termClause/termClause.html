@@ -1,0 +1,43 @@
+<template>
+  <require
+    from="../../../../../resources/elements/editingCard/editingCard"
+  ></require>
+
+  <editing-card
+    data-test="termsClause"
+    on-save.call="onSave()"
+    on-delete.call="onDelete()"
+  >
+    <!-- View -->
+    <template replace-part="view">
+      <pform-input
+        data-test="clauseFormInput"
+        class="wizardFormInput"
+        label="${`Clause ${index + 1}`}"
+        data-test="clause-input"
+      >
+        <!-- Make sure to render new line characters from textarea  -->
+        <pre>${clause.text}</pre>
+      </pform-input>
+    </template>
+
+    <!-- Edit -->
+    <template replace-part="edit">
+      <pform-input
+        data-test="clauseFormInput"
+        class="wizardFormInput"
+        label="${`Clause ${index + 1}`}"
+        show-counter
+        max-length="250"
+        data-test="clause-input"
+      >
+        <ptextarea
+          data-test="clauseTextarea"
+          rows="4"
+          value.bind="clause.text & validate:form"
+          placeholder="Some placeholder"
+        ></ptextarea>
+      </pform-input>
+    </template>
+  </editing-card>
+</template>

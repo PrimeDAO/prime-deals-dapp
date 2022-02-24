@@ -12,6 +12,7 @@ const stageTitlesToURLs = {
   "Primary DAO": "primary-dao",
   "Partner DAO": "partner-dao",
   "Token Details": "token-details",
+  "Terms": "terms",
 } as const;
 
 Then("I am presented the option to choose a partner", () => {
@@ -46,6 +47,11 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
 });
 
+Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
+  const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
+  cy.visit(url);
+});
+
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
   if (!wizardTitlesToURLs[wizardTitle]) {
     throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
@@ -59,6 +65,14 @@ Then("I am presented with the {string} {string} stage", (wizardTitle: keyof type
 When("I fill in the {string} field with {string}", (field: string, value: string) => {
   cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
     cy.get("input, textarea").type(value);
+  });
+});
+
+When("I fill in the {string} field with {string} in the {string} section", (field: string, value: string, section: string) => {
+  cy.get(`[data-test='${section.toLowerCase().replaceAll(" ", "-")}']`).within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input, textarea").type(value);
+    });
   });
 });
 

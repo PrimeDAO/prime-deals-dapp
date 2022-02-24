@@ -19,13 +19,13 @@ Feature: "Token Details" stage (Stage 5)
     And I am presented with the "Execution period is required" error message for the "Execution Period" field
 
   Scenario: Validates if the wallet address has the correct format
-    When I fill in the "Token address" field with "wrong address"
+    When I fill in the "Token address" field with "wrong address" in the "Primary DAO tokens" section
     And I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Please enter a valid ethereum address" error message for the "Token address" field
 
   Scenario: Validates vesting periods
-    When I fill in the "Token amount" field with "123"
+    When I fill in the "Token amount" field with "123" in the "Primary DAO tokens" section
     And I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Please provide a vesting period" error message for the "Vested Period" field
