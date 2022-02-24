@@ -20,7 +20,7 @@
         data-test="dao-treasury-field"
         class="wizardFormInput wizardFormInputNarrow"
         label.bind="name +' Treasury Address'"
-        label-info="This address will receive tokens from the Primary DAO/Partner DAO">
+        label-info="This address will receive tokens from the token swap">
         <pinput-text
           value.bind="data.treasury_address & validate:form"
           placeholder="0x..."
@@ -85,7 +85,7 @@
   </div>
   <div class="stageSection stageSectionNoBorder" data-test="dao-representatives-section">
     <div class="stageSectionSidebar">
-      <h2 class="heading heading3 title" data-test="section-title">Representatives</h2>
+      <h2 class="heading heading3 title" data-test="section-title">Select Representatives</h2>
       <p class="subtext" data-test="section-description">
         <slot name="representatives-description"></slot>
       </p>

@@ -11,12 +11,32 @@
       form.bind="form"
       wizard-manager.bind="wizardManager">
       <div slot="details-description">
-        Please fill in the details of the partner DAO who will be participating in the deal.
+        Please fill in the details of the first DAO for which the deal will be initiated for.
       </div>
       <div slot="representatives-description">
-        Representatives of the selected DAOs can cast votes, either to accept or reject the deal. The deal gets accepted if more than half of the representatives of involved DAO's vote agree.
+        Representatives are whitelisted accounts that can:
         <br /><br />
-        Representatives also have access to discuss clauses on the deal. They can also fund the deal, as well as withdraw and claim tokens.
+        <ul style="margin-left: 2em;">
+          <li>
+            cast a vote on the deal, either to accept or reject it
+          </li>
+          <li>
+            fund the deal, as well as withdraw and claim tokens.
+          </li>
+        </ul>
+        <br />
+        <template if.bind="isPartneredDeal">
+          In a Partnered Deal, Representatives are the only ones that can discuss the clauses of a deal.
+        </template>
+        <template else>
+          In an Open Deal anyone can engage in a discussion.
+        </template>
+        <br /><br />
+        Representatives are defined by the Primary DAO first and by the Partner DAO later as part of an offer.
+        <br /><br />
+        A deal gets accepted if more than half of the representatives of involved DAO's vote agree.
+        <br /><br />
+        Please put the address of the Proposal Lead if they are part of the Primary DAO, and wish to partake in the voting process.
       </div>
     </dao-stage-content>
   </stage-wrapper>
