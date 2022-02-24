@@ -16,12 +16,18 @@ import { ShowButtonsEnum } from "resources/dialogs/alert/alert";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { initializeApp } from "firebase/app";
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyAlB4gsZLjzkotfGvWBtsQ_j4EuBeFRx0I",
-  authDomain: "prime-deals-poc.firebaseapp.com",
-  projectId: "prime-deals-poc",
-  storageBucket: "prime-deals-poc.appspot.com",
-  messagingSenderId: "768323744054",
-  appId: "1:768323744054:web:2ba68336f652bfe4d20397",
+  // apiKey: "AIzaSyAlB4gsZLjzkotfGvWBtsQ_j4EuBeFRx0I",
+  // authDomain: "prime-deals-poc.firebaseapp.com",
+  // projectId: "prime-deals-poc",
+  // storageBucket: "prime-deals-poc.appspot.com",
+  // messagingSenderId: "768323744054",
+  // appId: "1:768323744054:web:2ba68336f652bfe4d20397",
+  apiKey: "AIzaSyDEE_xOVFn10j41f_He2Zwozpr3ZQdiXF4",
+  authDomain: "deals-poc.firebaseapp.com",
+  projectId: "deals-poc",
+  storageBucket: "deals-poc.appspot.com",
+  messagingSenderId: "229345033418",
+  appId: "1:229345033418:web:97c9bfafe677de686d4833",
 });
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");

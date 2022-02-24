@@ -27,32 +27,32 @@ export class WizardManager {
   private registrationData: IDealRegistrationTokenSwap;
   private proposalStage: IWizardStage = {
     name: "Proposal",
-    valid: false,
+    valid: true,
     route: "proposal",
     moduleId: PLATFORM.moduleName("./stages/proposalStage/proposalStage"),
   };
   private leadDetailsStage: IWizardStage = {
     name: "Lead Details",
-    valid: false,
+    valid: true,
     route: "lead-details",
     moduleId: PLATFORM.moduleName("./stages/leadDetailsStage/leadDetailsStage"),
   };
   private primaryDaoStage: IWizardStage = {
     name: "Primary DAO",
-    valid: false,
+    valid: true,
     route: "primary-dao",
     moduleId: PLATFORM.moduleName("./stages/primaryDaoStage/primaryDaoStage"),
   };
   private partnerDaoStage: IWizardStage = {
     name: "Partner DAO",
-    valid: false,
+    valid: true,
     route: "partner-dao",
     moduleId: PLATFORM.moduleName("./stages/partnerDaoStage/partnerDaoStage"),
   };
 
   private tokenDetailsStage: IWizardStage = {
     name: "Token Details",
-    valid: false,
+    valid: true,
     route: "token-details",
     moduleId: PLATFORM.moduleName("./stages/tokenDetailsStage/tokenDetailsStage"),
   };

@@ -24,8 +24,14 @@ export class Firestore {
 
   async attached() {
     this.currentWalletAddress = this.ethereumService.defaultAccountAddress;
-    this.eventAggregator.subscribe("Network.Changed.Account", address => {
+    this.eventAggregator.subscribe("Network.Changed.Account", async (address) => {
       this.currentWalletAddress = address;
+      const nonce = await this.firestoreService.getNonceToSign(address);
+      console.log("nonce", nonce);
+      const signature = await this.firestoreService.requestSignature(address, nonce);
+
+      const token = await this.firestoreService.verifySignedMessage(address, signature);
+      await this.firestoreService.signInWithCustomToken(token);
     });
 
     this.allOpenDeals = await this.firestoreService.getAllPublicDeals();
