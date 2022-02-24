@@ -9,14 +9,16 @@
 
   .connectButton {
     > pbutton > button {
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 14px;
       line-height: 17px;
       font-weight: 400;
-      padding: 10px 14px;
+      padding: 8px 10px;
       text-transform: none;
       transition: none;
       color: $Neutral03;
+      height: 13px;
+      align-items: center;
 
       &:focus {
         box-shadow: none;
@@ -28,9 +30,11 @@
         background: $Gradient01;
         border: none;
         transform: none;
-        padding: 10px 14px;
+        padding: 8px 10px;
+        height: 13px;
+        align-items: center;
         &.connect {
-          padding: 12px 16px;
+          padding: 10px 12px;
         }
       }
 

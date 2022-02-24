@@ -2,7 +2,10 @@
   <require from="../stageButtons/stageButtons"></require>
   <div class="page animated-page wizardStage au-animate">
     <div class="stageHeader">
-      <h1 class="heading heading1 gradient">${title}</h1>
+      <h1
+        data-test="stageHeaderTitle"
+        class="heading heading1 gradient"
+      >${title}</h1>
     </div>
     <div class="stageContent">
       <slot></slot>

@@ -234,6 +234,13 @@ export class App {
         title: "Documentation",
       },
       {
+        moduleId: PLATFORM.moduleName("./documentation/officialDocs/termsOfService.html"),
+        nav: false,
+        name: "termsOfService",
+        route: ["terms-of-service"],
+        title: "Terms of Service",
+      },
+      {
         moduleId: PLATFORM.moduleName("./dealDashboard/dealDashboard"),
         nav: false,
         name: "dealDashboard",

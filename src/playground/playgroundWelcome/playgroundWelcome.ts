@@ -3,8 +3,7 @@ export class PlaygroundWelcome {
   viewModel: string;
   componentName: any;
 
-  private onlyViewsList = [
-  ];
+  private onlyViewsList = [];
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   activate(params): void {
