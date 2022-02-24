@@ -30,12 +30,14 @@
         show-counter
         max-length="250"
         data-test="clause-input"
+        input-reference.bind="clauseTextareaViewModel"
       >
         <ptextarea
           data-test="clauseTextarea"
           rows="4"
           value.bind="clause.text & validate:form"
           placeholder="Some placeholder"
+          view-model.ref="clauseTextareaViewModel"
         ></ptextarea>
       </pform-input>
     </template>
