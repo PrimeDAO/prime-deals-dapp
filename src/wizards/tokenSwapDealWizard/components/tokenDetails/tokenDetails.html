@@ -7,7 +7,7 @@
         helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
         input-reference.bind="addressInput"
         label="Token Address"
-        label-info="Some info here"
+        label-info="Make sure to use the native contract address of the token."
       >
         <pinput-text
           input.trigger="getTokenInfo(token.address)"
@@ -49,8 +49,9 @@
       </div>
       <pform-input data-test="proposal-token-amount-field"
                    input-reference.bind="amountInput"
-                   label="Amount"
-                   label-description="You are able to edit the amount of tokens to be swapped before the execution phase."
+                   label="Total Amount of Tokens to Swap"
+                   label-description="This defines the total amount of token that will be transferred to the other DAO during the swap.
+                   You can adjust this amount at any time before the on-chain execution phase of the deal."
       >
         <pinput-numeric
           placeholder="500.000"
@@ -61,7 +62,7 @@
       </pform-input>
       <pform-input
         label="Instant Transfer Set-up"
-        label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO’s treasury address. You can adjust how much of the total amount is set to be transferred instantly and how much will be vested (see below)."
         label-info="some handy info"
       >
         <prange-slider
@@ -78,7 +79,7 @@
       </pform-input>
 
       <pform-input label="Vesting Set-up"
-                   label-description="Lorem ipsum dolor sit amet, consectetur adipiscing elit "
+                   label-description="Decide how long the tokens should be vested for, and the cliff period which defines the days after which the tokens can be claimed."
                    label-info="some handy info"
       >
         <div class="vesting">
@@ -133,7 +134,7 @@
         </div>
 
         <div class="detailsCell detailsCellAmount">
-          <p>Amount tokens</p>
+          <p>Total Amount of Tokens to Swap</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
                               value.to-view="token.amount | ethwei"></formatted-number>
