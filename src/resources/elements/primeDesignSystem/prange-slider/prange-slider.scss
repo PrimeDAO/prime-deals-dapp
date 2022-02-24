@@ -52,6 +52,10 @@ prange-slider {
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    span {
+      line-height: 33px;
+    }
   }
 
   .rangeSlider {
