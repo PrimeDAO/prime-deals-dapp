@@ -3,7 +3,7 @@
     <pstepper
       steps.bind="wizardState.stages"
       index-of-active.bind="wizardState.indexOfActive"
-      on-click.call="onClick(index)"
+      on-click.call="onStepperClick(index)"
       data-test="wizard-manager-stepper">
     </pstepper>
     <div>

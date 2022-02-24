@@ -126,8 +126,8 @@ export class WizardManager {
     }
   }
 
-  public onClick(index: number): void {
-    this.wizardService.goToStage(this, index);
+  public onStepperClick(index: number): void {
+    this.wizardService.goToStage(this, index, false);
   }
 
   private setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
