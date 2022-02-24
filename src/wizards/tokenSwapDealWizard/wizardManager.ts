@@ -93,7 +93,7 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap(wizardType === WizardType.partneredDeal);
+    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
 
     if (wizardType === WizardType.makeAnOffer) {
       this.registrationData.partnerDAO = emptyDaoDetails;
@@ -121,8 +121,8 @@ export class WizardManager {
 
   private getPreviousRoute(wizardType: WizardType) {
     switch (wizardType) {
-      case WizardType.openProposal:
-      case WizardType.partneredDeal:
+      case WizardType.createOpenProposal:
+      case WizardType.createPartneredDeal:
         return "initiate/token-swap";
 
       default:
@@ -148,9 +148,9 @@ export class WizardManager {
   private configureStages(wizardType: WizardType) {
     let stages: IWizardStage[];
     switch (wizardType) {
-      case WizardType.partneredDeal:
+      case WizardType.createPartneredDeal:
       case WizardType.makeAnOffer:
-      case WizardType.partneredDealEdit:
+      case WizardType.editPartneredDeal:
         stages = this.partneredDealStages;
         break;
 
@@ -176,7 +176,7 @@ export class WizardManager {
   }
 
   private async ensureAccess(wizardType: any): Promise<void> {
-    if (wizardType !== WizardType.openProposalEdit && wizardType !== WizardType.partneredDealEdit) {
+    if (wizardType !== WizardType.editOpenProposal && wizardType !== WizardType.editPartneredDeal) {
       return;
     }
 

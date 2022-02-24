@@ -10,7 +10,7 @@
     name: "createOpenProposal",
     title: "Create an Open Proposal",
     settings: {
-      wizardType: WizardType.openProposal,
+      wizardType: WizardType.createOpenProposal,
     },
   },
   ```
@@ -26,7 +26,7 @@
   ```
   // note this is just a fragment on the configureStages method
   switch (wizardType) {
-    case WizardType.openProposal:
+    case WizardType.createOpenProposal:
       stages = this.openProposalStages;
       break;
   }
