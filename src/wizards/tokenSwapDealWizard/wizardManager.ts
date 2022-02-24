@@ -145,8 +145,8 @@ export class WizardManager {
     this.viewModel = activeStage.moduleId;
   }
 
-  private configureStages(wizardType: WizardType) {
-    let stages: IWizardStage[];
+  private configureStages(wizardType: WizardType): Array<IWizardStage> {
+    let stages: Array<IWizardStage>;
     switch (wizardType) {
       case WizardType.createPartneredDeal:
       case WizardType.makeAnOffer:
@@ -159,7 +159,31 @@ export class WizardManager {
         break;
     }
 
+    this.setStagesAreValid(wizardType, stages);
+
     return stages;
+  }
+
+  private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
+    /**
+     * for any stages that have been previously validated, set stage.valid to true.
+     * Otherwise, set to false.
+     */
+    switch (wizardType) {
+      case WizardType.makeAnOffer:
+        stages.map((stage) => {
+          stage.valid = (stage !== this.partnerDaoStage);
+        });
+        break;
+      case WizardType.editPartneredDeal:
+      case WizardType.editOpenProposal:
+        stages.map((stage) => stage.valid = true);
+        break;
+      case WizardType.createPartneredDeal:
+      case WizardType.createOpenProposal:
+        stages.map((stage) => stage.valid = false);
+        break;
+    }
   }
 
   private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
