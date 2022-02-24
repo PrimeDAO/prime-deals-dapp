@@ -56,7 +56,7 @@ export class DealService {
   public initializing = true;
   private initializedPromise: Promise<void>;
 
-  public get openDeals(): Array<any> {
+  public get openProposals(): Array<any> {
     return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpen );
   }
 

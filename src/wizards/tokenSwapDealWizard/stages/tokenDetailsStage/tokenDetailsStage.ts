@@ -9,7 +9,7 @@ import { IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealReg
 export class TokenDetailsStage {
   wizardManager: any;
   wizardState: IWizardState<IDealRegistrationTokenSwap>;
-  isOpenDealWizard = false;
+  isOpenProposalWizard = false;
   form: ValidationController;
 
   primaryDAOTokensForms: ValidationController[] = [];
@@ -20,18 +20,18 @@ export class TokenDetailsStage {
   ) {
   }
 
-  @computedFrom("isOpenDealWizard", "wizardState.registrationData.primaryDAO.tokens.length")
+  @computedFrom("isOpenProposalWizard", "wizardState.registrationData.primaryDAO.tokens.length")
   get hasValidTokensDetailsCount(): boolean {
-    return !this.isOpenDealWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
+    return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
   }
 
   hasValidTokensDetailsCount2(tokens: IToken[]): boolean {
-    return !this.isOpenDealWizard ? Boolean(tokens.length) : true;
+    return !this.isOpenProposalWizard ? Boolean(tokens.length) : true;
   }
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
-    this.isOpenDealWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
+    this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.openProposalEdit].includes(stageMeta.wizardType);
 
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
@@ -61,7 +61,7 @@ export class TokenDetailsStage {
         .then(result => result.valid &&
           this.hasValidTokensDetailsCount &&
           Boolean(primaryDAOTokenValidation.filter(Boolean).length) &&
-          (this.isOpenDealWizard ? true : Boolean(partnerDAOTokenValidation.filter(Boolean).length)),
+          (this.isOpenProposalWizard ? true : Boolean(partnerDAOTokenValidation.filter(Boolean).length)),
         );
     });
   }

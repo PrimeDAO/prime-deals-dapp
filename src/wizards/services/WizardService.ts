@@ -89,15 +89,9 @@ export class WizardService {
   public async proceed(wizardManager: any): Promise<void> {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
-    wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
-
-    if (!wizardState.stages[indexOfActive].valid) {
-      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
-      return;
-    }
 
     if (indexOfActive < wizardState.stages.length - 1) {
-      this.goToStage(wizardManager, indexOfActive + 1);
+      this.goToStage(wizardManager, indexOfActive + 1, true);
     }
   }
 
@@ -106,7 +100,7 @@ export class WizardService {
     const indexOfActive = wizardState.indexOfActive;
 
     if (indexOfActive > 0) {
-      this.goToStage(wizardManager, indexOfActive - 1);
+      this.goToStage(wizardManager, indexOfActive - 1, false);
     } else {
       this.router.navigate(wizardState.previousRoute);
     }
@@ -117,8 +111,19 @@ export class WizardService {
     console.log("submit", wizardManager, valid);
   }
 
-  public goToStage(wizardManager: any, index: number): void {
+  public async goToStage(wizardManager: any, index: number, blockIfInvalid: boolean): Promise<void> {
+
     const wizardState = this.getWizardState(wizardManager);
+
+    const indexOfActive = wizardState.indexOfActive;
+
+    wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
+
+    if (blockIfInvalid && !wizardState.stages[indexOfActive].valid) {
+      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
+      return;
+    }
+
     wizardState.indexOfActive = index;
 
     const params = {
