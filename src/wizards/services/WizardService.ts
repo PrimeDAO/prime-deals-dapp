@@ -4,6 +4,7 @@ import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
+import { WizardManager } from "wizards/tokenSwapDealWizard/wizardManager";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -43,7 +44,7 @@ export class WizardService {
     cancelRoute,
     previousRoute,
   }: {
-    wizardManager: any;
+    wizardManager: WizardManager;
     stages: Array<IWizardStage>;
     indexOfActive: number;
     registrationData: Data;
@@ -115,6 +116,19 @@ export class WizardService {
   public submit(wizardManager: any, valid: boolean): void {
     // eslint-disable-next-line no-console
     console.log("submit", wizardManager, valid);
+    let allStagesValid = false;
+
+    this.wizardsStates.forEach(async (wizardState) => {
+      /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 124 ~ WizardService ~ this.wizardsStates.forEach ~ wizardState.stages.length", wizardState.stages.length);
+      wizardState.stages.forEach(async (stage) => {
+        stage.valid = await stage.validate?.();
+        /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 125 ~ WizardService ~ wizardState.stages.forEach ~ stage.valid", stage.valid);
+      });
+
+      allStagesValid = wizardState.stages.every(stage => stage.valid);
+    });
+
+    /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 129 ~ WizardService ~ submit ~ allStagesValid", allStagesValid);
   }
 
   public goToStage(wizardManager: any, index: number): void {

@@ -2,6 +2,7 @@ import { IWizardState } from "wizards/services/WizardService";
 import { ValidationRules } from "aurelia-validation";
 import { Validation } from "services/ValidationService";
 import { IDAO, ISocialMedia } from "entities/DealRegistrationTokenSwap";
+import { WizardManager } from "./wizardManager";
 
 export enum WizardType {openProposal, openProposalEdit, partneredDeal, partneredDealEdit, makeAnOffer}
 
@@ -12,7 +13,7 @@ export interface IBaseWizardStage {
 }
 
 export interface IStageMeta {
-  wizardManager: any;
+  wizardManager: WizardManager;
   wizardType: WizardType;
 }
 
