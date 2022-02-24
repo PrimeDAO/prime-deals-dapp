@@ -8,7 +8,7 @@
     <div class="stageSection" data-test="primary-dao-tokens">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">
-          <template if.bind="isOpenDealWizard">Tokens</template>
+          <template if.bind="isOpenProposalWizard">Tokens</template>
           <template else>Primary DAO Tokens</template>
         </h2>
         <div class="subtext">
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <div class="stageSection" if.bind="!isOpenDealWizard">
+    <div class="stageSection" if.bind="!isOpenProposalWizard">
       <div class="stageSectionSidebar">
         <h2 class="heading heading3 title">Partner DAO Tokens</h2>
         <div class="subtext">
