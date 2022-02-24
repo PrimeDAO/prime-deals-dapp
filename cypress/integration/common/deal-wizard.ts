@@ -13,6 +13,7 @@ const stageTitlesToURLs = {
   "Partner DAO": "partner-dao",
   "Token Details": "token-details",
   "Terms": "terms",
+  "Submit": "submit",
 } as const;
 
 Then("I am presented the option to choose a partner", () => {
@@ -29,6 +30,10 @@ When("I go to previous step", () => {
 
 When("I try to proceed to next step", () => {
   cy.get("[data-test='wizard-proceed-button']").click();
+});
+
+When("I try to submit the registration data", () => {
+  cy.get("[data-test='wizard-submit-button']").click();
 });
 
 When("I try to navigate to the {string} stage via stepper", (stageTitle: string) => {
