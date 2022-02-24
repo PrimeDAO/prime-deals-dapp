@@ -80,6 +80,26 @@ export interface IDealRegistrationTokenSwap {
   dealType: "token-swap"/* | "co-liquidity"*/;
 }
 
+export const emptyDaoDetails: IDAO = {
+  name: "",
+  tokens: [{
+    address: "",
+    name: undefined,
+    symbol: undefined,
+    decimals: undefined,
+    logoURI: undefined,
+    amount: undefined,
+    instantTransferAmount: undefined,
+    vestedTransferAmount: undefined,
+    vestedFor: undefined,
+    cliffOf: undefined,
+  }],
+  treasury_address: "",
+  representatives: [{address: ""}],
+  social_medias: [{name: "", url: ""}],
+  logoURI: null,
+};
+
 export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public version: string;
   public proposal: IProposal;
@@ -96,55 +116,19 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public executionPeriodInDays: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
-  constructor() {
-    this.clearState();
+  constructor(isPartneredDeal = false) {
+    this.clearState(isPartneredDeal);
   }
 
-  clearState(): void {
+  clearState(isPartneredDeal: boolean): void {
     this.version = "0.0.1";
     this.proposal = {
       title: "",
       summary: "",
       description: "",
     };
-    this.primaryDAO = {
-      name: "",
-      tokens: [{
-        address: "",
-        name: undefined,
-        symbol: undefined,
-        decimals: undefined,
-        logoURI: undefined,
-        amount: undefined,
-        instantTransferAmount: undefined,
-        vestedTransferAmount: undefined,
-        vestedFor: undefined,
-        cliffOf: undefined,
-      }],
-      treasury_address: "",
-      representatives: [{address: ""}],
-      social_medias: [{name: "", url: ""}],
-      logoURI: null,
-    };
-    this.partnerDAO = {
-      name: "",
-      tokens: [{
-        address: "",
-        name: undefined,
-        symbol: undefined,
-        decimals: undefined,
-        logoURI: undefined,
-        amount: undefined,
-        instantTransferAmount: undefined,
-        vestedTransferAmount: undefined,
-        vestedFor: undefined,
-        cliffOf: undefined,
-      }],
-      treasury_address: "",
-      representatives: [{address: ""}],
-      social_medias: [{name: "", url: ""}],
-      logoURI: null,
-    };
+    this.primaryDAO = emptyDaoDetails;
+    this.partnerDAO = isPartneredDeal ? emptyDaoDetails : undefined;
     this.proposalLead = {
       address: "",
       email: "",

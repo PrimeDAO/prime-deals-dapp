@@ -3,7 +3,7 @@ import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig, Router } from "aurelia-router";
 import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
-import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { DealRegistrationTokenSwap, emptyDaoDetails, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
@@ -93,7 +93,11 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
+    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+
+    if (wizardType === WizardType.makeAnOffer) {
+      this.registrationData.partnerDAO = emptyDaoDetails;
+    }
 
     await this.ensureAccess(wizardType);
 
@@ -117,8 +121,8 @@ export class WizardManager {
 
   private getPreviousRoute(wizardType: WizardType) {
     switch (wizardType) {
-      case WizardType.openProposal:
-      case WizardType.partneredDeal:
+      case WizardType.createOpenProposal:
+      case WizardType.createPartneredDeal:
         return "initiate/token-swap";
 
       default:
@@ -144,9 +148,9 @@ export class WizardManager {
   private configureStages(wizardType: WizardType) {
     let stages: IWizardStage[];
     switch (wizardType) {
-      case WizardType.partneredDeal:
+      case WizardType.createPartneredDeal:
       case WizardType.makeAnOffer:
-      case WizardType.partneredDealEdit:
+      case WizardType.editPartneredDeal:
         stages = this.partneredDealStages;
         break;
 
@@ -168,11 +172,11 @@ export class WizardManager {
     }
 
     await deal.ensureInitialized();
-    return deal.registrationData;
+    return JSON.parse(JSON.stringify(deal.registrationData));
   }
 
   private async ensureAccess(wizardType: any): Promise<void> {
-    if (wizardType !== WizardType.openProposalEdit && wizardType !== WizardType.partneredDealEdit) {
+    if (wizardType !== WizardType.editOpenProposal && wizardType !== WizardType.editPartneredDeal) {
       return;
     }
 

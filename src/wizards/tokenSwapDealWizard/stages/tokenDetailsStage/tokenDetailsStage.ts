@@ -31,7 +31,7 @@ export class TokenDetailsStage {
 
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
-    this.isOpenProposalWizard = [WizardType.openProposal, WizardType.openProposalEdit].includes(stageMeta.wizardType);
+    this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
 
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
