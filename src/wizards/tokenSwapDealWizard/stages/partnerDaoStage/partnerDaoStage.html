@@ -25,7 +25,12 @@
           </li>
         </ul>
         <br />
-        In an Open Deal anyone can engage in a discussion.
+        <template if.bind="isPartneredDeal">
+          In a Partnered Deal, Representatives are the only ones that can discuss the clauses of a deal.
+        </template>
+        <template else>
+          In an Open Deal anyone can engage in a discussion.
+        </template>
         <br /><br />
         Representatives are defined by the Primary DAO first and by the Partner DAO later as part of an offer.
         <br /><br />

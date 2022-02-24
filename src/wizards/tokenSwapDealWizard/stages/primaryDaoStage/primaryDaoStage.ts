@@ -37,7 +37,6 @@ export class PrimaryDaoStage implements IBaseWizardStage {
       case WizardType.makeAnOffer:
       case WizardType.partneredDealEdit:
         return true;
-        break;
 
       default:
         return false;
