@@ -111,11 +111,8 @@ export class WizardService {
     }
   }
 
-  public async submit(wizardManager: any, valid: boolean): Promise<void> {
-    // eslint-disable-next-line no-console
-    console.log("submit", wizardManager, valid);
+  public async submit(wizardManager: WizardManager): Promise<void> {
     let allStagesValid = false;
-
     this.wizardsStates.forEach((wizardState) => {
       allStagesValid = wizardState.stages.every(stage => stage.valid);
     });
@@ -129,6 +126,8 @@ export class WizardService {
       buttonTextPrimary: "Go to deal (todo)",
       className: "congratulatePopup",
     };
+
+    this.deleteVotesForPartneredDeal(wizardManager);
 
     await this.alertService.showAlert(congratulatePopupModel);
   }
@@ -184,5 +183,11 @@ export class WizardService {
   private getActiveStage(wizardManager: any): IWizardStage {
     const wizardState = this.getWizardState(wizardManager);
     return wizardState.stages[wizardState.indexOfActive];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private deleteVotesForPartneredDeal(wizardManager: WizardManager) {
+    // eslint-disable-next-line no-console
+    console.log("TODO: deleteVotesForPartneredDeal");
   }
 }
