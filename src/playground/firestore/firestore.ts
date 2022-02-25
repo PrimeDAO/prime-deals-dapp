@@ -8,7 +8,7 @@ import { getAuth } from "firebase/auth";
 @autoinject
 export class Firestore {
   title;
-  private;
+  private = false;
   address;
   primaryDaoRepresentativeOne;
   primaryDaoRepresentativeTwo;
