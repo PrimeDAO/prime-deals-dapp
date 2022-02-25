@@ -49,7 +49,7 @@ export class AlertService {
   }
 
   public showAlert(config: IAlertModel): Promise<DialogCloseResult> {
-    return this.dialogService.open(Alert, config, { keyboard: true });
+    return this.dialogService.open(Alert, config, { keyboard: true }, config.className);
   }
 }
 

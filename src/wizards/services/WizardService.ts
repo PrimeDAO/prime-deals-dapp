@@ -5,6 +5,7 @@ import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTyp
 import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
 import { WizardManager } from "wizards/tokenSwapDealWizard/wizardManager";
+import { AlertService, IAlertModel } from "services/AlertService";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -33,6 +34,7 @@ export class WizardService {
     private router: Router,
     private eventAggregator: EventAggregator,
     private validationFactory: ValidationControllerFactory,
+    private alertService: AlertService,
   ) {
   }
 
@@ -109,22 +111,26 @@ export class WizardService {
     }
   }
 
-  public submit(wizardManager: any, valid: boolean): void {
+  public async submit(wizardManager: any, valid: boolean): Promise<void> {
     // eslint-disable-next-line no-console
     console.log("submit", wizardManager, valid);
     let allStagesValid = false;
 
-    this.wizardsStates.forEach(async (wizardState) => {
-      /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 124 ~ WizardService ~ this.wizardsStates.forEach ~ wizardState.stages.length", wizardState.stages.length);
-      wizardState.stages.forEach(async (stage) => {
-        stage.valid = await stage.validate?.();
-        /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 125 ~ WizardService ~ wizardState.stages.forEach ~ stage.valid", stage.valid);
-      });
-
+    this.wizardsStates.forEach((wizardState) => {
       allStagesValid = wizardState.stages.every(stage => stage.valid);
     });
 
-    /* prettier-ignore */ console.log("TCL ~ file: WizardService.ts ~ line 129 ~ WizardService ~ submit ~ allStagesValid", allStagesValid);
+    if (!allStagesValid) return;
+
+    const congratulatePopupModel: IAlertModel = {
+      header: "Your deal has been submitted!",
+      message: "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
+      confetti: true,
+      buttonTextPrimary: "Go to deal (todo)",
+      className: "congratulatePopup",
+    };
+
+    await this.alertService.showAlert(congratulatePopupModel);
   }
 
   public async goToStage(wizardManager: any, index: number, blockIfInvalid: boolean): Promise<void> {

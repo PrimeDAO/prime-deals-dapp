@@ -54,4 +54,5 @@ export interface IPopupModalModel {
   buttonTextPrimary?: string;
   buttonTextSecondary?: string;
   confetti?: boolean;
+  className?: string;
 }
