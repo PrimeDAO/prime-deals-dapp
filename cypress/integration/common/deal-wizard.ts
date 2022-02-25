@@ -57,6 +57,12 @@ Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeo
   cy.visit(url);
 });
 
+Given("I edit a \"Partnered Deal\"", () => {
+  const dealId = "partnered_deals_stream_hash_3";
+  const url = `partnered-deal/${dealId}/edit/submit`;
+  cy.visit(url);
+});
+
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
   if (!wizardTitlesToURLs[wizardTitle]) {
     throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
