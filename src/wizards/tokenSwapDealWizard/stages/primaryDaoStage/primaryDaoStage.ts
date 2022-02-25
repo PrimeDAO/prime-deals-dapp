@@ -10,6 +10,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   private disabled: boolean;
   private form: ValidationController;
+  private isPartneredDeal: boolean;
 
   constructor(
     public wizardService: WizardService,
@@ -19,6 +20,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
+    this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
 
     const validationRules = daoStageValidationRules("Primary DAO");
 
@@ -27,5 +29,17 @@ export class PrimaryDaoStage implements IBaseWizardStage {
       this.wizardState.registrationData.primaryDAO,
       validationRules,
     );
+  }
+
+  getIsPartneredDeal(wizardType: WizardType) {
+    switch (wizardType) {
+      case WizardType.createPartneredDeal:
+      case WizardType.makeAnOffer:
+      case WizardType.editPartneredDeal:
+        return true;
+
+      default:
+        return false;
+    }
   }
 }

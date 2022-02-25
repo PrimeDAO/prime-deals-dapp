@@ -1,9 +1,10 @@
+import { IKey } from "./../../services/DataSourceDealsTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig, Router } from "aurelia-router";
 import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
-import { DealRegistrationTokenSwap, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { DealRegistrationTokenSwap, emptyDaoDetails, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
@@ -22,6 +23,9 @@ export class WizardManager {
 
   // view model of the currently active stage
   public viewModel: string;
+
+  private wizardType: WizardType;
+  private dealId: IKey;
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;
@@ -94,7 +98,7 @@ export class WizardManager {
   ) {
   }
 
-  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
+  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IKey}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
@@ -105,9 +109,31 @@ export class WizardManager {
     this.registrationData = await this.getDeal("partnered_deals_stream_hash_1");
     /* prettier-ignore */ console.log("TCL ~ file: wizardManager.ts ~ line 104 ~ WizardManager ~ activate ~ this.registrationData", this.registrationData);
 
-    await this.ensureAccess(wizardType);
+    const dealId = params.id;
 
-    this.stages = this.configureStages(wizardType);
+    if ((wizardType !== this.wizardType) || (dealId !== this.dealId)) {
+
+      this.wizardType = wizardType;
+      this.dealId = dealId;
+
+      this.registrationData = dealId ? await this.getDeal(dealId) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+
+      if (wizardType === WizardType.makeAnOffer) {
+        this.registrationData.partnerDAO = emptyDaoDetails;
+      }
+
+      await this.ensureAccess(wizardType);
+
+      this.stages = this.configureStages(wizardType);
+
+      this.wizardState = this.wizardService.registerWizard({
+        wizardManager: this,
+        stages: this.stages,
+        registrationData: this.registrationData,
+        cancelRoute: "home",
+        previousRoute: this.getPreviousRoute(wizardType),
+      });
+    }
 
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
@@ -115,20 +141,13 @@ export class WizardManager {
 
     this.setupStageComponent(indexOfActiveStage, wizardType);
 
-    this.wizardState = this.wizardService.registerWizard({
-      wizardManager: this,
-      stages: this.stages,
-      indexOfActive: indexOfActiveStage,
-      registrationData: this.registrationData,
-      cancelRoute: "home",
-      previousRoute: this.getPreviousRoute(wizardType),
-    });
+    this.wizardService.setActiveStage(this, indexOfActiveStage);
   }
 
   private getPreviousRoute(wizardType: WizardType) {
     switch (wizardType) {
-      case WizardType.openProposal:
-      case WizardType.partneredDeal:
+      case WizardType.createOpenProposal:
+      case WizardType.createPartneredDeal:
         return "initiate/token-swap";
 
       default:
@@ -136,8 +155,8 @@ export class WizardManager {
     }
   }
 
-  public onClick(index: number): void {
-    this.wizardService.goToStage(this, index);
+  public onStepperClick(index: number): void {
+    this.wizardService.goToStage(this, index, false);
   }
 
   private setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
@@ -151,12 +170,12 @@ export class WizardManager {
     this.viewModel = activeStage.moduleId;
   }
 
-  private configureStages(wizardType: WizardType) {
-    let stages: IWizardStage[];
+  private configureStages(wizardType: WizardType): Array<IWizardStage> {
+    let stages: Array<IWizardStage>;
     switch (wizardType) {
-      case WizardType.partneredDeal:
+      case WizardType.createPartneredDeal:
       case WizardType.makeAnOffer:
-      case WizardType.partneredDealEdit:
+      case WizardType.editPartneredDeal:
         stages = this.partneredDealStages;
         break;
 
@@ -165,7 +184,31 @@ export class WizardManager {
         break;
     }
 
+    this.setStagesAreValid(wizardType, stages);
+
     return stages;
+  }
+
+  private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
+    /**
+     * for any stages that have been previously validated, set stage.valid to true.
+     * Otherwise, set to false.
+     */
+    switch (wizardType) {
+      case WizardType.makeAnOffer:
+        stages.map((stage) => {
+          stage.valid = (stage !== this.partnerDaoStage);
+        });
+        break;
+      case WizardType.editPartneredDeal:
+      case WizardType.editOpenProposal:
+        stages.map((stage) => stage.valid = true);
+        break;
+      case WizardType.createPartneredDeal:
+      case WizardType.createOpenProposal:
+        stages.map((stage) => stage.valid = false);
+        break;
+    }
   }
 
   private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
@@ -178,11 +221,11 @@ export class WizardManager {
     }
 
     await deal.ensureInitialized();
-    return deal.registrationData;
+    return JSON.parse(JSON.stringify(deal.registrationData));
   }
 
   private async ensureAccess(wizardType: any): Promise<void> {
-    if (wizardType !== WizardType.openProposalEdit && wizardType !== WizardType.partneredDealEdit) {
+    if (wizardType !== WizardType.editOpenProposal && wizardType !== WizardType.editPartneredDeal) {
       return;
     }
 
@@ -190,11 +233,11 @@ export class WizardManager {
       await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
 
       if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
-        throw new Error();
+        throw new Error("Current account is not authorized");
       }
     } catch (error) {
       this.router.navigate(this.getPreviousRoute(wizardType));
-      throw new Error();
+      throw new Error("Error authorizing the current account");
     }
   }
 }

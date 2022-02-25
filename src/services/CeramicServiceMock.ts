@@ -6,7 +6,7 @@ const address3 = "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276";
 const address4 = "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b";
 const address5 = "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F";
 const address6 = "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E";
-const proposalLeadAddress1 = "0x8625F29e4d06D0a3998Ed8C9E45F4b04C7b28D00";
+const proposalLeadAddress1 = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
 const tokenAddress1 = "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad";
 
 const _registration1: IDealRegistrationTokenSwap = {

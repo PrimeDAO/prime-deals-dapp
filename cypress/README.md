@@ -60,8 +60,8 @@ Feature: Choose Deal type
   - Eg. `Given("I open a Deal", () => { /* test body */ })`, where in the test body you write Cypress test code, typically
 ```ts
 // Select the dom part in question
-// Here: Click on Open Deal button
-cy.get("[data-test='open-deal-button']").click()
+// Here: Click on Open Proposal button
+cy.get("[data-test='open-proposal-button']").click()
 
 // Run assertion
 // Here: Because we clicked on a button, there is a change in the url

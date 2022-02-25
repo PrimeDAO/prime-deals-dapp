@@ -8,7 +8,7 @@
 
     <div class="products">
       <div class="container">
-        <div class="item" click.delegate="goto('https://launch.prime.xyz', false)">
+        <div class="item" click.delegate="goto('https://launch.prime.xyz')">
           <div class="icon launch"><img class="mono" src="/static/launch-mono.svg" /><img class="color" src="/static/launch.svg" /></div>
           <div class="text">Launch</div>
         </div>
@@ -32,7 +32,7 @@
     <div class="productSubpages">
       <div class="container">
         <div click.delegate="navigate('/')" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
-        <div click.delegate="navigate('/deals/open')" class="item ${(router.currentInstruction.config.name === '/deals/open') ? 'active' : ''}">Open Deals</div>
+        <div click.delegate="navigate('/deals/open')" class="item ${(router.currentInstruction.config.name === '/deals/open') ? 'active' : ''}">Open Proposals</div>
         <div click.delegate="navigate('/deals/running')" class="item ${(router.currentInstruction.config.name === '/deals/running') ? 'active' : ''}">Running Deals</div>
         <div click.delegate="navigate('/initiate')" class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">Initiate a Deal</div>
       </div>
