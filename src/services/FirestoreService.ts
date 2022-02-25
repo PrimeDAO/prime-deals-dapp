@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { collection, addDoc, getDocs, getFirestore, query, updateDoc, setDoc, doc, writeBatch, where } from "firebase/firestore";
+import { collection, getDocs, getFirestore, query, updateDoc, doc, writeBatch, where } from "firebase/firestore";
 import axios from "axios";
 import { EthereumService } from "services/EthereumService";
 import { v4 as uuidv4 } from "uuid";
@@ -9,9 +9,6 @@ const db = getFirestore();
 const DEALS_COLLECTION = "deals";
 const VOTES_COLLECTION = "votes";
 const CLOUD_FUNCTIONS_URL = "https://us-central1-deals-poc.cloudfunctions.net";
-// const CLOUD_FUNCTIONS_URL = "http://localhost:5001/deals-poc/us-central1";
-// const getNonceToSign = "https://us-central1-deals-poc.cloudfunctions.net/getNonceToSign";
-// const verifySignedMessage = "https://us-central1-deals-poc.cloudfunctions.net/verifySignedMessage";
 
 export interface IFirestoreDeal {
   proposal: {
@@ -78,9 +75,6 @@ export class FirestoreService {
 
   public async addDeal(deal: IFirestoreDeal) {
     try {
-      // const docRef = await addDoc(collection(db, DEALS_COLLECTION), deal);
-      // setDoc(doc(db, DEALS_COLLECTION, "votes", "asd"), deal);
-
       const batch = writeBatch(db);
 
       const dealId = uuidv4();
