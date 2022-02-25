@@ -16,6 +16,9 @@
     <pform-input label="Proposal title">
       <pinput-text value.bind="title"></pinput-text>
     </pform-input>
+    <pform-input label="Is Private">
+      <ptoggle value.bind="private"></ptoggle>
+    </pform-input>
     <pform-input label="Proposal LEAD address">
       <pinput-text value.bind="address"></pinput-text>
     </pform-input>
@@ -40,72 +43,155 @@
   </div>
 
   <div class="firestore-section">
-    <h3 class="heading heading3">All open Deals (REAL TIME)</h3>
+    <span class="heading heading3">All my deals (REAL TIME)</span>
+    SHOW <ptoggle value.bind="showPrivate" style="display: inline"></ptoggle>
     <br>
-
-    <div repeat.for="deal of realTimeAllOpenDeals" class="firestore-section">
-      <div class="subtitle">Title: ${deal.data.proposal.title}</div>
-      <div>Proposal LEAD address: ${deal.data.proposalLead.address}</div>
-      <br>
-      <div>Primary DAO</div>
-      <div repeat.for="item of deal.data.primaryDAO.representatives">
-        Representative ${$index + 1}: ${item.address}
-      </div>
-      <br>
-      <div>Primary DAO</div>
-      <div repeat.for="item of deal.data.partnerDAO.representatives">
-        Representative ${$index + 1}: ${item.address}
-      </div>
-      <pbutton type="primary" click.delegate="show = !show">TOGGLE EDIT</pbutton>
-
-      <div class="firestore-section" if.bind="show">
-
-        <pform-input label=" Proposal title">
-          <pinput-text value.bind="deal.data.proposal.title"></pinput-text>
-        </pform-input>
-        <pform-input label="Proposal LEAD address">
-          <pinput-text value.bind="deal.data.proposalLead.address"></pinput-text>
-        </pform-input>
-        <h4 class="heading heading3">Primary DAO</h4>
+    <template if.bind="showPrivate">
+      <div repeat.for="deal of myPrivateDeals" class="firestore-section">
+        <div>Title: ${deal.data.proposal.title}</div>
+        <div>Private: ${deal.data.private}</div>
+        <div>Proposal LEAD address: ${deal.data.proposalLead.address}</div>
         <br>
-        <pform-input label="Primary DAO Representative ONE address">
-          <pinput-text value.bind="deal.data.primaryDAO.representatives[0].address"></pinput-text>
-        </pform-input>
-        <pform-input label="Primary DAO Representative TWO address">
-          <pinput-text value.bind="deal.data.primaryDAO.representatives[1].address"></pinput-text>
-        </pform-input>
-        <br><br>
-        <h4 class="heading heading3">Partner DAO</h4>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.data.primaryDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
         <br>
-        <pform-input label="Partner DAO Representative ONE address">
-          <pinput-text value.bind="deal.data.partnerDAO.representatives[0].address"></pinput-text>
-        </pform-input>
-        <pform-input label="Partner DAO Representative TWO address">
-          <pinput-text value.bind="deal.data.partnerDAO.representatives[1].address"></pinput-text>
-        </pform-input>
-        <pbutton type="primary" click.delegate="edit(deal.ref, deal.data)">EDIT</pbutton>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.data.partnerDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
+        <br>
+        <div>VOTES</div>
+        <div repeat.for="vote of myPrivateDealsVotes[deal.ref.id]">
+          ${vote.address}: ${vote.vote}
+        </div>
 
+        <pbutton type="primary" click.delegate="show = !show">TOGGLE EDIT</pbutton>
+
+        <div class="firestore-section" if.bind="show">
+
+          <pform-input label="Proposal title">
+            <pinput-text value.bind="deal.data.proposal.title"></pinput-text>
+          </pform-input>
+          <pform-input label="Is Private">
+            <ptoggle value.bind="deal.data.private"></ptoggle>
+          </pform-input>
+          <pform-input label="Proposal LEAD address">
+            <pinput-text value.bind="deal.data.proposalLead.address"></pinput-text>
+          </pform-input>
+          <h4 class="heading heading3">Primary DAO</h4>
+          <br>
+          <pform-input label="Primary DAO Representative ONE address">
+            <pinput-text value.bind="deal.data.primaryDAO.representatives[0].address"></pinput-text>
+          </pform-input>
+          <pform-input label="Primary DAO Representative TWO address">
+            <pinput-text value.bind="deal.data.primaryDAO.representatives[1].address"></pinput-text>
+          </pform-input>
+          <br><br>
+          <h4 class="heading heading3">Partner DAO</h4>
+          <br>
+          <pform-input label="Partner DAO Representative ONE address">
+            <pinput-text value.bind="deal.data.partnerDAO.representatives[0].address"></pinput-text>
+          </pform-input>
+          <pform-input label="Partner DAO Representative TWO address">
+            <pinput-text value.bind="deal.data.partnerDAO.representatives[1].address"></pinput-text>
+          </pform-input>
+          <pbutton type="primary" click.delegate="edit(deal.ref, deal.data)">EDIT</pbutton>
+
+          <br><br>
+          <h4 class="heading heading3">Votes</h4>
+          <div repeat.for="vote of myPrivateDealsVotes[deal.ref.id]">
+            ${vote.address}: <ptoggle value.bind="vote.vote" style="display: inline;"></ptoggle>
+          </div>
+
+        </div>
       </div>
+    </template>
 
-    </div>
   </div>
 
   <div class="firestore-section">
-    <h3 class="heading heading3">All open Deals (static, doesn't update)</h3>
+    <span class="heading heading3">Public Deals (REAL TIME)</span>
+    SHOW <ptoggle value.bind="showRealTime" style="display: inline"></ptoggle>
     <br>
-    <div repeat.for="deal of allOpenDeals" class="firestore-section">
-      <div>Title: ${deal.proposal.title}</div>
-      <div>Proposal LEAD address: ${deal.proposalLead.address}</div>
-      <br>
-      <div>Primary DAO</div>
-      <div repeat.for="item of deal.primaryDAO.representatives">
-        Representative ${$index + 1}: ${item.address}
+
+    <template if.bind="showRealTime">
+      <div repeat.for="deal of realTimeAllDeals" class="firestore-section">
+        <div class="subtitle">Title: ${deal.data.proposal.title}</div>
+        <div>Proposal LEAD address: ${deal.data.proposalLead.address}</div>
+        <br>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.data.primaryDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
+        <br>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.data.partnerDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
+        <pbutton type="primary" click.delegate="show = !show">TOGGLE EDIT</pbutton>
+
+        <div class="firestore-section" if.bind="show">
+
+          <pform-input label=" Proposal title">
+            <pinput-text value.bind="deal.data.proposal.title"></pinput-text>
+          </pform-input>
+          <pform-input label="Proposal LEAD address">
+            <pinput-text value.bind="deal.data.proposalLead.address"></pinput-text>
+          </pform-input>
+          <h4 class="heading heading3">Primary DAO</h4>
+          <br>
+          <pform-input label="Primary DAO Representative ONE address">
+            <pinput-text value.bind="deal.data.primaryDAO.representatives[0].address"></pinput-text>
+          </pform-input>
+          <pform-input label="Primary DAO Representative TWO address">
+            <pinput-text value.bind="deal.data.primaryDAO.representatives[1].address"></pinput-text>
+          </pform-input>
+          <br><br>
+          <h4 class="heading heading3">Partner DAO</h4>
+          <br>
+          <pform-input label="Partner DAO Representative ONE address">
+            <pinput-text value.bind="deal.data.partnerDAO.representatives[0].address"></pinput-text>
+          </pform-input>
+          <pform-input label="Partner DAO Representative TWO address">
+            <pinput-text value.bind="deal.data.partnerDAO.representatives[1].address"></pinput-text>
+          </pform-input>
+          <pbutton type="primary" click.delegate="edit(deal.ref, deal.data)">EDIT</pbutton>
+
+          <br><br>
+          <h4 class="heading heading3">Votes</h4>
+          <div repeat.for="vote of myPrivateDealsVotes[deal.ref.id]">
+            ${vote.address}:
+            <ptoggle value.bind="vote.vote" style="display: inline;"></ptoggle>
+            <pbutton click.delegate="updateVote(deal.ref.id, vote.address, vote.vote)">Save</pbutton>
+          </div>
+
+        </div>
+
       </div>
-      <br>
-      <div>Primary DAO</div>
-      <div repeat.for="item of deal.partnerDAO.representatives">
-        Representative ${$index + 1}: ${item.address}
+    </template>
+  </div>
+
+  <div class="firestore-section">
+    <span class="heading heading3">Public Deals (static, doesn't update)</span>
+    SHOW <ptoggle value.bind="showStatic" style="display: inline"></ptoggle>
+    <br>
+    <template if.bind="showStatic">
+      <div repeat.for="deal of allDeals" class="firestore-section">
+        <div>Title: ${deal.proposal.title}</div>
+        <div>Proposal LEAD address: ${deal.proposalLead.address}</div>
+        <br>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.primaryDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
+        <br>
+        <div>Primary DAO</div>
+        <div repeat.for="item of deal.partnerDAO.representatives">
+          Representative ${$index + 1}: ${item.address}
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>

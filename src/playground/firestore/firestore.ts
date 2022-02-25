@@ -3,17 +3,21 @@ import { onSnapshot } from "firebase/firestore";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { FirestoreService } from "services/FirestoreService";
 import { EthereumService } from "services/EthereumService";
+import { getAuth } from "firebase/auth";
 
 @autoinject
 export class Firestore {
   title;
+  private;
   address;
   primaryDaoRepresentativeOne;
   primaryDaoRepresentativeTwo;
   partnerDaoRepresentativeOne;
   partnerDaoRepresentativeTwo;
-  allOpenDeals;
-  realTimeAllOpenDeals;
+  myPrivateDeals;
+  myPrivateDealsVotes = {};
+  allDeals;
+  realTimeAllDeals;
   currentWalletAddress?: string;
 
   constructor(
@@ -23,6 +27,11 @@ export class Firestore {
   ){}
 
   async attached() {
+    getAuth().onAuthStateChanged(async (user) => {
+      console.log("user", user);
+      await this.getRealtimeMyPrivateDeals(user.uid);
+    });
+    console.log(getAuth().currentUser);
     this.currentWalletAddress = this.ethereumService.defaultAccountAddress;
     this.eventAggregator.subscribe("Network.Changed.Account", async (address) => {
       this.currentWalletAddress = address;
@@ -34,14 +43,9 @@ export class Firestore {
       await this.firestoreService.signInWithCustomToken(token);
     });
 
-    this.allOpenDeals = await this.firestoreService.getAllPublicDeals();
+    this.allDeals = await this.firestoreService.getAllPublicDeals();
 
-    onSnapshot(this.firestoreService.dealsCollectionQuery, (collection) => {
-      this.realTimeAllOpenDeals = collection.docs.map(doc => ({
-        ref: doc.ref,
-        data: doc.data(),
-      }));
-    });
+    this.getRealtimeAllPublicDeals();
   }
 
   add() {
@@ -49,10 +53,11 @@ export class Firestore {
       return;
     }
 
-    this.firestoreService.addItem({
+    this.firestoreService.addDeal({
       proposal: {
         title: this.title,
       },
+      private: this.private,
       proposalLead: {
         address: this.address,
       },
@@ -74,7 +79,7 @@ export class Firestore {
   }
 
   edit(ref: any, data: any) {
-    this.firestoreService.editItem(ref, data);
+    this.firestoreService.editDeal(ref, data);
   }
 
   validate() {
@@ -89,5 +94,39 @@ export class Firestore {
       return false;
     }
     return true;
+  }
+
+  getRealtimeAllPublicDeals() {
+    onSnapshot(this.firestoreService.dealsCollectionQuery, (collection) => {
+      this.realTimeAllDeals = collection.docs.map(doc => ({
+        ref: doc.ref,
+        data: doc.data(),
+      }));
+    });
+  }
+
+  async getRealtimeMyPrivateDeals(address: string) {
+    onSnapshot(this.firestoreService.myDealsCollectionQuery(address), async (collection) => {
+      this.myPrivateDeals = collection.docs.map((doc) => {
+        return {
+          ref: doc.ref,
+          data: doc.data(),
+        };
+      });
+
+      for (const deal of this.myPrivateDeals) {
+        const votes = await this.firestoreService.getDealVotes(deal.ref.id);
+
+        console.log(deal, votes);
+        this.myPrivateDealsVotes[deal.ref.id] = votes;
+      }
+
+      console.log(this.myPrivateDeals);
+    });
+  }
+
+  async updateVote(dealId: string, address: string, vote: boolean) {
+    console.log(dealId, address, vote);
+    await this.firestoreService.updateVote(dealId, address, vote);
   }
 }
