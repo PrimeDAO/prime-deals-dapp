@@ -102,7 +102,9 @@
           <br><br>
           <h4 class="heading heading3">Votes</h4>
           <div repeat.for="vote of myPrivateDealsVotes[deal.ref.id]">
-            ${vote.address}: <ptoggle value.bind="vote.vote" style="display: inline;"></ptoggle>
+            ${vote.address}:
+            <ptoggle value.bind="vote.vote" style="display: inline;"></ptoggle>
+            <pbutton type="primary" click.delegate="updateVote(deal.ref.id, vote.address, vote.vote)">Save</pbutton>
           </div>
 
         </div>
@@ -164,7 +166,7 @@
           <div repeat.for="vote of myPrivateDealsVotes[deal.ref.id]">
             ${vote.address}:
             <ptoggle value.bind="vote.vote" style="display: inline;"></ptoggle>
-            <pbutton click.delegate="updateVote(deal.ref.id, vote.address, vote.vote)">Save</pbutton>
+            <pbutton type="primary" click.delegate="updateVote(deal.ref.id, vote.address, vote.vote)">Save</pbutton>
           </div>
 
         </div>
