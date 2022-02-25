@@ -30,7 +30,7 @@ $scroll-bar-thumb-color: $Neutral02;
 $font-size1: 14px;
 $font-size2: 16px;
 $font-size3: 18px; // TODO: Should rename to "text-lg" (Figma)
-$font-size4: 20px; // TODO: Should rename to "text-lg" (Figma)
+$font-size4: 20px;
 
 /* Font Weights */
 $font-bold: 700;
@@ -48,8 +48,7 @@ $font-bold: 700;
 }
 
 @mixin loading-icon {
-
-  .loading>i,
+  .loading > i,
   i.loading {
     animation-name: spin;
     animation-duration: 1.5s;
