@@ -105,10 +105,6 @@ export class WizardManager {
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    // this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap();
-    this.registrationData = await this.getDeal("partnered_deals_stream_hash_1");
-    /* prettier-ignore */ console.log("TCL ~ file: wizardManager.ts ~ line 104 ~ WizardManager ~ activate ~ this.registrationData", this.registrationData);
-
     const dealId = params.id;
 
     if ((wizardType !== this.wizardType) || (dealId !== this.dealId)) {
