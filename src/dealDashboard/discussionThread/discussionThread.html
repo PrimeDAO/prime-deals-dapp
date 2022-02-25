@@ -46,7 +46,7 @@
           <single-comment
             callback.call="doAction(action, args)"
             discussionId.bind="discussionId"
-            author.bind="dealDiscussion.createdByAddress"
+            author.bind="dealDiscussion.createdBy.address"
             profile.bind="threadProfiles[comment.author]"
             loading.bind="isLoading"
             highlighted.bind="isReply && comment._id === replyToOriginalMessage._id"

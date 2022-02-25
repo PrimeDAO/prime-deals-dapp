@@ -2,20 +2,20 @@
   <div class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
     <header class="header">
       <figure class="avatar">
-        <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${profile.address}.svg" alt="">
+        <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${author}.svg" alt="">
         <img else src.bind="profile.image" alt.bind="profile.name">
       </figure>
-      <div class="identity ${loading.profiles ? 'loading' : ''}">
-        <div if.bind="loading.profiles" class="placeholder"></div>
+      <div class="identity ${loading[author] ? 'loading' : ''}">
+        <div if.bind="loading[author]" class="placeholder"></div>
         <div else>
           <span if.bind="profile.name" class="name">
             ${profile.name} 
-            <span if.bind="profile.address === author">(Author)</span>
+            <span if.bind="author === author">(Author)</span>
           </span>
-          <div if.bind="profile.address" class="${!profile.name ? 'only': ''} address">
+          <div if.bind="author" class="${!profile.name ? 'only': ''} address">
             <etherscanlink 
-              text="${profile.address | smallHexString}" 
-              address.bind="profile.address">
+              text="${author | smallHexString}" 
+              address.bind="author">
             </etherscanlink>
           </div>
         </div>

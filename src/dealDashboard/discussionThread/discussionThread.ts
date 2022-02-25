@@ -170,20 +170,22 @@ export class DiscussionThread {
     }, {});
 
     // Author profile for the discussion header
+    this.isLoading[this.dealDiscussion.createdBy.address] = true;
     this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
       .then(profile => {
         this.dealDiscussion.createdByName = profile.name;
+        this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
     // Comments author profiles
-    this.isLoading.profiles = true;
     this.threadComments.forEach(async (comment: IComment) => {
+      this.isLoading[comment.author] = true;
       if (!this.threadProfiles[comment.author]) {
         const profile = await this.discussionsService.loadProfile(comment.author);
+        this.isLoading[comment.author] = false;
         this.threadProfiles[profile.address] = profile;
       }
     });
-    this.isLoading.profiles = false;
 
     if (this.threadIsInView()) {
       this.discussionsService.autoScrollAfter(250);
