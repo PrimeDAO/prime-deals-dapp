@@ -35,27 +35,25 @@ export class WizardService {
   ) {
   }
 
-  public registerWizard<Data>({
+  public registerWizard<TData>({
     wizardManager,
     stages,
-    indexOfActive,
     registrationData,
     cancelRoute,
     previousRoute,
   }: {
     wizardManager: any;
     stages: Array<IWizardStage>;
-    indexOfActive: number;
-    registrationData: Data;
+    registrationData: TData;
     cancelRoute: string;
     previousRoute: string;
-  }): IWizardState<Data> {
+  }): IWizardState<TData> {
     if (!this.hasWizard(wizardManager)) {
       this.wizardsStates.set(
         wizardManager,
         {
           stages,
-          indexOfActive: indexOfActive,
+          indexOfActive: 0,
           registrationData,
           cancelRoute,
           previousRoute,
@@ -66,13 +64,17 @@ export class WizardService {
     return this.getWizardState(wizardManager);
   }
 
+  public setActiveStage(wizardManager: any, indexOfActive: number): void {
+    this.wizardsStates.get(wizardManager).indexOfActive = indexOfActive;
+  }
+
   public getWizardState<Data>(wizardManager: any): IWizardState<Data> {
     return this.wizardsStates.get(wizardManager);
   }
 
-  public updateStageValidity(wizardManager: any, valid: boolean) {
-    this.getActiveStage(wizardManager).valid = valid;
-  }
+  // public updateStageValidity(wizardManager: any, valid: boolean) {
+  //   this.getActiveStage(wizardManager).valid = valid;
+  // }
 
   public registerStageValidateFunction(
     wizardManager: any,
@@ -144,11 +146,13 @@ export class WizardService {
   public registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
     const stage = this.getActiveStage(wizardManager);
 
-    stage.form = this.validationFactory.createForCurrentScope();
-    stage.form.validateTrigger = validateTrigger.changeOrFocusout;
-    stage.form.addRenderer(new PrimeRenderer);
-    stage.validate = () => stage.form.validate().then(result => result.valid);
-    stage.form.addObject(data, rules);
+    if (!stage.form) {
+      stage.form = this.validationFactory.createForCurrentScope();
+      stage.form.validateTrigger = validateTrigger.changeOrFocusout;
+      stage.form.addRenderer(new PrimeRenderer);
+      stage.validate = () => stage.form.validate().then(result => result.valid);
+      stage.form.addObject(data, rules);
+    }
 
     return stage.form;
   }

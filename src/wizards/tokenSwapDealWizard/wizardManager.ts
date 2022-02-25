@@ -1,3 +1,4 @@
+import { IKey } from "./../../services/DataSourceDealsTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
@@ -22,6 +23,9 @@ export class WizardManager {
 
   // view model of the currently active stage
   public viewModel: string;
+
+  private wizardType: WizardType;
+  private dealId: IKey;
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;
@@ -86,22 +90,38 @@ export class WizardManager {
   ) {
   }
 
-  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: string}, routeConfig: RouteConfig): Promise<void> {
+  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IKey}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
 
     // if we are accessing an already existing deal, get its registration data
-    this.registrationData = params.id ? await this.getDeal(params.id) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+    const dealId = params.id;
 
-    if (wizardType === WizardType.makeAnOffer) {
-      this.registrationData.partnerDAO = emptyDaoDetails;
+    if ((wizardType !== this.wizardType) || (dealId !== this.dealId)) {
+
+      this.wizardType = wizardType;
+      this.dealId = dealId;
+
+      this.registrationData = dealId ? await this.getDeal(dealId) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+
+      if (wizardType === WizardType.makeAnOffer) {
+        this.registrationData.partnerDAO = emptyDaoDetails;
+      }
+
+      await this.ensureAccess(wizardType);
+
+      this.stages = this.configureStages(wizardType);
+
+      this.wizardState = this.wizardService.registerWizard({
+        wizardManager: this,
+        stages: this.stages,
+        registrationData: this.registrationData,
+        cancelRoute: "home",
+        previousRoute: this.getPreviousRoute(wizardType),
+      });
     }
-
-    await this.ensureAccess(wizardType);
-
-    this.stages = this.configureStages(wizardType);
 
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
@@ -109,14 +129,7 @@ export class WizardManager {
 
     this.setupStageComponent(indexOfActiveStage, wizardType);
 
-    this.wizardState = this.wizardService.registerWizard({
-      wizardManager: this,
-      stages: this.stages,
-      indexOfActive: indexOfActiveStage,
-      registrationData: this.registrationData,
-      cancelRoute: "home",
-      previousRoute: this.getPreviousRoute(wizardType),
-    });
+    this.wizardService.setActiveStage(this, indexOfActiveStage);
   }
 
   private getPreviousRoute(wizardType: WizardType) {
@@ -208,11 +221,11 @@ export class WizardManager {
       await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
 
       if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
-        throw new Error();
+        throw new Error("Current account is not authorized");
       }
     } catch (error) {
       this.router.navigate(this.getPreviousRoute(wizardType));
-      throw new Error();
+      throw new Error("Error authorizing the current account");
     }
   }
 }
