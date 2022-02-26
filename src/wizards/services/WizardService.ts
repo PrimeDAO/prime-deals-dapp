@@ -117,15 +117,20 @@ export class WizardService {
 
     const wizardState = this.getWizardState(wizardManager);
 
-    const indexOfActive = wizardState.indexOfActive;
+    const currentIndexOfActive = wizardState.indexOfActive;
+    /**
+     * This will set valid state to undefined when the validate function is not uninitialized.
+     * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
+     */
+    // eslint-disable-next-line require-atomic-updates
+    wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
 
-    wizardState.stages[indexOfActive].valid = await wizardState.stages[indexOfActive].validate?.();
-
-    if (blockIfInvalid && !wizardState.stages[indexOfActive].valid) {
+    if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
 
+    // eslint-disable-next-line require-atomic-updates
     wizardState.indexOfActive = index;
 
     const params = {
@@ -137,6 +142,15 @@ export class WizardService {
       this.router.currentInstruction.config.name,
       params,
     );
+    /**
+     * restore validation feedbacks if they were previously computed.
+     * This is experimental behavior. --dkent
+     */
+    // if (wizardState.stages[index].valid === false) { // deliberately false as opposed to undefined
+    //   setTimeout(() => {
+    //     wizardState.stages[index].validate?.();
+    //   }, 0);
+    // }
   }
 
   public hasWizard(wizardManager: any): boolean {

@@ -179,13 +179,14 @@ export class WizardManager {
 
   private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
     /**
-     * for any stages that have been previously validated, set stage.valid to true.
-     * Otherwise, set to false.
+     * for any stages that have been previously checked and found valid,
+     * set stage.valid to true Otherwise, set to undefined, indicating
+     * they have not been checked.
      */
     switch (wizardType) {
       case WizardType.makeAnOffer:
         stages.map((stage) => {
-          stage.valid = (stage !== this.partnerDaoStage);
+          stage.valid = (stage !== this.partnerDaoStage) ? true : undefined;
         });
         break;
       case WizardType.editPartneredDeal:
@@ -194,7 +195,7 @@ export class WizardManager {
         break;
       case WizardType.createPartneredDeal:
       case WizardType.createOpenProposal:
-        stages.map((stage) => stage.valid = false);
+        stages.map((stage) => stage.valid = undefined);
         break;
     }
   }
