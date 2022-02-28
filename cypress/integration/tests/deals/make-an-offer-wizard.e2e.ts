@@ -15,7 +15,6 @@ Given("I navigate to make an offer Primary DAO stage", () => {
 Then("I can see DAO details section with pre-filled disabled fields", () => {
   cy.get("[data-test=\"dao-details-section\"]").within(() => {
     cy.get("[data-test=\"section-title\"]").should("have.text", "Primary DAO");
-    cy.get("[data-test=\"section-description\"]").should("contain.text", "Please fill in the details of the first DAO who will be initiating the deal.");
 
     cy.contains("pform-input", "Primary DAO Name").within(() => {
       cy.get("input").should("be.disabled").invoke("val").should("have.length.at.least", 1);
@@ -44,7 +43,7 @@ Then("I can see DAO details section with pre-filled disabled fields", () => {
 
 And("I can see DAO representatives section with pre-filled disabled fields", () => {
   cy.get("[data-test=\"dao-representatives-section\"]").within(() => {
-    cy.get("[data-test=\"section-title\"]").should("have.text", "Representatives");
+    cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Primary DAO - Representatives Addresses (Max. 5)");
     cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
