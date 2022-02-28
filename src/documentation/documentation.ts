@@ -1,53 +1,64 @@
-import "./documentation.scss";
 import { PLATFORM } from "aurelia-pal";
 import { singleton } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
 import {activationStrategy } from "aurelia-router";
 
+import "./documentation.scss";
+
 @singleton(false)
 export class Documentation {
   router: Router;
 
-  configureRouter(config: RouterConfiguration, router: Router): void {
+  async configureRouter(config: RouterConfiguration, router: Router): Promise<void> {
     config.title = "Documentation";
 
+    const documentsSpec = require("./documents.json").documents;
+
+    // const routes = [];
+    // let first = true;
+
+    // for (const docspec of documentsSpec) {
+    //   const filespec = `./${docspec.filespec}`;
+    //   const md = await import(filespec);
+    //   const route = {
+    //     route: [docspec.title.replace(" ", "-")],
+    //     nav: true,
+    //     moduleId: PLATFORM.moduleName("./baseDocument"),
+    //     title: docspec.title,
+    //     activationStrategy: activationStrategy.replace,
+    //     settings: {
+    //       content: md,
+    //     },
+    //   };
+    //   if (first) {
+    //     route.route.push("");
+    //     first = false;
+    //   }
+    //   routes.push(route);
+    // }
+
+    // const docsFilesContext = (require as any).context("/src/documentation/documents/", true, /\.md$/);
+
     /**
-     * activationStrategy is so baseDocument will be reactivated on each change
+     * activationStrategy is docspec.filespecso baseDocument will be reactivated on each change
      * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
      */
-
-    const routes = [
-      {
-        route: ["", "overview"],
+    const routes = documentsSpec.map((docspec: {title: string, url: string }, ndx: number) => {
+      const route = {
+        route: [docspec.title.replace(" ", "-")],
         nav: true,
         moduleId: PLATFORM.moduleName("./baseDocument"),
-        title: "Overview",
+        title: docspec.title,
         activationStrategy: activationStrategy.replace,
         settings: {
-          content: require("/src/documentation/overview.md").default,
+          content: docspec.url,
         },
-      },
-      {
-        route: ["deal-launch"],
-        nav: true,
-        moduleId: PLATFORM.moduleName("./baseDocument"),
-        title: "Deal Details & Benefits",
-        activationStrategy: activationStrategy.replace,
-        settings: {
-          content: require("/src/documentation/dealLaunch.md").default,
-        },
-      },
-      {
-        route: ["liquid-launch-lbp"],
-        nav: true,
-        moduleId: PLATFORM.moduleName("./baseDocument"),
-        title: "Liquid Launch Details and Benefits",
-        activationStrategy: activationStrategy.replace,
-        settings: {
-          content: require("/src/documentation/liquidLaunch.md").default,
-        },
-      },
-    ];
+      };
+      if (ndx === 0) {
+        route.route.push("");
+      }
+      return route;
+    });
 
     config.map(routes);
 
