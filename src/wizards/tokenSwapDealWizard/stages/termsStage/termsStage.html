@@ -2,7 +2,7 @@
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <require from="./termClause/termClause"></require>
 
-  <stage-wrapper title="Terms" wizard-manager.bind="wizardManager">
+  <stage-wrapper header="Terms" wizard-manager.bind="wizardManager">
     <div class="stageSection">
       <!-- Sidebar -->
       <div class="stageSectionSidebar">
@@ -21,16 +21,14 @@
           clause.bind="clause"
           index.bind="$index"
           form.from-view="termsForms[$index]"
-          on-delete.call="onDelete($index)"
-        ></term-clause>
+          on-delete.call="onDelete($index)"></term-clause>
 
         <pbutton
           data-test="addClauseButton"
           class="addClauseButton"
           if.bind="wizardState.registrationData.terms.clauses.length < 10"
           click.delegate="addClauseButton()"
-          type="primary"
-        >
+          type="primary">
           Add Clause
           <i class="fa fa-plus"></i>
         </pbutton>
