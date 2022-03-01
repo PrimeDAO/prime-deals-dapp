@@ -10,18 +10,19 @@ import {
   ValidationControllerFactory,
   ValidationRules,
 } from "aurelia-validation";
-import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 import { Validation } from "../../../../services/ValidationService";
 import { Utils } from "../../../../services/utils";
 import { formatEther } from "ethers/lib/utils";
+import { NumberService } from "../../../../services/NumberService";
+import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 
 @autoinject
 export class TokenDetails {
   @bindable token: IToken;
   @bindable({defaultBindingMode: bindingMode.fromView}) onDelete: () => void;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
 
-  viewMode: "edit" | "view" = "edit";
   tokenInfoLoading = false;
   showTokenDetails = false;
   saving = false;
@@ -37,6 +38,7 @@ export class TokenDetails {
   constructor(
     private aureliaHelperService: AureliaHelperService,
     private tokenService: TokenService,
+    private numberService: NumberService,
     private validationControllerFactory: ValidationControllerFactory,
   ) {
     this.form = this.validationControllerFactory.createForCurrentScope();
@@ -47,6 +49,8 @@ export class TokenDetails {
   async attached() {
     this.addValidation();
     this.watchTokenProperties();
+
+    this.viewMode = this.viewMode ?? "edit";
 
     this.form.subscribe(result => {
       if (result.type === "validate") {
@@ -146,8 +150,6 @@ export class TokenDetails {
       "Please enter a valid IERC20 address",
     );
 
-    this.viewMode = this.token.address ? "view" : "edit";
-
     const rules = ValidationRules
       .ensure<IToken, string>(data => data.address)
       .required()
@@ -193,5 +195,9 @@ export class TokenDetails {
       .rules;
 
     this.form.addObject(this.token, rules);
+  }
+
+  withCommas(seconds: number) {
+    return this.numberService.toString(seconds, {thousandSeparated: true, mantissa: -1});
   }
 }
