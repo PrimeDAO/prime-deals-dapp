@@ -13,15 +13,16 @@ export class Markdown{
   //   marked.setOptions({ breaks: true, gfm: true });
   // }
 
-  async attached(): Promise<void> {
+  attached(): void {
     if (this.url) {
-      await axios.get(this.url)
+      axios.get(this.url)
         .then((response) => {
           if (response.data && response.data.length) {
-            this.document = response.data;
+            this.markdown = marked(response.data);
           }
         });
+    } else {
+      this.markdown = marked(this.document);
     }
-    this.markdown = marked(this.document);
   }
 }
