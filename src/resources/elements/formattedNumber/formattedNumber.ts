@@ -1,4 +1,4 @@
-import { autoinject, computedFrom, containerless, } from "aurelia-framework";
+import { autoinject, computedFrom, containerless } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { NumberService } from "services/NumberService";
 
