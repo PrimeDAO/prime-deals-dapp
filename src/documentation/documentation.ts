@@ -2,6 +2,8 @@ import { PLATFORM } from "aurelia-pal";
 import { singleton, computedFrom } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
 import {activationStrategy } from "aurelia-router";
+import axios from "axios";
+const marked = require("marked");
 
 import "./documentation.scss";
 
@@ -31,9 +33,31 @@ export class Documentation {
   }
 
   async configureRouter(config: RouterConfiguration, router: Router): Promise<void> {
+
     config.title = "Documentation";
 
-    const documentsSpec = require("./documents.json").documents;
+    let documentsSpec: Array<{ title: string, url: string }>;
+
+    await axios.get(process.env.DOCUMENTS_LIST_CONFIG)
+      .then((response) => {
+        if (response.data && response.data.documents) {
+          documentsSpec = response.data.documents;
+        }
+      });
+
+    const markdowns = [];
+
+    /**
+     * preload the markdown or else the pages will load with visible flickering
+     */
+    for (const doc of documentsSpec) {
+      await axios.get(doc.url)
+        .then((response) => {
+          if (response.data && response.data.length) {
+            markdowns.push(marked(response.data));
+          }
+        });
+    }
 
     /**
      * activationStrategy is docspec.filespecso baseDocument will be reactivated on each change
@@ -47,7 +71,7 @@ export class Documentation {
         title: docspec.title,
         activationStrategy: activationStrategy.replace,
         settings: {
-          content: docspec.url,
+          content: markdowns[ndx],
           docNumber: ndx+1,
         },
       };
@@ -66,7 +90,7 @@ export class Documentation {
 
   next(): void {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
-    if (docNumber < 6) {
+    if (docNumber < this.numDocs) {
       // @ts-ignore
       this.router.navigate(this.router.routes[docNumber + 1].route);
     }
