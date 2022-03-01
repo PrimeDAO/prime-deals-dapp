@@ -4,7 +4,11 @@ import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig, Router } from "aurelia-router";
 import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
-import { DealRegistrationTokenSwap, emptyDaoDetails, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import {
+  DealRegistrationTokenSwap,
+  emptyDaoDetails,
+  IDealRegistrationTokenSwap,
+} from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
@@ -23,6 +27,7 @@ export class WizardManager {
 
   // view model of the currently active stage
   public viewModel: string;
+  public additionalStageMetadata: Record<string, any>[] = [];
 
   private wizardType: WizardType;
   private dealId: IKey;
@@ -107,7 +112,7 @@ export class WizardManager {
       this.registrationData = dealId ? await this.getDeal(dealId) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
 
       if (wizardType === WizardType.makeAnOffer) {
-        this.registrationData.partnerDAO = emptyDaoDetails;
+        this.registrationData.partnerDAO = emptyDaoDetails();
       }
 
       await this.ensureAccess(wizardType);
@@ -148,9 +153,12 @@ export class WizardManager {
   }
 
   private setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
+    this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+
     this.stageMeta = {
       wizardType,
       wizardManager: this,
+      settings: this.additionalStageMetadata[indexOfActiveStage],
     };
 
     const activeStage = this.stages[indexOfActiveStage];

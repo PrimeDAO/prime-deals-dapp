@@ -164,18 +164,23 @@
           </p>
         </div>
 
-        <div class="detailsCell">
+        <div class="detailsCell" ptooltip.bind="withCommas(token.vestedFor) + ' seconds'">
           <p>Vested for</p>
           <p>
-            <template if.bind="token.vestedFor">${token.vestedFor | secondsDays} days</template>
-            <template else>0 days</template>
+            <formatted-number hide-tooltip if.bind="token.vestedFor"
+                              value.to-view="token.vestedFor | secondsDays | number"></formatted-number>
+            <template else>0</template>
+            days
           </p>
         </div>
 
-        <div class="detailsCell">
+        <div class="detailsCell" ptooltip.bind="withCommas(token.cliffOf) + ' seconds'">
           <p>Cliff of</p>
-          <template if.bind="token.cliffOf">${token.cliffOf | secondsDays} days</template>
-          <template else>0 days</template>
+          <formatted-number hide-tooltip if.bind="token.cliffOf"
+                            value.to-view="token.cliffOf | secondsDays | number"
+          ></formatted-number>
+          <template else>0</template>
+          days
         </div>
       </div>
 

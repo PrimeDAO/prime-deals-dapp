@@ -11,9 +11,10 @@ export interface IBaseWizardStage {
   activate;
 }
 
-export interface IStageMeta {
+export interface IStageMeta<Settings = any> {
   wizardManager: any;
   wizardType: WizardType;
+  settings: Settings
 }
 
 export const STAGE_ROUTE_PARAMETER = "stageRoute";

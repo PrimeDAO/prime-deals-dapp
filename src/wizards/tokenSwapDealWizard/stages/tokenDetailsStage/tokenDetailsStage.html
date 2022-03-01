@@ -17,10 +17,12 @@
       </div>
       <div class="stageSectionContent">
         <token-details
-          form.from-view="primaryDAOTokensForms[$index]"
           on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
-          token.bind="token"></token-details>
+          form.from-view="primaryDAOTokensForms[$index]"
+          view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
+          token.bind="token"
+        ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
           if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
@@ -29,7 +31,8 @@
           <i class="fa fa-plus"></i>
         </pbutton>
 
-        <p class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
+        <p
+          class="feedbackMessage errorMessage ${!hasValidPrimaryDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
           A partnered deal needs to have at least one token detail
         </p>
       </div>
@@ -42,12 +45,15 @@
           Please fill in the Ethereum native token address and swapping details of the secondary DAO.
         </div>
       </div>
+
       <div class="stageSectionContent">
         <token-details
           form.from-view="partnerDAOTokensForms[$index]"
           on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
-          token.bind="token"></token-details>
+          view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
+          token.bind="token"
+        ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
           if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
@@ -57,7 +63,7 @@
         </pbutton>
 
         <p
-          class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount2(wizardState.registrationData.partnerDAO.tokens) ? 'feedbackMessageVisible' : ''}">
+          class="feedbackMessage errorMessage ${!hasValidPartnerDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
           A partnered deal needs to have at least one token detail
         </p>
       </div>
