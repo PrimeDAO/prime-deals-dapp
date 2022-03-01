@@ -280,13 +280,14 @@ export class DiscussionsService {
       });
       if (!this.comments) return null;
 
-      this.comments = await this.comments.filter(async (comment: any) => {
+      this.comments = this.comments.filter((comment: any) => {
         return !(
-          comment.metadata.isPrivate === "true" &&
+          (comment.metadata.isPrivate === "true") &&
+          (!this.ethereumService.defaultAccountAddress ||
           ![
             comment.author,
             ...JSON.parse(comment.metadata.allowedMembers || "[]"),
-          ].includes(this.ethereumService.defaultAccountAddress)
+          ].includes(this.ethereumService.defaultAccountAddress))
         );
       });
 

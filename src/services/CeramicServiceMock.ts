@@ -91,7 +91,7 @@ const _registration1: IDealRegistrationTokenSwap = {
     name: "Creator",
     tokens: [],
     social_medias: [],
-    representatives: [{address: address1}],
+    representatives: [{address: address1}, {address: address4}],
     treasury_address: address2,
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
@@ -102,7 +102,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   },
   terms: {
     clauses: [
-      {id: "", text: "lorem"},
+      {id: "clause-hash-1", text: "lorem"},
     ],
   },
   keepAdminRights: false,
@@ -421,7 +421,9 @@ const MOCK_DATA = {
   "registration-hash-6": _registration6,
 
   // Discussions Mock Map
-  "clause-discussions-hash-1": {},
+  "clause-discussions-hash-1": {
+    "clause-hash-1": "41d17125b9e107857167b75341259a2b9cff6d13",
+  },
   "clause-discussions-hash-2": {
     "clause-hash-1": "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
     "clause-hash-2": "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
