@@ -33,9 +33,17 @@ export class Documentation {
   }
 
   async configureRouter(config: RouterConfiguration, router: Router): Promise<void> {
+
     config.title = "Documentation";
 
-    const documentsSpec = require("./documents.json").documents as Array<{ title: string, url: string }>;
+    let documentsSpec: Array<{ title: string, url: string }>;
+
+    await axios.get(process.env.DOCUMENTS_LIST_CONFIG)
+      .then((response) => {
+        if (response.data && response.data.documents) {
+          documentsSpec = response.data.documents;
+        }
+      });
 
     const markdowns = [];
 
