@@ -25,6 +25,7 @@ const discussion1: IDealDiscussion = {
   createdAt: new Date("2022-01-23T15:38:16.528Z"),
   modifiedAt: new Date(1643031030746),
   replies: 6,
+  key: "qKPjb-UsETIBQQKe_7LiS1eCHxuUwyVC3qzSslb5hus",
 };
 const discussion2: IDealDiscussion = {
   version: "0.0.1",
@@ -41,6 +42,7 @@ const discussion2: IDealDiscussion = {
   createdAt: new Date("2022-01-21T15:48:32.753Z"),
   modifiedAt: new Date(1642846275332),
   replies: 10,
+  key: "KHNUC5AJTNAdeKKRHY8EVdYcX8LA4IhQE4hFrsmjpBA",
 };
 const discussion3: IDealDiscussion = {
   version: "0.0.1",
@@ -57,10 +59,11 @@ const discussion3: IDealDiscussion = {
   createdAt: new Date("2022-01-22T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
+  key: "8awiOeBryjLFPP1FuymzAp-iA7aHLnkIy9WCgkOt8Y8",
 };
 const discussion4: IDealDiscussion = {
   version: "0.0.1",
-  discussionId: "18a416630e1ab87c7d24d960bfd3a0f72a61b9e0",
+  discussionId: "41d17125b9e107857167b75341259a2b9cff6d13",
   topic: "Clause without a discussion.",
   clauseIndex: 3,
   admins: [{
@@ -73,6 +76,7 @@ const discussion4: IDealDiscussion = {
   createdAt: new Date("2022-01-22T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
+  key: "-i90irriG3hu8xJs1g0c7LtTCtGiYmU5m3hZSfcIPz0",
 };
 
 const _registration1: IDealRegistrationTokenSwap = {
@@ -422,6 +426,7 @@ const MOCK_DATA = {
     "clause-hash-1": "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
     "clause-hash-2": "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
     "clause-hash-3": "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
+    "clause-hash-4": "41d17125b9e107857167b75341259a2b9cff6d13",
   },
   "clause-discussions-hash-3": {},
   "clause-discussions-hash-4": {},
@@ -444,7 +449,7 @@ const MOCK_DATA = {
   "3b39cab51d207ad9f77e1ee4083337b00bbc707f": discussion1,
   "e853c854c6bafac799eea13582d6bd41fa6c0fd5": discussion2,
   "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766": discussion3,
-  "discussion-hash-4": discussion4,
+  "41d17125b9e107857167b75341259a2b9cff6d13": discussion4,
 } as const;
 
 export class CeramicServiceMock extends IDataSourceDeals {

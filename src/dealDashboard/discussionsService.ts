@@ -8,6 +8,8 @@ import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+// import AES from "crypto-js/aes";
+// import Utf8 from "crypto-js/enc-utf8";
 
 @autoinject
 export class DiscussionsService {
@@ -141,6 +143,16 @@ export class DiscussionsService {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
       return null;
     } else {
+
+      const key = await window.crypto.subtle.generateKey(
+        {
+          name: "AES-GCM",
+          length: 256,
+        },
+        true,
+        ["encrypt", "decrypt"],
+      );
+
       discussions[discussionId] = {
         version: "0.0.1",
         discussionId,
@@ -152,6 +164,7 @@ export class DiscussionsService {
         replies: 0,
         representatives: [...new Set([...args.representatives])],
         admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
+        key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 
       const dealData = await this.dealService.deals.get(dealId);
@@ -165,6 +178,19 @@ export class DiscussionsService {
 
       return discussionId;
     }
+  }
+
+  convertArrayBufferToString(buffer: ArrayBuffer): string {
+    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+  }
+
+  private convertStringToArrayBuffer(text: string): ArrayBuffer {
+    const buf = new ArrayBuffer(text.length);
+    const bufView = new Uint8Array(buf);
+    for (let i = 0, strLen = text.length; i < strLen; i++) {
+      bufView[i] = text.charCodeAt(i);
+    }
+    return buf;
   }
 
   /**
@@ -187,6 +213,65 @@ export class DiscussionsService {
     this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
   }
 
+  private async importKey(discussionId: string): Promise<CryptoKey> {
+    return window.crypto.subtle.importKey(
+      "jwk",
+      {
+        kty: "oct",
+        k: this.discussions[discussionId].key,
+        alg: "A256GCM",
+        ext: true,
+      },
+      { name: "AES-GCM" },
+      false,
+      ["encrypt", "decrypt"],
+    );
+  }
+
+  private async encryptWithAES (text: string, discussionId: string): Promise<{cipherText: any, iv: any}> {
+    const key = await this.importKey(discussionId);
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+    const ab = new Uint8Array(text.length);
+    const enc = new TextEncoder();
+    enc.encodeInto(text, ab);
+
+    const cipherText = this.convertArrayBufferToString(await window.crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv,
+      },
+      key,
+      ab,
+    ));
+
+    return {cipherText: cipherText.toString(), iv};
+  }
+
+  public async decryptWithAES (cipherText: string, ivString: string, discussionId: string): Promise<string> {
+    const key = await this.importKey(discussionId);
+    const data = this.convertStringToArrayBuffer(cipherText);
+
+    try {
+
+      const decrypted = await window.crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          iv: this.convertStringToArrayBuffer(ivString),
+        },
+        key,
+        data,
+      );
+      return this.convertArrayBufferToString(decrypted);
+
+    } catch (err) {
+
+      this.consoleLogService.logMessage(err);
+      return "";
+
+    }
+  }
+
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
@@ -195,8 +280,7 @@ export class DiscussionsService {
       });
       if (!this.comments) return null;
 
-      this.comments = this.comments.filter((comment: any) => {
-        if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
+      this.comments = await this.comments.filter(async (comment: any) => {
         return !(
           comment.metadata.isPrivate === "true" &&
           ![
@@ -204,6 +288,16 @@ export class DiscussionsService {
             ...JSON.parse(comment.metadata.allowedMembers || "[]"),
           ].includes(this.ethereumService.defaultAccountAddress)
         );
+      });
+
+      this.comments.forEach((comment: any) => {
+        if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
+
+        if (comment.metadata?.encrypted) {
+          this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, discussionId).then(text => {
+            comment.text = text;
+          });
+        }
       });
 
       latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
@@ -250,19 +344,24 @@ export class DiscussionsService {
     }
 
     try {
+      const encrypted = await this.encryptWithAES(comment, discussionId);
       const data = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
-        comment,
+        "This comment is encrypted",
         `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
         "https://deals.prime.xyz",
         {
           isPrivate: isPrivate.toString(),
           allowedMembers: JSON.stringify(allowedMembers),
+          encrypted: encrypted.cipherText,
+          iv: this.convertArrayBufferToString(encrypted.iv),
         },
         replyTo,
       );
 
+      // Return un-encrypted comment to the view
+      data.text = comment;
       this.comments.push(data);
       this.updateDiscussionListStatus(discussionId);
       return this.comments;

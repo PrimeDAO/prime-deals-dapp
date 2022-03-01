@@ -122,6 +122,15 @@ export class DiscussionThread {
   private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
     // If a new comment is added to the thread, it is added at the end of the comments array.
     if (!this.comments.some(item => item._id === comment.name)) {
+      if (comment.data.metadata.encrypted) {
+        this.discussionsService.decryptWithAES(
+          comment.data.metadata.encrypted,
+          comment.data.metadata.iv,
+          this.discussionId,
+        ).then( (decryptedComment) => {
+          comment.data.text = decryptedComment;
+        });
+      }
       this.threadComments.push(comment.data);
       this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
 

@@ -52,6 +52,7 @@ export interface IDealDiscussion {
   topic: string;
   clauseIndex: number | null;
   replies: number;
+  key: string;
 }
 
 export class DealDiscussion implements IDealDiscussion {
@@ -67,4 +68,5 @@ export class DealDiscussion implements IDealDiscussion {
   // public clauseHash: string | null;
   public clauseIndex: number | null;
   public replies: number;
+  public key: string;
 }
