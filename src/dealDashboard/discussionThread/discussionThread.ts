@@ -227,6 +227,7 @@ export class DiscussionThread {
   }
 
   async addComment(): Promise<void> {
+    if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
     try {
       this.threadComments = await this.discussionsService.addComment(
@@ -264,6 +265,7 @@ export class DiscussionThread {
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
+    if (this.isLoading[`isVoting ${_id}`]) return;
     this.isLoading[`isVoting ${_id}`] = true;
     try {
       this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
@@ -276,10 +278,14 @@ export class DiscussionThread {
   }
 
   async deleteComment(_id: string): Promise<void> {
+    if (this.isLoading[`isDeleting ${_id}`]) return;
+    this.isLoading[`isDeleting ${_id}`] = true;
     try {
       this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
     } catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+    } finally {
+      this.isLoading[`isDeleting ${_id}`] = false;
     }
   }
 
