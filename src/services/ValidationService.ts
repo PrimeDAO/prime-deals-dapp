@@ -83,5 +83,5 @@ export function validateForms(forms: ValidationController[]) {
 export async function areFormsValid(forms: ValidationController[]) {
   const validationResults = await validateForms(forms);
 
-  return !!validationResults.filter(Boolean).length;
+  return validationResults.filter(Boolean).length === validationResults.length;
 }

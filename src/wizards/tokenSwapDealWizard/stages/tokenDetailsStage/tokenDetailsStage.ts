@@ -66,9 +66,9 @@ export class TokenDetailsStage {
       return this.form.validate()
         .then(async (result) => result.valid &&
           this.hasValidPrimaryDAOTokensDetailsCount &&
-          this.hasValidPrimaryDAOTokensDetailsCount &&
+          this.hasValidPartnerDAOTokensDetailsCount &&
           primaryTokensValid &&
-          this.isOpenProposalWizard ? true : partnerTokensValid,
+          (this.isOpenProposalWizard ? true : partnerTokensValid),
         );
     });
   }
