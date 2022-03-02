@@ -4,6 +4,7 @@ import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
+import { areFormsValid } from "../../../../services/ValidationService";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ("edit" | "view")[]>;
 
@@ -60,23 +61,14 @@ export class TokenDetailsStage {
     );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-
-      // check if child components for primary token details are valid
-      const primaryDAOTokenValidation = await Promise.all(
-        this.primaryDAOTokensForms.map(form => form.validate().then(result => result.valid)),
-      );
-
-      // check if child components for partner token details are valid
-      const partnerDAOTokenValidation = await Promise.all(
-        this.partnerDAOTokensForms.map(form => form.validate().then(result => result.valid)),
-      );
-
+      const primaryTokensValid = await areFormsValid(this.primaryDAOTokensForms);
+      const partnerTokensValid = await areFormsValid(this.partnerDAOTokensForms);
       return this.form.validate()
-        .then(result => result.valid &&
+        .then(async (result) => result.valid &&
           this.hasValidPrimaryDAOTokensDetailsCount &&
           this.hasValidPrimaryDAOTokensDetailsCount &&
-          !!primaryDAOTokenValidation.filter(Boolean).length &&
-          (this.isOpenProposalWizard ? true : Boolean(partnerDAOTokenValidation.filter(Boolean).length)),
+          primaryTokensValid &&
+          this.isOpenProposalWizard ? true : partnerTokensValid,
         );
     });
   }

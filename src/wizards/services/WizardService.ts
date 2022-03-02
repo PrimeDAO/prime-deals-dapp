@@ -92,9 +92,7 @@ export class WizardService {
     const wizardState = this.getWizardState(wizardManager);
     const indexOfActive = wizardState.indexOfActive;
 
-    if (indexOfActive < wizardState.stages.length - 1) {
-      this.goToStage(wizardManager, indexOfActive + 1, true);
-    }
+    this.goToStage(wizardManager, indexOfActive + 1, true);
   }
 
   public previous(wizardManager: any): void {
@@ -127,6 +125,10 @@ export class WizardService {
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
+      return;
+    }
+
+    if (index >= wizardState.stages.length) {
       return;
     }
 
