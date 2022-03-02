@@ -8,8 +8,9 @@
     padding-bottom: 14px; // override heading1 padding
   }
 
+  background-color: $BG01;
   .title {
-    background-color: $BG01;
+    background-color: inherit;
     position: sticky;
     top: 95px;
     z-index: 1;
