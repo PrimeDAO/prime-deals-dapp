@@ -13,6 +13,7 @@ import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
+import "../wizards.scss";
 
 @autoinject
 export class WizardManager {

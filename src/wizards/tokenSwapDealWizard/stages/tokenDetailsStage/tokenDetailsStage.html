@@ -7,13 +7,13 @@
 
     <div class="stageSection" data-test="primary-dao-tokens">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">
+        <h2 class="sidebarHeader heading heading3 title">
           <template if.bind="isOpenProposalWizard">Tokens</template>
           <template else>Primary DAO Tokens</template>
         </h2>
-        <div class="subtext">
+        <p class="sidebarText">
           Please fill in the Ethereum native token address and swapping details of the primary DAO.
-        </div>
+        </p>
       </div>
       <div class="stageSectionContent">
         <token-details
@@ -21,8 +21,7 @@
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
           form.from-view="primaryDAOTokensForms[$index]"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
-          token.bind="token"
-        ></token-details>
+          token.bind="token"></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
           if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
@@ -40,10 +39,10 @@
 
     <div class="stageSection" if.bind="!isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Partner DAO Tokens</h2>
-        <div class="subtext">
+        <h2 class="sidebarHeader heading heading3 title">Partner DAO Tokens</h2>
+        <p class="sidebarText">
           Please fill in the Ethereum native token address and swapping details of the secondary DAO.
-        </div>
+        </p>
       </div>
 
       <div class="stageSectionContent">
@@ -52,8 +51,7 @@
           on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
-          token.bind="token"
-        ></token-details>
+          token.bind="token"></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
           if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
@@ -71,16 +69,16 @@
 
     <div class="stageSection">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Execution Period</h2>
-        <p class="subtext">
+        <h2 class="sidebarHeader heading heading3 title">Execution Period</h2>
+        <p class="sidebarText">
           After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and execute the swap on-chain.
         </p>
         <br>
-        <p class="subtext">
+        <p class="sidebarText">
           Here you can setup the non-extendable amount of days that both parties have to complete these actions. If the representatives and the proposal lead failed to that within this agreed upon timeframe, the deal is considered Failed.
         </p>
         <br>
-        <p class="subtext">
+        <p class="sidebarText">
           With all of this mind, make sure that you set a reasonable Execution Period that takes in consideration the time needed to pass the deals through the governance processes of both parties.
         </p>
       </div>
