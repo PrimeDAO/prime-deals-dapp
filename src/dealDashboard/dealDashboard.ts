@@ -1,13 +1,10 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
-import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
-import { PLATFORM } from "aurelia-pal";
 import { DealService } from "services/DealService";
 import { EthereumService, Address } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IClause } from "entities/DealRegistrationTokenSwap";
-import { IDealDiscussion } from "entities/DealDiscussions";
 import "./dealDashboard.scss";
 
 @autoinject
@@ -19,11 +16,10 @@ export class DealDashboard {
 
   private dealId: string;
   private deal: DealTokenSwap;
+  private discussionId: string = null;
 
   private clauses: IClause[];
   private activeClause: string;
-
-  private discussions: IDealDiscussion;
 
   @computedFrom("ethereumService.defaultAccountAddress", "deal.registrationData")
   get isPrivate(): boolean {
@@ -46,7 +42,6 @@ export class DealDashboard {
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
     private eventAggregator: EventAggregator,
-    private router: Router,
     private dealService: DealService,
   ) {
     this.connectedAddress = "";
@@ -99,7 +94,7 @@ export class DealDashboard {
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
   private addOrReadDiscussion = async (topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> => {
-    const discussionId = discussionHash || // If no discussion hash provided- create a new discussion
+    this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
       await this.discussionsService.createDiscussion(
         this.dealId,
         {
@@ -111,44 +106,5 @@ export class DealDashboard {
           isPublic: true,
         },
       );
-
-    if (discussionId !== null) {
-      this.discussionsService.autoScrollAfter(200);
-      this.router.navigate(`discussion/${discussionId}`, { replace: true, trigger: true });
-    }
   };
-
-  private configureRouter(config: RouterConfiguration, router: Router): void {
-    const routes: RouteConfig[] = [
-      {
-        route: "",
-        nav: false,
-        moduleId: PLATFORM.moduleName("./discussionsList/discussionsList"),
-        name: "discussions-list",
-        title: "Discussions",
-      },
-      {
-        route: "discussion",
-        nav: false,
-        redirect: "",
-      },
-      {
-        route: "discussion/:discussionId",
-        nav: false,
-        moduleId: PLATFORM.moduleName("./discussionThread/discussionThread"),
-        name: "discussion-thread",
-        title: "Discussion",
-        /**
-         * activationStrategy is needed here in order to refresh the
-         * route if the user clicks on a different clause without going
-         * back to the list first
-         *  */
-        activationStrategy: "replace",
-      },
-    ];
-
-    config.map(routes);
-
-    this.router = router;
-  }
 }

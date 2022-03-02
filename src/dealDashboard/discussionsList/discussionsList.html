@@ -12,7 +12,7 @@
       <div class="tbody">
         <div class="tr"
           id="${discussion.id}"
-          click.delegate="navigateTo(`discussion/${discussion.id}`)"
+          click.delegate="navigateTo(`${discussion.id}`)"
           repeat.for="discussion of discussionsArray">
           <div class="td">${discussion.clauseIndex + 1 || "-" }</div>
           <div class="td">

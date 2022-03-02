@@ -1,4 +1,6 @@
 <template>
+  <require from="./discussionsList/discussionsList"></require>
+  <require from="./discussionThread/discussionThread"></require>
   <main class="page animated-page au-animate dealDashboardContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -46,10 +48,14 @@
 
     <!-- Discussions / Discussion Comments Thread -->
     <section class="discussion" show.bind="authorized || !isPrivate">
-      <router-view>
-        <!-- discussions-list -->
-        <!-- deal-thread -->
-      </router-view>
+      <discussions-list if.to-view="!discussionId"
+        discussion-id.two-way="discussionId"
+        deal.bind="deal">
+      </discussions-list>
+      <discussion-thread else 
+        discussion-id.two-way="discussionId"
+        deal.bind="deal">
+      </discussion-thread>
     </section>
   </main>
 </template>

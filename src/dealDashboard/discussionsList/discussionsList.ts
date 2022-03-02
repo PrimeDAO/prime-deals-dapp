@@ -1,4 +1,4 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, bindable } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -13,8 +13,8 @@ import "./discussionsList.scss";
 
 @autoinject
 export class DiscussionsList{
-
-  dealId: string;
+  @bindable deal: DealTokenSwap;
+  @bindable discussionId: string = null;
 
   paginationConfig = {
     listLength: 5,
@@ -24,7 +24,6 @@ export class DiscussionsList{
   private discussionsArray: Array<IDealDiscussion> = [];
   private discussionsHashes: string[];
   private hasDiscussions: boolean;
-  private deal: DealTokenSwap;
 
   constructor(
     private eventAggregator: EventAggregator,
@@ -35,12 +34,6 @@ export class DiscussionsList{
   ) {}
 
   async attached(): Promise<void> {
-    this.dealId = this.router.currentInstruction.parentInstruction.params.address;
-
-    await this.dealService.ensureInitialized();
-    this.deal = this.dealService.deals.get(this.dealId);
-    await this.deal.ensureInitialized();
-
     this.initialize();
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.initialize();
@@ -69,8 +62,8 @@ export class DiscussionsList{
     this.hasDiscussions = !!this.discussionsArray.length;
   }
 
-  private navigateTo(page) {
-    this.discussionsService.autoScrollAfter(100);
-    this.router.navigate(page);
+  private navigateTo(discussionId: string): void {
+    this.discussionsService.autoScrollAfter(0);
+    this.discussionId = discussionId;
   }
 }

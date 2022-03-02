@@ -19,11 +19,13 @@ import { Types } from "ably";
 @autoinject
 export class DiscussionThread {
   @bindable discussionId: string;
+  @bindable deal: DealTokenSwap;
   private refThread: HTMLElement;
   private refThreadEnd: HTMLSpanElement;
+  private refTitle: HTMLElement;
   private refCommentInput: HTMLTextAreaElement;
-  private deal: DealTokenSwap;
-  private dealId: string;
+  private atTop = false;
+  private scrollEvent: EventListener;
   private comment = "";
   private isReply = false;
   private replyToOriginalMessage: IComment;
@@ -92,12 +94,6 @@ export class DiscussionThread {
     this.isLoading.discussions = true;
 
     this.isAuthorized = this.checkIsAuthorized;
-    this.dealId = this.router.currentInstruction.parentInstruction.params.address;
-    this.discussionId = this.router.currentInstruction.params.discussionId;
-
-    await this.dealService.ensureInitialized();
-    this.deal = this.dealService.deals.get(this.dealId);
-    await this.deal.ensureInitialized();
 
     // Only member (representatives) can add a comments to a discussion
     this.isMember = (
@@ -204,7 +200,7 @@ export class DiscussionThread {
     });
 
     if (this.threadIsInView()) {
-      this.discussionsService.autoScrollAfter(250);
+      this.discussionsService.autoScrollAfter(0);
     }
 
     // Update the discussion status
@@ -315,7 +311,7 @@ export class DiscussionThread {
     this.replyToOriginalMessage = null;
   }
 
-  private navigateTo(page) {
-    this.router.navigate(page);
+  private navigateTo() {
+    this.discussionId = null;
   }
 }
