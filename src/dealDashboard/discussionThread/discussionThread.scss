@@ -3,27 +3,36 @@
 
 .thread {
   grid-area: thread;
-  background-color: $BG01;
   .head.container {
     background-color: inherit;
-    position: sticky;
-    top: 35px;
-    z-index: 1;
+    padding-bottom: 14px; // override heading1 padding
+  }
 
-    .title {
-      padding-bottom: $spacing-medium-small + $spacing-normal;
-      border-bottom: 1px solid $Secondary02;
-      &>span {
-        display: flex;
-        justify-content: space-between;
-      }
+  .title {
+    background-color: $BG01;
+    position: sticky;
+    top: 95px;
+    z-index: 1;
+    padding-top: $spacing-normal;
+    padding-bottom: $spacing-medium-small + $spacing-normal;
+    border-bottom: 1px solid $Secondary02;
+    &>span {
+      display: flex;
+      justify-content: space-between;
     }
-  
     .topic {
       font-family: "Inter";
       font-size: 24px;
       line-height: 33px;
       font-weight: 700;
+
+      &.at-top {
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
     }
   }
 

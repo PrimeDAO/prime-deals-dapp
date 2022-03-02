@@ -75,10 +75,17 @@ export class DiscussionThread {
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.initialize();
     });
+
+    this.scrollEvent = () => {
+      this.atTop = (this.refTitle.getBoundingClientRect().y) <= 95;
+    };
+
+    document.addEventListener("scroll", this.scrollEvent);
   }
 
   detached(): void {
     this.unsubscribeFromDiscussion();
+    document.removeEventListener("scroll", this.scrollEvent);
   }
 
   private async initialize(): Promise<void> {
