@@ -1,17 +1,20 @@
 @import "../styles";
 
+$pformInputLineHeight: 33px;
+
 pform-input {
   display: block;
+
   .formInputLabel {
     display: flex;
     color: $Secondary02;
-    margin-bottom: $spacing-normal;
     align-items: center;
     justify-content: space-between;
 
     .formInputLabelTitle {
       font-size: $font-size3;
       font-weight: 700;
+      line-height: $pformInputLineHeight;
     }
 
     .formInputLabelExtra {
@@ -26,6 +29,8 @@ pform-input {
   }
 
   .labelDescription {
+    white-space: pre-line;
+    line-height: 24px;
     color: $Neutral03;
   }
 

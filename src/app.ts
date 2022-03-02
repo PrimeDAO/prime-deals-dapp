@@ -162,7 +162,7 @@ export class App {
         name: "createOpenProposal",
         title: "Create an Open Proposal",
         settings: {
-          wizardType: WizardType.openProposal,
+          wizardType: WizardType.createOpenProposal,
         },
       },
       {
@@ -172,7 +172,7 @@ export class App {
         name: "createPartneredDeal",
         title: "Create a Partnered Deal",
         settings: {
-          wizardType: WizardType.partneredDeal,
+          wizardType: WizardType.createPartneredDeal,
         },
       },
       {
@@ -192,7 +192,7 @@ export class App {
         route: `/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
         title: "Edit an Open Proposal",
         settings: {
-          wizardType: WizardType.openProposalEdit,
+          wizardType: WizardType.editOpenProposal,
         },
       },
       {
@@ -202,7 +202,7 @@ export class App {
         route: `/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
         title: "Edit a Partnered Deal",
         settings: {
-          wizardType: WizardType.partneredDealEdit,
+          wizardType: WizardType.editPartneredDeal,
         },
       },
       {
