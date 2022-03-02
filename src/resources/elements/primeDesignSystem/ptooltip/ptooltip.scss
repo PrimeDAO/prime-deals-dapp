@@ -6,8 +6,13 @@
   border-radius: 8px;
   padding: 16px;
   font-size: $font-size1;
+  font-family: 'Inter', sans-serif;
+
+  .tippy-content {
+    padding: 0;
+  }
 
   .tippy-arrow:before {
-    color: $Border02
+    color: $Border02;
   }
 }
