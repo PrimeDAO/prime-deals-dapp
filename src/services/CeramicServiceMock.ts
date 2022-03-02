@@ -1,6 +1,7 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap, Platforms } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+
 const address1 = "0xf525a861391e64d5126414434bFf877285378246";
 const address2 = "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82";
 const address3 = "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276";
@@ -234,8 +235,8 @@ const _registration4: IDealRegistrationTokenSwap = {
       amount: "200000",
       instantTransferAmount: "150000",
       vestedTransferAmount: "50000",
-      vestedFor: 14,
-      cliffOf: 3,
+      vestedFor: 14 * 24 * 3600, // should be in seconds
+      cliffOf: 3 * 24 * 3600, // should be in seconds
     }],
     treasury_address: address3,
     representatives: [{address: address4}],

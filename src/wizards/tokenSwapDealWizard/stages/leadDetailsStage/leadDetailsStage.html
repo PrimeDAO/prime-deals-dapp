@@ -1,7 +1,7 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <stage-wrapper
-    title="Proposal Lead"
+    header="Proposal Lead"
     wizard-manager.bind="wizardManager">
 
     <div class="stageSection">
@@ -11,7 +11,7 @@
           <p class="proposalLeadSubtext">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
           <p class="proposalLeadSubtext">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and they can execute the token swap.</p>
           <p class="proposalLeadSubtext">The Proposal Lead can be changed at any time until the deal is approved.</p>
-            <p class="proposalLeadSubtext">You don't need to be part of DAO to be a Proposal Lead.</p>
+          <p class="proposalLeadSubtext">You don't need to be part of DAO to be a Proposal Lead.</p>
         </div>
       </div>
       <div class="stageSectionContent">
@@ -19,30 +19,27 @@
           class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
           label="Proposal Lead Address"
           input-reference.bind="input"
-          data-test="proposal-wallet-address-field"
-        >
+          data-test="proposal-wallet-address-field">
           <pinput-text
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             placeholder="0x..."
             value.bind="wizardState.registrationData.proposalLead.address & validate:form"
-            view-model.ref="input"
-          ></pinput-text>
+            view-model.ref="input"></pinput-text>
           <pbutton click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
             Connect your wallet
           </pbutton>
           <pbutton
             type="formfield"
             click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
-            if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress"
-          >
+            if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress">
             Make me an admin
           </pbutton>
         </pform-input>
 
         <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="proposal-email-field"
-                     label="Contact E-mail (optional)">
+          label="Contact E-mail (optional)">
           <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-                       value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
+            value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
         </pform-input>
       </div>
     </div>
@@ -97,8 +94,7 @@
           label="Make Deal Private">
           <ptoggle
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            value.bind="wizardState.registrationData.isPrivate"
-          ></ptoggle>
+            value.bind="wizardState.registrationData.isPrivate"></ptoggle>
         </pform-input>
       </div>
     </div>

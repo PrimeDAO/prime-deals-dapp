@@ -2,7 +2,7 @@
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <require from="../../components/tokenDetails/tokenDetails"></require>
   <stage-wrapper
-    title="Token details"
+    header="Token details"
     wizard-manager.bind="wizardManager">
 
     <div class="stageSection" data-test="primary-dao-tokens">
@@ -17,21 +17,22 @@
       </div>
       <div class="stageSectionContent">
         <token-details
-          form.from-view="primaryDAOTokensForms[$index]"
           on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
+          form.from-view="primaryDAOTokensForms[$index]"
+          view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
           token.bind="token"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
-                 if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
-                 type="primary"
-        >
+          if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
+          type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
 
-        <p class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
+        <p
+          class="feedbackMessage errorMessage ${!hasValidPrimaryDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
           A partnered deal needs to have at least one token detail
         </p>
       </div>
@@ -44,24 +45,25 @@
           Please fill in the Ethereum native token address and swapping details of the secondary DAO.
         </div>
       </div>
+
       <div class="stageSectionContent">
         <token-details
           form.from-view="partnerDAOTokensForms[$index]"
           on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
+          view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           token.bind="token"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
-                 if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
-                 type="primary"
-        >
+          if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
+          type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
 
         <p
-          class="feedbackMessage errorMessage ${!hasValidTokensDetailsCount2(wizardState.registrationData.partnerDAO.tokens) ? 'feedbackMessageVisible' : ''}">
+          class="feedbackMessage errorMessage ${!hasValidPartnerDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
           A partnered deal needs to have at least one token detail
         </p>
       </div>
@@ -87,14 +89,12 @@
           class="wizardFormInput"
           input-reference.bind="executionPeriodInput"
           label="On-Chain Execution Period"
-          data-test="proposal-execution-period-field"
-        >
+          data-test="proposal-execution-period-field">
           <pinput-group>
             <pinput-numeric
               not-wei
               value.bind="wizardState.registrationData.executionPeriodInDays | secondsDays & validate:form"
-              view-model.ref="executionPeriodInput"
-            ></pinput-numeric>
+              view-model.ref="executionPeriodInput"></pinput-numeric>
             <span slot="after">days</span>
           </pinput-group>
         </pform-input>
