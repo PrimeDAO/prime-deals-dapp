@@ -23,6 +23,7 @@ export class DiscussionThread {
   private refThread: HTMLElement;
   private refThreadEnd: HTMLSpanElement;
   private refTitle: HTMLElement;
+  private refComments = [];
   private refCommentInput: HTMLTextAreaElement;
   private atTop = false;
   private scrollEvent: EventListener;
@@ -113,7 +114,7 @@ export class DiscussionThread {
     if (this.isAuthorized) {
       // Loads the discussion details - necessary for thread header
       this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
-      this.dealDiscussion = this.discussionsService.discussions[this.discussionId];
+      this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
 
       // Ensures comment fetching and subscription
       this.ensureDealDiscussion(this.discussionId);
@@ -122,30 +123,39 @@ export class DiscussionThread {
     }
   }
 
+  private arrayToDictionary(comments): Record<string, IComment> {
+    return comments.reduce(function(r, e) {
+      r[e._id] = e;
+      return r;
+    }, {});
+  }
+
   private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
     // If a new comment is added to the thread, it is added at the end of the comments array.
-    if (!this.comments.some(item => item._id === comment.name)) {
-      if (comment.data.metadata.encrypted) {
-        this.discussionsService.decryptWithAES(
-          comment.data.metadata.encrypted,
-          comment.data.metadata.iv,
-          this.discussionId,
-        ).then( (decryptedComment) => {
-          comment.data.text = decryptedComment;
-        });
-      }
-      this.threadComments.push(comment.data);
-      this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
+    if (!this.threadDictionary[comment.name]) {
+      this.discussionsService.importKey(this.discussionId).then(key => {
+        if (comment.data.metadata.encrypted) {
+          this.discussionsService.decryptWithAES(
+            comment.data.metadata.encrypted,
+            comment.data.metadata.iv,
+            key,
+          ).then( (decryptedComment) => {
+            comment.data.text = decryptedComment;
+            this.threadComments.push(comment.data);
+            this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
+            this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
-      this.threadDictionary = this.comments.reduce(function(r, e) {
-        r[e._id] = e;
-        return r;
-      }, {});
+            // scroll to bottom only if the user is at seeing the last message
+            if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
+              this.refThreadEnd.scrollIntoView({
+                behavior: "smooth",
+              });
+            }
+            this.isLoading.commenting = false;
+          });
+        }
+      });
     }
-    this.refThreadEnd.scrollIntoView({
-      behavior: "smooth",
-    });
-    this.isLoading.commenting = false;
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
@@ -170,45 +180,47 @@ export class DiscussionThread {
     const comments = await this.discussionsService.loadDiscussionComments(discussionId);
     this.isLoading.discussions = false;
 
-    this.subscribeToDiscussion(this.discussionId);
+    if (comments) {
+      this.subscribeToDiscussion(this.discussionId);
 
-    if (!comments || !Object.keys(comments).length) return;
+      if (!comments || !Object.keys(comments).length) return;
 
-    this.threadComments = comments;
-    // Dictionary is used for replies, to easily find the comment by its id
-    this.threadDictionary = await comments.reduce((r, e): Record<string, IComment> => {
-      r[e._id] = e;
-      return r;
-    }, {});
+      this.threadComments = comments;
+      // Dictionary is used for replies, to easily find the comment by its id
+      this.threadDictionary = comments.reduce((r, e): Record<string, IComment> => {
+        r[e._id] = e;
+        return r;
+      }, {});
 
-    // Author profile for the discussion header
-    this.isLoading[this.dealDiscussion.createdBy.address] = true;
-    this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
-      .then(profile => {
-        this.dealDiscussion.createdByName = profile.name;
-        this.isLoading[this.dealDiscussion.createdBy.address] = false;
+      // Author profile for the discussion header
+      this.isLoading[this.dealDiscussion.createdBy.address] = true;
+      this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
+        .then(profile => {
+          this.dealDiscussion.createdByName = profile.name;
+          this.isLoading[this.dealDiscussion.createdBy.address] = false;
+        });
+
+      // Comments author profiles
+      this.threadComments.forEach(async (comment: IComment) => {
+        this.isLoading[comment.author] = true;
+        if (!this.threadProfiles[comment.author]) {
+          const profile = await this.discussionsService.loadProfile(comment.author);
+          this.isLoading[comment.author] = false;
+          this.threadProfiles[profile.address] = profile;
+        }
       });
 
-    // Comments author profiles
-    this.threadComments.forEach(async (comment: IComment) => {
-      this.isLoading[comment.author] = true;
-      if (!this.threadProfiles[comment.author]) {
-        const profile = await this.discussionsService.loadProfile(comment.author);
-        this.isLoading[comment.author] = false;
-        this.threadProfiles[profile.address] = profile;
+      if (this.isInView(this.refThread)) {
+        this.discussionsService.autoScrollAfter(0);
       }
-    });
 
-    if (this.threadIsInView()) {
-      this.discussionsService.autoScrollAfter(0);
+      // Update the discussion status
+      this.discussionsService.updateDiscussionListStatus(discussionId);
     }
-
-    // Update the discussion status
-    this.discussionsService.updateDiscussionListStatus(discussionId);
   }
 
-  threadIsInView() {
-    const rect = this.refThread.getBoundingClientRect();
+  private isInView(element: HTMLElement): boolean {
+    const rect = element.getBoundingClientRect();
     const vWidth = window.innerWidth || document.documentElement.clientWidth;
     const vHeight = window.innerHeight || document.documentElement.clientHeight;
     const efp = (x, y) => document.elementFromPoint(x, y);
@@ -244,6 +256,7 @@ export class DiscussionThread {
         ],
         this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
       );
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
 
       this.refThreadEnd.scrollIntoView({

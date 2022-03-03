@@ -53,20 +53,11 @@ export class DealDashboard {
   }
 
   async activate(_, __, navigationInstruction) {
-    this.setThreadIdFromRoute(navigationInstruction);
-    this.routeChangeEvent = this.eventAggregator.subscribe("router:navigation:complete", (response) => {
-      this.setThreadIdFromRoute(response.instruction);
-    });
-
     this.dealId = navigationInstruction.params.address;
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
     await this.deal.ensureInitialized();
     this.clauses = this.deal.registrationData.terms.clauses;
-  }
-
-  deactivate() {
-    this.routeChangeEvent.dispose();
   }
 
   accountAddressChanged(newAddress: Address){
@@ -93,7 +84,7 @@ export class DealDashboard {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private addOrReadDiscussion = async (topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> => {
+  private async addOrReadDiscussion (topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> {
     this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
       await this.discussionsService.createDiscussion(
         this.dealId,
@@ -106,5 +97,5 @@ export class DealDashboard {
           isPublic: true,
         },
       );
-  };
+  }
 }

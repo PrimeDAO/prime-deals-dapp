@@ -46,7 +46,7 @@ export class DiscussionsService {
         );
         return validation.success;
       } catch (error) {
-        this.consoleLogService.logMessage(error.message);
+        this.consoleLogService.logMessage("isValidAuth: " + error.message);
         return false;
       }
     }
@@ -110,11 +110,10 @@ export class DiscussionsService {
    * @returns void
    */
   public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
-    const discussions = {};
+    this.discussions = {};
     for (const [, value] of clauseDiscussions.entries()) {
-      discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
+      this.discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
     }
-    this.discussions = discussions;
   }
 
   /**
@@ -213,7 +212,7 @@ export class DiscussionsService {
     this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
   }
 
-  private async importKey(discussionId: string): Promise<CryptoKey> {
+  public async importKey(discussionId: string): Promise<CryptoKey> {
     return window.crypto.subtle.importKey(
       "jwk",
       {
@@ -248,8 +247,7 @@ export class DiscussionsService {
     return {cipherText: cipherText.toString(), iv};
   }
 
-  public async decryptWithAES (cipherText: string, ivString: string, discussionId: string): Promise<string> {
-    const key = await this.importKey(discussionId);
+  public async decryptWithAES (cipherText: string, ivString: string, key: CryptoKey): Promise<string> {
     const data = this.convertStringToArrayBuffer(cipherText);
 
     try {
@@ -264,9 +262,9 @@ export class DiscussionsService {
       );
       return this.convertArrayBufferToString(decrypted);
 
-    } catch (err) {
+    } catch (error) {
 
-      this.consoleLogService.logMessage(err);
+      this.consoleLogService.logMessage("decryptWithAES: " + error.message);
       return "";
 
     }
@@ -280,7 +278,7 @@ export class DiscussionsService {
       });
       if (!this.comments) return null;
 
-      this.comments = this.comments.filter((comment: any) => {
+      this.comments = await this.comments.filter((comment: any) => {
         return !(
           (comment.metadata.isPrivate === "true") &&
           (!this.ethereumService.defaultAccountAddress ||
@@ -291,11 +289,12 @@ export class DiscussionsService {
         );
       });
 
+      const key = await this.importKey(discussionId);
       this.comments.forEach((comment: any) => {
         if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
 
         if (comment.metadata?.encrypted) {
-          this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, discussionId).then(text => {
+          this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key).then(text => {
             comment.text = text;
           });
         }
@@ -305,7 +304,7 @@ export class DiscussionsService {
       this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp));
       return this.comments;
     } catch (error) {
-      this.consoleLogService.logMessage(error);
+      this.consoleLogService.logMessage("loadDiscussionComments: " + error.message);
     }
   }
 
@@ -341,7 +340,6 @@ export class DiscussionsService {
 
     if (!this.ethereumService.defaultAccountAddress) {
       throw new Error("Wallet is not connected. Message has not been added to the thread.");
-      return;
     }
 
     try {
@@ -367,7 +365,7 @@ export class DiscussionsService {
       this.updateDiscussionListStatus(discussionId);
       return this.comments;
     } catch (error) {
-      this.consoleLogService.logMessage(error.message);
+      this.consoleLogService.logMessage("addComment: " + error.message);
     }
   }
 
@@ -401,7 +399,7 @@ export class DiscussionsService {
       this.comments = this.comments.filter(comment => comment._id !== commentId);
       this.updateDiscussionListStatus(discussionId, new Date());
     } catch (error) {
-      this.consoleLogService.logMessage(error);
+      this.consoleLogService.logMessage("deleteComment: " + error.message);
     }
     return this.comments;
   }
@@ -454,7 +452,8 @@ export class DiscussionsService {
 
       if (success) {
         const commentIndex = this.comments.findIndex(comment => comment._id === message._id);
-        this.comments[commentIndex] = message;
+        this.comments[commentIndex].upvotes = message.upvotes;
+        this.comments[commentIndex].downvotes = message.downvotes;
         this.updateDiscussionListStatus(discussionId, new Date());
         return [...this.comments];
       }

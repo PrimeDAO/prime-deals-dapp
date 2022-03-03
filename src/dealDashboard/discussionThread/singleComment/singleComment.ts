@@ -16,7 +16,7 @@ export class SingleComment {
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;
-  @bindable callback;
+  @bindable commentAction;
 
   private connectedAddress: string;
   private dealClauseId: string;
@@ -65,7 +65,7 @@ export class SingleComment {
   }
 
   private delete() {
-    this.callback({
+    this.commentAction({
       action: "delete",
       args: {
         _id: this.comment._id,
@@ -74,7 +74,7 @@ export class SingleComment {
   }
 
   private reply() {
-    this.callback({
+    this.commentAction({
       action: "reply",
       args: {
         _id: this.comment._id,
@@ -84,7 +84,7 @@ export class SingleComment {
 
   private vote(vote: string) {
     this.pressed[vote.toLowerCase().indexOf("up")>0 ? "up" : "down"] = true;
-    this.callback({
+    this.commentAction({
       action: "vote",
       args: {
         _id: this.comment._id,

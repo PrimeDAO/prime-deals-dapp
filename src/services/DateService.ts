@@ -40,6 +40,27 @@ export class DateService {
   }
 
   public configure(): void {
+    // spacial case localize for diff display.
+    moment.updateLocale("en-custom", {
+      relativeTime: {
+        future: "in %s",
+        past:   "%s ago",
+        s:  "%dsec",
+        ss: "%dsec",
+        m:  "%dmin",
+        mm: "%dmin",
+        h:  "%dh",
+        hh: "%dh",
+        d:  "%dd",
+        dd: "%dd",
+        w:  "%dw",
+        ww: "%dw",
+        M:  "%dm",
+        MM: "%dm",
+        y:  "%dy",
+        yy: "%dy",
+      },
+    });
 
     this.formats = new Map<string, string>();
 
@@ -427,20 +448,7 @@ export class DateService {
       ),
       diff: () => {
         if (!date) return "-";
-        const diff = this.getDurationBetween(new Date(), _date);
-
-        if (diff.asMinutes() <= 1)
-          return diff.asSeconds().toFixed(0) + "sec";
-        if (diff.asHours() <= 1)
-          return diff.asMinutes().toFixed(0) + "min";
-        if (diff.asDays() <= 1)
-          return diff.asHours().toFixed(0) + "h";
-        if (diff.asWeeks() <= 1)
-          return diff.asDays().toFixed(0) + "d";
-        if (diff.asMonths() <= 12)
-          return diff.asWeeks().toFixed(0) + "w";
-
-        return diff.asMonths().toFixed(0) + "y";
+        return moment(date).locale("en-custom").fromNow(true);
       },
     };
   }

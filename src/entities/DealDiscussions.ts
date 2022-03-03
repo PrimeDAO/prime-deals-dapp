@@ -14,6 +14,7 @@ export interface IDiscussion {
 }
 
 export interface IComment {
+  // Following the comment structure of `theconvo.space` api:
   _id: string,
   text: string,
   author: string,
