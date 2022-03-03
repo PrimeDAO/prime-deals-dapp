@@ -62,7 +62,9 @@ export class PSelect {
         {text: this.placeholder, placeholder: true, value: null},
         ...this.data ?? [],
       ],
-      onChange: info => this.value = Array.isArray(info) ? info.map(item => item.value) : info.value,
+      onChange: info => {
+        this.value = Array.isArray(info) ? info.map(item => item.value) : (info.value ?? this.value);
+      },
     });
     this.select.set(this.value);
   }
