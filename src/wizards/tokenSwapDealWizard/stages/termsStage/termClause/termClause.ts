@@ -26,6 +26,7 @@ export class TermClause {
     const rules = ValidationRules
       .ensure<IClause, string>(clause => clause.text)
       .required()
+      .withMessage("Clause requires a description")
       .rules;
 
     this.form.addObject(this.clause, rules);
