@@ -3,7 +3,6 @@ import "./pform-input.scss";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { ValidationState } from "../types";
 import { Disposable } from "aurelia-binding";
-import tippy from "tippy.js";
 import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 
 @customElement("pform-input")
@@ -15,7 +14,7 @@ export class PFormInput {
   @bindable.number maxLength = 0;
   @bindable.string helperMessage = "";
   @bindable validationMessage = "";
-  @bindable.string validationState?: ValidationState;
+  @bindable validationState?: ValidationState;
 
   /*
   * By default, "pform-input" will select its first child as the "input" property.
@@ -35,7 +34,6 @@ export class PFormInput {
    */
   @child("*") input;
 
-  private labelInfoIcon: HTMLElement;
   private inputValueObserverSubscription?: Disposable;
 
   constructor(
@@ -46,10 +44,6 @@ export class PFormInput {
 
   attached() {
     this.inputReference = this.inputReference ?? this.input;
-
-    if (this.labelInfoIcon) {
-      tippy(this.labelInfoIcon);
-    }
 
     this.validationStateChanged(this.validationState);
 
