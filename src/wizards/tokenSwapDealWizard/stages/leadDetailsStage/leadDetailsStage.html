@@ -6,13 +6,11 @@
 
     <div class="stageSection">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Proposal Lead</h2>
-        <div class="subtext">
-          <p class="proposalLeadSubtext">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
-          <p class="proposalLeadSubtext">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and they can execute the token swap.</p>
-          <p class="proposalLeadSubtext">The Proposal Lead can be changed at any time until the deal is approved.</p>
-          <p class="proposalLeadSubtext">You don't need to be part of DAO to be a Proposal Lead.</p>
-        </div>
+        <h2 class="sidebarHeader heading heading3 title">Proposal Lead</h2>
+        <p class="sidebarText">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
+        <p class="sidebarText">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and they can execute the token swap.</p>
+        <p class="sidebarText">The Proposal Lead can be changed at any time until the deal is approved.</p>
+        <p class="sidebarText">You don't need to be part of DAO to be a Proposal Lead.</p>
       </div>
       <div class="stageSectionContent">
         <pform-input
@@ -46,12 +44,10 @@
 
     <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Keep Admin Rights?</h2>
-        <div class="subtext">
-          <p class="proposalLeadSubtext">Toggle this option on if you would like to retain the Proposal Lead role to yourself. This will allow you to steer all the offers incoming to your Open Proposal.</p>
-          <p class="proposalLeadSubtext">If instead you toggle this option off, you will transfer your admin rights to the prospect Partner DAO. In this case the Partner DAO will have to register a new Proposal Lead address to which the admin rights will be transfered to.</p>
-          <p class="proposalLeadSubtext">We suggest transferring your admin rights only if you anticipate many incoming offers for this proposal and won't have time to manage them.</p>
-        </div>
+        <h2 class="sidebarHeader heading heading3 title">Keep Admin Rights?</h2>
+        <p class="sidebarText">Toggle this option on if you would like to retain the Proposal Lead role to yourself. This will allow you to steer all the offers incoming to your Open Proposal.</p>
+        <p class="sidebarText">If instead you toggle this option off, you will transfer your admin rights to the prospect Partner DAO. In this case the Partner DAO will have to register a new Proposal Lead address to which the admin rights will be transfered to.</p>
+        <p class="sidebarText">We suggest transferring your admin rights only if you anticipate many incoming offers for this proposal and won't have time to manage them.</p>
       </div>
       <div class="stageSectionContent">
         <pform-input
@@ -64,12 +60,10 @@
 
     <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Make Incoming Offers Private?</h2>
-        <div class="subtext">
-          <p class="proposalLeadSubtext">Toggle this option on if you want the incoming proposals to be only visible to the Proposal Lead and the Deal Representatives.</p>
-          <p class="proposalLeadSubtext">You can always turn the deal to public during the negotiation phase to receive feedback from the community or after the deal is ratified. Once turned public, the conversations held in private will remain private.</p>
-          <p class="proposalLeadSubtext">A negotiated deal that has been turned public can be turned back into private, and vice versa.</p>
-        </div>
+        <h2 class="sidebarHeader heading heading3 title">Make Incoming Offers Private?</h2>
+        <p class="sidebarText">Toggle this option on if you want the incoming proposals to be only visible to the Proposal Lead and the Deal Representatives.</p>
+        <p class="sidebarText">You can always turn the deal to public during the negotiation phase to receive feedback from the community or after the deal is ratified. Once turned public, the conversations held in private will remain private.</p>
+        <p class="sidebarText">A negotiated deal that has been turned public can be turned back into private, and vice versa.</p>
       </div>
       <div class="stageSectionContent">
         <pform-input
@@ -82,11 +76,9 @@
 
     <div class="stageSection" if.bind="!isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="heading heading3 title">Make this Deal Private?</h2>
-        <div class="subtext">
-          <p class="proposalLeadSubtext">Toggle this option if you don't want the public to see what is being discussed by the DAOs. This will make all conversations of this Partnered Deal only visible by the Proposal Lead and the Deal Representatives from both DAOs.</p>
-          <p class="proposalLeadSubtext">You can always turn the deal public during negotiation phase to receive feedback from the community or after the deal is ratified. Once turned public, the conversations held in private will remain private.</p>
-        </div>
+        <h2 class="sidebarHeader heading heading3 title">Make this Deal Private?</h2>
+        <p class="sidebarText">Toggle this option if you don't want the public to see what is being discussed by the DAOs. This will make all conversations of this Partnered Deal only visible by the Proposal Lead and the Deal Representatives from both DAOs.</p>
+        <p class="sidebarText">You can always turn the deal public during negotiation phase to receive feedback from the community or after the deal is ratified. Once turned public, the conversations held in private will remain private.</p>
       </div>
       <div class="stageSectionContent">
         <pform-input

@@ -1,14 +1,15 @@
 import { customAttribute } from "aurelia-framework";
 import "./ptooltip.scss";
-import tippy, { Instance, Placement } from "tippy.js";
+import tippy, { Instance, Placement, Props } from "tippy.js";
 import { bindable } from "aurelia-typed-observable-plugin";
 
 @customAttribute("ptooltip")
 export class PTooltip {
-  @bindable interactive: boolean;
-  @bindable placement: Placement;
-  @bindable.boolean visible = true;
   @bindable({primaryProperty: true}) content: string;
+  @bindable placement: Placement;
+  @bindable.boolean interactive = false;
+  @bindable.boolean visible = true;
+  @bindable.boolean allowHtml = false;
 
   private tooltip: Instance;
 
@@ -17,6 +18,13 @@ export class PTooltip {
   }
 
   propertyChanged(name: string, newValue: string) {
+    // Aurelia doesn't trigger change for properties like `allowHTML`. It wants properties to be like this:`allowHtml`.
+    // But Tippy.js wants that property to be `allowHTML`, so we need to convert it
+    const convertPropertyToTippyConfig: Partial<Record<keyof PTooltip, keyof Props>> = {
+      allowHtml: "allowHTML",
+    };
+    name = convertPropertyToTippyConfig[name] ?? name;
+
     // this works only if this component's properties have the same name as the tippy.js config properties
     // additional properties (like 'visible' for ex.) need to be handled separately (see the 'visibleChanged' method)
     this.tooltip.setProps({[name]: newValue});
