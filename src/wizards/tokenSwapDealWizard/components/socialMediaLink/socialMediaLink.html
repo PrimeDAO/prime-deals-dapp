@@ -10,7 +10,7 @@
   <pform-input input-reference.bind="input">
     <pinput-text
       view-model.ref="input"
-      placeholder="https://"
+      placeholder="${socialMedia.name ? `Your ${socialMedia.name}` : 'Platform'} URL (https://...)"
       value.bind="socialMedia.url & validate:form"
       disabled.bind="disabled">
     </pinput-text>

@@ -36,6 +36,8 @@ $menu-open-duration: 0.1s;
 
   .menu-body {
     text-align: center;
+    display: flex;
+    flex-direction: column;
     > .products {
       display: inline-flex;
       column-gap: 15px;

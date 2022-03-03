@@ -23,7 +23,7 @@ export class Home {
 
   attached(): void {
     this.dealService.ensureAllDealsInitialized();
-    this.allDeals.open = this.dealService.openDeals;
+    this.allDeals.open = this.dealService.openProposals;
     this.allDeals.partnered = this.dealService.partneredDeals;
     this.featuredDeals = this.allDeals.open.length ? this.allDeals.open : this.allDeals.partnered;
 
