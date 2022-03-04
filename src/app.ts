@@ -220,7 +220,7 @@ export class App {
         title: "Initiate a Deal",
       },
       {
-        moduleId: PLATFORM.moduleName("./deals/allDeals/deals"),
+        moduleId: PLATFORM.moduleName("./deals/list/deals"),
         nav: false,
         name: "deals",
         route: "/deals",
