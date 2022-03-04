@@ -177,17 +177,16 @@ export class DiscussionThread {
   }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
-    const comments = await this.discussionsService.loadDiscussionComments(discussionId);
+    this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
     this.isLoading.discussions = false;
 
-    if (comments) {
+    if (this.threadComments) {
       this.subscribeToDiscussion(this.discussionId);
 
-      if (!comments || !Object.keys(comments).length) return;
+      if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
-      this.threadComments = comments;
       // Dictionary is used for replies, to easily find the comment by its id
-      this.threadDictionary = comments.reduce((r, e): Record<string, IComment> => {
+      this.threadDictionary = this.threadComments.reduce((r, e): Record<string, IComment> => {
         r[e._id] = e;
         return r;
       }, {});
