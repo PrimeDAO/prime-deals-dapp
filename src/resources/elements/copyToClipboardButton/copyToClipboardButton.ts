@@ -1,7 +1,7 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, containerless } from "aurelia-framework";
 import tippy from "tippy.js";
-
+import "./copyToClipboardButton.scss";
 @containerless
 @autoinject
 export class CopyToClipboardButton {

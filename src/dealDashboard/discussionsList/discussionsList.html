@@ -1,0 +1,53 @@
+<template>
+  <div class="header">
+    <h1 class="subtitle heading heading1 gradient">
+      Discuss
+    </h1>
+  </div>
+  <section if.bind="discussionsArray.length" class="section discussions-list">
+    <div class="table">
+      <div class="thead">
+        <span>#</span><span>Topic</span><span class="h-centered">Replies</span><span class="h-centered">Activity</span>
+      </div>
+      <div class="tbody">
+        <div class="tr"
+          id="${discussion.id}"
+          click.delegate="navigateTo(`${discussion.id}`)"
+          repeat.for="discussion of discussionsArray">
+          <div class="td">${discussion.clauseIndex + 1 || "-" }</div>
+          <div class="td">
+            <p>
+              ${discussion.topic}
+            </p>
+            <p class="creator">
+              ${discussion.profile.address}
+              <i class="fas fa-pencil-alt"></i>
+              <span if.bind="discussion.createdByName">
+                Created by ${discussion.createdByName} 
+              </span>
+              <span else>
+                Created by ${discussion.createdByAddress | smallHexString} 
+              </span>
+              on ${dateService.formattedTime(discussion.createdAt).short()}
+            </p>
+          </div>
+          <div class="td h-centered v-centered">${discussion.replies || 0}</div>
+          <div class="td h-centered v-centered">${dateService.formattedTime(discussion.modifiedAt).diff()}</div>
+        </div>
+      </div>
+    </div>
+    <div if.bind="discussions.length >= paginationConfig.listLength" class="pagination container">
+      <button class="pagination button left" type="tertiary"><</button>
+      <button 
+        repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
+        class="page button ${page.isActive? 'active' : ''}"
+        type="tertiary">
+        ${$index + 1}
+      </button>
+      <button class="pagination button right" type="tertiary">></button>
+    </div>
+  </section>
+  <section else>
+    There are no discussions on this deal yet. Click on a deal clause to get started.
+  </section>
+</template>
