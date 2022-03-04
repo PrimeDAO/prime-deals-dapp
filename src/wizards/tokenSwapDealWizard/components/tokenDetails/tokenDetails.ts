@@ -55,7 +55,7 @@ export class TokenDetails {
   }
 
   async attached() {
-    // Add the validation rules only for Open Proposals
+    // Add the validation rules only for deals that are not Open Proposals
     if (![WizardType.editOpenProposal, WizardType.createOpenProposal].includes(this.wizardType)) {
       this.addValidation();
     }
