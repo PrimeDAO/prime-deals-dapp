@@ -21,7 +21,9 @@
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
           form.from-view="primaryDAOTokensForms[$index]"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
-          token.bind="token"></token-details>
+          token.bind="token"
+          wizard-type.bind="wizardType"
+        ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
           if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
