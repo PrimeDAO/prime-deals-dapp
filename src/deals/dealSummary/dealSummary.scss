@@ -7,7 +7,9 @@ deal-summary {
     width: 360px;
     background-color: $BG02;
     padding: $spacing-normal;
+    /* don't do this transition until we can do it with gradient pcards too
     transition: 0.35s ease-in-out;
+    */
     cursor: pointer;
 
     &:hover {
