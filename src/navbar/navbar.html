@@ -33,7 +33,7 @@
       <div class="container">
         <div click.delegate="navigate('/')" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
         <div click.delegate="navigate('/initiate')" class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">Initiate a Deal</div>
-        <div click.delegate="navigate('/deals')" class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">All Deals</div>
+        <div click.delegate="navigate('/deals')" class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'deals') ? 'active' : ''}">All Deals</div>
         <div click.delegate="navigate('/documentation')" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</div>
         <div click.delegate="goto('https://form.typeform.com/to/SUCTM812')" class="item">Support</div>
       </div>
