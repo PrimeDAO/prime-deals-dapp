@@ -9,8 +9,8 @@ Feature: Landing page
     Scenario: Initiate a Deal
         Given I choose Deal Type
 
-    Scenario: Open Deals
-        Given I Open Deals
+    Scenario: Open Proposals
+        Given I Open Proposals
 
     Scenario: Running Deals
         Given I want to see Running Deals
@@ -22,7 +22,3 @@ Feature: Landing page
 # TODO 4. User can click on the deal card to navigate to that deal.
 # 5. User can click View All Deals Link to navigate to All Deals Page.
 # 6. **User** can click Play Button to watch the tutorial.
-
-#     Aside from the mock below:
-
-#     - [x]  -"Partner" Button for Open Deals is replaced with "View"

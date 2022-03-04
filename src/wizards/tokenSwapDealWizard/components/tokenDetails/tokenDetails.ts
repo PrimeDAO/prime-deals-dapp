@@ -10,18 +10,21 @@ import {
   ValidationControllerFactory,
   ValidationRules,
 } from "aurelia-validation";
-import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 import { Validation } from "../../../../services/ValidationService";
 import { Utils } from "../../../../services/utils";
 import { formatEther } from "ethers/lib/utils";
+import { NumberService } from "../../../../services/NumberService";
+import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
+import { WizardType } from "../../dealWizardTypes";
 
 @autoinject
 export class TokenDetails {
   @bindable token: IToken;
+  @bindable wizardType: WizardType;
   @bindable({defaultBindingMode: bindingMode.fromView}) onDelete: () => void;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
 
-  viewMode: "edit" | "view" = "edit";
   tokenInfoLoading = false;
   showTokenDetails = false;
   saving = false;
@@ -37,16 +40,29 @@ export class TokenDetails {
   constructor(
     private aureliaHelperService: AureliaHelperService,
     private tokenService: TokenService,
+    private numberService: NumberService,
     private validationControllerFactory: ValidationControllerFactory,
   ) {
     this.form = this.validationControllerFactory.createForCurrentScope();
     this.form.validateTrigger = validateTrigger.change;
     this.form.addRenderer(new PrimeRenderer);
+
+    ValidationRules.customRule(
+      "isValidIERC20Address",
+      (value) => this.tokenService.isERC20Token(value),
+      "Please enter a valid IERC20 address",
+    );
   }
 
   async attached() {
-    this.addValidation();
+    // Add the validation rules only for deals that are not Open Proposals
+    if (![WizardType.editOpenProposal, WizardType.createOpenProposal].includes(this.wizardType)) {
+      this.addValidation();
+    }
+
     this.watchTokenProperties();
+
+    this.viewMode = this.viewMode ?? "edit";
 
     this.form.subscribe(result => {
       if (result.type === "validate") {
@@ -104,7 +120,11 @@ export class TokenDetails {
 
   async save(): Promise<void> {
     this.saving = true;
-    const result = await this.form.validate().finally(() => this.saving = false);
+    const result = await this.form.validate({
+      object: this.token,
+      rules: this.getValidationRules(),
+    }).finally(() => this.saving = false);
+
     if (!result.valid) {
       return;
     }
@@ -140,15 +160,13 @@ export class TokenDetails {
   }
 
   private addValidation() {
-    ValidationRules.customRule(
-      "isValidIERC20Address",
-      (value) => this.tokenService.isERC20Token(value),
-      "Please enter a valid IERC20 address",
-    );
+    const rules = this.getValidationRules();
 
-    this.viewMode = this.token.address ? "view" : "edit";
+    this.form.addObject(this.token, rules);
+  }
 
-    const rules = ValidationRules
+  private getValidationRules() {
+    return ValidationRules
       .ensure<IToken, string>(data => data.address)
       .required()
       .satisfiesRule(Validation.isETHAddress)
@@ -191,7 +209,9 @@ export class TokenDetails {
       .withMessage("Cliff period needs to be smaller or equal to vesting period")
       .min(0)
       .rules;
+  }
 
-    this.form.addObject(this.token, rules);
+  withCommas(seconds: number) {
+    return this.numberService.toString(seconds, {thousandSeparated: true, mantissa: -1});
   }
 }

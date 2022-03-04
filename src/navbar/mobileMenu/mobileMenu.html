@@ -5,7 +5,6 @@
     </div>
     <div class="menu-body">
       <div class="products">
-
         <div class="item" click.delegate="gotoCallback({url: 'https://launch.prime.xyz'}, false)">
           <div class="icon launch"><img class="mono" src="/static/launch-mono.svg" /><img class="color" src="/static/launch.svg" /></div>
           <div class="text">Launch</div>
@@ -26,9 +25,10 @@
       <div class="productSubpages">
         <div class="container">
           <div click.delegate="navigateCallback({href: '/'})" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
-          <div click.delegate="navigateCallback({href: '/deals/open'})" class="item ${(router.currentInstruction.config.name === '/deals/open') ? 'active' : ''}">Open Deals</div>
-          <div click.delegate="navigateCallback({href: '/deals/running'})" class="item ${(router.currentInstruction.config.name === '/deals/running') ? 'active' : ''}">Running Deals</div>
-          <div click.delegate="navigateCallback({href: '/initiate'})" class="item ${(router.currentInstruction.config.name === 'initiate') ? 'active' : ''}">Initiate a Deal</div>
+          <div click.delegate="navigateCallback({href: '/initiate'})" class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">Initiate a Deal</div>
+          <div click.delegate="navigateCallback({href: '/deals'})" class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">All Deals</div>
+          <div click.delegate="navigateCallback({href: '/documentation'})" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</div>
+          <div click.delegate="goto('https://form.typeform.com/to/SUCTM812')" class="item">Support</div>
         </div>
       </div>
     </div>

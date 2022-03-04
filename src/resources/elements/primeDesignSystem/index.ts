@@ -19,5 +19,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pcountdown-closebutton/pcountdown-closebutton"),
     PLATFORM.moduleName("./ppopup-notification/ppopup-notification"),
     PLATFORM.moduleName("./ppopup-modal/ppopup-modal"),
+    PLATFORM.moduleName("./ptooltip/ptooltip"),
+    PLATFORM.moduleName("./pquestion-mark/pquestion-mark"),
   ]);
 }

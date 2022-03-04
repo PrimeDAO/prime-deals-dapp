@@ -1,4 +1,5 @@
-<template><span ref="textElement"
-    data-tippy-content.to-view="tooltip"
-    data-tippy-interactive="true"
-    data-tippy-placement.to-view="placement">${text}</span></template>
+<template>
+  <span ptooltip="content.bind: tooltip; placement.bind: placement; interactive: true; visible.bind: !hideTooltip">
+    ${text}
+  </span>
+</template>

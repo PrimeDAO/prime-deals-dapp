@@ -3,7 +3,6 @@ import { Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 Then("I can see Partner DAO section with inputs for collecting its details", () => {
   cy.get("[data-test=\"dao-details-section\"]").within(() => {
     cy.get("[data-test=\"section-title\"]").should("have.text", "Partner DAO");
-    cy.get("[data-test=\"section-description\"]").should("contain.text", "Please fill in the details of the partner DAO who will be participating in the deal.");
 
     cy.contains("pform-input", "Partner DAO Name").within(() => {
       cy.get("input").should("be.visible");
@@ -39,7 +38,7 @@ Then("I can see Partner DAO section with inputs for collecting its details", () 
 
 Then("I can see Partner DAO Representatives section", () => {
   cy.get("[data-test=\"dao-representatives-section\"]").within(() => {
-    cy.get("[data-test=\"section-title\"]").should("have.text", "Representatives");
+    cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Partner DAO - Representatives Addresses (Max. 5)");
     cy.get("[data-test=\"dao-representative\"]").should(($item) => {

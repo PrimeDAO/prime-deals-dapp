@@ -33,9 +33,9 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
   getIsPartneredDeal(wizardType: WizardType) {
     switch (wizardType) {
-      case WizardType.partneredDeal:
+      case WizardType.createPartneredDeal:
       case WizardType.makeAnOffer:
-      case WizardType.partneredDealEdit:
+      case WizardType.editPartneredDeal:
         return true;
 
       default:

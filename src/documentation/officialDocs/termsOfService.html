@@ -1,3 +1,17 @@
 <template>
-  <markdown url="https://raw.githubusercontent.com/PrimeDAO/prime-launch-dapp/master/src/documentation/officialDocs/TermsOfService.md"></markdown>
+  <style>
+    .termsOfService .dialogBody {
+      white-space: pre-line;
+      word-break: break-word;
+    }
+
+    .termsOfService .dialogHeader {
+      font-size: 28px;
+    }
+  </style>
+  <div class="termsOfService ppopup-dialog">
+
+    <p class="dialogHeader">Terms of Service</p>
+    <markdown class="dialogBody" url="https://raw.githubusercontent.com/PrimeDAO/prime-deals-dapp/master/src/documentation/officialDocs/TermsOfService.md"></markdown>
+  </div>
 </template>

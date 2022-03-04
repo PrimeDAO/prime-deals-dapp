@@ -13,8 +13,8 @@ Given("I choose Deal Type", () => {
   cy.contains("div", "Choose Deal Type").should("be.visible");
 });
 
-Given("I Open Deals", () => {
-  cy.contains("li", "Open Deals").click();
+Given("I Open Proposals", () => {
+  cy.contains("li", "Open Proposals").click();
   cy.url().should("include", "deals/open");
 });
 

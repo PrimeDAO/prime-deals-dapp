@@ -19,7 +19,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/horizontal-scroller/horizontal-scroller"),
     PLATFORM.moduleName("./elements/timeLeft/timeLeft"),
     PLATFORM.moduleName("./elements/dealSummary/dealSummary"),
-    PLATFORM.moduleName("./elements/questionMark/questionMark"),
     PLATFORM.moduleName("./elements/tokenPair/tokenPair"),
     PLATFORM.moduleName("./elements/markdown/markdown"),
     PLATFORM.moduleName("./value-converters/number"),

@@ -4,7 +4,6 @@ import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
 import { ValidationController, ValidationRules } from "aurelia-validation";
-import "./proposalStage.scss";
 
 @autoinject
 export class ProposalStage implements IBaseWizardStage {

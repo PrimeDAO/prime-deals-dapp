@@ -3,7 +3,7 @@ import { ValidationRules } from "aurelia-validation";
 import { Validation } from "services/ValidationService";
 import { IDAO, ISocialMedia } from "entities/DealRegistrationTokenSwap";
 
-export enum WizardType {openProposal, openProposalEdit, partneredDeal, partneredDealEdit, makeAnOffer}
+export enum WizardType {createOpenProposal, editOpenProposal, createPartneredDeal, editPartneredDeal, makeAnOffer}
 
 export interface IBaseWizardStage {
   wizardManager: any;
@@ -11,9 +11,10 @@ export interface IBaseWizardStage {
   activate;
 }
 
-export interface IStageMeta {
+export interface IStageMeta<Settings = any> {
   wizardManager: any;
   wizardType: WizardType;
+  settings: Settings
 }
 
 export const STAGE_ROUTE_PARAMETER = "stageRoute";
