@@ -26,6 +26,7 @@ export class TermsStage implements IBaseWizardStage {
   onDelete(index: number) {
     if (this.wizardState.registrationData.terms.clauses.length === 1) {
       this.wizardState.registrationData.terms.clauses[0].text = "";
+      // This `return true` is used by the termClause component
       return true;
     }
 

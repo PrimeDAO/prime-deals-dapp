@@ -12,6 +12,7 @@ type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerD
 export class TokenDetailsStage {
   wizardManager: any;
   wizardState: IWizardState<IDealRegistrationTokenSwap>;
+  wizardType: WizardType;
   isOpenProposalWizard = false;
   form: ValidationController;
 
@@ -39,6 +40,7 @@ export class TokenDetailsStage {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.stageMetadata = stageMeta.settings;
 
+    this.wizardType = stageMeta.wizardType;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
 
     this.stageMetadata.primaryDAOTokenDetailsViewModes = this.stageMetadata.primaryDAOTokenDetailsViewModes
@@ -49,6 +51,7 @@ export class TokenDetailsStage {
     const validationRules = ValidationRules
       .ensure<IDealRegistrationTokenSwap, number>(data => data.executionPeriodInDays)
       .required()
+      .when(() => !this.isOpenProposalWizard)
       .withMessage("Execution period is required")
       .min(0)
       .withMessage("Execution period should be greater or equal to zero")

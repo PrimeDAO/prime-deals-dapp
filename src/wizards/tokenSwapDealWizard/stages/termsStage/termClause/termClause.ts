@@ -10,7 +10,7 @@ export class TermClause {
   @bindable clause: IClause;
   @bindable.number index: number;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
-  @bindable onDelete: () => void;
+  @bindable onDelete: () => boolean | undefined;
 
   constructor(validationController: ValidationController) {
     this.form = validationController;
@@ -34,5 +34,12 @@ export class TermClause {
 
   onSave(): Promise<boolean> {
     return this.form.validate().then(result => result.valid);
+  }
+
+  delete() {
+    if (this.onDelete()) {
+      return;
+    }
+    this.form.removeObject(this.clause);
   }
 }
