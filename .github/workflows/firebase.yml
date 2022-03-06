@@ -13,4 +13,4 @@ jobs:
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
     - name: Deploy firebase
-      run: npm run firebase-deploy:${{ github.ref }}
+      run: npm run firebase-deploy:${GITHUB_REF_NAME}
