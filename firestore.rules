@@ -14,7 +14,7 @@ service cloud.firestore {
     }
 
     match /test/{item} {
-      allow read, write: if true; 
+      allow read, create: if true; 
     }
     
     match /{document=**} {
