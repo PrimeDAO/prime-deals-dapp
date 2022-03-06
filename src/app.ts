@@ -14,8 +14,16 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
+import { initializeApp } from "firebase/app";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
+
+initializeApp({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  appId: process.env.FIREBASE_APP_ID,
+});
 
 @autoinject
 export class App {
