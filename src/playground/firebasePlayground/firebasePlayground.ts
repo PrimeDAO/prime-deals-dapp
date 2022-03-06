@@ -7,6 +7,5 @@ export class FirebasePlayground {
 
   attached() {
     this.firebaseService.add();
-    this.firebaseService.createCustomToken("asd");
   }
 }
