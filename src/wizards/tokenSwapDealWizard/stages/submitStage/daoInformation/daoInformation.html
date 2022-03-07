@@ -12,23 +12,32 @@
 
   <div class="submitContentLabel-sm">Treasury address</div>
   <div class="submitContent">
-    <p class="subtext">${daoData.treasury_address | smallHexString}</p>
+    <p class="subtext">
+      <template if.bind="daoData.treasury_address">
+        ${daoData.treasury_address | smallHexString}
+      </template>
+      <template else>-</template>
+    </p>
   </div>
 
   <div class="submitContentLabel-sm">Social Media</div>
   <div class="submitContent">
-    <template repeat.for="socialMedia of daoData.social_medias">
+    <template if.bind="daoData.social_medias.length > 0" repeat.for="socialMedia of daoData.social_medias">
       <div>
         <span class="subtext">${socialMedia.name}</span> -
         <span class="subtext">${socialMedia.url}</span>
       </div>
     </template>
+    <template else>-</template>
   </div>
 
   <div class="submitContentLabel-sm">Representatives</div>
   <div class="submitContent">
     <template repeat.for="representative of daoData.representatives">
-      <p class="subtext">${representative.address | smallHexString}</p>
+      <template if.bind="representative.address">
+        <p class="subtext">${representative.address | smallHexString}</p>
+      </template>
+      <template else>-</template>
     </template>
   </div>
 
@@ -36,7 +45,7 @@
   <div class="submitDaoTokenCard">
     <!-- <p class="subtext">TODO: use from Token Details stage</p> -->
 
-    <pcard repeat.for="token of daoData.tokens">
+    <pcard if.bind="daoData.tokens.length > 0" repeat.for="token of daoData.tokens">
       <div>
         <p class="tokenName">
           <img height="32" src.bind="token.logoURI" />
@@ -106,5 +115,6 @@
         </div>
       </div>
     </pcard>
+    <template else>-</template>
   </div>
 </template>
