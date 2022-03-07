@@ -1,4 +1,5 @@
 @import "styles/styles.scss";
+@import "resources/elements/primeDesignSystem/variables";
 
 dao-stage-content {
   .daoRepresentative, .daoSocialMedia {
@@ -21,6 +22,7 @@ dao-stage-content {
   .multiFieldTitle {
     color: $Secondary02;
     margin-bottom: $spacing-normal;
+    @include subHeading;
     font-size: $font-size3;
     font-weight: 700;
   }
