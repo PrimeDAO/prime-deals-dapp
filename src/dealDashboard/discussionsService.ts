@@ -298,6 +298,7 @@ export class DiscussionsService {
             comment.text = text;
           });
         }
+        if (comment.authorENS) comment.authorName = comment.authorENS;
       });
 
       latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
