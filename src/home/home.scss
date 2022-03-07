@@ -79,6 +79,10 @@
 
         > .selector-tab {
           cursor: pointer;
+
+          &:hover:not(.active) {
+            -webkit-text-fill-color: $Neutral04;
+          }
         }
 
         display: flex;
