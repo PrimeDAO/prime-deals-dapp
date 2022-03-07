@@ -14,7 +14,7 @@ export class PTooltip {
   private tooltip: Instance;
 
   constructor(private element: Element) {
-    this.tooltip = tippy(this.element, {theme: "prime-design-system"});
+    this.tooltip = tippy(this.element, {theme: "prime-design-system", appendTo: document.body});
   }
 
   propertyChanged(name: string, newValue: string) {
