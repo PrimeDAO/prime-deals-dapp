@@ -9,6 +9,7 @@ import "./stageButtons.scss";
 export class stageButtons {
   @bindable wizardManager: any;
   @bindable showSubmit;
+  @bindable onSubmit: () => void;
 
   private wizardState: IWizardState<IDealRegistrationTokenSwap>;
 

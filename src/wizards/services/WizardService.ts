@@ -4,7 +4,6 @@ import { Router } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Rule, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
-import { AlertService, IAlertModel } from "services/AlertService";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -35,7 +34,6 @@ export class WizardService {
     private router: Router,
     private eventAggregator: EventAggregator,
     private validationFactory: ValidationControllerFactory,
-    private alertService: AlertService,
   ) {
   }
 
@@ -110,27 +108,6 @@ export class WizardService {
     }
   }
 
-  public async submit(wizardStateKey: WizardStateKey): Promise<void> {
-    let allStagesValid = false;
-    this.wizardsStates.forEach((wizardState) => {
-      allStagesValid = wizardState.stages.every(stage => stage.valid);
-    });
-
-    if (!allStagesValid) return;
-
-    const congratulatePopupModel: IAlertModel = {
-      header: "Your deal has been submitted!",
-      message: "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
-      confetti: true,
-      buttonTextPrimary: "Go to deal (todo)",
-      className: "congratulatePopup",
-    };
-
-    this.deleteVotesForPartneredDeal(wizardStateKey);
-
-    await this.alertService.showAlert(congratulatePopupModel);
-  }
-
   public async goToStage(wizardStateKey: WizardStateKey, index: number, blockIfInvalid: boolean): Promise<void> {
 
     const wizardState = this.getWizardState(wizardStateKey);
@@ -200,11 +177,5 @@ export class WizardService {
   private getActiveStage(wizardStateKey: WizardStateKey): IWizardStage {
     const wizardState = this.getWizardState(wizardStateKey);
     return wizardState.stages[wizardState.indexOfActive];
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private deleteVotesForPartneredDeal(wizardStateKey: WizardStateKey) {
-    // eslint-disable-next-line no-console
-    console.log("TODO: deleteVotesForPartneredDeal");
   }
 }
