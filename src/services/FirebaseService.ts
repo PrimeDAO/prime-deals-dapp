@@ -5,7 +5,6 @@ import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, in
 import { getFirestore, connectFirestoreEmulator, doc, setDoc } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
-import { EthereumService } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 
 export const firebaseApp = initializeApp({
@@ -30,10 +29,7 @@ export class FirebaseService {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
-  ) {
-
-  }
+  ) {}
 
   async add() {
     await setDoc(doc(firebaseDatabase, "test", `${Math.random()}`), {

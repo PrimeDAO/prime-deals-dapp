@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
+import { getAddress } from "ethers/lib/utils";
 
 const admin = firebaseAdmin.initializeApp();
 
@@ -19,10 +20,15 @@ export const createCustomToken = functions.https.onRequest(
         return response.sendStatus(400);
       }
 
-      // @TODO check if it is a correct eth address
+      const address = request.body.address;
 
       try {
-        const address = request.body.address;
+        getAddress(address);
+      } catch {
+        return response.sendStatus(500);
+      }
+
+      try {
         const firebaseToken = await admin.auth().createCustomToken(address);
 
         return response.status(200).json({ token: firebaseToken });
