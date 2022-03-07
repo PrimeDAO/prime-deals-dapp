@@ -377,16 +377,16 @@ export class DiscussionsService {
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to add a comment"),
       );
-      return null;
+      return this.comments;
     }
-
     if (!isValidAuth) {
       await this.authenticateSession();
-      if (!isValidAuth) {
+      if (!localStorage.getItem("discussionToken")) {
         this.eventAggregator.publish(
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
+        return this.comments;
       }
     }
 

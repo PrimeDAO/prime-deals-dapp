@@ -19,7 +19,6 @@ export class DealDashboard {
   private discussionId: string = null;
 
   private clauses: IClause[];
-  private activeClause: string;
 
   @computedFrom("ethereumService.defaultAccountAddress", "deal.registrationData")
   get isPrivate(): boolean {
@@ -66,15 +65,6 @@ export class DealDashboard {
       ...this.deal.registrationData.primaryDAO.representatives.map(representative => representative.address),
       ...this.deal.registrationData.partnerDAO.representatives.map(representative => representative.address),
     ].includes(newAddress));
-  }
-
-  private setThreadIdFromRoute(navigationInstruction): void {
-    const currentRoute = navigationInstruction.params.childRoute;
-    if (currentRoute && currentRoute.includes("/")) {
-      this.activeClause = navigationInstruction.params.childRoute.split("/")[1];
-    } else {
-      this.activeClause = undefined;
-    }
   }
 
   /**
