@@ -129,7 +129,7 @@ export class WizardManager {
       this.stages = this.configureStages(wizardType);
 
       this.wizardState = this.wizardService.registerWizard({
-        wizardManager: this,
+        wizardStateKey: this,
         stages: this.stages,
         registrationData: this.registrationData,
         cancelRoute: "home",
