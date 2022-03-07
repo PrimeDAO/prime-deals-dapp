@@ -12,6 +12,10 @@
 
   .active {
     color: $Secondary02;
+
+    .valid {
+      color: $Secondary02;
+    }
   }
   .valid {
     color: $Neutral02;
