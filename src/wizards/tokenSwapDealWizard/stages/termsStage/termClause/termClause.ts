@@ -1,9 +1,10 @@
 import { autoinject, bindingMode } from "aurelia-framework";
-import { bindable } from "aurelia-typed-observable-plugin";
+import { bindable, observable } from "aurelia-typed-observable-plugin";
 import { validateTrigger, ValidationController, ValidationRules } from "aurelia-validation";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
 import "./termClause.scss";
+import { EditingCard } from "../../../../../resources/elements/editingCard/editingCard";
 
 @autoinject
 export class TermClause {
@@ -11,6 +12,9 @@ export class TermClause {
   @bindable.number index: number;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
   @bindable onDelete: () => boolean | undefined;
+  @bindable onSaved?: () => void;
+
+  @observable viewMode: EditingCard["viewMode"];
 
   constructor(validationController: ValidationController) {
     this.form = validationController;
@@ -41,5 +45,11 @@ export class TermClause {
       return;
     }
     this.form.removeObject(this.clause);
+  }
+
+  viewModeChanged(newValue: "edit" | "view") {
+    if (newValue === "view") {
+      this.onSaved?.();
+    }
   }
 }
