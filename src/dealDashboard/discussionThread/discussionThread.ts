@@ -91,7 +91,13 @@ export class DiscussionThread {
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
-  private async initialize(): Promise<void> {
+  discussionIdChanged() {
+    if (this.deal) {
+      this.initialize(true);
+    }
+  }
+
+  private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
 
     this.isAuthorized = this.checkIsAuthorized;
@@ -117,7 +123,11 @@ export class DiscussionThread {
       this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
 
       // Ensures comment fetching and subscription
-      this.ensureDealDiscussion(this.discussionId);
+      await this.ensureDealDiscussion(this.discussionId);
+      if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
+        this.discussionsService.autoScrollAfter(0);
+      }
+
     } else {
       this.isLoading.discussions = false;
     }
@@ -218,10 +228,6 @@ export class DiscussionThread {
           }
         }
       });
-
-      if (this.isInView(this.refThread)) {
-        this.discussionsService.autoScrollAfter(0);
-      }
 
       // Update the discussion status
       this.discussionsService.updateDiscussionListStatus(discussionId);
