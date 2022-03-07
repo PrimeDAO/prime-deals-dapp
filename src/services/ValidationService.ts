@@ -1,4 +1,4 @@
-import { ValidationRules } from "aurelia-validation";
+import { ValidationController, ValidationRules } from "aurelia-validation";
 import { Utils } from "./utils";
 import { ImageService } from "./ImageService";
 
@@ -65,3 +65,23 @@ ValidationRules.customRule(
   "Image should have one of the extensions: ${$config.extensions.join(', ')}",
   (extensions) => ({extensions}),
 );
+
+/**
+ * Get the validation result from each ValidationController in an array
+ * @param forms
+ */
+export function validateForms(forms: ValidationController[]) {
+  return Promise.all(
+    forms.map(form => form.validate().then(result => result.valid)),
+  );
+}
+
+/**
+ * Returns true if all the ValidationControllers are valid
+ * @param forms
+ */
+export async function areFormsValid(forms: ValidationController[]) {
+  const validationResults = await validateForms(forms);
+
+  return validationResults.filter(Boolean).length === validationResults.length;
+}

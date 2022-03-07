@@ -22,9 +22,13 @@
         display: flex;
         margin-bottom: 200px;
 
-        pcard {
+        .pcard {
           width: clamp(100px, 100%, 335px);
           padding: 12px 24px 24px 24px;
+
+          &.gradient:hover {
+            @include pcardBgAndGradient($backgroundColor: $Border01);
+          }
 
           header {
             display: flex;
@@ -38,7 +42,6 @@
               font-weight: 400;
             }
           }
-
         }
 
         flex-direction: row;
@@ -65,7 +68,6 @@
       }
 
       > .selector {
-
         :not(:first-child) {
           margin-left: 63px;
         }

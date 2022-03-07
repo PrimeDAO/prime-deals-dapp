@@ -20,10 +20,10 @@
           <div class="icon rating"><img class="mono" src="/static/rating-mono.svg" /><img class="color" src="/static/rating.svg" /></div>
           <div class="text">Rating</div>
         </div>
-        <div class="item active" click.delegate="navigate('/')">
+        <a class="item active" href="/">
           <div class="icon deals"><img class="mono" src="/static/deals-mono.svg" /><img class="color" src="/static/deals.svg" /></div>
           <div class="text">Deals</div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -31,10 +31,10 @@
 
     <div class="productSubpages">
       <div class="container">
-        <div click.delegate="navigate('/')" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</div>
-        <div click.delegate="navigate('/initiate')" class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">Initiate a Deal</div>
-        <div click.delegate="navigate('/deals')" class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">All Deals</div>
-        <div click.delegate="navigate('/documentation')" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</div>
+        <a href="/" class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}">Home</a>
+        <a href="/initiate" class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}">Initiate a Deal</a>
+        <a href="/deals" class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'deals') ? 'active' : ''}">All Deals</a>
+        <a href="/documentation" class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}">Documentation</a>
         <div click.delegate="goto('https://form.typeform.com/to/SUCTM812')" class="item">Support</div>
       </div>
     </div>

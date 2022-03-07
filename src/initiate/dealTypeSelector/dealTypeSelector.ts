@@ -11,7 +11,7 @@ export interface IDealTypeBox {
 
 @autoinject
 export class dealTypeSelector {
-  @bindable title: string;
+  @bindable header: string;
   @bindable description: string;
   @bindable boxes: IDealTypeBox[];
 

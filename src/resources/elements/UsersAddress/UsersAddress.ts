@@ -25,7 +25,7 @@ export class UsersAddress {
 
   private async initialize() {
     this.usersAddress = this.ethereumService.defaultAccountAddress;
-    if (this.usersAddress && this.showEns) {
+    if (this.usersAddress && this.showEns && this.ethereumService.walletProvider) {
       this.ens = await this.ethereumService.walletProvider.lookupAddress(this.usersAddress);
     }
   }

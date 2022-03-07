@@ -80,25 +80,27 @@ export interface IDealRegistrationTokenSwap {
   dealType: "token-swap"/* | "co-liquidity"*/;
 }
 
-export const emptyDaoDetails: IDAO = {
-  name: "",
-  tokens: [{
-    address: "",
-    name: undefined,
-    symbol: undefined,
-    decimals: undefined,
-    logoURI: undefined,
-    amount: undefined,
-    instantTransferAmount: undefined,
-    vestedTransferAmount: undefined,
-    vestedFor: undefined,
-    cliffOf: undefined,
-  }],
-  treasury_address: "",
-  representatives: [{address: ""}],
-  social_medias: [{name: "", url: ""}],
-  logoURI: null,
-};
+export function emptyDaoDetails(): IDAO {
+  return {
+    name: "",
+    tokens: [{
+      address: "",
+      name: undefined,
+      symbol: undefined,
+      decimals: undefined,
+      logoURI: undefined,
+      amount: undefined,
+      instantTransferAmount: undefined,
+      vestedTransferAmount: undefined,
+      vestedFor: undefined,
+      cliffOf: undefined,
+    }],
+    treasury_address: "",
+    representatives: [{address: ""}],
+    social_medias: [{name: "", url: ""}],
+    logoURI: null,
+  };
+}
 
 export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public version: string;
@@ -127,8 +129,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       summary: "",
       description: "",
     };
-    this.primaryDAO = emptyDaoDetails;
-    this.partnerDAO = isPartneredDeal ? emptyDaoDetails : undefined;
+    this.primaryDAO = emptyDaoDetails();
+    this.partnerDAO = isPartneredDeal ? emptyDaoDetails() : undefined;
     this.proposalLead = {
       address: "",
       email: "",

@@ -63,6 +63,11 @@ html {
       }
     }
 
+    // Important: Fix stacks styling messing things around
+    figure {
+      margin: unset;
+    }
+
     hr {
       height: 1px;
       border: none;

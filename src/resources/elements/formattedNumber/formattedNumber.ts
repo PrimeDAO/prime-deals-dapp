@@ -1,11 +1,6 @@
-import {
-  autoinject,
-  computedFrom,
-  containerless,
-} from "aurelia-framework";
+import { autoinject, computedFrom, containerless } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { NumberService } from "services/NumberService";
-import tippy from "tippy.js";
 
 @autoinject
 @containerless
@@ -24,12 +19,11 @@ export class FormattedNumber {
   @bindable public value: number | string;
   @bindable public placement = "top";
   @bindable public defaultText = "--";
+  @bindable.booleanAttr public hideTooltip = false;
   @bindable.booleanAttr public thousandsSeparated = false;
 
   private text: string;
-  private textElement: HTMLElement;
   private _value: number | string;
-  private tippyInstance: any;
 
   constructor(private numberService: NumberService) {
   }
@@ -57,32 +51,10 @@ export class FormattedNumber {
 
     this.text = text ?? this.defaultText;
 
-    this.setTooltip();
   }
-
-  public attached(): void {
-    this.setTooltip();
-  }
-
-  // public detached(): void {
-  //   tippy(this.textElement, "dispose");
-  // }
 
   @computedFrom("_value")
   private get tooltip():string {
     return this._value?.toString(10);
-  }
-
-  private setTooltip() {
-    if (this.textElement && this.value) {
-      if (!this.tippyInstance) {
-      // tippy(this.textElement, "dispose");
-        this.tippyInstance = tippy(this.textElement, {
-          appendTo: () => document.body, // because is "interactive" and otherwise messes with the layout on hover
-          zIndex: 10005,
-        });
-      }
-      this.tippyInstance.setContent(this.value.toString());
-    }
   }
 }

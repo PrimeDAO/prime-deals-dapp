@@ -1,6 +1,6 @@
 import { containerless } from "aurelia-framework";
 // import { bindable } from "aurelia-typed-observable-plugin";
-import "./CounterPanel.scss";
+import "./counterPanel.scss";
 
 interface ICounterInfo {
   created: number

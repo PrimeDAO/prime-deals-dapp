@@ -1,7 +1,5 @@
-import { singleton } from "aurelia-framework";
 import { RouteConfig } from "aurelia-router";
 
-@singleton(true)
 export class BaseDocument {
   content: string;
   title: string;

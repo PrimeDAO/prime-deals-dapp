@@ -22,7 +22,7 @@ class Terms {
     return cy.get("[data-test='clauseTextarea'] textarea");
   }
   static getClauseError() {
-    return cy.get("[data-test='clauseFormInput']");
+    return cy.get("[data-test='clauseFormInput'] .pInput-error");
   }
 }
 
@@ -79,8 +79,12 @@ Then("I have {int} Clauses", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", numOfClauses);
 });
 
-Then("I should get an error message", () => {
+Then("I should get an error message for the Clause", () => {
   Terms.getClauseError().should("be.visible");
+});
+
+Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
+  Terms.getClauseError().should("have.length", numOfErros);
 });
 
 Then("I can see my existing Clauses", () => {
