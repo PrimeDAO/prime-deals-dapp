@@ -3,7 +3,7 @@
   <label class="formInputLabel" if.bind="label">
     <span class="formInputLabelTitle">
       ${label}
-      <i ref="labelInfoIcon" show.bind="labelInfo" class="fas fa-question-circle labelInfoIcon" data-tippy-content.bind="labelInfo"></i>
+      <pquestion-mark class="labelInfoIcon" if.bind="labelInfo" text.bind="labelInfo"></pquestion-mark>
     </span>
     <div class="formInputLabelExtra" if.bind="showCounter">
       ${input.value.length || 0}${maxLength ? '/' + maxLength : ''}

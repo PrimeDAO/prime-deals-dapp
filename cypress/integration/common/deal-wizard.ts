@@ -49,7 +49,7 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   if (!stageTitlesToURLs[stageTitle]) {
     throw new Error(`Stage  ${stageTitle} does not exist in the list`);
   }
-  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {

@@ -18,7 +18,7 @@ const project = require('./aurelia_project/aurelia.json');
 const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { EnvironmentPlugin, ProvidePlugin } = require("webpack");
+const { EnvironmentPlugin, ProvidePlugin } = require( "webpack" );
 require("dotenv").config({ path: `${ process.env.DOTENV_CONFIG_PATH }`});
 
 console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
@@ -52,7 +52,7 @@ const sassRules = [
   }
 ];
 
-module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } = {}) => ({
+module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } = {} ) => ( {
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
@@ -69,15 +69,15 @@ module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } =
       process: 'process/browser',
       buffer: 'buffer',
       "styles": path.resolve(__dirname, "src/styles"),
-      static: path.resolve(__dirname, 'src/static'),
+      static: path.resolve( __dirname, 'src/static' ),
     },
     fallback: {
-      crypto: require.resolve('crypto-browserify'),
-      stream: require.resolve('stream-browserify'),
-      os: require.resolve('os-browserify/browser'),
-      http: require.resolve('stream-http'),
-      https: require.resolve('https-browserify'),
-      buffer: require.resolve('buffer/'),
+      crypto: require.resolve( 'crypto-browserify' ),
+      stream: require.resolve( 'stream-browserify' ),
+      os: require.resolve( 'os-browserify/browser' ),
+      http: require.resolve( 'stream-http' ),
+      https: require.resolve( 'https-browserify' ),
+      buffer: require.resolve( 'buffer/' ),
     },
   },
   entry: {
@@ -246,7 +246,7 @@ module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } =
       // only when the issuer is a .js/.ts file, so the loaders are not applied inside html templates
       {
         test: /\.css$/i,
-        issuer: { not: [/\.html$/i] },
+        issuer: { not: [ /\.html$/i ] },
         use: extractCss ? [{
           loader: MiniCssExtractPlugin.loader
         }, ...cssRules
@@ -299,10 +299,10 @@ module.exports = ({ production, extractCss, analyze, tests, hmr, port, host, } =
     ...when(!tests, new DuplicatePackageCheckerPlugin()),
     // Work around for Buffer is undefined:
     // https://github.com/webpack/changelog-v5/issues/10
-    new ProvidePlugin({
+    new ProvidePlugin( {
       process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
-    }),
+      Buffer: [ 'buffer', 'Buffer' ],
+    } ),
     new AureliaPlugin(),
     new ModuleDependenciesPlugin({
       'aurelia-testing': ['./compile-spy', './view-spy']

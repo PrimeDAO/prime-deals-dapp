@@ -59,6 +59,7 @@ $menu-open-duration: 0.1s;
         align-items: center;
         justify-items: start;
         column-gap: 12px;
+        text-decoration: none;
 
         .icon {
           display: inline-grid; // to get vertical alignment
@@ -119,7 +120,7 @@ $menu-open-duration: 0.1s;
       list-style-type: none;
       margin: 0;
       display: grid;
-      grid-template-columns: auto auto auto auto;
+      grid-template-columns: auto auto auto auto auto;
       justify-content: start;
 
       column-gap: 20px;
@@ -131,6 +132,8 @@ $menu-open-duration: 0.1s;
         font-weight: 500;
         font-size: 16px;
         line-height: 19px;
+        white-space: nowrap;
+        text-decoration: none;
 
         color: $Neutral02;
 
@@ -174,7 +177,7 @@ $menu-open-duration: 0.1s;
   }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 600px) {
   .navbar-container {
     grid-template-columns: auto 1fr auto;
     grid-template-areas: "logo connect hamburger-menu";

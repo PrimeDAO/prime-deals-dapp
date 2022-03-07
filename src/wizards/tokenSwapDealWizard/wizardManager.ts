@@ -4,11 +4,16 @@ import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
 import { RouteConfig, Router } from "aurelia-router";
 import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
-import { DealRegistrationTokenSwap, emptyDaoDetails, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import {
+  DealRegistrationTokenSwap,
+  emptyDaoDetails,
+  IDealRegistrationTokenSwap,
+} from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
+import "../wizards.scss";
 
 @autoinject
 export class WizardManager {
@@ -23,6 +28,7 @@ export class WizardManager {
 
   // view model of the currently active stage
   public viewModel: string;
+  public additionalStageMetadata: Record<string, any>[] = [];
 
   private wizardType: WizardType;
   private dealId: IKey;
@@ -115,7 +121,7 @@ export class WizardManager {
       this.registrationData = dealId ? await this.getDeal(dealId) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
 
       if (wizardType === WizardType.makeAnOffer) {
-        this.registrationData.partnerDAO = emptyDaoDetails;
+        this.registrationData.partnerDAO = emptyDaoDetails();
       }
 
       await this.ensureAccess(wizardType);
@@ -156,9 +162,12 @@ export class WizardManager {
   }
 
   private setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
+    this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+
     this.stageMeta = {
       wizardType,
       wizardManager: this,
+      settings: this.additionalStageMetadata[indexOfActiveStage],
     };
 
     const activeStage = this.stages[indexOfActiveStage];
@@ -187,13 +196,14 @@ export class WizardManager {
 
   private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
     /**
-     * for any stages that have been previously validated, set stage.valid to true.
-     * Otherwise, set to false.
+     * for any stages that have been previously checked and found valid,
+     * set stage.valid to true Otherwise, set to undefined, indicating
+     * they have not been checked.
      */
     switch (wizardType) {
       case WizardType.makeAnOffer:
         stages.map((stage) => {
-          stage.valid = (stage !== this.partnerDaoStage);
+          stage.valid = (stage !== this.partnerDaoStage) ? true : undefined;
         });
         break;
       case WizardType.editPartneredDeal:
@@ -202,7 +212,7 @@ export class WizardManager {
         break;
       case WizardType.createPartneredDeal:
       case WizardType.createOpenProposal:
-        stages.map((stage) => stage.valid = false);
+        stages.map((stage) => stage.valid = undefined);
         break;
     }
   }

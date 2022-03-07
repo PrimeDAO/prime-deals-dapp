@@ -1,13 +1,84 @@
+import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap, Platforms } from "entities/DealRegistrationTokenSwap";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+
 const address1 = "0xf525a861391e64d5126414434bFf877285378246";
 const address2 = "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82";
 const address3 = "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276";
-const address4 = "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b";
-const address5 = "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F";
+const address4 = "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F";
+const address5 = "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b";
 const address6 = "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E";
 const proposalLeadAddress1 = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
 const tokenAddress1 = "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad";
+
+const discussion1: IDealDiscussion = {
+  version: "0.0.1",
+  discussionId: "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
+  topic: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
+  clauseIndex: 0,
+  admins: [{
+    address: address5,
+  }],
+  representatives: [{
+    address: address5,
+  }],
+  createdBy: {address: address4},
+  createdAt: new Date("2022-01-23T15:38:16.528Z"),
+  modifiedAt: new Date(1643031030746),
+  replies: 6,
+  key: "qKPjb-UsETIBQQKe_7LiS1eCHxuUwyVC3qzSslb5hus",
+};
+const discussion2: IDealDiscussion = {
+  version: "0.0.1",
+  discussionId: "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
+  topic: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostr",
+  clauseIndex: 1,
+  admins: [{
+    address: address5,
+  }],
+  representatives: [{
+    address: address5,
+  }],
+  createdBy: {address: address4},
+  createdAt: new Date("2022-01-21T15:48:32.753Z"),
+  modifiedAt: new Date(1642846275332),
+  replies: 10,
+  key: "KHNUC5AJTNAdeKKRHY8EVdYcX8LA4IhQE4hFrsmjpBA",
+};
+const discussion3: IDealDiscussion = {
+  version: "0.0.1",
+  discussionId: "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
+  topic: "Excepteur sint occaecat cupidatat id est laborum.",
+  clauseIndex: 2,
+  admins: [{
+    address: address4,
+  }],
+  representatives: [{
+    address: address4,
+  }],
+  createdBy: {address: address4},
+  createdAt: new Date("2022-01-22T20:57:43.707Z"),
+  modifiedAt: null,
+  replies: 0,
+  key: "8awiOeBryjLFPP1FuymzAp-iA7aHLnkIy9WCgkOt8Y8",
+};
+const discussion4: IDealDiscussion = {
+  version: "0.0.1",
+  discussionId: "41d17125b9e107857167b75341259a2b9cff6d13",
+  topic: "Clause without a discussion.",
+  clauseIndex: 3,
+  admins: [{
+    address: address4,
+  }],
+  representatives: [{
+    address: address4,
+  }],
+  createdBy: {address: address4},
+  createdAt: new Date("2022-01-22T20:57:43.707Z"),
+  modifiedAt: null,
+  replies: 0,
+  key: "-i90irriG3hu8xJs1g0c7LtTCtGiYmU5m3hZSfcIPz0",
+};
 
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
@@ -21,7 +92,7 @@ const _registration1: IDealRegistrationTokenSwap = {
     name: "Creator",
     tokens: [],
     social_medias: [],
-    representatives: [{address: address1}],
+    representatives: [{address: address1}, {address: address4}],
     treasury_address: address2,
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
@@ -32,7 +103,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   },
   terms: {
     clauses: [
-      {id: "", text: "lorem"},
+      {id: "clause-hash-1", text: "lorem"},
     ],
   },
   keepAdminRights: false,
@@ -84,10 +155,10 @@ const _registration2: IDealRegistrationTokenSwap = {
   },
   keepAdminRights: true,
   offersPrivate: true,
-  isPrivate: true,
+  isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: address5,
+  createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -128,10 +199,10 @@ const _registration3: IDealRegistrationTokenSwap = {
   },
   keepAdminRights: true,
   offersPrivate: true,
-  isPrivate: true,
+  isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: address5,
+  createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -198,8 +269,8 @@ const _registration4: IDealRegistrationTokenSwap = {
       amount: "200000",
       instantTransferAmount: "150000",
       vestedTransferAmount: "50000",
-      vestedFor: 14,
-      cliffOf: 3,
+      vestedFor: 14 * 24 * 3600, // should be in seconds
+      cliffOf: 3 * 24 * 3600, // should be in seconds
     }],
     treasury_address: address3,
     representatives: [{address: address4}],
@@ -276,7 +347,7 @@ const _registration5: IDealRegistrationTokenSwap = {
   isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: address5,
+  createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -326,10 +397,10 @@ const _registration6: IDealRegistrationTokenSwap = {
   },
   keepAdminRights: true,
   offersPrivate: true,
-  isPrivate: true,
+  isPrivate: false,
   createdAt: new Date("2022-02-02"),
   modifiedAt: null,
-  createdByAddress: address5,
+  createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
@@ -385,16 +456,23 @@ const MOCK_DATA = {
   "registration-hash-6": _registration6,
 
   // Discussions Mock Map
-  "clause-discussions-hash-1": {},
+  "clause-discussions-hash-1": {
+    "clause-hash-1": "41d17125b9e107857167b75341259a2b9cff6d13",
+  },
   "clause-discussions-hash-2": {
     "clause-hash-1": "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
     "clause-hash-2": "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
     "clause-hash-3": "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
+    "clause-hash-4": "41d17125b9e107857167b75341259a2b9cff6d13",
   },
   "clause-discussions-hash-3": {},
   "clause-discussions-hash-4": {},
   "clause-discussions-hash-5": {},
-  "clause-discussions-hash-6": {},
+  "clause-discussions-hash-6": {
+    "clause-hash-1": "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
+    "clause-hash-2": "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
+    "clause-hash-3": "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
+  },
 
   // Votes Mock
   "votes-hash-1": [],
@@ -405,74 +483,10 @@ const MOCK_DATA = {
   "votes-hash-6": [],
 
   // Discussions Mock
-  "3b39cab51d207ad9f77e1ee4083337b00bbc707f": {
-    version: "0.0.1",
-    discussionId: "3b39cab51d207ad9f77e1ee4083337b00bbc707f",
-    topic: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
-    clauseId: 0,
-    admins: [
-      address5,
-    ],
-    representatives: [
-      address5,
-    ],
-    isPrivate: false,
-    createdByAddress: address5,
-    createdAt: new Date("2022-01-23T15:38:16.528Z"),
-    modifiedAt: new Date(1643031030746),
-    replies: 6,
-  },
-  "e853c854c6bafac799eea13582d6bd41fa6c0fd5": {
-    version: "0.0.1",
-    discussionId: "e853c854c6bafac799eea13582d6bd41fa6c0fd5",
-    topic: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostr",
-    clauseId: 1,
-    admins: [
-      address5,
-    ],
-    representatives: [
-      address5,
-    ],
-    isPrivate: true,
-    createdByAddress: address5,
-    createdAt: new Date("2022-01-21T15:48:32.753Z"),
-    modifiedAt: new Date(1642846275332),
-    replies: 10,
-  },
-  "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766": {
-    version: "0.0.1",
-    discussionId: "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766",
-    topic: "Excepteur sint occaecat cupidatat id est laborum.",
-    clauseId: 2,
-    admins: [
-      address4,
-    ],
-    representatives: [
-      address4,
-    ],
-    isPrivate: true,
-    createdByAddress: address4,
-    createdAt: new Date("2022-01-22T20:57:43.707Z"),
-    modifiedAt: null,
-    replies: 0,
-  },
-  "discussion-hash-4": {
-    version: "0.0.1",
-    discussionId: "18a416630e1ab87c7d24d960bfd3a0f72a61b9e0",
-    topic: "Clause without a discussion.",
-    clauseId: 3,
-    admins: [
-      address4,
-    ],
-    representatives: [
-      address4,
-    ],
-    isPrivate: true,
-    createdByAddress: address4,
-    createdAt: new Date("2022-01-22T20:57:43.707Z"),
-    modifiedAt: null,
-    replies: 0,
-  },
+  "3b39cab51d207ad9f77e1ee4083337b00bbc707f": discussion1,
+  "e853c854c6bafac799eea13582d6bd41fa6c0fd5": discussion2,
+  "0adcb114f1cd5f39e88e67c9b85424b9d4d9e766": discussion3,
+  "41d17125b9e107857167b75341259a2b9cff6d13": discussion4,
 } as const;
 
 export class CeramicServiceMock extends IDataSourceDeals {
@@ -492,6 +506,6 @@ export class CeramicServiceMock extends IDataSourceDeals {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public update(id: IKey, data: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    return MOCK_DATA[id] = JSON.parse(data);
   }
 }

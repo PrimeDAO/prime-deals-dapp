@@ -32,11 +32,19 @@ $Gradient05: linear-gradient(220.2deg, #2d062b 0%, #15062d 100%);
 $Gradient06: linear-gradient(220.2deg, #2a204a 0%, #15062d 100%);
 $Gradient07: linear-gradient(220.2deg, #30ef71 0%, #41a0c9 100%);
 $Gradient08: linear-gradient(45deg, $Secondary02 0%, $Shade01 50%, $Shade06 100%);
+$Gradient09: linear-gradient(220.2deg, #a258a7 0%, #ff497a 100%);
+
 @mixin standardTextGradient {
   background-image: $Gradient01;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+@mixin standardTextGradientReversed {
+  background-image: $Gradient08;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 $Red: #ff5252; // Fail

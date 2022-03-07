@@ -40,6 +40,27 @@ export class DateService {
   }
 
   public configure(): void {
+    // spacial case localize for diff display.
+    moment.updateLocale("en-custom", {
+      relativeTime: {
+        future: "in %s",
+        past:   "%s ago",
+        s:  "%dsec",
+        ss: "%dsec",
+        m:  "%dmin",
+        mm: "%dmin",
+        h:  "%dh",
+        hh: "%dh",
+        d:  "%dd",
+        dd: "%dd",
+        w:  "%dw",
+        ww: "%dw",
+        M:  "%dm",
+        MM: "%dm",
+        y:  "%dy",
+        yy: "%dy",
+      },
+    });
 
     this.formats = new Map<string, string>();
 
@@ -388,6 +409,49 @@ export class DateService {
     return (end && start) ? moment.duration(end.valueOf() - start.valueOf()) : moment.duration(0);
   }
 
+  /**
+   * ## Returns formatted time:
+   * @param date the date reference (Date).
+   *
+   * ### Methods:
+   *
+   * #### `short`:
+   * Short formatted date string with the format of "MMM dd, yyyy"
+   *
+   * @param locale in which local to return the date. Defaults to "en-US"
+   * @returns Date
+   *
+   * #### `diff`:
+   * Return the time passed from <date> until now as the number of
+   * seconds, minutes, hours, days, weeks or years- depends on the
+   * difference size.
+   * * Up to 1 minutes, the output is "#sec".
+   * * Up to 1 hour, the output is "#min".
+   * * Up to 1 day, the output is "#h".
+   * * Up to 1 week, the output is "#d".
+   * * Up to 1 year, the output is "#w".
+   * * Over 1 year, the output is "#y".
+   * @returns string
+   *
+   * #### Example:
+   * formatDate(new Date()).short("de-DE");
+   *
+   * formatDate(new Date()).diff();
+   */
+  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: () => string} {
+    const _date = new Date(date);
+
+    return {
+      short: (locale = "en-US") => _date.toLocaleDateString(
+        locale,
+        { year: "numeric", month: "short", day: "numeric" },
+      ),
+      diff: () => {
+        if (!date) return "-";
+        return moment(date).locale("en-custom").fromNow(true);
+      },
+    };
+  }
   /**
    * Trying here to keep everything in local timezone with option to translate into UTC when formating as a string.
    * The utc option will only control how toString() behaves, and only when using moment's toString.

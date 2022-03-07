@@ -7,7 +7,6 @@ Given("I navigate to create partnered deal wizard Primary DAO stage", () => {
 Then("I can see Primary DAO section with inputs for collecting its details", () => {
   cy.get("[data-test=\"dao-details-section\"]").within(() => {
     cy.get("[data-test=\"section-title\"]").should("have.text", "Primary DAO");
-    cy.get("[data-test=\"section-description\"]").should("contain.text", "Please fill in the details of the first DAO who will be initiating the deal.");
 
     cy.contains("pform-input", "Primary DAO Name").within(() => {
       cy.get("input").should("exist");
@@ -43,7 +42,7 @@ Then("I can see Primary DAO section with inputs for collecting its details", () 
 
 Then("I can see Primary DAO Representatives section", () => {
   cy.get("[data-test=\"dao-representatives-section\"]").within(() => {
-    cy.get("[data-test=\"section-title\"]").should("have.text", "Representatives");
+    cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Primary DAO - Representatives Addresses (Max. 5)");
     cy.get("[data-test=\"dao-representative\"]").should(($item) => {
