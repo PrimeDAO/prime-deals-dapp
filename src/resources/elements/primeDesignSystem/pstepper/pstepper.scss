@@ -24,6 +24,10 @@
     >div {
       text-align: center;
     }
+    transition: color 125ms ease-in-out;
+    .circledNumber {
+      transition: background-color 125ms ease-in-out;
+    }
   }
 
   pcircled-number {
@@ -48,5 +52,12 @@
         background: $Neutral02;
       }
     }
+  }
+
+  .stepNumber:hover {
+    .circledNumber {
+      background-color: $Neutral04;
+    }
+    color: $Neutral04;
   }
 }
