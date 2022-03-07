@@ -91,7 +91,13 @@ export class DiscussionThread {
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
-  private async initialize(): Promise<void> {
+  discussionIdChanged() {
+    if (this.deal) {
+      this.initialize(true);
+    }
+  }
+
+  private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
 
     this.isAuthorized = this.checkIsAuthorized;
@@ -117,7 +123,11 @@ export class DiscussionThread {
       this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
 
       // Ensures comment fetching and subscription
-      this.ensureDealDiscussion(this.discussionId);
+      await this.ensureDealDiscussion(this.discussionId);
+      if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
+        this.discussionsService.autoScrollAfter(0);
+      }
+
     } else {
       this.isLoading.discussions = false;
     }
@@ -180,8 +190,8 @@ export class DiscussionThread {
     this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
     this.isLoading.discussions = false;
 
-    if (this.threadComments) {
-      this.subscribeToDiscussion(this.discussionId);
+    if (this.threadComments && this.dealDiscussion) {
+      this.subscribeToDiscussion(discussionId);
 
       if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
@@ -195,23 +205,29 @@ export class DiscussionThread {
       this.isLoading[this.dealDiscussion.createdBy.address] = true;
       this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
         .then(profile => {
-          this.dealDiscussion.createdByName = profile.name;
+          this.dealDiscussion.createdByName = profile.name || null;
           this.isLoading[this.dealDiscussion.createdBy.address] = false;
         });
 
-      // Comments author profiles
-      this.threadComments.forEach(async (comment: IComment) => {
-        this.isLoading[comment.author] = true;
+      /* Comments author profiles */
+      this.threadComments.forEach((comment: IComment) => {
         if (!this.threadProfiles[comment.author]) {
-          const profile = await this.discussionsService.loadProfile(comment.author);
-          this.isLoading[comment.author] = false;
-          this.threadProfiles[profile.address] = profile;
+          this.isLoading[comment.author] = true;
+          if (comment.authorName /* author has ENS name */) {
+            this.threadProfiles[comment.author] = {
+              name: comment.authorName,
+              address: comment.author,
+              image: "",
+            };
+          } else {
+            /* required for replies */
+            this.discussionsService.loadProfile(comment.author).then(profile => {
+              this.threadProfiles[comment.author] = profile;
+              this.isLoading[comment.author] = false;
+            });
+          }
         }
       });
-
-      if (this.isInView(this.refThread)) {
-        this.discussionsService.autoScrollAfter(0);
-      }
 
       // Update the discussion status
       this.discussionsService.updateDiscussionListStatus(discussionId);
