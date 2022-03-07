@@ -26,7 +26,8 @@ export const createCustomToken = functions.https.onRequest(
         const firebaseToken = await admin.auth().createCustomToken(address);
 
         return response.status(200).json({ token: firebaseToken });
-      } catch {
+      } catch (error){
+        functions.logger.error("createCustomToken error:", error);
         return response.sendStatus(500);
       }
     }),
