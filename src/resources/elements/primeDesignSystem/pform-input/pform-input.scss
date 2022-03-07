@@ -1,4 +1,5 @@
 @import "../styles";
+@import "../variables";
 
 $pformInputLineHeight: 33px;
 
@@ -12,6 +13,7 @@ pform-input {
     justify-content: space-between;
 
     .formInputLabelTitle {
+      @include subHeading;
       font-size: $font-size3;
       font-weight: 700;
       line-height: $pformInputLineHeight;

@@ -1,5 +1,6 @@
 @import "./animations";
 @import "../resources/elements/primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/variables";
 @import "../resources/elements/primeDesignSystem/colors";
 @import "./colors";
 @import "tippy.js/dist/tippy.css"; // TODO: use CDN?
@@ -109,6 +110,7 @@ html {
         margin-bottom: 8px;
       }
       &.heading3 {
+        @include subHeading;
         font-size: 26px;
         line-height: 24px;
         margin-bottom: 6px;
