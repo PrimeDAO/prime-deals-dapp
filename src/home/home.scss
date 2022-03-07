@@ -1,6 +1,11 @@
 @import "src/styles/styles.scss";
 @import "../resources/elements/primeDesignSystem/variables";
 
+@mixin border-gradient($borderGradientColor) {
+  border-image-slice: 1;
+  border-image-source: $borderGradientColor;
+}
+
 .page.home {
   .section {
     &.hero,
@@ -87,7 +92,8 @@
           -webkit-text-fill-color: transparent;
           -webkit-background-clip: text;
           background-clip: text;
-          border-bottom: 6px solid $Secondary02;
+          border-bottom: 6px solid;
+          @include border-gradient($Gradient02);
           padding-bottom: 19px;
         }
 
