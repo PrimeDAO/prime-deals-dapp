@@ -1,6 +1,11 @@
 import { autoinject, bindingMode } from "aurelia-framework";
 import { bindable, observable } from "aurelia-typed-observable-plugin";
-import { validateTrigger, ValidationController, ValidationRules } from "aurelia-validation";
+import {
+  validateTrigger,
+  ValidationController,
+  ValidationControllerFactory,
+  ValidationRules,
+} from "aurelia-validation";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
 import "./termClause.scss";
@@ -16,8 +21,8 @@ export class TermClause {
 
   @observable viewMode: EditingCard["viewMode"];
 
-  constructor(validationController: ValidationController) {
-    this.form = validationController;
+  constructor(private validationControllerFactory: ValidationControllerFactory) {
+    this.form = this.validationControllerFactory.createForCurrentScope();
     this.form.validateTrigger = validateTrigger.change;
     this.form.addRenderer(new PrimeRenderer());
   }
@@ -31,6 +36,8 @@ export class TermClause {
       .ensure<IClause, string>(clause => clause.text)
       .required()
       .withMessage("Clause requires a description")
+      .minLength(10)
+      .withMessage("Clause must be at least ${$config.length} characters")
       .rules;
 
     this.form.addObject(this.clause, rules);
