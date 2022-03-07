@@ -182,8 +182,6 @@ export class PopupNotifications {
     };
 
     this.queueEventConfig(bannerConfig);
-    // eslint-disable-next-line no-console
-    console.error(bannerConfig.message);
   }
 
   private handleInfo(config: EventConfig | string): void {
