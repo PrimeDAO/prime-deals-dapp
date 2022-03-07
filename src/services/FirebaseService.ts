@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
-import { getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator, doc, setDoc } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
@@ -8,7 +8,13 @@ import { Utils } from "services/utils";
 import { EthereumService } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 
-export const firebaseApp = getApp();
+export const firebaseApp = initializeApp({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  appId: process.env.FIREBASE_APP_ID,
+});
+
 export const firebaseDatabase = getFirestore();
 export const firebaseAuth = getAuth();
 export const firebaseFunctions = getFunctions(firebaseApp);
@@ -26,19 +32,23 @@ export class FirebaseService {
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
   ) {
-    this.eventAggregator.subscribe("Network.Changed.Account", address => {
-      if (Utils.isAddress(address)) {
-        this.signInToFirebase(address);
-      } else {
-        signOut(firebaseAuth);
-      }
-    });
+
   }
 
   async add() {
     await setDoc(doc(firebaseDatabase, "test", `${Math.random()}`), {
       name: "Test document",
       random: `${Math.random()}`,
+    });
+  }
+
+  public initializeFirebaseAuthentication() {
+    this.eventAggregator.subscribe("Network.Changed.Account", (address: string) => {
+      if (Utils.isAddress(address)) {
+        this.signInToFirebase(address);
+      } else {
+        signOut(firebaseAuth);
+      }
     });
   }
 
