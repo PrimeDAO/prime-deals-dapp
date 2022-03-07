@@ -14,7 +14,7 @@
       </div>
       <div class="stageSectionContent">
         <pform-input
-          class="wizardFormInput wizardFormInputNarrow proposalLeadAddress"
+          class="wizardFormInput proposalLeadAddress"
           label="Proposal Lead Address"
           input-reference.bind="input"
           data-test="proposal-wallet-address-field">
@@ -24,13 +24,13 @@
             value.bind="wizardState.registrationData.proposalLead.address & validate:form"
             view-model.ref="input"></pinput-text>
           <pbutton click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
-            Connect your wallet
+            Connect wallet
           </pbutton>
           <pbutton
             type="formfield"
             click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
             if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress">
-            Make me an admin
+            Make me admin
           </pbutton>
         </pform-input>
 
