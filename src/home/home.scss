@@ -1,10 +1,6 @@
 @import "src/styles/styles.scss";
 @import "../resources/elements/primeDesignSystem/variables";
-
-@mixin border-gradient($borderGradientColor) {
-  border-image-slice: 1;
-  border-image-source: $borderGradientColor;
-}
+@import "../resources/elements/primeDesignSystem/colors";
 
 .page.home {
   .section {
