@@ -47,6 +47,11 @@ $Gradient09: linear-gradient(220.2deg, #a258a7 0%, #ff497a 100%);
   -webkit-text-fill-color: transparent;
 }
 
+@mixin border-gradient($borderGradientColor) {
+  border-image-slice: 1;
+  border-image-source: $borderGradientColor;
+}
+
 $Red: #ff5252; // Fail
 $Red-BG: #3e263c;
 $Orange: #ffb155; // Warning
