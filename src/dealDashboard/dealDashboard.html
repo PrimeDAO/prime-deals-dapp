@@ -33,14 +33,17 @@
         <header>
           <h2 class="subtitle heading heading3">Deal Clauses</h2>
         </header>
-        <p>Start a discussion below by selecting a specific clause.</p>
         <ol>
-          <li repeat.for="clause of clauses" class="clause ${authorized ? 'isPrivate' : ''} ${activeClause && activeClause === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
+          <li repeat.for="clause of clauses" class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
             <span class="marker">${$index + 1}</span>
             <span class="body">
               ${clause.text}
             </span>
-            <span if.to-view="authorized" class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">Discuss<img src="/static/comment.svg"></img></span>
+            <span if.to-view="authorized" class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">
+              <div if.to-view="!discussionsService.discussions[deal.clauseDiscussions.get(clause.id)]">Begin A Discussion</div>
+              <div else>Discuss</div>
+              <img src="/static/comment.svg"></img>
+            </span>
           </li>
         </ol>
       </section>
@@ -50,6 +53,7 @@
     <section class="discussion" show.bind="authorized || !isPrivate">
       <discussions-list if.to-view="!discussionId"
         discussion-id.two-way="discussionId"
+        is-authorized.bind="authorized"
         deal.bind="deal">
       </discussions-list>
       <discussion-thread else 
