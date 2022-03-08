@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "prime-deals-6ace4",
+    "development": "prime-deals-6ace4",
+    "staging": "todo",
+    "production": "todo"
+  }
+}

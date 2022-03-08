@@ -6,6 +6,7 @@
     "EditorConfig.EditorConfig",
     "christian-kohler.path-intellisense",
     "behzad88.Aurelia",
-    "alexkrechik.cucumberautocomplete"
+    "alexkrechik.cucumberautocomplete",
+    "toba.vsfire"
   ]
 }

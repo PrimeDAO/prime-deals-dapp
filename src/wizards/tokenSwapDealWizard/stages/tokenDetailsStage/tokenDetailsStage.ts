@@ -5,6 +5,7 @@ import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
 import { areFormsValid } from "../../../../services/ValidationService";
+import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ("edit" | "view")[]>;
 
@@ -16,9 +17,12 @@ export class TokenDetailsStage {
   isOpenProposalWizard = false;
   form: ValidationController;
 
-  primaryDAOTokensForms: ValidationController[] = [];
-  partnerDAOTokensForms: ValidationController[] = [];
+  primaryDAOTokenDetails: TokenDetails[] = [];
+  partnerDAOTokenDetails: TokenDetails[] = [];
   stageMetadata: Partial<TokenDetailsMetadata> = {};
+
+  hasUnsavedChangesForPrimaryDetails = false;
+  hasUnsavedChangesForPartnerDetails = false;
 
   constructor(
     private wizardService: WizardService,
@@ -64,11 +68,18 @@ export class TokenDetailsStage {
     );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      const primaryTokensValid = await areFormsValid(this.primaryDAOTokensForms);
-      const partnerTokensValid = await areFormsValid(this.partnerDAOTokensForms);
+      const primaryTokensForms = this.primaryDAOTokenDetails.map(viewModel => viewModel.form);
+      const partnerTokensForms = this.partnerDAOTokenDetails.map(viewModel => viewModel.form);
+      const primaryTokensValid = await areFormsValid(primaryTokensForms);
+      const partnerTokensValid = await areFormsValid(partnerTokensForms);
+
+      this.checkedForUnsavedChanges();
+
       return this.form.validate()
         .then(async (result) => result.valid &&
           this.hasValidPrimaryDAOTokensDetailsCount &&
+          !this.hasUnsavedChangesForPrimaryDetails &&
+          !this.hasUnsavedChangesForPartnerDetails &&
           this.hasValidPartnerDAOTokensDetailsCount &&
           primaryTokensValid &&
           (this.isOpenProposalWizard ? true : partnerTokensValid),
@@ -90,19 +101,26 @@ export class TokenDetailsStage {
       decimals: 18,
       logoURI: "",
     });
+    this.checkedForUnsavedChanges();
   }
 
-  deleteToken(token: IToken, tokens: IToken[], forms: ValidationController[]): void {
+  deleteToken(token: IToken, tokens: IToken[], forms: TokenDetails[]): void {
     const index = tokens.indexOf(token);
     if (index !== -1) {
       forms.splice(index, 1);
       tokens.splice(index, 1);
     }
+    this.checkedForUnsavedChanges();
   }
 
   private getDefaultTokenDetailsViewModes(wizardType: WizardType, dao?: IDAO): ("view" | "edit")[] {
     return [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType)
       ? []
       : dao?.tokens?.map(() => "view") ?? [];
+  }
+
+  private checkedForUnsavedChanges() {
+    this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+    this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
   }
 }

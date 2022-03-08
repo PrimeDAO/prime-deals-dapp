@@ -5,8 +5,8 @@ export class EditingCard {
   @bindable onDelete: () => boolean | Promise<boolean>;
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
+  @bindable viewMode: "edit" | "view" = "edit";
 
-  private viewMode: "edit" | "view" = "edit";
   private deleteButtonRef: HTMLElement;
   private saving: boolean;
 

@@ -4,6 +4,7 @@
       display: block;
       margin: 25px 20px;
     }
+
   </style>
 
   <a href="#">Back to home</a>
@@ -11,22 +12,22 @@
   <pbutton type="primary"><a href="/playground">All Playgrounds</a></pbutton>
   <br>
 
-  <require from="../../resources/elements/primeDesignSystem/pbutton/pbutton" ></require>
+  <require from="../../resources/elements/primeDesignSystem/pbutton/pbutton"></require>
   <require from="../editingCardPlayground/editingCardPlayground"></require>
+  <require from="../firebasePlayground/firebasePlayground"></require>
 
   <pbutton type="secondary"> <a href="/playground/">Your playground</a> </pbutton>
   <pbutton type="secondary"> <a href="/playground/editingCardPlayground">editingCard</a> </pbutton>
+  <pbutton type="secondary"> <a href="/playground/firebasePlayground">editingCard</a> </pbutton>
 
-  <div class=playgroundsWelcome__compose">
+  <div class="playgroundsWelcome__compose">
     <compose
       if.bind="view"
       view.bind="view"
-      class="${view}"
-    ></compose>
+      class="${view}"></compose>
     <compose
       else
       view-model.bind="viewModel"
-      class="${viewModelName}"
-    ></compose>
+      class="${viewModelName}"></compose>
   </div>
 </template>
