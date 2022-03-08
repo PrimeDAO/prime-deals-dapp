@@ -14,7 +14,7 @@
       </div>
       <div class="stageSectionContent">
         <pform-input
-          class="wizardFormInput proposalLeadAddress"
+          class="wizardFormInput"
           label="Proposal Lead Address"
           input-reference.bind="input"
           data-test="proposal-wallet-address-field">
@@ -23,21 +23,22 @@
             placeholder="0x..."
             value.bind="wizardState.registrationData.proposalLead.address & validate:form"
             view-model.ref="input"></pinput-text>
-          <pbutton click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
-            Connect wallet
-          </pbutton>
-          <pbutton
-            type="formfield"
-            click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
-            if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress">
-            Make me admin
-          </pbutton>
         </pform-input>
+        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
+          Connect to get your wallet address
+        </pbutton>
+        <pbutton
+          class="walletButton"
+          click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
+          if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress"
+          type="formfield">
+          Make me admin
+        </pbutton>
 
         <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="proposal-email-field"
-          label="Contact E-mail (optional)">
+                     label="Contact E-mail (optional)">
           <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
+                       value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
         </pform-input>
       </div>
     </div>
