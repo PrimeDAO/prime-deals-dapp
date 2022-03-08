@@ -97,7 +97,7 @@ export function emptyDaoDetails(): IDAO {
     }],
     treasury_address: "",
     representatives: [{address: ""}],
-    social_medias: [{name: "", url: ""}],
+    social_medias: [],
     logoURI: null,
   };
 }
