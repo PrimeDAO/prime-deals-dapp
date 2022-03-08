@@ -1,8 +1,8 @@
 @import '../variables';
 
 .tippy-box[data-theme="prime-design-system"] {
-  background-color: $Border02;
-  box-shadow: 0 0 16px 8px #00000040;
+  background-color: $Secondary05;
+  box-shadow: 2px 2px 8px 0 #00000040;
   border-radius: 8px;
   padding: 16px;
   font-size: $font-size1;
@@ -13,6 +13,6 @@
   }
 
   .tippy-arrow:before {
-    color: $Border02;
+    color: $Secondary05;
   }
 }
