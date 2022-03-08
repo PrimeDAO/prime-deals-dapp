@@ -13,6 +13,6 @@ jobs:
     - name: Install firebaseFunctions dependencies
       run: cd firebaseFunctions && npm ci
     - name: Lint firebase functions
-      run: npm run lint
+      run: cd firebaseFunctions && npm run lint
     - name: Build firebase functions
       run: npm run build
