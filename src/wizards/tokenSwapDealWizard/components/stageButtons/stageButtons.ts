@@ -20,7 +20,11 @@ export class stageButtons {
 
   async proceed() {
     this.validating = true;
-    this.wizardService.proceed(this.wizardManager).finally(() => this.validating = false);
+    this.wizardService
+      .proceed(this.wizardManager)
+      // eslint-disable-next-line no-console
+      .catch(console.error)
+      .finally(() => this.validating = false);
   }
 
   attached() {
