@@ -22,8 +22,6 @@ export class FormattedNumber {
   @bindable.booleanAttr public hideTooltip = false;
   @bindable.booleanAttr public thousandsSeparated = false;
 
-  documentBody = document.body;
-
   private text: string;
   private _value: number | string;
 
