@@ -2,9 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /deals/{deal} {
-      allow read: if !resource.data.private || request.auth.uid == resource.data.proposalLead.address;
+      allow read: if !resource.data.registrationData.private || request.auth.uid == resource.data.registrationData.proposalLead.address;
       allow create: if request.auth != null;
-      allow update: if request.auth.uid == resource.data.proposalLead.address;
+      allow update: if request.auth.uid == resource.data.registrationData.proposalLead.address;
     }
     
     match /deals/{deal}/votes/{representative} {
