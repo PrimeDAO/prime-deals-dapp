@@ -25,7 +25,8 @@ export class TermsStage implements IBaseWizardStage {
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
       this.checkedForUnsavedChanges();
-      return await areFormsValid(this.termClauses.map(viewModel => viewModel.form)) && !this.hasUnsavedChanges;
+      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
+      return formsAreValid && !this.hasUnsavedChanges;
     });
   }
 
