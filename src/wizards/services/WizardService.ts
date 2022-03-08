@@ -95,6 +95,12 @@ export class WizardService {
     const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
+    if (!this.checkCanProceed(indexOfActive)) {
+      const validationErrorMessage = "Unable to proceed, not all stages are valid.";
+      this.eventAggregator.publish("handleValidationError", validationErrorMessage);
+      return Promise.reject(validationErrorMessage);
+    }
+
     return this.goToStage(wizardStateKey, indexOfActive + 1, true);
   }
 
@@ -178,5 +184,31 @@ export class WizardService {
   private getActiveStage(wizardStateKey: WizardStateKey): IWizardStage {
     const wizardState = this.getWizardState(wizardStateKey);
     return wizardState.stages[wizardState.indexOfActive];
+  }
+
+  private checkCanProceed(indexOfActive: number): boolean {
+    // Get number of non-hidden stages
+    let notHiddenStagesCount = 0;
+    this.wizardsStates.forEach((wizardState) => {
+      const notHiddenStages = wizardState.stages.filter(stage => !stage.hidden);
+      notHiddenStagesCount = notHiddenStages.length;
+    });
+    const isLastStage = notHiddenStagesCount === indexOfActive + 1;
+
+    /** Proceed just fine when not last stage. */
+    if (!isLastStage) return true;
+
+    const allStagesValid = this.checkAllStagesValid();
+    const canProceed = allStagesValid && isLastStage;
+
+    return canProceed;
+  }
+
+  private checkAllStagesValid() {
+    let allStagesValid = false;
+    this.wizardsStates.forEach((wizardState) => {
+      allStagesValid = wizardState.stages.every(stage => stage.valid);
+    });
+    return allStagesValid;
   }
 }
