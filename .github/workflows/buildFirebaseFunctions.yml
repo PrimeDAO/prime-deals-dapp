@@ -15,4 +15,4 @@ jobs:
     - name: Lint firebase functions
       run: cd firebaseFunctions && npm run lint
     - name: Build firebase functions
-      run: npm run build
+      run: cd firebaseFunctions && npm run build
