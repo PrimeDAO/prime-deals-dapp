@@ -20,6 +20,7 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
+  hidden?: boolean;
   form?: ValidationController;
   validate?: () => Promise<boolean> | boolean;
 }

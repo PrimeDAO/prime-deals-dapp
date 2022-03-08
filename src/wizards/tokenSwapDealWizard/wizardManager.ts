@@ -74,6 +74,7 @@ export class WizardManager {
   private submitStage: IWizardStage = {
     name: "Submit",
     valid: false,
+    hidden: true,
     route: "submit",
     moduleId: PLATFORM.moduleName("./stages/submitStage/submitStage"),
   };
