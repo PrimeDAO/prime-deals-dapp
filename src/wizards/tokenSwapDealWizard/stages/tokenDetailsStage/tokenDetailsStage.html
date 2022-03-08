@@ -17,24 +17,29 @@
       </div>
       <div class="stageSectionContent">
         <token-details
-          on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
-          form.from-view="primaryDAOTokensForms[$index]"
+          on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails)"
+          on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
           token.bind="token"
+          view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
-          if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
-          type="primary">
+                 if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
+                 type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
 
         <p
           class="feedbackMessage errorMessage ${!hasValidPrimaryDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
-          A partnered deal needs to have at least one token detail
+          A partnered deal needs to have at least one saved token detail
+        </p>
+
+        <p class="feedbackMessage errorMessage ${hasUnsavedChangesForPrimaryDetails ? 'feedbackMessageVisible' : ''}">
+          Please save your token details
         </p>
       </div>
     </div>
@@ -49,22 +54,26 @@
 
       <div class="stageSectionContent">
         <token-details
-          form.from-view="partnerDAOTokensForms[$index]"
-          on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokensForms)"
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
+          on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails)"
+          on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
-          token.bind="token"></token-details>
+          token.bind="token"
+          view-model.ref="partnerDAOTokenDetails[$index]"
+        ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
-          if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
-          type="primary">
+                 if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
+                 type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
 
-        <p
-          class="feedbackMessage errorMessage ${!hasValidPartnerDAOTokensDetailsCount ? 'feedbackMessageVisible' : ''}">
-          A partnered deal needs to have at least one token detail
+        <p class="feedbackMessage errorMessage ${!hasValidPartnerDAOTokensDetailsCount? 'feedbackMessageVisible' : ''}">
+          A partnered deal needs to have at least one saved token detail
+        </p>
+        <p class="feedbackMessage errorMessage ${hasUnsavedChangesForPartnerDetails ? 'feedbackMessageVisible' : ''}">
+          Please save your token details
         </p>
       </div>
     </div>
