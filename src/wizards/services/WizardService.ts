@@ -187,14 +187,8 @@ export class WizardService {
   }
 
   private checkCanProceed(indexOfActive: number): boolean {
-    // Get number of non-hidden stages
-    let notHiddenStagesCount = 0;
-    this.wizardsStates.forEach((wizardState) => {
-      const notHiddenStages = wizardState.stages.filter(stage => !stage.hidden);
-      notHiddenStagesCount = notHiddenStages.length;
-    });
-    const isLastStage = notHiddenStagesCount === indexOfActive + 1;
-
+    const visibleStagesCount = this.getVisibleStages().length;
+    const isLastStage = visibleStagesCount === indexOfActive + 1;
     /** Proceed just fine when not last stage. */
     if (!isLastStage) return true;
 
@@ -204,11 +198,16 @@ export class WizardService {
     return canProceed;
   }
 
-  private checkAllStagesValid() {
-    let allStagesValid = false;
+  private getVisibleStages(): IWizardStage[] {
+    let notHiddenStages;
     this.wizardsStates.forEach((wizardState) => {
-      allStagesValid = wizardState.stages.every(stage => stage.valid);
+      notHiddenStages = wizardState.stages.filter(stage => !stage.hidden);
     });
+    return notHiddenStages;
+  }
+
+  private checkAllStagesValid() {
+    const allStagesValid = this.getVisibleStages().every(stage => stage.valid);
     return allStagesValid;
   }
 }
