@@ -192,8 +192,8 @@ Assuming that a Firebase Project is already setup and you have access to API key
     1. On your local machine run `firebase login:ci` (make sure you have firebase-tools installed globally)
     2. Login in the browser and authenticate firebase 
     3. Copy token that was printed to the terminal
-    4. !!!! IMPORTANT !!!! Scope the secret to the branch by which it should be used. For example if you are creating a Firebase project for staging, make sure that in the Github Actions you scope the token to be available only for the staging branch. Otherwise it might deploy firebase to wrong environment!!!!
-        1. Go to Github actions settings page and add secret `FIREBASE_TOKEN` with value of the token copied from the terminal. Scope it properly.
+    4. IMPORTANT If the account used to generate the token doesn’t have access to all firebase projects, scope the secret to the branch by which it should be used. For example if you are creating a Firebase project for staging, make sure that in the Github Actions you scope the token to be available only for the staging branch.
+        1. Go to Github actions settings page and add secret `FIREBASE_TOKEN` with value of the token copied from the terminal. If it belongs to all firebase projects make it “repository secret” otherwise scope it per branch
 12. Add `FIREBASE_FUNCTIONS_URL` to the Vercel Environment Variables
     
     Assign following URL to it:
