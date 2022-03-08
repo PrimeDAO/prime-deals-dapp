@@ -25,127 +25,125 @@
 
 $submitCardWidth: 645px;
 
-stage-wrapper[header="Submit"] {
-  .stageSectionContentContainer {
-    font-family: Inter;
+.submitStageSectionContentContainer {
+  font-family: Inter;
 
-    .stageSectionContent {
-      margin-bottom: 30px;
+  .stageSectionContent {
+    margin-bottom: 30px;
 
-      &:last-child {
-        margin-bottom: inherit;
+    &:last-child {
+      margin-bottom: inherit;
+    }
+
+    .subtext {
+      color: $Neutral04;
+    }
+  }
+
+  .submitContentLabel {
+    @include commonContentLabel;
+    font-size: $font-size3;
+    line-height: 33px;
+  }
+
+  .submitContentLabel-sm {
+    @include commonContentLabel;
+    font-size: $font-size2;
+    line-height: 22px;
+  }
+
+  .submitCard {
+    width: $submitCardWidth;
+
+    pcard {
+      display: block;
+      padding: 20px;
+    }
+
+    &.submitDaoCard {
+      .submitContent {
+        margin: unset;
       }
+    }
+
+    &.submitTermsCard {
+      margin-top: 30px;
 
       .subtext {
-        color: $Neutral04;
+        font-size: $font-size3;
       }
     }
 
-    .submitContentLabel {
-      @include commonContentLabel;
-      font-size: $font-size3;
-      line-height: 33px;
-    }
-
-    .submitContentLabel-sm {
-      @include commonContentLabel;
-      font-size: $font-size2;
-      line-height: 22px;
-    }
-
-    .submitCard {
-      width: $submitCardWidth;
-
-      pcard {
-        display: block;
-        padding: 20px;
-      }
-
-      &.submitDaoCard {
-        .submitContent {
-          margin: unset;
+    &.submitDaoCard {
+      .submitDaoTokenCard {
+        pcard {
+          background: $BG01;
+          margin-top: 20px;
         }
-      }
 
-      &.submitTermsCard {
-        margin-top: 30px;
-
-        .subtext {
-          font-size: $font-size3;
-        }
-      }
-
-      &.submitDaoCard {
-        .submitDaoTokenCard {
-          pcard {
-            background: $BG01;
-            margin-top: 20px;
-          }
-
-          .tokenName {
-            display: flex;
-            align-items: center;
-            gap: $spacing-normal;
-            font-weight: $font-bold;
-            font-size: $font-size1;
-            line-height: 20px;
-          }
-
-          .detailsTable {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 15px;
-            row-gap: 20px;
-            width: 100%;
-            border-spacing: $spacing-normal;
-
-            .detailsCell {
-              max-width: 130px; // TODO: experimented, until it looks good --> Should ask Design
-
-              p {
-                text-overflow: ellipsis;
-                overflow-x: hidden;
-              }
-
-              p:first-child {
-                color: $Secondary02;
-                margin-bottom: $spacing-small;
-                display: flex;
-                align-items: center;
-                gap: $spacing-medium-small;
-                font-weight: $font-bold;
-              }
-            }
-
-            &.detailsTableInViewMode {
-              grid-template-columns: 1fr 1fr 1fr 1fr;
-              margin: 30px 0;
-
-              .detailsCellAmount {
-                grid-column: span 3;
-              }
-            }
-          }
-        }
-      }
-
-      .submitCardContent {
-        .submitCardHeader {
-          font-size: $font-size3;
+        .tokenName {
+          display: flex;
+          align-items: center;
+          gap: $spacing-normal;
           font-weight: $font-bold;
-          border-bottom: 1px $Secondary05 solid;
-          margin-bottom: 18px;
-          padding-bottom: 6px;
-          line-height: 28px;
+          font-size: $font-size1;
+          line-height: 20px;
         }
 
-        .submitContent {
-          margin-bottom: 20px;
-        }
+        .detailsTable {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 15px;
+          row-gap: 20px;
+          width: 100%;
+          border-spacing: $spacing-normal;
 
-        .daoAvatar {
-          @include daoAvatar(36px);
+          .detailsCell {
+            max-width: 130px; // TODO: experimented, until it looks good --> Should ask Design
+
+            p {
+              text-overflow: ellipsis;
+              overflow-x: hidden;
+            }
+
+            p:first-child {
+              color: $Secondary02;
+              margin-bottom: $spacing-small;
+              display: flex;
+              align-items: center;
+              gap: $spacing-medium-small;
+              font-weight: $font-bold;
+            }
+          }
+
+          &.detailsTableInViewMode {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            margin: 30px 0;
+
+            .detailsCellAmount {
+              grid-column: span 3;
+            }
+          }
         }
+      }
+    }
+
+    .submitCardContent {
+      .submitCardHeader {
+        font-size: $font-size3;
+        font-weight: $font-bold;
+        border-bottom: 1px $Secondary05 solid;
+        margin-bottom: 18px;
+        padding-bottom: 6px;
+        line-height: 28px;
+      }
+
+      .submitContent {
+        margin-bottom: 20px;
+      }
+
+      .daoAvatar {
+        @include daoAvatar(36px);
       }
     }
   }
