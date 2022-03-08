@@ -15,6 +15,6 @@ export class stageButtons {
 
   async proceed() {
     this.validating = true;
-    await this.wizardService.proceed(this.wizardManager).finally(() => this.validating = false);
+    this.wizardService.proceed(this.wizardManager).finally(() => this.validating = false);
   }
 }
