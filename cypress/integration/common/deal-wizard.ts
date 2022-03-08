@@ -105,3 +105,7 @@ Then("the {string} option should be turned off", (optionText: string) => {
     cy.get("[data-test='pToggleInput']").invoke("val").should("equal", "false");
   });
 });
+
+Then("I should get an error notification", () => {
+  cy.contains("[data-test='pPopupNotification']", "Error").should("be.visible");
+});

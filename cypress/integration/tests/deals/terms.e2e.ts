@@ -5,7 +5,7 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { EditingCard } from "../components/editingCard.e2e";
 
-const UPDATED = "(updated)";
+const UPDATED = "(updated.)";
 const MAX_NUMBER_OF_CLAUSES = 10;
 
 class Terms {
