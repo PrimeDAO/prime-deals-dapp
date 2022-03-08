@@ -1,0 +1,18 @@
+name: Build Firebase functions
+on:
+  pull_request:
+    branches: [ development, staging, master ]
+jobs:
+  firebase:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+    - name: Install firebaseFunctions dependencies
+      run: cd firebaseFunctions && npm ci
+    - name: Lint firebase functions
+      run: npm run lint
+    - name: Build firebase functions
+      run: npm run build
