@@ -39,16 +39,29 @@ PINATA_SECRET_API_KEY_TEST=...
 
 IPFS_GATEWAY=https://primedao.mypinata.cloud/${protocol}/${hash}
 COINGECKO_API_KEY=...
+
+FIREBASE_API_KEY=     # apiKey
+FIREBASE_AUTH_DOMAIN= # authDomain
+FIREBASE_PROJECT_ID=  # projectId
+FIREBASE_APP_ID=      # appId
+FIREBASE_FUNCTIONS_URL=http://localhost:5001/${projectId}/us-central1
 ```
 
 >When building for production, the build will look for variables in ".env.production".
 
-Following are the two most commonly used commands:
+Following are the three most commonly used commands:
 
 #### Build and serve unoptimized code against rinkeby
 Best for development and debugging, the output goes to webpack-dev-server for use with your favorate debugger, like VSCode:
 ```
 npm run serve-dev
+```
+#### Run Firebase emulators
+For fast and safe development use firebase emulator suite instead of connecting to a real project.
+App is going to use emulated firebase services automatically, but if some/all of them are not available
+it will call the real service instead. 
+```
+npm run firebase
 ```
 #### Build with optimized code against mainnet
 The production build, output goes to the `dist` folder:
@@ -95,6 +108,109 @@ Various code dependencies include:
 * Wallet providers - [Web3Modal](https://github.com/Web3Modal/web3modal)
 * Interactions with Ethereum and wallet providers - [ethers.js](https://docs.ethers.io/v5/)
 * Mainnet web3 provider - [Rivet](https://rivet.cloud/)
+
+## Firebase
+
+### Firebase Local development environment setup
+
+Assuming that a Firebase Project is already setup (otherwise see [how to setup a new project](#new-firebase-project-setup))
+
+1. Add Firebase environment variables to `.env` file. You can find them in the Firebase console [https://console.firebase.google.com](https://console.firebase.google.com/) Under “Project settings” → “Your apps” → select the app you want to use
+    
+    ```
+    FIREBASE_API_KEY=     # apiKey
+    FIREBASE_AUTH_DOMAIN= # authDomain
+    FIREBASE_PROJECT_ID=  # projectId
+    FIREBASE_APP_ID=      # appId
+    ```
+    
+2. Use Firebase emulator for development
+    1. Run `npm run firebase` to start firebase emulator
+        1. It will output URLs for the locally deployed functions
+        
+        ```
+        functions[us-central1-functionName]: http function initialized 
+        (http://localhost:5001/${projectId}/us-central1/${functionName}).
+        ```
+        
+    2. When running it for the first time copy the outputted URL without the function name (with the last part), for example:
+        
+        `http://localhost:5001/${projectId}/us-central1`
+        
+    3. Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
+        
+        `FIREBASE_FUNCTIONS_URL=http://localhost:5001/${projectId}/us-central1`
+        
+3. Run `npm run start-dev` the app should be now using firebase emulators
+4. You should always run `npm run firebase` and `npm run start-dev` for local development
+5. Deployment from you local machine (optional)
+    1. Install firebase cli on your machine `npm install -g firebase-tools`
+    2. Login to firebase, run `firebase login`
+
+### New Firebase Project setup
+
+1. Create a new Firebase project
+2. Upgrade it to “Blaze” plan (or any plan that allows us to use Firestore, Functions and Authentication, as of 03/2022 Blaze is the only one)
+3. Go to Firebase console [https://console.firebase.google.com](https://console.firebase.google.com/)
+4. Add new app for the Web
+5. Copy provided secrets to environment variables (to your local .env or to Vercel Environment Variables)
+    
+    ```
+    FIREBASE_API_KEY=     # apiKey
+    FIREBASE_AUTH_DOMAIN= # authDomain
+    FIREBASE_PROJECT_ID=  # projectId
+    FIREBASE_APP_ID=      # appId
+    ```
+    
+6. Setup Authentication
+    1. Add “Email/password” sign-in method (We are not going to use email/password to sign in users, but we need at least one sign-in method to be enabled in order for our custom sign-in to work)
+    2. Add desired domains under “Authorized domains”
+7. Setup Firestore Database
+    1. Follow create database flow
+    2. Under "Secure rules for Cloud Firestore” select "Start in production mode” which will disable all reads and writes
+    3. Select Firestore location that makes the most sense for the project
+8. Update Google Cloud IAM settings
+    1. Open [https://console.cloud.google.com/iam-admin/iam](https://console.cloud.google.com/iam-admin/iam) and select the correct project, choose “Permissions” tab and view by “principals”
+    2. Select one with name “firebase-adminsdk”, make sure it has at least the following roles:
+        1. Firebase Admin SDK Administrator Service Agent
+        2. Firebase Authentication Admin
+        3. Service Account Token Creator
+    3. Select one with name “App Engine default service account” make sure it has at least the following roles:
+        1. Editor
+        2. Service Account Token Creator
+9. Set API key restrictions  [https://cloud.google.com/docs/authentication/api-keys#adding_application_restrictions](https://cloud.google.com/docs/authentication/api-keys#adding_application_restrictions)
+    1. Open Google Cloud APIs and Services settings [https://console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials) and select the correct project
+    2. Under “API Keys” select "Browser key (auto created by Firebase)”
+    3. Set “Application restrictions” to be “HTTP referrers (web sites)”
+    4. Whitelist domains under "Website restrictions”
+    5. Under "API restrictions” select “Restrict key” and choose:
+        1. Cloud Firestore API
+        2. Identity Toolkit API
+10. Enable IAM Service Account Credentials API
+    1. Go to the following link and enable the API [https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/overview](https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/overview)
+11. Add `FIREBASE_TOKEN` used to deploy firebase from CI to Github actions secrets
+    1. On your local machine run `firebase login:ci` (make sure you have firebase-tools installed globally)
+    2. Login in the browser and authenticate firebase 
+    3. Copy token that was printed to the terminal
+    4. !!!! IMPORTANT !!!! Scope the secret to the branch by which it should be used. For example if you are creating a Firebase project for staging, make sure that in the Github Actions you scope the token to be available only for the staging branch. Otherwise it might deploy firebase to wrong environment!!!!
+        1. Go to Github actions settings page and add secret `FIREBASE_TOKEN` with value of the token copied from the terminal. Scope it properly.
+12. Add `FIREBASE_FUNCTIONS_URL` to the Vercel Environment Variables
+    
+    Assign following URL to it:
+    
+    `https://${region}-${projectId}.cloudfunctions.net`
+    
+    If you are not sure if the URL is correct, after firebase deployment is triggered, whether locally by running `firebase deploy` or by Github Actions, you can see the URL in the console output:
+    
+    ```
+    Function URL (${functionName}(us-central1)): 
+    https://us-central1-${projectId}.cloudfunctions.net/${functionName}
+    
+    ```
+    
+    Omit the functionName (last part) and use 
+    
+    `https://us-central1-${projectId}.cloudfunctions.net`
 
 ## Architecture
 ### Technical Description
