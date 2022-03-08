@@ -60,7 +60,8 @@
             <p class="subtext" ptooltip.bind="submitData.proposalLead.address">
               ${submitData.proposalLead.address | smallHexString}
             </p>
-            <p class="subtext">${submitData.proposalLead.email || "[optional email not supplied]"}</p>
+            <p class="subtext" if.bind="submitData.proposalLead.email">${submitData.proposalLead.email}</p>
+            <p class="optionalContent" else>[optional email not supplied]</p>
           </div>
         </section>
 
