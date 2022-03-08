@@ -2,7 +2,7 @@ import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator, doc, setDoc } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -30,13 +30,6 @@ export class FirebaseService {
   constructor(
     private eventAggregator: EventAggregator,
   ) {}
-
-  async add() {
-    await setDoc(doc(firebaseDatabase, "test", `${Math.random()}`), {
-      name: "Test document",
-      random: `${Math.random()}`,
-    });
-  }
 
   public initializeFirebaseAuthentication() {
     this.eventAggregator.subscribe("Network.Changed.Account", (address: string) => {
