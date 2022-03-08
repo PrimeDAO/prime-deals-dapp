@@ -1,3 +1,4 @@
+import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -15,6 +16,7 @@ import "./discussionsList.scss";
 export class DiscussionsList{
   @bindable deal: DealTokenSwap;
   @bindable discussionId: string = null;
+  @bindable isAuthorized: boolean;
 
   paginationConfig = {
     listLength: 5,
@@ -30,6 +32,7 @@ export class DiscussionsList{
     private router: Router,
     private dateService: DateService,
     private dealService: DealService,
+    private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
   ) {}
 

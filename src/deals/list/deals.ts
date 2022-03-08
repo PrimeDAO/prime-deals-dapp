@@ -1,5 +1,5 @@
 import { EthereumService } from "services/EthereumService";
-import { SortOrder } from "../services/SortService";
+import { SortOrder } from "../../services/SortService";
 import { DealService } from "services/DealService";
 import { autoinject, singleton } from "aurelia-framework";
 import { Router } from "aurelia-router";

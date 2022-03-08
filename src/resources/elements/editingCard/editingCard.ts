@@ -5,9 +5,10 @@ export class EditingCard {
   @bindable onDelete: () => boolean | Promise<boolean>;
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
+  @bindable viewMode: "edit" | "view" = "edit";
 
-  private viewMode: "edit" | "view" = "edit";
-  saving: boolean;
+  private deleteButtonRef: HTMLElement;
+  private saving: boolean;
 
   async edit() {
     if (typeof this.onEdit === "function") {
@@ -34,6 +35,8 @@ export class EditingCard {
 
   async delete() {
     if (typeof this.onDelete === "function") {
+      this.deleteButtonRef.querySelector("button").blur();
+
       const canDelete = await this.onDelete();
       if (!canDelete) return;
     }

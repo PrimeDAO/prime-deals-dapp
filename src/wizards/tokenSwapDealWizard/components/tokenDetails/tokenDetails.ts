@@ -24,6 +24,7 @@ export class TokenDetails {
   @bindable({defaultBindingMode: bindingMode.fromView}) onDelete: () => void;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
   @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
+  @bindable onSaved?: () => void;
 
   tokenInfoLoading = false;
   showTokenDetails = false;
@@ -129,6 +130,7 @@ export class TokenDetails {
       return;
     }
     this.viewMode = "view";
+    this.onSaved?.();
   }
 
   logoLoaded(valid: boolean) {

@@ -6,7 +6,8 @@
   <editing-card
     data-test="termsClause"
     on-save.call="onSave()"
-    on-delete.call="onDelete()"
+    on-delete.call="delete()"
+    view-mode.from-view="viewMode"
   >
     <!-- View -->
     <template replace-part="view">
@@ -30,11 +31,13 @@
         show-counter
         max-length="250"
         data-test="clause-input"
+        input-reference.bind="clauseTextareaViewModel"
       >
         <ptextarea
           data-test="clauseTextarea"
           rows="4"
           value.bind="clause.text & validate:form"
+          view-model.ref="clauseTextareaViewModel"
           placeholder="Text describing the clause"
         ></ptextarea>
       </pform-input>

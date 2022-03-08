@@ -1,5 +1,6 @@
 @import "src/styles/styles.scss";
 @import "../resources/elements/primeDesignSystem/variables";
+@import "../resources/elements/primeDesignSystem/colors";
 
 .page.home {
   .section {
@@ -22,9 +23,13 @@
         display: flex;
         margin-bottom: 200px;
 
-        pcard {
+        .pcard {
           width: clamp(100px, 100%, 335px);
           padding: 12px 24px 24px 24px;
+
+          &.gradient:hover {
+            @include pcardBgAndGradient($backgroundColor: $Border01);
+          }
 
           header {
             display: flex;
@@ -38,7 +43,6 @@
               font-weight: 400;
             }
           }
-
         }
 
         flex-direction: row;
@@ -65,13 +69,16 @@
       }
 
       > .selector {
-
         :not(:first-child) {
           margin-left: 63px;
         }
 
         > .selector-tab {
           cursor: pointer;
+
+          &:hover:not(.active) {
+            -webkit-text-fill-color: $Neutral04;
+          }
         }
 
         display: flex;
@@ -85,7 +92,8 @@
           -webkit-text-fill-color: transparent;
           -webkit-background-clip: text;
           background-clip: text;
-          border-bottom: 6px solid $Secondary02;
+          border-bottom: 6px solid;
+          @include border-gradient($Gradient02);
           padding-bottom: 19px;
         }
 

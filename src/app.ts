@@ -14,6 +14,7 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
+import { FirebaseService } from "./services/FirebaseService";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -25,7 +26,8 @@ export class App {
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
-    private storageService: BrowserStorageService) { }
+    private storageService: BrowserStorageService,
+    private firebaseService: FirebaseService) { }
 
   router: Router;
   onOff = false;
@@ -50,6 +52,8 @@ export class App {
     document.addEventListener("scroll", (_e) => {
       this.handleScrollEvent();
     });
+
+    this.firebaseService.initializeFirebaseAuthentication();
 
     this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
@@ -220,7 +224,7 @@ export class App {
         title: "Initiate a Deal",
       },
       {
-        moduleId: PLATFORM.moduleName("./deals/deals"),
+        moduleId: PLATFORM.moduleName("./deals/list/deals"),
         nav: false,
         name: "deals",
         route: "/deals",

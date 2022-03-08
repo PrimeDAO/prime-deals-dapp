@@ -1,5 +1,5 @@
-@import "src/styles/styles.scss";
-@import "../primeDesignSystem/variables";
+@import "styles/styles.scss";
+@import "resources/elements/primeDesignSystem/variables";
 
 deal-summary {
   .pcard {
@@ -7,7 +7,9 @@ deal-summary {
     width: 360px;
     background-color: $BG02;
     padding: $spacing-normal;
+    /* don't do this transition until we can do it with gradient pcards too
     transition: 0.35s ease-in-out;
+    */
     cursor: pointer;
 
     &:hover {
@@ -16,10 +18,6 @@ deal-summary {
       .button:after {
         opacity: 0;
       }
-
-      .icons > .icon {
-        border-color: $Border01;
-      }
     }
 
     .dealSummary {
@@ -27,10 +25,9 @@ deal-summary {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr 190px 67px;
       grid-template-areas:
-      "countdown"
-      "proposal"
-      "footer";
-
+        "countdown"
+        "proposal"
+        "footer";
 
       .icons {
         display: grid;
@@ -56,8 +53,6 @@ deal-summary {
             height: 34px;
             width: 34px;
           }
-
-          border: 2px solid $BG02;
 
           &:not(:first-child) {
             margin-left: -15px;
@@ -103,8 +98,8 @@ deal-summary {
         grid-area: proposal;
         display: grid;
         grid-template-areas:
-        "title"
-        "description";
+          "title"
+          "description";
         grid-template-rows: min-content auto;
         height: 190px;
         row-gap: 12px;
@@ -145,7 +140,6 @@ deal-summary {
           justify-content: space-between;
           width: 100%;
         }
-
       }
     }
 
@@ -157,10 +151,8 @@ deal-summary {
         color: $Secondary07;
       }
     }
-
   }
 }
-
 
 @media screen and (max-width: $PageBreakWidth) {
   .dealSummaryContainer {

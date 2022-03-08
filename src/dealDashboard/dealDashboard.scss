@@ -58,7 +58,7 @@ $hover-transition-speed-slow: 0.4s;
             .button {
               position: absolute;
               display: flex;
-              gap: $spacing-small;
+              gap: $spacing-normal * 1.2;
               align-items: center;
               line-height: 19px;
               right: 0;
@@ -76,13 +76,15 @@ $hover-transition-speed-slow: 0.4s;
               color: $Neutral04;
               transition: opacity $hover-transition-speed-fast ease-in;
               transition-delay: 0s;
+              max-width: 200px;
+              text-align: right;
+              cursor: pointer;
               img {
                 width: $logo-icon-size-small;
                 height: $logo-icon-size-small;
               }
-              cursor: pointer;
             }
-            &.isPrivate:hover, &.isPrivate.active {
+            &.isPrivate:hover, &.active {
               transition-delay: 0s;
               &:not(.active) span {
                 transition-delay: $hover-transition-speed-fast / 2;
