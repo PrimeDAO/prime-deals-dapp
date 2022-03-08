@@ -22,11 +22,13 @@
 
   <div class="submitContentLabel-sm">Social Media</div>
   <div class="submitContent">
-    <template if.bind="daoData.social_medias.length > 0" repeat.for="socialMedia of daoData.social_medias">
-      <div>
-        <span class="subtext">${socialMedia.name}</span> -
-        <span class="subtext">${socialMedia.url}</span>
-      </div>
+    <template if.bind="daoData.social_medias.length > 0">
+      <template repeat.for="socialMedia of daoData.social_medias">
+        <div>
+          <span class="subtext">${socialMedia.name}</span> -
+          <span class="subtext">${socialMedia.url}</span>
+        </div>
+      </template>
     </template>
     <template else>-</template>
   </div>
