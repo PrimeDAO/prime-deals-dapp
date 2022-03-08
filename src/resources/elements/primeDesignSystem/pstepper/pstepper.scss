@@ -12,6 +12,10 @@
 
   .active {
     color: $Secondary02;
+
+    .valid {
+      color: $Secondary02;
+    }
   }
   .valid {
     color: $Neutral02;
@@ -23,6 +27,10 @@
     align-items: center;
     >div {
       text-align: center;
+    }
+    transition: color 125ms ease-in-out;
+    .circledNumber {
+      transition: background-color 125ms ease-in-out;
     }
   }
 
@@ -48,5 +56,12 @@
         background: $Neutral02;
       }
     }
+  }
+
+  .stepNumber:hover {
+    .circledNumber {
+      background-color: $Neutral04;
+    }
+    color: $Neutral04;
   }
 }

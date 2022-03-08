@@ -35,6 +35,13 @@ $font-size4: 20px;
 /* Font Weights */
 $font-bold: 700;
 
+$sub-heading: Inter;
+$heading: Aeonik;
+
+@mixin subHeading() {
+  font-family: $sub-heading;
+}
+
 @mixin spin {
   @keyframes spin {
     from {
@@ -48,7 +55,8 @@ $font-bold: 700;
 }
 
 @mixin loading-icon {
-  .loading > i,
+
+  .loading>i,
   i.loading {
     animation-name: spin;
     animation-duration: 1.5s;

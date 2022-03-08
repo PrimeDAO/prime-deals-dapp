@@ -22,8 +22,10 @@
           repeat.for="clause of wizardState.registrationData.terms.clauses"
           clause.bind="clause"
           index.bind="$index"
-          form.from-view="termsForms[$index]"
-          on-delete.call="onDelete($index)"></term-clause>
+          on-delete.call="onDelete($index)"
+          on-saved.call="checkedForUnsavedChanges()"
+          view-model.ref="termClauses[$index]"
+        ></term-clause>
 
         <pbutton
           data-test="addClauseButton"
@@ -34,6 +36,11 @@
           Add Clause
           <i class="fa fa-plus"></i>
         </pbutton>
+
+        <p
+          class="feedbackMessage errorMessage ${ hasUnsavedChanges ? 'feedbackMessageVisible' : ''}">
+          Please save all your clauses
+        </p>
       </div>
     </div>
   </stage-wrapper>

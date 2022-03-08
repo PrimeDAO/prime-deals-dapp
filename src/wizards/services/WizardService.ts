@@ -90,11 +90,11 @@ export class WizardService {
     this.router.navigate(this.getWizardState(wizardStateKey).cancelRoute);
   }
 
-  public async proceed(wizardStateKey: WizardStateKey): Promise<void> {
+  public proceed(wizardStateKey: WizardStateKey): Promise<void> {
     const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
-    this.goToStage(wizardStateKey, indexOfActive + 1, true);
+    return this.goToStage(wizardStateKey, indexOfActive + 1, true);
   }
 
   public previous(wizardStateKey: WizardStateKey): void {
