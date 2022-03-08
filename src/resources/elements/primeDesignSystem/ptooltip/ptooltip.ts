@@ -10,11 +10,12 @@ export class PTooltip {
   @bindable.boolean interactive = false;
   @bindable.boolean visible = true;
   @bindable.boolean allowHtml = false;
+  @bindable appendTo: Element;
 
   private tooltip: Instance;
 
   constructor(private element: Element) {
-    this.tooltip = tippy(this.element, {theme: "prime-design-system", appendTo: document.body});
+    this.tooltip = tippy(this.element, {theme: "prime-design-system"});
   }
 
   propertyChanged(name: string, newValue: string) {
