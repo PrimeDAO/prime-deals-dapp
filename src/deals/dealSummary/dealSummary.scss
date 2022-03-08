@@ -33,6 +33,7 @@ deal-summary {
         display: grid;
         grid-area: icon;
         width: inherit;
+        align-items: center;
         grid-template-columns: 42px auto;
 
         &.running {
@@ -127,19 +128,14 @@ deal-summary {
       > .footer {
         grid-area: footer;
         display: flex;
-        align-items: baseline;
         padding: $spacing-normal;
 
-        & > div {
-          .button {
-            margin: 0 12px 0 0;
-          }
-
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
+        .button {
+          margin: 0 12px 0 0;
         }
+
+        justify-content: space-between;
+        width: 100%;
       }
     }
 
