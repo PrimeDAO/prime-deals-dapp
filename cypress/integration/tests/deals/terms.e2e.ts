@@ -42,7 +42,7 @@ When("I add a Clause", () => {
   Terms.addClause();
 });
 
-When("I save the changes", () => {
+When("I save the changes to the Clause", () => {
   EditingCard.click("Save");
 });
 
