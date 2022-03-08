@@ -113,7 +113,7 @@ Various code dependencies include:
 
 ### Firebase Local development environment setup
 
-Assuming that a Firebase Project is already setup (otherwise see [how to setup a new project](#new-firebase-project-setup))
+Assuming that a Firebase Project is already setup and you have access to API key and other secrets (otherwise see [how to setup a new project](#new-firebase-project-setup))
 
 1. Add Firebase environment variables to `.env` file. You can find them in the Firebase console [https://console.firebase.google.com](https://console.firebase.google.com/) Under “Project settings” → “Your apps” → select the app you want to use
     
@@ -124,20 +124,21 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     FIREBASE_APP_ID=      # appId
     ```
     
-2. Use Firebase emulator for development
-    1. Run `npm run firebase` to start firebase emulator
-        1. It will output URLs for the locally deployed functions
+2. Use Firebase emulators for development
+    1. Run `npm run firebase` to start firebase emulators
+        1. It will output information about running firebase emulators. Make sure that Authentication, Functions and Firestore emulators are running. Emulator UI should be available at http://localhost:4000
+        2. It will output URLs for the locally deployed functions
         
         ```
         functions[us-central1-functionName]: http function initialized 
         (http://localhost:5001/${projectId}/us-central1/${functionName}).
         ```
         
-    2. When running it for the first time copy the outputted URL without the function name (with the last part), for example:
+    2. When running it for the first time copy the outputted functions URL without the function name (with the last part), for example:
         
         `http://localhost:5001/${projectId}/us-central1`
         
-    3. Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
+        Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
         
         `FIREBASE_FUNCTIONS_URL=http://localhost:5001/${projectId}/us-central1`
         
@@ -164,7 +165,6 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     
 6. Setup Authentication
     1. Add “Email/password” sign-in method (We are not going to use email/password to sign in users, but we need at least one sign-in method to be enabled in order for our custom sign-in to work)
-    2. Add desired domains under “Authorized domains”
 7. Setup Firestore Database
     1. Follow create database flow
     2. Under "Secure rules for Cloud Firestore” select "Start in production mode” which will disable all reads and writes
