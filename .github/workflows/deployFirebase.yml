@@ -3,7 +3,7 @@ on:
   push:
     branches: [ development, staging, master ]
 jobs:
-  Deploy Firebase:
+  Deploy_firebase:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
