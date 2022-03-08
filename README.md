@@ -212,6 +212,12 @@ Assuming that a Firebase Project is already setup and you have access to API key
     
     `https://us-central1-${projectId}.cloudfunctions.net`
 
+## Git hooks
+It's advised to use post-merge git hook which builds firebase functions for you,
+so your local firebase emulators will have the latest functions after a pull/merge.
+1. copy or symlink `post-merge` file into `.git/hooks`
+2. make the file executable by running `chmod +x post-merge`
+
 ## Architecture
 ### Technical Description
 The project framework is [Aurelia](https://aurelia.io).
