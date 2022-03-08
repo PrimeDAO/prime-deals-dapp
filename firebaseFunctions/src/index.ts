@@ -5,12 +5,17 @@ import { getAddress } from "ethers/lib/utils";
 
 const admin = firebaseAdmin.initializeApp();
 
+// Allow cross-origin requests for functions which use it
+// It is necessary to accept HTTP requests from our app,
+// as firebase functions are not hosted on the same domain
 const cors = corsLib({
   origin: true,
 });
 
+// creates a token that is used to sign in to firebase from the frontend
 export const createCustomToken = functions.https.onRequest(
   (request, response) =>
+    // Allow cross-origin requests for this function
     cors(request, response, async () => {
       if (request.method !== "POST") {
         return response.sendStatus(403);
@@ -22,6 +27,7 @@ export const createCustomToken = functions.https.onRequest(
 
       const address = request.body.address;
 
+      // Fail if provided address is not an ethereum address
       try {
         getAddress(address);
       } catch {
