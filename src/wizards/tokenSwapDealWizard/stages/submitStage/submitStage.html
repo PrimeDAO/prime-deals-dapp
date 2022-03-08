@@ -57,7 +57,7 @@
         <section class="stageSectionContent">
           <div class="submitContentLabel">Proposal Lead</div>
           <div class="submitContent">
-            <p class="subtext">
+            <p class="subtext" ptooltip.bind="submitData.proposalLead.address">
               ${submitData.proposalLead.address | smallHexString}
             </p>
             <p class="subtext">${submitData.proposalLead.email}</p>

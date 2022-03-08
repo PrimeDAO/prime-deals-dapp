@@ -12,7 +12,7 @@
 
   <div class="submitContentLabel-sm">Treasury address</div>
   <div class="submitContent">
-    <p class="subtext">
+    <p class="subtext" ptooltip.bind="daoData.treasury_address">
       <template if.bind="daoData.treasury_address">
         ${daoData.treasury_address | smallHexString}
       </template>
@@ -37,7 +37,9 @@
   <div class="submitContent">
     <template repeat.for="representative of daoData.representatives">
       <template if.bind="representative.address">
-        <p class="subtext">${representative.address | smallHexString}</p>
+        <p class="subtext" ptooltip.bind="representative.address">
+          ${representative.address | smallHexString}
+        </p>
       </template>
       <template else>-</template>
     </template>
@@ -54,7 +56,7 @@
           ${token.name || '-'}
         </p>
         <div class="detailsTable detailsTableInViewMode">
-          <div class="detailsCell">
+          <div class="detailsCell" ptooltip.bind="token.address">
             <p>Token address</p>
             <p>${token.address || '-' | smallHexString }</p>
           </div>
