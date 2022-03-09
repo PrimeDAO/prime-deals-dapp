@@ -15,6 +15,7 @@ export enum ShowButtonsEnum {
 @customElement("ppopup-modal")
 export class PPopupModal {
 
+  @bindable className: string;
   @bindable buttons: ShowButtonsEnum;
   @bindable message: string;
   @bindable header: string;
@@ -48,11 +49,11 @@ export class PPopupModal {
 }
 
 export interface IPopupModalModel {
+  className?: string;
   message: string;
   header?: string,
   buttons?: ShowButtonsEnum;
   buttonTextPrimary?: string;
   buttonTextSecondary?: string;
   confetti?: boolean;
-  className?: string;
 }
