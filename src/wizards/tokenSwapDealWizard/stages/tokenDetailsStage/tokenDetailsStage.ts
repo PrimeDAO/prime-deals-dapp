@@ -3,7 +3,7 @@ import { ValidationController, ValidationRules } from "aurelia-validation";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
-import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IToken, } from "../../../../entities/DealRegistrationTokenSwap";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
 
@@ -46,6 +46,8 @@ export class TokenDetailsStage {
 
     this.wizardType = stageMeta.wizardType;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
+
+    this.addDefaultValuesToRegistrationData(stageMeta.wizardType);
 
     this.stageMetadata.primaryDAOTokenDetailsViewModes = this.stageMetadata.primaryDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.wizardState.registrationData.primaryDAO);
@@ -122,5 +124,12 @@ export class TokenDetailsStage {
   private checkedForUnsavedChanges() {
     this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
     this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+  }
+
+  private addDefaultValuesToRegistrationData(wizardType: WizardType) {
+    if (wizardType === WizardType.createPartneredDeal) {
+      this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
+      this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
+    }
   }
 }
