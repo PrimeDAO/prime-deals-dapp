@@ -2,7 +2,7 @@
   "projects": {
     "default": "prime-deals-6ace4",
     "development": "prime-deals-development",
-    "staging": "todo",
+    "staging": "prime-deals-staging",
     "production": "todo"
   }
 }
