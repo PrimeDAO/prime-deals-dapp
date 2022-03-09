@@ -18,9 +18,7 @@ const project = require('./aurelia_project/aurelia.json');
 const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { EnvironmentPlugin, ProvidePlugin } = require( "webpack" );
-const CompressionPlugin = require( "compression-webpack-plugin" )
-const zlib = require( "zlib" )
+const { EnvironmentPlugin, ProvidePlugin } = require( "webpack" )
 require("dotenv").config({ path: `${ process.env.DOTENV_CONFIG_PATH }`});
 
 console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
@@ -335,18 +333,5 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
      */
     new CleanWebpackPlugin(),
     new EnvironmentPlugin( process.env ),
-    new CompressionPlugin( {
-      filename: "[path][base].br",
-      algorithm: "brotliCompress",
-      test: /\.(js|css|scss|html|svg)$/,
-      compressionOptions: {
-        params: {
-          [ zlib.constants.BROTLI_PARAM_QUALITY ]: 11,
-        },
-      },
-      threshold: 10240,
-      minRatio: 0.8,
-      deleteOriginalAssets: false,
-    } ),
   ]
 });
