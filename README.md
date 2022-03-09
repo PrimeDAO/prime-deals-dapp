@@ -212,6 +212,17 @@ Assuming that a Firebase Project is already setup and you have access to API key
     
     `https://us-central1-${projectId}.cloudfunctions.net`
 
+### Testing Firebase on Vercel preview (for pull requests)(optional)
+
+Firebase is not automatically deployed when you create a PR, because all Vercel previews (deployments run for pull requests) are connected to the same firebase projects, and we want to avoid overwriting Firebase Functions or Rules when multiple PRs have conflicting Firebase Functions or Rules. Therefore if you want Vercel preview for your PR, to have access to the firebase functions and rules from your PR, you should deploy them from your local machine. Vercel previews are connected to firebase project with id `prime-deals-6ace4` and name “prime-deals-local”. It’s the default project and you can see it assigned to `default` alias in `.firebaserc` file.
+
+Deploy Firebase from you local machine to the default project (used by Vercel previews for PRs)
+
+In the project directory (make sure you have firebase cli and you are authenticated) Run:
+```
+firebase deploy
+```
+
 ## Git hooks
 It's advised to use post-merge git hook which builds firebase functions for you,
 so your local firebase emulators will have the latest functions after a pull/merge.

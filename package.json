@@ -29,7 +29,7 @@
     "firebase": "npm run firebase-emulators:start",
     "firebase:all": "npm run firebase-functions:watch & npm run firebase-emulators:start",
     "firebase-export": "firebase emulators:export --force firebase_seed",
-    "firebase-emulators:start": "firebase emulators:start --project development --import=firebase_seed",
+    "firebase-emulators:start": "firebase emulators:start --import=firebase_seed",
     "firebase-functions:watch": "cd firebaseFunctions && npm run build:watch",
     "firebase-deploy:development": "firebase deploy --project=development",
     "firebase-deploy:staging": "firebase deploy --project=staging",
