@@ -1,0 +1,18 @@
+name: Deploy Firebase
+on:
+  push:
+    branches: [ development, staging, master ]
+jobs:
+  Deploy_firebase:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+    - name: Install firebaseFunctions dependencies
+      run: cd firebaseFunctions && npm ci
+    - name: Deploy firebase
+      run: npm run firebase-deploy:${GITHUB_REF_NAME} -- --token ${{ secrets.FIREBASE_TOKEN }}
