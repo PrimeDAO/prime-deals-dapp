@@ -19,6 +19,9 @@ const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plu
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { EnvironmentPlugin, ProvidePlugin } = require( "webpack" );
+const CompressionPlugin = require( "compression-webpack-plugin" )
+const HtmlMinimizerPlugin = require( "html-minimizer-webpack-plugin" )
+const zlib = require( "zlib" )
 require("dotenv").config({ path: `${ process.env.DOTENV_CONFIG_PATH }`});
 
 console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
@@ -220,7 +223,13 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
         }
         */
       }
-    }
+    },
+    minimize: true,
+    minimizer: [
+      new HtmlMinimizerPlugin( {
+        include: /\/includes/,
+      } ),
+    ],
   },
   performance: { hints: false },
   devServer: {
@@ -332,6 +341,19 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
      * `del` (https://www.npmjs.com/package/del), or `rimraf` (https://www.npmjs.com/package/rimraf).
      */
     new CleanWebpackPlugin(),
-    new EnvironmentPlugin(process.env)
+    new EnvironmentPlugin( process.env ),
+    new CompressionPlugin( {
+      filename: "[path][base].br",
+      algorithm: "brotliCompress",
+      test: /\.(js|css|scss|html|svg)$/,
+      compressionOptions: {
+        params: {
+          [ zlib.constants.BROTLI_PARAM_QUALITY ]: 11,
+        },
+      },
+      threshold: 10240,
+      minRatio: 0.8,
+      deleteOriginalAssets: false,
+    } ),
   ]
 });
