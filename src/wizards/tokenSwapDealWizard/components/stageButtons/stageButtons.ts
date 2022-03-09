@@ -1,6 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { ConsoleLogService } from "services/ConsoleLogService";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 
 import "./stageButtons.scss";
@@ -15,15 +16,17 @@ export class stageButtons {
 
   validating = false;
 
-  constructor(public wizardService: WizardService) {
+  constructor(
+    public wizardService: WizardService,
+    private consoleLogService: ConsoleLogService,
+  ) {
   }
 
   async proceed() {
     this.validating = true;
     this.wizardService
       .proceed(this.wizardManager)
-      // eslint-disable-next-line no-console
-      .catch(console.error)
+      .catch(errorMessage => this.consoleLogService.logMessage(errorMessage, "error"))
       .finally(() => this.validating = false);
   }
 
