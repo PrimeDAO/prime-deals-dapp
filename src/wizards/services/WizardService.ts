@@ -91,11 +91,12 @@ export class WizardService {
     this.router.navigate(this.getWizardState(wizardStateKey).cancelRoute);
   }
 
-  public proceed(wizardStateKey: WizardStateKey): Promise<void> {
+  public async proceed(wizardStateKey: WizardStateKey): Promise<void> {
     const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
-    if (!this.checkCanProceed(indexOfActive)) {
+    const canProceed = await this.checkCanProceed(wizardState, indexOfActive);
+    if (!canProceed) {
       const validationErrorMessage = "Unable to proceed, not all stages are valid.";
       this.eventAggregator.publish("handleValidationError", validationErrorMessage);
       return Promise.reject(validationErrorMessage);
@@ -120,12 +121,8 @@ export class WizardService {
     const wizardState = this.getWizardState(wizardStateKey);
 
     const currentIndexOfActive = wizardState.indexOfActive;
-    /**
-     * This will set valid state to undefined when the validate function is not uninitialized.
-     * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
-     */
-    // eslint-disable-next-line require-atomic-updates
-    wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
+
+    await this.validateActiveStage(wizardState, currentIndexOfActive );
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
@@ -159,6 +156,15 @@ export class WizardService {
     // }
   }
 
+  private async validateActiveStage(wizardState: IWizardState<unknown>, currentIndexOfActive: number) {
+    /**
+     * This will set valid state to undefined when the validate function is not uninitialized.
+     * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
+     */
+    // eslint-disable-next-line require-atomic-updates
+    wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
+  }
+
   public hasWizard(wizardStateKey: WizardStateKey): boolean {
     return this.wizardsStates.has(wizardStateKey);
   }
@@ -186,11 +192,15 @@ export class WizardService {
     return wizardState.stages[wizardState.indexOfActive];
   }
 
-  private checkCanProceed(indexOfActive: number): boolean {
+  private async checkCanProceed(wizardState: IWizardState<unknown>, indexOfActive: number): Promise<boolean> {
     const visibleStagesCount = this.getVisibleStages().length;
     const isLastStage = visibleStagesCount === indexOfActive + 1;
     /** Proceed just fine when not last stage. */
     if (!isLastStage) return true;
+
+    if (isLastStage) {
+      await this.validateActiveStage(wizardState, indexOfActive );
+    }
 
     const allStagesValid = this.checkAllStagesValid();
     const canProceed = allStagesValid && isLastStage;
