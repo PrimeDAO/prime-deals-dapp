@@ -3,7 +3,7 @@ import { ValidationController, ValidationRules } from "aurelia-validation";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
-import { IDAO, IDealRegistrationTokenSwap, IToken, } from "../../../../entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
 
