@@ -12,6 +12,8 @@
 
   &.pcard.gradient {
     @include pcardBgAndGradient($backgroundColor: $Border01);
+    /* Fix pink line appearing */
+    border-right-width: 7px
   }
 
   > .dialogHeader,
