@@ -3,6 +3,9 @@ import "./ptooltip.scss";
 import tippy, { Instance, Placement, Props } from "tippy.js";
 import { bindable } from "aurelia-typed-observable-plugin";
 
+/** Value found by getting width of 42 'M's of font size 14px. */
+const MAX_WIDTH = 560;
+
 @customAttribute("ptooltip")
 export class PTooltip {
   @bindable({primaryProperty: true}) content: string;
@@ -11,15 +14,14 @@ export class PTooltip {
   @bindable.boolean visible = true;
   @bindable.boolean allowHtml = false;
   @bindable appendTo: Props["appendTo"] | string;
+  @bindable.number maxWidth: number = MAX_WIDTH;
 
   private tooltip: Instance;
 
   constructor(private element: Element) {
-    /** Value found by getting width of 42 'M's of font size 14px. */
-    const maxWidth = 560;
     this.tooltip = tippy(this.element, {
       theme: "prime-design-system",
-      maxWidth,
+      maxWidth: this.maxWidth,
     });
   }
 
