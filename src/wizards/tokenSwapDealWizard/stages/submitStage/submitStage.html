@@ -57,8 +57,11 @@
         <section class="stageSectionContent">
           <div class="submitContentLabel">Proposal Lead</div>
           <div class="submitContent">
-            <p class="subtext" ptooltip.bind="submitData.proposalLead.address">
-              ${submitData.proposalLead.address | smallHexString}
+            <p class="subtext">
+              <etherscanlink
+                text="${submitData.proposalLead.address | smallHexString}"
+                address.bind="submitData.proposalLead.address">
+              </etherscanlink>
             </p>
             <p class="subtext" if.bind="submitData.proposalLead.email">${submitData.proposalLead.email}</p>
             <p class="optionalContent" else>[optional email not supplied]</p>
