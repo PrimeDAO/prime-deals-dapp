@@ -43,14 +43,14 @@
         <section class="stageSectionContent">
           <div class="submitContentLabel">Proposal Summary</div>
           <div class="submitContent">
-            <p class="subtext">${submitData.proposal.summary}</p>
+            <pre class="subtext">${submitData.proposal.summary}</pre>
           </div>
         </section>
 
         <section class="stageSectionContent">
           <div class="submitContentLabel">Proposal Description</div>
           <div class="submitContent">
-            <p class="subtext">${submitData.proposal.description}</p>
+            <pre class="subtext">${submitData.proposal.description}</pre>
           </div>
         </section>
 
@@ -120,7 +120,7 @@
                 <template if.bind="true">
                   <div class="submitContentLabel">Clause ${$index + 1}</div>
                   <div class="submitContent">
-                    <p class="subtext">${clause.text}</p>
+                    <pre class="subtext">${clause.text}</pre>
                   </div>
                 </template>
               </div>

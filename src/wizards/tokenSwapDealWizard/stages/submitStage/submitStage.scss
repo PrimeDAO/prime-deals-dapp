@@ -35,6 +35,8 @@ $submitCardWidth: 645px;
       margin-bottom: inherit;
     }
 
+    @include pre;
+
     .subtext {
       color: $Neutral04;
     }
