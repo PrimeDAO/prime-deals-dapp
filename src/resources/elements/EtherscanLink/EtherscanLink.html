@@ -1,20 +1,21 @@
 <template>
   <div class="etherscanlink ${css}">
-    <a ref="hotElement"
-      data-tippy-content="${address}"
-      class="text" if.to-view="networkExplorerUri" 
-      href.to-view="networkExplorerUri"
-      target='${internal ? "" : "_blank"}' rel="noopener noreferrer">
+    <a class="text"
+       href.to-view="networkExplorerUri" if.to-view="networkExplorerUri"
+       ptooltip.bind="address"
+       rel="noopener noreferrer" target='${internal ? "" : "_blank"}'>
       ${text || address}
     </a>
 
-    <div else 
-      ref="coldElement"
-      data-tippy-content="${address}"
-      class="text">
+    <div class="text"
+         else
+         ptooltip.bind="address">
       ${text || address}
     </div>
 
-    <copy-to-clipboard-button if.to-view="!hideClipboardButton" text-to-copy.to-view="address" message.to-view="copyMessage"></copy-to-clipboard-button>
+    <copy-to-clipboard-button
+      if.to-view="!hideClipboardButton" message.to-view="copyMessage"
+      text-to-copy.to-view="address"
+    ></copy-to-clipboard-button>
   </div>
 </template>

@@ -113,7 +113,7 @@ Various code dependencies include:
 
 ### Firebase Local development environment setup
 
-Assuming that a Firebase Project is already setup (otherwise see [how to setup a new project](#new-firebase-project-setup))
+Assuming that a Firebase Project is already setup and you have access to API key and other secrets (otherwise see [how to setup a new project](#new-firebase-project-setup))
 
 1. Add Firebase environment variables to `.env` file. You can find them in the Firebase console [https://console.firebase.google.com](https://console.firebase.google.com/) Under “Project settings” → “Your apps” → select the app you want to use
     
@@ -124,20 +124,21 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     FIREBASE_APP_ID=      # appId
     ```
     
-2. Use Firebase emulator for development
-    1. Run `npm run firebase` to start firebase emulator
-        1. It will output URLs for the locally deployed functions
+2. Use Firebase emulators for development
+    1. Run `npm run firebase` to start firebase emulators
+        1. It will output information about running firebase emulators. Make sure that Authentication, Functions and Firestore emulators are running. Emulator UI should be available at http://localhost:4000
+        2. It will output URLs for the locally deployed functions
         
         ```
         functions[us-central1-functionName]: http function initialized 
         (http://localhost:5001/${projectId}/us-central1/${functionName}).
         ```
         
-    2. When running it for the first time copy the outputted URL without the function name (with the last part), for example:
+    2. When running it for the first time copy the outputted functions URL without the function name (with the last part), for example:
         
         `http://localhost:5001/${projectId}/us-central1`
         
-    3. Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
+        Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
         
         `FIREBASE_FUNCTIONS_URL=http://localhost:5001/${projectId}/us-central1`
         
@@ -164,7 +165,6 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     
 6. Setup Authentication
     1. Add “Email/password” sign-in method (We are not going to use email/password to sign in users, but we need at least one sign-in method to be enabled in order for our custom sign-in to work)
-    2. Add desired domains under “Authorized domains”
 7. Setup Firestore Database
     1. Follow create database flow
     2. Under "Secure rules for Cloud Firestore” select "Start in production mode” which will disable all reads and writes
@@ -192,8 +192,8 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     1. On your local machine run `firebase login:ci` (make sure you have firebase-tools installed globally)
     2. Login in the browser and authenticate firebase 
     3. Copy token that was printed to the terminal
-    4. !!!! IMPORTANT !!!! Scope the secret to the branch by which it should be used. For example if you are creating a Firebase project for staging, make sure that in the Github Actions you scope the token to be available only for the staging branch. Otherwise it might deploy firebase to wrong environment!!!!
-        1. Go to Github actions settings page and add secret `FIREBASE_TOKEN` with value of the token copied from the terminal. Scope it properly.
+    4. IMPORTANT If the account used to generate the token doesn’t have access to all firebase projects, scope the secret to the branch by which it should be used. For example if you are creating a Firebase project for staging, make sure that in the Github Actions you scope the token to be available only for the staging branch.
+        1. Go to Github actions settings page and add secret `FIREBASE_TOKEN` with value of the token copied from the terminal. If it belongs to all firebase projects make it “repository secret” otherwise scope it per branch
 12. Add `FIREBASE_FUNCTIONS_URL` to the Vercel Environment Variables
     
     Assign following URL to it:
@@ -211,6 +211,23 @@ Assuming that a Firebase Project is already setup (otherwise see [how to setup a
     Omit the functionName (last part) and use 
     
     `https://us-central1-${projectId}.cloudfunctions.net`
+
+### Testing Firebase on Vercel preview (for pull requests)(optional)
+
+Firebase is not automatically deployed when you create a PR, because all Vercel previews (deployments run for pull requests) are connected to the same firebase projects, and we want to avoid overwriting Firebase Functions or Rules when multiple PRs have conflicting Firebase Functions or Rules. Therefore if you want Vercel preview for your PR, to have access to the firebase functions and rules from your PR, you should deploy them from your local machine. Vercel previews are connected to firebase project with id `prime-deals-6ace4` and name “prime-deals-local”. It’s the default project and you can see it assigned to `default` alias in `.firebaserc` file.
+
+Deploy Firebase from you local machine to the default project (used by Vercel previews for PRs)
+
+In the project directory (make sure you have firebase cli and you are authenticated) Run:
+```
+firebase deploy
+```
+
+## Git hooks
+It's advised to use post-merge git hook which builds firebase functions for you,
+so your local firebase emulators will have the latest functions after a pull/merge.
+1. copy or symlink `post-merge` file into `.git/hooks`
+2. make the file executable by running `chmod +x post-merge`
 
 ## Architecture
 ### Technical Description

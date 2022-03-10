@@ -83,21 +83,10 @@ export interface IDealRegistrationTokenSwap {
 export function emptyDaoDetails(): IDAO {
   return {
     name: "",
-    tokens: [{
-      address: "",
-      name: undefined,
-      symbol: undefined,
-      decimals: undefined,
-      logoURI: undefined,
-      amount: undefined,
-      instantTransferAmount: undefined,
-      vestedTransferAmount: undefined,
-      vestedFor: undefined,
-      cliffOf: undefined,
-    }],
+    tokens: [],
     treasury_address: "",
     representatives: [{address: ""}],
-    social_medias: [{name: "", url: ""}],
+    social_medias: [],
     logoURI: null,
   };
 }
