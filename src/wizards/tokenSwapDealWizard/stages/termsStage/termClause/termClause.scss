@@ -1,6 +1,12 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 
 term-clause {
+  .pcard {
+    .wizardFormInput {
+      margin-bottom: unset;
+    }
+  }
+
   .formInputLabelTitle {
     line-height: 33px;
   }
