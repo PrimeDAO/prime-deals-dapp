@@ -129,6 +129,11 @@ export class WizardManager {
 
       this.stages = this.configureStages(wizardType);
 
+      if (this.isHiddenStage(stageRoute)) {
+        this.router.navigate(this.getPreviousRoute(wizardType));
+        throw new Error("Not a valid URL");
+      }
+
       this.wizardState = this.wizardService.registerWizard({
         wizardStateKey: this,
         stages: this.stages,
@@ -246,5 +251,12 @@ export class WizardManager {
       this.router.navigate(this.getPreviousRoute(wizardType));
       throw new Error("Error authorizing the current account");
     }
+  }
+
+  private isHiddenStage(stageRoute: string): boolean {
+    const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
+    const isHidden = hiddenStage !== -1;
+    return isHidden;
+
   }
 }
