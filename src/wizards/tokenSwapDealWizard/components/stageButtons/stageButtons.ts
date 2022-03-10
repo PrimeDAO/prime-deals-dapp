@@ -1,7 +1,9 @@
+import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { ConsoleLogService } from "services/ConsoleLogService";
+import { Address, EthereumService } from "services/EthereumService";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 
 import "./stageButtons.scss";
@@ -13,12 +15,16 @@ export class stageButtons {
   @bindable onSubmit: () => void;
 
   private wizardState: IWizardState<IDealRegistrationTokenSwap>;
+  private accountSubscription: Subscription;
 
   validating = false;
+  connectedAddress?: Address;
 
   constructor(
     public wizardService: WizardService,
     private consoleLogService: ConsoleLogService,
+    private eventAggregator: EventAggregator,
+    private ethereumService: EthereumService,
   ) {
   }
 
@@ -36,6 +42,18 @@ export class stageButtons {
     if (this.showSubmit === undefined) {
       this.showSubmit = this.showSubmitButton();
     }
+
+    this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
+      this.connectedAddress = address;
+    });
+  }
+
+  detached() {
+    this.accountSubscription.dispose();
+  }
+
+  connectToWallet() {
+    this.ethereumService.ensureConnected();
   }
 
   showSubmitButton() {
