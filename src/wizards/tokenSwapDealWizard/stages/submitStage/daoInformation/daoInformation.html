@@ -12,9 +12,12 @@
 
   <div class="submitContentLabel-sm">Treasury address</div>
   <div class="submitContent">
-    <p class="subtext" ptooltip.bind="daoData.treasury_address">
+    <p class="subtext">
       <template if.bind="daoData.treasury_address">
-        ${daoData.treasury_address | smallHexString}
+        <etherscanlink
+          text="${daoData.treasury_address | smallHexString}"
+          address.bind="daoData.treasury_address">
+        </etherscanlink>
       </template>
       <template else>-</template>
     </p>
@@ -39,8 +42,11 @@
   <div class="submitContent">
     <template repeat.for="representative of daoData.representatives">
       <template if.bind="representative.address">
-        <p class="subtext" ptooltip.bind="representative.address">
-          ${representative.address | smallHexString}
+        <p class="subtext">
+          <etherscanlink
+            text="${representative.address | smallHexString}"
+            address.bind="representative.address">
+          </etherscanlink>
         </p>
       </template>
       <template else>-</template>
@@ -58,9 +64,14 @@
           ${token.name || '-'}
         </p>
         <div class="detailsTable detailsTableInViewMode">
-          <div class="detailsCell" ptooltip.bind="token.address">
+          <div class="detailsCell">
             <p>Token address</p>
-            <p>${token.address || '-' | smallHexString }</p>
+            <p>
+              <etherscanlink
+                text="${token.address || '-' | smallHexString}"
+                address.bind="token.address">
+              </etherscanlink>
+            </p>
           </div>
 
           <div class="detailsCell detailsCellAmount">
