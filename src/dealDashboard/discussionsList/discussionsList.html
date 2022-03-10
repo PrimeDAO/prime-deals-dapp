@@ -42,19 +42,18 @@
               ${discussion.topic}
             </p>
             <p class="creator">
-              ${discussion.profile.address}
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdByName">
                 Created by ${discussion.createdByName} 
               </span>
               <span else>
-                Created by ${discussion.createdByAddress | smallHexString} 
+                Created by ${discussion.createdBy.address | smallHexString} 
               </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
           <div class="td h-centered v-centered">${discussion.replies || 0}</div>
-          <div class="td h-centered v-centered">${dateService.formattedTime(discussion.modifiedAt).diff()}</div>
+          <div class="td h-centered v-centered">${discussion.lastModified}</div>
         </div>
       </div>
     </div>

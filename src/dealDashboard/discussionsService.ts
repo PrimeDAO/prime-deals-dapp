@@ -8,8 +8,13 @@ import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { DateService } from "services/DateService";
 // import AES from "crypto-js/aes";
 // import Utf8 from "crypto-js/enc-utf8";
+
+interface IDiscussionListItem extends IDealDiscussion {
+  lastModified: string
+}
 
 @autoinject
 export class DiscussionsService {
@@ -18,7 +23,7 @@ export class DiscussionsService {
   private convo = new Convo(process.env.CONVO_API_KEY);
   private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
-  public discussions: Record<string, IDealDiscussion> = {};
+  public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
 
   constructor(
@@ -27,6 +32,7 @@ export class DiscussionsService {
     private eventAggregator: EventAggregator,
     private dealService: DealService,
     private dataSourceDeals: IDataSourceDeals,
+    private dateService: DateService,
   ) { }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -112,7 +118,11 @@ export class DiscussionsService {
   public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
     this.discussions = {};
     for (const [, value] of clauseDiscussions.entries()) {
-      this.discussions[value] = this.dataSourceDeals.get<IDealDiscussion>(value);
+      const discussion = this.dataSourceDeals.get<IDealDiscussion>(value);
+      this.discussions[value] = {
+        ...discussion,
+        lastModified: this.dateService.formattedTime(discussion.modifiedAt).diff(),
+      };
     }
   }
 
@@ -160,6 +170,7 @@ export class DiscussionsService {
         createdBy,
         createdAt: new Date(),
         modifiedAt: new Date(),
+        lastModified: "<1min",
         replies: 0,
         representatives: [...new Set([...args.representatives])],
         admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
