@@ -19,12 +19,7 @@ term-clause {
     .inputContainer {
       margin-top: unset;
 
-      pre {
-        white-space: pre;
-        font-family: Inter;
-        font-size: $font-size3;
-        line-height: 22px;
-      }
+      @include pre($font-size3);
     }
 
     .formInputLabel {

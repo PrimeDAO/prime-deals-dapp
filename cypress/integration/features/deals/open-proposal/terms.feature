@@ -11,11 +11,11 @@ Feature: Terms - Open Proposal
 
   Scenario: Update a Clause
     Given I add content to a Clause
-    When I save the changes
+    When I save the changes to the Clause
     Then the new Clause should appear
 
   Scenario: Update a Clause - invalid
-    When I save the changes
+    When I save the changes to the Clause
     Then I should get an error message for the Clause
 
   Scenario: Delete a Clause

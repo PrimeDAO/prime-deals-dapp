@@ -20,13 +20,16 @@ export interface IWizardStage {
   valid: boolean;
   route: string;
   moduleId: any
+  hidden?: boolean;
   form?: ValidationController;
   validate?: () => Promise<boolean> | boolean;
 }
 
+export type WizardStateKey = unknown
+
 @autoinject
 export class WizardService {
-  private wizardsStates = new Map<any, IWizardState>();
+  private wizardsStates = new Map<WizardStateKey, IWizardState>();
 
   constructor(
     private router: Router,
@@ -36,21 +39,21 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-    wizardManager,
+    wizardStateKey,
     stages,
     registrationData,
     cancelRoute,
     previousRoute,
   }: {
-    wizardManager: any;
+    wizardStateKey: WizardStateKey;
     stages: Array<IWizardStage>;
     registrationData: TData;
     cancelRoute: string;
     previousRoute: string;
   }): IWizardState<TData> {
-    if (!this.hasWizard(wizardManager)) {
+    if (!this.hasWizard(wizardStateKey)) {
       this.wizardsStates.set(
-        wizardManager,
+        wizardStateKey,
         {
           stages,
           indexOfActive: 0,
@@ -61,59 +64,60 @@ export class WizardService {
       );
     }
 
-    return this.getWizardState(wizardManager);
+    return this.getWizardState(wizardStateKey);
   }
 
-  public setActiveStage(wizardManager: any, indexOfActive: number): void {
-    this.wizardsStates.get(wizardManager).indexOfActive = indexOfActive;
+  public setActiveStage(wizardStateKey: WizardStateKey, indexOfActive: number): void {
+    this.wizardsStates.get(wizardStateKey).indexOfActive = indexOfActive;
   }
 
-  public getWizardState<Data>(wizardManager: any): IWizardState<Data> {
-    return this.wizardsStates.get(wizardManager);
+  public getWizardState<Data>(wizardStateKey: WizardStateKey): IWizardState<Data> {
+    return this.wizardsStates.get(wizardStateKey);
   }
 
-  // public updateStageValidity(wizardManager: any, valid: boolean) {
-  //   this.getActiveStage(wizardManager).valid = valid;
+  // public updateStageValidity(wizardStateKey: WizardStateKey, valid: boolean) {
+  //   this.getActiveStage(wizardStateKey).valid = valid;
   // }
 
   public registerStageValidateFunction(
-    wizardManager: any,
+    wizardStateKey: WizardStateKey,
     validate: () => Promise<boolean>,
   ) {
-    const stage = this.getActiveStage(wizardManager);
+    const stage = this.getActiveStage(wizardStateKey);
     stage.validate = validate;
   }
 
-  public cancel(wizardManager: any): void {
-    this.router.navigate(this.getWizardState(wizardManager).cancelRoute);
+  public cancel(wizardStateKey: WizardStateKey): void {
+    this.router.navigate(this.getWizardState(wizardStateKey).cancelRoute);
   }
 
-  public proceed(wizardManager: any): Promise<void> {
-    const wizardState = this.getWizardState(wizardManager);
+  public proceed(wizardStateKey: WizardStateKey): Promise<void> {
+    const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
-    return this.goToStage(wizardManager, indexOfActive + 1, true);
+    if (!this.checkCanProceed(indexOfActive)) {
+      const validationErrorMessage = "Unable to proceed, not all stages are valid.";
+      this.eventAggregator.publish("handleValidationError", validationErrorMessage);
+      return Promise.reject(validationErrorMessage);
+    }
+
+    return this.goToStage(wizardStateKey, indexOfActive + 1, true);
   }
 
-  public previous(wizardManager: any): void {
-    const wizardState = this.getWizardState(wizardManager);
+  public previous(wizardStateKey: WizardStateKey): void {
+    const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
     if (indexOfActive > 0) {
-      this.goToStage(wizardManager, indexOfActive - 1, false);
+      this.goToStage(wizardStateKey, indexOfActive - 1, false);
     } else {
       this.router.navigate(wizardState.previousRoute);
     }
   }
 
-  public submit(wizardManager: any, valid: boolean): void {
-    // eslint-disable-next-line no-console
-    console.log("submit", wizardManager, valid);
-  }
+  public async goToStage(wizardStateKey: WizardStateKey, index: number, blockIfInvalid: boolean): Promise<void> {
 
-  public async goToStage(wizardManager: any, index: number, blockIfInvalid: boolean): Promise<void> {
-
-    const wizardState = this.getWizardState(wizardManager);
+    const wizardState = this.getWizardState(wizardStateKey);
 
     const currentIndexOfActive = wizardState.indexOfActive;
     /**
@@ -155,12 +159,12 @@ export class WizardService {
     // }
   }
 
-  public hasWizard(wizardManager: any): boolean {
-    return this.wizardsStates.has(wizardManager);
+  public hasWizard(wizardStateKey: WizardStateKey): boolean {
+    return this.wizardsStates.has(wizardStateKey);
   }
 
-  public registerValidationRules(wizardManager: any, data: object, rules: Rule<object, any>[][]) {
-    const stage = this.getActiveStage(wizardManager);
+  public registerValidationRules(wizardStateKey: WizardStateKey, data: object, rules: Rule<object, any>[][]) {
+    const stage = this.getActiveStage(wizardStateKey);
 
     if (!stage.form) {
       stage.form = this.validationFactory.createForCurrentScope();
@@ -173,12 +177,37 @@ export class WizardService {
     return stage.form;
   }
 
-  // private getWizardStage(wizardManager: any, stageName: string): IWizardStage {
-  //   return this.getWizardState(wizardManager).stages.find(stage => stage.name === stageName);
+  // private getWizardStage(wizardStateKey: WizardStateKey, stageName: string): IWizardStage {
+  //   return this.getWizardState(wizardStateKey).stages.find(stage => stage.name === stageName);
   // }
 
-  private getActiveStage(wizardManager: any): IWizardStage {
-    const wizardState = this.getWizardState(wizardManager);
+  private getActiveStage(wizardStateKey: WizardStateKey): IWizardStage {
+    const wizardState = this.getWizardState(wizardStateKey);
     return wizardState.stages[wizardState.indexOfActive];
+  }
+
+  private checkCanProceed(indexOfActive: number): boolean {
+    const visibleStagesCount = this.getVisibleStages().length;
+    const isLastStage = visibleStagesCount === indexOfActive + 1;
+    /** Proceed just fine when not last stage. */
+    if (!isLastStage) return true;
+
+    const allStagesValid = this.checkAllStagesValid();
+    const canProceed = allStagesValid && isLastStage;
+
+    return canProceed;
+  }
+
+  private getVisibleStages(): IWizardStage[] {
+    let notHiddenStages;
+    this.wizardsStates.forEach((wizardState) => {
+      notHiddenStages = wizardState.stages.filter(stage => !stage.hidden);
+    });
+    return notHiddenStages;
+  }
+
+  private checkAllStagesValid() {
+    const allStagesValid = this.getVisibleStages().every(stage => stage.valid);
+    return allStagesValid;
   }
 }
