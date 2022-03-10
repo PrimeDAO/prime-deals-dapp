@@ -95,12 +95,6 @@ export class WizardService {
     const wizardState = this.getWizardState(wizardStateKey);
     const indexOfActive = wizardState.indexOfActive;
 
-    if (!this.checkCanProceed(indexOfActive)) {
-      const validationErrorMessage = "Unable to proceed, not all stages are valid.";
-      this.eventAggregator.publish("handleValidationError", validationErrorMessage);
-      return Promise.reject(validationErrorMessage);
-    }
-
     return this.goToStage(wizardStateKey, indexOfActive + 1, true);
   }
 
@@ -115,7 +109,7 @@ export class WizardService {
     }
   }
 
-  public async goToStage(wizardStateKey: WizardStateKey, index: number, blockIfInvalid: boolean): Promise<void> {
+  public async goToStage(wizardStateKey: WizardStateKey, destIndex: number, blockIfInvalid: boolean): Promise<void> {
 
     const wizardState = this.getWizardState(wizardStateKey);
 
@@ -131,17 +125,35 @@ export class WizardService {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
-
-    if (index >= wizardState.stages.length) {
+    /**
+     * I suspect this only handles the case where we haven't finished coding all the stages.
+     * Is it possible otherwise?
+     */
+    if (destIndex >= wizardState.stages.length) {
       return;
     }
 
+    if (blockIfInvalid) {
+      /**
+       * if we are on the last stage and going to submit, make sure all *visible* stages are valid
+       * (the Submit stage is not visible).
+       */
+      const visibleStages = wizardState.stages.filter(stage => !stage.hidden);
+      const isLastStage = (visibleStages.length - 1) === currentIndexOfActive;
+      const allStagesAreValid = visibleStages.every(stage => stage.valid);
+
+      if (isLastStage && !allStagesAreValid) {
+        this.eventAggregator.publish("handleValidationError", "Unable to proceed, not all stages are valid");
+        return;
+      }
+    }
+
     // eslint-disable-next-line require-atomic-updates
-    wizardState.indexOfActive = index;
+    wizardState.indexOfActive = destIndex;
 
     const params = {
       ...this.router.currentInstruction.params,
-      [STAGE_ROUTE_PARAMETER]: wizardState.stages[index].route,
+      [STAGE_ROUTE_PARAMETER]: wizardState.stages[destIndex].route,
     };
 
     this.router.navigateToRoute(
@@ -184,30 +196,5 @@ export class WizardService {
   private getActiveStage(wizardStateKey: WizardStateKey): IWizardStage {
     const wizardState = this.getWizardState(wizardStateKey);
     return wizardState.stages[wizardState.indexOfActive];
-  }
-
-  private checkCanProceed(indexOfActive: number): boolean {
-    const visibleStagesCount = this.getVisibleStages().length;
-    const isLastStage = visibleStagesCount === indexOfActive + 1;
-    /** Proceed just fine when not last stage. */
-    if (!isLastStage) return true;
-
-    const allStagesValid = this.checkAllStagesValid();
-    const canProceed = allStagesValid && isLastStage;
-
-    return canProceed;
-  }
-
-  private getVisibleStages(): IWizardStage[] {
-    let notHiddenStages;
-    this.wizardsStates.forEach((wizardState) => {
-      notHiddenStages = wizardState.stages.filter(stage => !stage.hidden);
-    });
-    return notHiddenStages;
-  }
-
-  private checkAllStagesValid() {
-    const allStagesValid = this.getVisibleStages().every(stage => stage.valid);
-    return allStagesValid;
   }
 }
