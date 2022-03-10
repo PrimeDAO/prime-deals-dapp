@@ -109,3 +109,9 @@ Then("the {string} option should be turned off", (optionText: string) => {
 Then("I should get an error notification", () => {
   cy.contains("[data-test='pPopupNotification']", "Error").should("be.visible");
 });
+
+Then("I should be redirected to the Home Page", () => {
+  cy.url().then(url => {
+    expect(url).to.include("home");
+  });
+});
