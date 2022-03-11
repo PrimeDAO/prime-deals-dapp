@@ -10,6 +10,8 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
 
+let dealsLoadedOnce = false;
+
 @singleton(false)
 @autoinject
 export class Deals {
@@ -26,17 +28,17 @@ export class Deals {
   }
 
   attached(): void {
+    if (dealsLoadedOnce) return;
     this.dealService.ensureAllDealsInitialized();
-    // this.dealService.partneredDeals.forEach(x => {
-    //   console.log(x.totalPrice);
-    //   x.loadDealSize();});
     this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
     this.sortDirection = SortOrder.DESC;
     this.sort("age");
+    dealsLoadedOnce = true;
   }
+
   @computedFrom("cardIndex", "showMine")
-  get featuredDeals(){
-    return this.getDealsForCardIndex(this.cardIndex, this.showMine);
+  get featuredDeals() {
+    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine)];
   }
   seeMore(yesNo: boolean): void {
     this.seeingMore = yesNo;
@@ -46,7 +48,7 @@ export class Deals {
   }
   private toggleMyDeals(): void {
     this.showMine = !this.showMine;
-    if (!this.isTabVisible(0, this.showMine)){
+    if (!this.isTabVisible(0, this.showMine)) {
       this.cardIndex = 1;
     }
   }
@@ -79,29 +81,23 @@ export class Deals {
         break;
     }
   }
-  private isTabVisible(cardIndex: number, showMine: boolean){
+  private isTabVisible(cardIndex: number, showMine: boolean) {
     return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
   }
-  private getDealsForCardIndex(cardIndex: number, showMine: boolean){
-    if (cardIndex === 0){
+  private getDealsForCardIndex(cardIndex: number, showMine: boolean) {
+    if (cardIndex === 0) {
       //open proposals
-      if (showMine){
-        return this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
-      }
-      return this.dealService.openProposals;
-    } else {
-      //partnered deals
-      if (showMine){
-        return this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress) || x.registrationData.partnerDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
-      }
-      return this.dealService.partneredDeals;
+      return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
     }
-  }
 
-  // gotoEtherscan(deal: Deal, event: Event): boolean {
-  //   Utils.goto(this.ethereumService.getEtherscanLink(deal.address));
-  //   event.stopPropagation();
-  //   return false;
-  // }
+    //partnered deals
+    const deals = !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress) || x.registrationData.partnerDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
+    deals.forEach(y => {
+      if (y.totalPrice) return;
+      y.loadDealSize();
+    });
+    return deals;
+
+  }
 
 }

@@ -17,8 +17,7 @@ export class DealTokenSwap implements IDeal {
 
   public id: IKey;
   public dealInitialized: boolean;
-  public isLoadingPrice: boolean;
-  public totalPrice: number;
+  public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
 
@@ -52,13 +51,14 @@ export class DealTokenSwap implements IDeal {
 
   public create(id: IKey): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
-    this.isLoadingPrice = false;
     this.id = id;
     return this;
   }
-  async loadDealSize(){
-    if (!this.isLoadingPrice){
-      this.isLoadingPrice = true;
+
+  async loadDealSize() {
+    // if the total price is already figured out we don't need to try again
+    if (this.totalPrice !== undefined) return;
+    try {
       let total = 0;
       const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
       const tokens: Array<ITokenInfo> = allTokens.map(x => ({
@@ -72,11 +72,10 @@ export class DealTokenSwap implements IDeal {
       await this.tokenService.getTokenPrices(tokens);
       allTokens.forEach(x => {
         const currentToken = tokens.find(y => y.symbol === x.symbol);
-        total += currentToken.price * Number(x.amount);
+        total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
       });
       this.totalPrice = total;
-      this.isLoadingPrice = false;
-    }
+    } catch { this.totalPrice = 0; }
   }
   /**
    * note this is called when the contracts change
@@ -122,7 +121,7 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
       /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
-      if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses);}
+      if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses); }
       this.status = this.statuses.shift();
       /* ++++ ------------------------------------------ ++++ */
     }
