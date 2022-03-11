@@ -1,11 +1,13 @@
-import { autoinject } from "aurelia-framework";
-import { EthereumService } from "services/EthereumService";
+import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { ITokenInfo, TokenService } from "./../services/TokenService";
+
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Utils } from "services/utils";
-import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { EthereumService } from "services/EthereumService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
+import { Utils } from "services/utils";
+import { autoinject } from "aurelia-framework";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -15,7 +17,8 @@ export class DealTokenSwap implements IDeal {
 
   public id: IKey;
   public dealInitialized: boolean;
-
+  public isLoadingPrice: boolean;
+  public totalPrice: number;
   public initializing = true;
   public corrupt = false;
 
@@ -43,15 +46,38 @@ export class DealTokenSwap implements IDeal {
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
     private dataSourceDeals: IDataSourceDeals,
+    private tokenService: TokenService,
   ) {
   }
 
   public create(id: IKey): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
+    this.isLoadingPrice = false;
     this.id = id;
     return this;
   }
-
+  async loadDealSize(){
+    if (!this.isLoadingPrice){
+      this.isLoadingPrice = true;
+      let total = 0;
+      const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
+      const tokens: Array<ITokenInfo> = allTokens.map(x => ({
+        address: x.address,
+        decimals: x.decimals,
+        logoURI: x.logoURI,
+        id: "",
+        name: x.name,
+        symbol: x.symbol,
+      }));
+      await this.tokenService.getTokenPrices(tokens);
+      allTokens.forEach(x => {
+        const currentToken = tokens.find(y => y.symbol === x.symbol);
+        total += currentToken.price * Number(x.amount);
+      });
+      this.totalPrice = total;
+      this.isLoadingPrice = false;
+    }
+  }
   /**
    * note this is called when the contracts change
    * @param config

@@ -4,7 +4,8 @@
 .discussions-list {
   .table {
     width: 100%;
-    .thead, .tr {
+    .thead,
+    .tr {
       display: grid;
       grid-template-columns: 30px 1fr 75px 75px;
       justify-content: space-around;
@@ -56,6 +57,9 @@
     .v-centered {
       vertical-align: middle;
     }
+    .no-wrap {
+      white-space: nowrap;
+    }
     .h-centered {
       text-align: center;
     }
@@ -80,10 +84,12 @@
       font-family: "Inter";
       font-size: 16px;
       font-weight: 400;
-      >.tertiary {
+      > .tertiary {
         padding: $spacing-small;
       }
-      &.active, &:hover, &:focus {
+      &.active,
+      &:hover,
+      &:focus {
         background-color: $BG02;
         color: $White;
       }
@@ -97,6 +103,4 @@
     color: $Primary01;
     font-weight: 700;
   }
-
 }
-

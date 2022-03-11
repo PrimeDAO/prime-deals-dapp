@@ -1,35 +1,61 @@
-import { EthereumService } from "services/EthereumService";
-import { SortOrder } from "../../services/SortService";
-import { DealService } from "services/DealService";
-import { autoinject, singleton } from "aurelia-framework";
-import { Router } from "aurelia-router";
 import "./deals.scss";
-// import { Deal } from "entities/Deal";
+
+import { autoinject, computedFrom, singleton } from "aurelia-framework";
+
+import { DateService } from "services/DateService";
+import { DealService } from "services/DealService";
+import { DealTokenSwap } from "entities/DealTokenSwap";
+import { EthereumService } from "services/EthereumService";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
 
 @singleton(false)
 @autoinject
 export class Deals {
-
-  featuredDeals: Array<any> = null;
+  cardIndex = 0;
   seeingMore = false;
-
+  showMine = false;
   constructor(
-    private router: Router,
+    private readonly dealService: DealService,
+    private eventAggregator: EventAggregator,
+    private dateService: DateService,
     private ethereumService: EthereumService,
-    private dealService: DealService,
   ) {
-    this.sort("starts"); // sort order will be ASC
+
   }
 
+  attached(): void {
+    this.dealService.ensureAllDealsInitialized();
+    // this.dealService.partneredDeals.forEach(x => {
+    //   console.log(x.totalPrice);
+    //   x.loadDealSize();});
+    this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+    this.sortDirection = SortOrder.DESC;
+    this.sort("age");
+  }
+  @computedFrom("cardIndex", "showMine")
+  get featuredDeals(){
+    return this.getDealsForCardIndex(this.cardIndex, this.showMine);
+  }
   seeMore(yesNo: boolean): void {
     this.seeingMore = yesNo;
   }
-
+  dealToggle(index: number): void {
+    this.cardIndex = index;
+  }
+  private toggleMyDeals(): void {
+    this.showMine = !this.showMine;
+    if (!this.isTabVisible(0, this.showMine)){
+      this.cardIndex = 1;
+    }
+  }
+  private onConnect(): void {
+    this.eventAggregator.publish("Account.Connect");
+  }
   sortDirection = SortOrder.DESC;
   sortColumn: string;
   sortEvaluator: (a: any, b: any) => number;
-
   sort(columnName: string): void {
 
     if (this.sortColumn === columnName) {
@@ -38,32 +64,38 @@ export class Deals {
       this.sortColumn = columnName;
     }
 
-    // switch (columnName) {
-    //   case "dealToken":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateString(a.dealTokenInfo.symbol, b.dealTokenInfo.symbol, this.sortDirection);
-    //     break;
-    //   case "fundingToken":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateString(a.fundingTokenInfo.symbol, b.fundingTokenInfo.symbol, this.sortDirection);
-    //     break;
-    //   case "type":
-    //     this.sortEvaluator = (_a: Deal, _b: Deal) => 0;
-    //     break;
-    //   case "target":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateBigNumber(a.target, b.target, this.sortDirection);
-    //     break;
-    //   case "project":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateString(a.metadata?.general?.projectName, b.metadata?.general?.projectName, this.sortDirection);
-    //     break;
-    //   case "starts":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateDateTimeAsDate(a.startTime, b.startTime, this.sortDirection);
-    //     break;
-    //   case "cap":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateBigNumber(a.cap, b.cap, this.sortDirection);
-    //     break;
-    //   case "whitelist":
-    //     this.sortEvaluator = (a: Deal, b: Deal) => SortService.evaluateBoolean(a.whitelisted, b.whitelisted, this.sortDirection);
-    //     break;
-    // }
+    switch (columnName) {
+      case "type":
+        this.sortEvaluator = (_a: DealTokenSwap, _b: DealTokenSwap) => 0;
+        break;
+      case "status":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.status, b.status, this.sortDirection);
+        break;
+      case "age":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt, b.registrationData.createdAt, this.sortDirection);
+        break;
+      case "dealSize":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.registrationData.dealType, b.registrationData.dealType, this.sortDirection);
+        break;
+    }
+  }
+  private isTabVisible(cardIndex: number, showMine: boolean){
+    return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
+  }
+  private getDealsForCardIndex(cardIndex: number, showMine: boolean){
+    if (cardIndex === 0){
+      //open proposals
+      if (showMine){
+        return this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
+      }
+      return this.dealService.openProposals;
+    } else {
+      //partnered deals
+      if (showMine){
+        return this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress) || x.registrationData.partnerDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
+      }
+      return this.dealService.partneredDeals;
+    }
   }
 
   // gotoEtherscan(deal: Deal, event: Event): boolean {
@@ -72,7 +104,4 @@ export class Deals {
   //   return false;
   // }
 
-  // onDealClick(deal: Deal): void {
-  //   this.router.navigate(deal.canGoToDashboard ? `deal/${deal.address}` : "launches");
-  // }
 }
