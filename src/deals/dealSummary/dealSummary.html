@@ -15,25 +15,23 @@
         </div>
       </div>
       <div class="footer">
-        <div>
-          <div class="icons ${ deal.registrationData.partnerDAO ? 'running' : 'open' }">
-            <div if.to-view="deal.registrationData.primaryDAO" class="icon">
-              <img src="${deal.registrationData.primaryDAO.logoURI}" />
+        <div class="icons ${ deal.registrationData.partnerDAO ? 'running' : 'open' }">
+          <div class="icon" if.to-view="deal.registrationData.primaryDAO">
+            <img src="${deal.registrationData.primaryDAO.logoURI}"/>
+          </div>
+          <div class="icon" if.to-view="deal.registrationData.partnerDAO">
+            <img src="${deal.registrationData.partnerDAO.logoURI}"/>
+          </div>
+          <div class="dao">
+            <div class="name ellipses" if.to-view="deal.registrationData.primaryDAO">
+              ${deal.registrationData.primaryDAO.name}
             </div>
-            <div if.to-view="deal.registrationData.partnerDAO" class="icon">
-              <img src="${deal.registrationData.partnerDAO.logoURI}" />
-            </div>
-            <div class="dao">
-              <div if.to-view="deal.registrationData.primaryDAO" class="name ellipses">
-                ${deal.registrationData.primaryDAO.name}
-              </div>
-              <div if.to-view="deal.registrationData.partnerDAO" class="name ellipses">
-                ${deal.registrationData.partnerDAO.name}
-              </div>
+            <div class="name ellipses" if.to-view="deal.registrationData.partnerDAO">
+              ${deal.registrationData.partnerDAO.name}
             </div>
           </div>
-          <pbutton type="secondary">View</pbutton>
         </div>
+        <pbutton type="secondary">View</pbutton>
       </div>
     </div>
     <div if.to-view="loading" class="loading">

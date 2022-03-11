@@ -162,7 +162,9 @@ export class TokenService {
         if (!tokenInfo.id) {
           tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
         }
-        tokensByGeckoId.set(tokenInfo.id, tokenInfo);
+        if (tokenInfo.id) {
+          tokensByGeckoId.set(tokenInfo.id, tokenInfo);
+        }
       }
     });
 

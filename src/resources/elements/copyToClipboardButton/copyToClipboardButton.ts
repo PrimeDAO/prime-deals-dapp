@@ -1,7 +1,7 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, containerless } from "aurelia-framework";
-import tippy from "tippy.js";
 import "./copyToClipboardButton.scss";
+
 @containerless
 @autoinject
 export class CopyToClipboardButton {
@@ -19,15 +19,9 @@ export class CopyToClipboardButton {
 
   @bindable handleClick: () => void;
 
-  private button: HTMLElement;
-
   constructor(
     private eventAggregator: EventAggregator,
   ) { }
-
-  public attached(): void {
-    tippy(this.button);
-  }
 
   private listener(e) { e.clipboardData.setData("text/plain", this.textToCopy); e.preventDefault(); }
 

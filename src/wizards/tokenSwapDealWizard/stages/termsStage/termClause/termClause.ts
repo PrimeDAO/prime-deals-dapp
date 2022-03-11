@@ -1,5 +1,5 @@
 import { autoinject, bindingMode } from "aurelia-framework";
-import { bindable, observable } from "aurelia-typed-observable-plugin";
+import { bindable } from "aurelia-typed-observable-plugin";
 import {
   validateTrigger,
   ValidationController,
@@ -16,10 +16,9 @@ export class TermClause {
   @bindable clause: IClause;
   @bindable.number index: number;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: EditingCard["viewMode"] = "edit";
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
-
-  @observable viewMode: EditingCard["viewMode"];
 
   constructor(private validationControllerFactory: ValidationControllerFactory) {
     this.form = this.validationControllerFactory.createForCurrentScope();

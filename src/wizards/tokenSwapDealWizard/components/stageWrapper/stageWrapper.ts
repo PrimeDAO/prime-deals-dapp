@@ -5,4 +5,5 @@ export class stageWrapper {
   @bindable header: string;
   @bindable wizardManager: any;
   @bindable showSubmit = false;
+  @bindable onSubmit: () => void;
 }

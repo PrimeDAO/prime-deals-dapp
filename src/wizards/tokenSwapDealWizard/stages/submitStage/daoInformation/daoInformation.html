@@ -1,0 +1,137 @@
+<template>
+  <div class="daoNameAndLogo">
+    <div
+      class="daoAvatar"
+      style.bind="`background-image: url(${daoData.logoURI})`"
+      data-test="dao-avatar"
+    >
+      <i if.bind="!daoData.logoURI" class="fas fa-image"></i>
+    </div>
+    <h3>Dao name</h3>
+  </div>
+
+  <div class="submitContentLabel-sm">Treasury address</div>
+  <div class="submitContent">
+    <p class="subtext">
+      <template if.bind="daoData.treasury_address">
+        <etherscanlink
+          text="${daoData.treasury_address | smallHexString}"
+          address.bind="daoData.treasury_address">
+        </etherscanlink>
+      </template>
+      <template else>-</template>
+    </p>
+  </div>
+
+  <div class="submitContentLabel-sm">Social Media</div>
+  <div class="submitContent">
+    <template if.bind="!isEmptySocialMedia()">
+      <template repeat.for="socialMedia of daoData.social_medias">
+        <div>
+          <span class="subtext">${socialMedia.name}</span> -
+          <span class="subtext">${socialMedia.url}</span>
+        </div>
+      </template>
+    </template>
+    <template else>
+      <span class="optionalContent">[optional links not supplied]</span>
+    </template>
+  </div>
+
+  <div class="submitContentLabel-sm">Representatives</div>
+  <div class="submitContent">
+    <template repeat.for="representative of daoData.representatives">
+      <template if.bind="representative.address">
+        <p class="subtext">
+          <etherscanlink
+            text="${representative.address | smallHexString}"
+            address.bind="representative.address">
+          </etherscanlink>
+        </p>
+      </template>
+      <template else>-</template>
+    </template>
+  </div>
+
+  <div class="submitContentLabel-sm">Tokens</div>
+  <div class="submitDaoTokenCard">
+    <!-- <p class="subtext">TODO: use from Token Details stage</p> -->
+
+    <pcard if.bind="daoData.tokens.length > 0" repeat.for="token of daoData.tokens">
+      <div>
+        <p class="tokenName">
+          <img height="32" src.bind="token.logoURI" />
+          ${token.name || '-'}
+        </p>
+        <div class="detailsTable detailsTableInViewMode">
+          <div class="detailsCell">
+            <p>Token address</p>
+            <p>
+              <etherscanlink
+                text="${token.address || '-' | smallHexString}"
+                address.bind="token.address">
+              </etherscanlink>
+            </p>
+          </div>
+
+          <div class="detailsCell detailsCellAmount">
+            <p>Amount tokens</p>
+            <p>
+              <formatted-number
+                if.bind="token.amount >= 0"
+                thousands-separated
+                value.to-view="token.amount | ethwei"
+              ></formatted-number>
+              <template else> - </template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Instant transfer</p>
+            <p>
+              <formatted-number
+                if.bind="token.instantTransferAmount"
+                thousands-separated
+                value.to-view="token.instantTransferAmount | ethwei"
+              ></formatted-number>
+              <template else> - </template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Vested transfer</p>
+            <p>
+              <formatted-number
+                if.bind="token.vestedTransferAmount"
+                thousands-separated
+                value.to-view="token.vestedTransferAmount | ethwei"
+              ></formatted-number>
+              <template else> - </template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Vested for</p>
+            <p>
+              <template if.bind="token.vestedFor"
+                >${token.vestedFor | secondsDays} days</template
+              >
+              <template else>0 days</template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Cliff of</p>
+            <p>
+              <template if.bind="token.cliffOf"
+                >${token.cliffOf | secondsDays} days</template
+              >
+              <template else>0 days</template>
+            </p>
+          </div>
+        </div>
+      </div>
+    </pcard>
+    <p class="optionalContent" else>[optional token information not supplied]</p class="optionalContent">
+  </div>
+</template>
