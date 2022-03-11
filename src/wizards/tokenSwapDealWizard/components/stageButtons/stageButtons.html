@@ -15,13 +15,22 @@
     >
       Proceed
     </pbutton>
-    <pbutton
-      if.bind="showSubmit"
-      type="primary"
-      click.delegate="wizardService.submit(wizardManager)"
-      data-test="wizard-submit-button">
-      Submit
-    </pbutton>
+    <template if.bind="showSubmit" >
+      <pbutton
+        if.bind="connectedAddress"
+        type="primary"
+        click.delegate="onSubmit()"
+        data-test="wizard-submit-button">
+        Submit
+      </pbutton>
+      <pbutton
+        else
+        type="primary"
+        click.delegate="connectToWallet()"
+        data-test="wizard-submit-button">
+        Connect to Submit
+      </pbutton>
+    </template>
     <pbutton
       class="cancel"
       type="tertiary"

@@ -13,6 +13,7 @@ const stageTitlesToURLs = {
   "Partner DAO": "partner-dao",
   "Token Details": "token-details",
   "Terms": "terms",
+  "Submit": "submit",
 } as const;
 
 Then("I am presented the option to choose a partner", () => {
@@ -29,6 +30,10 @@ When("I go to previous step", () => {
 
 When("I try to proceed to next step", () => {
   cy.get("[data-test='wizard-proceed-button']").click();
+});
+
+When("I try to submit the registration data", () => {
+  cy.get("[data-test='wizard-submit-button']").click();
 });
 
 When("I try to navigate to the {string} stage via stepper", (stageTitle: string) => {
@@ -49,6 +54,12 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
   const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
+  cy.visit(url);
+});
+
+Given("I edit a \"Partnered Deal\"", () => {
+  const dealId = "partnered_deals_stream_hash_3";
+  const url = `partnered-deal/${dealId}/edit/submit`;
   cy.visit(url);
 });
 
@@ -92,5 +103,15 @@ Then("the {string} option should be turned off", (optionText: string) => {
   cy.get(`pform-input[label='${optionText}']`).within(() => {
     cy.contains(optionText).should("be.visible");
     cy.get("[data-test='pToggleInput']").invoke("val").should("equal", "false");
+  });
+});
+
+Then("I should get an error notification", () => {
+  cy.contains("[data-test='pPopupNotification']", "Error").should("be.visible");
+});
+
+Then("I should be redirected to the Home Page", () => {
+  cy.url().then(url => {
+    expect(url).to.include("home");
   });
 });

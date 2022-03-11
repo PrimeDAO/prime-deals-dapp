@@ -15,7 +15,12 @@ export class PTooltip {
   private tooltip: Instance;
 
   constructor(private element: Element) {
-    this.tooltip = tippy(this.element, {theme: "prime-design-system"});
+    /** Value found by getting width of 42 'M's of font size 14px. */
+    const maxWidth = 560;
+    this.tooltip = tippy(this.element, {
+      theme: "prime-design-system",
+      maxWidth,
+    });
   }
 
   propertyChanged(name: string, newValue: any) {
