@@ -9,7 +9,10 @@
         <div class="action" click.delegate="disconnect()">Disconnect</div>
       </div>
       <div class="pair accountInfo">
-        <usersaddress small></usersaddress>
+        <etherscanlink
+          text="${ethereumService.defaultAccountAddress | smallHexString}"
+          address="${ethereumService.defaultAccountAddress}"
+        ></etherscanlink>
         <div class="buttons">
           <copy-to-clipboard-button handle-click.call="copyAddress()" text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
           <div class="eslink" click.delegate="gotoEtherscan()"><i class="fa fa-external-link-alt"></i></div>
