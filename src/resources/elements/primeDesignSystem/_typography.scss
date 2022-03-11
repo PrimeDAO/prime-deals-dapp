@@ -75,3 +75,14 @@
   color: $Neutral02;
   font-weight: 400;
 }
+
+
+@media screen and (max-width: $PageBreakWidth) {
+  .heading01Gradient {
+    font-size: 36px;
+  }
+
+  .heading02 {
+    font-size: 35px;
+  }
+}
