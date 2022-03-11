@@ -374,7 +374,7 @@ export class DiscussionsService {
       // Return un-encrypted comment to the view
       data.text = comment;
       this.comments.push(data);
-      this.updateDiscussionListStatus(discussionId);
+      this.updateDiscussionListStatus(discussionId, new Date(parseInt(data.createdOn)));
       return this.comments;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
@@ -409,10 +409,10 @@ export class DiscussionsService {
         commentId,
       );
       this.comments = this.comments.filter(comment => comment._id !== commentId);
-      this.updateDiscussionListStatus(discussionId, new Date());
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
     }
+    this.updateDiscussionListStatus(discussionId, new Date());
     return this.comments;
   }
 
