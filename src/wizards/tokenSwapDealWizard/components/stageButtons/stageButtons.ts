@@ -43,6 +43,7 @@ export class stageButtons {
       this.showSubmit = this.showSubmitButton();
     }
 
+    this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
       this.connectedAddress = address;
     });
