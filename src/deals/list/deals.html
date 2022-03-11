@@ -84,7 +84,7 @@
             <div class="age cell body hot sortable">${dateService.formattedTime(deal.registrationData.createdAt).diff("en-US").replace("a ","1 ")}</div>
             <div class="dealSize cell body hot sortable">
               <span if.to-view="cardIndex === 1 && deal.totalPrice === undefined"><i class="spinner fa fas fa-circle-notch fa-spin"></i></span>
-              <span if.to-view="cardIndex === 1 && deal.totalPrice !== undefined">${deal.totalPrice === 0 ? 'N/A' : deal.totalPrice}</span>
+              <span if.to-view="cardIndex === 1 && deal.totalPrice !== undefined">${(deal.totalPrice === 0 ? 'N/A' : deal.totalPrice) | currency}</span>
               <span if.to-view="cardIndex === 0">-</span>
             </div>
           </a>

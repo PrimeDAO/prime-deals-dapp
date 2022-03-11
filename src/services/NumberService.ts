@@ -31,6 +31,14 @@ export interface IToStringOptions {
 }
 
 export class NumberService {
+
+  private readonly currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
   /**
    * @param value
    * @param format
@@ -80,6 +88,13 @@ export class NumberService {
     }
   }
 
+  public formatCurrency(data: string | undefined | number, decimalPlaces = 0) {
+    if (isNaN(Number(data))) return data;
+    const number = this.fromString(String(data), decimalPlaces);
+    const value = this.currencyFormatter.format(number);
+    return value;
+  }
+
   /**
    * returns number with `digits` number of digits.
    * @param value the value
@@ -117,7 +132,7 @@ export class NumberService {
 
   public fromString(value: string | number | BigNumber, decimalPlaces = 1000): number {
 
-    if (typeof(value) === "number") return value;
+    if (typeof (value) === "number") return value;
 
     /**
      * ok, isn't a string, but still helpful

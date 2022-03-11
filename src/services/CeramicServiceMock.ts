@@ -918,7 +918,7 @@ const _registration22: IDealRegistrationTokenSwap = {
     name: "PrimeDAO",
     tokens: [{
       address: tokenAddress1,
-      name: "Prime (D2D)",
+      name: "Prime",
       symbol: "D2D",
       decimals: 18,
       logoURI: "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
