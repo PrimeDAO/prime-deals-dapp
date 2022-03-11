@@ -1,10 +1,11 @@
 import { Address, Hash } from "./EthereumService";
-import { autoinject, computedFrom, Container } from "aurelia-framework";
-import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EventAggregator } from "aurelia-event-aggregator";
+import { Container, autoinject, computedFrom } from "aurelia-framework";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { DealTokenSwap } from "entities/DealTokenSwap";
+import { EventAggregator } from "aurelia-event-aggregator";
 
 export interface IDaoPartner {
   daoId: string,
