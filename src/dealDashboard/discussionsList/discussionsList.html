@@ -1,69 +1,68 @@
 <template>
   <div class="header">
-    <h1 class="subtitle heading heading1 gradient">
-      Discuss
-    </h1>
+    <h1 class="subtitle heading heading1 gradient">Discuss</h1>
   </div>
 
   <section class="section discussions-list">
     <!-- always when there are no discussions-->
     <section if.bind="!discussionsArray.length">
       <p class="instructions">
-        <span>
-          None of the clauses are currently being discussed.
-        </span>
+        <span> None of the clauses are currently being discussed. </span>
         <!-- always when connected and authorized -->
-        <span if.to-view="isAuthorized">
-          Click on a clause to begin a discussion.
-        </span>
+        <span if.to-view="isAuthorized"> Click on a clause to begin a discussion. </span>
       </p>
     </section>
-  
+
     <!-- always when not connected -->
     <section if.to-view="!ethereumService.defaultAccountAddress">
       <p class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
-        <a class="connect-link" href="" click.delegate="this.ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
+        <a class="connect-link" href="" click.delegate="this.ethereumService.ensureConnected()"
+          >Connect</a
+        >
+        to see if you are authorized to begin a discussion.
       </p>
     </section>
 
-    <div class="table" if.bind="discussionsArray.length" >
+    <div class="table" if.bind="discussionsArray.length">
       <div class="thead">
-        <span>#</span><span>Topic</span><span class="h-centered">Replies</span><span class="h-centered">Activity</span>
+        <span>#</span><span>Topic</span><span class="h-centered">Replies</span
+        ><span class="h-centered">Activity</span>
       </div>
       <div class="tbody">
-        <div class="tr"
+        <div
+          class="tr"
           id="${discussion.id}"
           click.delegate="navigateTo(`${discussion.id}`)"
-          repeat.for="discussion of discussionsArray">
+          repeat.for="discussion of discussionsArray"
+        >
           <div class="td">${discussion.clauseIndex + 1 || "-" }</div>
           <div class="td">
-            <p>
-              ${discussion.topic}
-            </p>
+            <p>${discussion.topic}</p>
             <p class="creator">
               ${discussion.profile.address}
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdByName">
-                Created by ${discussion.createdByName} 
+                Created by ${discussion.createdByName}
               </span>
-              <span else>
-                Created by ${discussion.createdByAddress | smallHexString} 
-              </span>
+              <span else> Created by ${discussion.createdByAddress | smallHexString} </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
           <div class="td h-centered v-centered">${discussion.replies || 0}</div>
-          <div class="td h-centered v-centered">${dateService.formattedTime(discussion.modifiedAt).diff()}</div>
+          <div class="td h-centered v-centered no-wrap">
+            ${dateService.formattedTime(discussion.modifiedAt).diff()}
+          </div>
         </div>
       </div>
     </div>
     <div if.bind="discussions.length >= paginationConfig.listLength" class="pagination container">
       <button class="pagination button left" type="tertiary"><</button>
-      <button 
+      <button
         repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
         class="page button ${page.isActive? 'active' : ''}"
-        type="tertiary">
+        type="tertiary"
+      >
         ${$index + 1}
       </button>
       <button class="pagination button right" type="tertiary">></button>
