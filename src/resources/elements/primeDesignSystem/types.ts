@@ -12,6 +12,7 @@ export enum ValidationState {
 export interface IStepperStep {
   name: string;
   valid: boolean;
+  hidden?: boolean;
 }
 
 export type AureliaElement<T> = HTMLElement & {

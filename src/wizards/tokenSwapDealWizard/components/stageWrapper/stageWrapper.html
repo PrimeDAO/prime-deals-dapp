@@ -9,6 +9,9 @@
     <div class="stageContent">
       <slot></slot>
     </div>
-    <stage-buttons wizard-manager.bind="wizardManager"></stage-buttons>
+    <stage-buttons
+      wizard-manager.bind="wizardManager"
+      on-submit.bind="onSubmit"
+    ></stage-buttons>
   </div>
 </template>

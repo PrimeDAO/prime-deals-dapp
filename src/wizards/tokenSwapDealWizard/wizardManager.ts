@@ -72,12 +72,20 @@ export class WizardManager {
     route: "terms",
     moduleId: PLATFORM.moduleName("./stages/termsStage/termsStage"),
   };
+  private submitStage: IWizardStage = {
+    name: "Submit",
+    valid: false,
+    hidden: true,
+    route: "submit",
+    moduleId: PLATFORM.moduleName("./stages/submitStage/submitStage"),
+  };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
     this.leadDetailsStage,
     this.primaryDaoStage,
     this.tokenDetailsStage,
     this.termsStage,
+    this.submitStage,
   ];
   private partneredDealStages: IWizardStage[] = [
     this.proposalStage,
@@ -86,6 +94,7 @@ export class WizardManager {
     this.partnerDaoStage,
     this.tokenDetailsStage,
     this.termsStage,
+    this.submitStage,
   ];
 
   constructor(
@@ -121,8 +130,13 @@ export class WizardManager {
 
       this.stages = this.configureStages(wizardType);
 
+      if (this.isHiddenStage(stageRoute)) {
+        this.router.navigate(this.getPreviousRoute(wizardType));
+        throw new Error("Not a valid URL");
+      }
+
       this.wizardState = this.wizardService.registerWizard({
-        wizardManager: this,
+        wizardStateKey: this,
         stages: this.stages,
         registrationData: this.registrationData,
         cancelRoute: "home",
@@ -238,5 +252,12 @@ export class WizardManager {
       this.router.navigate(this.getPreviousRoute(wizardType));
       throw new Error("Error authorizing the current account");
     }
+  }
+
+  private isHiddenStage(stageRoute: string): boolean {
+    const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
+    const isHidden = hiddenStage !== -1;
+    return isHidden;
+
   }
 }
