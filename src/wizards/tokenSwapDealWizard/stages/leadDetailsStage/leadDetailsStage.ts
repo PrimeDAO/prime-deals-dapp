@@ -1,3 +1,4 @@
+import { EventType } from "./../../../../services/constants";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { ValidationController, ValidationRules } from "aurelia-validation";
 import { IWizardState, WizardService } from "../../../services/WizardService";
@@ -32,7 +33,7 @@ export class LeadDetailsStage {
 
   attached(): void {
     this.ethAddress = this.ethereumService.defaultAccountAddress;
-    this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", address => {
+    this.accountSubscription = this.eventAggregator.subscribe(EventType.NetworkChangedAccount, address => {
       this.ethAddress = address;
     });
   }

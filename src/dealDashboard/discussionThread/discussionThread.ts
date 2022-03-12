@@ -19,28 +19,11 @@ import { Types } from "ably";
 
 @autoinject
 export class DiscussionThread {
-  @bindable discussionId: string;
-  @bindable deal: DealTokenSwap;
-  private refThread: HTMLElement;
-  private refThreadEnd: HTMLSpanElement;
-  private refTitle: HTMLElement;
-  private refComments = [];
-  private refCommentInput: HTMLTextAreaElement;
-  private atTop = false;
-  private scrollEvent: EventListener;
-  private comment = "";
-  private isReply = false;
-  private replyToOriginalMessage: IComment;
-  private threadComments: IComment[] = [];
-  private threadDictionary: TCommentDictionary = {};
-  private threadProfiles: Record<string, IProfile> = {};
-  private isLoading: Record<string, boolean> = {};
-  private isAuthorized: boolean;
-  private isMember = false;
   private accountAddress: Address;
+  private atTop = false;
+  private comment = "";
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
   private deletedComment: IComment = {
     _id: "",
     text: "This message has been removed.",
@@ -54,6 +37,24 @@ export class DiscussionThread {
     downvotes: [""],
     timestamp: 0,
   };
+  private discussionCommentsStream: Types.RealtimeChannelPromise;
+  private isAuthorized: boolean;
+  private isLoading: Record<string, boolean> = {};
+  private isMember = false;
+  private isReply = false;
+  private refCommentInput: HTMLTextAreaElement;
+  private refComments = [];
+  private refThread: HTMLElement;
+  private refThreadEnd: HTMLSpanElement;
+  private refTitle: HTMLElement;
+  private replyToOriginalMessage: IComment;
+  private scrollEvent: EventListener;
+  private threadComments: IComment[] = [];
+  private threadDictionary: TCommentDictionary = {};
+  private threadProfiles: Record<string, IProfile> = {};
+
+  @bindable public deal: DealTokenSwap;
+  @bindable public discussionId: string;
 
   constructor(
     private router: Router,
@@ -64,19 +65,48 @@ export class DiscussionThread {
     private eventAggregator: EventAggregator,
   ) { }
 
-  @computedFrom("discussionsService.comments")
-  private get comments(): Array<IComment> {
-    return this.discussionsService.comments;
-  }
-
   @computedFrom("ethereumService.defaultAccountAddress")
   private get checkIsAuthorized(): boolean {
     return !!this.ethereumService.defaultAccountAddress;
   }
 
-  attached(): void {
+  @computedFrom("discussionsService.comments")
+  private get comments(): Array<IComment> {
+    return this.discussionsService.comments;
+  }
+
+  public async addComment(): Promise<void> {
+    if (this.isLoading.commenting) return;
+    this.isLoading.commenting = true;
+    try {
+      this.threadComments = await this.discussionsService.addComment(
+        this.discussionId,
+        this.comment,
+        this.deal.registrationData.isPrivate,
+        [
+          this.deal.registrationData.proposalLead.address,
+          ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
+          ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
+        ],
+        this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
+      );
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
+      this.comment = "";
+
+      this.refThreadEnd.scrollIntoView({
+        behavior: "smooth",
+      });
+      this.isReply = false;
+    } catch (err) {
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
+    } finally {
+      this.isLoading.commenting = false;
+    }
+  }
+
+  public attached(): void {
     this.initialize();
-    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedAccount, (): void => {
       this.initialize();
     });
 
@@ -87,50 +117,71 @@ export class DiscussionThread {
     document.addEventListener("scroll", this.scrollEvent);
   }
 
-  detached(): void {
+  public closeReply() {
+    this.isReply = false;
+    this.replyToOriginalMessage = null;
+  }
+
+  public async deleteComment(_id: string): Promise<void> {
+    if (this.isLoading[`isDeleting ${_id}`]) return;
+    this.isLoading[`isDeleting ${_id}`] = true;
+    try {
+      this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
+    } catch (err) {
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
+    } finally {
+      this.isLoading[`isDeleting ${_id}`] = false;
+    }
+  }
+
+  public detached(): void {
     this.unsubscribeFromDiscussion();
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
-  discussionIdChanged() {
+  public discussionIdChanged() {
     if (this.deal) {
       this.initialize(true);
     }
   }
 
-  private async initialize(isIdChange = false): Promise<void> {
-    this.isLoading.discussions = true;
+  public async doAction(action: string, args: any): Promise<void> {
+    switch (action) {
+      case "reply":
+        this.replyComment(args._id);
+        break;
+      case "vote":
+        this.voteComment(args._id, args.vote);
+        break;
+      case "delete":
+        this.deleteComment(args._id);
+        break;
+    }
+  }
 
-    this.isAuthorized = this.checkIsAuthorized;
+  public loadMoreComments() {
+    // TODO
+  }
 
-    // Only member (representatives) can add a comments to a discussion
-    this.isMember = (
-      [
-        this.deal.registrationData.proposalLead.address,
-        ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
-        ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
-      ].includes(this.ethereumService.defaultAccountAddress)
-    );
+  public async replyComment(_id: string): Promise<void> {
+    this.isReply = !this.isReply;
+    if (this.isReply) {
+      this.refCommentInput.querySelector("textarea").focus();
+    }
 
-    // Only members should see the discussion if is private
-    this.isAuthorized = (
-      !this.deal.registrationData.isPrivate ||
-      (this.deal.registrationData.isPrivate && this.isMember)
-    );
+    this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
+  }
 
-    if (this.isAuthorized) {
-      // Loads the discussion details - necessary for thread header
-      this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
-      this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
-
-      // Ensures comment fetching and subscription
-      await this.ensureDealDiscussion(this.discussionId);
-      if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
-        this.discussionsService.autoScrollAfter(0);
-      }
-
-    } else {
-      this.isLoading.discussions = false;
+  public async voteComment(_id: string, type: VoteType): Promise<void> {
+    if (this.isLoading[`isVoting ${_id}`]) return;
+    this.isLoading[`isVoting ${_id}`] = true;
+    try {
+      this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
+    }
+    catch (err) {
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
+    } finally {
+      this.isLoading[`isVoting ${_id}`] = false;
     }
   }
 
@@ -139,52 +190,6 @@ export class DiscussionThread {
       r[e._id] = e;
       return r;
     }, {});
-  }
-
-  private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
-    // If a new comment is added to the thread, it is added at the end of the comments array.
-    if (!this.threadDictionary[comment.name]) {
-      this.discussionsService.importKey(this.discussionId).then(key => {
-        if (comment.data.metadata.encrypted) {
-          this.discussionsService.decryptWithAES(
-            comment.data.metadata.encrypted,
-            comment.data.metadata.iv,
-            key,
-          ).then( (decryptedComment) => {
-            comment.data.text = decryptedComment;
-            this.threadComments.push(comment.data);
-            this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
-            this.threadDictionary = this.arrayToDictionary(this.threadComments);
-
-            // scroll to bottom only if the user is at seeing the last message
-            if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
-              this.refThreadEnd.scrollIntoView({
-                behavior: "smooth",
-              });
-            }
-            this.isLoading.commenting = false;
-          });
-        }
-      });
-    }
-  }
-
-  private async subscribeToDiscussion(discussionId: string): Promise<void> {
-    const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-
-    // const convo = new Convo(process.env.CONVO_API_KEY);
-    // const res = convo.threads.subscribe(channelName, this.updateThread);
-    // console.log({res});
-
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-    this.discussionCommentsStream = await ably.channels.get(channelName);
-    this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
-  }
-
-  private unsubscribeFromDiscussion(): void {
-    if (this.discussionCommentsStream) {
-      this.discussionCommentsStream.unsubscribe();
-    }
   }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
@@ -235,6 +240,42 @@ export class DiscussionThread {
     }
   }
 
+  private async initialize(isIdChange = false): Promise<void> {
+    this.isLoading.discussions = true;
+
+    this.isAuthorized = this.checkIsAuthorized;
+
+    // Only member (representatives) can add a comments to a discussion
+    this.isMember = (
+      [
+        this.deal.registrationData.proposalLead.address,
+        ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
+        ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
+      ].includes(this.ethereumService.defaultAccountAddress)
+    );
+
+    // Only members should see the discussion if is private
+    this.isAuthorized = (
+      !this.deal.registrationData.isPrivate ||
+      (this.deal.registrationData.isPrivate && this.isMember)
+    );
+
+    if (this.isAuthorized) {
+      // Loads the discussion details - necessary for thread header
+      this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
+      this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
+
+      // Ensures comment fetching and subscription
+      await this.ensureDealDiscussion(this.discussionId);
+      if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
+        this.discussionsService.autoScrollAfter(0);
+      }
+
+    } else {
+      this.isLoading.discussions = false;
+    }
+  }
+
   private isInView(element: HTMLElement): boolean {
     const rect = element.getBoundingClientRect();
     const vWidth = window.innerWidth || document.documentElement.clientWidth;
@@ -253,94 +294,54 @@ export class DiscussionThread {
     );
   }
 
-  loadMoreComments() {
-    // TODO
-  }
-
-  async addComment(): Promise<void> {
-    if (this.isLoading.commenting) return;
-    this.isLoading.commenting = true;
-    try {
-      this.threadComments = await this.discussionsService.addComment(
-        this.discussionId,
-        this.comment,
-        this.deal.registrationData.isPrivate,
-        [
-          this.deal.registrationData.proposalLead.address,
-          ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
-          ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
-        ],
-        this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
-      );
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
-      this.comment = "";
-
-      this.refThreadEnd.scrollIntoView({
-        behavior: "smooth",
-      });
-      this.isReply = false;
-    } catch (err) {
-      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
-    } finally {
-      this.isLoading.commenting = false;
-    }
-
-  }
-
-  async replyComment(_id: string): Promise<void> {
-    this.isReply = !this.isReply;
-    if (this.isReply) {
-      this.refCommentInput.querySelector("textarea").focus();
-    }
-
-    this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
-  }
-
-  async voteComment(_id: string, type: VoteType): Promise<void> {
-    if (this.isLoading[`isVoting ${_id}`]) return;
-    this.isLoading[`isVoting ${_id}`] = true;
-    try {
-      this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
-    }
-    catch (err) {
-      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
-    } finally {
-      this.isLoading[`isVoting ${_id}`] = false;
-    }
-  }
-
-  async deleteComment(_id: string): Promise<void> {
-    if (this.isLoading[`isDeleting ${_id}`]) return;
-    this.isLoading[`isDeleting ${_id}`] = true;
-    try {
-      this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
-    } catch (err) {
-      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
-    } finally {
-      this.isLoading[`isDeleting ${_id}`] = false;
-    }
-  }
-
-  async doAction(action: string, args: any): Promise<void> {
-    switch (action) {
-      case "reply":
-        this.replyComment(args._id);
-        break;
-      case "vote":
-        this.voteComment(args._id, args.vote);
-        break;
-      case "delete":
-        this.deleteComment(args._id);
-        break;
-    }
-  }
-
-  closeReply() {
-    this.isReply = false;
-    this.replyToOriginalMessage = null;
-  }
-
   private navigateTo() {
     this.discussionId = null;
   }
+
+  private async subscribeToDiscussion(discussionId: string): Promise<void> {
+    const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
+
+    // const convo = new Convo(process.env.CONVO_API_KEY);
+    // const res = convo.threads.subscribe(channelName, this.updateThread);
+    // console.log({res});
+
+    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
+    this.discussionCommentsStream = await ably.channels.get(channelName);
+    this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
+  }
+
+  private unsubscribeFromDiscussion(): void {
+    if (this.discussionCommentsStream) {
+      this.discussionCommentsStream.unsubscribe();
+    }
+  }
+
+  private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
+    // If a new comment is added to the thread, it is added at the end of the comments array.
+    if (!this.threadDictionary[comment.name]) {
+      this.discussionsService.importKey(this.discussionId).then(key => {
+        if (comment.data.metadata.encrypted) {
+          this.discussionsService.decryptWithAES(
+            comment.data.metadata.encrypted,
+            comment.data.metadata.iv,
+            key,
+          ).then( (decryptedComment) => {
+            comment.data.text = decryptedComment;
+            this.threadComments.push(comment.data);
+            this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
+            this.threadDictionary = this.arrayToDictionary(this.threadComments);
+
+            // scroll to bottom only if the user is at seeing the last message
+            if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
+              this.refThreadEnd.scrollIntoView({
+                behavior: "smooth",
+              });
+            }
+            this.isLoading.commenting = false;
+          });
+        }
+      });
+    }
+  }
+
 }

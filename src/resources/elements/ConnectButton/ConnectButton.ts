@@ -41,7 +41,7 @@ export class ConnectButton {
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
   ) {
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkChangedAccount, async (account: Address) => {
       this.accountAddress = account;
       this.txPhase = Phase.None;
       this.txReceipt = null;

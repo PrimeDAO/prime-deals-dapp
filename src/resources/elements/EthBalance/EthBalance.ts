@@ -3,6 +3,7 @@ import { autoinject, containerless, customElement, bindable } from "aurelia-fram
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
+import { EventType } from "services/constants";
 
 @autoinject
 @containerless
@@ -21,14 +22,14 @@ export class EthBalance {
   }
 
   public attached(): void {
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkChangedAccount,
       (account: string) => {
         this.account = account;
         this.getBalance();
       }));
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Id",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkChangedId,
       () => { this.initialize(); }));
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.NewBlock",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkNewBlock,
       () => this.getBalance()));
     this.initialize();
   }

@@ -21,7 +21,7 @@ export class AlertService {
 
   configureHandleErrors(): void {
     this.subscriptions.push(this.eventAggregator
-      .subscribe("handleException",
+      .subscribe(EventType.HandleException,
         (config: EventConfigException | any) => this.handleException(config)));
     this.subscriptions.push(this.eventAggregator
       .subscribe(EventType.HandleFailure, (config: EventConfig | string) => this.handleFailure(config)));

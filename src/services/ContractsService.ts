@@ -41,7 +41,7 @@ export class ContractsService {
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService) {
 
-    this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedAccount, (account: Address): void => {
       if (account !== this.accountAddress) {
         this.accountAddress = account;
         this.initializeContracts();
@@ -56,15 +56,15 @@ export class ContractsService {
       }
     };
 
-    this.eventAggregator.subscribe("Network.Changed.Disconnect", (): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedDisconnect, (): void => {
       networkChange(null);
     });
 
-    this.eventAggregator.subscribe("Network.Changed.Connected", (info: IChainEventInfo): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedConnected, (info: IChainEventInfo): void => {
       networkChange(info);
     });
 
-    this.eventAggregator.subscribe("Network.Changed.Id", (info: IChainEventInfo): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedId, (info: IChainEventInfo): void => {
       networkChange(info);
     });
 

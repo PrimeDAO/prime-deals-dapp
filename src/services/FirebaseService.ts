@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
@@ -39,7 +40,7 @@ export class FirebaseService {
   }
 
   public initializeFirebaseAuthentication() {
-    this.eventAggregator.subscribe("Network.Changed.Account", (address: string) => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedAccount, (address: string) => {
       if (Utils.isAddress(address)) {
         this.signInToFirebase(address);
       } else {

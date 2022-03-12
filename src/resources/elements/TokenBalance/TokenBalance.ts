@@ -1,3 +1,4 @@
+import { EventType } from "./../../../services/constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless, customElement, bindable } from "aurelia-framework";
 import { DisposableCollection } from "services/DisposableCollection";
@@ -25,14 +26,14 @@ export class TokenBalance {
   }
 
   public attached(): void {
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkChangedAccount,
       (account: string) => {
         this.account = account;
         this.getBalance();
       }));
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Id",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkChangedId,
       () => { this.initialize(); }));
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.NewBlock",
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.NetworkNewBlock,
       () => this.getBalance()));
     this.initialize();
   }

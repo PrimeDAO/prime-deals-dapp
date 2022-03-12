@@ -1,3 +1,4 @@
+import { EventType } from "./../services/constants";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { DealService } from "services/DealService";
@@ -44,7 +45,7 @@ export class DealDashboard {
     private dealService: DealService,
   ) {
     this.connectedAddress = "";
-    this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedAccount, (account: Address): void => {
       if (account !== this.connectedAddress) {
         this.connectedAddress = account;
       }

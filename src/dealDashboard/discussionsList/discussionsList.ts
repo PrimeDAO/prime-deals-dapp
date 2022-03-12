@@ -1,3 +1,4 @@
+import { EventType } from "./../../services/constants";
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -14,18 +15,18 @@ import "./discussionsList.scss";
 
 @autoinject
 export class DiscussionsList{
-  @bindable deal: DealTokenSwap;
-  @bindable discussionId: string = null;
-  @bindable isAuthorized: boolean;
-
-  paginationConfig = {
-    listLength: 5,
-    maxVisiblePages: 5,
-  };
 
   private discussionsArray: Array<IDealDiscussion> = [];
   private discussionsHashes: string[];
   private hasDiscussions: boolean;
+
+  @bindable public deal: DealTokenSwap;
+  @bindable public discussionId: string = null;
+  @bindable public isAuthorized: boolean;
+  public paginationConfig = {
+    listLength: 5,
+    maxVisiblePages: 5,
+  };
 
   constructor(
     private eventAggregator: EventAggregator,
@@ -36,9 +37,9 @@ export class DiscussionsList{
     private discussionsService: DiscussionsService,
   ) {}
 
-  async attached(): Promise<void> {
+  public async attached(): Promise<void> {
     this.initialize();
-    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+    this.eventAggregator.subscribe(EventType.NetworkChangedAccount, (): void => {
       this.initialize();
     });
   }
