@@ -45,8 +45,8 @@ export class DateService {
       relativeTime: {
         future: "in %s",
         past:   "%s ago",
-        s:  "<1 min",
-        ss: "<1 min",
+        s:  "< 1 min",
+        ss: "< 1 min",
         m:  "%d min",
         mm: "%d min",
         h:  "%d h",

@@ -170,7 +170,7 @@ export class DiscussionsService {
         createdBy,
         createdAt: new Date(),
         modifiedAt: new Date(),
-        lastModified: "<1min",
+        lastModified: "< 1 min",
         replies: 0,
         representatives: [...new Set([...args.representatives])],
         admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
