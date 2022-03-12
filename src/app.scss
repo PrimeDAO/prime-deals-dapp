@@ -30,5 +30,6 @@
       minmax(#{$ContentBodyPaddingLeftRightMobile}, 1fr)
       100fr
       minmax(#{$ContentBodyPaddingLeftRightMobile}, 1fr);
+    grid-template-rows: 125px 100fr 1fr;
   }
 }
