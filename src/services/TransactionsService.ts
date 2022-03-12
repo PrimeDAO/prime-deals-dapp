@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { EventConfigTransaction } from "./GeneralEvents";
 import { Utils } from "services/utils";
 import { TransactionResponse, TransactionReceipt } from "@ethersproject/providers";
@@ -19,17 +20,17 @@ export default class TransactionsService {
   public async send(methodCall: () => Promise<TransactionResponse>): Promise<TransactionReceipt> {
     let receipt: TransactionReceipt;
     try {
-      this.eventAggregator.publish("transaction.sending");
+      this.eventAggregator.publish(EventType.TransactionSending);
       const response = await methodCall();
-      this.eventAggregator.publish("transaction.sent", response);
+      this.eventAggregator.publish(EventType.TransactionSent, response);
       receipt = await response.wait(1);
-      this.eventAggregator.publish("transaction.mined", { message: "Transaction was mined", receipt });
+      this.eventAggregator.publish(EventType.TransactionMined, { message: "Transaction was mined", receipt });
       receipt = await response.wait(TransactionsService.blocksToConfirm);
-      this.eventAggregator.publish("transaction.confirmed", new EventConfigTransaction("Transaction was confirmed", receipt),
+      this.eventAggregator.publish(EventType.TransactionConfirmed, new EventConfigTransaction("Transaction was confirmed", receipt),
       );
       return receipt;
     } catch (ex) {
-      this.eventAggregator.publish("transaction.failed", ex);
+      this.eventAggregator.publish(EventType.TransactionFailed, ex);
       return null;
     }
   }

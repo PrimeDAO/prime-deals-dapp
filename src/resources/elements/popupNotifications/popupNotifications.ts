@@ -1,3 +1,4 @@
+import { EventType } from "./../../../services/constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless } from "aurelia-framework";
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "../../../services/GeneralEvents";
@@ -26,20 +27,20 @@ export class PopupNotifications {
     private aureliaHelperService: AureliaHelperService,
   ) {
     this.subscriptions.push(eventAggregator
-      .subscribe("handleException", (config: EventConfigException | any) => this.handleException(config)));
+      .subscribe(EventType.HandleException, (config: EventConfigException | any) => this.handleException(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+      .subscribe(EventType.HandleFailure, (config: EventConfig | string) => this.handleFailure(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleWarning", (config: EventConfig | string) => this.handleWarning(config)));
+      .subscribe(EventType.HandleWarning, (config: EventConfig | string) => this.handleWarning(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleValidationError", (config: EventConfig | string) => this.handleValidationError(config)));
+      .subscribe(EventType.HandleValidationError, (config: EventConfig | string) => this.handleValidationError(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleInfo", (config: EventConfig | string) => this.handleInfo(config)));
+      .subscribe(EventType.HandleInfo, (config: EventConfig | string) => this.handleInfo(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("showMessage", (config: EventConfig | string) => this.handleInfo(config)));
+      .subscribe(EventType.ShowMessage, (config: EventConfig | string) => this.handleInfo(config)));
 
-    this.subscriptions.push(eventAggregator.subscribe("transaction.failed", (ex) => this.handleException(ex)));
-    this.subscriptions.push(eventAggregator.subscribe("transaction.confirmed", (config: EventConfigTransaction) => this.handleTransaction(config)));
+    this.subscriptions.push(eventAggregator.subscribe(EventType.TransactionFailed, (ex) => this.handleException(ex)));
+    this.subscriptions.push(eventAggregator.subscribe(EventType.TransactionConfirmed, (config: EventConfigTransaction) => this.handleTransaction(config)));
 
     this.queue = new Subject<IBannerConfig>();
     /**

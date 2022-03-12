@@ -1,3 +1,4 @@
+import { EventType } from "./services/constants";
 /* eslint-disable linebreak-style */
 import { autoinject } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -39,7 +40,7 @@ export class App {
   intervalId: any;
 
   errorHandler = (ex: unknown): boolean => {
-    this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
+    this.eventAggregator.publish(EventType.HandleException, new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
   };
 
@@ -55,30 +56,30 @@ export class App {
 
     this.firebaseService.initializeFirebaseAuthentication();
 
-    this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
+    this.eventAggregator.subscribe(EventType.DealsLoading, async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
       this.handleOnOff(onOff);
     });
 
-    this.eventAggregator.subscribe("deal.creating", async (onOff: boolean) => {
+    this.eventAggregator.subscribe(EventType.DealsCreating, async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initiate the creation of a new deal...";
       this.handleOnOff(onOff);
     });
 
-    this.eventAggregator.subscribe("transaction.sent", async () => {
+    this.eventAggregator.subscribe(EventType.TransactionSent, async () => {
       this.modalMessage = "Awaiting confirmation...";
       this.handleOnOff(true);
     });
 
-    this.eventAggregator.subscribe("transaction.confirmed", async () => {
+    this.eventAggregator.subscribe(EventType.TransactionConfirmed, async () => {
       this.handleOnOff(false);
     });
 
-    this.eventAggregator.subscribe("transaction.failed", async () => {
+    this.eventAggregator.subscribe(EventType.TransactionFailed, async () => {
       this.handleOnOff(false);
     });
 
-    this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
+    this.eventAggregator.subscribe(EventType.WrongNetwork, async (info: { provider: any, connectedTo: string, need: string }) => {
 
       let notChanged = true;
       const connect = await this.alertService.showAlert( {
@@ -96,15 +97,15 @@ export class App {
 
       if (notChanged) {
         this.ethereumService.disconnect({ code: -1, message: "wrong network" });
-        this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
+        this.eventAggregator.publish(EventType.HandleFailure, `Please connect to ${info.need}`);
       }
     });
 
     this.intervalId = setInterval(async () => {
-      this.signaler.signal("secondPassed");
+      this.signaler.signal(EventType.SecondPassed);
       const blockDate = this.ethereumService.lastBlock?.blockDate;
       if (blockDate) {
-        this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+        this.eventAggregator.publish(EventType.SecondPassed, {blockDate, now: new Date()});
       }
     }, 1000);
 

@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { Address, Hash } from "./EthereumService";
 import { Container, autoinject, computedFrom } from "aurelia-framework";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
@@ -118,8 +119,7 @@ export class DealService {
           }
           catch (error) {
             this.deals = new Map();
-            // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-            this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
+            this.eventAggregator.publish(EventType.HandleException, new Error("Sorry, an error occurred"));
             this.initializing = false;
             reject();
           }

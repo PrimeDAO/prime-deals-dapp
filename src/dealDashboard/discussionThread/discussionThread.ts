@@ -1,3 +1,4 @@
+import { EventType } from "./../../services/constants";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -279,7 +280,7 @@ export class DiscussionThread {
       });
       this.isReply = false;
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
     } finally {
       this.isLoading.commenting = false;
     }
@@ -302,7 +303,7 @@ export class DiscussionThread {
       this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
     }
     catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
     } finally {
       this.isLoading[`isVoting ${_id}`] = false;
     }
@@ -314,7 +315,7 @@ export class DiscussionThread {
     try {
       this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish(EventType.HandleFailure, "Your signature is needed in order to vote");
     } finally {
       this.isLoading[`isDeleting ${_id}`] = false;
     }

@@ -1,3 +1,4 @@
+import { EventType } from "./../../../services/constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, containerless } from "aurelia-framework";
 import "./copyToClipboardButton.scss";
@@ -36,7 +37,7 @@ export class CopyToClipboardButton {
     document.execCommand("copy");
     document.removeEventListener("copy", handler);
 
-    this.eventAggregator.publish("showMessage", this.message);
+    this.eventAggregator.publish(EventType.ShowMessage, this.message);
 
     e.stopPropagation();
 

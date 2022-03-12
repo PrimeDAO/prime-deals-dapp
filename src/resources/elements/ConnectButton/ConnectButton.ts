@@ -1,3 +1,4 @@
+import { EventType } from "./../../../services/constants";
 import "./ConnectButton.scss";
 
 import { Address, EthereumService } from "services/EthereumService";
@@ -46,26 +47,26 @@ export class ConnectButton {
       this.txReceipt = null;
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe("Account.Connect", async () => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.AccountConnect, async () => {
       this.onConnect();
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe("transaction.sent", async () => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.TransactionSent, async () => {
       this.txPhase = Phase.Mining;
       this.txReceipt = null;
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe("transaction.mined", async (event: EventConfigTransaction) => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.TransactionMined, async (event: EventConfigTransaction) => {
       this.txPhase = Phase.Confirming;
       this.txReceipt = event.receipt;
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe("transaction.confirmed", async () => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.TransactionConfirmed, async () => {
       this.txPhase = Phase.None;
       this.txReceipt = null;
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe("transaction.failed", async () => {
+    this.subscriptions.push(this.eventAggregator.subscribe(EventType.TransactionFailed, async () => {
       this.txPhase = Phase.None;
       this.txReceipt = null;
     }));

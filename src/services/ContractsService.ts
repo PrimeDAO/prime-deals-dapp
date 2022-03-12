@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { BigNumber, Contract, ethers, Signer } from "ethers";
 import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -129,7 +130,7 @@ export class ContractsService {
       ContractsService.Contracts.set(contractName, contract);
     });
 
-    this.eventAggregator.publish("Contracts.Changed");
+    this.eventAggregator.publish(EventType.ContractsChanged);
 
     this.resolveInitializingContracts();
   }

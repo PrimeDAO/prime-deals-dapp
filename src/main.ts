@@ -1,3 +1,4 @@
+import { EventType } from "./services/constants";
 import { PinataIpfsClient } from "./services/PinataIpfsClient";
 import { Aurelia } from "aurelia-framework";
 import * as environment from "../config/environment.json";
@@ -75,7 +76,7 @@ export function configure(aurelia: Aurelia): void {
 
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
-      eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));
+      eventAggregator.publish(EventType.HandleException, new EventConfigException("Sorry, couldn't connect to ethereum", ex));
       alert(`Sorry, couldn't connect to ethereum: ${ex.message}`);
     }
     aurelia.setRoot(PLATFORM.moduleName("app"));

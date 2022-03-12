@@ -1,3 +1,4 @@
+import { EventType } from "./../../services/constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -26,6 +27,9 @@ export interface IWizardStage {
 
 @autoinject
 export class WizardService {
+
+  private static readonly ValidationErrorMessage = "Unable to proceed, please check the page for validation errors";
+
   private wizardsStates = new Map<any, IWizardState>();
 
   constructor(
@@ -124,7 +128,7 @@ export class WizardService {
     wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
-      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
+      this.eventAggregator.publish(EventType.HandleValidationError, WizardService.ValidationErrorMessage);
       return;
     }
 

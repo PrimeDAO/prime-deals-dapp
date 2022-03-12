@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
@@ -118,7 +119,7 @@ export class EthereumService {
   private handleNewBlock = async (blockNumber: number): Promise<void> => {
     const block = await this.getBlock(blockNumber);
     this.lastBlock = block;
-    this.eventAggregator.publish("Network.NewBlock", block);
+    this.eventAggregator.publish(EventType.NetworkNewBlock, block);
   };
 
   public initialize(network: AllowedNetworks): void {
@@ -186,19 +187,19 @@ export class EthereumService {
       account = null;
     }
     console.info(`account changed: ${account}`);
-    this.eventAggregator.publish("Network.Changed.Account", account);
+    this.eventAggregator.publish(EventType.NetworkChangedAccount, account);
   }
   private fireChainChangedHandler(info: IChainEventInfo) {
     console.info(`chain changed: ${info.chainId}`);
-    this.eventAggregator.publish("Network.Changed.Id", info);
+    this.eventAggregator.publish(EventType.NetworkChangedId, info);
   }
   private fireConnectHandler(info: IChainEventInfo) {
     console.info(`connected: ${info.chainName}`);
-    this.eventAggregator.publish("Network.Changed.Connected", info);
+    this.eventAggregator.publish(EventType.NetworkChangedConnected, info);
   }
   private fireDisconnectHandler(error: { code: number; message: string }) {
     console.info(`disconnected: ${error?.code}: ${error?.message}`);
-    this.eventAggregator.publish("Network.Changed.Disconnect", error);
+    this.eventAggregator.publish(EventType.NetworkChangedDisconnect, error);
   }
 
   /**
@@ -313,7 +314,7 @@ export class EthereumService {
         (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
         const network = await this.getNetwork(walletProvider);
         if (network.name !== EthereumService.targetedNetwork) {
-          this.eventAggregator.publish("Network.wrongNetwork", { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
+          this.eventAggregator.publish(EventType.WrongNetwork, { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
           return;
         }
         /**
@@ -384,7 +385,7 @@ export class EthereumService {
     const network = ethers.providers.getNetwork(Number(chainId));
 
     if (network.name !== EthereumService.targetedNetwork) {
-      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
+      this.eventAggregator.publish(EventType.WrongNetwork, { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
       return;
     }
     else {

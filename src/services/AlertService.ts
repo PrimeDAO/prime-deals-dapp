@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { autoinject } from "aurelia-framework";
 import { EventConfig, EventConfigException } from "./GeneralEvents";
 import { DialogCloseResult, DialogService } from "./DialogService";
@@ -23,7 +24,7 @@ export class AlertService {
       .subscribe("handleException",
         (config: EventConfigException | any) => this.handleException(config)));
     this.subscriptions.push(this.eventAggregator
-      .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+      .subscribe(EventType.HandleFailure, (config: EventConfig | string) => this.handleFailure(config)));
   }
 
   private handleException(config: EventConfigException | any) {

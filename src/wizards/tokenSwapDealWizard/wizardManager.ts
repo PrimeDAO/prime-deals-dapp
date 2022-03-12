@@ -1,3 +1,4 @@
+import { EventType } from "./../../services/constants";
 import { IKey } from "./../../services/DataSourceDealsTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
@@ -214,7 +215,7 @@ export class WizardManager {
     const deal = this.dealService.deals.get(id);
 
     if (!deal) {
-      this.eventAggregator.publish("handleFailure", "Deal does not exist");
+      this.eventAggregator.publish(EventType.HandleFailure, "Deal does not exist");
       throw new Error("Deal does not exist");
     }
 

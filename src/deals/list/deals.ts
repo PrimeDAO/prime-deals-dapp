@@ -1,3 +1,4 @@
+import { EventType } from "./../../services/constants";
 import "./deals.scss";
 
 import { autoinject, computedFrom, singleton } from "aurelia-framework";
@@ -37,7 +38,7 @@ export class Deals {
   }
 
   @computedFrom("cardIndex", "showMine")
-  get featuredDeals() {
+  get featuredDeals(): DealTokenSwap[] {
     return [...this.getDealsForCardIndex(this.cardIndex, this.showMine)];
   }
   seeMore(yesNo: boolean): void {
@@ -52,8 +53,17 @@ export class Deals {
       this.cardIndex = 1;
     }
   }
+
+  getFormattedTime(dateTime: Date): string {
+    return this.dateService.formattedTime(dateTime).diff("en-US").replace("a ", "1 ");
+  }
+
+  getPrice(deal: DealTokenSwap) : string | number {
+    return deal.totalPrice === 0 ? "N/A" : deal.totalPrice;
+  }
+
   private onConnect(): void {
-    this.eventAggregator.publish("Account.Connect");
+    this.eventAggregator.publish(EventType.AccountConnect);
   }
   sortDirection = SortOrder.DESC;
   sortColumn: string;

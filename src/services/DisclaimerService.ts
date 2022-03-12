@@ -1,3 +1,4 @@
+import { EventType } from "./constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DialogCloseResult, DialogService } from "services/DialogService";
@@ -44,7 +45,7 @@ export class DisclaimerService {
 
       if (typeof response.output === "string") {
         // then an error occurred
-        this.eventAggregator.publish("handleFailure", response.output);
+        this.eventAggregator.publish(EventType.HandleFailure, response.output);
         disclaimed = false;
       } else if (response.wasCancelled) {
         disclaimed = false;

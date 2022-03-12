@@ -1,3 +1,4 @@
+import { EventType } from "./../services/constants";
 import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, computedFrom } from "aurelia-framework";
@@ -139,7 +140,7 @@ export class DiscussionsService {
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
-      this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
+      this.eventAggregator.publish(EventType.HandleFailure, "Please first connect your wallet in order to create a discussion");
       return null;
     } else {
 
@@ -332,7 +333,7 @@ export class DiscussionsService {
         await this.authenticateSession();
       } else {
         this.eventAggregator.publish(
-          "handleValidationError",
+          EventType.HandleValidationError,
           new EventConfigFailure("Please connect your wallet to add a comment"),
         );
         return this.comments;
@@ -375,7 +376,7 @@ export class DiscussionsService {
 
     if (!this.ethereumService.defaultAccountAddress) {
       this.eventAggregator.publish(
-        "handleValidationError",
+        EventType.HandleValidationError,
         new EventConfigFailure("Please connect your wallet to add a comment"),
       );
       return this.comments;
@@ -384,7 +385,7 @@ export class DiscussionsService {
       await this.authenticateSession();
       if (!localStorage.getItem("discussionToken")) {
         this.eventAggregator.publish(
-          "handleValidationError",
+          EventType.HandleValidationError,
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
         return this.comments;
@@ -409,7 +410,7 @@ export class DiscussionsService {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
-        "handleValidationError",
+        EventType.HandleValidationError,
         new EventConfigFailure("Please connect your wallet to vote a comment"),
       );
       return null;
@@ -419,7 +420,7 @@ export class DiscussionsService {
       await this.authenticateSession();
       if (!(await this.isValidAuth())) {
         this.eventAggregator.publish(
-          "handleValidationError",
+          EventType.HandleValidationError,
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
         return this.comments;

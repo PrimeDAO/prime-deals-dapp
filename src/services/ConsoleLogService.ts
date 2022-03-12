@@ -1,3 +1,4 @@
+import { EventType, Loggers } from "./constants";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, LogManager } from "aurelia-framework";
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "./GeneralEvents";
@@ -11,25 +12,25 @@ export class ConsoleLogService {
 
   // probably doesn't really need to be a disposable collection since this is a singleton service
   private subscriptions: DisposableCollection = new DisposableCollection();
-  private logger = LogManager.getLogger("Prime Deals");
+  private logger = LogManager.getLogger(Loggers.PrimeDeals);
 
   constructor (
     eventAggregator: EventAggregator,
   ) {
     this.subscriptions.push(eventAggregator
-      .subscribe("handleException",
+      .subscribe(EventType.HandleException,
         (config: EventConfigException | any) => this.handleException(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleSuccess", (config: EventConfig | string) => this.handleSuccess(config)));
+      .subscribe(EventType.HandleSuccess, (config: EventConfig | string) => this.handleSuccess(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleTransaction",
+      .subscribe(EventType.HandleTransaction,
         (config: EventConfigTransaction | string) => this.handleTransaction(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleWarning", (config: EventConfig | string) => this.handleWarning(config)));
+      .subscribe(EventType.HandleWarning, (config: EventConfig | string) => this.handleWarning(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+      .subscribe(EventType.HandleFailure, (config: EventConfig | string) => this.handleFailure(config)));
     this.subscriptions.push(eventAggregator
-      .subscribe("handleMessage", (config: EventConfig | string) => this.handleMessage(config)));
+      .subscribe(EventType.HandleMessage, (config: EventConfig | string) => this.handleMessage(config)));
   }
 
   /* shouldn't actually ever happen */
