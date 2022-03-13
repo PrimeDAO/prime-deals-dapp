@@ -5,10 +5,15 @@ import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
+interface IThreadComment extends IComment {
+  createdOn: string;
+  lastModified: string;
+}
+
 @autoinject
 export class SingleComment {
-  @bindable private comment: IComment;
-  @bindable private repliesTo: IComment;
+  @bindable private comment: IThreadComment;
+  @bindable private repliesTo: IThreadComment;
   @bindable private repliesToProfile: IProfile;
   @bindable private author: string;
   @bindable private profile: IProfile;
@@ -25,6 +30,7 @@ export class SingleComment {
     up: false,
     down: false,
   };
+  private commentTimeInterval: ReturnType<typeof setInterval>;
 
   constructor(
     private dateService: DateService,
@@ -36,6 +42,14 @@ export class SingleComment {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
     this.isConnected = !!this.connectedAddress;
+    this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+    this.commentTimeInterval = setInterval((): void => {
+      this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+    }, 30000);
+  }
+
+  detached() {
+    clearInterval(this.commentTimeInterval);
   }
 
   @computedFrom("comment.upvotes", "comment.downvotes")
