@@ -12,23 +12,36 @@ import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
 
 let dealsLoadedOnce = false;
-
+/**
+ * This is the view model for the deals page
+ */
 @singleton(false)
 @autoinject
 export class Deals {
-  cardIndex = 0;
-  seeingMore = false;
-  showMine = false;
+
+  private cardIndex = 0;
+  private seeingMore = false;
+  private showMine = false;
+  private sortColumn: string;
+  private sortDirection = SortOrder.DESC;
+  private sortEvaluator: (a: DealTokenSwap, b: DealTokenSwap) => number;
+
   constructor(
     private readonly dealService: DealService,
     private eventAggregator: EventAggregator,
     private dateService: DateService,
     private ethereumService: EthereumService,
   ) {
-
+  }
+  /**
+   * Provides a filtered list of deals based off of certain conditions and toggles on the deal page
+   */
+  @computedFrom("cardIndex", "showMine")
+  public get featuredDeals(): DealTokenSwap[] {
+    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine)];
   }
 
-  attached(): void {
+  public attached(): void {
     if (dealsLoadedOnce) return;
     this.dealService.ensureAllDealsInitialized();
     this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
@@ -37,39 +50,44 @@ export class Deals {
     dealsLoadedOnce = true;
   }
 
-  @computedFrom("cardIndex", "showMine")
-  get featuredDeals(): DealTokenSwap[] {
-    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine)];
-  }
-  seeMore(yesNo: boolean): void {
-    this.seeingMore = yesNo;
-  }
-  dealToggle(index: number): void {
+  /**
+   * Switches the tab index which is open/partner deals
+   * @param index The tab Index
+   */
+  public dealToggle(index: number): void {
     this.cardIndex = index;
   }
-  private toggleMyDeals(): void {
-    this.showMine = !this.showMine;
-    if (!this.isTabVisible(0, this.showMine)) {
-      this.cardIndex = 1;
-    }
-  }
 
-  getFormattedTime(dateTime: Date): string {
+  /**
+   * Returns a relative time with a custom replacer
+   * @param dateTime
+   * @returns
+   */
+  public getFormattedTime(dateTime: Date): string {
     return this.dateService.formattedTime(dateTime).diff("en-US").replace("a ", "1 ");
   }
 
-  getPrice(deal: DealTokenSwap) : string | number {
+  /**
+   * @param deal
+   * @returns
+   */
+  public getPrice(deal: DealTokenSwap): string | number {
     return deal.totalPrice === 0 ? "N/A" : deal.totalPrice;
   }
 
-  private onConnect(): void {
-    this.eventAggregator.publish(EventType.AccountConnect);
+  /**
+   * This allows for more deals to be displayed on the deal page grid
+   * @param yesNo
+   */
+  public seeMore(yesNo: boolean): void {
+    this.seeingMore = yesNo;
   }
-  sortDirection = SortOrder.DESC;
-  sortColumn: string;
-  sortEvaluator: (a: any, b: any) => number;
-  sort(columnName: string): void {
 
+  /**
+   * Sorts the current featured deals based on the current selector
+   * @param columnName
+   */
+  public sort(columnName: string): void {
     if (this.sortColumn === columnName) {
       this.sortDirection = SortService.toggleSortOrder(this.sortDirection);
     } else {
@@ -91,9 +109,13 @@ export class Deals {
         break;
     }
   }
-  private isTabVisible(cardIndex: number, showMine: boolean) {
-    return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
-  }
+
+  /**
+   * Returns a filtered set of deals based on criteria being passed in from the deal service
+   * @param cardIndex The current Tab
+   * @param showMine Whether or not to show your current deals
+   * @returns
+   */
   private getDealsForCardIndex(cardIndex: number, showMine: boolean) {
     if (cardIndex === 0) {
       //open proposals
@@ -107,7 +129,34 @@ export class Deals {
       y.loadDealSize();
     });
     return deals;
+  }
 
+  /**
+   * If there are no deals to be shown on the tab then it will be hidden.
+   * @param cardIndex The curren tab
+   * @param showMine The toggle of deals to show
+   * @returns
+   */
+  private isTabVisible(cardIndex: number, showMine: boolean) {
+    return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
+  }
+
+  /**
+   * This event is subscribed on the connect button and will open the meta mask prompt
+   * @fires {@link EventType.AccountConnect}
+   */
+  private onConnect(): void {
+    this.eventAggregator.publish(EventType.AccountConnect);
+  }
+
+  /**
+   * Flips the toggle for whether or not deals for user are shown and also checks visbility
+   */
+  private toggleMyDeals(): void {
+    this.showMine = !this.showMine;
+    if (!this.isTabVisible(0, this.showMine)) {
+      this.cardIndex = 1;
+    }
   }
 
 }
