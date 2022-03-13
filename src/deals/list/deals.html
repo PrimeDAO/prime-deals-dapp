@@ -18,6 +18,7 @@
         </pform-input>        
         <pbutton
           type="primary"
+          data-test='initiate-deal-button'
           click.delegate="navigate('initiate')"
           rel="noopener noreferrer">
           Initiate a deal
@@ -35,11 +36,13 @@
     <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
       <div class="heading02Gradient selector">
         <span if.to-view="isTabVisible(0,showMine)"
+          data-test="open-proposals-tab"
           class="selector-tab ${cardIndex==0?'active':''}"
           click.delegate="dealToggle(0, 'open')">
           Open Proposals
         </span>
         <span if.to-view="isTabVisible(1,showMine)"
+          data-test="partnered-deals-tab"
           class="selector-tab ${cardIndex==1?'active':''}"
           click.delegate="dealToggle(1, 'partnered')">
           Partnered Deals
@@ -59,7 +62,7 @@
       <div class="heading02Gradient">${cardIndex==0 ? "All open proposals" : "All partnered deals"}</div>
       <div if.to-view="!featuredDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       <!-- Desktop grid -->
-      <div if.to-view="featuredDeals" class="grid dealGrid">
+      <div if.to-view="featuredDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
           <div class="cell daos header">DAO'S</div>
           <div class="cell title header">TITLE</div>
