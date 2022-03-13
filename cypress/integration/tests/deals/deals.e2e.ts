@@ -1,4 +1,3 @@
-
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Given("I navigate to the All Deals page", () => {
@@ -23,5 +22,6 @@ Given("I want to see Running Deals", () => {
   cy.url().should("include", "deals/running");
 });
 
-Then("I can read about the deal types", () => {})
-
+Then("I can read about the deal types", () => {
+  cy.log("todo");
+});

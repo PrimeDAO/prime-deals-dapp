@@ -9,4 +9,6 @@ Given("No thread is created for this deal", () => {
   cy.contains("section", "There are no discussions on this deal yet. Click on a deal clause to get started.");
 });
 
-Then("I should see a no discussions for deal message", () => {});
+Then("I should see a no discussions for deal message", () => {
+  cy.log("todo");
+});
