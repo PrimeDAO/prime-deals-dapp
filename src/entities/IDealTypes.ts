@@ -38,8 +38,7 @@ export interface IDeal {
   corrupt: boolean;
   clauseDiscussions: Map<string, string>;
   registrationData: any;
-  totalPrice: number;
-  isLoadingPrice: boolean;
+  totalPrice?: number;
   initialize(): Promise<void>;
   create(id: IKey): IDeal;
   ensureInitialized(): Promise<void>;
