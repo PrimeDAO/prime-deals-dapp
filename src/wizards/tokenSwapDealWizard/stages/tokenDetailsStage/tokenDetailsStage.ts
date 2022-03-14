@@ -128,8 +128,12 @@ export class TokenDetailsStage {
 
   private addDefaultValuesToRegistrationData(wizardType: WizardType) {
     if (wizardType === WizardType.createPartneredDeal) {
-      this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
-      this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
+      if (this.wizardState.registrationData.primaryDAO.tokens.length === 0) {
+        this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
+      }
+      if (this.wizardState.registrationData.partnerDAO.tokens.length === 0) {
+        this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
+      }
     }
   }
 }
