@@ -69,7 +69,7 @@
           <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
           <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
           <div class="cell age header sortable" click.delegate="sort('age')">AGE</div>
-          <div class="cell dealSize header" click.delegate="sort('dealSize')">DEAL SIZE (USD)</div>
+          <div class="cell dealSize header sortable" click.delegate="sort('dealSize')">DEAL SIZE (USD)</div>
         </div>
         <template repeat.for="deal of featuredDeals | sort:sortEvaluator">
           <a
