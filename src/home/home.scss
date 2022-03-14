@@ -145,22 +145,29 @@
         }
 
         align-self: center;
+      }
 
-        & > .introVideo {
+      .introVideo {
+        position: relative;
+        padding-top: 56.25%;
+        iframe {
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
           width: 100%;
+          height: 100%;
           border-radius: 6px;
-          display: flex;
-          margin-bottom: 4px;
-          justify-content: left;
         }
+      }
 
-        .disclaimer {
-          text-align: left;
+      .disclaimer {
+        text-align: left;
 
-          a {
-            color: $Neutral02;
-            text-decoration: underline;
-          }
+        a {
+          color: $Neutral02;
+          text-decoration: underline;
         }
       }
     }
