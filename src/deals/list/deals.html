@@ -14,7 +14,7 @@
           label="Show my deals only"
           >
           <ptoggle if.to-view="!ethereumService.defaultAccountAddress"
-          click.delegate="onConnect()"
+          click.delegate="ethereumService.ensureConnected()"
           ptooltip="Connect your wallet to see your deals"
           ></ptoggle>
           <ptoggle if.to-view="ethereumService.defaultAccountAddress"

@@ -141,14 +141,6 @@ export class Deals {
   }
 
   /**
-   * This event is subscribed on the connect button and will open the meta mask prompt
-   * @fires {@link EventType.AccountConnect}
-   */
-  private onConnect(): void {
-    this.eventAggregator.publish("account.connect");
-  }
-
-  /**
    * Flips the toggle for whether or not deals for user are shown and also checks visbility
    */
   private toggleMyDeals(): void {

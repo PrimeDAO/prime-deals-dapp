@@ -60,9 +60,7 @@ export class ConnectButton {
       this.txPhase = Phase.None;
       this.txReceipt = null;
     }));
-    this.subscriptions.push(this.eventAggregator.subscribe("account.connect", async () => {
-      this.onConnect();
-    }));
+
     this.subscriptions.push(this.eventAggregator.subscribe("transaction.failed", async () => {
       this.txPhase = Phase.None;
       this.txReceipt = null;
