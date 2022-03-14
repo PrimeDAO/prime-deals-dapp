@@ -1,7 +1,8 @@
+import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut } from "firebase/auth";
+import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut, onAuthStateChanged, User, Unsubscribe } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
@@ -34,11 +35,24 @@ export class FirebaseService {
   public initializeFirebaseAuthentication() {
     this.eventAggregator.subscribe("Network.Changed.Account", (address: string) => {
       if (Utils.isAddress(address)) {
+        // maybe check if user in not yet signed in with another address. But not sure if that's necessary
+        // as signInToFirebase will probably already invalidated previous session
         this.signInToFirebase(address);
       } else {
         signOut(firebaseAuth);
       }
     });
+  }
+
+  public authStateChanged(): Observable<User> {
+    return fromEventPattern(
+      (handler) => onAuthStateChanged(firebaseAuth, (user) => {
+        handler(user);
+      }),
+      (handler, unsubscribe: Unsubscribe) => {
+        unsubscribe();
+      },
+    );
   }
 
   private async createCustomToken(address: string): Promise<string> {
@@ -52,6 +66,7 @@ export class FirebaseService {
   }
 
   private async signInToFirebase(address: string): Promise<void> {
+    await signOut(firebaseAuth);
     const token = await this.createCustomToken(address);
 
     await setPersistence(firebaseAuth, inMemoryPersistence);
