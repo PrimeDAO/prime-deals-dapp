@@ -17,9 +17,8 @@ $MinContentBodyWidth: 250px;
 $MinContentBodyPaddingLeftRight: 160px;
 $MaxContentBodyWidth: 1120px;
 
-$ContentBodyWidth: clamp(
-  $MinContentBodyWidth,
-  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+$ContentBodyWidth: clamp($MinContentBodyWidth,
+  calc(100% - #{$MinContentBodyPaddingLeftRight} * 2),
   $MaxContentBodyWidth
 );
 
