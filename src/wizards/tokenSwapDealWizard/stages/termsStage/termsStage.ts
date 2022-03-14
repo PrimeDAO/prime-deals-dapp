@@ -1,10 +1,11 @@
-import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
+import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IClause, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import "./termsStage.scss";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TermClause } from "./termClause/termClause";
+import { EditingCard } from "../../../../resources/elements/editingCard/editingCard";
 
 @autoinject
 export class TermsStage implements IBaseWizardStage {
@@ -13,6 +14,7 @@ export class TermsStage implements IBaseWizardStage {
 
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
+  stageMetadata: Partial<{ termsViewModes: EditingCard["viewMode"][] }> = {};
 
   constructor(
     public wizardService: WizardService,
@@ -22,6 +24,9 @@ export class TermsStage implements IBaseWizardStage {
   activate(stageMeta: IStageMeta): void {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+
+    this.stageMetadata = stageMeta.settings;
+    this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
       this.checkedForUnsavedChanges();
@@ -52,5 +57,10 @@ export class TermsStage implements IBaseWizardStage {
 
   checkedForUnsavedChanges() {
     this.hasUnsavedChanges = this.termClauses.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+  }
+
+  private getDefaultTermsViewModes(wizardType: WizardType): EditingCard["viewMode"][] {
+    const isACreateWizard = [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType);
+    return this.wizardState.registrationData.terms.clauses.map(() => isACreateWizard ? "edit" : "view");
   }
 }

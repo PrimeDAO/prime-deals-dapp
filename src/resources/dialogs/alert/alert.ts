@@ -8,6 +8,7 @@ import { IPopupModalModel, ShowButtonsEnum } from "resources/elements/primeDesig
  */
 @autoinject
 export class Alert {
+  className: string;
   buttons: ShowButtonsEnum;
   buttonTextPrimary?: string;
   buttonTextSecondary?: string;
@@ -18,6 +19,7 @@ export class Alert {
   constructor(private controller: DialogController) { }
 
   public activate(model: IPopupModalModel): void {
+    this.className = model.className;
     this.buttons = model.buttons ?? ShowButtonsEnum.Primary;
     this.buttonTextPrimary = model.buttonTextPrimary ?? "OK";
     this.buttonTextSecondary = model.buttonTextSecondary ?? "CANCEL";

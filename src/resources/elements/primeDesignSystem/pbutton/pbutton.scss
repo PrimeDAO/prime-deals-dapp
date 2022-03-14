@@ -77,6 +77,10 @@
   transition: background 0.25s ease-in, transform 0.1s ease-in;
 }
 
+pbutton {
+  display: inline-block;
+}
+
 button {
   &.primary {
     @include standardButton;

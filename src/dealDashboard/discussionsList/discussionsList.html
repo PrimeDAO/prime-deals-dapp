@@ -23,7 +23,7 @@
     <section if.to-view="!ethereumService.defaultAccountAddress">
       <p class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
-        <a class="connect-link" href="" click.delegate="this.ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
+        <a class="connect-link" href="" click.delegate="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
       </p>
     </section>
 
@@ -42,19 +42,18 @@
               ${discussion.topic}
             </p>
             <p class="creator">
-              ${discussion.profile.address}
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdByName">
                 Created by ${discussion.createdByName} 
               </span>
               <span else>
-                Created by ${discussion.createdByAddress | smallHexString} 
+                Created by ${discussion.createdBy.address | smallHexString} 
               </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
           <div class="td h-centered v-centered">${discussion.replies || 0}</div>
-          <div class="td h-centered v-centered">${dateService.formattedTime(discussion.modifiedAt).diff()}</div>
+          <div class="td h-centered v-centered">${discussion.lastModified}</div>
         </div>
       </div>
     </div>
