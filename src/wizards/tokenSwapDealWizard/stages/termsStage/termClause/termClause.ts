@@ -9,14 +9,14 @@ import {
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { PrimeRenderer } from "resources/elements/primeDesignSystem/validation/primeRenderer";
 import "./termClause.scss";
-import { EditingCard } from "../../../../../resources/elements/editingCard/editingCard";
+import { ViewMode } from "../../../../../resources/elements/editingCard/editingCard";
 
 @autoinject
 export class TermClause {
   @bindable clause: IClause;
   @bindable.number index: number;
   @bindable({defaultBindingMode: bindingMode.fromView}) form: ValidationController;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: EditingCard["viewMode"] = "edit";
+  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: ViewMode = "edit";
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
 
