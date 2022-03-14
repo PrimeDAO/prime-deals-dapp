@@ -174,13 +174,9 @@
   }
 }
 
-@media screen and (max-width: 1080px) {
-  .page.home {
-    .section.top {
-      .cards {
-        justify-content: center;
-      }
-    }
+@media screen and (max-width: 900px) and (min-width: 550px) {
+  .deals {
+    padding: 0 45px;
   }
 }
 
