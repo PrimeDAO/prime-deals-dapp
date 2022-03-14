@@ -1,11 +1,13 @@
-import { autoinject } from "aurelia-framework";
-import { EthereumService } from "services/EthereumService";
+import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
+import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { ITokenInfo, TokenService } from "services/TokenService";
+
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Utils } from "services/utils";
-import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { EthereumService } from "services/EthereumService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
+import { Utils } from "services/utils";
+import { autoinject } from "aurelia-framework";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -15,7 +17,7 @@ export class DealTokenSwap implements IDeal {
 
   public id: IKey;
   public dealInitialized: boolean;
-
+  public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
 
@@ -43,6 +45,7 @@ export class DealTokenSwap implements IDeal {
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
     private dataSourceDeals: IDataSourceDeals,
+    private tokenService: TokenService,
   ) {
   }
 
@@ -65,7 +68,28 @@ export class DealTokenSwap implements IDeal {
        */
     this.hydrate();
   }
-
+  async loadDealSize() {
+    // if the total price is already figured out we don't need to try again
+    if (this.totalPrice !== undefined) return;
+    try {
+      let total = 0;
+      const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
+      const tokens: Array<ITokenInfo> = allTokens.map(x => ({
+        address: x.address,
+        decimals: x.decimals,
+        logoURI: x.logoURI,
+        id: "",
+        name: x.name,
+        symbol: x.symbol,
+      }));
+      await this.tokenService.getTokenPrices(tokens);
+      allTokens.forEach(x => {
+        const currentToken = tokens.find(y => y.symbol === x.symbol);
+        total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
+      });
+      this.totalPrice = total;
+    } catch { this.totalPrice = 0; }
+  }
   private async loadContracts(): Promise<void> {
     try {
       // this.contract = await this.contractsService.getContractAtAddress(ContractNames.DEAL, this.address);

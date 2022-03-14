@@ -28,6 +28,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./value-converters/smallHexString"),
     PLATFORM.moduleName("./value-converters/sort"),
     PLATFORM.moduleName("./value-converters/withCommas"),
+    PLATFORM.moduleName("./value-converters/currency"),
 
     PLATFORM.moduleName("./dialogs/disclaimer/disclaimer"),
     // PLATFORM.moduleName("./bindingBehaviors/asyncBinding"),
