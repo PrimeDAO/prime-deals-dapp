@@ -1,5 +1,7 @@
+@import "../../../../resources/elements/primeDesignSystem/_variables.scss";
+
 .termsStageSectionContent {
-  max-width: 645px;
+  width: $stageContentWidthDesktop;
   word-wrap: break-word;
 
   editing-card {
