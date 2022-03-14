@@ -115,7 +115,7 @@ export class Deals {
    * @param showMine Whether or not to show your current deals
    * @returns
    */
-  private getDealsForCardIndex(cardIndex: number, showMine: boolean) {
+  private getDealsForCardIndex(cardIndex: number, showMine: boolean) : DealTokenSwap[] {
     if (cardIndex === 0) {
       //open proposals
       return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
@@ -136,7 +136,7 @@ export class Deals {
    * @param showMine The toggle of deals to show
    * @returns
    */
-  private isTabVisible(cardIndex: number, showMine: boolean) {
+  private isTabVisible(cardIndex: number, showMine: boolean) : boolean {
     return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
   }
 
