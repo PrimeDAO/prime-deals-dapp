@@ -223,8 +223,8 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
         */
       }
     },
-    minimize: true,
-    minimizer: [
+    minimize: production ? true : false,
+    minimizer: production ? [
       new CssMinimizerPlugin(),
       new TerserPlugin( {
         terserOptions: {
@@ -243,7 +243,7 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
           keep_classnames: false,
         },
       } ),
-    ],
+    ] : [],
   },
   performance: { hints: false },
   devServer: {
