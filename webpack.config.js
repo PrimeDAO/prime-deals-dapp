@@ -19,6 +19,8 @@ const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plu
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { EnvironmentPlugin, ProvidePlugin } = require( "webpack" );
+const TerserPlugin = require( "terser-webpack-plugin" )
+const CssMinimizerPlugin = require( "css-minimizer-webpack-plugin" )
 require("dotenv").config({ path: `${ process.env.DOTENV_CONFIG_PATH }`});
 
 console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
@@ -220,7 +222,28 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
         }
         */
       }
-    }
+    },
+    minimize: true,
+    minimizer: [
+      new CssMinimizerPlugin(),
+      new TerserPlugin( {
+        terserOptions: {
+          ecma: undefined,
+          compress: {
+            dead_code: true,
+            passes: 3,
+          },
+          format: {
+            comments: false,
+            indent_level: 2,
+          },
+          mangle: true, // Note `mangle.properties` is `false` by default.
+          module: true,
+          nameCache: {},
+          keep_classnames: false,
+        },
+      } ),
+    ],
   },
   performance: { hints: false },
   devServer: {
@@ -312,7 +335,12 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
       metadata: {
         // available in index.ejs //
         baseUrl
-      }
+      },
+      minify: {
+        removeAttributeQuotes: true,
+        collapseWhitespace: true,
+        removeComments: true,
+      },
     }),
     // ref: https://webpack.js.org/plugins/mini-css-extract-plugin/
     ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
