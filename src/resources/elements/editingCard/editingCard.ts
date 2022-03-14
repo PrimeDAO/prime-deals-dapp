@@ -7,7 +7,7 @@ export class EditingCard {
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
   @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
-  @bindable.boolean hideDeleteButton: boolean;
+  @bindable.boolean hideDeleteButton = false;
 
   private deleteButtonRef: HTMLElement;
   private saving: boolean;
