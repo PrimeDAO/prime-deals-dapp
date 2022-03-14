@@ -39,12 +39,6 @@
       }
       pform-input {
         display: flex;
-        cursor: pointer;
-        &:hover {
-          .formInputLabelTitle {
-            color: inherit;
-          }
-        }
         .formInputLabelTitle {
           text-transform: uppercase;
           color: $Neutral02;

@@ -4,17 +4,22 @@
   <require from="../dao-icon-name/dao-icon-name"></require>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
-        <pbutton if.to-view="!ethereumService.defaultAccountAddress"
+        <!-- <pbutton if.to-view="!ethereumService.defaultAccountAddress"
           type="secondary"
           click.delegate="onConnect()"
           rel="noopener noreferrer">
           Connect your wallet
-        </pbutton>
+        </pbutton> -->
         <pform-input
-          click.delegate="toggleMyDeals()"
           label="Show my deals only"
-          if.to-view="ethereumService.defaultAccountAddress">
-          <ptoggle value.bind="showMine"></ptoggle>
+          >
+          <ptoggle if.to-view="!ethereumService.defaultAccountAddress"
+          click.delegate="onConnect()"
+          ptooltip="Connect your wallet to see your deals"
+          ></ptoggle>
+          <ptoggle if.to-view="ethereumService.defaultAccountAddress"
+          click.delegate="toggleMyDeals()"
+          value.bind="showMine"></ptoggle>
         </pform-input>        
         <pbutton
           type="primary"
