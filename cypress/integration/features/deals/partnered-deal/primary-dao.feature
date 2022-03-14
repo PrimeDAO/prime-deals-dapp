@@ -1,7 +1,7 @@
 Feature: Create Partnered Deal Primary DAO stage
 
   Background:
-    Given I navigate to the 'Partnered Deal' 'Primary DAO' stage
+    Given I navigate to the "Partnered Deal" "Primary DAO" stage
 
   Scenario: Primary DAO stage allows to add information about DAO and its representatives
     Then I can see Primary DAO section with inputs for collecting its details

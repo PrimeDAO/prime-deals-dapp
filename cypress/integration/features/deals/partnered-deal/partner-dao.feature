@@ -1,7 +1,7 @@
 Feature: Create Partnered Deal Partner DAO stage
 
   Background:
-    Given I navigate to the 'Partnered Deal' 'Partner DAO' stage
+    Given I navigate to the "Partnered Deal" "Partner DAO" stage
 
   Scenario: Partner DAO stage allows to add information about DAO and its representatives
     Then I can see Partner DAO section with inputs for collecting its details
@@ -35,4 +35,3 @@ Feature: Create Partnered Deal Partner DAO stage
     When I add 2 incorrect representative addresses
     And I try to proceed to next step
     Then I am presented with errors about incorrect representative addresses
-  
