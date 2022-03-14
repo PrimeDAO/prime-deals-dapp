@@ -34,7 +34,6 @@
     "firebase-deploy:development": "firebase deploy --project=development",
     "firebase-deploy:staging": "firebase deploy --project=staging",
     "firebase-deploy:master": "firebase deploy --project=production",
-    "postinstall": "cd firebaseFunctions && npm ci && npm run build"
   },
   "dependencies": {
     "@makerdao/multicall": "^0.12.0",
