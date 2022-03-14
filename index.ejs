@@ -11,71 +11,69 @@
   <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="./base.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.css" rel="stylesheet">
-  </link>
   <script src="https://kit.fontawesome.com/bf98881e0a.js" crossorigin="anonymous"></script>
 
   <% if ((process.env.NODE_ENV==="production" ) && (process.env.NETWORK==="mainnet" )) { %>
     <script src="https://cdn.usefathom.com/script.js" data-site="DPJWXNFE" data-spa="history" defer></script>
-    <% } %>
+  <% } %>
 
-      <style>
-        /* these are here so webpack will pick up the fonts */
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-Light.ttf");
-          font-weight: 300;
-          font-display: swap;
-        }
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-Light.ttf");
+      font-weight: 300;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-Regular.ttf");
-          font-weight: 400;
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-Regular.ttf");
+      font-weight: 400;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-Medium.ttf");
-          font-weight: 500;
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-Medium.ttf");
+      font-weight: 500;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-SemiBold.ttf");
-          font-weight: 600;
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-SemiBold.ttf");
+      font-weight: 600;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-Bold.ttf");
-          font-weight: 700;
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-Bold.ttf");
+      font-weight: 700;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Inter";
-          src: url("./Inter-ExtraBold.ttf");
-          font-weight: 800;
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Inter";
+      src: url("./Inter-ExtraBold.ttf");
+      font-weight: 800;
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Aeonik";
-          src: url("./Aeonik-Regular.otf");
-          font-display: swap;
-        }
+    @font-face {
+      font-family: "Aeonik";
+      src: url("./Aeonik-Regular.otf");
+      font-display: swap;
+    }
 
-        @font-face {
-          font-family: "Aeonik";
-          src: url("./Aeonik-Bold.otf");
-          font-weight: 600;
-          font-display: swap;
-        }
-      </style>
-      <!-- imported CSS are concatenated and added automatically -->
+    @font-face {
+      font-family: "Aeonik";
+      src: url("./Aeonik-Bold.otf");
+      font-weight: 600;
+      font-display: swap;
+    }
+  </style>
+  <!-- imported CSS are concatenated and added automatically -->
 </head>
 
 <body aurelia-app="main" class="loading">
