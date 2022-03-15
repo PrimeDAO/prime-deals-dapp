@@ -18,28 +18,23 @@ $MinContentBodyPaddingLeftRight: 160px;
 $MaxContentBodyWidth: 1120px;
 
 $ContentBodyWidth: clamp(
-  $MinContentBodyWidth,
-  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
-  $MaxContentBodyWidth
+$MinContentBodyWidth,
+calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+$MaxContentBodyWidth
 );
 
 $BodyPaddingLeftRight: calc((100% - #{$ContentBodyWidth}) / 2);
 
-$ContentBodyPaddingLeftRightMobile: 20px;
-$MaxContentBodyWidthMobile: calc(100% - (#{$ContentBodyPaddingLeftRightMobile} * 2));
+$ContentMinLeftRightPadding: 20px;
+$MaxContentBodyWidthMobile: calc(100% - (#{$ContentMinLeftRightPadding} * 2));
 
 $ContentBodyWidthMobile: minmax(
-  $MinContentBodyWidth,
-  calc(100vw - (#{$ContentBodyPaddingLeftRightMobile} * 2)),
-  $MaxContentBodyWidthMobile
+    $MinContentBodyWidth,
+    calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
+    $MaxContentBodyWidthMobile
 );
 
 $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
-
-/**
- * this is to sync with when the navbar controls start to break
- */
-$PageBreakWidth: 900px;
 
 html {
   body {

@@ -160,11 +160,13 @@ $menu-open-duration: 0.1s;
 
 @media screen and (max-width: $PageBreakWidth) {
   .navbar-container {
-    grid-template-columns: calc(#{$ContentBodyPaddingLeftRightMobile} + 50px) auto auto;
+    grid-template-columns: calc(#{$ContentMinLeftRightPadding} + 50px) auto auto;
+
     .products {
       .container {
         justify-content: center;
         column-gap: 2px;
+
         .item {
           grid-template-columns: auto;
 
@@ -185,7 +187,7 @@ $menu-open-duration: 0.1s;
     height: 70px;
 
     .logo {
-      padding-left: $ContentBodyPaddingLeftRightMobile;
+      padding-left: $ContentMinLeftRightPadding;
     }
 
     .mobile-only {
@@ -194,11 +196,7 @@ $menu-open-duration: 0.1s;
     .hamburger-menu-button {
       z-index: 999;
       grid-area: hamburger-menu;
-      margin-right: $ContentBodyPaddingLeftRightMobile;
-    }
-    .headerConnectButton {
-      text-align: center;
-      padding-right: 0;
+      margin-right: $ContentMinLeftRightPadding;
     }
 
     & > .products,
