@@ -29,6 +29,8 @@ $submitCardWidth: 645px;
   font-family: Inter;
 
   .stageSectionContent {
+    width: 645px;
+    word-wrap: break-word;
     margin-bottom: 30px;
 
     &:last-child {
