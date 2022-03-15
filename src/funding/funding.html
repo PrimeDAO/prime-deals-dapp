@@ -1,0 +1,46 @@
+<template>
+  <require from="../deals/timeLeft/timeLeft"></require>
+  <main class="page animated-page au-animate fundContainer">
+    <section class="section top">
+      <h1 class="title heading heading1 gradient">
+        Swap tokenized carbon credits for a better world
+      </h1>
+      <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer"
+        >Return to deal page</pbutton
+      >
+    </section>
+    <section class="section deposit" if.bind="!isProposalLead">
+      <div class="box-container">
+        <div class="box-header">
+          <div class="heading heading3 title gradient">${getDaoNameRelatedToWallet()} Deposit</div>
+          <div class="countdown">
+            <div class="timeLeftContainer contained">
+              <div class="mainStatus">
+                <div class="timeLeft comingUp">
+                  <span class="icon far fa-clock"></span>${getTimeLeft()} left
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="buttons">
+          <div class="buttonContainer">
+            <a class="button1 ${disabled}" route-href.bind="route">${btnText}</a>
+          </div>
+          <div class="moreInfoContainer">
+            <a
+              href="https://primedao.typeform.com/to/xwkxA9XP"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Request Information</a
+            >
+          </div>
+        </div>
+        <div class="container-footer">
+          <div>POWERED BY</div>
+          <img alt="icon" src.bind="logo" />
+        </div>
+      </div>
+    </section>
+  </main>
+</template>

@@ -961,7 +961,18 @@ const _registration23: IDealRegistrationTokenSwap = {
   primaryDAO: {
     id: "primary-dao-hash-1",
     name: "FirstMyDAO",
-    tokens: [],
+    tokens: [{
+      address: tokenAddress1,
+      name: "Prime (D2D)",
+      symbol: "D2D",
+      decimals: 18,
+      logoURI: "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
+      amount: "200000",
+      instantTransferAmount: "150000",
+      vestedTransferAmount: "50000",
+      vestedFor: 14 * 24 * 3600, // should be in seconds
+      cliffOf: 3 * 24 * 3600, // should be in seconds
+    }],
     social_medias: [],
     representatives: [{
       address: address4,
@@ -970,20 +981,20 @@ const _registration23: IDealRegistrationTokenSwap = {
     }],
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png",
     platform: Platforms.DAOstack,
-    treasury_address: "",
+    treasury_address: address2,
   },
   partnerDAO: {
     id: "partner-dao-hash-1",
     name: "TheirDAO",
     tokens: [],
     social_medias: [],
-    representatives: [{address: ""}],
+    representatives: [{address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA"}],
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
-    treasury_address: "",
+    treasury_address: address3,
   },
   proposalLead: {
-    address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
+    address: proposalLeadAddress1,
     email: "",
   },
   terms: {

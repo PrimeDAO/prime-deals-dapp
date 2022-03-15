@@ -1,0 +1,103 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+
+$hover-transition-speed-fast: 175ms;
+$hover-transition-speed-medium: 0.3s;
+$hover-transition-speed-slow: 0.4s;
+
+.page.fundContainer {
+  section {
+    &.top {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 50px 115px;
+      pbutton {
+        justify-self: right;
+      }
+    }
+    &.deposit {
+      .box-container {
+        background-color: $BG02;
+        border-radius: 10px;
+        height: 100%;
+        display: grid;
+        grid-template-rows: 2fr 1fr;
+        margin-top: 50px;
+        > div {
+          padding: 0 24px;
+        }
+        .box-header {
+          padding-top: 20px;
+          margin-bottom: 32px;
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          div.countdown {
+            justify-self: right;
+            .timeLeftContainer.contained {
+              display: inline;
+            }
+          }
+        }
+        .buttons {
+          display: flex;
+          flex-flow: row wrap;
+          align-items: center;
+          justify-content: space-between;
+          column-gap: 10px;
+          .buttonContainer {
+            text-align: center;
+            font-size: 8px;
+            border-radius: 32px;
+
+            a {
+              margin-left: 0;
+              width: 100px;
+              font-weight: 600;
+              text-decoration: none;
+              color: $White;
+              cursor: pointer;
+              &.disabled {
+                pointer-events: none;
+                background: $Neutral04;
+                color: $Shade04;
+              }
+            }
+          }
+
+          .moreInfoContainer {
+            a {
+              @include standardTextGradient;
+              &:hover {
+                border-bottom: 1px solid $Secondary02;
+                text-decoration: none;
+              }
+            }
+          }
+        }
+        .container-footer {
+          background-color: $Border01;
+          border-bottom-right-radius: 10px;
+          border-bottom-left-radius: 10px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-end;
+          padding-top: 20px;
+          padding-bottom: 20px;
+          height: 32px;
+          margin-top: 20px;
+
+          > div {
+            font-size: 14px;
+            line-height: 33px;
+            font-weight: 400;
+            color: $Neutral03;
+            padding-right: 18px;
+          }
+        }
+      }
+    }
+  }
+}
