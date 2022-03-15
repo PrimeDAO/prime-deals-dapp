@@ -4,12 +4,6 @@
   <require from="../dao-icon-name/dao-icon-name"></require>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
-        <!-- <pbutton if.to-view="!ethereumService.defaultAccountAddress"
-          type="secondary"
-          click.delegate="onConnect()"
-          rel="noopener noreferrer">
-          Connect your wallet
-        </pbutton> -->
         <pform-input
           label="Show my deals only"
           >
@@ -40,13 +34,13 @@
     </div>    
     <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
       <div class="heading02Gradient selector">
-        <span if.to-view="isTabVisible(0,showMine)"
+        <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
           data-test="open-proposals-tab"
           class="selector-tab ${cardIndex==0?'active':''}"
           click.delegate="dealToggle(0, 'open')">
           Open Proposals
         </span>
-        <span if.to-view="isTabVisible(1,showMine)"
+        <span if.to-view="isTabVisible(1,showMine,ethereumService.defaultAccountAddress)"
           data-test="partnered-deals-tab"
           class="selector-tab ${cardIndex==1?'active':''}"
           click.delegate="dealToggle(1, 'partnered')">
@@ -69,8 +63,8 @@
       <!-- Desktop grid -->
       <div if.to-view="featuredDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
-          <div class="cell daos header">DAO'S</div>
-          <div class="cell title header">TITLE</div>
+          <div class="cell daos header sortable" click.delegate="sort('daos')">DAO'S</div>
+          <div class="cell title header sortable" click.delegate="sort('title')">TITLE</div>
           <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
           <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
           <div class="cell age header sortable" click.delegate="sort('age')">AGE</div>

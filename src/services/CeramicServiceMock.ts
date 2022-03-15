@@ -960,7 +960,7 @@ const _registration23: IDealRegistrationTokenSwap = {
   },
   primaryDAO: {
     id: "primary-dao-hash-1",
-    name: "MyDAO",
+    name: "FirstMyDAO",
     tokens: [],
     social_medias: [],
     representatives: [{
@@ -1013,7 +1013,7 @@ const _registration24: IDealRegistrationTokenSwap = {
   },
   primaryDAO: {
     id: "primary-dao-hash-1",
-    name: "MyDAO",
+    name: "SecondMyDAO",
     tokens: [],
     social_medias: [],
     representatives: [{

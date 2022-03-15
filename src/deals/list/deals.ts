@@ -35,9 +35,9 @@ export class Deals {
   /**
    * Provides a filtered list of deals based off of certain conditions and toggles on the deal page
    */
-  @computedFrom("cardIndex", "showMine")
+  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress")
   public get featuredDeals(): DealTokenSwap[] {
-    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine)];
+    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress)];
   }
 
   public attached(): void {
@@ -94,6 +94,12 @@ export class Deals {
     }
 
     switch (columnName) {
+      case "daos":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.registrationData.primaryDAO.name, b.registrationData.primaryDAO.name, this.sortDirection);
+        break;
+      case "title":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.registrationData.proposal.title, b.registrationData.proposal.title, this.sortDirection);
+        break;
       case "type":
         this.sortEvaluator = (_a: DealTokenSwap, _b: DealTokenSwap) => 0;
         break;
@@ -115,14 +121,13 @@ export class Deals {
    * @param showMine Whether or not to show your current deals
    * @returns
    */
-  private getDealsForCardIndex(cardIndex: number, showMine: boolean) : DealTokenSwap[] {
+  private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string) : DealTokenSwap[] {
     if (cardIndex === 0) {
       //open proposals
-      return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
+      return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
     }
-
     //partnered deals
-    const deals = !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress || x.registrationData.primaryDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress) || x.registrationData.partnerDAO?.representatives.some(y => y.address === this.ethereumService.defaultAccountAddress));
+    const deals = !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address) || x.registrationData.partnerDAO?.representatives.some(y => y.address === address));
     deals.forEach(y => {
       if (y.totalPrice) return;
       y.loadDealSize();
@@ -136,8 +141,8 @@ export class Deals {
    * @param showMine The toggle of deals to show
    * @returns
    */
-  private isTabVisible(cardIndex: number, showMine: boolean) : boolean {
-    return !!this.getDealsForCardIndex(cardIndex, showMine)?.length;
+  private isTabVisible(cardIndex: number, showMine: boolean, address: string) : boolean {
+    return !!this.getDealsForCardIndex(cardIndex, showMine, address)?.length;
   }
 
   /**
@@ -145,7 +150,7 @@ export class Deals {
    */
   private toggleMyDeals(): void {
     this.showMine = !this.showMine;
-    if (!this.isTabVisible(0, this.showMine)) {
+    if (!this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress)) {
       this.cardIndex = 1;
     }
   }
