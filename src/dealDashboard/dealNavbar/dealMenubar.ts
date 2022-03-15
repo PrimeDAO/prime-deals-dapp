@@ -3,7 +3,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealNavbar.scss";
 
 @autoinject
-export class DealNavbar {
+export class DealMenubar {
   @bindable deal: DealTokenSwap;
 
 }
