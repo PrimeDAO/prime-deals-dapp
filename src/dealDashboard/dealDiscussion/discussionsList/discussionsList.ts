@@ -1,9 +1,9 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject, bindable } from "aurelia-framework";
+import { autoinject } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
-import { DiscussionsService } from "./../discussionsService";
+import { DiscussionsService } from "../../discussionsService";
 import { DealService } from "services/DealService";
 import { DateService } from "services/DateService";
 
@@ -11,6 +11,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDealDiscussion } from "entities/DealDiscussions";
 
 import "./discussionsList.scss";
+import { bindable } from "aurelia-typed-observable-plugin";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -20,7 +21,7 @@ interface IDiscussionListItem extends IDealDiscussion {
 export class DiscussionsList{
   @bindable deal: DealTokenSwap;
   @bindable discussionId: string = null;
-  @bindable isAuthorized: boolean;
+  @bindable.booleanAttr authorized: boolean;
 
   paginationConfig = {
     listLength: 5,
