@@ -29,49 +29,6 @@ deal-summary {
         "proposal"
         "footer";
 
-      .icons {
-        display: grid;
-        grid-area: icon;
-        width: inherit;
-        align-items: center;
-        grid-template-columns: 42px auto;
-
-        &.running {
-          grid-template-columns: 38px 26px auto;
-        }
-
-        .icon {
-          transition: 0.35s ease-in-out;
-          display: grid;
-          align-items: center;
-          justify-content: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 17px;
-          overflow: hidden;
-
-          img {
-            height: 34px;
-            width: 34px;
-          }
-
-          &:not(:first-child) {
-            margin-left: -15px;
-            z-index: 2;
-          }
-        }
-
-        .name {
-          white-space: nowrap;
-          padding-right: 10px;
-          color: $Neutral03;
-          font-family: "Inter";
-          font-size: 14px;
-          font-weight: 700;
-          line-height: 19.6px;
-        }
-      }
-
       .titleContainer {
         grid-area: title;
 

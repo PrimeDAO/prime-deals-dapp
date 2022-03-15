@@ -3,7 +3,7 @@
   "chainId": "4",
   "contracts": {
     "BaseContract": {
-      "address": "0xC7cf47fA740ec7358fF48157013727Bb3C675E77",
+      "address": "0x7431c9bfA33add7BccCfbAEF79B597bea54702d6",
       "abi": [
         {
           "anonymous": false,
@@ -206,54 +206,6 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "_caller",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            }
-          ],
-          "name": "isDAOorOwner",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_caller",
-              "type": "address"
-            },
-            {
-              "internalType": "address[]",
-              "name": "_involvedDAOs",
-              "type": "address[]"
-            }
-          ],
-          "name": "isDAOorOwnerFromArray",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
               "name": "",
               "type": "address"
             }
@@ -367,52 +319,6 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_representative",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "_active",
-              "type": "bool"
-            }
-          ],
-          "name": "setRepresentative",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            },
-            {
-              "internalType": "address[]",
-              "name": "_representatives",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bool[]",
-              "name": "_active",
-              "type": "bool[]"
-            }
-          ],
-          "name": "setRepresentatives",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
               "name": "_newWETH",
               "type": "address"
             }
@@ -451,7 +357,7 @@
       ]
     },
     "DepositContract": {
-      "address": "0x2b3F04a519b20C29c4bca22Ad9543b7cED331fC9",
+      "address": "0xF43F28bC7D7ac20CB0D1EB9b36a41ad2E92798fD",
       "abi": [
         {
           "anonymous": false,
@@ -496,6 +402,37 @@
             {
               "indexed": false,
               "internalType": "bytes32",
+              "name": "actionId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "claimed",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "dao",
+              "type": "address"
+            }
+          ],
+          "name": "VestingClaimed",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
               "name": "processID",
               "type": "bytes32"
             },
@@ -520,7 +457,13 @@
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "vestingEnd",
+              "name": "vestingCliff",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "vestingDuration",
               "type": "uint256"
             }
           ],
@@ -602,9 +545,34 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "_id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "claimDealVestings",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "claimVestings",
-          "outputs": [],
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -1032,6 +1000,11 @@
         {
           "inputs": [
             {
+              "internalType": "bytes32",
+              "name": "_actionId",
+              "type": "bytes32"
+            },
+            {
               "internalType": "address",
               "name": "_token",
               "type": "address"
@@ -1043,12 +1016,12 @@
             },
             {
               "internalType": "uint256",
-              "name": "_start",
+              "name": "_vestingCliff",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "_end",
+              "name": "_vestingDuration",
               "type": "uint256"
             }
           ],
@@ -1119,28 +1092,38 @@
           "name": "vestings",
           "outputs": [
             {
+              "internalType": "bytes32",
+              "name": "actionId",
+              "type": "bytes32"
+            },
+            {
               "internalType": "address",
               "name": "token",
               "type": "address"
             },
             {
               "internalType": "uint256",
-              "name": "amount",
+              "name": "totalVested",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "sent",
+              "name": "totalClaimed",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "start",
+              "name": "startTime",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "end",
+              "name": "cliff",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "duration",
               "type": "uint256"
             }
           ],
@@ -1184,7 +1167,7 @@
       ]
     },
     "TokenSwapModule": {
-      "address": "0xC13dcc1E21681f8069A5f0f81507d37C81822a45",
+      "address": "0x6cc679281471Db14ebCDD3323ed28354290fFc21",
       "abi": [
         {
           "inputs": [
@@ -1243,19 +1226,12 @@
               "internalType": "uint256",
               "name": "id",
               "type": "uint256"
-            }
-          ],
-          "name": "TokenSwapCancelled",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
+            },
             {
               "indexed": true,
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
             },
             {
               "indexed": false,
@@ -1299,29 +1275,54 @@
               "internalType": "uint256",
               "name": "id",
               "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newDeadline",
-              "type": "uint256"
-            }
-          ],
-          "name": "TokenSwapDeadlineExtended",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
             }
           ],
           "name": "TokenSwapExecuted",
           "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "_daos",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_tokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[][]",
+              "name": "_pathFrom",
+              "type": "uint256[][]"
+            },
+            {
+              "internalType": "uint256[][]",
+              "name": "_pathTo",
+              "type": "uint256[][]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_metadata",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_deadline",
+              "type": "uint256"
+            }
+          ],
+          "name": "_createSwap",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         },
         {
           "inputs": [],
@@ -1334,19 +1335,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_id",
-              "type": "uint256"
-            }
-          ],
-          "name": "cancelSwap",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -1391,43 +1379,9 @@
               "type": "uint256[][]"
             },
             {
-              "internalType": "uint256",
-              "name": "_deadline",
-              "type": "uint256"
-            }
-          ],
-          "name": "createDepositContractAndCreateSwap",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "_daos",
-              "type": "address[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "_tokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[][]",
-              "name": "_pathFrom",
-              "type": "uint256[][]"
-            },
-            {
-              "internalType": "uint256[][]",
-              "name": "_pathTo",
-              "type": "uint256[][]"
+              "internalType": "bytes",
+              "name": "_metadata",
+              "type": "bytes"
             },
             {
               "internalType": "uint256",
@@ -1460,24 +1414,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_id",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "extendDeadline",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "feeInBasisPoints",
           "outputs": [
@@ -1498,6 +1434,86 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes",
+              "name": "_metadata",
+              "type": "bytes"
+            }
+          ],
+          "name": "getTokenswap",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address[]",
+                  "name": "daos",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "tokens",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "uint256[][]",
+                  "name": "pathFrom",
+                  "type": "uint256[][]"
+                },
+                {
+                  "internalType": "uint256[][]",
+                  "name": "pathTo",
+                  "type": "uint256[][]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deadline",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "executionDate",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "metadata",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "enum ModuleBase.Status",
+                  "name": "status",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct TokenSwapModule.TokenSwap",
+              "name": "swap",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "name": "metadataToId",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -1574,6 +1590,11 @@
               "internalType": "uint256",
               "name": "executionDate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
             },
             {
               "internalType": "enum ModuleBase.Status",

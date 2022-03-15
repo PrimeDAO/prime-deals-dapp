@@ -20,7 +20,8 @@ $hover-transition-speed-slow: 0.4s;
       section {
         margin: 0 0 100px 0;
 
-        &.overview, &.clauses {
+        &.overview,
+        &.clauses {
           min-height: 390px;
         }
       }
@@ -84,7 +85,8 @@ $hover-transition-speed-slow: 0.4s;
                 height: $logo-icon-size-small;
               }
             }
-            &.isPrivate:hover, &.active {
+            &.isPrivate:hover,
+            &.active {
               transition-delay: 0s;
               &:not(.active) span {
                 transition-delay: $hover-transition-speed-fast / 2;
@@ -105,7 +107,6 @@ $hover-transition-speed-slow: 0.4s;
           }
         }
       }
-
     }
     &.discussion {
       grid-area: discussion;
@@ -127,10 +128,15 @@ $hover-transition-speed-slow: 0.4s;
 
       .vote {
         height: 465px;
+        .fundButton {
+          i {
+            margin-left: 6px;
+          }
+        }
       }
-      .deal-information {
-        height: 511px;
-      }
+    }
+    .deal-information {
+      height: 511px;
     }
   }
 }

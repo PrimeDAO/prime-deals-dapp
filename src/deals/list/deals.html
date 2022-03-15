@@ -1,97 +1,134 @@
 <template>
   <require from="../dealSummary/dealSummary"></require>
   <require from="../timeLeft/timeLeft"></require>
-
+  <require from="../dao-icon-name/dao-icon-name"></require>
   <div class="page animated-page au-animate deals">
-    <div class="section featured" if.to-view="featuredDeals && featuredDeals.length">
-      <div class="title heading heading1">Featured</div>
-      <div class="deals">
-        <horizontal-scroller item-count.to-view="featuredDeals.length">
-          <deal-summary repeat.for="deal of featuredDeals" address.to-view="deal.address"></deal-summary>
-        </horizontal-scroller>
+    <div class="section deals-actions">
+        <pform-input
+          label="Show my deals only"
+          >
+          <ptoggle if.to-view="!ethereumService.defaultAccountAddress"
+          click.delegate="ethereumService.ensureConnected()"
+          ptooltip="Connect your wallet to see your deals"
+          ></ptoggle>
+          <ptoggle if.to-view="ethereumService.defaultAccountAddress"
+          click.delegate="toggleMyDeals()"
+          value.bind="showMine"></ptoggle>
+        </pform-input>        
+        <pbutton
+          type="primary"
+          data-test='initiate-deal-button'
+          click.delegate="navigate('initiate')"
+          rel="noopener noreferrer">
+          Initiate a deal
+        </pbutton>
+    </div>
+    <div class="section no-deals heading02" if.to-view="featuredDeals && featuredDeals.length === 0">
+      ${showMine ? "You currently are not a part of any deal." : "There are no public deals available." }
+      <pbutton
+          type="primary"
+          click.delegate="navigate('initiate')"
+          rel="noopener noreferrer">
+          Create Your Own Deal
+        </pbutton>
+    </div>    
+    <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
+      <div class="heading02Gradient selector">
+        <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
+          data-test="open-proposals-tab"
+          class="selector-tab ${cardIndex==0?'active':''}"
+          click.delegate="dealToggle(0, 'open')">
+          Open Proposals
+        </span>
+        <span if.to-view="isTabVisible(1,showMine,ethereumService.defaultAccountAddress)"
+          data-test="partnered-deals-tab"
+          class="selector-tab ${cardIndex==1?'active':''}"
+          click.delegate="dealToggle(1, 'partnered')">
+          Partnered Deals
+        </span>
+      </div>
+      <template if.to-view="featuredDeals && featuredDeals.length">
+        <horizontal-scroller class="featuredDealsScroller" item-count.to-view="featuredDeals.length">
+          <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
+        </horizontal-scroller>        
+      </template>
+      <div if.to-view="!featuredDeals" class="loading">
+        <i class="fas fa-circle-notch fa-spin"></i>
       </div>
     </div>
-    <div class="section deals">
-      <div class="title heading heading1">Deals</div>
-      <div if.to-view="featuredDeals === null" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+
+    <div class="section all-deals" if.to-view="!featuredDeals || featuredDeals.length">
+      <div class="heading02Gradient">${cardIndex==0 ? "All open proposals" : "All partnered deals"}</div>
+      <div if.to-view="!featuredDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       <!-- Desktop grid -->
-      <div if.to-view="featuredDeals !== null" class="grid launchGrid">
+      <div if.to-view="featuredDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
-          <div class="cell dealToken header sortable" click.delegate="sort('dealToken')">DEAL TOKEN</div>
-          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
-          <div class="cell project header sortable" click.delegate="sort('project')">PROJECT</div>
-          <div class="cell starts header sortable" click.delegate="sort('starts')">STARTS</div>
-          <div class="cell type header">TYPE</div>
-          <div class="cell target header sortable" click.delegate="sort('target')">TARGET</div>
-          <!-- <div class="cell cap header sortable" click.delegate="sort('cap')">MAX</div> -->
-          <div class="cell whitelist header" click.delegate="sort('whitelist')">WHITELIST</div>
-          <div class="cell eslink header">ETHERSCAN</div>
+          <div class="cell daos header sortable" click.delegate="sort('daos')">DAO'S</div>
+          <div class="cell title header sortable" click.delegate="sort('title')">TITLE</div>
+          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
+          <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
+          <div class="cell age header sortable" click.delegate="sort('age')">AGE</div>
+          <div class="cell dealSize header sortable" click.delegate="sort('dealSize')">DEAL SIZE (USD)</div>
         </div>
-        <template repeat.for="deal of dealService.dealsArray | sort:sortEvaluator">
+        <template repeat.for="deal of featuredDeals | sort:sortEvaluator">
           <a
-            class="row body ${deal.canGoToDashboard ? 'hot' : '' }"
-            if.to-view="!deal.initializing && (($index < 4) || seeingMore)"
-            click.delegate="onDealClick(deal)">
-            <div class="dealToken cell body ${deal.canGoToDashboard ? 'hot' : '' }"><img src.to-view="deal.dealTokenInfo.icon"></img>${deal.dealTokenInfo.symbol}</div>
-            <div class="fundingToken cell body ${deal.canGoToDashboard ? 'hot' : '' }"><img src.to-view="deal.fundingTokenInfo.icon"></img>${deal.fundingTokenInfo.symbol}</div>
-            <div class="project cell body ellipses ${deal.canGoToDashboard ? 'hot' : '' }">${deal.metadata.general.projectName}</div>
-            <div class="starts cell body ${deal.canGoToDashboard ? 'hot' : '' }">
-              <time-left deal.to-view="deal" hide-icons largest></time-left>
+            class="row body hot"
+            if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
+            click.delegate="navigate(`deal/${deal.id}`)">
+            <div class="project cell body ellipses hot">
+              <dao-icon-name registration-data.to-view="deal.registrationData"></dao-icon-name>
             </div>
-            <div class="type cell body ${deal.canGoToDashboard ? 'hot' : '' }">DEAL</div>
-            <div class="target cell body ${deal.canGoToDashboard ? 'hot' : '' }">$ <formatted-number average value.to-view="deal.target | ethwei"></formatted-number>
+            <div class="title cell body hot">${deal.registrationData.proposal.title}</div>
+            <div class="type cell body hot sortable">Token Swap</div>
+            <div class="status cell body hot sortable">
+              <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
             </div>
-            <!-- <div class="cap cell body ${deal.canGoToDashboard ? 'hot' : '' }">$ <formatted-number average value.to-view="deal.cap | ethwei"></formatted-number>
-            </div> -->
-            <div class="whitelist cell body ${deal.canGoToDashboard ? 'hot' : '' }"><span if.to-view="deal.whitelisted" class="fa fa-check"></span><span else>&nbsp;</span></div>
-            <div class="eslink cell body ${deal.canGoToDashboard ? 'hot' : '' }"><i class="fa fa-external-link-alt" click.trigger="gotoEtherscan(deal, $event)"></i></div>
+            <div class="age cell body hot sortable">${getFormattedTime(deal.registrationData.createdAt)}</div>
+            <div class="dealSize cell body hot sortable">
+              <span if.to-view="cardIndex === 1 && deal.totalPrice === undefined"><i class="spinner fa fas fa-circle-notch fa-spin"></i></span>
+              <span if.to-view="cardIndex === 1 && deal.totalPrice !== undefined">${getPrice(deal) | currency}</span>
+              <span if.to-view="cardIndex === 0">-</span>
+            </div>
           </a>
         </template>
       </div>
       <!-- Mobile grid -->
-      <div if.to-view="featuredDeals !== null" class="grid launchGridMobile">
+      <div if.to-view="!loading" class="grid dealGridMobile">
         <div class="row header">
-          <div class="cell dealToken header sortable" click.delegate="sort('dealToken')">DEAL TOKEN</div>
           <div class="cell project header sortable" click.delegate="sort('project')">PROJECT</div>
-          <div class="cell type header">TYPE</div>
+          <div class="cell projectToken header sortable" click.delegate="sort('projectToken')">PROJECT TOKEN</div>
+          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
           <div class="cell whitelist header" click.delegate="sort('whitelist')">WHITELIST</div>
-          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
           <div class="cell starts header sortable" click.delegate="sort('starts')">STARTS</div>
-          <div class="cell target header sortable" click.delegate="sort('target')">TARGET</div>
-          <!-- <div class="cell cap header sortable" click.delegate="sort('cap')">MAX</div> -->
-          <div class="cell eslink header">ETHERSCAN</div>
+          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
+          <div class="cell target header">&nbsp;</div>
         </div>
-        <template repeat.for="deal of dealService.dealsArray | sort:sortEvaluator">
+        <template repeat.for="deal of deals | sort:sortEvaluator">
           <a
-            class="row body ${deal.canGoToDashboard ? 'hot' : '' }"
+            class="row body hot"
             if.to-view="!deal.initializing && (($index < 4) || seeingMore)"
             click.delegate="onDealClick(deal)">
-            <div class="dealToken cell body ${deal.canGoToDashboard ? 'hot' : '' }"><img src.to-view="deal.dealTokenInfo.icon"></img>${deal.dealTokenInfo.symbol}</div>
-            <div class="project cell body ${deal.canGoToDashboard ? 'hot' : '' }">${deal.metadata.general.projectName}</div>
-            <div class="type cell body ${deal.canGoToDashboard ? 'hot' : '' }">DEAL</div>
-            <div class="whitelist cell body ${deal.canGoToDashboard ? 'hot' : '' }"><span if.to-view="deal.whitelisted" class="fa fa-check"></span><span else>&nbsp;</span></div>
-            <div class="fundingToken cell body ${deal.canGoToDashboard ? 'hot' : '' }"><img src.to-view="deal.fundingTokenInfo.icon"></img>${deal.fundingTokenInfo.symbol}</div>
-            <div class="starts cell body ${deal.canGoToDashboard ? 'hot' : '' }">
+            <div class="project cell body hot">${deal.metadata.general.projectName}</div>
+            <div class="projectToken cell body hot"><img src.to-view="deal.projectTokenInfo.logoURI"></img>${deal.projectTokenInfo.symbol}</div>
+            <div class="type cell body hot">${deal.dealType.toUpperCase()}</div>
+            <div class="whitelist cell body hot"><span if.to-view="deal.whitelisted" class="fa fa-check"></span><span else>&nbsp;</span></div>
+            <div class="starts cell body hot">
               <time-left deal.to-view="deal" hide-icons largest></time-left>
             </div>
-            <div class="target cell body ${deal.canGoToDashboard ? 'hot' : '' }">$ <formatted-number average value.to-view="deal.target | ethwei"></formatted-number>
-            </div>
-            <!-- <div class="cap cell body ${deal.canGoToDashboard ? 'hot' : '' }">$ <formatted-number average value.to-view="deal.cap | ethwei"></formatted-number>
-            </div> -->
-            <div class="eslink cell body ${deal.canGoToDashboard ? 'hot' : '' }" click.trigger="gotoEtherscan(deal, $event)"><i class="fa fa-external-link-alt"></i></div>
+            <div class="fundingToken cell body hot"><img src.to-view="deal.fundingTokenInfo.logoURI"></img>${deal.fundingTokenInfo.symbol}</div>
+            <div class="cell body hot">&nbsp;</div>
           </a>
         </template>
       </div>
-      <template if.to-view="dealService.dealsArray.length > 4">
-        <div if.to-view="featuredDeals !== null && !seeingMore" class="seeMore">
+      <template if.to-view="featuredDeals.length > 4">
+        <div if.to-view="!loading && !seeingMore" class="seeMore">
           <div class="arrow">&darr;</div>
           <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
         </div>
-        <div if.to-view="featuredDeals !== null && seeingMore" class="seeMore">
+        <div if.to-view="!loading && seeingMore" class="seeMore">
           <div class="arrow">&uarr;</div>
           <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
         </div>
       </template>
     </div>
-  </div>
 </template>

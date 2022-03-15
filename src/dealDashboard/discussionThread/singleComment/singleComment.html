@@ -53,14 +53,15 @@
         </div>
         <div if.bind="comment.author === connectedAddress && isConnected" class="vote action">
           <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>
-          <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton>
+          <!-- Commenting out until `edit` is implemented in the convo.space -->
+          <!-- <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton> -->
           <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
           </pbutton>
         </div>
       </div>
-      <time class="lastActivity ${isConnected ? 'isConnected' : ''}">${lastActivity(comment.createdOn)}</time>
+      <time class="lastActivity ${isConnected ? 'isConnected' : ''}">${comment.lastModified}</time>
     </header>
 
     <section class="commentBody">

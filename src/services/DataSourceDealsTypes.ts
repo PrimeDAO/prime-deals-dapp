@@ -60,6 +60,11 @@ export abstract class IDataSourceDeals {
 //     yes: boolean): Promise<void> {
 //     throw new Error("Method not implemented.");
 //   }
+//   deleteAllVotes(
+//     dealId: IDealIdType,
+//     accountAddress: Address): Promise<void> {
+//     throw new Error("Method not implemented.");
+//   }
 //   /**
 //    * update deal registration
 //    * @param dealId

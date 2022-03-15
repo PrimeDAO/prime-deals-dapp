@@ -12,6 +12,7 @@
       <div class="sticky-container">
         <pcard class="vote">
           <h1 class="title heading heading3 gradient">Vote</h1>
+          <pbutton class="fundButton" type="primary" click.delegate="goto(`fund/${deal.id}`)">Start Funding <i class="fas fa-arrow-right"></i></pbutton>
         </pcard>
         <pcard class="deal-information">
           <h1 class="title heading heading3 gradient">Deal Information</h1>
@@ -56,7 +57,7 @@
         is-authorized.bind="authorized"
         deal.bind="deal">
       </discussions-list>
-      <discussion-thread else 
+      <discussion-thread else
         discussion-id.two-way="discussionId"
         deal.bind="deal">
       </discussion-thread>

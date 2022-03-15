@@ -1,7 +1,7 @@
 Feature: "Proposal" stage (Stage 1)
 
   Background:
-    Given I navigate to the 'Partnered Deal' 'Proposal' stage
+    Given I navigate to the "Partnered Deal" "Proposal" stage
 
   Scenario: Go back to deal type select
     When I go to previous step
