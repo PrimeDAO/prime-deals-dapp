@@ -1,9 +1,9 @@
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { getDoc, collection, doc, query, where, getDocs, writeBatch, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, writeBatch, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { firebaseDatabase, FirebaseService } from "./FirebaseService";
+import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { v4 as uuidv4 } from "uuid";
 import uniqBy from "lodash/uniqBy";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
@@ -17,16 +17,18 @@ export interface IFirebaseDocument {
 const DEALS_COLLECTION = "deals";
 const VOTES_COLLECTION = "votes";
 
-const allPublicDealsQuery = query(collection(firebaseDatabase, DEALS_COLLECTION), where("registrationData.private", "==", false));
+const allPublicDealsQuery = query(collection(firebaseDatabase, DEALS_COLLECTION), where("registrationData.isPrivate", "==", false), where("isReady", "==", true));
 
 const representativeDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
   where("representativesAddresses", "array-contains", address),
+  where("isReady", "==", true),
 );
 
 const proposalLeadDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
   where("registrationData.proposalLead.address", "==", address),
+  where("isReady", "==", true),
 );
 
 @autoinject
@@ -40,24 +42,23 @@ export class FirestoreService {
 
   public async createTokenSwapDeal(registrationData: IDealRegistrationTokenSwap) {
     try {
-      const batch = writeBatch(firebaseDatabase);
-      const representativesAddresses = [...registrationData.primaryDAO.representatives, ...registrationData.partnerDAO.representatives].map(item => item.address);
+      if (!firebaseAuth.currentUser.uid) {
+        // this check is just for the UI purposes, write access is handled by firestore.rules
+        throw new Error("User not authenticated");
+      }
 
-      const dealId = uuidv4();
-      const dealRef = doc(firebaseDatabase, DEALS_COLLECTION, dealId);
-      batch.set(dealRef, {
-        registrationData,
-        representativesAddresses,
-      });
+      const dealData: {registrationData: IDealRegistrationTokenSwap, isReady:boolean} = {
+        registrationData: {
+          ...JSON.parse(JSON.stringify(registrationData)),
+          createdAt: serverTimestamp(),
+          createdByAddress: firebaseAuth.currentUser.uid,
+        },
+        isReady: false,
+      };
 
-      representativesAddresses.forEach(address => {
-        const representativeRef = doc(firebaseDatabase, DEALS_COLLECTION, dealId, VOTES_COLLECTION, address);
-        batch.set(representativeRef, {vote: false});
-      });
-
-      await batch.commit();
-    } catch {
-      this.eventAggregator.publish("handleFailure", "There was an error while creating the Deal");
+      await addDoc(collection(firebaseDatabase, DEALS_COLLECTION), dealData);
+    } catch (error) {
+      this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
     }
   }
 
@@ -102,17 +103,6 @@ export class FirestoreService {
     } catch {
       throw new Error("Error while getting deals");
     }
-  }
-
-  public subscribeToAllDealsForAddress(address: Address): Observable<Array<IFirebaseDocument>> {
-    const allPublicDeals = this.getQueryObservable<Array<IFirebaseDocument>>(allPublicDealsQuery);
-    const representativeDeals = this.getQueryObservable<Array<IFirebaseDocument>>(representativeDealsQuery(address));
-    const proposalLeadDeals = this.getQueryObservable<Array<IFirebaseDocument>>(proposalLeadDealsQuery(address));
-
-    return combineLatest([allPublicDeals, representativeDeals, proposalLeadDeals])
-      .pipe(
-        map(data => uniqBy(data.flat(), "id")),
-      );
   }
 
   public subscribeToAllDealsForUser(): Observable<Array<IFirebaseDocument>> {

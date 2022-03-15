@@ -1,6 +1,8 @@
 import { autoinject } from "aurelia-framework";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { AlertService, IAlertModel } from "services/AlertService";
+import { FirestoreService } from "services/FirestoreService";
 import { IWizardState, WizardService } from "wizards/services/WizardService";
 import { IStageMeta } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { WizardManager } from "wizards/tokenSwapDealWizard/wizardManager";
@@ -15,6 +17,8 @@ export class SubmitStage {
   constructor(
     private wizardService: WizardService,
     private alertService: AlertService,
+    private eventAggregator: EventAggregator,
+    private firestoreService: FirestoreService,
   ) {}
 
   activate(stageMeta: IStageMeta): void {
@@ -25,15 +29,21 @@ export class SubmitStage {
   }
 
   public async onSubmit(): Promise<void> {
-    const congratulatePopupModel: IAlertModel = {
-      header: "Your deal has been submitted!",
-      message:
-        "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
-      confetti: true,
-      buttonTextPrimary: "Go to deal (todo)",
-      className: "congratulatePopup",
-    };
+    try {
+      await this.firestoreService.createTokenSwapDeal(this.submitData);
 
-    await this.alertService.showAlert(congratulatePopupModel);
+      const congratulatePopupModel: IAlertModel = {
+        header: "Your deal has been submitted!",
+        message:
+          "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
+        confetti: true,
+        buttonTextPrimary: "Go to deal (todo)",
+        className: "congratulatePopup",
+      };
+
+      await this.alertService.showAlert(congratulatePopupModel);
+    } catch (error) {
+      this.eventAggregator.publish("handleFailure", error);
+    }
   }
 }
