@@ -1,8 +1,7 @@
-import { Router } from "aurelia-router";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { DealService } from "services/DealService";
-import { EthereumService, Address } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IClause } from "entities/DealRegistrationTokenSwap";
@@ -43,7 +42,6 @@ export class DealDashboard {
     private discussionsService: DiscussionsService,
     private eventAggregator: EventAggregator,
     private dealService: DealService,
-    private router: Router,
   ) {
     this.connectedAddress = "";
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
@@ -91,7 +89,4 @@ export class DealDashboard {
       );
   }
 
-  private goto(fragment: string) {
-    this.router.navigate(fragment);
-  }
 }

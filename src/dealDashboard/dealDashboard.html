@@ -1,63 +1,46 @@
 <template>
   <require from="./discussionsList/discussionsList"></require>
+  <require from="./dealNavbar/dealNavbar"></require>
+  <require from="./dealVotes/dealVotes"></require>
+  <require from="./dealInfo/dealInfo"></require>
+  <require from="./dealClauses/dealClauses"></require>
+  <require from="./dealDescription/dealDescription"></require>
   <require from="./discussionThread/discussionThread"></require>
+
   <main class="page animated-page au-animate dealDashboardContainer">
+    <deal-navbar deal.bind="deal"></deal-navbar>
+
     <section class="section top">
       <h1 class="title heading heading1 gradient">
         Swap tokenized carbon credits for a better world
       </h1>
       <h2>* Active, Recently updated (Private)</h2>
     </section>
+
     <aside class="aside">
-      <div class="sticky-container">
-        <pcard class="vote">
-          <h1 class="title heading heading3 gradient">Vote</h1>
-          <pbutton class="fundButton" type="primary" click.delegate="goto(`fund/${deal.id}`)">Start Funding <i class="fas fa-arrow-right"></i></pbutton>
-        </pcard>
-        <pcard class="deal-information">
-          <h1 class="title heading heading3 gradient">Deal Information</h1>
-        </pcard>
-      </div>
+      <deal-votes deal.bind="deal"></deal-votes>
+      <deal-info deal.bind="deal"></deal-info>
     </aside>
+
     <section class="content">
-      <section class="overview">
-        <header>
-          <h2 class="subtitle heading heading3">Overview</h2>
-        </header>
-        <p>
-          We propose AcmeDAO and GreenLabDAO to swap 1,000 ACM and 140,000 GLD to solidify the partnership between the two projects and align their incentives going forward. AcmeDAO also agrees to continue developing current and future products on top of GreenLabDAO’s protocol, which GreenLabDAO will help support promotionally.
-        </p>
-      </section>
+      <deal-description deal.bind="deal"></deal-description>
 
       <!-- Clauses List -->
-      <section if.to-view="authorized || !isPrivate" class="clauses">
-        <header>
-          <h2 class="subtitle heading heading3">Deal Clauses</h2>
-        </header>
-        <ol>
-          <li repeat.for="clause of clauses" class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}">
-            <span class="marker">${$index + 1}</span>
-            <span class="body">
-              ${clause.text}
-            </span>
-            <span if.to-view="authorized" class="button" click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)">
-              <div if.to-view="!discussionsService.discussions[deal.clauseDiscussions.get(clause.id)]">Begin A Discussion</div>
-              <div else>Discuss</div>
-              <img src="/static/comment.svg"></img>
-            </span>
-          </li>
-        </ol>
-      </section>
+    </section>
+    <section class="clauses" if.to-view="authorized || !deal.registrationData.isPrivate">
+      <deal-clauses authorized.bind="authorized" deal.bind="deal"></deal-clauses>
     </section>
 
     <!-- Discussions / Discussion Comments Thread -->
     <section class="discussion" show.bind="authorized || !isPrivate">
-      <discussions-list if.to-view="!discussionId"
+      <discussions-list
+        if.to-view="!discussionId"
         discussion-id.two-way="discussionId"
         is-authorized.bind="authorized"
         deal.bind="deal">
       </discussions-list>
-      <discussion-thread else
+      <discussion-thread
+        else
         discussion-id.two-way="discussionId"
         deal.bind="deal">
       </discussion-thread>

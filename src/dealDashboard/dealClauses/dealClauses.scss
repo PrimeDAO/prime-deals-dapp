@@ -1,0 +1,94 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
+$hover-transition-speed-fast: 175ms;
+$hover-transition-speed-medium: 0.3s;
+$hover-transition-speed-slow: 0.4s;
+
+p {
+  margin-bottom: 20px;
+}
+
+ol {
+  display: grid;
+  gap: $spacing-small;
+  list-style-type: decimal;
+  list-style-position: inside;
+
+  .clause {
+    display: flex;
+    gap: $spacing-normal * 2;
+    vertical-align: top;
+    padding: $spacing-normal $spacing-medium-small;
+    // padding-right: 150px;
+    cursor: default;
+    position: relative;
+
+    border-radius: $border-radius-normal;
+    background-color: transparent;
+    transition: background-color $hover-transition-speed-fast ease-in-out;
+    transition-delay: $hover-transition-speed-fast / 2;
+
+    .body {
+      width: calc(100% - 165px);
+
+      small {
+        font-size: 12px;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .button {
+      position: absolute;
+      display: flex;
+      gap: $spacing-normal * 1.2;
+      align-items: center;
+      line-height: 19px;
+      right: 0;
+      top: 0;
+      height: 100%;
+      padding: 0 $spacing-normal * 1.5;
+      background: $BG02;
+      opacity: 0;
+      justify-content: center;
+      border-radius: $border-radius-normal;
+      text-transform: uppercase;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: $Neutral04;
+      transition: opacity $hover-transition-speed-fast ease-in;
+      transition-delay: 0s;
+      max-width: 200px;
+      text-align: right;
+      cursor: pointer;
+
+      img {
+        width: $logo-icon-size-small;
+        height: $logo-icon-size-small;
+      }
+    }
+
+    &.isPrivate:hover, &.active {
+      transition-delay: 0s;
+
+      &:not(.active) span {
+        transition-delay: $hover-transition-speed-fast / 2;
+        opacity: 1;
+      }
+
+      background-color: $BG02;
+    }
+
+    .marker {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: "Inter";
+      color: $Border01;
+
+      &::after {
+        content: ".";
+      }
+    }
+  }
+}
+
