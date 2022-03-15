@@ -68,6 +68,13 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
       // Enforce single aurelia-binding, to avoid v1/v2 duplication due to
       // out-of-date dependencies on 3rd party aurelia plugins
       'aurelia-binding': path.resolve(__dirname, 'node_modules/aurelia-binding'),
+      'aes-js': path.resolve( __dirname, 'node_modules/aes-js' ),
+      'bn.js': path.resolve( __dirname, 'node_modules/bn.js' ),
+      'pify': path.resolve( __dirname, 'node_modules/pify' ),
+      'ethereumjs-util': path.resolve( __dirname, 'node_modules/ethereumjs-util' ),
+      'json-rpc-engine': path.resolve( __dirname, 'node_modules/json-rpc-engine' ),
+      'tslib': path.resolve( __dirname, 'node_modules/tslib' ),
+      'varint': path.resolve( __dirname, 'node_modules/varint' ),
       process: 'process/browser',
       buffer: 'buffer',
       "styles": path.resolve(__dirname, "src/styles"),
