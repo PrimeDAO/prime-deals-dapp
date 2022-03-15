@@ -17,26 +17,24 @@
     grid-area: navbar;
   }
 
-  section {
-    &.top {
-      grid-area: top;
-    }
+  .top {
+    grid-area: top;
+  }
 
-    &.content {
-      grid-area: content;
-    }
+  deal-description {
+    grid-area: content;
+  }
 
-    &.clauses {
-      grid-area: clauses;
-    }
+  deal-clauses {
+    grid-area: clauses;
+  }
 
-    &.discussion {
-      grid-area: discussion;
+  deal-discussion {
+    grid-area: discussion;
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-      }
+    .header {
+      display: flex;
+      justify-content: space-between;
     }
   }
 

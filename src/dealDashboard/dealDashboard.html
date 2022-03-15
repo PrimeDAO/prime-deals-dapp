@@ -1,14 +1,13 @@
 <template>
-  <require from="./discussionsList/discussionsList"></require>
-  <require from="./dealNavbar/dealNavbar"></require>
+  <require from="./dealMenubar/dealMenubar"></require>
   <require from="./dealVotes/dealVotes"></require>
   <require from="./dealInfo/dealInfo"></require>
   <require from="./dealClauses/dealClauses"></require>
+  <require from="./dealDiscussion/dealDiscussion"></require>
   <require from="./dealDescription/dealDescription"></require>
-  <require from="./discussionThread/discussionThread"></require>
 
   <main class="page animated-page au-animate dealDashboardContainer">
-    <deal-navbar deal.bind="deal"></deal-navbar>
+    <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -22,28 +21,21 @@
       <deal-info deal.bind="deal"></deal-info>
     </aside>
 
-    <section class="content">
-      <deal-description deal.bind="deal"></deal-description>
+    <deal-description deal.bind="deal"></deal-description>
 
-      <!-- Clauses List -->
-    </section>
-    <section class="clauses" if.to-view="authorized || !deal.registrationData.isPrivate">
-      <deal-clauses authorized.bind="authorized" deal.bind="deal"></deal-clauses>
-    </section>
+    <deal-clauses
+      authorized.bind="authorized"
+      deal.bind="deal"
+      discussion-id.bind="discussionId"
+      if.to-view="authorized || !deal.registrationData.isPrivate"
+    ></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
-    <section class="discussion" show.bind="authorized || !isPrivate">
-      <discussions-list
-        if.to-view="!discussionId"
-        discussion-id.two-way="discussionId"
-        is-authorized.bind="authorized"
-        deal.bind="deal">
-      </discussions-list>
-      <discussion-thread
-        else
-        discussion-id.two-way="discussionId"
-        deal.bind="deal">
-      </discussion-thread>
-    </section>
+    <deal-discussion
+      authorized.bind="authorized"
+      deal.bind="deal"
+      discussion-id.bind="discussionId"
+      show.bind="authorized || !this.deal.registrationData.isPrivate"
+    ></deal-discussion>
   </main>
 </template>
