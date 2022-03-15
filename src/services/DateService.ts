@@ -1,5 +1,7 @@
-﻿import { autoinject } from "aurelia-framework";
-import * as moment from "moment-timezone";
+﻿import * as moment from "moment-timezone";
+
+import { autoinject } from "aurelia-framework";
+
 import Moment = moment.Moment;
 
 @autoinject
@@ -438,7 +440,7 @@ export class DateService {
    *
    * formatDate(new Date()).diff();
    */
-  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: () => string} {
+  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: (locale?: string ) => string} {
     const _date = new Date(date);
 
     return {
@@ -446,9 +448,9 @@ export class DateService {
         locale,
         { year: "numeric", month: "short", day: "numeric" },
       ),
-      diff: () => {
+      diff: (locale = "en-custom") => {
         if (!date) return "-";
-        return moment(date).locale("en-custom").fromNow(true);
+        return moment(date).locale(locale).fromNow();
       },
     };
   }

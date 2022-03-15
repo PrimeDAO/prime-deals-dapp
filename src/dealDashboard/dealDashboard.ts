@@ -1,3 +1,4 @@
+import { Router } from "aurelia-router";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { DealService } from "services/DealService";
@@ -42,6 +43,7 @@ export class DealDashboard {
     private discussionsService: DiscussionsService,
     private eventAggregator: EventAggregator,
     private dealService: DealService,
+    private router: Router,
   ) {
     this.connectedAddress = "";
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
@@ -87,5 +89,9 @@ export class DealDashboard {
           isPublic: true,
         },
       );
+  }
+
+  private goto(fragment: string) {
+    this.router.navigate(fragment);
   }
 }

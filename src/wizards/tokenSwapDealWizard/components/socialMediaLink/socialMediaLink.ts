@@ -19,7 +19,7 @@ export class SocialMediaLink {
       .satisfies((value) => {
         return this.data.social_medias.filter(socialMedia => socialMedia.url === value).length === 1;
       })
-      .withMessage("URL duplicated")
+      .withMessage("URL already provided. Please use another URL")
       .ensure((socialMedia) => socialMedia.name)
       .required()
       .withMessage("Please select one")
