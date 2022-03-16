@@ -1,0 +1,23 @@
+<template>
+  <header>
+    <h2 class="subtitle heading heading3">Deal Clauses</h2>
+  </header>
+  <ol>
+    <li
+      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}"
+      repeat.for="clause of clauses">
+      <span class="marker">${$index + 1}</span>
+      <span class="body">${clause.text}</span>
+      <span
+        class="button"
+        click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)"
+        if.to-view="authorized"
+      >
+        <div
+          if.to-view="!discussionsService.discussions[deal.clauseDiscussions.get(clause.id)]">Begin A Discussion</div>
+        <div else>Discuss</div>
+        <img src="/static/comment.svg"/>
+      </span>
+    </li>
+  </ol>
+</template>

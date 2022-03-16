@@ -1,5 +1,5 @@
-@import "styles/styles.scss";
-@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/styles/styles.scss";
+@import "../../../../resources/elements/primeDesignSystem/styles";
 
 .single.comment {
   display: grid;
@@ -111,10 +111,10 @@
           width: 500%;
           margin-left: -250%;
           background: linear-gradient(
-            to right, 
-            rgba(255,255,255, 0) 46%, 
-            rgba(255,255,255, 0.35) 50%, 
-            rgba(255,255,255, 0) 54%) 50% 50%;
+              to right,
+              rgba(255, 255, 255, 0) 46%,
+              rgba(255, 255, 255, 0.35) 50%,
+              rgba(255, 255, 255, 0) 54%) 50% 50%;
           animation: slider 0.8s linear infinite;
           content: " ";
           pointer-events: none;

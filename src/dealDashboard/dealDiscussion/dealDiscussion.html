@@ -1,0 +1,16 @@
+<template>
+  <require from="./discussionsList/discussionsList"></require>
+  <require from="./discussionThread/discussionThread"></require>
+
+  <discussions-list
+    authorized.bind="authorized"
+    deal.bind="deal"
+    discussion-id.two-way="discussionId"
+    if.to-view="!discussionId">
+  </discussions-list>
+  <discussion-thread
+    deal.bind="deal"
+    discussion-id.two-way="discussionId"
+    else>
+  </discussion-thread>
+</template>

@@ -1,13 +1,15 @@
-import { EventAggregator } from "aurelia-event-aggregator";
-import { autoinject, containerless, customElement, singleton } from "aurelia-framework";
-import { ContractNames, ContractsService } from "services/ContractsService";
-import { DisposableCollection } from "services/DisposableCollection";
+import "./ConnectButton.scss";
+
 import { Address, EthereumService } from "services/EthereumService";
+import { ContractNames, ContractsService } from "services/ContractsService";
+import { autoinject, containerless, customElement, singleton } from "aurelia-framework";
+
+import { DisposableCollection } from "services/DisposableCollection";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigTransaction } from "services/GeneralEvents";
 import { TransactionReceipt } from "services/TransactionsService";
-import "./ConnectButton.scss";
-import { bindable } from "aurelia-typed-observable-plugin";
 import { Utils } from "services/utils";
+import { bindable } from "aurelia-typed-observable-plugin";
 
 enum Phase {
   None = "None",

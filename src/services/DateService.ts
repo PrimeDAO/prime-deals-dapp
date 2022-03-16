@@ -1,5 +1,7 @@
-﻿import { autoinject } from "aurelia-framework";
-import * as moment from "moment-timezone";
+﻿import * as moment from "moment-timezone";
+
+import { autoinject } from "aurelia-framework";
+
 import Moment = moment.Moment;
 
 @autoinject
@@ -45,20 +47,20 @@ export class DateService {
       relativeTime: {
         future: "in %s",
         past:   "%s ago",
-        s:  "%dsec",
-        ss: "%dsec",
-        m:  "%dmin",
-        mm: "%dmin",
-        h:  "%dh",
-        hh: "%dh",
-        d:  "%dd",
-        dd: "%dd",
-        w:  "%dw",
-        ww: "%dw",
-        M:  "%dm",
-        MM: "%dm",
-        y:  "%dy",
-        yy: "%dy",
+        s:  "< 1 min",
+        ss: "< 1 min",
+        m:  "%d min",
+        mm: "%d min",
+        h:  "%d h",
+        hh: "%d h",
+        d:  "%d d",
+        dd: "%d d",
+        w:  "%d w",
+        ww: "%d w",
+        M:  "%d mo",
+        MM: "%d mo",
+        y:  "%d y",
+        yy: "%d y",
       },
     });
 
@@ -438,7 +440,7 @@ export class DateService {
    *
    * formatDate(new Date()).diff();
    */
-  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: () => string} {
+  public formattedTime(date: Date | number): {short: (locale: string) => string, diff: (locale?: string ) => string} {
     const _date = new Date(date);
 
     return {
@@ -446,9 +448,9 @@ export class DateService {
         locale,
         { year: "numeric", month: "short", day: "numeric" },
       ),
-      diff: () => {
+      diff: (locale = "en-custom") => {
         if (!date) return "-";
-        return moment(date).locale("en-custom").fromNow(true);
+        return moment(date).locale(locale).fromNow();
       },
     };
   }

@@ -103,7 +103,7 @@
       </pform-input>
 
       <div class="tokenDetailsFooter">
-        <pbutton class="deleteButton" click.delegate="onDelete()" type="tertiary">
+        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary">
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
@@ -119,7 +119,13 @@
       <div class="detailsTable detailsTableInViewMode">
         <div class="detailsCell">
           <p>Token address</p>
-          <p>${token.address || '-' | smallHexString }</p>
+          <p if.bind="token.address">
+            <etherscanlink
+              text="${token.address | smallHexString}"
+              address.bind="token.address">
+            </etherscanlink>
+          </p>
+          <p else>-</p>
         </div>
 
         <div class="detailsCell detailsCellAmount">

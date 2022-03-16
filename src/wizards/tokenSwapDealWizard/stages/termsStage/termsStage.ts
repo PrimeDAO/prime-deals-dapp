@@ -5,7 +5,7 @@ import { IClause, IDealRegistrationTokenSwap } from "entities/DealRegistrationTo
 import "./termsStage.scss";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TermClause } from "./termClause/termClause";
-import { EditingCard } from "../../../../resources/elements/editingCard/editingCard";
+import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 
 @autoinject
 export class TermsStage implements IBaseWizardStage {
@@ -14,7 +14,7 @@ export class TermsStage implements IBaseWizardStage {
 
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
-  stageMetadata: Partial<{ termsViewModes: EditingCard["viewMode"][] }> = {};
+  stageMetadata: { termsViewModes?: ViewMode[] } = {};
 
   constructor(
     public wizardService: WizardService,
@@ -35,16 +35,13 @@ export class TermsStage implements IBaseWizardStage {
     });
   }
 
-  onDelete(index: number) {
+  onDelete(index: number): boolean | void {
     if (this.wizardState.registrationData.terms.clauses.length === 1) {
-      this.wizardState.registrationData.terms.clauses[0].text = "";
-      // This `return true` is used by the termClause component
-      return true;
+      return false;
     }
 
     this.termClauses.splice(index, 1);
     this.wizardState.registrationData.terms.clauses.splice(index, 1);
-    this.checkedForUnsavedChanges();
   }
 
   addClause() {
@@ -59,7 +56,7 @@ export class TermsStage implements IBaseWizardStage {
     this.hasUnsavedChanges = this.termClauses.filter(viewModel => viewModel.viewMode === "edit").length > 0;
   }
 
-  private getDefaultTermsViewModes(wizardType: WizardType): EditingCard["viewMode"][] {
+  private getDefaultTermsViewModes(wizardType: WizardType): ViewMode[] {
     const isACreateWizard = [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType);
     return this.wizardState.registrationData.terms.clauses.map(() => isACreateWizard ? "edit" : "view");
   }
