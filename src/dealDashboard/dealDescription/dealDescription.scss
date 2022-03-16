@@ -5,10 +5,30 @@ deal-description {
   margin-bottom: 100px;
   word-wrap: break-word;
   font-family: Inter;
+  line-height: 24px;
 
   .descriptionLabel {
     color: $Secondary02;
     font-weight: $font-bold;
-    line-height: 24px;
+  }
+
+  .mobileButtonContainerDealDescription {
+    display: none;
+  }
+}
+
+@media screen and (max-width: $MobileWidth) {
+  deal-description {
+    max-width: 335px;
+    margin-bottom: 56px;
+
+    .dealDescription {
+      margin-bottom: 28px;
+    }
+
+    .mobileButtonContainerDealDescription {
+      display: flex;
+      justify-content: center;
+    }
   }
 }
