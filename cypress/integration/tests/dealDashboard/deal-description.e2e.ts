@@ -11,9 +11,13 @@ When("the description text is long", () => {
     });
 });
 
-Then("I can view the current status of the Partnered Deal", () => {});
+Then("I can view the current status of the Partnered Deal", () => {
+  cy.get("[data-test='dealStatus']").should("be.visible");
+});
 
-Then("I can view the title of the Partnered Deal", () => {});
+Then("I can view the title of the Partnered Deal", () => {
+  cy.get("[data-test='dealTitle']").should("be.visible");
+});
 
 And("I can view the description of the Partnered Deal", () => {
   cy.get("[data-test='dealDescriptionText']").should("be.visible");

@@ -10,12 +10,12 @@
     <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
-      <h1 class="title heading heading1 gradient">
+      <h1 data-test="dealTitle" class="title heading heading1 gradient">
         ${deal.registrationData.proposal.title}
       </h1>
 
       <let deal-privacy-text="${deal.registrationData.isPrivate ? 'Private' : 'Public'}"></let>
-      <h2>• ${deal.status}, Recently updated (${dealPrivacyText})</h2>
+      <h2 data-test="dealStatus">• ${deal.status}, Recently updated (${dealPrivacyText})</h2>
     </section>
 
     <aside class="aside">
