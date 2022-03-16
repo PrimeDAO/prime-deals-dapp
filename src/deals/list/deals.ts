@@ -63,7 +63,7 @@ export class Deals {
    * @returns
    */
   public getFormattedTime(dateTime: Date): string {
-    return this.dateService.formattedTime(dateTime).diff("en-US").replace("a ", "1 ");
+    return this.dateService.formattedTime(dateTime).diff("en-US", false).replace("a ", "1 ");
   }
 
   /**
