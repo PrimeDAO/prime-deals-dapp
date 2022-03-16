@@ -117,7 +117,7 @@ pbutton {
         padding: 2px;
         background: $Gradient01;
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); // do no fix the errors
-        // we need this for Firefox. Also, the for (-webkit-)mask-composite order is important
+        // we need this for Firefox. Also, the order for (-webkit-)mask-composite is important
         -webkit-mask-composite: xor;
         mask-composite: exclude;
       }
