@@ -1,3 +1,14 @@
+@import "../../resources/elements/primeDesignSystem/variables";
+
 deal-description {
+  width: $sectionWidth;
   margin-bottom: 100px;
+  word-wrap: break-word;
+  font-family: Inter;
+
+  .descriptionLabel {
+    color: $Secondary02;
+    font-weight: $font-bold;
+    line-height: 24px;
+  }
 }
