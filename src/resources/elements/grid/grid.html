@@ -1,0 +1,26 @@
+<template>
+  <div class="grid" style="grid-template-columns:${gridTemplateColumnText}">
+    <div class="row header">
+      <div
+        repeat.for="column of columns"
+        class="cell header ${column.sortable ? 'sortable' : ''}"
+        click.delegate="column.sortable && sort(column.field)"
+      >
+        ${column.headerText}
+      </div>
+    </div>
+    <template repeat.for="row of rows | sort:sortEvaluator">
+      <template if.bind="!selectable">
+        <div repeat.for="column of columns" class="cell body hot">
+          <compose if.bind="column.render" view.bind="viewStrategy(column.render)" view-model.bind="getBuffedVm(row)" ></compose>
+          <template else>${row[column.field]}</template>
+        </div>
+      </template>
+      <a else class="row body hot" select.delegate="select(row)">
+        <div repeat.for="column of columns" class="cell body hot">
+          ${row[column.field]}
+        </div>
+      </a>
+    </template>
+  </div>
+</template>

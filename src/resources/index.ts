@@ -6,6 +6,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/popupNotifications/popupNotifications"),
     PLATFORM.moduleName("./elements/EtherscanLink/EtherscanLink"),
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
+    PLATFORM.moduleName("./elements/grid/grid"),
     PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
     PLATFORM.moduleName("./elements/UsersAddress/UsersAddress"),
     PLATFORM.moduleName("./elements/copyToClipboardButton/copyToClipboardButton"),
@@ -29,7 +30,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./value-converters/sort"),
     PLATFORM.moduleName("./value-converters/withCommas"),
     PLATFORM.moduleName("./value-converters/currency"),
-
     PLATFORM.moduleName("./dialogs/disclaimer/disclaimer"),
     // PLATFORM.moduleName("./bindingBehaviors/asyncBinding"),
   ]);
