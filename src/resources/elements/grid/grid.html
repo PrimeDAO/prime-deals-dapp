@@ -12,13 +12,14 @@
     <template repeat.for="row of rows | sort:sortEvaluator">
       <template if.bind="!selectable">
         <div repeat.for="column of columns" class="cell body hot">
-          <compose if.bind="column.render" view.bind="viewStrategy(column.render)" view-model.bind="getBuffedVm(row)" ></compose>
+          <compose if.bind="column.render" view.bind="viewStrategy(column.render)" view-model.bind="getBuffedVm(row)" containerless ></compose>
           <template else>${row[column.field]}</template>
         </div>
       </template>
       <a else class="row body hot" select.delegate="select(row)">
         <div repeat.for="column of columns" class="cell body hot">
-          ${row[column.field]}
+          <compose if.bind="column.render" view.bind="viewStrategy(column.render)" view-model.bind="getBuffedVm(row)" containerless ></compose>
+          <template else>${row[column.field]}</template>
         </div>
       </a>
     </template>

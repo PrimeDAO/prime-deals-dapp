@@ -35,7 +35,7 @@ export class Grid {
   }
 
   viewStrategy(html: string) {
-    return new InlineViewStrategy(!html.startsWith("<template>") ? `<template>${html}</template>` : html, (this.parent as any).resources.elements);
+    return new InlineViewStrategy(!html.startsWith("<template>") ? `<template>${html}</template>` : html, [this.parent]);
   }
 
   @computedFrom("columns")
