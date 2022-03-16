@@ -22,8 +22,6 @@ $hover-transition-speed-slow: 0.4s;
         background-color: $BG02;
         border-radius: 10px;
         height: 100%;
-        display: grid;
-        grid-template-rows: 2fr 1fr;
         margin-top: 50px;
         > div {
           padding: 0 24px;
@@ -37,6 +35,109 @@ $hover-transition-speed-slow: 0.4s;
             justify-self: right;
             .timeLeftContainer.contained {
               display: inline;
+            }
+          }
+        }
+        .box-content {
+          .tokens {
+            .grid {
+              margin-bottom: 20px;
+              font-size: 16px;
+
+              .row {
+                cursor: default;
+                /**
+                 * so the grid will be composed of the contents of the row element,
+                 * not the row element itself.
+                 */
+                display: contents;
+
+                &:hover {
+                  text-decoration: none;
+                }
+
+                .cell.header {
+                  padding: 10px 0;
+                  text-transform: uppercase;
+                }
+
+                .cell {
+                  &.body {
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                  }
+                  /**
+                   * for when columns get scrunched together
+                   */
+                  &:not(:nth-of-type(n + 7)) {
+                    padding-right: 12px;
+                  }
+
+                  &.header {
+                    &.sortable {
+                      cursor: pointer;
+                    }
+                  }
+
+                  &.project {
+                    .ellipsesContainer {
+                      display: inline-block;
+                      overflow-x: hidden;
+                      text-overflow: ellipsis;
+                    }
+                  }
+
+                  &.percent {
+                    text-align: right;
+                    justify-content: right;
+                  }
+
+                  &.projectToken,
+                  &.fundingToken {
+                    white-space: nowrap;
+
+                    img {
+                      margin-right: 6px;
+                      @include tokenIcon;
+                    }
+                  }
+
+                  &.starts {
+                    .timeLeftContainer {
+                      .body {
+                        font-family: Aeonik; // so will center properly and look consistent
+                      }
+                    }
+                  }
+                  &.eslink {
+                    i {
+                      cursor: pointer;
+                      color: $Secondary02;
+                    }
+                  }
+                }
+              }
+            }
+
+            .tokenGrid {
+              display: grid;
+              grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 1fr 0.2fr;
+
+              .row {
+                &.header {
+                  .cell {
+                    border-bottom: 1px solid $Secondary02;
+                  }
+                }
+                &.body {
+                  .cell {
+                    &.required {
+                      color: $Orange;
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -80,21 +181,87 @@ $hover-transition-speed-slow: 0.4s;
           background-color: $Border01;
           border-bottom-right-radius: 10px;
           border-bottom-left-radius: 10px;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           flex-direction: row;
-          align-items: center;
-          justify-content: flex-end;
-          padding-top: 20px;
-          padding-bottom: 20px;
-          height: 32px;
-          margin-top: 20px;
-
-          > div {
-            font-size: 14px;
-            line-height: 33px;
-            font-weight: 400;
-            color: $Neutral03;
-            padding-right: 18px;
+          padding: 37px 24px 20px 24px;
+          .contracts {
+            p {
+              font-size: 14px;
+              color: $Neutral02;
+              line-height: 17px;
+              margin-bottom: 20px;
+              padding: 0 100px 0 0;
+              display: grid;
+              grid-template-columns: 30px auto;
+              i {
+                font-size: 20px;
+                margin-top: 3px;
+              }
+            }
+            a {
+              font-size: 14px;
+              font-weight: 400;
+              margin-right: 20px;
+              i {
+                color: $Secondary05;
+                margin-left: 5px;
+                -webkit-transform: rotate(-45deg);
+                -moz-transform: rotate(-45deg);
+                -ms-transform: rotate(-45deg);
+                -o-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+              }
+            }
+          }
+          .deposit {
+            .form {
+              justify-items: right;
+              display: grid;
+              grid-template-columns: auto 1fr;
+              flex-direction: row;
+              grid-gap: 44px;
+              .inputs {
+                justify-items: right;
+                display: grid;
+                grid-template-columns: 1fr 0.7fr;
+                flex-direction: row;
+                position: relative;
+                pselect {
+                  .ss-single-selected {
+                    border-bottom-right-radius: 0;
+                    border-top-right-radius: 0;
+                  }
+                }
+                .balance {
+                  display: block;
+                  margin: 4px 10px 0 0;
+                  color: $Neutral02;
+                  font-size: 13px;
+                  grid-column: span 2;
+                  &:hover {
+                    color: white;
+                  }
+                }
+                numeric-input {
+                  input {
+                    border-bottom-left-radius: 0;
+                    border-top-left-radius: 0;
+                    padding-right: 65px;
+                    text-align: right;
+                  }
+                }
+                pbutton {
+                  position: absolute;
+                  top: 11px;
+                  right: 10px;
+                  button {
+                    font-size: 9px;
+                    padding: 0px 9px;
+                  }
+                }
+              }
+            }
           }
         }
       }

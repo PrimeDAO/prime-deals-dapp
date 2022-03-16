@@ -1,4 +1,5 @@
 <template>
+  <require from="../deals/dao-icon-name/dao-icon-name"></require>
   <require from="../deals/timeLeft/timeLeft"></require>
   <main class="page animated-page au-animate fundContainer">
     <section class="section top">
@@ -9,10 +10,13 @@
         >Return to deal page</pbutton
       >
     </section>
-    <section class="section deposit" if.bind="!isProposalLead">
+    <section
+      class="section deposit"
+      if.to-view="!isProposalLead || !daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length"
+    >
       <div class="box-container">
         <div class="box-header">
-          <div class="heading heading3 title gradient">${getDaoNameRelatedToWallet()} Deposit</div>
+          <div class="heading heading3 title gradient">${daoRelatedToWallet.name} Deposit</div>
           <div class="countdown">
             <div class="timeLeftContainer contained">
               <div class="mainStatus">
@@ -23,22 +27,75 @@
             </div>
           </div>
         </div>
-        <div class="buttons">
-          <div class="buttonContainer">
-            <a class="button1 ${disabled}" route-href.bind="route">${btnText}</a>
-          </div>
-          <div class="moreInfoContainer">
-            <a
-              href="https://primedao.typeform.com/to/xwkxA9XP"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Request Information</a
-            >
+        <div class="box-content">
+          <div class="tokens">
+            <div class="grid tokenGrid">
+              <div class="row header">
+                <div class="cell token header">Token</div>
+                <div class="cell target header">Target</div>
+                <div class="cell deposited header">Deposited</div>
+                <div class="cell required header">Required</div>
+                <div class="cell completed header">Completed</div>
+                <div class="cell percent header">%</div>
+              </div>
+              <template repeat.for="token of daoRelatedToWallet.tokens | sort:sortEvaluator">
+                <div class="row body">
+                  <div class="token cell body">
+                    <dao-icon-name
+                      primary-dao.to-view="token"
+                      icon-size="24"
+                      use-token-symbol.to-view="true"
+                    ></dao-icon-name>
+                  </div>
+                  <div class="target cell body">${token.target | ethwei}</div>
+                  <div class="deposited cell body">${token.deposited | ethwei}</div>
+                  <div class="required cell body">${token.required | ethwei}</div>
+                  <div class="completed cell body">
+                    <progress-bar
+                      style="height: 10px; width: 100%"
+                      max.bind="token.target"
+                      current.bind="token.deposited"
+                    ></progress-bar>
+                  </div>
+                  <div class="percent cell body">${token.percentCompleted}%</div>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
         <div class="container-footer">
-          <div>POWERED BY</div>
-          <img alt="icon" src.bind="logo" />
+          <div class="contracts">
+            <p>
+              <i class="fas fa-info-circle"></i>
+              <span>
+                You're depositing on behalf of ${daoRelatedToWallet.name}. This deal needs to be
+                funded and executed within ${getTimeLeft()}.
+              </span>
+            </p>
+            <div>
+              <a href="#">Token Deposit Contract <i class="fas fa-arrow-right"></i></a>
+              <a href="#">TokenSwapModule Contract <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+          <div class="deposit">
+            <div class="form">
+              <div>
+                <div class="inputs">
+                  <pselect
+                    data.bind="tokenSelectData"
+                    value.bind="selectedToken"
+                    ref="refSelectToken"
+                  ></pselect>
+                  <numeric-input css="pInput" value.bind="depositAmount"> </numeric-input>
+                  <pbutton type="secondary" click.delegate="setMax()">Max</pbutton>
+                  <a class="balance" click.delegate="setMax()">
+                    Balance: ${walletBalance | ethwei}
+                  </a>
+                </div>
+              </div>
+              <pbutton type="primary">Deposit</pbutton>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -76,7 +76,7 @@
             if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
             click.delegate="navigate(`deal/${deal.id}`)">
             <div class="project cell body ellipses hot">
-              <dao-icon-name registration-data.to-view="deal.registrationData"></dao-icon-name>
+              <dao-icon-name primary-dao.to-view="deal.registrationData.primaryDAO" partner-dao.to-view="deal.registrationData.partnerDAO"></dao-icon-name>
             </div>
             <div class="title cell body hot">${deal.registrationData.proposal.title}</div>
             <div class="type cell body hot sortable">Token Swap</div>

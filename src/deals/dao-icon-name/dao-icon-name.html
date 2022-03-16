@@ -1,17 +1,17 @@
 <template>
-  <div class="icons ${ registrationData.partnerDAO ? 'running' : 'open' }">
-    <div class="icon" if.to-view="registrationData.primaryDAO">
-      <img src="${registrationData.primaryDAO.logoURI}" />
+  <div class="icons ${ partnerDao ? 'running' : 'open' }" style.to-view="gridStyle">
+    <div class="icon" if.to-view="primaryDao" style.to-view="iconStyle">
+      <img src="${primaryDao.logoURI}" style.to-view="iconStyle" />
     </div>
-    <div class="icon" if.to-view="registrationData.partnerDAO">
-      <img src="${registrationData.partnerDAO.logoURI}" />
+    <div class="icon" if.to-view="partnerDao" style.to-view="iconStyle">
+      <img src="${partnerDao.logoURI}" style.to-view="iconStyle" />
     </div>
-    <div class="dao">
-      <div class="name ellipses" if.to-view="registrationData.primaryDAO">
-        ${registrationData.primaryDAO.name}
+    <div class="Dao">
+      <div class="name ellipses" if.to-view="primaryDao">
+        ${useTokenSymbol ? primaryDao.symbol : primaryDao.name}
       </div>
-      <div class="name ellipses" if.to-view="registrationData.partnerDAO">
-        ${registrationData.partnerDAO.name}
+      <div class="name ellipses" if.to-view="partnerDao">
+        ${useTokenSymbol ? partnerDao.symbol : partnerDao.name}
       </div>
     </div>
   </div>
