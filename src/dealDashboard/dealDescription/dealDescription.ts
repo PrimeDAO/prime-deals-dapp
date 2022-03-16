@@ -16,6 +16,8 @@ export class DealDescription {
   private descriptionText: string | undefined;
   private originalDescriptionText = "";
 
+  private resizeWatcher;
+
   @computedFrom("descriptionText")
   get showReadMoreButton() {
     return this.descriptionText.length < this.originalDescriptionText.length;
@@ -24,16 +26,30 @@ export class DealDescription {
   bind() {
     this.originalDescriptionText = this.deal.registrationData.proposal.description;
 
+    this.watchResize();
+    this.changeTextIfMobile();
+
+    if (this.descriptionText === undefined) {
+      this.descriptionText = this.originalDescriptionText;
+    }
+  }
+
+  watchResize() {
+    this.resizeWatcher = () => this.changeTextIfMobile();
+    window.addEventListener("resize", this.resizeWatcher);
+  }
+
+  changeTextIfMobile() {
     if (MobileService.isMobile()) {
       if (this.originalDescriptionText.length > MOBILE_MAX_LENGTH) {
         const shortened = this.originalDescriptionText.substring(0, MOBILE_MAX_LENGTH);
         this.descriptionText = `${shortened}...`;
       }
     }
+  }
 
-    if (this.descriptionText === undefined) {
-      this.descriptionText = this.originalDescriptionText;
-    }
+  detached() {
+    window.removeEventListener("resize", this.resizeWatcher);
   }
 
   private readMore(): void {
