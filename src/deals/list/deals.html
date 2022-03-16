@@ -92,7 +92,6 @@
           </a>
         </template>
       </div>
-      <grid selectable.bind="false" rows.to-view="featuredDeals | sort:sortEvaluator" columns.one-time="columns" ></grid>
       <!-- Mobile grid -->
       <div if.to-view="!loading" class="grid dealGridMobile">
         <div class="row header">
@@ -101,7 +100,7 @@
           <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
           <div class="cell whitelist header" click.delegate="sort('whitelist')">WHITELIST</div>
           <div class="cell starts header sortable" click.delegate="sort('starts')">STARTS</div>
-          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>  
+          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
           <div class="cell target header">&nbsp;</div>
         </div>
         <template repeat.for="deal of deals | sort:sortEvaluator">

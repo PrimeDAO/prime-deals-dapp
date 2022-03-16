@@ -18,8 +18,6 @@ let dealsLoadedOnce = false;
 @autoinject
 export class Deals {
 
-  columns = [{field: "id", render: "<dao-icon-name registration-data.to-view='registrationData'></dao-icon-name>", width: "1fr", sortable: true, headerText: "Deal Id"}];
-
   private cardIndex = 0;
   private seeingMore = false;
   private showMine = false;
