@@ -2,11 +2,14 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import "./editingCard.scss";
 import { bindingMode } from "aurelia-framework";
 
+export type ViewMode = "edit" | "view";
+
 export class EditingCard {
   @bindable onDelete: () => boolean | Promise<boolean>;
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
-  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
+  @bindable({defaultBindingMode: bindingMode.twoWay}) viewMode: ViewMode = "edit";
+  @bindable.boolean hideDeleteButton = false;
 
   private deleteButtonRef: HTMLElement;
   private saving: boolean;

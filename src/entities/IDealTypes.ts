@@ -43,4 +43,5 @@ export interface IDeal {
   ensureInitialized(): Promise<void>;
   updateRegistration(registration: Record<string, any>): Promise<void>;
   addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
+  status: DealStatus;
 }

@@ -252,6 +252,13 @@ export class App {
         title: "DEAL Dashboard",
       },
       {
+        moduleId: PLATFORM.moduleName("./fund/fund"),
+        nav: false,
+        name: "fund",
+        route: "/fund/:address",
+        title: "Fund",
+      },
+      {
         moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
         nav: false,
         name: "comingSoon",

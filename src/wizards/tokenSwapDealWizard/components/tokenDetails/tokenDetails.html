@@ -103,7 +103,7 @@
       </pform-input>
 
       <div class="tokenDetailsFooter">
-        <pbutton class="deleteButton" click.delegate="onDelete()" type="tertiary">
+        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary">
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>

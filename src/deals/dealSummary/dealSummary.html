@@ -1,5 +1,6 @@
 <template>
   <require from="../timeLeft/timeLeft"></require>
+  <require from="../dao-icon-name/dao-icon-name"></require>
   <pcard click.delegate="navigate()">
     <div if.to-view="!loading" class="dealSummary">
       <div class="countdown">
@@ -10,27 +11,10 @@
           <div class="titleType">${deal.registrationData.dealType}</div>
           <div class="title">${deal.registrationData.proposal.title}</div>
         </div>
-        <div class="description">
-          ${deal.registrationData.proposal.summary}
-        </div>
+        <div class="description">${deal.registrationData.proposal.summary}</div>
       </div>
       <div class="footer">
-        <div class="icons ${ deal.registrationData.partnerDAO ? 'running' : 'open' }">
-          <div class="icon" if.to-view="deal.registrationData.primaryDAO">
-            <img src="${deal.registrationData.primaryDAO.logoURI}"/>
-          </div>
-          <div class="icon" if.to-view="deal.registrationData.partnerDAO">
-            <img src="${deal.registrationData.partnerDAO.logoURI}"/>
-          </div>
-          <div class="dao">
-            <div class="name ellipses" if.to-view="deal.registrationData.primaryDAO">
-              ${deal.registrationData.primaryDAO.name}
-            </div>
-            <div class="name ellipses" if.to-view="deal.registrationData.partnerDAO">
-              ${deal.registrationData.partnerDAO.name}
-            </div>
-          </div>
-        </div>
+        <dao-icon-name registration-data.to-view="deal.registrationData"></dao-icon-name>
         <pbutton type="secondary">View</pbutton>
       </div>
     </div>

@@ -8,7 +8,7 @@ token-details {
     display: block;
     padding: 20px;
 
-    > div > pform-input:not(:first-child) {
+    >div>pform-input:not(:first-child) {
       margin-top: 30px;
     }
 
@@ -40,7 +40,7 @@ token-details {
     .tokenDetailsFooter {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: 20px;
 
@@ -63,7 +63,10 @@ token-details {
     .tokenName {
       display: flex;
       align-items: center;
-      gap: $spacing-normal
+      gap: $spacing-normal;
+      font-size: $font-size4;
+      font-weight: $font-bold;
+      line-height: 28px;
     }
   }
 

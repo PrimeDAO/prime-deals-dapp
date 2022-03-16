@@ -1,5 +1,5 @@
 @import "styles/styles.scss";
-@import "src/resources/elements/primeDesignSystem/styles";
+@import "../../../resources/elements/primeDesignSystem/styles";
 
 .discussionThread {
   grid-area: thread;
@@ -102,7 +102,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      
+
       .replyState {
         overflow: hidden;
         white-space: nowrap;

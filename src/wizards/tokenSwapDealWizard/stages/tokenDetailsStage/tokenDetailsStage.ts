@@ -116,7 +116,7 @@ export class TokenDetailsStage {
   }
 
   private getDefaultTokenDetailsViewModes(wizardType: WizardType, dao?: IDAO): ("view" | "edit")[] {
-    return [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType)
+    return this.isCreatingDealLike(wizardType)
       ? []
       : dao?.tokens?.map(() => "view") ?? [];
   }
@@ -127,9 +127,25 @@ export class TokenDetailsStage {
   }
 
   private addDefaultValuesToRegistrationData(wizardType: WizardType) {
-    if (wizardType === WizardType.createPartneredDeal) {
-      this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
-      this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
+    if (this.isCreatingPartneredDealLike(wizardType)) {
+      if (this.wizardState.registrationData.primaryDAO.tokens.length === 0) {
+        this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
+      }
+      if (this.wizardState.registrationData.partnerDAO.tokens.length === 0) {
+        this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
+      }
     }
+  }
+
+  private isCreatingPartneredDealLike(wizardType: WizardType): boolean {
+    return [WizardType.createPartneredDeal, WizardType.makeAnOffer].includes(wizardType);
+  }
+
+  private isCreatingDealLike(wizardType: WizardType): boolean {
+    return [
+      WizardType.createOpenProposal,
+      WizardType.createPartneredDeal,
+      WizardType.makeAnOffer,
+    ].includes(wizardType);
   }
 }
