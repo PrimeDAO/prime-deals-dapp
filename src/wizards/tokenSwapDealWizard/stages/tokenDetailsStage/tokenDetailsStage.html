@@ -18,7 +18,7 @@
       <div class="stageSectionContent">
         <token-details
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
-          on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails)"
+          on-delete.call="deleteToken($index, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails, stageMetadata.primaryDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
           token.bind="token"
@@ -56,7 +56,7 @@
       <div class="stageSectionContent">
         <token-details
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
-          on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails)"
+          on-delete.call="deleteToken($index, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails, stageMetadata.partnerDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           token.bind="token"
