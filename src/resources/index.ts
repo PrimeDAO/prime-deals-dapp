@@ -7,6 +7,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/EtherscanLink/EtherscanLink"),
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
     PLATFORM.moduleName("./elements/grid/grid"),
+    PLATFORM.moduleName("./elements/progress-bar/progress-bar"),
     PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
     PLATFORM.moduleName("./elements/UsersAddress/UsersAddress"),
     PLATFORM.moduleName("./elements/copyToClipboardButton/copyToClipboardButton"),
