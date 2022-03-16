@@ -97,6 +97,16 @@ export class DiscussionThread {
     }
   }
 
+  @computedFrom("isLoading.discussions", "isMember", "threadComments.length")
+  private get noCommentsText(): string {
+    if (!this.isLoading.discussions && !this.threadComments.length) {
+      return (!this.isMember && this.deal.registrationData.isPrivate)
+        ? "This discussion is private."
+        : "This discussion has no comments yet.";
+    }
+    return "";
+  }
+
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
 
@@ -340,6 +350,6 @@ export class DiscussionThread {
   }
 
   private navigateTo() {
-    this.discussionId = null;
+    this.discussionId = "";
   }
 }

@@ -7,7 +7,7 @@ import { DealService } from "../services/DealService";
 @autoinject
 export class DealDashboard {
   private deal: DealTokenSwap;
-  discussionId?: string;
+  discussionId?: string = "";
   private dealId: string;
 
   constructor(
