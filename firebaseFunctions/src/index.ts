@@ -2,7 +2,6 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
-import uniqBy from "lodash/uniqBy";
 
 interface IProposal {
   title: string,
@@ -89,7 +88,8 @@ interface IDealRegistrationTokenSwap {
 const admin = firebaseAdmin.initializeApp();
 const firestore = admin.firestore();
 const DEALS_COLLECTION = "deals";
-const VOTES_COLLECTION = "votes";
+const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
+const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
@@ -134,19 +134,11 @@ export const createCustomToken = functions.https.onRequest(
 export const buildDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onCreate(async (snapshot, context) => {
-    console.log(snapshot.data(), context);
-
     const deal = snapshot.data() as {registrationData: IDealRegistrationTokenSwap, isReady: boolean};
+    // deal should have "ready" flag set to false (should already be set to false on the client)
 
-    // TODO remove
-    await new Promise(r => setTimeout(r, 10000));
-
-    // create/update representativesAddresses
-
-    const representativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
-    if (deal.registrationData.partnerDAO) {
-      representativesAddresses.push(...deal.registrationData.partnerDAO.representatives.map(item => item.address));
-    }
+    const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
+    const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
     const dealId: string = context.params.dealId;
 
@@ -154,10 +146,23 @@ export const buildDealStructure = functions.firestore
 
     const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
 
-    batch.set(dealRef, {representativesAddresses, isReady: true}, {merge: true});
+    batch.set(
+      dealRef,
+      {
+        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+        isReady: true,
+      },
+      { merge: true },
+    );
+    // set the "ready" flag to true. Firestore rules should block any operations on deals with flag "ready" set to false
 
-    representativesAddresses.forEach(address => {
-      const representativeRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${VOTES_COLLECTION}/${address}`);
+    primaryDaoRepresentativesAddresses.forEach(address => {
+      const representativeRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
+      batch.set(representativeRef, {vote: null});
+    });
+
+    partnerDaoRepresentativesAddresses.forEach(address => {
+      const representativeRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
       batch.set(representativeRef, {vote: null});
     });
 
@@ -166,46 +171,84 @@ export const buildDealStructure = functions.firestore
 
 export const updateDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
-  .onUpdate((change, context) => {
-    console.log(change);
-    console.log(context.eventType);
+  .onUpdate(async (change, context) => {
+    const dealId: string = context.params.dealId;
     const oldDeal = change.after.data() as {registrationData: IDealRegistrationTokenSwap};
     const updatedDeal = change.after.data() as {registrationData: IDealRegistrationTokenSwap};
-    // console.log("updatedDeal", updatedDeal);
-    // console.log("oldDeal", oldDeal);
 
     if (!updatedDeal) {
       return;
     }
 
-    const representativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
-    if (updatedDeal.registrationData.partnerDAO) {
-      representativesAddresses.push(...updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address));
-    }
+    const batch = firestore.batch();
+
+    const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
+    const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
     // loop representativesAddresses
 
+    const votes = await Promise.all([
+      firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).listDocuments(),
+      firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).listDocuments(),
+    ]);
+
+    const primaryDaoVotes = votes[0];
+    const partnerDaoVotes = votes[1];
+
+    primaryDaoVotes.forEach(ref => {
+      // updated dao representatives don't have some of the old addresses
+      if (!primaryDaoRepresentativesAddresses.includes(ref.id)) {
+        // delete the vote
+        batch.delete(ref);
+      }
+    });
+
+    primaryDaoRepresentativesAddresses.forEach(address => {
+      // if vote for the address already exists in the votes collection do nothing
+      // otherwise create a new vote document
+      if (!primaryDaoVotes.find(ref => ref.id === address)) {
+        const voteRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
+        batch.set(voteRef, {vote: null});
+      }
+    });
+
+    partnerDaoVotes.forEach(ref => {
+      // updated dao representatives don't have some of the old addresses
+      if (!partnerDaoRepresentativesAddresses.includes(ref.id)) {
+        // delete the vote
+        batch.delete(ref);
+      }
+    });
+
+    partnerDaoRepresentativesAddresses.forEach(address => {
+      // if vote for the address already exists in the votes collection do nothing
+      // otherwise create a new vote document
+      if (!partnerDaoVotes.find(ref => ref.id === address)) {
+        const voteRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
+        batch.set(voteRef, {vote: null});
+      }
+    });
+
+    batch.set(
+      change.after.ref,
+      {
+        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+      },
+      {merge: true},
+    );
+
+    return batch.commit();
+
     // if an address already in votes collection don't do anything
 
-    // deal should have "ready" flag set to false (should already be set to false on the client)
+    // if address deleted from representativesAddresses remove the vote
 
-    // sanitize/validate schema on created/updated deal
+    // if address new - initialize the vote for it
 
-    // create/update representativesAddresses
+    // update representativesAddresses
 
-    // const representativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
-    // if (updatedDeal.registrationData.partnerDAO) {
-    //   representativesAddresses.push(...updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address));
-    // }
+    // update votes collection (don't replace documents that already exist if deleted)
 
-    // return change.after.ref.set({
-    //   registrationData: updatedDeal.registrationData,
-    //   representativesAddresses,
-    // });
+    // update voting summary object
 
-    // create/update votes collection (don't replace documents that already exist if deleted)
-
-    // create/update voting summary object
-
-    // set the "ready" flag to true. Firestore rules should block any operations on deals with flag "ready" set to false
   });

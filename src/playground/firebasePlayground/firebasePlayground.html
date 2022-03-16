@@ -1,6 +1,40 @@
 <template>
+  <style>
+    .firebasePlaygroundItem {
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid;
+    }
+
+  </style>
   <h3>Firebase</h3>
   <pbutton type="primary" click.delegate="createDeal()">Create a Deal</pbutton>
   <pbutton type="primary" click.delegate="getDealById('9e38dcb1-3b5f-4343-a8ce-2dfbdbe78eb')">Get a Deal</pbutton>
   <pbutton type="primary" click.delegate="getAllDealsForTheUser('0xe835f975d731Aa8515DD3Da9ec8a82e1DEF33c34')">Get all deals for user</pbutton>
+  <h3>All deals</h3>
+  <div>
+    <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">
+      <div>ID: ${deal.id}</div>
+      <div>CreatedAt: ${deal.data.registrationData.createdAt.toDate()}</div>
+      <div>Proposal Title: ${deal.data.registrationData.proposal.title}</div>
+      <label>PrimaryDao representatives:</label>
+      <ul>
+        <li repeat.for="representative of deal.data.registrationData.primaryDAO.representatives">
+          Address: ${representative.address}
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', true)">Vote Yes</pbutton>
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', false)">Vote No</pbutton>
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', null)">Reset Vote</pbutton>
+        </li>
+      </ul>
+      <label>PartnerDao representatives:</label>
+      <ul>
+        <li repeat.for="representative of deal.data.registrationData.partnerDAO.representatives">
+          Address: ${representative.address}
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', true)">Vote Yes</pbutton>
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', false)">Vote No</pbutton>
+          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', null)">Reset Vote</pbutton>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>

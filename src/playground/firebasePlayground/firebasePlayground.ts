@@ -1,22 +1,20 @@
 import { autoinject } from "aurelia-framework";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Subscription } from "rxjs";
-import { Address } from "services/EthereumService";
 import { FirestoreService } from "./../../services/FirestoreService";
 
 @autoinject
 export class FirebasePlayground {
-  allPublicDeals: any;
+  allDeals: any = [];
   subscriptions: Array<Subscription> = [];
 
   constructor(private firestoreService: FirestoreService) {}
 
   async attached() {
-    this.allPublicDeals = await this.firestoreService.getAllPublicDeals();
-    console.log(this.allPublicDeals);
     this.firestoreService.subscribeToAllDealsForUser()
       .subscribe(
         deals => {
+          this.allDeals = deals;
           console.log("All deals for user", deals);
         },
         error => {
@@ -27,6 +25,10 @@ export class FirebasePlayground {
 
   detached() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  vote(dealId: string, address: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", value: any) {
+    this.firestoreService.updateRepresentativeVote(dealId, address, dao, value);
   }
 
   createDeal() {
@@ -60,11 +62,5 @@ export class FirebasePlayground {
     } catch (error){
       console.log(error);
     }
-  }
-
-  public async getAllDealsForTheUser(address: Address) {
-    const deals = await this.firestoreService.getAllDealsForTheUser(address);
-
-    console.log(deals);
   }
 }

@@ -1,10 +1,9 @@
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { getDoc, collection, doc, query, where, getDocs, writeBatch, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc, arrayUnion } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
-import { v4 as uuidv4 } from "uuid";
 import uniqBy from "lodash/uniqBy";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
 import { map, mergeAll } from "rxjs/operators";
@@ -15,7 +14,10 @@ export interface IFirebaseDocument {
 }
 
 const DEALS_COLLECTION = "deals";
-const VOTES_COLLECTION = "votes";
+const VOTES_COLLECTIONS = {
+  PRIMARY_DAO: "primary-dao-votes",
+  PARTNER_DAO: "partner-dao-votes",
+};
 
 const allPublicDealsQuery = query(collection(firebaseDatabase, DEALS_COLLECTION), where("registrationData.isPrivate", "==", false), where("isReady", "==", true));
 
@@ -65,6 +67,21 @@ export class FirestoreService {
   public async updateTokenSwapRegistrationData(dealId: string, registrationData: IDealRegistrationTokenSwap) {
     const dealRef = doc(firebaseDatabase, DEALS_COLLECTION, dealId);
     setDoc(dealRef, { registrationData }, { merge: true });
+  }
+
+  public async updateRepresentativeVote(
+    dealId: string,
+    address: string,
+    dao: "PRIMARY_DAO" | "PARTNER_DAO",
+    value: any,
+  ) {
+    const voteRef = doc(firebaseDatabase, DEALS_COLLECTION, dealId, VOTES_COLLECTIONS[dao], address);
+    setDoc(
+      voteRef,
+      {
+        vote: value,
+      },
+    );
   }
 
   public async getDealById(dealId: string): Promise<IFirebaseDocument> {

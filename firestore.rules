@@ -24,10 +24,15 @@ service cloud.firestore {
     match /deals/{deal} {
       allow read: if isReadyDeal() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
       allow create: if userIsAuthenticated() && !request.resource.data.isReady;
-      allow update: if userIsProposalLead() && !request.resource.data.isReady;
+      allow update: if userIsProposalLead(); // && !request.resource.data.isReady;
     }
     
-    match /deals/{deal}/votes/{representative} {
+    match /deals/{deal}/primary-dao-votes/{representative} {
+    	allow read, create, delete: if false;
+    	allow update: if request.auth.uid == resource.id;
+    }
+
+    match /deals/{deal}/partner-dao-votes/{representative} {
     	allow read, create, delete: if false;
     	allow update: if request.auth.uid == resource.id;
     }
