@@ -35,7 +35,7 @@
       authorized.bind="authorized"
       deal.bind="deal"
       discussion-id.bind="discussionId"
-      show.bind="authorized || !this.deal.registrationData.isPrivate"
+      show.bind="authorized || !deal.registrationData.isPrivate"
     ></deal-discussion>
   </main>
 </template>
