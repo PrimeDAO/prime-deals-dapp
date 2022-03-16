@@ -1,4 +1,4 @@
-Feature: Partnered Deal - Main
+Feature: Partnered Deal - Description
   Background:
     Given I'm viewing the Partnered Deal Dashboard
 
