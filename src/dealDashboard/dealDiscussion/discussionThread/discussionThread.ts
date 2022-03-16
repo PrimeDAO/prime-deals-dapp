@@ -92,7 +92,7 @@ export class DiscussionThread {
   }
 
   discussionIdChanged() {
-    if (this.deal) {
+    if (this.deal && this.discussionId) {
       this.initialize(true);
     }
   }
@@ -350,6 +350,6 @@ export class DiscussionThread {
   }
 
   private navigateTo() {
-    this.discussionId = "";
+    this.discussionId = null;
   }
 }
