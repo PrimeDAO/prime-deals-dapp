@@ -2,11 +2,10 @@
   <p class="descriptionLabel">Description</p>
 
   <p data-test="dealDescriptionText" class="dealDescriptionText">
-    registrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationDataregistrationData
-    ${deal.registrationData.proposal.description}
+    ${descriptionText}
   </p>
 
   <div class="mobileButtonContainerDealDescription">
-    <pbutton type="tertiary">Read more</pbutton>
+    <pbutton if.bind="showReadMoreButton" type="tertiary" click.delegate="readMore()">Read more</pbutton>
   </div>
 </template>
