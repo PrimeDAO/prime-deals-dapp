@@ -12,6 +12,8 @@ deal-description {
     font-weight: $font-bold;
   }
 
+  @include pre;
+
   .mobileButtonContainerDealDescription {
     display: none;
   }
