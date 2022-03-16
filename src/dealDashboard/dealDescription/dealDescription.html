@@ -6,6 +6,11 @@
   </p>
 
   <div class="mobileButtonContainerDealDescription">
-    <pbutton if.bind="showReadMoreButton" type="tertiary" click.delegate="readMore()">Read more</pbutton>
+    <pbutton
+      data-test="readMoreDealDescription"
+      if.bind="showReadMoreButton"
+      type="tertiary"
+      click.delegate="readMore()">
+      Read more</pbutton>
   </div>
 </template>
