@@ -10,10 +10,12 @@
     <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
-      <h1 class="title heading heading1 gradient">
-        Swap tokenized carbon credits for a better world
+      <h1 data-test="dealTitle" class="title heading heading1 gradient">
+        ${deal.registrationData.proposal.title}
       </h1>
-      <h2>* Active, Recently updated (Private)</h2>
+
+      <let deal-privacy-text="${deal.registrationData.isPrivate ? 'Private' : 'Public'}"></let>
+      <h2 data-test="dealStatus">• ${deal.status}, Recently updated (${dealPrivacyText})</h2>
     </section>
 
     <aside class="aside">

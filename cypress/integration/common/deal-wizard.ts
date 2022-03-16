@@ -57,6 +57,14 @@ Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeo
   cy.visit(url);
 });
 
+When("I'm viewing the Partnered Deal Dashboard", () => {
+  const dealId = "partnered_deals_stream_hash_2";
+  const url = `/deal/${dealId}`;
+  cy.visit(url);
+
+  cy.get(".dealDashboardContainer").should("be.visible");
+});
+
 Given("I edit a \"Partnered Deal\"", () => {
   const dealId = "partnered_deals_stream_hash_3";
   const url = `partnered-deal/${dealId}/edit/submit`;
