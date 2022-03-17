@@ -17,9 +17,13 @@ export class EthweiValueConverter {
    * @param ethValue
    * @param decimals Default is 18.
    */
-  public fromView(ethValue: string | number, decimals: string | number = 18): BigNumber {
+  public fromView(ethValue: string | number, decimals: string | number): BigNumber {
     if ((ethValue === undefined) || (ethValue === null) || ((typeof ethValue === "string") && ((ethValue as string)?.trim() === ""))) {
       return null;
+    }
+
+    if (decimals === undefined) {
+      throw new Error("ethwei: `decimals` is missing");
     }
 
     return toWei(ethValue.toString(), decimals);
@@ -30,10 +34,14 @@ export class EthweiValueConverter {
    * @param weiValue
    * @param decimals Default is 18.
    */
-  public toView(weiValue: BigNumber | string, decimals: string | number = 18): string {
+  public toView(weiValue: BigNumber | string, decimals: string | number): string {
     try {
       if ((weiValue === undefined) || (weiValue === null)) {
         return "";
+      }
+
+      if (decimals === undefined) {
+        throw new Error("ethwei: `decimals` is missing");
       }
 
       return fromWei(weiValue, decimals);
