@@ -1,5 +1,9 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 
+When("I add social medias", () => {
+  cy.get("[data-test=\"add-social-media\"]").click();
+});
+
 Then("I am presented with errors for DAO details fields", () => {
   cy.get("[data-test=\"dao-name-field\"] .errorMessage").should("contain.text", "DAO name is required");
   cy.get("[data-test=\"dao-treasury-field\"] .errorMessage").should("contain.text", "Treasury address is required");
