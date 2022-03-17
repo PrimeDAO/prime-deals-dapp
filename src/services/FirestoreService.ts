@@ -1,6 +1,6 @@
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc, arrayUnion } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import uniqBy from "lodash/uniqBy";
@@ -18,7 +18,11 @@ const VOTES_COLLECTIONS = {
   PARTNER_DAO: "partner-dao-votes",
 };
 
-const allPublicDealsQuery = query(collection(firebaseDatabase, DEALS_COLLECTION), where("registrationData.isPrivate", "==", false), where("isReady", "==", true));
+const allPublicDealsQuery = query(
+  collection(firebaseDatabase, DEALS_COLLECTION),
+  where("registrationData.isPrivate", "==", false),
+  where("isReady", "==", true),
+);
 
 const representativeDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
@@ -169,7 +173,7 @@ export class FirestoreService {
   }
 
   private getDocumentsFromQuerySnapshot(querySnapshot: QuerySnapshot<DocumentData>): Array<IFirebaseDocument> {
-    return querySnapshot.docs.map(doc => ({
+    return querySnapshot.docs.filter(doc => doc.exists()).map(doc => ({
       id: doc.id,
       data: doc.data(),
     }));

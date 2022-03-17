@@ -8,9 +8,22 @@
 
   </style>
   <h3>Firebase</h3>
-  <pbutton type="primary" click.delegate="createDeal()">Create a Deal</pbutton>
-  <pbutton type="primary" click.delegate="getDealById('9e38dcb1-3b5f-4343-a8ce-2dfbdbe78eb')">Get a Deal</pbutton>
-  <pbutton type="primary" click.delegate="getAllDealsForTheUser('0xe835f975d731Aa8515DD3Da9ec8a82e1DEF33c34')">Get all deals for user</pbutton>
+  <br>
+  <div>
+    <pbutton type="primary" click.delegate="createOpenProposal()">Create dummy Open Proposal</pbutton>
+    <pbutton type="primary" click.delegate="createPartneredDeal()">Create dummy Partnered Deal</pbutton>
+  </div>
+  <br>
+  <div style="display: flex;">
+    <pinput-text value.bind="getDealId"></pinput-text>
+    <pbutton type="primary" click.delegate="getDealById(getDealId)">Get a Deal</pbutton>
+  </div>
+  <br>
+  <pbutton type="primary" click.delegate="getAllPublicDeals()">get All Public Deals</pbutton>
+  <pbutton type="primary" click.delegate="getRepresentativeDeals()">Get deals where I am representative</pbutton>
+  <pbutton type="primary" click.delegate="getProposalLeadDeals()">Get deals where I am Proposal Lead</pbutton>
+  <pbutton type="primary" click.delegate="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
+  <br>
   <h3>All deals</h3>
   <div>
     <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">

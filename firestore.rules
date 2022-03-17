@@ -36,10 +36,6 @@ service cloud.firestore {
     	allow read, create, delete: if false;
     	allow update: if request.auth.uid == resource.id;
     }
-
-    match /test/{item} {
-      allow read, create: if true; 
-    }
     
     match /{document=**} {
       allow read, write: if false;
