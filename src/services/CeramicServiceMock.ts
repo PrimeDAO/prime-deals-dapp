@@ -246,12 +246,24 @@ const _registration4: IDealRegistrationTokenSwap = {
     ],
     social_medias: [
       {
-        url: "http://social.one.io",
+        url: "http://twitter.com/mydao",
         name: "Twitter",
       },
       {
-        url: "http://two.social.io",
+        url: "http://reddit.com/r/mydao",
         name: "Reddit",
+      },
+      {
+        url: "http://http://t.io/mydao",
+        name: "Telegram",
+      },
+      {
+        url: "http://linkedin.com/in/mydao",
+        name: "LinkedIn",
+      },
+      {
+        url: "http://https://discord.com/channels/mydao",
+        name: "Discord",
       },
     ],
     representatives: [{address: address1}],
@@ -275,7 +287,11 @@ const _registration4: IDealRegistrationTokenSwap = {
     }],
     treasury_address: address3,
     representatives: [{address: address4}],
-    social_medias: [{name: "Twitter", url: "http://twitter.com/their-dao"}, {name: "Telegram", url: "http://telegram.com/their-dao"}],
+    social_medias: [
+      {name: "Telegram", url: "http://telegram.com/their-dao"},
+      {name: "LinkedIn", url: "http://linkedin.com/in/their-dao"},
+      {name: "Twitter", url: "http://twitter.com/their-dao"},
+    ],
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png",
   },
   proposalLead: {
