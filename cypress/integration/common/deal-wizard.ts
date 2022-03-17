@@ -99,6 +99,15 @@ Then("I am presented with the {string} {string} stage", (wizardTitle: keyof type
   cy.url().should("contain", `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
 });
 
+When("I fill in the {string} field with an invalid address", (field: string) => {
+  const invalidAddress = "invalid address";
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input, textarea").type(invalidAddress);
+    });
+  });
+});
+
 When("I fill in the {string} field with {string}", (field: string, value: string) => {
   withinWizardSection().within(() => {
     cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
