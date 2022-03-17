@@ -43,7 +43,7 @@ export class SubmitStage {
 
       await this.alertService.showAlert(congratulatePopupModel);
     } catch (error) {
-      this.eventAggregator.publish("handleFailure", error);
+      this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
     }
   }
 }

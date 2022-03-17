@@ -1,6 +1,5 @@
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { EventAggregator } from "aurelia-event-aggregator";
 import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc, arrayUnion } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
@@ -38,7 +37,6 @@ export class FirestoreService {
   public deals = [];
 
   constructor(
-    private eventAggregator: EventAggregator,
     private firebaseService: FirebaseService,
   ){}
 
@@ -60,7 +58,7 @@ export class FirestoreService {
 
       await addDoc(collection(firebaseDatabase, DEALS_COLLECTION), dealData);
     } catch (error) {
-      this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
+      throw new Error(error);
     }
   }
 
