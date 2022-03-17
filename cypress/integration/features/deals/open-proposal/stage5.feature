@@ -8,7 +8,6 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
   Scenario: Token Details - Optional
     Then I can proceed to the next step
 
-  @focus
   Scenario: Proceeding to the next stage - only Token Details
     Given I want to fill in information for the "Tokens" section
     Given I add a Token Details form

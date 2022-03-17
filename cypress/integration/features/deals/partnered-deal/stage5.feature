@@ -14,23 +14,26 @@ Feature: "Token Details" stage (Stage 5)
       | Make an offer  |
 
 
-  Scenario: Token Details - Address
-  Scenario: Token Details - Amount
-  Scenario: Token Details - Instant Transfer Set up
-  Scenario: Token Details - Vesting Set up
+  # Scenario: Token Details - Address
+  # Scenario: Token Details - Amount
+  # Scenario: Token Details - Instant Transfer Set up
+  # Scenario: Token Details - Vesting Set up
 
-  Scenario: Add Token
+  # Scenario: Add Token
 
   Scenario: No Delete, when there is only one Token form
-    Given I have 1 Token Details form
+    Given I want to fill in information for the "Primary DAO Tokens" section
+    And I have 1 Token Details form
     Then I cannot delete a Token Details form
 
   Scenario: Delete Token
-    Given I have 2 Token Details forms
+    Given I want to fill in information for the "Primary DAO Tokens" section
+    And I have 2 Token Details forms
     Then I can delete a Token Details form
 
   Scenario: Save Token
-    Given I have 1 Token Details form
+    Given I want to fill in information for the "Primary DAO Tokens" section
+    And I have 1 Token Details form
     When I try to save the Token Details form
     And I am presented with the "Address is required" error message for the "Token address" field
     And I am presented with the "Amount is required" error message for the "Token amount" field
@@ -38,11 +41,11 @@ Feature: "Token Details" stage (Stage 5)
 
   #####################################################
 
-  Scenario: Partner DAO
+  # Scenario: Partner DAO
 
   #####################################################
 
-  Scenario: Execution Period
+  # Scenario: Execution Period
 
   #####################################################
 
@@ -74,5 +77,5 @@ Feature: "Token Details" stage (Stage 5)
     And I am presented with the "Please provide a vesting period" error message for the "Vested Period" field
     And I am presented with the "Please provide a cliff period" error message for the "Cliff Period" field
 
-  Scenario: Validation - Proceeding when unsaved data
+  # Scenario: Validation - Proceeding when unsaved data
 

@@ -9,7 +9,7 @@ Given("I add a Token Details form", () => {
   });
 });
 
-Given("I have {int} Token Details forms?", (numOfForms: number) => {
+Given("I have {int} Token Details form(s)", (numOfForms: number) => {
   withinWizardSection().within(() => {
     cy.get("[data-test='tokenDetails']").should("have.length", 1);
 
@@ -25,7 +25,6 @@ When("I try to save the Token Details form", () => {
   withinWizardSection().within(() => {
     cy.get("[data-test='saveTokenDetail']").click();
 
-    cy.get("[data-test='loadingIcon']").should("be.visible");
     cy.get("[data-test='loadingIcon']").should("not.exist");
   });
 
