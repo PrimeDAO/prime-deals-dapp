@@ -1,4 +1,4 @@
-<template>
+<template data-test="tokenDetails">
   <pcard>
     <div if.bind="viewMode === 'edit'">
 
@@ -104,11 +104,11 @@
       </pform-input>
 
       <div class="tokenDetailsFooter">
-        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary">
+        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary" data-test="deleteTokenDetail">
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
-        <pbutton click.delegate="save()" is-loading.bind="saving" type="primary">Save</pbutton>
+        <pbutton click.delegate="save()" is-loading.bind="saving" type="primary" data-test="saveTokenDetail">Save</pbutton>
       </div>
     </div>
 
