@@ -24,7 +24,7 @@
           token.bind="token"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"
-          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1"
+          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
@@ -61,7 +61,7 @@
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           token.bind="token"
           view-model.ref="partnerDAOTokenDetails[$index]"
-          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1"
+          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
