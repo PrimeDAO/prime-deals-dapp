@@ -6,7 +6,7 @@ Given("I navigate to a Deal Dashboard", () => {
 });
 Given("No thread is created for this deal", () => {
   cy.contains(".header", "Discuss");
-  cy.contains("section", "There are no discussions on this deal yet. Click on a deal clause to get started.");
+  cy.contains("section", "None of the clauses are currently being discussed.");
 });
 
 Then("I should see a no discussions for deal message", () => {
