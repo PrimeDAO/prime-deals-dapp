@@ -104,7 +104,6 @@ export class TokenDetailsStage {
       decimals: 18,
       logoURI: "",
     });
-    this.checkedForUnsavedChanges();
   }
 
   deleteToken(index: number, tokens: IToken[], forms: TokenDetails[], tokensViewModes: ViewMode[]): void {
@@ -137,7 +136,7 @@ export class TokenDetailsStage {
   }
 
   private isCreatingPartneredDealLike(wizardType: WizardType): boolean {
-    return [WizardType.createPartneredDeal, WizardType.makeAnOffer].includes(wizardType);
+    return [WizardType.createPartneredDeal, WizardType.makeAnOffer, WizardType.editPartneredDeal].includes(wizardType);
   }
 
   private isCreatingDealLike(wizardType: WizardType): boolean {

@@ -68,8 +68,8 @@ export class TokenDetails {
       }
     });
 
-    if (this.token.address) {
-      await this.getTokenInfo(this.token.address);
+    if (this.token.address && (this.token.logoURI || this.token.name || this.token.decimals || this.token.symbol)) {
+      this.showTokenDetails = true;
     }
   }
 
