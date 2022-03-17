@@ -3,7 +3,7 @@ import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
 import { ITokenSwapDeal } from "./types";
-import { initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, updateRepresentativesAndVotes } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, updateRepresentativesAndVotes } from "./helpers";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
@@ -107,9 +107,42 @@ export const updateDealStructure = functions.firestore
     batch.set(
       change.after.ref,
       {
+        registrationData: {
+          modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        },
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         meta: {
           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        },
+      },
+      {merge: true},
+    );
+
+    return batch.commit();
+  });
+
+export const onVoteUpdate = functions.firestore
+  .document(`${DEALS_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
+  .onUpdate(async (change, context) => {
+    const dealSubcollection = context.params.collection;
+
+    if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
+      return;
+    }
+
+    const dealId = context.params.dealId;
+
+    const batch = firestore.batch();
+
+    const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
+
+    const votingSummary = await generateVotingSummary(dealId);
+
+    batch.set(
+      dealRef,
+      {
+        meta: {
+          votingSummary,
         },
       },
       {merge: true},

@@ -7,12 +7,19 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, upd
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
   delete oldDealRegistrationData.isPrivate;
   delete updatedDealRegistrationData.isPrivate;
+  delete oldDealRegistrationData.modifiedAt;
+  delete updatedDealRegistrationData.modifiedAt;
 
   return isEqual(oldDealRegistrationData, updatedDealRegistrationData);
 };
 
 export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
-  return !isEqual(oldDeal.registrationData, updatedDeal.registrationData);
+  const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
+  const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
+  delete oldDealRegistrationData.modifiedAt;
+  delete updatedDealRegistrationData.modifiedAt;
+
+  return !isEqual(oldDealRegistrationData, updatedDealRegistrationData);
 };
 
 export const updateRepresentativesAndVotes = async (
