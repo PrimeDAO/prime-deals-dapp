@@ -1,4 +1,5 @@
 import { NumberService } from "services/NumberService";
+import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable } from "aurelia-framework";
 import { IDAO, IToken } from "entities/DealRegistrationTokenSwap";
 import { DealTokenSwap } from "entities/DealTokenSwap";
@@ -14,10 +15,10 @@ export class DealInfo {
   private dealType: string;
   private representatives: number;
   private tokens: Array<IToken> = [];
-  private funds: Array<number> = [];
 
   constructor(
     private numberService: NumberService,
+    private ethereumService: EthereumService,
   ) {
   }
 
@@ -34,10 +35,10 @@ export class DealInfo {
       this.deal.registrationData.primaryDAO.tokens[0],
       this.deal.registrationData.partnerDAO.tokens[0],
     ];
-    this.funds = [
-      this.numberService.fromString(fromWei(this.tokens[0].amount, this.tokens[0].decimals)),
-      this.numberService.fromString(fromWei(this.tokens[1].amount, this.tokens[1].decimals)),
-    ];
+  }
+
+  private get isProposalLead(): boolean {
+    return this.deal.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress;
   }
 
   private capitalizeWords(string) {

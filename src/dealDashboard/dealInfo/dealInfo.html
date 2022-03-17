@@ -24,24 +24,9 @@
       <div>
         <p>${partnerDAO.name}</p>
         <ul class="social">
-          <li>
-            <a href="https://t.me/primedao" target="_blank" rel="noopener noreferrer">
-              <div class="telegram"></div>
-            </a>
-          </li>
-          <li>
-            <a href="https://twitter.com/PrimeDAO_?s=09" target="_blank" rel="noopener noreferrer">
-              <div class="twitter"></div>
-            </a>
-          </li>
-          <li>
-            <a href="https://discord.gg/x8v59pG" target="_blank" rel="noopener noreferrer">
-              <div class="discord"></div>
-            </a>
-          </li>
-          <li>
-            <a href="https://medium.com/primedao" target="_blank" rel="noopener noreferrer">
-              <div class="medium"></div>
+          <li repeat.for="media of partnerDAO.social_medias">
+            <a href.bind="media.url" target="_blank" rel="noopener noreferrer">
+              <div class.bind="media.name.toLowerCase()"></div>
             </a>
           </li>
         </ul>
@@ -61,13 +46,35 @@
         </span>
       </p>
       <p class="sectionTitle">Primary DAO Funds</p>
-      <p class="detail">${funds[0]} ${tokens[0].symbol}</p>
+      <p class="detail">
+        <formatted-number
+          thousands-separated
+          value.to-view="tokens[0].amount | ethwei:tokens[0].decimals">
+        </formatted-number>
+        ${tokens[0].symbol}
+      </p>
       <p class="sectionTitle">Partner DAO Funds</p>
-      <p class="detail">${funds[1]} ${tokens[1].symbol}</p>
+      <p class="detail">
+        <formatted-number
+          thousands-separated
+          value.to-view="tokens[1].amount | ethwei:tokens[1].decimals">
+        </formatted-number>
+        ${tokens[1].symbol}
+      </p>
       <p class="sectionTitle">Total funds</p>
-      <p class="detail">${deal.registrationData.dealType}</p>
+      <p class="detail">TODO</p>
       <p class="sectionTitle">Time left</p>
-      <p class="detail">${deal.registrationData.dealType}</p>
+      <p class="detail">TODO</p>
+    </section>
+    <hr class="separator">
+    <section class="dealDetails">
+      <p class="sectionTitle">Private Deal</p>
+      <ptoggle 
+        type="toggle" 
+        class="detail" 
+        disabled.bind="!isProposalLead"
+        value.bind="deal.registrationData.isPrivate">
+      </ptoggle>
     </section>
   </pcard>
 </template>
