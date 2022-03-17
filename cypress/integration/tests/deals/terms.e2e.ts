@@ -21,6 +21,9 @@ class Terms {
   static getClausesTextarea() {
     return cy.get("[data-test='clauseTextarea'] textarea");
   }
+  static getClausesText() {
+    return cy.get("[data-test='clauseFormInput']");
+  }
   static getClauseError() {
     return cy.get("[data-test='clauseFormInput'] .pInput-error");
   }
@@ -89,7 +92,7 @@ Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
 
 Then("I can see my existing Clauses", () => {
   const CLAUSE_TEXT = "lorem";
-  Terms.getClausesTextarea().invoke("val").should("equal", CLAUSE_TEXT);
+  Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
 });
 
 Then("the Clause's content should be cleared", () => {
