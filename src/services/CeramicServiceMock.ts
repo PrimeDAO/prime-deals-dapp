@@ -265,9 +265,9 @@ const _registration4: IDealRegistrationTokenSwap = {
       address: tokenAddress1,
       name: "Prime (D2D)",
       symbol: "D2D",
-      decimals: 18,
+      decimals: 6,
       logoURI: "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
-      amount: "200000",
+      amount: "20000000",
       instantTransferAmount: "150000",
       vestedTransferAmount: "50000",
       vestedFor: 14 * 24 * 3600, // should be in seconds
