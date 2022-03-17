@@ -1,5 +1,73 @@
 <template>
   <pcard>
     <h1 class="title heading heading3 gradient">Deal Information</h1>
+    <section class="daoDetails">
+      <figure>
+        <img src.bind="primaryDAO.logoURI" alt.bind="primaryDAO.name" />
+      </figure>
+      <div>
+        <p>${primaryDAO.name}</p>
+        <ul class="social">
+          <li repeat.for="media of primaryDAO.social_medias">
+            <a href.bind="media.url" target="_blank" rel="noopener noreferrer">
+              <div class.bind="media.name.toLowerCase()"></div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <p class="sectionTitle">Primary DAO</p>
+    </section>
+    <section class="daoDetails">
+      <figure>
+        <img src.bind="partnerDAO.logoURI" alt.bind="partnerDAO.name" />
+      </figure>
+      <div>
+        <p>${partnerDAO.name}</p>
+        <ul class="social">
+          <li>
+            <a href="https://t.me/primedao" target="_blank" rel="noopener noreferrer">
+              <div class="telegram"></div>
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/PrimeDAO_?s=09" target="_blank" rel="noopener noreferrer">
+              <div class="twitter"></div>
+            </a>
+          </li>
+          <li>
+            <a href="https://discord.gg/x8v59pG" target="_blank" rel="noopener noreferrer">
+              <div class="discord"></div>
+            </a>
+          </li>
+          <li>
+            <a href="https://medium.com/primedao" target="_blank" rel="noopener noreferrer">
+              <div class="medium"></div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <p class="sectionTitle">Partner DAO</p>
+    </section>
+    <section class="dealDetails">
+      <p class="sectionTitle">Type</p>
+      <p class="detail">${dealType}</p>
+      <p class="sectionTitle">Representatives</p>
+      <p class="detail">${representatives}</p>
+      <p class="sectionTitle">Tokens</p>
+      <p class="detail">
+        <token-pair token1.bind="tokens[0].logoURI" token2.bind="tokens[1].logoURI"></token-pair>
+        <span>
+          ${tokens[0].symbol}/${tokens[1].symbol}
+        </span>
+      </p>
+      <p class="sectionTitle">Primary DAO Funds</p>
+      <p class="detail">${funds[0]} ${tokens[0].symbol}</p>
+      <p class="sectionTitle">Partner DAO Funds</p>
+      <p class="detail">${funds[1]} ${tokens[1].symbol}</p>
+      <p class="sectionTitle">Total funds</p>
+      <p class="detail">${deal.registrationData.dealType}</p>
+      <p class="sectionTitle">Time left</p>
+      <p class="detail">${deal.registrationData.dealType}</p>
+    </section>
   </pcard>
 </template>
