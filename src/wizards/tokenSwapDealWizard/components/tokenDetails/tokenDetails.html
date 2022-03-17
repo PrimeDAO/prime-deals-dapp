@@ -9,7 +9,6 @@
         label="Token Address"
         label-info="Make sure to use the native contract address of the token.">
         <pinput-text
-          input.trigger="getTokenInfo(token.address)"
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
           value.bind="token.address & validate"
@@ -40,8 +39,8 @@
               src.bind="token.logoURI">
           </p>
           <pform-input input-reference.bind="logoImageInput">
-            <pinput-text input.trigger="checkURL()" value.bind="token.logoURI & validate"
-              view-model.ref="logoImageInput"></pinput-text>
+            <pinput-text value.bind="token.logoURI & validate"
+                         view-model.ref="logoImageInput"></pinput-text>
           </pform-input>
         </div>
       </div>

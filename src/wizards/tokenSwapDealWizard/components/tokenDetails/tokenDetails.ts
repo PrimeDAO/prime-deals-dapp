@@ -153,8 +153,12 @@ export class TokenDetails {
         this.token.cliffOf = undefined;
       }
     });
-    this.aureliaHelperService.createPropertyWatch(this.token, "address", () => {
+    this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
       this.token.amount = undefined;
+      this.getTokenInfo(address);
+    });
+    this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
+      this.checkURL();
     });
   }
 
