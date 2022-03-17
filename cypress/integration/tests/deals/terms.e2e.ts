@@ -30,7 +30,7 @@ Given("I add content to a Clause", () => {
   Terms.getClausesTextarea().type(UPDATED);
 });
 
-Given("I have {int} existing Clauses", (numOfClauses: number) => {
+Given("I have {int} existing Clause(s)", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", 1);
 
   for (let i = 1; i < numOfClauses; i += 1) {
@@ -94,4 +94,8 @@ Then("I can see my existing Clauses", () => {
 
 Then("the Clause's content should be cleared", () => {
   Terms.getClausesTextarea().invoke("val").should("equal", "");
+});
+
+Then("I cannot delete the Clause", () => {
+  EditingCard.getButton("Delete").should("not.exist");
 });

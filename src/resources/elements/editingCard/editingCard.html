@@ -29,7 +29,7 @@
         class="cardFooter"
       >
         <pbutton
-          show.bind="!hideDeleteButton"
+          if.bind="!hideDeleteButton"
           class="deleteButton"
           click.delegate="delete()"
           type="tertiary"
