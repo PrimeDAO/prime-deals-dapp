@@ -157,5 +157,7 @@ Then("I can proceed to the next step", () => {
 });
 
 function waitForTokenAddressLoaded() {
-  throw new Error("Function not implemented.");
+  cy.contains("[data-test='tokenDetails']", "Searching token address details").should("be.visible");
+  const timeoutForAddressRequest = 20000;
+  cy.contains("p", "Symbol", {timeout: timeoutForAddressRequest}).should("be.visible");
 }

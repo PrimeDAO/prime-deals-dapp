@@ -22,19 +22,19 @@ Feature: "Token Details" stage (Stage 5)
   Scenario: Add Token
 
   Scenario: No Delete, when there is only one Token form
-    Given I have 1 Token Details form for the "Primary DAO Tokens"
+    Given I have 1 Token Details form
     Then I cannot delete a Token Details form
 
   Scenario: Delete Token
-    Given I have 2 Token Details forms for the "Primary DAO Tokens"
+    Given I have 2 Token Details forms
     Then I can delete a Token Details form
 
   Scenario: Save Token
-    Given I have 1 Token Details form for the "Primary DAO Tokens"
-    When I try to save the Token Details form for the "Primary DAO Tokens"
+    Given I have 1 Token Details form
+    When I try to save the Token Details form
     And I am presented with the "Address is required" error message for the "Token address" field
     And I am presented with the "Amount is required" error message for the "Token amount" field
-    And the Token Details form was not saved for the "Primary DAO Tokens"
+    And the Token Details form was not saved
 
   #####################################################
 

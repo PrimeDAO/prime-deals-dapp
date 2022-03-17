@@ -9,7 +9,7 @@ Given("I add a Token Details form", () => {
   });
 });
 
-Given(/^I have (\d+) Token Details forms? for the "(.*)"$/, (numOfForms: number) => {
+Given("I have {int} Token Details forms?", (numOfForms: number) => {
   withinWizardSection().within(() => {
     cy.get("[data-test='tokenDetails']").should("have.length", 1);
 
@@ -21,9 +21,12 @@ Given(/^I have (\d+) Token Details forms? for the "(.*)"$/, (numOfForms: number)
   });
 });
 
-When(/^I try to save the Token Details form for the "(.*)"$/, () => {
+When("I try to save the Token Details form", () => {
   withinWizardSection().within(() => {
     cy.get("[data-test='saveTokenDetail']").click();
+
+    cy.get("[data-test='loadingIcon']").should("be.visible");
+    cy.get("[data-test='loadingIcon']").should("not.exist");
   });
 
 });
@@ -40,7 +43,7 @@ Then("I can delete a Token Details form", () => {
   cy.get("[data-test='deleteTokenDetail']").should("have.length", 2);
 });
 
-And(/the Token Details form was not saved for the "(.*)"$/, () => {
+And("the Token Details form was not saved", () => {
   withinWizardSection().within(() => {
     cy.get("[data-test='saveTokenDetail']").should("be.visible");
   });
