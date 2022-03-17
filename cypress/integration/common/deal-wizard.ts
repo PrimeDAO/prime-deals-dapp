@@ -165,6 +165,11 @@ Then("I can proceed to the next step", () => {
   });
 });
 
+Then("I am notified, that I am unable to proceed due to validation errors", () => {
+  cy.contains("[data-test='pPopupNotification']", "Unable to proceed, please check the page for validation errors")
+    .should("be.visible");
+});
+
 function waitForTokenAddressLoaded() {
   cy.contains("[data-test='tokenDetails']", "Searching token address details").should("be.visible");
   const timeoutForAddressRequest = 20000;

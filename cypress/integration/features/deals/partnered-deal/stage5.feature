@@ -13,7 +13,6 @@ Feature: "Token Details" stage (Stage 5)
       | Partnered Deal |
       | Make an offer  |
 
-
   # Scenario: Token Details - Address
   # Scenario: Token Details - Amount
   # Scenario: Token Details - Instant Transfer Set up
@@ -49,13 +48,19 @@ Feature: "Token Details" stage (Stage 5)
 
   #####################################################
 
+  Scenario: Validation - Proceeding when unsaved data
+    Given I want to fill in information for the "Primary DAO Tokens" section
+    And I fill in the "Token amount" field with "123"
+    When I try to proceed to next step
+    Then I am notified, that I am unable to proceed due to validation errors
+    Then I am presented with the "Partnered Deal" "Token Details" stage
+
   Scenario: Validates required fields
     When I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Address is required" error message for the "Token address" field
     And I am presented with the "Amount is required" error message for the "Token amount" field
     And I am presented with the "Execution period is required" error message for the "Execution Period" field
-
 
   Scenario: Validates vesting fields
     When I try to proceed to next step
@@ -78,6 +83,4 @@ Feature: "Token Details" stage (Stage 5)
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Please provide a vesting period" error message for the "Vested Period" field
     And I am presented with the "Please provide a cliff period" error message for the "Cliff Period" field
-
-  # Scenario: Validation - Proceeding when unsaved data
 
