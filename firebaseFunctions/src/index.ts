@@ -2,99 +2,14 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
-import {isEqual} from "lodash";
-
-interface IProposal {
-  title: string,
-  summary: string,
-  description: string;
-}
-
-enum Platforms {
-  "Independent",
-  "DAOstack",
-  "Moloch",
-  "OpenLaw",
-  "Aragon",
-  "Colony",
-  "Compound Governance",
-  "Snapshot",
-  "Gnosis Safe / Snapshot",
-  "Substrate",
-}
-
-interface IToken {
-  address: string,
-
-  name: string,
-  symbol: string,
-  decimals: number,
-  logoURI: string,
-
-  amount: string
-  instantTransferAmount: string
-  vestedTransferAmount: string
-  vestedFor: number
-  cliffOf: number
-}
-
-interface ISocialMedia {
-  name: string,
-  url: string,
-}
-
-interface IDAO {
-  name: string;
-  treasury_address: string;
-  logoURI: string;
-  social_medias: Array<ISocialMedia>;
-  representatives: Array<{address: string}>;
-  id?: string;
-  tokens?: Array<IToken>;
-  platform?: Platforms;
-}
-
-interface IProposalLead {
-  address: string,
-  email?: string;
-  // dao?: IDAO /* Deprecated: Proposal lead does not need to be part of the a DAO */
-}
-
-interface IClause {
-  id: string,
-  text: string,
-}
-
-interface ITerms {
-  clauses: Array<IClause>,
-}
-
-interface IDealRegistrationTokenSwap {
-  version: string;
-  proposal: IProposal;
-  primaryDAO: IDAO;
-  partnerDAO: IDAO;
-  proposalLead: IProposalLead; // this contains to address
-  terms: ITerms;
-  keepAdminRights: boolean;
-  offersPrivate: boolean;
-  isPrivate: boolean;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
-  createdByAddress: string | null;
-  executionPeriodInDays: number;
-  dealType: "token-swap"/* | "co-liquidity"*/;
-}
-
-interface ITokenSwapDeal {
-  registrationData: IDealRegistrationTokenSwap;
-}
+import { ITokenSwapDeal } from "./types";
+import { initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, updateRepresentativesAndVotes } from "./helpers";
 
 const admin = firebaseAdmin.initializeApp();
-const firestore = admin.firestore();
-const DEALS_COLLECTION = "deals";
-const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
-const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+export const firestore = admin.firestore();
+export const DEALS_COLLECTION = "deals";
+export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
+export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
@@ -139,8 +54,7 @@ export const createCustomToken = functions.https.onRequest(
 export const buildDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onCreate(async (snapshot, context) => {
-    const deal = snapshot.data() as {registrationData: IDealRegistrationTokenSwap, isReady: boolean};
-    // deal should have "ready" flag set to false (should already be set to false on the client)
+    const deal = snapshot.data() as ITokenSwapDeal;
 
     const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
     const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
@@ -155,11 +69,13 @@ export const buildDealStructure = functions.firestore
       dealRef,
       {
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-        isReady: true,
+        isReady: true, // set the "isReady" flag to true. Firestore rules should block any operations on deals with flag "isReady" set to false
+        meta: {
+          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        },
       },
       { merge: true },
     );
-    // set the "ready" flag to true. Firestore rules should block any operations on deals with flag "ready" set to false
 
     initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
@@ -173,7 +89,11 @@ export const updateDealStructure = functions.firestore
     const oldDeal = change.before.data() as ITokenSwapDeal;
     const updatedDeal = change.after.data() as ITokenSwapDeal;
 
-    if (!updatedDeal || isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)) {
+    if (
+      !updatedDeal ||
+      !isRegistrationDataUpdated(oldDeal, updatedDeal) ||
+      isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
+    ) {
       return;
     }
 
@@ -188,68 +108,12 @@ export const updateDealStructure = functions.firestore
       change.after.ref,
       {
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+        meta: {
+          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        },
       },
       {merge: true},
     );
 
     return batch.commit();
   });
-
-function isRegistrationDataPrivacyOnlyUpdate(oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean {
-  const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
-  const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
-  delete oldDealRegistrationData.isPrivate;
-  delete updatedDealRegistrationData.isPrivate;
-
-  return isEqual(oldDealRegistrationData, updatedDealRegistrationData);
-}
-
-async function updateRepresentativesAndVotes(
-  batch: FirebaseFirestore.WriteBatch,
-  dealId: string,
-  primaryDaoRepresentativesAddresses: string[],
-  partnerDaoRepresentativesAddresses: string[],
-) {
-  // delete current votes
-  const votes = await Promise.all([
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).listDocuments(),
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).listDocuments(),
-  ]);
-
-  votes.forEach(daoVotes => {
-    daoVotes.forEach(voteRef => {
-      batch.delete(voteRef);
-    });
-  });
-
-  initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
-}
-
-function initializeVotes(
-  batch: FirebaseFirestore.WriteBatch,
-  dealId: string,
-  primaryDaoRepresentativesAddresses: string[],
-  partnerDaoRepresentativesAddresses: string[],
-) {
-  primaryDaoRepresentativesAddresses.forEach(address => {
-    const representativeRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
-    batch.set(representativeRef, {vote: null});
-  });
-
-  partnerDaoRepresentativesAddresses.forEach(address => {
-    const representativeRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
-    batch.set(representativeRef, {vote: null});
-  });
-}
-
-// if an address already in votes collection don't do anything
-
-// if address deleted from representativesAddresses remove the vote
-
-// if address new - initialize the vote for it
-
-// update representativesAddresses
-
-// update votes collection (don't replace documents that already exist if deleted)
-
-// update voting summary object
