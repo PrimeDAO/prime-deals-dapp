@@ -2,7 +2,6 @@ Feature: Submit Stage - Open Deal (Partnered Deal)
   Scenario: View registration data
     # Then all the wizard registration data should be presented
 
-  @focus
   Scenario: Prevent navigation - Direct navigation
     Given I navigate to the "Partnered Deal" "Submit" stage
     Then I should be redirected to the Home Page

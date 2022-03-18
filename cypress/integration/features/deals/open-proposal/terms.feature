@@ -26,12 +26,23 @@ Feature: Terms - Open Proposal
 
   Scenario: Delete a Clause
     Given I have 2 existing Clauses
-    When I delete the latest Clause
+    When I delete the last Clause
     Then I should only have 1 Clause
 
   Scenario: Delete a Clause - No deletion for single Clause
     Given I have 1 existing Clause
     Then I cannot delete the Clause
+
+  @regression
+  Scenario: Delete a Clause - Correct view state
+    Given I have 2 existing Clause
+    When I add content to the first Clause
+    And I save the changes to the first Clause
+    And I add content to the last Clause
+    And I save the changes to the last Clause
+    When I edit the last Clause
+    And I delete the last Clause
+    Then the first Clause should be in View mode
 
   Scenario: Proceeding with incomplete Clauses
     When I try to proceed to next step
