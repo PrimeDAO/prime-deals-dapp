@@ -30,6 +30,14 @@ When("I try to save the Token Details form", () => {
 
 });
 
+When("I clear the {string} field", (field: string) => {
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input").clear();
+    });
+  });
+});
+
 Then("I am presented with an empty Token Details form", () => {
   cy.get("[data-test='tokenDetails']").should("be.visible");
 });
@@ -40,6 +48,22 @@ Then("I cannot delete a Token Details form", () => {
 
 Then("I can delete a Token Details form", () => {
   cy.get("[data-test='deleteTokenDetail']").should("have.length", 2);
+});
+
+Then("the {string} field should be disabled", (field: string) => {
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input").should("be.disabled");
+    });
+  });
+});
+
+Then("the {string} field should not be disabled", (field: string) => {
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input").should("not.be.disabled");
+    });
+  });
 });
 
 And("the Token Details form was not saved", () => {
