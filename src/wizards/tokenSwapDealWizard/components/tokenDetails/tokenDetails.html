@@ -14,7 +14,7 @@
           value.bind="token.address & validate"
           view-model.ref="addressInput"></pinput-text>
       </pform-input>
-      <div class="detailsTable" if.bind="showTokenDetails">
+      <div data-test="tokenDetailsMetadata" class="detailsTable" if.bind="showTokenDetails">
         <div class="detailsCell">
           <p>Name</p>
           <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>

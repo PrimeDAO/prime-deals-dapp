@@ -74,6 +74,10 @@ Then("the {string} field should not be disabled", (field: string) => {
   });
 });
 
+Then("I should not be presented with the Token Details metadata", () => {
+  cy.get("[data-test='tokenDetailsMetadata']").should("not.exist");
+});
+
 And("the Token Details form was not saved", () => {
   withinWizardSection().within(() => {
     cy.get("[data-test='saveTokenDetail']").should("be.visible");

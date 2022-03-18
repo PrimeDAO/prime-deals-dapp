@@ -8,9 +8,23 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
   Scenario: Token Details - Optional
     Then I can proceed to the next step
 
+  #####################################################
+
+  @regression
+  Scenario: Token Details - Incorrect Address and navigation
+    Given I want to fill in information for the "Tokens" section
+    And I add a Token Details form
+    When I fill in the "Token address" field with an invalid address "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
+    And I am presented with the "Please enter a valid IERC20 address" error message for the "Token address" field
+    And I go to previous step
+    And I use the stepper to go to the "Token Details" step
+    Then I should not be presented with the Token Details metadata
+
+  #####################################################
+
   Scenario: Proceeding to the next stage - only Token Details
     Given I want to fill in information for the "Tokens" section
-    Given I add a Token Details form
+    And I add a Token Details form
     When I fill in the "Token address" field with "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad"
     And I fill in the "Token amount" field with "123"
     And I fill in the "Vested Period" field with "123"
