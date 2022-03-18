@@ -21,19 +21,19 @@ const VOTES_COLLECTIONS = {
 const allPublicDealsQuery = query(
   collection(firebaseDatabase, DEALS_COLLECTION),
   where("registrationData.isPrivate", "==", false),
-  where("isReady", "==", true),
+  where("meta.isReady", "==", true),
 );
 
 const representativeDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
   where("representativesAddresses", "array-contains", address),
-  where("isReady", "==", true),
+  where("meta.isReady", "==", true),
 );
 
 const proposalLeadDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
   where("registrationData.proposalLead.address", "==", address),
-  where("isReady", "==", true),
+  where("meta.isReady", "==", true),
 );
 
 @autoinject
@@ -51,13 +51,15 @@ export class FirestoreService {
         throw new Error("User not authenticated");
       }
 
-      const dealData: {registrationData: IDealRegistrationTokenSwap, isReady:boolean} = {
+      const dealData: {registrationData: IDealRegistrationTokenSwap, meta: { isReady:boolean }} = {
         registrationData: {
           ...JSON.parse(JSON.stringify(registrationData)),
           createdAt: serverTimestamp(),
           createdByAddress: firebaseAuth.currentUser.uid,
         },
-        isReady: false,
+        meta: {
+          isReady: false,
+        },
       };
 
       await addDoc(collection(firebaseDatabase, DEALS_COLLECTION), dealData);

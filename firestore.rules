@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isReadyDeal() {
-      return resource.data.isReady;
+      return resource.data.meta.isReady;
     }
 
     function isPublicDeal() {
@@ -23,8 +23,8 @@ service cloud.firestore {
 
     match /deals/{deal} {
       allow read: if isReadyDeal() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
-      allow create: if userIsAuthenticated() && !request.resource.data.isReady;
-      allow update: if userIsProposalLead(); // && !request.resource.data.isReady;
+      allow create: if userIsAuthenticated() && !request.resource.data.meta.isReady;
+      allow update: if userIsProposalLead(); // && !request.resource.data.meta.isReady;
     }
     
     match /deals/{deal}/primary-dao-votes/{representative} {
