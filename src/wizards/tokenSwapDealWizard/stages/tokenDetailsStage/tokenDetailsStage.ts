@@ -101,7 +101,7 @@ export class TokenDetailsStage {
 
       name: "",
       symbol: "",
-      decimals: 18,
+      decimals: undefined,
       logoURI: "",
     });
   }

@@ -52,6 +52,7 @@
           placeholder="500.00"
           value.bind="token.amount & validate"
           decimals.bind="token.decimals"
+          disabled.bind="token.decimals === undefined"
           view-model.ref="amountInput"></pinput-numeric>
       </pform-input>
       <pform-input

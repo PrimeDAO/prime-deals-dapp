@@ -154,8 +154,12 @@ export class TokenDetails {
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
-      this.token.amount = undefined;
-      this.getTokenInfo(address);
+      if (address) {
+        this.token.amount = undefined;
+        this.getTokenInfo(address);
+      } else {
+        this.token.decimals = undefined;
+      }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
       this.checkURL();
