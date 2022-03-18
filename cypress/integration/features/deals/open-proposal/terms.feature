@@ -18,25 +18,29 @@ Feature: Terms - Open Proposal
     When I save the changes to the Clause
     Then I should get an error message for the Clause
 
+  Scenario: Update a Clause - No validation
+    Given I have 2 existing Clauses
+    When I add content to the first Clause
+    And I save the changes to the Clause
+    Then I should get not an error message for the Clause
+
   Scenario: Delete a Clause
     Given I have 2 existing Clauses
     When I delete the latest Clause
     Then I should only have 1 Clause
 
-  Scenario: Delete a Clause - single Clause
-    Given I add content to a Clause
-    When I delete the latest Clause
-    Then the Clause's content should be cleared
+  Scenario: Delete a Clause - No deletion for single Clause
+    Given I have 1 existing Clause
+    Then I cannot delete the Clause
 
   Scenario: Proceeding with incomplete Clauses
     When I try to proceed to next step
     Then I should get an error message for the Clause
 
-  @focus
   Scenario: Validation multiple clauses
     Given I have 2 existing Clauses
     When I try to proceed to next step
-    Then I should get 2 errors for the Clauses
+    Then I should get 3 errors for the Clauses
 
   Rule: Maximum 10 Clauses
     Scenario: 9 Clauses present

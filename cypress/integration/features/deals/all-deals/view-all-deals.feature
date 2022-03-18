@@ -4,7 +4,6 @@ Feature: View All Deals
 
     Scenario: View all deals page
         Then I can see Initiate A Deal button
-        And I can see Connect Your Wallet button
         And I can see Open Proposals tab
         And I can see Partnered Deals tab
         And I can see Open Proposals Carousel
