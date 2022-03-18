@@ -10,7 +10,7 @@ import { IClause } from "../../entities/DealRegistrationTokenSwap";
 export class DealClauses {
   @bindable deal: DealTokenSwap;
   @bindable.booleanAttr authorized = false;
-  @bindable.string({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
   private clauses: IClause[];
 

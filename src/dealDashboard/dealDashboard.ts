@@ -7,7 +7,7 @@ import "./dealDashboard.scss";
 @autoinject
 export class DealDashboard {
   private deal: DealTokenSwap;
-  private discussionId?: string;
+  private discussionId: string = null;
   private dealId: string;
 
   constructor(

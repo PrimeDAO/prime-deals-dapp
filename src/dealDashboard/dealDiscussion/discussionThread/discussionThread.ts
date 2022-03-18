@@ -1,4 +1,4 @@
-import { autoinject, bindable, computedFrom } from "aurelia-framework";
+import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -18,7 +18,7 @@ import { Types } from "ably";
 
 @autoinject
 export class DiscussionThread {
-  @bindable discussionId: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
   private refThread: HTMLElement;
   private refThreadEnd: HTMLSpanElement;
@@ -350,6 +350,6 @@ export class DiscussionThread {
   }
 
   private navigateTo() {
-    this.discussionId = ""; // needed to return a falsy value
+    this.discussionId = null;
   }
 }
