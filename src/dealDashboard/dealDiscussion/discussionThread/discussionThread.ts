@@ -97,9 +97,9 @@ export class DiscussionThread {
     }
   }
 
-  @computedFrom("isLoading.discussions", "isMember", "threadComments.length")
+  @computedFrom("isLoading.discussions", "isMember", "threadComments")
   private get noCommentsText(): string {
-    if (!this.isLoading.discussions && !this.threadComments.length) {
+    if (!this.isLoading.discussions && !this.threadComments?.length) {
       return (!this.isMember && this.deal.registrationData.isPrivate)
         ? "This discussion is private."
         : "This discussion has no comments yet.";
@@ -200,6 +200,14 @@ export class DiscussionThread {
     this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
     this.isLoading.discussions = false;
 
+    // Author profile for the discussion header
+    this.isLoading[this.dealDiscussion.createdBy.address] = true;
+    this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
+      .then(profile => {
+        this.dealDiscussion.createdByName = profile.name || null;
+        this.isLoading[this.dealDiscussion.createdBy.address] = false;
+      });
+
     if (this.threadComments && this.dealDiscussion) {
       this.subscribeToDiscussion(discussionId);
 
@@ -210,14 +218,6 @@ export class DiscussionThread {
         r[e._id] = e;
         return r;
       }, {});
-
-      // Author profile for the discussion header
-      this.isLoading[this.dealDiscussion.createdBy.address] = true;
-      this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
-        .then(profile => {
-          this.dealDiscussion.createdByName = profile.name || null;
-          this.isLoading[this.dealDiscussion.createdBy.address] = false;
-        });
 
       /* Comments author profiles */
       this.threadComments.forEach((comment: IComment) => {
@@ -350,6 +350,6 @@ export class DiscussionThread {
   }
 
   private navigateTo() {
-    this.discussionId = null;
+    this.discussionId = ""; // needed to return a falsy value
   }
 }

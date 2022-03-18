@@ -18,7 +18,7 @@
             Created by ${dealDiscussion.createdByName}
           </span>
           <span else>
-            Created by ${dealDiscussion.createdByAddress | smallHexString}
+            Created by ${dealDiscussion.createdBy.address | smallHexString}
           </span>
           at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }</h3>
       </span>
@@ -42,7 +42,7 @@
           class="comment">
           <single-comment
             comment-action.call="doAction(action, args)"
-            discussionId.bind="discussionId"
+            discussion-id.two-way="discussionId"
             author.bind="dealDiscussion.createdBy.address"
             profile.bind="threadProfiles[comment.author]"
             loading.bind="isLoading"

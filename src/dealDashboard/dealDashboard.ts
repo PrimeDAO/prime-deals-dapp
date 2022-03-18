@@ -1,13 +1,13 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EthereumService } from "services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import "./dealDashboard.scss";
 import { DealService } from "../services/DealService";
+import "./dealDashboard.scss";
 
 @autoinject
 export class DealDashboard {
   private deal: DealTokenSwap;
-  discussionId?: string;
+  private discussionId?: string;
   private dealId: string;
 
   constructor(
