@@ -7,7 +7,7 @@ import { openProposalDummyData1, partnerDealDummyData1 } from "./firebaseDummyDa
 
 @autoinject
 export class FirebasePlayground {
-  allDeals: any = [];
+  allDeals: any[] = [];
   subscriptions: Array<Subscription> = [];
 
   constructor(
@@ -97,5 +97,12 @@ export class FirebasePlayground {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async updateDealTitle(dealId: string, title: string) {
+    const registrationData = this.allDeals.find(deal => deal.id === dealId).data.registrationData;
+    registrationData.proposal.title = title;
+    registrationData.partnerDAO = registrationData.partnerDAO ? registrationData.partnerDAO : null;
+    await this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 }

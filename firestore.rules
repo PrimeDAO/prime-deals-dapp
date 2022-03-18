@@ -21,10 +21,15 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function updateOnlyToDiscussions() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['discussions']);
+    }
+
     match /deals/{deal} {
       allow read: if isReadyDeal() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
       allow create: if userIsAuthenticated() && !request.resource.data.meta.isReady;
-      allow update: if userIsProposalLead(); // && !request.resource.data.meta.isReady;
+      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.meta.isReady;
+      allow delete: if false;
     }
     
     match /deals/{deal}/primary-dao-votes/{representative} {
