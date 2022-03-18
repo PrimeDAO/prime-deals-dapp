@@ -26,7 +26,7 @@ const allPublicDealsQuery = query(
 
 const representativeDealsQuery = (address: Address) => query(
   collection(firebaseDatabase, DEALS_COLLECTION),
-  where("representativesAddresses", "array-contains", address),
+  where("meta.representativesAddresses", "array-contains", address),
   where("meta.isReady", "==", true),
 );
 

@@ -14,7 +14,7 @@ service cloud.firestore {
     }
 
     function userIsRepresentative() {
-      return request.auth.uid in resource.data.representativesAddresses;
+      return request.auth.uid in resource.data.meta.representativesAddresses;
     }
 
     function userIsAuthenticated() {

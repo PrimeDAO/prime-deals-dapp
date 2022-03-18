@@ -104,9 +104,9 @@ export interface IFirebaseDocument<T = any> {
 
 export interface ITokenSwapDeal {
   registrationData: IDealRegistrationTokenSwap;
-  representativesAddresses: Array<string>;
   meta: {
     isReady: boolean;
+    representativesAddresses: Array<string>;
     votingSummary: IVotingSummary;
   }
 }

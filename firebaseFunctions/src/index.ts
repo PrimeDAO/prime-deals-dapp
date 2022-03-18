@@ -68,9 +68,9 @@ export const buildDealStructure = functions.firestore
     batch.set(
       dealRef,
       {
-        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         meta: {
           isReady: true, // set the "isReady" flag to true. Firestore rules should block any operations on deals with flag "isReady" set to false
+          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
         },
       },
@@ -110,8 +110,8 @@ export const updateDealStructure = functions.firestore
         registrationData: {
           modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
         },
-        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         meta: {
+          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
         },
       },
