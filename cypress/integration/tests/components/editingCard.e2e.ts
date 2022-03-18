@@ -27,6 +27,9 @@ export class EditingCard {
   static click(buttonType: EditincCardButtonTypes) {
     cy.contains(EditingCard.button, buttonType).click();
   }
+  static getButton(buttonType: EditincCardButtonTypes) {
+    return cy.contains(EditingCard.button, buttonType);
+  }
 }
 
 Given("I navigate to the {string} component", (componentName: string) => {
