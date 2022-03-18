@@ -22,7 +22,10 @@ class Terms {
     return cy.get("[data-test='clauseTextarea'] textarea");
   }
   static getClauseError() {
-    return cy.get("[data-test='clauseFormInput'] .pInput-error");
+    return cy.get("[data-test='errorMessage']");
+  }
+  static getUnsavedChangesError() {
+    return cy.contains("[data-test='errorMessage']", "Please save all your clauses");
   }
 }
 
@@ -90,7 +93,11 @@ Then("I have {int} Clauses", (numOfClauses: number) => {
 });
 
 Then("I should get an error message for the Clause", () => {
-  cy.contains("[data-test='errorMessage']", "Please save all your clauses").should("not.be.visible");
+  Terms.getClauseError().should("be.visible");
+});
+
+Then("I should get not an error message for the Clause", () => {
+  Terms.getUnsavedChangesError().should("not.be.visible");
 });
 
 Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
