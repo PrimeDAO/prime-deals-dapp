@@ -24,6 +24,13 @@
   <pbutton type="primary" click.delegate="getProposalLeadDeals()">Get deals where I am Proposal Lead</pbutton>
   <pbutton type="primary" click.delegate="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
   <br>
+  <div style="display: flex;">
+    <pinput-text value.bind="clauseDealId"></pinput-text>
+    <pinput-text value.bind="clauseId"></pinput-text>
+    <pinput-text value.bind="discussionHash"></pinput-text>
+    <pbutton type="primary" click.delegate="addDiscussionClause(clauseDealId, clauseId, discussionHash)">Add deal clause discussion</pbutton>
+  </div>
+  <br>
   <h3>All deals</h3>
   <div>
     <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">

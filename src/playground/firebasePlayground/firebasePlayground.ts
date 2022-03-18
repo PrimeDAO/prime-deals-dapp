@@ -50,6 +50,10 @@ export class FirebasePlayground {
     this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 
+  addDiscussionClause(dealId: string, clauseId: string, discussionHash: string) {
+    this.firestoreService.addDiscussionClause(dealId, clauseId, discussionHash);
+  }
+
   async getDealById(dealId: string) {
     try {
       const deal = await this.firestoreService.getDealById(dealId);

@@ -158,6 +158,21 @@ export class FirestoreService {
     return this.getQueryObservable<Array<IFirebaseDocument>>(allPublicDealsQuery);
   }
 
+  public async addDiscussionClause(dealId: string, clauseId: string, discussionHash: string) {
+    try {
+      const ref = doc(firebaseDatabase, DEALS_COLLECTION, dealId);
+      await setDoc(
+        ref,
+        {
+          discussions: {[clauseId]: discussionHash},
+        },
+        {merge: true},
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   private getQueryObservable<T>(q: Query<DocumentData>): Observable<T> {
     return fromEventPattern(
       (handler) => onSnapshot(
