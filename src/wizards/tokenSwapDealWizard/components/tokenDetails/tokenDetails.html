@@ -63,11 +63,11 @@
           left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
           disabled.bind="!token.amount"
           right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
-          left.bind="token.instantTransferAmount | ethwei & validate"
+          left.bind="token.instantTransferAmount | ethwei:token.decimals & validate"
           view-model.ref="rangeSlider"
-          max-value.bind="token.amount | ethwei"
+          max-value.bind="token.amount | ethwei:token.decimals"
           not-wei
-          right.bind="token.vestedTransferAmount | ethwei & validate"></prange-slider>
+          right.bind="token.vestedTransferAmount | ethwei:token.decimals & validate"></prange-slider>
       </pform-input>
 
       <pform-input label="Vesting Set-up"
@@ -134,7 +134,7 @@
           <p>Total Amount of Tokens to Swap</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
-              value.to-view="token.amount | ethwei"></formatted-number>
+              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -145,7 +145,7 @@
           <p>Instant transfer</p>
           <p>
             <formatted-number if.bind="token.instantTransferAmount" thousands-separated
-              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -156,7 +156,7 @@
           <p>Vested transfer</p>
           <p>
             <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-              value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
