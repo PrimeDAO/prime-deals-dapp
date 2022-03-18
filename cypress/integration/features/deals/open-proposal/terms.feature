@@ -18,6 +18,13 @@ Feature: Terms - Open Proposal
     When I save the changes to the Clause
     Then I should get an error message for the Clause
 
+  @focus
+  Scenario: Update a Clause - No validation
+    Given I have 2 existing Clauses
+    When I add content to the first Clause
+    And I save the changes to the Clause
+    Then I should get an error message for the Clause
+
   Scenario: Delete a Clause
     Given I have 2 existing Clauses
     When I delete the latest Clause

@@ -30,6 +30,10 @@ Given("I add content to a Clause", () => {
   Terms.getClausesTextarea().type(UPDATED);
 });
 
+Given("I add content to the first Clause", () => {
+  Terms.getClausesTextarea().first().type(UPDATED);
+});
+
 Given("I have {int} existing Clause(s)", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", 1);
 
@@ -44,6 +48,12 @@ When("I add a Clause", () => {
 
 When("I save the changes to the Clause", () => {
   EditingCard.click("Save");
+});
+
+When("I save the changes to the first Clause", () => {
+  Terms.getClauses().first().within(() => {
+    EditingCard.click("Save");
+  });
 });
 
 When("I delete the latest Clause", () => {
@@ -80,7 +90,7 @@ Then("I have {int} Clauses", (numOfClauses: number) => {
 });
 
 Then("I should get an error message for the Clause", () => {
-  Terms.getClauseError().should("be.visible");
+  cy.contains("[data-test='errorMessage']", "Please save all your clauses").should("not.be.visible");
 });
 
 Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
