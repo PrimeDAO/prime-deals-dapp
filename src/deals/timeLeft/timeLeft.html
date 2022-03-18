@@ -13,7 +13,9 @@
       largest} left
       </div> -->
       <div class.bind="status">
+        <slot name="before"></slot>
         ${deal.status}
+        <slot></slot>
       </div>
     </div>
   </div>
