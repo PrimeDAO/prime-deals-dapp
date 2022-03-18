@@ -2,7 +2,7 @@
   <button class="${type} ${fullWidth?'full-width':''} ${noAnimation? 'no-animation': ''}" disabled.bind="disabled" role="button">
     <slot></slot>
     <span class="icon ${isLoading? 'is-loading': ''}">
-      <i if.bind="isLoading" class="spinner fas fa-sync-alt"></i>
+      <i data-test="loadingIcon" if.bind="isLoading" class="spinner fas fa-sync-alt"></i>
     </span>
   </button>
 </template>

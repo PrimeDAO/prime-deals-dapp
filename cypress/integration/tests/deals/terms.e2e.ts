@@ -40,6 +40,10 @@ Given("I add content to the first Clause", () => {
   Terms.getClausesTextarea().first().type(UPDATED);
 });
 
+Given("I add content to the last Clause", () => {
+  Terms.getClausesTextarea().last().type(UPDATED);
+});
+
 Given("I have {int} existing Clause(s)", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", 1);
 
@@ -62,7 +66,19 @@ When("I save the changes to the first Clause", () => {
   });
 });
 
-When("I delete the latest Clause", () => {
+When("I save the changes to the last Clause", () => {
+  Terms.getClauses().last().within(() => {
+    EditingCard.click("Save");
+  });
+});
+
+When("I edit the last Clause", () => {
+  Terms.getClauses().last().within(() => {
+    EditingCard.click("Edit");
+  });
+});
+
+When("I delete the last Clause", () => {
   Terms.getClauses().last().within(() => {
     EditingCard.click("Delete");
   });
@@ -118,4 +134,10 @@ Then("the Clause's content should be cleared", () => {
 
 Then("I cannot delete the Clause", () => {
   EditingCard.getButton("Delete").should("not.exist");
+});
+
+Then("the first Clause should be in View mode", () => {
+  Terms.getClauses().first().within(() => {
+    EditingCard.getButton("Edit").should("be.visible");
+  });
 });
