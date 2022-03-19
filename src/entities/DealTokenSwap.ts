@@ -5,7 +5,7 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IDealRegistrationTokenSwap, IRepresentative } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject } from "aurelia-framework";
 
@@ -22,8 +22,127 @@ export class DealTokenSwap implements IDeal {
   public corrupt = false;
 
   public registrationData: IDealRegistrationTokenSwap;
+  /**
+   * the id used by the TokenSwapModule contract to identify this deal.  Is
+   * generated when funding is initiated by the Proposal Lead, and obtained
+   * from the resulting TokenSwapModule.TokenSwapCreated event.
+   */
+  public contractDealId: number;
+  /**
+   * is detected by the presence of an TokenSwapModule.TokenSwapExecuted for this deal
+   */
+  public isExecuted: boolean;
+  /**
+   * computed at hydrate time
+   */
+  public isFailed: boolean;
+  /**
+   * stored in the doc
+   */
+  public isWithdrawn: boolean;
+  /**
+   * stored in the doc.
+   */
+  public isRejected: boolean;
 
-  public status: DealStatus;
+  // public get fundingPeriodDuration(): number {
+  //   return this.registrationData.
+  // }
+
+  //   public get inFundingPeriod(): boolean {
+  //   return this.tokenSwapCreated && ;
+  // }
+
+  /**
+   * Open Proposal, open for offers
+   * @returns
+   */
+  public get isActive(): boolean {
+    return this.isOpenProposal && !this.isWithdrawn;
+  }
+
+  public get isApproved(): boolean {
+    return this.isPartnered && this.majorityHasVoted;
+  }
+
+  public get isVoting(): boolean {
+    return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
+  }
+
+  /**
+   * Same as isVoting
+   * @returns
+   */
+  public get isNegotiating(): boolean {
+    return this.isVoting;
+  }
+
+  public get fundingWasInitiated(): boolean {
+    return !!this.contractDealId;
+  }
+
+  public get isFunding(): boolean {
+    // ????????? is supposed to be a timeout ?????????
+    return this.fundingWasInitiated && !this.isExecuted;
+  }
+
+  /**
+   * poor naming of this status by bizdev because it is being defined to
+   * actually be the funding period when swapping (claiming) isn't actually occurring.
+   */
+  public get isSwapping(): boolean {
+    return this.isFunding;
+  }
+
+  public get isClaiming(): boolean {
+    return this.isExecuted && !this.isFailed;
+  }
+
+  public get isCompleted(): boolean {
+    return this.isClaiming;
+  }
+
+  /**
+   * withdrawn or rejected
+   * @returns
+   */
+  public get isClosed(): boolean {
+    return this.isWithdrawn || this.isRejected;
+  }
+
+  // public get isTargetReached(): boolean {
+  //   return;
+  // }
+
+  public get primaryRepresentatives(): Array<IRepresentative> {
+    return this.registrationData.partnerDAO.representatives;
+  }
+
+  public get partnerRepresentatives(): Array<IRepresentative> {
+    return this.registrationData.partnerDAO.representatives;
+  }
+
+  public get allRepresentatives(): Array<IRepresentative> {
+    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO.representatives);
+  }
+
+  public get majorityHasVoted(): boolean {
+    return;
+    //return this.votes?.length > (this.allRepresentatives.length / 2);
+  }
+
+  public get status(): DealStatus {
+    if (this.isActive) { return DealStatus.active; }
+    else if (this.isCompleted) { return DealStatus.completed; }
+    else if (this.isFailed) { return DealStatus.failed; }
+    else if (this.isClosed) { return DealStatus.closed; }
+    else if (this.isNegotiating) { return DealStatus.negotiating; }
+    else if (this.isFunding) { return DealStatus.funding; }
+    else if (this.isSwapping) { return DealStatus.swapping; }
+    // else if (this.isTargetReached) { return DealStatus.targetReached; }
+    // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
+  }
+
   // public get votes(): Array<IVoteInfo> {
   //   return this.rootData.votes;
   // }
@@ -33,7 +152,7 @@ export class DealTokenSwap implements IDeal {
    */
   public clauseDiscussions: Map<string, string>;
 
-  public get isOpen(): boolean {
+  public get isOpenProposal(): boolean {
     return !this.registrationData.partnerDAO;
   }
 
@@ -120,8 +239,8 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
       /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
-      if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses);}
-      this.status = this.statuses.shift();
+      // if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses);}
+      // this.status = this.statuses.shift();
       /* ++++ ------------------------------------------ ++++ */
     }
     catch (error) {
