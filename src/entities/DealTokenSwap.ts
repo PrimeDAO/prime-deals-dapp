@@ -8,6 +8,8 @@ import { EthereumService } from "services/EthereumService";
 import { IDealRegistrationTokenSwap, IRepresentative } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject } from "aurelia-framework";
+import { ContractNames, ContractsService } from "services/ContractsService";
+import { EventAggregator } from "aurelia-event-aggregator";
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -28,6 +30,11 @@ export class DealTokenSwap implements IDeal {
    * from the resulting TokenSwapModule.TokenSwapCreated event.
    */
   public contractDealId: number;
+  public moduleContract: any;
+  public depositContractPrimary: any;
+  public depositContractPartner: any;
+  public baseContract: any;
+
   /**
    * is detected by the presence of an TokenSwapModule.TokenSwapExecuted event for this deal
    */
@@ -54,7 +61,7 @@ export class DealTokenSwap implements IDeal {
   // }
 
   /**
-   * Open Proposal, open for offers
+   * Open Proposal that is open for offers, by bizdev definition
    * @returns
    */
   public get isActive(): boolean {
@@ -70,7 +77,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * Same as isVoting
+   * Same as isVoting, by bizdev definition
    * @returns
    */
   public get isNegotiating(): boolean {
@@ -101,6 +108,9 @@ export class DealTokenSwap implements IDeal {
     return this.isExecuted;
   }
 
+  /**
+   * same as isClaiming, by bizdev definition
+   */
   public get isCompleted(): boolean {
     return this.isClaiming;
   }
@@ -168,7 +178,12 @@ export class DealTokenSwap implements IDeal {
     private ethereumService: EthereumService,
     private dataSourceDeals: IDataSourceDeals,
     private tokenService: TokenService,
+    private contractsService: ContractsService,
+    eventAggregator: EventAggregator,
   ) {
+    this.subscriptions.push(eventAggregator.subscribe("Contracts.Changed", async () => {
+      await this.loadContracts();
+    }));
   }
 
   public create(id: IKey): DealTokenSwap {
@@ -190,31 +205,12 @@ export class DealTokenSwap implements IDeal {
        */
     this.hydrate();
   }
-  async loadDealSize() {
-    // if the total price is already figured out we don't need to try again
-    if (this.totalPrice !== undefined) return;
-    try {
-      let total = 0;
-      const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
-      const tokens: Array<ITokenInfo> = allTokens.map(x => ({
-        address: x.address,
-        decimals: x.decimals,
-        logoURI: x.logoURI,
-        id: "",
-        name: x.name,
-        symbol: x.symbol,
-      }));
-      await this.tokenService.getTokenPrices(tokens);
-      allTokens.forEach(x => {
-        const currentToken = tokens.find(y => y.symbol === x.symbol);
-        total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
-      });
-      this.totalPrice = total;
-    } catch { this.totalPrice = 0; }
-  }
+
   private async loadContracts(): Promise<void> {
     try {
-      // this.contract = await this.contractsService.getContractAtAddress(ContractNames.DEAL, this.address);
+      this.moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+      this.baseContract = await this.contractsService.getContractFor(ContractNames.BASECONTRACT);
+      return this.loadDepositContracts();
     }
     catch (error) {
       this.corrupt = true;
@@ -223,28 +219,23 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
-  // private statuses = Object.values(DealStatus);
-  // private shuffleArray(array): void {
-  //   for (let i = array.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [array[i], array[j]] = [array[j], array[i]];
-  //   }
-  // }
-  /* ++++ ------------------------------------------ ++++ */
+  private async loadDepositContracts(): Promise<void> {
+    if (this.registrationData) {
+      this.depositContractPrimary = await this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.registrationData.primaryDAO.treasury_address);
+      if (this.registrationData.partnerDAO) {
+        this.depositContractPartner = await this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.registrationData.partnerDAO.treasury_address);
+      }
+    }
+  }
 
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
+      await this.loadDepositContracts(); // now that we have registrationData
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
-
-      /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
-      // if (this.statuses.length === Object.keys(DealStatus).length) { this.shuffleArray(this.statuses);}
-      // this.status = this.statuses.shift();
-      /* ++++ ------------------------------------------ ++++ */
     }
     catch (error) {
       this.corrupt = true;
@@ -274,5 +265,29 @@ export class DealTokenSwap implements IDeal {
     this.clauseDiscussions.set(clauseId, discussionKey);
     const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
     return this.dataSourceDeals.update(discussionKey, JSON.stringify(clauseDiscussionsObject)); // TODO check if this line works correctly
+  }
+
+  public async loadDealSize(): Promise<void> {
+    // if the total price is already figured out we don't need to try again
+    if (this.totalPrice === undefined) {
+      try {
+        let total = 0;
+        const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
+        const tokens: Array<ITokenInfo> = allTokens.map(x => ({
+          address: x.address,
+          decimals: x.decimals,
+          logoURI: x.logoURI,
+          id: "",
+          name: x.name,
+          symbol: x.symbol,
+        }));
+        await this.tokenService.getTokenPrices(tokens);
+        allTokens.forEach(x => {
+          const currentToken = tokens.find(y => y.symbol === x.symbol);
+          total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
+        });
+        this.totalPrice = total;
+      } catch { this.totalPrice = 0; }
+    }
   }
 }
