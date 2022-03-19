@@ -35,7 +35,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * computed at hydrate time
    */
-  public isFailed: boolean;
+  public fundingPeriodHasExpired: boolean;
   /**
    * stored in the doc
    */
@@ -81,9 +81,12 @@ export class DealTokenSwap implements IDeal {
     return !!this.contractDealId;
   }
 
+  public get isFailed() {
+    return this.fundingPeriodHasExpired;
+  }
+
   public get isFunding(): boolean {
-    // ????????? is supposed to be a timeout ?????????
-    return this.fundingWasInitiated && !this.isExecuted;
+    return this.fundingWasInitiated && !this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
   /**
@@ -95,7 +98,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   public get isClaiming(): boolean {
-    return this.isExecuted && !this.isFailed;
+    return this.isExecuted;
   }
 
   public get isCompleted(): boolean {
@@ -134,7 +137,7 @@ export class DealTokenSwap implements IDeal {
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
     else if (this.isCompleted) { return DealStatus.completed; }
-    else if (this.isFailed) { return DealStatus.failed; }
+    else if (this.fundingPeriodHasExpired) { return DealStatus.failed; }
     else if (this.isClosed) { return DealStatus.closed; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
@@ -221,13 +224,13 @@ export class DealTokenSwap implements IDeal {
   }
 
   /* ++++ TEMPORARY UNTIL STATUS LOGIC IS SORTED OUT ++++ */
-  private statuses = Object.values(DealStatus);
-  private shuffleArray(array): void {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
+  // private statuses = Object.values(DealStatus);
+  // private shuffleArray(array): void {
+  //   for (let i = array.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1));
+  //     [array[i], array[j]] = [array[j], array[i]];
+  //   }
+  // }
   /* ++++ ------------------------------------------ ++++ */
 
   private async hydrate(): Promise<void> {
