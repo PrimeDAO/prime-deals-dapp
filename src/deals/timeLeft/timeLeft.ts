@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
-import { DealStatus, IDeal } from "entities/IDealTypes";
+import { IDeal } from "entities/IDealTypes";
 import "./timeLeft.scss";
 
 @autoinject
@@ -16,11 +16,7 @@ export class TimeLeft {
   status: string;
 
   attached(): void {
-    const reversedEnum = {};
-    Object.keys(DealStatus).forEach(key => {
-      reversedEnum[DealStatus[key]] = key;
-    });
-    this.status = reversedEnum[this.deal.status];
+    this.status = this.deal.status;
   }
 
   // constructor(
