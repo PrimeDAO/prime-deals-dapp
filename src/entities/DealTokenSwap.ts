@@ -29,7 +29,7 @@ export class DealTokenSwap implements IDeal {
    */
   public contractDealId: number;
   /**
-   * is detected by the presence of an TokenSwapModule.TokenSwapExecuted for this deal
+   * is detected by the presence of an TokenSwapModule.TokenSwapExecuted event for this deal
    */
   public isExecuted: boolean;
   /**
