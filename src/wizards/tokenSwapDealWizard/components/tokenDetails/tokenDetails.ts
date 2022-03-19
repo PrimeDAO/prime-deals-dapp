@@ -57,11 +57,7 @@ export class TokenDetails {
   }
 
   async attached() {
-    // Add the validation rules only for deals that are not Open Proposals
-    if (![WizardType.editOpenProposal, WizardType.createOpenProposal].includes(this.wizardType)) {
-      this.addValidation();
-    }
-
+    this.addValidation();
     this.watchTokenProperties();
 
     this.viewMode = this.viewMode ?? "edit";
@@ -72,8 +68,8 @@ export class TokenDetails {
       }
     });
 
-    if (this.token.address) {
-      await this.getTokenInfo(this.token.address);
+    if (this.token.address && (this.token.logoURI || this.token.name || this.token.decimals || this.token.symbol)) {
+      this.showTokenDetails = true;
     }
   }
 
@@ -157,8 +153,12 @@ export class TokenDetails {
         this.token.cliffOf = undefined;
       }
     });
-    this.aureliaHelperService.createPropertyWatch(this.token, "address", () => {
+    this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
       this.token.amount = undefined;
+      this.getTokenInfo(address);
+    });
+    this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
+      this.checkURL();
     });
   }
 
