@@ -34,7 +34,7 @@ export class FirebasePlayground {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  vote(dealId: string, address: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", value: any) {
+  vote(dealId: string, address: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", value: boolean) {
     this.firestoreService.updateRepresentativeVote(dealId, address, dao, value);
   }
 
@@ -50,8 +50,8 @@ export class FirebasePlayground {
     this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 
-  addDiscussionClause(dealId: string, clauseId: string, discussionHash: string) {
-    this.firestoreService.addDiscussionClause(dealId, clauseId, discussionHash);
+  addClauseDiscussion(dealId: string, clauseId: string, discussionHash: string) {
+    this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionHash);
   }
 
   async getDealById(dealId: string) {
