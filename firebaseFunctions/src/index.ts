@@ -3,7 +3,7 @@ import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
 import { ITokenSwapDeal } from "./types";
-import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, updateRepresentativesAndVotes } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
@@ -64,10 +64,12 @@ export const buildDealStructure = functions.firestore
 
     const dealId: string = context.params.dealId;
 
+    // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
     const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
 
+    // adds meta object to the deal document
     batch.set(
       dealRef,
       {
@@ -77,11 +79,13 @@ export const buildDealStructure = functions.firestore
           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
         },
       },
-      { merge: true },
+      { merge: true }, // merges provided object with the existing data
     );
 
+    // updates batch with writes for creating vote object for each representative
     initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
+    // commits all writes added to the batch
     await batch.commit();
   });
 
@@ -104,16 +108,17 @@ export const updateDealStructure = functions.firestore
       return;
     }
 
+    // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
     // get updated representatives address for both DAOs
     const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
     const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-    await updateRepresentativesAndVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+    await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
     batch.set(
-      change.after.ref,
+      change.after.ref, // reference to the updated Deal document
       {
         registrationData: {
           modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
@@ -123,27 +128,33 @@ export const updateDealStructure = functions.firestore
           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
         },
       },
-      {merge: true},
+      {merge: true}, // merges provided object with the existing data
     );
 
     return batch.commit();
   });
 
+/**
+ * Run every time a document in a deal subcollection is updated
+ */
 export const onVoteUpdate = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
   .onUpdate(async (change, context) => {
     const dealSubcollection = context.params.collection;
 
+    // make sure that updated document is a subcollection of votes and not some other subcollection
     if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
       return;
     }
 
     const dealId = context.params.dealId;
 
+    // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
     const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
 
+    // generate updated voting summary after a vote was updated
     const votingSummary = await generateVotingSummary(dealId);
 
     batch.set(
@@ -153,7 +164,7 @@ export const onVoteUpdate = functions.firestore
           votingSummary,
         },
       },
-      {merge: true},
+      {merge: true}, // merges provided object with the existing data
     );
 
     return batch.commit();

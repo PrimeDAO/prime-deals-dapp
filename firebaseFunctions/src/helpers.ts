@@ -4,6 +4,8 @@ import { IDAOVotingSummary, IFirebaseDocument, ITokenSwapDeal, IVotingSummary } 
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
+ *
+ * Intended to be used inside a callback function triggered on deal document update
  */
 export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
   oldDeal = JSON.parse(JSON.stringify(oldDeal));
@@ -18,6 +20,8 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, upd
 
 /**
  * Checks if registration data was updated (any part of it apart from modifiedAt field)
+ *
+ * Intended to be used inside a callback function triggered on deal document update
  */
 export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
@@ -29,9 +33,13 @@ export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: 
 };
 
 /**
+ * Adds delete operations for existing votes to the given batch
+ *
+ * Adds set operations to initialize new votes to the given batch
+ *
  * Deletes existing votes and initializes empty votes for all representatives
  */
-export const updateRepresentativesAndVotes = async (
+export const resetVotes = async (
   batch: FirebaseFirestore.WriteBatch,
   dealId: string,
   primaryDaoRepresentativesAddresses: string[],
@@ -54,7 +62,10 @@ export const updateRepresentativesAndVotes = async (
 };
 
 /**
+ * Adds set operations to the given batch
+ *
  * Creates vote documents for each representative and set them to null (not voted)
+ *
  * There are two collections of votes, one for each DAO
  * Having two separate collections gives us more flexibility and we don't need to store additional info about the DAO
  */
@@ -77,6 +88,7 @@ export const initializeVotes = (
 
 /**
  * Initializes the voting summary object with default values
+ *
  * Used to create an initial voting summary as well as to reset the existing one
  */
 export const initializeVotingSummary = (
@@ -102,7 +114,8 @@ export const initializeVotingSummary = (
 };
 
 /**
- * Generates voting summary based on current votes
+ * Generates voting summary based on current votes. Reads current votes.
+ *
  * Used to recalculate voting summary after a vote is updated
  */
 export const generateVotingSummary = async (dealId: string): Promise<IVotingSummary> => {
