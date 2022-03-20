@@ -13,6 +13,7 @@ import { autoinject } from "aurelia-framework";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
+import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 
 interface ITokenSwapInfo {
   // the participating DAOs
@@ -35,6 +36,21 @@ interface ITokenSwapInfo {
 
 @autoinject
 export class DealTokenSwap implements IDeal {
+
+  constructor(
+    private consoleLogService: ConsoleLogService,
+    private ethereumService: EthereumService,
+    private dataSourceDeals: IDataSourceDeals,
+    private tokenService: TokenService,
+    private contractsService: ContractsService,
+    private transactionsService: TransactionsService,
+    eventAggregator: EventAggregator,
+  ) {
+    this.subscriptions.push(eventAggregator.subscribe("Contracts.Changed", async () => {
+      await this.loadContracts();
+    }));
+  }
+
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
   private rootData: IDealsData;
@@ -201,19 +217,6 @@ export class DealTokenSwap implements IDeal {
     return !!this.registrationData.partnerDAO;
   }
 
-  constructor(
-    private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
-    private dataSourceDeals: IDataSourceDeals,
-    private tokenService: TokenService,
-    private contractsService: ContractsService,
-    eventAggregator: EventAggregator,
-  ) {
-    this.subscriptions.push(eventAggregator.subscribe("Contracts.Changed", async () => {
-      await this.loadContracts();
-    }));
-  }
-
   public create(id: IKey): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.id = id;
@@ -335,7 +338,7 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public createSwap(): Promise<void> {
+  public createSwap(): Promise<TransactionReceipt> {
     const daoAddresses = [
       this.primaryDao.treasury_address,
       this.partnerDao.treasury_address,
@@ -352,7 +355,15 @@ export class DealTokenSwap implements IDeal {
       metadata,
       deadline,
     ];
-    return this.moduleContract.createSwap(...dealParameters);
+
+    return this.transactionsService.send(
+      () => this.moduleContract.createSwap(...dealParameters))
+      .then(async receipt => {
+        if (receipt) {
+          this.hydrate();
+          return receipt;
+        }
+      });
   }
 
   /**
