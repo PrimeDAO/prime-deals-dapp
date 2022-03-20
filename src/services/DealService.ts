@@ -5,6 +5,29 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
+import { BigNumber } from "ethers";
+import { Utils } from "services/utils";
+
+interface ITokenSwapCreatedArgs {
+  id: BigNumber; // trying to get them to switch to uint type
+  // the participating DAOs
+  daos: Array<Address>;
+  // the tokens involved in the swap
+  tokens: Array<Address>;
+  // the token flow from the DAOs to the module
+  pathFrom: Array<Array<BigNumber>>;
+  // the token flow from the module to the DAO
+  pathTo: Array<Array<BigNumber>>;
+  // unix timestamp of the deadline
+  deadline: BigNumber; // trying to get them to switch to uint type
+  // unix timestamp of the execution
+  // executionDate: BigNumber; // trying to get them to switch to uint type
+  // hash of the deal information.
+  metadata: { hash: string };
+  // status of the deal
+  status: number; // 3 ("DONE") means the deal has been executed
+}
 
 export interface IDaoPartner {
   daoId: string,
@@ -72,6 +95,7 @@ export class DealService {
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,
+    private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
   ) {
   }
@@ -111,6 +135,7 @@ export class DealService {
               this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
               deal.initialize(); // set this off asyncronously.
             }
+            this.hydrateDealsExecuted(dealsMap);
             this.deals = dealsMap;
             this.initializing = false;
             resolve();
@@ -125,6 +150,25 @@ export class DealService {
         }
       },
     );
+  }
+
+  private async hydrateDealsExecuted(_dealsMap: Map<Address, DealTokenSwap>): Promise<void> {
+    // commented-out until we have working contract code for retrieving the metadata
+    // const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    // const filter = moduleContract.filters.TokenSwapCreated();
+
+    // await moduleContract.queryFilter(filter)
+    //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+    //     for (const event of events) {
+    //     const params = event.args;
+    //     const dealId = Utils.toAscii(params.metadata.hash.slice(2));
+    //     const deal = dealsMap.get(dealId);
+    //     if (deal) { // should only happen for test data
+    //       deal.isExecuted = true;
+    //       deal.executedAt = new Date((await event.getBlock()).timestamp * 1000);
+    //     }
+    //     }
+    //   });
   }
 
   private createSeedFromConfig(dealId: Hash): DealTokenSwap {

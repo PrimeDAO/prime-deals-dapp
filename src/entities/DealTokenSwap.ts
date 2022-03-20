@@ -1,3 +1,5 @@
+import { formatBytes32String } from "ethers/lib/utils";
+import { Address } from "./../services/EthereumService";
 import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
@@ -5,11 +7,31 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDealRegistrationTokenSwap, IRepresentative } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IRepresentative } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject } from "aurelia-framework";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
+import { BigNumber } from "ethers";
+
+interface ITokenSwapInfo {
+  // the participating DAOs
+  daos: Array<Address>;
+  // the tokens involved in the swap
+  tokens: Array<Address>;
+  // the token flow from the DAOs to the module
+  pathFrom: Array<Array<BigNumber>>;
+  // the token flow from the module to the DAO
+  pathTo: Array<Array<BigNumber>>;
+  // unix timestamp of the deadline
+  deadline: BigNumber; // trying to get them to switch to uint type
+  // unix timestamp of the execution
+  executionDate: BigNumber; // trying to get them to switch to uint type
+  // hash of the deal information.
+  metadata: string;
+  // status of the deal
+  status: number; // 3 ("DONE") means the deal has been executed
+}
 
 @autoinject
 export class DealTokenSwap implements IDeal {
@@ -25,24 +47,30 @@ export class DealTokenSwap implements IDeal {
 
   public registrationData: IDealRegistrationTokenSwap;
   /**
-   * the id used by the TokenSwapModule contract to identify this deal.  Is
+   * the id used by the TokenSwapModule contract to identify this this.  Is
    * generated when funding is initiated by the Proposal Lead, and obtained
    * from the resulting TokenSwapModule.TokenSwapCreated event.
    */
   public contractDealId: number;
+
   public moduleContract: any;
   public depositContractPrimary: any;
   public depositContractPartner: any;
   public baseContract: any;
 
+  public primaryDao: IDAO;
+  public partnerDao: IDAO;
+
   /**
    * is detected by the presence of an TokenSwapModule.TokenSwapExecuted event for this deal
    */
-  public isExecuted: boolean;
+  public isExecuted = false;
   /**
-   * computed at hydrate time
+   * in seconds, duration from execution to expired
    */
+  public executionPeriod: number;
   public fundingPeriodHasExpired: boolean;
+  public executedAt: Date;
   /**
    * stored in the doc
    */
@@ -233,9 +261,25 @@ export class DealTokenSwap implements IDeal {
     try {
       this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
       this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
+
+      this.primaryDao = this.registrationData.primaryDAO;
+      this.partnerDao = this.registrationData.partnerDAO;
+      this.executionPeriod = this.registrationData.executionPeriodInDays * 86400;
+
       await this.loadDepositContracts(); // now that we have registrationData
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
+
+      // TODO:
+      // const metadata = Utils.asciiToHex(this.id); // should be same as tokenSwapInfo.metadata
+      // this.contractDealId = await this.moduleContract.metadataToId(metadata);
+      // const tokenSwapInfo: TokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
+      // this.isExecuted = tokenSwapInfo.status === 3;
+      this.isExecuted = this.isWithdrawn = this.isRejected = false;
+
+      // const now = Date.now();
+      // this.fundingPeriodHasExpired = this.isExecuted ?
+      //   ((this.executionPeriod * 1000) - now) : false;
     }
     catch (error) {
       this.corrupt = true;
@@ -245,16 +289,16 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public ensureInitialized(): Promise<void> {
-    return this.initializedPromise;
-  }
-
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
     if (account) {
       // TODO- Is it necessary?
     }
+  }
+
+  public ensureInitialized(): Promise<void> {
+    return this.initializedPromise;
   }
 
   public updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
@@ -289,5 +333,66 @@ export class DealTokenSwap implements IDeal {
         this.totalPrice = total;
       } catch { this.totalPrice = 0; }
     }
+  }
+
+  public createSwap(): Promise<void> {
+    const daoAddresses = [
+      this.primaryDao.treasury_address,
+      this.partnerDao.treasury_address,
+    ];
+    const { tokens, pathTo, pathFrom } = this.constructDealCreateParameters();
+    const metadata = formatBytes32String(this.id);
+    const deadline = this.executionPeriod;
+
+    const dealParameters = [
+      daoAddresses,
+      tokens,
+      pathFrom,
+      pathTo,
+      metadata,
+      deadline,
+    ];
+    return this.moduleContract.createSwap(...dealParameters);
+  }
+
+  /**
+   * pulled from deal-contracts
+   * @returns
+   */
+  private constructDealCreateParameters(): { tokens: Array<unknown>, pathTo: Array<unknown>, pathFrom: Array<unknown> } {
+    const tokens = new Array<unknown>();
+    const pathTo = new Array<unknown>();
+    const pathFrom = new Array<unknown>();
+    const zero = 0;
+    const fourZeros = [0, 0, 0, 0];
+
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < this.primaryDao.tokens.length; i++) {
+      if (!tokens.includes(this.primaryDao.tokens[i].address)) {
+        tokens.push(this.primaryDao.tokens[i].address);
+        pathFrom.push([this.primaryDao.tokens[i].amount, zero]);
+        pathTo.push([
+          ...fourZeros,
+          this.primaryDao.tokens[i].instantTransferAmount,
+          this.primaryDao.tokens[i].vestedTransferAmount,
+          this.primaryDao.tokens[i].cliffOf,
+          this.primaryDao.tokens[i].vestedFor,
+        ]);
+      }
+    }
+    for (let i = 0; i < this.partnerDao.tokens.length; i++) {
+      if (!tokens.includes(this.partnerDao.tokens[i].address)) {
+        tokens.push(this.partnerDao.tokens[i].address);
+        pathFrom.push([zero, this.partnerDao.tokens[i].amount]);
+        pathTo.push([
+          this.primaryDao.tokens[i].instantTransferAmount,
+          this.primaryDao.tokens[i].vestedTransferAmount,
+          this.primaryDao.tokens[i].cliffOf,
+          this.primaryDao.tokens[i].vestedFor,
+          ...fourZeros,
+        ]);
+      }
+    }
+    return { tokens, pathTo, pathFrom };
   }
 }
