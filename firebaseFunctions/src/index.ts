@@ -51,6 +51,9 @@ export const createCustomToken = functions.https.onRequest(
     }),
 );
 
+/**
+ * Run every time a new document (a deal) in deals collection is created
+ */
 export const buildDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onCreate(async (snapshot, context) => {
@@ -82,6 +85,9 @@ export const buildDealStructure = functions.firestore
     await batch.commit();
   });
 
+/**
+ * Run every time a document (a deal) in deals collection is updated
+ */
 export const updateDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onUpdate(async (change, context) => {
@@ -89,6 +95,7 @@ export const updateDealStructure = functions.firestore
     const oldDeal = change.before.data() as ITokenSwapDeal;
     const updatedDeal = change.after.data() as ITokenSwapDeal;
 
+    // Proceed only if registration data was updated and the update was done to field/fields other than the privacy flag
     if (
       !updatedDeal ||
       !isRegistrationDataUpdated(oldDeal, updatedDeal) ||
@@ -99,6 +106,7 @@ export const updateDealStructure = functions.firestore
 
     const batch = firestore.batch();
 
+    // get updated representatives address for both DAOs
     const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
     const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 

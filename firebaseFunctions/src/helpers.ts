@@ -2,17 +2,23 @@ import { isEqual } from "lodash";
 import { DEALS_COLLECTION, firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDAOVotingSummary, IFirebaseDocument, ITokenSwapDeal, IVotingSummary } from "./types";
 
+/**
+ * Checks if the only change to the deal is isPrivacy flag change
+ */
 export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
-  const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
-  const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
-  delete oldDealRegistrationData.isPrivate;
-  delete updatedDealRegistrationData.isPrivate;
-  delete oldDealRegistrationData.modifiedAt;
-  delete updatedDealRegistrationData.modifiedAt;
+  oldDeal = JSON.parse(JSON.stringify(oldDeal));
+  updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
+  delete oldDeal.registrationData.isPrivate;
+  delete updatedDeal.registrationData.isPrivate;
+  delete oldDeal.registrationData.modifiedAt;
+  delete updatedDeal.registrationData.modifiedAt;
 
-  return isEqual(oldDealRegistrationData, updatedDealRegistrationData);
+  return isEqual(oldDeal, updatedDeal);
 };
 
+/**
+ * Checks if registration data was updated (any part of it apart from modifiedAt field)
+ */
 export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
@@ -22,6 +28,9 @@ export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: 
   return !isEqual(oldDealRegistrationData, updatedDealRegistrationData);
 };
 
+/**
+ * Deletes existing votes and initializes empty votes for all representatives
+ */
 export const updateRepresentativesAndVotes = async (
   batch: FirebaseFirestore.WriteBatch,
   dealId: string,
@@ -40,9 +49,15 @@ export const updateRepresentativesAndVotes = async (
     });
   });
 
+  // initialize new votes
   initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 };
 
+/**
+ * Creates vote documents for each representative and set them to null (not voted)
+ * There are two collections of votes, one for each DAO
+ * Having two separate collections gives us more flexibility and we don't need to store additional info about the DAO
+ */
 export const initializeVotes = (
   batch: FirebaseFirestore.WriteBatch,
   dealId: string,
@@ -60,9 +75,10 @@ export const initializeVotes = (
   });
 };
 
-// update voting summary object
-
-// run on deal create/update
+/**
+ * Initializes the voting summary object with default values
+ * Used to create an initial voting summary as well as to reset the existing one
+ */
 export const initializeVotingSummary = (
   primaryDaoRepresentativesAddresses: string[],
   partnerDaoRepresentativesAddresses: string[],
@@ -85,7 +101,10 @@ export const initializeVotingSummary = (
   };
 };
 
-// run on vote update
+/**
+ * Generates voting summary based on current votes
+ * Used to recalculate voting summary after a vote is updated
+ */
 export const generateVotingSummary = async (dealId: string): Promise<IVotingSummary> => {
   const votes = await Promise.all([
     firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).get(),
@@ -105,7 +124,10 @@ export const generateVotingSummary = async (dealId: string): Promise<IVotingSumm
   };
 };
 
-export const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDAOVotingSummary => {
+/**
+ * Builds an object with a voting summary for a DAO
+ */
+const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDAOVotingSummary => {
   return {
     total: daoVotes.length,
     accepted: daoVotes.filter(vote => vote.data.vote).length,
@@ -114,7 +136,10 @@ export const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boo
   };
 };
 
-export const getDocumentsFromQuerySnapshot = (querySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>): Array<IFirebaseDocument> => {
+/**
+ * Turns querySnapshot into a collection of objects with id and data fields
+ */
+const getDocumentsFromQuerySnapshot = (querySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>): Array<IFirebaseDocument> => {
   return querySnapshot.docs.filter(doc => doc.exists).map(doc => ({
     id: doc.id,
     data: doc.data(),
