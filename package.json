@@ -58,7 +58,6 @@
     "firebase": "^9.6.8",
     "json-to-graphql-query": "^2.0.0",
     "litepicker": "^2.0.11",
-    "lodash": "^4.17.21",
     "marked": "^2.0.7",
     "moment-timezone": "^0.5.31",
     "numeral": "^2.0.6",

@@ -1,9 +1,9 @@
+import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
-import uniqBy from "lodash/uniqBy";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
 import { map, mergeAll } from "rxjs/operators";
 
@@ -120,7 +120,7 @@ export class FirestoreService {
   public async getAllDealsForTheUser(address: Address): Promise<Array<IFirebaseDocument>> {
     try {
       const deals = await Promise.all([this.getAllPublicDeals(), this.getRepresentativeDeals(address), this.getProposalLeadDeals(address)]);
-      return uniqBy(deals.flat(), "id");
+      return Utils.uniqById<IFirebaseDocument>(deals.flat());
     } catch {
       throw new Error("Error while getting deals");
     }
@@ -143,7 +143,7 @@ export class FirestoreService {
             representativeDeals,
             proposalLeadDeals,
           ]).pipe(
-            map(data => uniqBy(data.flat(), "id")),
+            map(data => Utils.uniqById<IFirebaseDocument>(data.flat())),
           ));
         }
       },
