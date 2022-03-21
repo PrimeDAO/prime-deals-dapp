@@ -161,6 +161,12 @@ export class TokenDetails {
         this.token.decimals = undefined;
       }
     });
+    this.aureliaHelperService.createPropertyWatch(this.token, "decimals", decimals => {
+      if (!decimals) {
+        /** Reset Amount, if no decimals, due to `ethwei` needing a decimals parameter */
+        this.token.amount = undefined;
+      }
+    });
     this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
       this.checkURL();
     });
