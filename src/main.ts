@@ -18,6 +18,7 @@ import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
+import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -35,6 +36,7 @@ export function configure(aurelia: Aurelia): void {
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
+  const isCypress = (window as any).Cypress;
 
   if (inDev) {
     aurelia.use.developmentLogging(); // everything
@@ -52,10 +54,18 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.registerTransient(DealTokenSwap);
 
+      if (isCypress) {
+        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+      }
+
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
 
-      ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
+      const targetNetwork = isCypress ? EthereumServiceTesting.targetedNetwork : EthereumService.targetedNetwork;
+      // const targetNetwork = isCypress ? EthereumService.targetedNetwork : EthereumService.targetedNetwork;
+
+      ContractsDeploymentProvider.initialize(targetNetwork);
+      // ContractsDeploymentProvider.initialize(EthereumServiceTesting.targetedNetwork);
 
       aurelia.container.get(ContractsService);
 

@@ -251,6 +251,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async loadDepositContracts(): Promise<void> {
+    return;
     if (this.registrationData) {
       this.depositContractPrimary = await this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.registrationData.primaryDAO.treasury_address);
       if (this.registrationData.partnerDAO) {

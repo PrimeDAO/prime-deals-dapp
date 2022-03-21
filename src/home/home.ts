@@ -22,6 +22,9 @@ export class Home {
   }
 
   attached(): void {
+    // console.clear();
+    /* prettier-ignore */ console.log("TCL ~ file: home.ts ~ line 25 ~ Home ~ attached ~ attached");
+    // debugger;
     this.dealService.ensureAllDealsInitialized();
     this.allDeals.open = this.dealService.openProposals;
     this.allDeals.partnered = this.dealService.partneredDeals;
