@@ -7,7 +7,7 @@
         helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
         input-reference.bind="addressInput"
         label="Token Address"
-        label-info="Make sure to use the native contract address of the token.">
+        label-info="Make sure to use the native contract address of the token">
         <pinput-text
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
