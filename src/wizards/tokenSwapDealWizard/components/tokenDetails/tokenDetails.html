@@ -26,7 +26,7 @@
           <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
           <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
         </div>
-        <div class="detailsCell">
+        <div data-test="proposal-decimals-field" class="detailsCell">
           <p>Decimals</p>
           <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
           <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>

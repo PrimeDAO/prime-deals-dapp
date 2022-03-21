@@ -58,6 +58,14 @@ Then("the {string} field should be disabled", (field: string) => {
   });
 });
 
+Then("the {string} field should be cleared", (field: string) => {
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input").invoke("val").should("equal", "");
+    });
+  });
+});
+
 Then("the {string} field should not be disabled", (field: string) => {
   withinWizardSection().within(() => {
     cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
