@@ -13,7 +13,7 @@
   "engines": {
     "node": "14"
   },
-  "main": "lib/index.js",
+  "main": "lib/firebaseFunctions/src/index.js",
   "dependencies": {
     "ethers": "^5.5.4",
     "firebase-admin": "^9.8.0",
