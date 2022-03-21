@@ -1,5 +1,6 @@
 @import "src/styles/styles.scss";
-@import "../../../../resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
 
 .single.comment {
   display: grid;
@@ -125,6 +126,7 @@
   .commentBody {
     grid-area: comment;
     padding-left: $spacing-normal + 30px;
+    @include pre;
     .replyContainer {
       display: flex;
       align-items: center;
@@ -162,7 +164,7 @@
             }
           }
         }
-        &>p {
+        &>pre {
           color: $Neutral02;
           font-size: 14px;
           font-weight: 400;

@@ -7,7 +7,7 @@
       class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}"
       repeat.for="clause of clauses">
       <span class="marker">${$index + 1}</span>
-      <span class="body">${clause.text}</span>
+      <pre class="body">${clause.text}</pre>
       <span
         class="button"
         click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)"

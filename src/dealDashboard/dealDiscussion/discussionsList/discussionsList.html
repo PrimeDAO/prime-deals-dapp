@@ -38,9 +38,7 @@
           repeat.for="discussion of discussionsArray">
           <div class="td">${discussion.clauseIndex + 1 || "-" }</div>
           <div class="td">
-            <p>
-              ${discussion.topic}
-            </p>
+            <pre>${discussion.topic}</pre>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdByName">

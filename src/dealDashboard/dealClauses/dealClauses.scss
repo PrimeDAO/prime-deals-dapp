@@ -29,8 +29,10 @@ deal-clauses {
       transition: background-color $hover-transition-speed-fast ease-in-out;
       transition-delay: $hover-transition-speed-fast / 2;
 
+      @include pre;
       .body {
         width: calc(100% - 165px);
+        word-wrap: anywhere;
 
         small {
           font-size: 12px;
