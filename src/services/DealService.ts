@@ -1,4 +1,4 @@
-import { Address, Hash } from "./EthereumService";
+import { Address, EthereumService, Hash, Networks } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -63,6 +63,8 @@ export interface IDaoPartner {
 //   platform: number,
 // }
 
+export let StartingBlockNumber: number;
+
 @autoinject
 export class DealService {
 
@@ -98,6 +100,18 @@ export class DealService {
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
   ) {
+    switch (EthereumService.targetedNetwork) {
+      case Networks.Mainnet:
+        StartingBlockNumber = 0;
+        break;
+      case Networks.Rinkeby:
+        StartingBlockNumber = 10367781;
+        break;
+      default:
+        StartingBlockNumber = 0;
+        break;
+    }
+
   }
 
   public async initialize(): Promise<void> {
@@ -157,7 +171,7 @@ export class DealService {
     // const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     // const filter = moduleContract.filters.TokenSwapCreated();
 
-    // await moduleContract.queryFilter(filter)
+    // await moduleContract.queryFilter(filter, StartingBlockNumber)
     //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
     //     for (const event of events) {
     //       const params = event.args;
@@ -186,39 +200,4 @@ export class DealService {
       await deal.ensureInitialized();
     }
   }
-
-  public createRegistration(_registration: any): Promise<IKey> {
-    /**
-     * this should create the root CID for a Deal, populated with empty votes and discussions,
-     * and populate the registration with what is given.  Should return the root CID for the
-     * Deal.
-     */
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * TODO: move this to a `DaosService`
-   */
-  // public async getDAOsInformation(): Promise<void> {
-  //   // TODO
-  //   const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
-
-  //   this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
-  //     organizationId: dao.organizationId,
-  //     daoId: dao.daoId,
-  //     name: dao.daoName,
-  //     logo: (dao.logo)
-  //       ? (dao.logo.toLocaleLowerCase().startsWith("http"))
-  //         ? dao.logo
-  //         : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
-  //       : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
-  //   }));
-  // }
-
-  // public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
-  //   if (!this.DAOs) await this.getDAOsInformation;
-
-  //   const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
-  //   return dao;
-  // }
 }
