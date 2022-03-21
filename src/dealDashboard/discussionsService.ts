@@ -178,6 +178,8 @@ export class DiscussionsService {
       };
 
       const dealData = await this.dealService.deals.get(dealId);
+      /* prettier-ignore */ console.log("TCL ~ file: discussionsService.ts ~ line 181 ~ DiscussionsService ~ dealId", dealId);
+      /* prettier-ignore */ console.log("TCL ~ file: discussionsService.ts ~ line 181 ~ DiscussionsService ~ dealData", dealData);
       await dealData.addClauseDiscussion(
         args.clauseHash,
         discussionId,

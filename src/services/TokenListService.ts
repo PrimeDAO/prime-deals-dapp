@@ -6,6 +6,7 @@ import { TOKEN_LIST_MAP } from "configurations/tokenLists";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ITokenInfo } from "services/TokenTypes";
 import { TimingService } from "services/TimingService";
+import { EthereumServiceTesting } from "./EthereumServiceTesting";
 
 interface ITokenListUris {
   All: string[];
@@ -58,7 +59,7 @@ export class TokenListService {
    * a structured object.
    */
   public get tokenLists(): ITokenListUris {
-    const { PrimeDao /*, Balancer, External */ } = TOKEN_LIST_MAP[EthereumService.targetedNetwork];
+    const { PrimeDao /*, Balancer, External */ } = TOKEN_LIST_MAP[EthereumServiceTesting.targetedNetwork];
 
     const primeDaoLists = [PrimeDao.Payments];
     // const balancerLists = [Balancer.Default, Balancer.Vetted];
