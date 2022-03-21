@@ -122,7 +122,7 @@ export class DealService {
             const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
 
             for (const dealId of dealIds) {
-              const deal = this.createSeedFromConfig(dealId);
+              const deal = this.createDealFromConfig(dealId);
               dealsMap.set(dealId, deal);
               /**
                * remove the deal if it is corrupt
@@ -152,7 +152,7 @@ export class DealService {
     );
   }
 
-  private async hydrateDealsExecuted(_dealsMap: Map<Address, DealTokenSwap>): Promise<void> {
+  private async hydrateDealsExecuted(dealsMap: Map<Address, DealTokenSwap>): Promise<void> {
     // commented-out until we have working contract code for retrieving the metadata
     // const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     // const filter = moduleContract.filters.TokenSwapCreated();
@@ -160,18 +160,18 @@ export class DealService {
     // await moduleContract.queryFilter(filter)
     //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
     //     for (const event of events) {
-    //     const params = event.args;
-    //     const dealId = Utils.toAscii(params.metadata.hash.slice(2));
-    //     const deal = dealsMap.get(dealId);
-    //     if (deal) { // should only happen for test data
-    //       deal.isExecuted = true;
-    //       deal.executedAt = new Date((await event.getBlock()).timestamp * 1000);
-    //     }
+    //       const params = event.args;
+    //       const dealId = Utils.toAscii(params.metadata.hash.slice(2));
+    //       const deal = dealsMap.get(dealId);
+    //       if (deal) { // should only happen for test data
+    //         deal.isExecuted = true;
+    //         deal.executedAt = new Date((await event.getBlock()).timestamp * 1000);
+    //       }
     //     }
     //   });
   }
 
-  private createSeedFromConfig(dealId: Hash): DealTokenSwap {
+  private createDealFromConfig(dealId: Hash): DealTokenSwap {
     const deal = this.container.get(DealTokenSwap);
     return deal.create(dealId);
   }

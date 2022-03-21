@@ -1,5 +1,5 @@
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address } from "./../services/EthereumService";
+import { Address, Hash } from "./../services/EthereumService";
 import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
@@ -7,10 +7,10 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDAO, IDealRegistrationTokenSwap, IRepresentative } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IRepresentative, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
-import { autoinject } from "aurelia-framework";
-import { ContractNames, ContractsService } from "services/ContractsService";
+import { autoinject, computedFrom } from "aurelia-framework";
+import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
@@ -32,6 +32,27 @@ interface ITokenSwapInfo {
   metadata: string;
   // status of the deal
   status: number; // 3 ("DONE") means the deal has been executed
+}
+
+interface IDepositEventArgs {
+  module: Address;
+  dealId: number;
+  depositId: number;
+  depositor: Address;
+  token: Address;
+  amount: BigNumber;
+}
+
+export type DealTransactionType = "deposit" | "withdraw";
+
+export interface IDaoTransaction {
+  dao: IDAO, //dao that this transaction is related to in registration data
+  type: DealTransactionType, // deposit or withdraw
+  token: IToken, //only need iconURI, amount and symbol
+  address: string, //from/to address
+  createdAt: Date, //transaction date
+  txid: Hash, //transaction id,
+  depositId: number,
 }
 
 @autoinject
@@ -70,8 +91,7 @@ export class DealTokenSwap implements IDeal {
   public contractDealId: number;
 
   public moduleContract: any;
-  public depositContractPrimary: any;
-  public depositContractPartner: any;
+  public daoDepositContracts: Map<IDAO, any>;
   public baseContract: any;
 
   public primaryDao: IDAO;
@@ -85,7 +105,6 @@ export class DealTokenSwap implements IDeal {
    * in seconds, duration from execution to expired
    */
   public executionPeriod: number;
-  public fundingPeriodHasExpired: boolean;
   public executedAt: Date;
   /**
    * stored in the doc
@@ -130,6 +149,13 @@ export class DealTokenSwap implements IDeal {
 
   public get fundingWasInitiated(): boolean {
     return !!this.contractDealId;
+  }
+
+  @computedFrom("executedAt", "executionPeriod")
+  public get fundingPeriodHasExpired(): boolean {
+    const now = Date.now();
+    return this.isExecuted ?
+      (now > (this.executedAt.valueOf() + (this.executionPeriod * 1000))) : false;
   }
 
   public get isFailed() {
@@ -252,10 +278,15 @@ export class DealTokenSwap implements IDeal {
 
   private async loadDepositContracts(): Promise<void> {
     if (this.registrationData) {
-      this.depositContractPrimary = await this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.registrationData.primaryDAO.treasury_address);
+
+      const daoDepositContracts = new Map<IDAO, any>();
+
+      daoDepositContracts.set(this.primaryDao, await this.baseContract.depositContract(this.registrationData.primaryDAO.treasury_address));
       if (this.registrationData.partnerDAO) {
-        this.depositContractPartner = await this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.registrationData.partnerDAO.treasury_address);
+        daoDepositContracts.set(this.partnerDao, await this.baseContract.depositContract(this.registrationData.partnerDAO.treasury_address));
       }
+
+      this.daoDepositContracts = daoDepositContracts;
     }
   }
 
@@ -279,10 +310,6 @@ export class DealTokenSwap implements IDeal {
       // const tokenSwapInfo: TokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
       // this.isExecuted = tokenSwapInfo.status === 3;
       this.isExecuted = this.isWithdrawn = this.isRejected = false;
-
-      // const now = Date.now();
-      // this.fundingPeriodHasExpired = this.isExecuted ?
-      //   ((this.executionPeriod * 1000) - now) : false;
     }
     catch (error) {
       this.corrupt = true;
@@ -364,6 +391,52 @@ export class DealTokenSwap implements IDeal {
           return receipt;
         }
       });
+  }
+
+  public getTokenInfoFromAddress(tokenAddress: Address, dao: IDAO): IToken {
+    tokenAddress = tokenAddress.toLowerCase();
+    return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
+  }
+
+  public async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
+    const transactions = new Array<IDaoTransaction>();
+    const depositContract = this.daoDepositContracts.get(dao);
+
+    const depositFilter = depositContract.filters.Deposit();
+    await depositContract.queryFilter(depositFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "deposit",
+            dao: dao,
+            token: this.getTokenInfoFromAddress(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+          });
+        }
+      });
+
+    const withdrawFilter = depositContract.filters.Withdraw();
+    await depositContract.queryFilter(withdrawFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "withdraw",
+            dao: dao,
+            token: this.getTokenInfoFromAddress(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+          });
+        }
+      });
+
+    return transactions;
   }
 
   /**
