@@ -28,8 +28,7 @@
         </div>
         <div data-test="proposal-decimals-field" class="detailsCell">
           <p>Decimals</p>
-          <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
-          <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>
+          <p>${token.decimals}</p>
         </div>
         <div class="detailsCell">
           <p>

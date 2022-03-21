@@ -99,7 +99,7 @@ export class TokenDetails {
 
       this.token.name = tokenInfo.name;
       this.token.symbol = tokenInfo.symbol;
-      this.token.decimals = tokenInfo.decimals;
+      this.token.decimals = tokenInfo.decimals ?? TokenService.DefaultDecimals;
       this.token.logoURI = tokenInfo.logoURI;
     } catch (error) {
       this.token.name = undefined;
@@ -110,7 +110,6 @@ export class TokenDetails {
 
     this.tokenDetailsNotFound.name = !this.token.name;
     this.tokenDetailsNotFound.symbol = !this.token.symbol;
-    this.tokenDetailsNotFound.decimals = !this.token.decimals;
 
     this.tokenInfoLoading = false;
     this.showTokenDetails = true;
