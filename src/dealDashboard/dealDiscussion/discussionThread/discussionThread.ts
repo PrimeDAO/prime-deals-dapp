@@ -270,7 +270,7 @@ export class DiscussionThread {
     if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
     try {
-      this.threadComments = await this.discussionsService.addComment(
+      await this.discussionsService.addComment(
         this.discussionId,
         this.comment,
         this.deal.registrationData.isPrivate,
@@ -279,7 +279,7 @@ export class DiscussionThread {
           ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
           ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
         ],
-        this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
+        this.isReply ? this.replyToOriginalMessage._id : null,
       );
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -288,6 +288,7 @@ export class DiscussionThread {
         behavior: "smooth",
       });
       this.isReply = false;
+      this.replyToOriginalMessage = null;
     } catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
     } finally {
@@ -298,11 +299,11 @@ export class DiscussionThread {
 
   async replyComment(_id: string): Promise<void> {
     this.isReply = !this.isReply;
+    this.replyToOriginalMessage = null;
     if (this.isReply) {
       this.refCommentInput.querySelector("textarea").focus();
+      this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
     }
-
-    this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
