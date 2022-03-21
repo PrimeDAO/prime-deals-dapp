@@ -39,16 +39,3 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
 
     When I clear the "Token address" field
     Then the "Token amount" field should be disabled
-
-  # @internal
-  # --> Disabled: Why? - No known token, that has no decimals, if you know one, then please uncomment, and change the "Token address" field below
-  # Scenario: Token Details - Token amount disabled if no Token address provided - Remove address again
-  #   Given I want to fill in information for the "Tokens" section
-  #   And I add a Token Details form
-  #   When I fill in the "Token address" field with "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad"
-  #   When I fill in the "Token amount" field with "123"
-
-  #   When I clear the "Decimals" field
-  #   And the "Token amount" field should be disabled
-  #   Then the "Token amount" field should be cleared
-
