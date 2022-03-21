@@ -182,7 +182,7 @@ export class Utils {
     documentElement?.style.setProperty(varName, value);
   }
 
-  public static uniqById<T>(collection: Array<T & {id: string}>): Array<T & {id: string}> {
+  public static uniqById<T extends {id: string}>(collection: Array<T>): Array<T> {
     const ids = collection.map(item => item.id);
     return collection.filter(({id}, index) => !ids.includes(id, index + 1));
   }
