@@ -46,4 +46,9 @@ export class DealClauses {
       );
   }
 
+  authorizedChanged(): void {
+    if (this.ethereumService.defaultAccountAddress) {
+      this.discussionsService.getEnsName(this.ethereumService.defaultAccountAddress);
+    }
+  }
 }

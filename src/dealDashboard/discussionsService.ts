@@ -25,6 +25,7 @@ export class DiscussionsService {
 
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
+  private ensName: string;
 
   constructor(
     private ethereumService: EthereumService,
@@ -126,6 +127,12 @@ export class DiscussionsService {
     }
   }
 
+  public async getEnsName(address: string): Promise<string> {
+    this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
+
+    return this.ensName;
+  }
+
   /**
    * Creates a new discussion (if not already exists) stores it in the data storage and updates the discussion object.
    * If the discussion already exists, it returns the existing discussion ID.
@@ -146,6 +153,8 @@ export class DiscussionsService {
 
     const discussions = this.discussions || {};
     const createdBy = {address: this.ethereumService.defaultAccountAddress};
+    const createdByName = this.ensName || (await this.getEnsName(createdBy.address));
+
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
@@ -168,6 +177,7 @@ export class DiscussionsService {
         topic: args.topic,
         clauseIndex: args.clauseIndex,
         createdBy,
+        createdByName,
         createdAt: new Date(),
         modifiedAt: new Date(),
         lastModified: "< 1 min",
@@ -335,7 +345,7 @@ export class DiscussionsService {
   * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
   * @returns void
   */
-  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment[]> {
+  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -346,7 +356,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Please connect your wallet to add a comment"),
         );
-        return this.comments;
+        return null;
       }
     }
 
@@ -375,7 +385,7 @@ export class DiscussionsService {
       data.text = comment;
       this.comments.push(data);
       this.updateDiscussionListStatus(discussionId, new Date(parseInt(data.createdOn)));
-      return this.comments;
+      return data;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
     }
@@ -481,7 +491,7 @@ export class DiscussionsService {
       address: authorWalletAddress,
       // image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
       image: "",
-      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || "",
+      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || null,
     };
   }
 
