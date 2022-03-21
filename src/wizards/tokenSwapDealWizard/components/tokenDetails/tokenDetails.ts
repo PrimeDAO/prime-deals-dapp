@@ -157,6 +157,7 @@ export class TokenDetails {
         this.token.amount = undefined;
         this.getTokenInfo(address);
       } else {
+        // Will disable the Total Amount field, because it needs a decimal
         this.token.decimals = undefined;
       }
     });
