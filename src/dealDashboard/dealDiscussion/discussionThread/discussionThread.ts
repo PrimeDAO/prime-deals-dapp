@@ -204,7 +204,7 @@ export class DiscussionThread {
     this.isLoading[this.dealDiscussion.createdBy.address] = true;
     this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
       .then(profile => {
-        this.dealDiscussion.createdByName = profile.name || null;
+        this.dealDiscussion.createdBy.name = profile.name || null;
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 

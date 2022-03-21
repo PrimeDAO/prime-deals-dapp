@@ -65,10 +65,10 @@ export class DiscussionsList{
       ));
 
     this.discussionsArray.forEach((listDiscussionItem: IDiscussionListItem) => {
-      if (!listDiscussionItem.createdByName) {
+      if (!listDiscussionItem.createdBy.name) {
         this.discussionsService.loadProfile(listDiscussionItem.createdBy.address)
           .then(profile => {
-            if (profile.name) listDiscussionItem.createdByName = profile.name;
+            if (profile.name) listDiscussionItem.createdBy.name = profile.name;
           });
       }
 

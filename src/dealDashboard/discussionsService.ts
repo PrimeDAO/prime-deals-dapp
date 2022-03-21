@@ -152,8 +152,11 @@ export class DiscussionsService {
     }): Promise<string> {
 
     const discussions = this.discussions || {};
-    const createdBy = {address: this.ethereumService.defaultAccountAddress};
-    const createdByName = this.ensName || (await this.getEnsName(createdBy.address));
+    const createdBy = {
+      address: this.ethereumService.defaultAccountAddress,
+      name: null,
+    };
+    createdBy.name = this.ensName || (await this.getEnsName(createdBy.address));
 
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
@@ -177,7 +180,6 @@ export class DiscussionsService {
         topic: args.topic,
         clauseIndex: args.clauseIndex,
         createdBy,
-        createdByName,
         createdAt: new Date(),
         modifiedAt: new Date(),
         lastModified: "< 1 min",

@@ -14,8 +14,8 @@
       <span if.bind="dealDiscussion && dealDiscussion.createdBy.address">
         <h3 class="subtext">Clause #${dealDiscussion.clauseIndex + 1}</h3>
         <h3 class="subtext">
-          <span if.bind="dealDiscussion.createdByName">
-            Created by ${dealDiscussion.createdByName}
+          <span if.bind="dealDiscussion.createdBy.name">
+            Created by ${dealDiscussion.createdBy.name}
           </span>
           <span else>
             Created by ${dealDiscussion.createdBy.address | smallHexString}
