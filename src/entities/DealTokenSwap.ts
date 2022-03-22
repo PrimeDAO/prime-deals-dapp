@@ -281,9 +281,16 @@ export class DealTokenSwap implements IDeal {
 
       const daoDepositContracts = new Map<IDAO, any>();
 
-      daoDepositContracts.set(this.primaryDao, await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address));
+      daoDepositContracts.set(this.primaryDao,
+        this.contractsService.getContractAtAddress(
+          ContractNames.DAODEPOSITMANAGER,
+          await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address)));
+
       if (this.registrationData.partnerDAO) {
-        daoDepositContracts.set(this.partnerDao, await this.dealManager.daoDepositManager(this.registrationData.partnerDAO.treasury_address));
+        daoDepositContracts.set(this.partnerDao,
+          this.contractsService.getContractAtAddress(
+            ContractNames.DAODEPOSITMANAGER,
+            await this.dealManager.daoDepositManager(this.registrationData.partnerDAO.treasury_address)));
       }
 
       this.daoDepositContracts = daoDepositContracts;
