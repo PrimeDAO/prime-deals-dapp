@@ -80,7 +80,7 @@
               <formatted-number
                 if.bind="token.amount >= 0"
                 thousands-separated
-                value.to-view="token.amount | ethwei"
+                value.to-view="token.amount | ethwei:token.decimals"
               ></formatted-number>
               <template else> - </template>
             </p>
@@ -92,7 +92,7 @@
               <formatted-number
                 if.bind="token.instantTransferAmount"
                 thousands-separated
-                value.to-view="token.instantTransferAmount | ethwei"
+                value.to-view="token.instantTransferAmount | ethwei:token.decimals"
               ></formatted-number>
               <template else> - </template>
             </p>
@@ -104,7 +104,7 @@
               <formatted-number
                 if.bind="token.vestedTransferAmount"
                 thousands-separated
-                value.to-view="token.vestedTransferAmount | ethwei"
+                value.to-view="token.vestedTransferAmount | ethwei:token.decimals"
               ></formatted-number>
               <template else> - </template>
             </p>
