@@ -22,7 +22,7 @@ export interface IToken {
 
   name: string,
   symbol: string,
-  decimals: number | undefined,
+  decimals: number,
   logoURI: string,
 
   amount: string
