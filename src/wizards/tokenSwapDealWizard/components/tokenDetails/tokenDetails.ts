@@ -110,6 +110,7 @@ export class TokenDetails {
 
     this.tokenDetailsNotFound.name = !this.token.name;
     this.tokenDetailsNotFound.symbol = !this.token.symbol;
+    this.tokenDetailsNotFound.decimals = !this.token.decimals;
 
     this.tokenInfoLoading = false;
     this.showTokenDetails = true;
