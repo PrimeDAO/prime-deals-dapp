@@ -35,15 +35,14 @@ export class TermsStage implements IBaseWizardStage {
     });
   }
 
-  onDelete(index: number) {
+  onDelete(index: number): boolean | void {
     if (this.wizardState.registrationData.terms.clauses.length === 1) {
-      this.wizardState.registrationData.terms.clauses[0].text = "";
-      // This `return true` is used by the termClause component
-      return true;
+      return false;
     }
 
     this.termClauses.splice(index, 1);
     this.wizardState.registrationData.terms.clauses.splice(index, 1);
+    this.stageMetadata.termsViewModes.splice(index, 1);
   }
 
   addClause() {

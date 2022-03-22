@@ -1,142 +1,53 @@
-@import "styles/styles.scss";
+@import "src/styles/styles.scss";
 @import "src/resources/elements/primeDesignSystem/styles";
-
-$hover-transition-speed-fast: 175ms;
-$hover-transition-speed-medium: 0.3s;
-$hover-transition-speed-slow: 0.4s;
 
 .page.dealDashboardContainer {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas: "top ." "content aside" "discussion discussion" "thread thread";
+  grid-template-columns: auto minmax(360px, 1fr);
+  grid-template-areas:
+    "navbar navbar"
+    "top top-extended"
+    "content aside"
+    "clauses aside"
+    "discussion discussion"
+    "thread thread";
   gap: 50px 115px;
 
-  section {
-    &.top {
-      grid-area: top;
-    }
-    &.content {
-      grid-area: content;
-      section {
-        margin: 0 0 100px 0;
+  deal-navbar {
+    grid-area: navbar;
+  }
 
-        &.overview,
-        &.clauses {
-          min-height: 390px;
-        }
-      }
+  .top {
+    grid-area: top;
+  }
 
-      .clauses {
-        p {
-          margin-bottom: 20px;
-        }
+  deal-description {
+    grid-area: content;
+  }
 
-        ol {
-          display: grid;
-          gap: $spacing-small;
-          list-style-type: decimal;
-          list-style-position: inside;
-          .clause {
-            display: flex;
-            gap: $spacing-normal * 2;
-            vertical-align: top;
-            padding: $spacing-normal $spacing-medium-small;
-            // padding-right: 150px;
-            cursor: default;
-            position: relative;
+  deal-clauses {
+    grid-area: clauses;
+  }
 
-            border-radius: $border-radius-normal;
-            background-color: transparent;
-            transition: background-color $hover-transition-speed-fast ease-in-out;
-            transition-delay: $hover-transition-speed-fast / 2;
-            .body {
-              width: calc(100% - 165px);
-              small {
-                font-size: 12px;
-                text-overflow: ellipsis;
-              }
-            }
-            .button {
-              position: absolute;
-              display: flex;
-              gap: $spacing-normal * 1.2;
-              align-items: center;
-              line-height: 19px;
-              right: 0;
-              top: 0;
-              height: 100%;
-              padding: 0 $spacing-normal * 1.5;
-              background: $BG02;
-              opacity: 0;
-              justify-content: center;
-              border-radius: $border-radius-normal;
-              text-transform: uppercase;
-              font-size: 16px;
-              font-weight: 700;
-              letter-spacing: 0.6px;
-              color: $Neutral04;
-              transition: opacity $hover-transition-speed-fast ease-in;
-              transition-delay: 0s;
-              max-width: 200px;
-              text-align: right;
-              cursor: pointer;
-              img {
-                width: $logo-icon-size-small;
-                height: $logo-icon-size-small;
-              }
-            }
-            &.isPrivate:hover,
-            &.active {
-              transition-delay: 0s;
-              &:not(.active) span {
-                transition-delay: $hover-transition-speed-fast / 2;
-                opacity: 1;
-              }
-              background-color: $BG02;
-            }
+  deal-discussion {
+    grid-area: discussion;
 
-            .marker {
-              font-size: 26px;
-              font-weight: 700;
-              font-family: "Inter";
-              color: $Border01;
-              &::after {
-                content: ".";
-              }
-            }
-          }
-        }
-      }
-    }
-    &.discussion {
-      grid-area: discussion;
-      .header {
-        display: flex;
-        justify-content: space-between;
-      }
+    .header {
+      display: flex;
+      justify-content: space-between;
     }
   }
 
   aside {
     grid-area: aside;
-    .sticky-container {
-      // position: sticky;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      top: 105px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
 
-      .vote {
-        height: 465px;
-        .fundButton {
-          i {
-            margin-left: 6px;
-          }
-        }
-      }
-    }
-    .deal-information {
-      height: 511px;
+    deal-votes, deal-info {
+      min-width: 335px; // min-width needs to be 335px because the mobile size is min 375px (20px padding side by side)
+      flex: 1;
     }
   }
 }
@@ -144,13 +55,36 @@ $hover-transition-speed-slow: 0.4s;
 @media screen and (max-width: $MaxContentBodyWidth) {
   .page.dealDashboardContainer {
     grid-template-columns: 1fr;
-    grid-template-areas: "top" "aside" "content" "discussion";
+    grid-template-areas:
+      "navbar"
+      "top"
+      "content"
+      "clauses"
+      "aside"
+      "discussion";
+    grid-row-gap: 50px;
+    grid-column-gap: 0;
   }
 }
 
 @media screen and (max-width: $MaxContentBodyWidthMobile) {
   .page.dealDashboardContainer {
     grid-template-columns: 1fr;
-    grid-template-areas: "top" "aside" "content" "discussion";
+    grid-template-areas:
+      "navbar"
+      "top"
+      "content"
+      "clauses"
+      "aside"
+      "discussion";
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .page.dealDashboardContainer {
+    section.top {
+      grid-column-start: top;
+      grid-column-end: top-extended;
+    }
   }
 }

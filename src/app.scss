@@ -3,9 +3,9 @@
 .appWrapper {
   display: grid;
   grid-template-columns:
-    minmax(#{$MinContentBodyPaddingLeftRight}, 1fr)
-    #{$ContentBodyWidth}
-    minmax(#{$MinContentBodyPaddingLeftRight}, 1fr);
+    minmax($ContentMinLeftRightPadding, auto)
+    minmax(auto, $MaxContentBodyWidth)
+    minmax($ContentMinLeftRightPadding, auto);
   grid-template-rows: 192px 100fr 1fr;
   grid-template-areas:
     ". . ."
@@ -16,7 +16,7 @@
   .mainContent {
     grid-area: mainContent;
     color: $White;
-    padding-bottom: 52px;
+    padding-bottom: 64px;
   }
 
   .appFooter {
@@ -26,9 +26,6 @@
 
 @media screen and (max-width: $PageBreakWidth) {
   .appWrapper {
-    grid-template-columns:
-      minmax(#{$ContentBodyPaddingLeftRightMobile}, 1fr)
-      100fr
-      minmax(#{$ContentBodyPaddingLeftRightMobile}, 1fr);
+    grid-template-rows: 125px 100fr 1fr;
   }
 }

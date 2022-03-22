@@ -1,4 +1,4 @@
-@import "styles/colors.scss";
+@import "src/styles/colors.scss";
 
 .connectButtonContainer {
   display: inline-block;
@@ -13,12 +13,17 @@
       font-size: 14px;
       line-height: 17px;
       font-weight: 400;
+      letter-spacing: unset;
       padding: 8px 10px;
       text-transform: none;
       transition: none;
       color: $Neutral03;
       height: 13px;
       align-items: center;
+
+      &:before {
+        border-radius: 6px;
+      }
 
       &:focus {
         box-shadow: none;
@@ -28,14 +33,6 @@
       &:hover:active:not(.disabled):not(:disabled),
       &:focus:active:not(.disabled):not(:disabled) {
         background: $Gradient01;
-        border: none;
-        transform: none;
-        padding: 8px 10px;
-        height: 13px;
-        align-items: center;
-        &.connect {
-          padding: 10px 12px;
-        }
       }
 
       .address {
@@ -44,6 +41,10 @@
           padding-left: 4px;
         }
       }
+    }
+
+    > pbutton button.tertiary {
+      background-color: $BG02;
     }
   }
 
@@ -65,29 +66,12 @@
   }
 
   &.connected {
-    padding-left: 14px;
-    padding-right: 1px;
-    padding-top: 1px;
-    padding-bottom: 1px;
-
-    // .separator {
-    //   display: inline-block;
-    //   margin-left: 0.5em;
-    //   margin-right: 0.5em;
-    //   position: relative;
-    //   bottom: 1px;
-    //   color: $White;
-    // }
+    padding: 1px 1px 1px 14px;
 
     .connectedButtons {
       .connectButton {
         cursor: default;
         text-align: center;
-        // color: white;
-        // background-color: $BG05;
-        // border-color: transparent;
-        // border-radius: 0.75rem;
-        // border: 1px solid;
 
         .pending {
           .phase {
@@ -131,7 +115,6 @@
         .connectButton {
           margin-left: 0;
         }
-        //.separator,
         .ethBalanceContainer {
           display: none;
         }

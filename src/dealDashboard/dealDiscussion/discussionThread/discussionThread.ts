@@ -3,11 +3,11 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { EthereumService, AllowedNetworks, Address } from "services/EthereumService";
+import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 
-import { IDealDiscussion, IComment, IProfile, VoteType, TCommentDictionary } from "entities/DealDiscussions";
+import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 
 import "./discussionThread.scss";
@@ -92,9 +92,19 @@ export class DiscussionThread {
   }
 
   discussionIdChanged() {
-    if (this.deal) {
+    if (this.deal && this.discussionId) {
       this.initialize(true);
     }
+  }
+
+  @computedFrom("isLoading.discussions", "isMember", "threadComments.length")
+  private get noCommentsText(): string {
+    if (!this.isLoading.discussions && !this.threadComments.length) {
+      return (!this.isMember && this.deal.registrationData.isPrivate)
+        ? "This discussion is private."
+        : "This discussion has no comments yet.";
+    }
+    return "";
   }
 
   private async initialize(isIdChange = false): Promise<void> {

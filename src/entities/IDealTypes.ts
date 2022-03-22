@@ -20,17 +20,13 @@ export interface IDealsData {
 }
 
 export enum DealStatus {
+  active = "Active",
   completed = "Completed",
-  swapping = "Swapping",
-  negotiating = "Negotiating",
   failed = "Failed",
-  open = "Open",
-  live = "Live",
-  targetReached = "Target reached",
-  swapCompleted = "Swap completed",
-  targetNotReached = "Target not reached",
-  fundingInProgress = "Funding in progress",
   closed = "Closed",
+  negotiating = "Negotiating",
+  funding = "Funding in progress",
+  swapping = "Swapping",
 }
 
 export interface IDeal {
@@ -43,4 +39,5 @@ export interface IDeal {
   ensureInitialized(): Promise<void>;
   updateRegistration(registration: Record<string, any>): Promise<void>;
   addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
+  status: DealStatus;
 }

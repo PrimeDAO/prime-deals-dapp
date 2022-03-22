@@ -531,7 +531,7 @@ export class EthereumService {
 
 /**
  * @param ethValue
- * @param decimals Default is 18.  Can be decimal count or:
+ * @param decimals Can be a number or:
  *  "wei",
  *  "kwei",
  *  "mwei",
@@ -541,7 +541,7 @@ export class EthereumService {
  *  "ether",
  * @returns
  */
-export const toWei = (ethValue: BigNumberish, decimals: string | number = 18): BigNumber => {
+export const toWei = (ethValue: BigNumberish, decimals: string | number): BigNumber => {
   const t = typeof ethValue;
   if (t === "string" || t === "number") {
     // avoid underflows
@@ -552,7 +552,7 @@ export const toWei = (ethValue: BigNumberish, decimals: string | number = 18): B
 
 /**
  * @param weiValue
- * @param decimals Default is 18.  Can be decimal count or:
+ * @param decimals Can be a number or:
  *  "wei",
  *  "kwei",
  *  "mwei",
@@ -562,7 +562,7 @@ export const toWei = (ethValue: BigNumberish, decimals: string | number = 18): B
  *  "ether",
  * @returns
  */
-export const fromWei = (weiValue: BigNumberish, decimals: string | number = 18): string => {
+export const fromWei = (weiValue: BigNumberish, decimals: string | number): string => {
   return formatUnits(weiValue.toString(), decimals);
 };
 

@@ -12,7 +12,11 @@
     padding-left: auto;
     padding-right: auto;
     -webkit-overflow-scrolling: touch;
-    overflow: hidden;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none; // Firefox
+
 
     > div {
       flex: 0 0 auto;

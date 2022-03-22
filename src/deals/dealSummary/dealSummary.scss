@@ -4,7 +4,8 @@
 deal-summary {
   .pcard {
     display: inline-block;
-    width: 360px;
+    max-width: 360px;
+    min-width: 330px;
     background-color: $BG02;
     padding: $spacing-normal;
     /* don't do this transition until we can do it with gradient pcards too

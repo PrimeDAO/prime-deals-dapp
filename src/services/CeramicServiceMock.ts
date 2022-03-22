@@ -109,7 +109,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   },
   keepAdminRights: false,
   offersPrivate: false,
-  isPrivate: false,
+  isPrivate: true,
   createdAt: new Date("2022-01-27"),
   modifiedAt: null,
   createdByAddress: "",

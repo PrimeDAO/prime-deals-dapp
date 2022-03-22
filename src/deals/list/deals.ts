@@ -35,8 +35,13 @@ export class Deals {
   /**
    * Provides a filtered list of deals based off of certain conditions and toggles on the deal page
    */
-  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress")
+  @computedFrom("gridDeals")
   public get featuredDeals(): DealTokenSwap[] {
+    return this.gridDeals.slice(0, 10);
+  }
+
+  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress")
+  public get gridDeals(): DealTokenSwap[] {
     return [...this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress)];
   }
 
@@ -63,7 +68,7 @@ export class Deals {
    * @returns
    */
   public getFormattedTime(dateTime: Date): string {
-    return this.dateService.formattedTime(dateTime).diff("en-US").replace("a ", "1 ");
+    return this.dateService.formattedTime(dateTime).diff("en-US", false).replace("a ", "1 ");
   }
 
   /**

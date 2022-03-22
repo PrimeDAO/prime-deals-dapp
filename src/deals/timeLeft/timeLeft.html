@@ -1,7 +1,7 @@
 <template>
   <div class="timeLeftContainer ${contained ? 'contained' : ''}">
     <div class="mainStatus">
-      <div
+      <!-- <div
         class="timeLeft ${(proximity===1) ? 'soon' : ((proximity===2) ? 'comingUp' : 'farOff' )}"
         ref="timeLeft"
         if.to-view="deal.status !== 'uninitialized' && deal.status === 'hasNotStarted' && deal.status !== 'incomplete'"
@@ -11,9 +11,11 @@
       "minutes"
       :
       largest} left
-      </div>
+      </div> -->
       <div class.bind="status">
+        <slot name="before"></slot>
         ${deal.status}
+        <slot></slot>
       </div>
     </div>
   </div>

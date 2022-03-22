@@ -7,7 +7,7 @@
     >
       <i if.bind="!daoData.logoURI" class="fas fa-image"></i>
     </div>
-    <h3>Dao name</h3>
+    <h3>${daoData.name}</h3>
   </div>
 
   <div class="submitContentLabel-sm">Treasury address</div>
@@ -110,7 +110,8 @@
             </p>
           </div>
 
-          <div class="detailsCell">
+          <let token-vested-for-tooltip.bind="token.vestedFor | withCommas"></let>
+          <div class="detailsCell" ptooltip.bind="tokenVestedForTooltip + ' seconds'">
             <p>Vested for</p>
             <p>
               <template if.bind="token.vestedFor"
@@ -120,7 +121,8 @@
             </p>
           </div>
 
-          <div class="detailsCell">
+          <let token-cliff-of-tooltip.bind="token.cliffOf | withCommas"></let>
+          <div class="detailsCell" ptooltip.bind="tokenCliffOfTooltip + ' seconds'">
             <p>Cliff of</p>
             <p>
               <template if.bind="token.cliffOf"

@@ -6,8 +6,9 @@ import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
+import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 
-type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ("edit" | "view")[]>;
+type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
 @autoinject
 export class TokenDetailsStage {
@@ -103,20 +104,17 @@ export class TokenDetailsStage {
       decimals: 18,
       logoURI: "",
     });
-    this.checkedForUnsavedChanges();
   }
 
-  deleteToken(token: IToken, tokens: IToken[], forms: TokenDetails[]): void {
-    const index = tokens.indexOf(token);
-    if (index !== -1) {
-      forms.splice(index, 1);
-      tokens.splice(index, 1);
-    }
+  deleteToken(index: number, tokens: IToken[], forms: TokenDetails[], tokensViewModes: ViewMode[]): void {
+    forms.splice(index, 1);
+    tokens.splice(index, 1);
+    tokensViewModes.splice(index, 1);
     this.checkedForUnsavedChanges();
   }
 
   private getDefaultTokenDetailsViewModes(wizardType: WizardType, dao?: IDAO): ("view" | "edit")[] {
-    return [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType)
+    return this.isCreatingDealLike(wizardType)
       ? []
       : dao?.tokens?.map(() => "view") ?? [];
   }
@@ -127,7 +125,7 @@ export class TokenDetailsStage {
   }
 
   private addDefaultValuesToRegistrationData(wizardType: WizardType) {
-    if (wizardType === WizardType.createPartneredDeal) {
+    if (this.isCreatingPartneredDealLike(wizardType)) {
       if (this.wizardState.registrationData.primaryDAO.tokens.length === 0) {
         this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
       }
@@ -135,5 +133,17 @@ export class TokenDetailsStage {
         this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
       }
     }
+  }
+
+  private isCreatingPartneredDealLike(wizardType: WizardType): boolean {
+    return [WizardType.createPartneredDeal, WizardType.makeAnOffer, WizardType.editPartneredDeal].includes(wizardType);
+  }
+
+  private isCreatingDealLike(wizardType: WizardType): boolean {
+    return [
+      WizardType.createOpenProposal,
+      WizardType.createPartneredDeal,
+      WizardType.makeAnOffer,
+    ].includes(wizardType);
   }
 }

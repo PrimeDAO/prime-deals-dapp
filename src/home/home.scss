@@ -4,11 +4,12 @@
 
 .page.home {
   .section {
-    &.hero,
     &.deals {
-      margin-bottom: 100px;
+      margin-bottom: 64px;
     }
-
+    &.hero {
+      margin-bottom: 16px;
+    }
     &.top {
       .heading01Gradient {
         padding-bottom: 5px;
@@ -26,6 +27,7 @@
         .pcard {
           width: clamp(100px, 100%, 335px);
           padding: 12px 24px 24px 24px;
+          align-self: normal;
 
           &.gradient:hover {
             @include pcardBgAndGradient($backgroundColor: $Border01);
@@ -97,11 +99,12 @@
           padding-bottom: 19px;
         }
 
-        margin-bottom: 53px;
+        margin-bottom: 40px;
       }
 
       > .dealsButton {
-        padding: 32px;
+        margin-top: 28px;
+        margin-bottom: 150px;
 
         button.tertiary {
           color: $Neutral03;
@@ -172,54 +175,77 @@
   }
 }
 
-@media screen and (max-width: 1080px) {
-  .page.home {
-    .section.top {
-      .cards {
-        justify-content: center;
-      }
-    }
+@media screen and (max-width: 900px) and (min-width: 550px) {
+  .deals {
+    padding: 0 45px;
   }
 }
 
 @media screen and (max-width: $PageBreakWidth) {
   .page.home {
     .section {
-      &.top,
-      &.deals,
-      &.hero .heroColumn {
-      }
-
       &.top {
         width: 100%;
+
+        .heading01Gradient {
+          font-size: 36px;
+          margin-bottom: 28px;
+        }
+
+        .heading01Gradient,
+        .heading04 {
+          text-align: center;
+          max-width: none;
+        }
 
         .cards {
           justify-content: center;
           grid-auto-flow: row;
           width: 100%;
           align-items: center;
+          margin-bottom: 80px;
+          gap: 28px;
         }
       }
 
       &.deals {
+        .selector {
+          margin-bottom: 20px;
+
+          :not(:first-child) {
+            margin-left: 20px;
+          }
+
+          .selector-tab {
+            font-size: $font-size3;
+          }
+        }
+
         .scrollerContainer {
           margin-bottom: 0;
 
           .scroller deal-summary {
             margin: 0;
-            margin-bottom: 20px;
+
+            &:not(:last-child) {
+              margin-bottom: 20px;
+            }
 
             .dealSummary {
               text-align: left;
             }
           }
         }
+
+        .dealsButton {
+          margin-bottom: 80px;
+        }
       }
 
       &.hero {
         grid-template-columns: auto;
-        padding: 20px;
-        row-gap: 24px;
+        row-gap: 28px;
+        margin-bottom: 0;
 
         .heroColumn {
           justify-content: center;

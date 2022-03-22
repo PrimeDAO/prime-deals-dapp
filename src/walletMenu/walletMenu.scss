@@ -75,8 +75,15 @@ $walletMenuWidth: 360px;
       column-gap: 4px;
       align-items: center;
 
-      i {
-        color: $Secondary05;
+      .etherscan-button {
+        outline: none;
+        path {
+          fill: $Secondary05;
+        }
+        cursor: pointer;
+        &:hover > path {
+          fill: $White;
+        }
       }
     }
   }

@@ -30,12 +30,8 @@
           Loading comments...
         </div>
 
-        <div if.bind="!threadComments.length && isMember && !isLoading.discussions" class="no comment">
-          This discussion has no comments yet.
-        </div>
-
-        <div if.bind="!threadComments.length && !isMember && !isLoading.discussions" class="no comment">
-          This discussion is private.
+        <div else class="no comment">
+          ${noCommentsText}
         </div>
 
         <div 
