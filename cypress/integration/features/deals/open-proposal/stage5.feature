@@ -25,11 +25,6 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
 
   #####################################################
 
-  Scenario: Token Details - Token amount disabled if no Token address provided
-    Given I want to fill in information for the "Tokens" section
-    And I add a Token Details form
-    Then the "Token amount" field should be disabled
-
   @internal
   Scenario: Token Details - Token amount disabled if no Token address provided - Remove address again
     Given I want to fill in information for the "Tokens" section
