@@ -39,11 +39,11 @@ export class FirebasePlayground {
   }
 
   createOpenProposal() {
-    this.firestoreService.createTokenSwapDeal(openProposalDummyData1);
+    this.firestoreService.createDealTokenSwap(openProposalDummyData1);
   }
 
   createPartneredDeal() {
-    this.firestoreService.createTokenSwapDeal(partnerDealDummyData1);
+    this.firestoreService.createDealTokenSwap(partnerDealDummyData1);
   }
 
   updateDealRegistrationData(dealId: string, registrationData: IDealRegistrationTokenSwap) {

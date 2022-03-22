@@ -30,7 +30,7 @@ export class SubmitStage {
 
   public async onSubmit(): Promise<void> {
     try {
-      await this.firestoreService.createTokenSwapDeal(this.submitData);
+      await this.firestoreService.createDealTokenSwap(this.submitData);
 
       const congratulatePopupModel: IAlertModel = {
         header: "Your deal has been submitted!",

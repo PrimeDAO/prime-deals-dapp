@@ -25,7 +25,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
       return;
     }
 
-    return this.firestoreService.createTokenSwapDeal(registration as any) as any;
+    return this.firestoreService.createDealTokenSwap(registration as any) as any;
   }
 
   updateRegistration<TRegistration>(dealId: string, accountAddress: string, registration: TRegistration): Promise<void> {

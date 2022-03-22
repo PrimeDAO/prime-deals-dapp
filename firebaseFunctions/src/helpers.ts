@@ -1,13 +1,14 @@
 import { isEqual } from "lodash";
 import { DEALS_COLLECTION, firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
-import { IDAOVotingSummary, IFirebaseDocument, ITokenSwapDeal, IVotingSummary } from "./types";
+import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealSharedTypes";
+import { IFirebaseDocument } from "../../src/services/FirestoreTypes";
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
  *
  * Intended to be used inside a callback function triggered on deal document update
  */
-export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
+export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
   oldDeal = JSON.parse(JSON.stringify(oldDeal));
   updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
   delete oldDeal.registrationData.isPrivate;
@@ -23,7 +24,7 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: ITokenSwapDeal, upd
  *
  * Intended to be used inside a callback function triggered on deal document update
  */
-export const isRegistrationDataUpdated = (oldDeal: ITokenSwapDeal, updatedDeal: ITokenSwapDeal): boolean => {
+export const isRegistrationDataUpdated = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
   delete oldDealRegistrationData.modifiedAt;
@@ -94,7 +95,7 @@ export const initializeVotes = (
 export const initializeVotingSummary = (
   primaryDaoRepresentativesAddresses: string[],
   partnerDaoRepresentativesAddresses: string[],
-): IVotingSummary => {
+): IDealVotingSummary => {
   return {
     primaryDAO: {
       total: primaryDaoRepresentativesAddresses.length,
@@ -118,7 +119,7 @@ export const initializeVotingSummary = (
  *
  * Used to recalculate voting summary after a vote is updated
  */
-export const generateVotingSummary = async (dealId: string): Promise<IVotingSummary> => {
+export const generateVotingSummary = async (dealId: string): Promise<IDealVotingSummary> => {
   const votes = await Promise.all([
     firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).get(),
     firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).get(),
@@ -140,7 +141,7 @@ export const generateVotingSummary = async (dealId: string): Promise<IVotingSumm
 /**
  * Builds an object with a voting summary for a DAO
  */
-const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDAOVotingSummary => {
+const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDealDAOVotingSummary => {
   return {
     total: daoVotes.length,
     accepted: daoVotes.filter(vote => vote.data.vote).length,

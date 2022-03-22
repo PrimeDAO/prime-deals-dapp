@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
-import { ITokenSwapDeal } from "./types";
+import { IDealTokenSwapDocument } from "../../src/entities/IDealSharedTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
 
 const admin = firebaseAdmin.initializeApp();
@@ -57,7 +57,7 @@ export const createCustomToken = functions.https.onRequest(
 export const buildDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onCreate(async (snapshot, context) => {
-    const deal = snapshot.data() as ITokenSwapDeal;
+    const deal = snapshot.data() as IDealTokenSwapDocument;
 
     const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
     const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
@@ -96,8 +96,8 @@ export const updateDealStructure = functions.firestore
   .document(`${DEALS_COLLECTION}/{dealId}`)
   .onUpdate(async (change, context) => {
     const dealId: string = context.params.dealId;
-    const oldDeal = change.before.data() as ITokenSwapDeal;
-    const updatedDeal = change.after.data() as ITokenSwapDeal;
+    const oldDeal = change.before.data() as IDealTokenSwapDocument;
+    const updatedDeal = change.after.data() as IDealTokenSwapDocument;
 
     // Proceed only if registration data was updated and the update was done to field/fields other than the privacy flag
     if (
