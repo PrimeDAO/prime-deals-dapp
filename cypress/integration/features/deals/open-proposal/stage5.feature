@@ -25,6 +25,14 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
 
   #####################################################
 
+  # TODO: Three below: Find token where amount is 0, else cannot change decimals in UI
+  @internal
+  Scenario: Token Details - Decimals - Clearing should default to 0
+  @internal
+  Scenario: Token Details - Decimals - Min 0
+  @internal
+  Scenario: Token Details - Decimals - Max 18
+
   @internal
   Scenario: Token Details - Token amount disabled if no Token address provided - Remove address again
     Given I want to fill in information for the "Tokens" section
