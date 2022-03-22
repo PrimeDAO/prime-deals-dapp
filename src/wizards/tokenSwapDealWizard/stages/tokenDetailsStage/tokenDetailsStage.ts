@@ -7,6 +7,7 @@ import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/D
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
+import { TokenService } from "services/TokenService";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
@@ -101,7 +102,7 @@ export class TokenDetailsStage {
 
       name: "",
       symbol: "",
-      decimals: undefined,
+      decimals: TokenService.DefaultDecimals,
       logoURI: "",
     });
   }

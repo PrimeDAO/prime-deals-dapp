@@ -105,7 +105,7 @@ export class TokenDetails {
       this.token.name = undefined;
       this.token.logoURI = undefined;
       this.token.symbol = undefined;
-      this.token.decimals = undefined;
+      this.token.decimals = TokenService.DefaultDecimals;
     }
 
     this.tokenDetailsNotFound.name = !this.token.name;
@@ -158,7 +158,7 @@ export class TokenDetails {
         this.getTokenInfo(address);
       } else {
         // Will disable the Total Amount field, because it needs a decimal
-        this.token.decimals = undefined;
+        this.token.decimals = TokenService.DefaultDecimals;
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
