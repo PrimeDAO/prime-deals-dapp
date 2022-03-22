@@ -154,13 +154,8 @@ export class TokenDetails {
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
-      if (address) {
-        this.token.amount = undefined;
-        this.getTokenInfo(address);
-      } else {
-        // Will disable the Total Amount field, because it needs a decimal
-        this.token.decimals = TokenService.DefaultDecimals;
-      }
+      this.token.amount = undefined;
+      this.getTokenInfo(address);
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "decimals", decimals => {
       if (decimals === undefined) {
