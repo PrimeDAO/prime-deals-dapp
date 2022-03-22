@@ -196,6 +196,8 @@ export class TokenDetails {
       .ensure<string>(data => data.symbol)
       .required()
       .ensure<number>(data => data.decimals)
+      .min(0)
+      .max(18)
       .required()
       .ensure<string>(data => data.logoURI)
       .required()
