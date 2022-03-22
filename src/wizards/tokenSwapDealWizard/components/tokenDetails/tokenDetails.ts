@@ -162,6 +162,14 @@ export class TokenDetails {
         this.token.decimals = TokenService.DefaultDecimals;
       }
     });
+    this.aureliaHelperService.createPropertyWatch(this.token, "decimals", decimals => {
+      if (decimals === undefined) {
+        this.token.decimals = TokenService.DefaultDecimals;
+      }
+
+      // Clear amount after every decimal change
+      this.token.amount = undefined;
+    });
     this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
       this.checkURL();
     });
