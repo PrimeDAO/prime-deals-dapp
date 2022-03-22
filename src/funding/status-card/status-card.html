@@ -1,0 +1,31 @@
+<template>
+  <require from="../../deals/dao-icon-name/dao-icon-name"></require>
+  <require from="../../resources/elements/chip/chip"></require>
+  <pcard>
+    <header>
+      <div class="daoName">
+        <dao-icon-name primary-dao.to-view="dao"></dao-icon-name>
+      </div>
+      <chip color="${status === dealStatuses.targetReached ? 'success' : 'warning'}">
+        ${status}
+      </chip>
+    </header>
+    <div class="content">
+      <div class="token-progress" repeat.for="token of dao.tokens">
+        <img src="${token.logoURI}" />
+        <div>
+          <div class="progress-bar-content">
+            <div>
+              ${token.deposited | ethwei:token.decimals}
+              <strong>${token.symbol}</strong> Deposited
+            </div>
+            <div>${token.percentCompleted}%</div>
+          </div>
+          <div class="progress-bar">
+            <progress-bar max.bind="token.target" current.bind="token.deposited"></progress-bar>
+          </div>
+        </div>
+      </div>
+    </div>
+  </pcard>
+</template>

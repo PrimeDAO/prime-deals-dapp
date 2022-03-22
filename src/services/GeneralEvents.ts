@@ -9,6 +9,7 @@ export class EventConfig {
   constructor(
     public message: string,
     public type: EventMessageType = EventMessageType.Info,
+    public title?: string,
   ) {
   }
 }

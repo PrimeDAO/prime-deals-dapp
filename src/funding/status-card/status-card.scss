@@ -1,0 +1,37 @@
+@import "src/resources/elements/primeDesignSystem/colors";
+pcard {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  header {
+    padding: 0px 15px 15px 15px;
+    margin: 10px 0;
+    border-bottom: 1px solid $Border01;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    flex-direction: column;
+    align-items: center;
+  }
+  .content {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    grid-row-gap: 40px;
+    padding: 20px 0;
+    .token-progress {
+      display: grid;
+      grid-template-columns: 45px auto;
+      flex-direction: column;
+      padding: 0 15px;
+      img {
+        width: 34px;
+        height: 34px;
+      }
+      .progress-bar-content {
+        color: $Neutral02;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        flex-direction: column;
+      }
+    }
+  }
+}

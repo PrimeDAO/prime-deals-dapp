@@ -6,7 +6,16 @@
 $hover-transition-speed-fast: 175ms;
 $hover-transition-speed-medium: 0.3s;
 $hover-transition-speed-slow: 0.4s;
-
+.success {
+  color: $Green;
+}
+.danger {
+  color: $Red;
+}
+.progress-bar {
+  height: 10px;
+  width: 100%;
+}
 .page.fundContainer {
   section {
     &.top {
@@ -30,13 +39,7 @@ $hover-transition-speed-slow: 0.4s;
           padding-top: 20px;
           margin-bottom: 32px;
           display: grid;
-          grid-template-columns: 2fr 1fr;
-          div.countdown {
-            justify-self: right;
-            .timeLeftContainer.contained {
-              display: inline;
-            }
-          }
+          grid-template-columns: 1fr auto;
         }
         .box-content {
           .tokens {
@@ -184,7 +187,7 @@ $hover-transition-speed-slow: 0.4s;
           display: grid;
           grid-template-columns: 1fr 1fr;
           flex-direction: row;
-          padding: 37px 24px 20px 24px;
+          padding: 20px 24px 20px 24px;
           .contracts {
             p {
               font-size: 14px;
@@ -224,13 +227,22 @@ $hover-transition-speed-slow: 0.4s;
               .inputs {
                 justify-items: right;
                 display: grid;
-                grid-template-columns: 1fr 0.7fr;
+                grid-template-columns: 1fr 1fr;
                 flex-direction: row;
                 position: relative;
                 pselect {
                   .ss-single-selected {
                     border-bottom-right-radius: 0;
                     border-top-right-radius: 0;
+                    &.ss-disabled {
+                      background-color: #151318;
+                      border: 1px solid #403453;
+                      color: inherit;
+                      cursor: inherit;
+                      .ss-arrow {
+                        display: none;
+                      }
+                    }
                   }
                 }
                 .balance {
@@ -240,7 +252,7 @@ $hover-transition-speed-slow: 0.4s;
                   font-size: 13px;
                   grid-column: span 2;
                   &:hover {
-                    color: white;
+                    cursor: default;
                   }
                 }
                 numeric-input {
@@ -260,6 +272,123 @@ $hover-transition-speed-slow: 0.4s;
                     padding: 0px 9px;
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    &.swap-status {
+      margin-top: 40px;
+      .status-cards {
+        display: grid;
+        margin-top: 20px;
+        grid-template-columns: 1fr auto 1fr;
+        grid-gap: 30px;
+        .swap {
+          place-self: center;
+          display: grid;
+          grid-template-row: 1fr 1fr;
+        }
+      }
+    }
+    &.transactions {
+      margin-top: 100px;
+
+      .transactions-grid {
+        margin-bottom: 20px;
+        display: grid;
+        grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.2fr 0.25fr;
+
+        .row {
+          &.body {
+            .cell {
+              &.required {
+                color: $Orange;
+              }
+            }
+          }
+          cursor: default;
+          /**
+             * so the grid will be composed of the contents of the row element,
+             * not the row element itself.
+             */
+          display: contents;
+
+          &:hover {
+            text-decoration: none;
+          }
+
+          .cell.header {
+            padding: 10px 0;
+          }
+
+          .cell {
+            &.body {
+              display: flex;
+              align-items: center;
+              &.cell {
+                border-bottom: 1px solid $Border01;
+                padding: 20px 0;
+                font-size: 16px;
+                font-weight: 400;
+              }
+              &.withdraw {
+                pbutton {
+                  button {
+                    font-size: 9px;
+                    padding: 0px 9px;
+                  }
+                }
+              }
+              &.address {
+                div {
+                  div {
+                    color: $Secondary05;
+                    font-size: 14px;
+                    font-weight: 700;
+                  }
+                }
+              }
+              &.type {
+                i {
+                  padding-right: 10px;
+                }
+              }
+              &.amount {
+                div {
+                  display: grid;
+                  grid-template-columns: 24px auto;
+                  grid-column-gap: 11px;
+                }
+              }
+              &.txid {
+                i {
+                  color: $Secondary02;
+                  -webkit-transform: rotate(-45deg);
+                  -moz-transform: rotate(-45deg);
+                  -ms-transform: rotate(-45deg);
+                  -o-transform: rotate(-45deg);
+                  transform: rotate(-45deg);
+                }
+              }
+              &.withdraw {
+                justify-content: right;
+              }
+            }
+            /**
+               * for when columns get scrunched together
+               */
+            &:not(:nth-of-type(n + 7)) {
+              padding-right: 12px;
+            }
+
+            &.header {
+              &.sortable {
+                cursor: pointer;
+              }
+              &.cell {
+                border-bottom: 1px solid $Secondary02;
               }
             }
           }

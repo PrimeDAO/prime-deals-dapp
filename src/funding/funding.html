@@ -1,6 +1,7 @@
 <template>
   <require from="../deals/dao-icon-name/dao-icon-name"></require>
-  <require from="../deals/timeLeft/timeLeft"></require>
+  <require from="../resources/elements/chip/chip"></require>
+  <require from="./status-card/status-card"></require>
   <main class="page animated-page au-animate fundContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -12,20 +13,14 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="!isProposalLead || !daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length"
+      if.to-view="!daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length"
     >
       <div class="box-container">
         <div class="box-header">
           <div class="heading heading3 title gradient">${daoRelatedToWallet.name} Deposit</div>
-          <div class="countdown">
-            <div class="timeLeftContainer contained">
-              <div class="mainStatus">
-                <div class="timeLeft comingUp">
-                  <span class="icon far fa-clock"></span>${getTimeLeft()} left
-                </div>
-              </div>
-            </div>
-          </div>
+          <chip color="warning">
+            <span class="icon far fa-clock" slot="icon"></span>${getTimeLeft()} left
+          </chip>
         </div>
         <div class="box-content">
           <div class="tokens">
@@ -47,9 +42,9 @@
                       use-token-symbol.to-view="true"
                     ></dao-icon-name>
                   </div>
-                  <div class="target cell body">${token.target | ethwei}</div>
-                  <div class="deposited cell body">${token.deposited | ethwei}</div>
-                  <div class="required cell body">${token.required | ethwei}</div>
+                  <div class="target cell body">${token.target | ethwei:token.decimals}</div>
+                  <div class="deposited cell body">${token.deposited | ethwei:token.decimals}</div>
+                  <div class="required cell body">${token.required | ethwei:token.decimals}</div>
                   <div class="completed cell body">
                     <progress-bar
                       style="height: 10px; width: 100%"
@@ -65,7 +60,7 @@
         </div>
         <div class="container-footer">
           <div class="contracts">
-            <p>
+            <p if.to-view="!isProposalLead">
               <i class="fas fa-info-circle"></i>
               <span>
                 You're depositing on behalf of ${daoRelatedToWallet.name}. This deal needs to be
@@ -73,31 +68,120 @@
               </span>
             </p>
             <div>
-              <a href="#">Token Deposit Contract <i class="fas fa-arrow-right"></i></a>
-              <a href="#">TokenSwapModule Contract <i class="fas fa-arrow-right"></i></a>
+              <a href="${tokenDepositContractUrl}" target="_blank" rel="noopener noreferrer"
+                >DepositContract Contract <i class="fas fa-arrow-right"></i
+              ></a>
+              <a href="${tokenSwapModuleContractUrl}" target="_blank" rel="noopener noreferrer"
+                >TokenSwapModule Contract <i class="fas fa-arrow-right"></i
+              ></a>
             </div>
           </div>
           <div class="deposit">
-            <div class="form">
+            <div class="form" if.to-view="!isProposalLead">
               <div>
                 <div class="inputs">
                   <pselect
+                    disabled.bind="daoRelatedToWallet.tokens.length === 1"
+                    placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
                     ref="refSelectToken"
                   ></pselect>
-                  <numeric-input css="pInput" value.bind="depositAmount"> </numeric-input>
-                  <pbutton type="secondary" click.delegate="setMax()">Max</pbutton>
-                  <a class="balance" click.delegate="setMax()">
-                    Balance: ${walletBalance | ethwei}
-                  </a>
+                  <numeric-input
+                    css="pInput"
+                    value.bind="depositAmount"
+                    keyup.delegate="checkMaxAmount()"
+                  >
+                  </numeric-input>
+                  <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
+                    >Max</pbutton
+                  >
+                  <span class="balance" if.to-view="walletBalance">
+                    Your ${daoRelatedToWallet.tokens[selectedToken].symbol} Balance:
+                    <formatted-number
+                      value="${walletBalance | ethwei:token.decimals}"
+                      mantissa="2"
+                    ></formatted-number>
+                  </span>
                 </div>
               </div>
-              <pbutton type="primary">Deposit</pbutton>
+              <pbutton
+                type="primary"
+                click.delegate="depositTokens()"
+                disabled.bind="!selectToken && !depositAmount"
+                >Deposit</pbutton
+              >
             </div>
           </div>
         </div>
       </div>
+    </section>
+    <section class="section swap-status">
+      <div class="heading heading3 title gradient">Token Swap Status</div>
+      <div class="status-cards">
+        <status-card dao.bind="daoRelatedToWallet"></status-card>
+        <div class="swap"><i class="fas fa-arrow-right"></i><i class="fas fa-arrow-left"></i></div>
+        <status-card dao.bind="otherDao"></status-card>
+      </div>
+    </section>
+    <section class="section transactions">
+      <h1 class="title heading heading1 gradient">Transactions</h1>
+
+      <div class="grid transactions-grid">
+        <div class="row header">
+          <div class="cell dao header">DAO</div>
+          <div class="cell type header">TYPE</div>
+          <div class="cell amount header">AMOUNT</div>
+          <div class="cell address header">ADDRESS</div>
+          <div class="cell age header">AGE</div>
+          <div class="cell txid header">TxID</div>
+          <div class="cell withdraw header"></div>
+        </div>
+        <template repeat.for="transaction of transactions | sort:sortEvaluator">
+          <div class="row body" if.to-view="!loadingTransactions && (($index < 10) || seeingMore)">
+            <div class="dao cell body">
+              <dao-icon-name primary-dao.to-view="transaction.dao"></dao-icon-name>
+            </div>
+            <div class="type cell body">
+              <i class="fas fa-arrow-${getTypeIcon(transaction.type)}"></i> ${transaction.type}
+            </div>
+            <div class="amount cell body">
+              <div>
+                <img src="${transaction.token.logoURI}" />
+                <span
+                  >${transaction.type.toLowerCase() === "deposit" ? '+' :
+                  '-'}${transaction.token.amount}${" "}${transaction.token.symbol}</span
+                >
+              </div>
+            </div>
+            <div class="address cell body">
+              <div>
+                <div>FROM</div>
+                ${transaction.address | smallHexString}
+              </div>
+            </div>
+            <div class="age cell body">${getFormattedTime(transaction.createdAt)}</div>
+            <div class="txid cell body">
+              <a click.delegate="viewTransaction(transaction.txid)"
+                >View <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+            <div class="withdraw cell body">
+              <pbutton type="secondary" click.delegate="withdraw(transaction)">WITHDRAW</pbutton>
+            </div>
+          </div>
+        </template>
+      </div>
+      <template if.to-view="transactions.length > 10">
+        <div if.to-view="!loadingTransactions && !seeingMore" class="seeMore">
+          <div class="arrow">&darr;</div>
+          <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
+        </div>
+        <div if.to-view="!loadingTransactions && seeingMore" class="seeMore">
+          <div class="arrow">&uarr;</div>
+          <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
+        </div>
+      </template>
     </section>
   </main>
 </template>
