@@ -20,6 +20,9 @@ export class TimeLeft {
     Object.keys(DealStatus).forEach(key => {
       reversedEnum[DealStatus[key]] = key;
     });
+    /**
+     * is the name of the enum for use as the classname in the view
+     */
     this.status = reversedEnum[this.deal.status];
   }
 

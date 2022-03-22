@@ -21,8 +21,14 @@ class Terms {
   static getClausesTextarea() {
     return cy.get("[data-test='clauseTextarea'] textarea");
   }
+  static getClausesText() {
+    return cy.get("[data-test='clauseFormInput']");
+  }
   static getClauseError() {
-    return cy.get("[data-test='clauseFormInput'] .pInput-error");
+    return cy.get("[data-test='errorMessage']");
+  }
+  static getUnsavedChangesError() {
+    return cy.contains("[data-test='errorMessage']", "Please save all your clauses");
   }
 }
 
@@ -30,7 +36,15 @@ Given("I add content to a Clause", () => {
   Terms.getClausesTextarea().type(UPDATED);
 });
 
-Given("I have {int} existing Clauses", (numOfClauses: number) => {
+Given("I add content to the first Clause", () => {
+  Terms.getClausesTextarea().first().type(UPDATED);
+});
+
+Given("I add content to the last Clause", () => {
+  Terms.getClausesTextarea().last().type(UPDATED);
+});
+
+Given("I have {int} existing Clause(s)", (numOfClauses: number) => {
   Terms.getClauses().should("have.length", 1);
 
   for (let i = 1; i < numOfClauses; i += 1) {
@@ -46,7 +60,25 @@ When("I save the changes to the Clause", () => {
   EditingCard.click("Save");
 });
 
-When("I delete the latest Clause", () => {
+When("I save the changes to the first Clause", () => {
+  Terms.getClauses().first().within(() => {
+    EditingCard.click("Save");
+  });
+});
+
+When("I save the changes to the last Clause", () => {
+  Terms.getClauses().last().within(() => {
+    EditingCard.click("Save");
+  });
+});
+
+When("I edit the last Clause", () => {
+  Terms.getClauses().last().within(() => {
+    EditingCard.click("Edit");
+  });
+});
+
+When("I delete the last Clause", () => {
   Terms.getClauses().last().within(() => {
     EditingCard.click("Delete");
   });
@@ -83,15 +115,29 @@ Then("I should get an error message for the Clause", () => {
   Terms.getClauseError().should("be.visible");
 });
 
+Then("I should get not an error message for the Clause", () => {
+  Terms.getUnsavedChangesError().should("not.be.visible");
+});
+
 Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
   Terms.getClauseError().should("have.length", numOfErros);
 });
 
 Then("I can see my existing Clauses", () => {
   const CLAUSE_TEXT = "lorem";
-  Terms.getClausesTextarea().invoke("val").should("equal", CLAUSE_TEXT);
+  Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
 });
 
 Then("the Clause's content should be cleared", () => {
   Terms.getClausesTextarea().invoke("val").should("equal", "");
+});
+
+Then("I cannot delete the Clause", () => {
+  EditingCard.getButton("Delete").should("not.exist");
+});
+
+Then("the first Clause should be in View mode", () => {
+  Terms.getClauses().first().within(() => {
+    EditingCard.getButton("Edit").should("be.visible");
+  });
 });
