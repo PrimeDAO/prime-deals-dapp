@@ -1,3 +1,4 @@
+import { IDaoTransaction } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
 import { EventConfig } from "./../services/GeneralEvents";
@@ -5,7 +6,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import { EthweiValueConverter } from "./../resources/value-converters/ethwei";
 import "./funding.scss";
-import { ContractNames, ContractsService } from "services/ContractsService";
+import { ContractsService } from "services/ContractsService";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EthereumService } from "services/EthereumService";
@@ -13,7 +14,7 @@ import {Router} from "aurelia-router";
 import { Utils } from "services/utils";
 import {autoinject} from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
-import { ITokenFunding, ITransaction } from "entities/TokenFunding";
+import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
 const converter = new EthweiValueConverter();
@@ -32,7 +33,7 @@ export class Funding {
   private depositAmount: BigNumber;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
-  private transactions: ITransaction[] = [];
+  private transactions: IDaoTransaction[] = [];
   private loadingTransactions = false; //TODO set this to true by default and false after transactions load
   private seeingMore = false;
 
@@ -80,7 +81,7 @@ export class Funding {
     //TODO get the tokenSwapModuleContractUrl and set it
   }
 
-  public bind() : void {
+  public async bind() : Promise<void> {
     //get the token information from the registration data for the dao this user is a representative of
     this.setDaosBasedOnWallet();
 
@@ -110,15 +111,10 @@ export class Funding {
     }
 
     //get the transactions for this deal
-    this.transactions.push({
-      dao: this.daoRelatedToWallet,
-      type: "Deposit",
-      token: this.daoRelatedToWallet.tokens[0],
-      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
-      createdAt: new Date("2022-03-21"),
-      txid: "0xca7e7a28808c47e6b93b2825ceb74a6d88642c4a5fb9efd19722b2b7bb90d91c",
-      withdrawLink: "",
-    });
+    const daoRelatedToWalletTransactions = await this.deal.getDaoTransactions(this.daoRelatedToWallet);
+    const otherDaoTransactions = await this.deal.getDaoTransactions(this.otherDao);
+    console.log(daoRelatedToWalletTransactions);
+    console.log(otherDaoTransactions);
   }
 
   /**
@@ -282,7 +278,7 @@ export class Funding {
    * Withdraws the deposit made from the connected wallet
    * @param transaction
    */
-  public withdraw(transaction: ITransaction) : void {
+  public withdraw(transaction: IDaoTransaction) : void {
     //TODO wire up the withdraw method
     this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
   }
