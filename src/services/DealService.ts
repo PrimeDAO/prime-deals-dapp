@@ -10,7 +10,8 @@ import { BigNumber } from "ethers";
 import { Utils } from "services/utils";
 
 interface ITokenSwapCreatedArgs {
-  id: BigNumber; // trying to get them to switch to uint type
+  module: Address,
+  dealId: number; // trying to get them to switch to uint type
   // the participating DAOs
   daos: Array<Address>;
   // the tokens involved in the swap

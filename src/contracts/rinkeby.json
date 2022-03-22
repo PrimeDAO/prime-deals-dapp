@@ -2,376 +2,34 @@
   "name": "rinkeby",
   "chainId": "4",
   "contracts": {
-    "BaseContract": {
-      "address": "0x7431c9bfA33add7BccCfbAEF79B597bea54702d6",
+    "DaoDepositManager": {
+      "address": "0x0a15E581ae04BAD36c58538bCe1faA0a9627f5fd",
       "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "dao",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "depositContract",
-              "type": "address"
-            }
-          ],
-          "name": "DepositContractCreated",
-          "type": "event"
-        },
         {
           "anonymous": false,
           "inputs": [
             {
               "indexed": true,
               "internalType": "address",
-              "name": "previousOwner",
+              "name": "dealModule",
               "type": "address"
             },
             {
               "indexed": true,
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "dao",
-              "type": "address"
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
-              "name": "representative",
+              "name": "depositor",
               "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "status",
-              "type": "bool"
-            }
-          ],
-          "name": "RepresentativeStatusChanged",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_address",
-              "type": "address"
-            }
-          ],
-          "name": "addressIsModule",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            }
-          ],
-          "name": "createDepositContract",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_moduleAddress",
-              "type": "address"
-            }
-          ],
-          "name": "deactivateModule",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "depositContract",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "depositContractImplementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            }
-          ],
-          "name": "getDepositContract",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_module",
-              "type": "string"
-            }
-          ],
-          "name": "getLatestModule",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_dao",
-              "type": "address"
-            }
-          ],
-          "name": "hasDepositContract",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "isModule",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes32",
-              "name": "",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "modules",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "owner",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_moduleAddress",
-              "type": "address"
-            }
-          ],
-          "name": "registerModule",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renounceOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "representative",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_newImplementation",
-              "type": "address"
-            }
-          ],
-          "name": "setDepositContractImplementation",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_newWETH",
-              "type": "address"
-            }
-          ],
-          "name": "setWETHAddress",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "transferOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "weth",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]
-    },
-    "DepositContract": {
-      "address": "0xF43F28bC7D7ac20CB0D1EB9b36a41ad2E92798fD",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "bytes32",
-              "name": "processID",
-              "type": "bytes32"
             },
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "depositID",
+              "name": "depositId",
               "type": "uint256"
             },
             {
@@ -385,12 +43,6 @@
               "internalType": "uint256",
               "name": "amount",
               "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "sender",
-              "type": "address"
             }
           ],
           "name": "Deposited",
@@ -400,10 +52,22 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "bytes32",
-              "name": "actionId",
-              "type": "bytes32"
+              "indexed": true,
+              "internalType": "address",
+              "name": "dealModule",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "dao",
+              "type": "address"
             },
             {
               "indexed": false,
@@ -416,12 +80,6 @@
               "internalType": "uint256",
               "name": "claimed",
               "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "dao",
-              "type": "address"
             }
           ],
           "name": "VestingClaimed",
@@ -431,10 +89,34 @@
           "anonymous": false,
           "inputs": [
             {
+              "indexed": true,
+              "internalType": "address",
+              "name": "dealModule",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "vestingStart",
+              "type": "uint256"
+            },
+            {
               "indexed": false,
-              "internalType": "bytes32",
-              "name": "processID",
-              "type": "bytes32"
+              "internalType": "uint32",
+              "name": "vestingCliff",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint32",
+              "name": "vestingDuration",
+              "type": "uint32"
             },
             {
               "indexed": false,
@@ -447,24 +129,6 @@
               "internalType": "uint256",
               "name": "amount",
               "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "vestingStart",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "vestingCliff",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "vestingDuration",
-              "type": "uint256"
             }
           ],
           "name": "VestingStarted",
@@ -474,22 +138,28 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "bytes32",
-              "name": "processID",
-              "type": "bytes32"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "depositID",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
-              "name": "to",
+              "name": "dealModule",
               "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "depositor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint32",
+              "name": "depositId",
+              "type": "uint32"
             },
             {
               "indexed": false,
@@ -515,30 +185,22 @@
               "type": "address"
             },
             {
-              "internalType": "bytes32",
+              "internalType": "address",
               "name": "",
-              "type": "bytes32"
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
-          "name": "availableModuleBalances",
+          "name": "availableDealBalances",
           "outputs": [
             {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "baseContract",
-          "outputs": [
-            {
-              "internalType": "contract IBaseContract",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -547,17 +209,27 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_id",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
           "name": "claimDealVestings",
           "outputs": [
             {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
+              "internalType": "address[]",
+              "name": "tokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "amounts",
+              "type": "uint256[]"
             }
           ],
           "stateMutability": "nonpayable",
@@ -568,9 +240,14 @@
           "name": "claimVestings",
           "outputs": [
             {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
+              "internalType": "address[]",
+              "name": "tokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "amounts",
+              "type": "uint256[]"
             }
           ],
           "stateMutability": "nonpayable",
@@ -590,11 +267,29 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "dealManager",
+          "outputs": [
+            {
+              "internalType": "contract IDealManager",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -615,9 +310,14 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
+              "internalType": "address",
               "name": "",
-              "type": "bytes32"
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             },
             {
               "internalType": "uint256",
@@ -629,7 +329,7 @@
           "outputs": [
             {
               "internalType": "address",
-              "name": "sender",
+              "name": "depositor",
               "type": "address"
             },
             {
@@ -648,9 +348,9 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
-              "name": "time",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "depositedAt",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -659,9 +359,14 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -669,7 +374,7 @@
               "type": "address"
             }
           ],
-          "name": "getAvailableProcessBalance",
+          "name": "getAvailableDealBalance",
           "outputs": [
             {
               "internalType": "uint256",
@@ -702,14 +407,19 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
             },
             {
-              "internalType": "uint256",
-              "name": "_depositID",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_depositId",
+              "type": "uint32"
             }
           ],
           "name": "getDeposit",
@@ -746,19 +456,24 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
             },
             {
-              "internalType": "uint256",
-              "name": "_fromDepositID",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
-              "internalType": "uint256",
-              "name": "_toDepositID",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_fromDepositId",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_toDepositId",
+              "type": "uint32"
             }
           ],
           "name": "getDepositRange",
@@ -795,33 +510,14 @@
         {
           "inputs": [
             {
-              "internalType": "string",
+              "internalType": "address",
               "name": "_module",
-              "type": "string"
+              "type": "address"
             },
             {
-              "internalType": "uint256",
-              "name": "_id",
-              "type": "uint256"
-            }
-          ],
-          "name": "getProcessID",
-          "outputs": [
-            {
-              "internalType": "bytes32",
-              "name": "",
-              "type": "bytes32"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
           "name": "getTotalDepositCount",
@@ -857,9 +553,14 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -900,21 +601,13 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "_newBaseContract",
+              "name": "_module",
               "type": "address"
-            }
-          ],
-          "name": "migrateBaseContract",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
+            },
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address[]",
@@ -935,9 +628,14 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -953,9 +651,14 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address[]",
@@ -971,9 +674,9 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -1000,9 +703,22 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_actionId",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_newDaoDepositManager",
+              "type": "address"
+            }
+          ],
+          "name": "setDealManagerImplementation",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -1015,14 +731,14 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "_vestingCliff",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "_vestingDuration",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "name": "startVesting",
@@ -1039,6 +755,30 @@
             }
           ],
           "name": "tokenBalances",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "tokensPerDeal",
           "outputs": [
             {
               "internalType": "uint256",
@@ -1089,12 +829,55 @@
               "type": "uint256"
             }
           ],
+          "name": "vestedTokenAddresses",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "vestedTokenAmounts",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "name": "vestings",
           "outputs": [
             {
-              "internalType": "bytes32",
-              "name": "actionId",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "dealModule",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
             },
             {
               "internalType": "address",
@@ -1112,19 +895,19 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "startTime",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "cliff",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "duration",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -1133,14 +916,19 @@
         {
           "inputs": [
             {
-              "internalType": "bytes32",
-              "name": "_processID",
-              "type": "bytes32"
+              "internalType": "address",
+              "name": "_module",
+              "type": "address"
             },
             {
-              "internalType": "uint256",
-              "name": "_depositID",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_depositId",
+              "type": "uint32"
             }
           ],
           "name": "withdraw",
@@ -1166,14 +954,276 @@
         }
       ]
     },
+    "DealManager": {
+      "address": "0x0b500dB17E4D9e8167253956546A9A2b3412a432",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "dao",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "daoDepositManager",
+              "type": "address"
+            }
+          ],
+          "name": "DaoDepositManagerCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "addressIsModule",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_dao",
+              "type": "address"
+            }
+          ],
+          "name": "createDaoDepositManager",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "daoDepositManager",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "daoDepositManagerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_moduleAddress",
+              "type": "address"
+            }
+          ],
+          "name": "deactivateModule",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_dao",
+              "type": "address"
+            }
+          ],
+          "name": "getDaoDepositManager",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_dao",
+              "type": "address"
+            }
+          ],
+          "name": "hasDaoDepositManager",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "isModule",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_moduleAddress",
+              "type": "address"
+            }
+          ],
+          "name": "registerModule",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "setDaoDepositManagerImplementation",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_newWETH",
+              "type": "address"
+            }
+          ],
+          "name": "setWETHAddress",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "weth",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
     "TokenSwapModule": {
-      "address": "0x6cc679281471Db14ebCDD3323ed28354290fFc21",
+      "address": "0x160bF98E6eDBd2CB54BBDF694831063C03c4846B",
       "abi": [
         {
           "inputs": [
             {
               "internalType": "address",
-              "name": "_baseContract",
+              "name": "_dealmanager",
               "type": "address"
             }
           ],
@@ -1184,16 +1234,16 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "uint256",
+              "indexed": true,
+              "internalType": "uint32",
               "name": "oldFee",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
-              "indexed": false,
-              "internalType": "uint256",
+              "indexed": true,
+              "internalType": "uint32",
               "name": "newFee",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "name": "FeeChanged",
@@ -1203,13 +1253,13 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "oldFeeWallet",
               "type": "address"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "newFeeWallet",
               "type": "address"
@@ -1223,9 +1273,15 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "module",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
             },
             {
               "indexed": true,
@@ -1259,9 +1315,9 @@
             },
             {
               "indexed": false,
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "deadline",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "name": "TokenSwapCreated",
@@ -1272,9 +1328,15 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "module",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "dealId",
+              "type": "uint32"
             }
           ],
           "name": "TokenSwapExecuted",
@@ -1283,66 +1345,9 @@
         {
           "inputs": [
             {
-              "internalType": "address[]",
-              "name": "_daos",
-              "type": "address[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "_tokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[][]",
-              "name": "_pathFrom",
-              "type": "uint256[][]"
-            },
-            {
-              "internalType": "uint256[][]",
-              "name": "_pathTo",
-              "type": "uint256[][]"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_metadata",
-              "type": "bytes"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_deadline",
-              "type": "uint256"
-            }
-          ],
-          "name": "_createSwap",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "baseContract",
-          "outputs": [
-            {
-              "internalType": "contract IBaseContract",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_id",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
           "name": "checkExecutability",
@@ -1384,28 +1389,41 @@
               "type": "bytes"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "_deadline",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "name": "createSwap",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "dealManager",
+          "outputs": [
+            {
+              "internalType": "contract IDealManager",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "_id",
-              "type": "uint256"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
           "name": "executeSwap",
@@ -1418,9 +1436,9 @@
           "name": "feeInBasisPoints",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -1447,7 +1465,7 @@
               "type": "bytes"
             }
           ],
-          "name": "getTokenswap",
+          "name": "getTokenswapFromMetadata",
           "outputs": [
             {
               "components": [
@@ -1472,14 +1490,14 @@
                   "type": "uint256[][]"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "uint32",
                   "name": "deadline",
-                  "type": "uint256"
+                  "type": "uint32"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "uint32",
                   "name": "executionDate",
-                  "type": "uint256"
+                  "type": "uint32"
                 },
                 {
                   "internalType": "bytes",
@@ -1503,43 +1521,17 @@
         {
           "inputs": [
             {
-              "internalType": "bytes",
-              "name": "",
-              "type": "bytes"
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
-          "name": "metadataToId",
+          "name": "hasDealExpired",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "bool",
               "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "moduleIdentifier",
-          "outputs": [
-            {
-              "internalType": "bytes32",
-              "name": "",
-              "type": "bytes32"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "moduleIdentifierString",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -1548,9 +1540,28 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "name": "metadataToDealId",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint32",
               "name": "_feeInBasisPoints",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "name": "setFee",
@@ -1582,14 +1593,14 @@
           "name": "tokenSwaps",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "deadline",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "executionDate",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
               "internalType": "bytes",

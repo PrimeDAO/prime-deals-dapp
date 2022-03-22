@@ -92,7 +92,7 @@ export class DealTokenSwap implements IDeal {
 
   public moduleContract: any;
   public daoDepositContracts: Map<IDAO, any>;
-  public baseContract: any;
+  public dealManager: any;
 
   public primaryDao: IDAO;
   public partnerDao: IDAO;
@@ -266,7 +266,7 @@ export class DealTokenSwap implements IDeal {
   private async loadContracts(): Promise<void> {
     try {
       this.moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-      this.baseContract = await this.contractsService.getContractFor(ContractNames.BASECONTRACT);
+      this.dealManager = await this.contractsService.getContractFor(ContractNames.DEALMANAGER);
       return this.loadDepositContracts();
     }
     catch (error) {
@@ -281,9 +281,9 @@ export class DealTokenSwap implements IDeal {
 
       const daoDepositContracts = new Map<IDAO, any>();
 
-      daoDepositContracts.set(this.primaryDao, await this.baseContract.depositContract(this.registrationData.primaryDAO.treasury_address));
+      daoDepositContracts.set(this.primaryDao, await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address));
       if (this.registrationData.partnerDAO) {
-        daoDepositContracts.set(this.partnerDao, await this.baseContract.depositContract(this.registrationData.partnerDAO.treasury_address));
+        daoDepositContracts.set(this.partnerDao, await this.dealManager.daoDepositManager(this.registrationData.partnerDAO.treasury_address));
       }
 
       this.daoDepositContracts = daoDepositContracts;
@@ -304,12 +304,17 @@ export class DealTokenSwap implements IDeal {
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
-      // TODO:
-      // const metadata = Utils.asciiToHex(this.id); // should be same as tokenSwapInfo.metadata
-      // this.contractDealId = await this.moduleContract.metadataToId(metadata);
-      // const tokenSwapInfo: TokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
-      // this.isExecuted = tokenSwapInfo.status === 3;
-      this.isExecuted = this.isWithdrawn = this.isRejected = false;
+      // TODO: when we are getting real deals from storage and have a real id.
+      const metadata = Utils.asciiToHex(this.id); // should be same as tokenSwapInfo.metadata
+      this.contractDealId = await this.moduleContract.metadataToDealId(metadata);
+      if (this.contractDealId) {
+        const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
+        this.isExecuted = tokenSwapInfo.status === 3;
+      } else {
+        this.isExecuted = false;
+      }
+
+      this.isWithdrawn = this.isRejected = false; // <== TODO: get these from Deal storage
     }
     catch (error) {
       this.corrupt = true;
