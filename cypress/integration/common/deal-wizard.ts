@@ -1,12 +1,13 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { DealWizard } from "./pageObjects/dealWizard";
 
-const wizardTitlesToURLs = {
+export const wizardTitlesToURLs = {
   "Open proposal": "open-proposal",
   "Partnered Deal": "partnered-deal",
   "Make an offer": "make-an-offer",
 } as const;
 
-const stageTitlesToURLs = {
+export const stageTitlesToURLs = {
   "Proposal": "proposal",
   "Lead Details": "lead-details",
   "Primary DAO": "primary-dao",
@@ -16,14 +17,13 @@ const stageTitlesToURLs = {
   "Submit": "submit",
 } as const;
 
-export let sectionTitle = "";
-
 export function withinWizardSection() {
+  const sectionTitle = DealWizard.getSectionTitle();
   return cy.contains("[data-test='section-title']", sectionTitle).parents(".stageSection");
 }
 
 Given(/^I want to fill in information for the "(.*)" section$/, (_sectionTitle: string) => {
-  sectionTitle = _sectionTitle;
+  DealWizard.inWizardSection(_sectionTitle);
 });
 
 Then("I am presented the option to choose a partner", () => {
@@ -31,15 +31,11 @@ Then("I am presented the option to choose a partner", () => {
 });
 
 When("I go to previous step", () => {
-  cy.url().then(url => {
-    const oldUrl = url;
-    cy.get("[data-test='wizard-previous-button']").click();
-    cy.url().should("not.equal", oldUrl);
-  });
+  DealWizard.previous();
 });
 
 When("I try to proceed to next step", () => {
-  cy.get("[data-test='wizard-proceed-button']").click();
+  DealWizard.proceed();
 });
 
 When("I try to submit the registration data", () => {
@@ -47,27 +43,27 @@ When("I try to submit the registration data", () => {
 });
 
 When("I try to navigate to the {string} stage via stepper", (stageTitle: string) => {
-  cy.get("[data-test='wizard-manager-stepper']").within(() => {
-    cy.contains("[data-test='pstepper-step']", stageTitle).click();
-  });
+  DealWizard.stepperNavigationTo(stageTitle);
 });
 
+const lastUrl = "";
 Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
-  if (!wizardTitlesToURLs[wizardTitle]) {
-    throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
-  }
-  if (!stageTitlesToURLs[stageTitle]) {
-    throw new Error(`Stage  ${stageTitle} does not exist in the list`);
-  }
-
   if (wizardTitle === "Make an offer") {
     const dealId = "open_deals_stream_hash_1";
     const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
-    cy.visit(url).wait(1500);
+    cy.visit(url);
     return;
   }
 
-  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
+  DealWizard.inWizardType(wizardTitle).inStage(stageTitle);
+
+  let url = `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`;
+  if (lastUrl === url) {
+    url = lastUrl;
+    return;
+  }
+
+  cy.visit(url);
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
@@ -90,13 +86,7 @@ Given("I edit a \"Partnered Deal\"", () => {
 });
 
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
-  if (!wizardTitlesToURLs[wizardTitle]) {
-    throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
-  }
-  if (!stageTitlesToURLs[stageTitle]) {
-    throw new Error(`Stage ${stageTitle} does not exist in the list`);
-  }
-  cy.url().should("contain", `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+  DealWizard.inWizardType(wizardTitle).inStage(stageTitle).isInStage();
 });
 
 When("I fill in the {string} field with an invalid address", (field: string) => {
@@ -109,18 +99,12 @@ When("I fill in the {string} field with an invalid address", (field: string) => 
 });
 
 When("I fill in the {string} field with {string}", (field: string, value: string) => {
-  withinWizardSection().within(() => {
-    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-      cy.get("input, textarea").type(value);
-    });
-
-    if (field === "Token address") {
-      waitForTokenAddressLoaded();
-    }
-  });
+  DealWizard.inField(field).fillIn(value);
 });
 
 When("I fill in the {string} field with {string} in the {string} section", (field: string, value: string, section: string) => {
+  // DealWizard.inWizardSection(section).inField(field).fillIn(value);
+
   cy.get(`[data-test='${section.toLowerCase().replaceAll(" ", "-")}']`).within(() => {
     cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
       cy.get("input, textarea").type(value);
@@ -129,10 +113,7 @@ When("I fill in the {string} field with {string} in the {string} section", (fiel
 });
 
 Then("I am presented with the {string} error message for the {string} field", (message: string, field: string) => {
-  cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-    cy.get(".errorMessage").should("be.visible");
-    cy.get(".errorMessage").should("contain.text", message);
-  });
+  DealWizard.inField(field).checkErrorMessage(message);
 });
 
 When("I'm in the {string} section", (sectionHeading: string) => {

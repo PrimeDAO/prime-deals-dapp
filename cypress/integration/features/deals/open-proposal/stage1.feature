@@ -18,6 +18,7 @@ Feature: "Proposal" stage (Stage 1)
     And I am presented with the "Description is required" error message for the "Description" field
 
   Scenario: Validates summary and description being too short
+    Given I want to fill in information for the "Proposal" section
     When I fill in the "Summary" field with "short"
     And I fill in the "Description" field with "short"
     And I try to proceed to next step
@@ -32,6 +33,7 @@ Feature: "Proposal" stage (Stage 1)
     And I try to proceed to next step
     Then I am presented with the "Open proposal" "Lead Details" stage
 
+  @focus
   Scenario: I can navigate the stages freely using stepper
     Given I am presented with the "Open proposal" "Proposal" stage
     When I try to navigate to the "Lead Details" stage via stepper

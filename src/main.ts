@@ -36,7 +36,6 @@ export function configure(aurelia: Aurelia): void {
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
-  const isCypress = (window as any).Cypress;
 
   if (inDev) {
     aurelia.use.developmentLogging(); // everything
@@ -54,6 +53,8 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.registerTransient(DealTokenSwap);
 
+      // const isCypress = (window as any).Cypress;
+      const isCypress = true;
       if (isCypress) {
         aurelia.use.singleton(EthereumService, EthereumServiceTesting);
       }
