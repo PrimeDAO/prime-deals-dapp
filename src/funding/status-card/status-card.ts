@@ -10,9 +10,9 @@ export class StatusCard {
   private dealStatuses = DealStatus; //have to assign this to a view model field for the HTML to be able to compare enums
   get status(): DealStatus{
     if (this.dao.tokens.some((x: ITokenFunding) => Number(x.required) <= 0)){
-      return DealStatus.targetReached;
+      return DealStatus.completed;
     } else {
-      return DealStatus.fundingInProgress;
+      return DealStatus.funding;
     }
   }
 }

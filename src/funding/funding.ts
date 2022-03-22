@@ -64,19 +64,18 @@ export class Funding {
     if (this.ethereumService.defaultAccountAddress === this.deal.registrationData.proposalLead.address){
       this.isProposalLead = true;
     }
-
     //TODO get the contract from the blockchain
-    const baseContract = await this.contractsService.getContractFor(ContractNames.BASECONTRACT);
-    console.log("Primary DAO Address", this.deal.registrationData.primaryDAO.treasury_address);
-    console.log("Partner DAO Address", this.deal.registrationData.partnerDAO.treasury_address);
-    const primaryDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.primaryDAO.treasury_address);
-    const partnerDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.partnerDAO.treasury_address);
+    // const baseContract = await this.contractsService.getContractFor(ContractNames.BASECONTRACT);
+    // console.log("Primary DAO Address", this.deal.registrationData.primaryDAO.treasury_address);
+    // console.log("Partner DAO Address", this.deal.registrationData.partnerDAO.treasury_address);
+    // const primaryDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.primaryDAO.treasury_address);
+    // const partnerDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.partnerDAO.treasury_address);
     //const primaryDao = this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.deal.registrationData.primaryDAO.treasury_address);
     //const processId = this.ethereumService.hash("TOKEN_SWAP_MODULE", "deal1");
     //await baseContract.getAvailableProcessBalance(processId, this.deal.registrationData.primaryDAO.tokens[0].address);
-    console.log(baseContract);
-    console.log(primaryDaoContractAddress);
-    console.log(partnerDaoContractAddress);
+    // console.log(baseContract);
+    // console.log(primaryDaoContractAddress);
+    // console.log(partnerDaoContractAddress);
     //TODO get the tokenDepositContractUrl and set it
     //TODO get the tokenSwapModuleContractUrl and set it
   }

@@ -6,9 +6,7 @@
       <div class="daoName">
         <dao-icon-name primary-dao.to-view="dao"></dao-icon-name>
       </div>
-      <chip color="${status === dealStatuses.targetReached ? 'success' : 'warning'}">
-        ${status}
-      </chip>
+      <chip color="${status === dealStatuses.completed ? 'success' : 'warning'}"> ${status} </chip>
     </header>
     <div class="content">
       <div class="token-progress" repeat.for="token of dao.tokens">
