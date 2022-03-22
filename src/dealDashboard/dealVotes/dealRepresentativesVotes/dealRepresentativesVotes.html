@@ -1,0 +1,30 @@
+<template>
+  <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
+    <img class="dao-logo" src.bind="dao.logoURI">
+    <div class="accordion-title bodySmallText">
+      ${dao.name}
+    </div>
+    <div class="votes-statuses-circles">
+      <div class="vote-status-circle vote-success"></div>
+      <div class="vote-status-circle vote-rejected"></div>
+      <div class="vote-status-circle vote-success"></div>
+      <div class="vote-status-circle-delimiter"></div>
+      <div class="vote-status-circle vote-rejected"></div>
+      <div class="vote-status-circle vote-success"></div>
+    </div>
+    <i class="fas fa-angle-up arrow"></i>
+  </div>
+
+  <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
+      <etherscanlink address.bind="representative.address"
+                     text="${representative.address | smallHexString}">
+      </etherscanlink>
+      accepted
+      <span class="representative-vote representative-vote-accepted">
+        <i class="fas fa-check-circle"></i>
+      </span>
+    </p>
+  </div>
+
+</template>
