@@ -10,7 +10,7 @@
       </div>
     </section>
     <hgroup class="title" ref="refTitle">
-      <pre><h2 class="heading topic ${atTop? 'at-top': ''}">${dealDiscussion.topic}</h2></pre>
+      <pre><h2 class="heading topic">${dealDiscussion.topic}</h2></pre>
       <span if.bind="dealDiscussion && dealDiscussion.createdBy.address">
         <h3 class="subtext">Clause #${dealDiscussion.clauseIndex + 1}</h3>
         <h3 class="subtext">

@@ -293,6 +293,8 @@ const _registration4: IDealRegistrationTokenSwap = {
   terms: {
     clauses: [
       {id: "clause-hash-1", text: "lorem"},
+      {id: "clause-hash-2", text: "loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem"},
+      {id: "clause-hash-3", text: "lorem\nlorem\nlorem\nlorem\nlorem\nlorem\n"},
     ],
   },
   keepAdminRights: false,
