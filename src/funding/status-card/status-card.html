@@ -6,10 +6,10 @@
       <div class="daoName">
         <dao-icon-name primary-dao.to-view="dao"></dao-icon-name>
       </div>
-      <chip color="${status === dealStatuses.completed ? 'success' : 'warning'}"> ${status} </chip>
+      <chip color="${chipColor}"> ${status} </chip>
     </header>
     <div class="content">
-      <div class="token-progress" repeat.for="token of dao.tokens">
+      <div class="token-progress" repeat.for="token of dao.tokens" if.to-view="!swapCompleted">
         <img src="${token.logoURI}" />
         <div>
           <div class="progress-bar-content">
@@ -22,6 +22,15 @@
           <div class="progress-bar">
             <progress-bar max.bind="token.target" current.bind="token.deposited"></progress-bar>
           </div>
+        </div>
+      </div>
+      <div class="token-completed" if.to-view="swapCompleted">
+        <div repeat.for="token of dao.tokens">
+          <img src="${token.logoURI}" />
+          <span
+            >${token.deposited | ethwei:token.decimals}
+            <strong>${token.symbol}</strong> Received</span
+          >
         </div>
       </div>
     </div>

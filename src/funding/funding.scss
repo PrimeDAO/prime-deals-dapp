@@ -6,6 +6,52 @@
 $hover-transition-speed-fast: 175ms;
 $hover-transition-speed-medium: 0.3s;
 $hover-transition-speed-slow: 0.4s;
+.ppopup-dialog {
+  p.dialogBody {
+    width: 550px;
+  }
+  .modal-content {
+    border-radius: 10px;
+    background-color: $BG02;
+    width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+    display: grid;
+    grid-gap: 20px;
+    h6 {
+      text-transform: uppercase;
+      color: $Secondary02;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Aeonik;
+    }
+    .dao {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 400;
+      font-family: Aeonik;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-column-gap: 10px;
+      .buttons {
+        display: flex;
+        column-gap: 4px;
+        align-items: center;
+
+        .etherscan-button {
+          outline: none;
+          path {
+            fill: $Secondary05;
+          }
+          cursor: pointer;
+          &:hover > path {
+            fill: $White;
+          }
+        }
+      }
+    }
+  }
+}
 .success {
   color: $Green;
 }
@@ -25,8 +71,10 @@ $hover-transition-speed-slow: 0.4s;
       pbutton {
         justify-self: right;
       }
+      margin-bottom: 80px;
     }
     &.deposit {
+      margin-bottom: 30px;
       .box-container {
         background-color: $BG02;
         border-radius: 10px;
@@ -279,7 +327,7 @@ $hover-transition-speed-slow: 0.4s;
       }
     }
     &.swap-status {
-      margin-top: 40px;
+      margin-bottom: 110px;
       .status-cards {
         display: grid;
         margin-top: 20px;
@@ -296,10 +344,16 @@ $hover-transition-speed-slow: 0.4s;
           }
         }
       }
+      .initiate-swap {
+        margin-top: 40px;
+        display: grid;
+        place-items: center;
+        i {
+          margin-left: 10px;
+        }
+      }
     }
     &.transactions {
-      margin-top: 100px;
-
       .transactions-grid {
         margin-bottom: 20px;
         display: grid;
@@ -326,6 +380,10 @@ $hover-transition-speed-slow: 0.4s;
 
           .cell.header {
             padding: 10px 0;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 24px;
+            font-family: Aeonik;
           }
 
           .cell {
@@ -336,7 +394,14 @@ $hover-transition-speed-slow: 0.4s;
                 border-bottom: 1px solid $Border01;
                 padding: 20px 0;
                 font-size: 16px;
+                font-family: Aeonik;
                 font-weight: 400;
+                color: $Neutral03;
+                .Dao .name {
+                  font-size: 16px;
+                  font-weight: 400;
+                  font-family: Aeonik;
+                }
               }
               &.withdraw {
                 pbutton {
@@ -347,15 +412,35 @@ $hover-transition-speed-slow: 0.4s;
                 }
               }
               &.address {
-                div {
-                  div {
-                    color: $Secondary05;
-                    font-size: 14px;
-                    font-weight: 700;
+                .transactionType {
+                  color: $Secondary05;
+                  font-size: 14px;
+                  font-weight: 700;
+                }
+                .addressLink {
+                  display: grid;
+                  grid-template-columns: auto auto;
+                  grid-column-gap: 10px;
+                  .buttons {
+                    display: flex;
+                    column-gap: 4px;
+                    align-items: center;
+
+                    .etherscan-button {
+                      outline: none;
+                      path {
+                        fill: $Secondary05;
+                      }
+                      cursor: pointer;
+                      &:hover > path {
+                        fill: $White;
+                      }
+                    }
                   }
                 }
               }
               &.type {
+                text-transform: capitalize;
                 i {
                   padding-right: 10px;
                 }
@@ -368,13 +453,20 @@ $hover-transition-speed-slow: 0.4s;
                 }
               }
               &.txid {
-                i {
-                  color: $Secondary02;
-                  -webkit-transform: rotate(-45deg);
-                  -moz-transform: rotate(-45deg);
-                  -ms-transform: rotate(-45deg);
-                  -o-transform: rotate(-45deg);
-                  transform: rotate(-45deg);
+                a {
+                  display: flex;
+                  column-gap: 4px;
+                  align-items: center;
+                  .etherscan-button {
+                    outline: none;
+                    path {
+                      fill: $Secondary05;
+                    }
+                    cursor: pointer;
+                    &:hover > path {
+                      fill: $White;
+                    }
+                  }
                 }
               }
               &.withdraw {

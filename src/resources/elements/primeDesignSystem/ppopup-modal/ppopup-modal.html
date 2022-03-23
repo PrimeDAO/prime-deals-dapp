@@ -3,8 +3,17 @@
     <p class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}">${header}</p>
     <p class="dialogBody" ref="body"></p>
     <p class="dialogFooter">
-      <pbutton type="tertiary" show.bind="showCancelButton" click.trigger="secondaryClick()">${buttonTextSecondary}</pbutton>
-      <pbutton type="primary" show.bind="showOkButton" ref="primaryButton" click.trigger="primaryClick()">${buttonTextPrimary}</pbutton>
+      <pbutton type="tertiary" show.bind="showCancelButton" click.trigger="secondaryClick()"
+        >${buttonTextSecondary}</pbutton
+      >
+      <pbutton
+        type="primary"
+        show.bind="showOkButton"
+        ref="primaryButton"
+        click.trigger="primaryClick()"
+      >
+        <span innerhtml.bind="buttonTextPrimary | sanitizeHTML"></span
+      ></pbutton>
     </p>
   </section>
 </template>

@@ -1,3 +1,5 @@
+import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
+import { NumberService } from "./../services/NumberService";
 import { IDaoTransaction } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
@@ -18,6 +20,7 @@ import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
 import moment from "moment-timezone";
+import { IAlertModel } from "services/AlertService";
 const converter = new EthweiValueConverter();
 @autoinject
 export class Funding {
@@ -38,7 +41,10 @@ export class Funding {
   private transactions: IDaoTransaction[] = [];
   private loadingTransactions = false; //TODO set this to true by default and false after transactions load
   private seeingMore = false;
-  private swapCompletedNoVestedAmount = false;
+  private vestedAmount = 0;
+  private swapCompleted = false;
+  private dealTargetReached = false;
+  private fundingFailed = false;
 
   constructor(
     private router: Router,
@@ -47,6 +53,8 @@ export class Funding {
     private contractsService: ContractsService,
     private dateService: DateService,
     private eventAggregator: EventAggregator,
+    private numberService: NumberService,
+    private alertService: AlertService,
   ) {}
 
   async canActivate(){
@@ -68,18 +76,6 @@ export class Funding {
     if (this.ethereumService.defaultAccountAddress === this.deal.registrationData.proposalLead.address){
       this.isProposalLead = true;
     }
-    //TODO get the contract from the blockchain
-    // const baseContract = await this.contractsService.getContractFor(ContractNames.BASECONTRACT);
-    // console.log("Primary DAO Address", this.deal.registrationData.primaryDAO.treasury_address);
-    // console.log("Partner DAO Address", this.deal.registrationData.partnerDAO.treasury_address);
-    // const primaryDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.primaryDAO.treasury_address);
-    // const partnerDaoContractAddress = await baseContract.getDepositContract(this.deal.registrationData.partnerDAO.treasury_address);
-    //const primaryDao = this.contractsService.getContractAtAddress(ContractNames.BASECONTRACT, this.deal.registrationData.primaryDAO.treasury_address);
-    //const processId = this.ethereumService.hash("TOKEN_SWAP_MODULE", "deal1");
-    //await baseContract.getAvailableProcessBalance(processId, this.deal.registrationData.primaryDAO.tokens[0].address);
-    // console.log(baseContract);
-    // console.log(primaryDaoContractAddress);
-    // console.log(partnerDaoContractAddress);
     //TODO get the tokenDepositContractUrl and set it
     //TODO get the tokenSwapModuleContractUrl and set it
   }
@@ -93,13 +89,18 @@ export class Funding {
       this.setTokenContractInfo(x);
     });
 
+    //TODO wire up the isTargetReached() method from DealTokenSwap.ts
+    this.dealTargetReached = false;
+
     //TODO figure out what the vested amount is from the deal
-    //this.swapCompletedNoVestedAmount = this.deal.isCompleted && this.deal.vestedAmount <= 0
-    this.swapCompletedNoVestedAmount = true;
+    //this.swapCompleted = this.deal.isCompleted;
+    //this.vestedAmount = this.deal.vestedAmount;
+    this.swapCompleted = false;
+    this.vestedAmount = 0;
 
     //TODO: Check the time left on the funding period and if there is no time left set "Target Not Reached" for each DAO status
     const d = new Date(); //TODO comment out - test data
-    d.setDate(d.getDate() - 40); //TODO comment out - test data
+    d.setDate(d.getDate() - 46); //TODO comment out - test data
     this.deal.executedAt = d; //TODO comment out - test data
     if (this.deal.executedAt && this.deal.executionPeriod){
       const executionTime = this.deal.executedAt;
@@ -129,10 +130,36 @@ export class Funding {
     }
 
     //get the transactions for this deal
+    this.daoRelatedToWallet.tokens[0].amount = "12304.23423524343122343232243";
+    this.transactions.push({
+      address: "0xdb6a67c15a0f10e1656517c463152c22468b78b8",
+      createdAt: new Date(),
+      dao: this.daoRelatedToWallet,
+      depositId: 1234,
+      token: this.daoRelatedToWallet.tokens[0],
+      type: "deposit",
+      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    });
+    this.transactions.push({
+      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
+      createdAt: new Date(),
+      dao: this.daoRelatedToWallet,
+      depositId: 1234,
+      token: this.daoRelatedToWallet.tokens[0],
+      type: "withdraw",
+      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    });
+
+    //TODO combine these two arrays to one and order by deposit date descending
     const daoRelatedToWalletTransactions = await this.deal.getDaoTransactions(this.daoRelatedToWallet);
     const otherDaoTransactions = await this.deal.getDaoTransactions(this.otherDao);
     console.log(daoRelatedToWalletTransactions);
     console.log(otherDaoTransactions);
+
+    //TODO subscribe to an event when a transaction happens on the blockchain and update the grid's transaction data
+
+    //this.fundingFailed = this.deal.isFailed;
+    this.fundingFailed = true; //TODO comment test data
   }
 
   /**
@@ -140,7 +167,7 @@ export class Funding {
    */
   private setTokenContractInfo(token: ITokenFunding): void{
     //get the additional token information from the contract for this token
-    token.deposited = converter.fromView(100, 18); //TODO get total amount of deposited tokens from the DepositContract
+    token.deposited = converter.fromView(80, 18); //TODO get total amount of deposited tokens from the DepositContract
     token.target = converter.fromView(100, 18); //TODO get the target amount of tokens to be reached
     // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
     token.required = converter.fromView(Number(converter.toView(token.target, token.decimals)) - Number(converter.toView(token.deposited, token.decimals)), token.decimals);
@@ -237,10 +264,13 @@ export class Funding {
     //TODO implement the deposit of tokens
     this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${converter.toView(this.depositAmount, 18)} ${tokenSymbol} on behalf of ${this.daoRelatedToWallet.name}`, EventMessageType.Info, "Deposit Submitted"));
     //TODO handle wallet provider transaction rejection
+    //TODO handle the popup notification on the event of the deposit actually being completed
   }
 
   /**
    * Handles the change event of the select token dropdown
+   * @param newVal
+   * @param prevVal
    */
   private selectedTokenChanged(newVal: number | string, prevVal: number | string): void{
     this.depositAmount = null;
@@ -264,7 +294,7 @@ export class Funding {
    * @returns string
    */
   public getFormattedTime(dateTime: Date): string {
-    return this.dateService.formattedTime(dateTime).diff("en-US").replace("a ", "1 ");
+    return this.dateService.formattedTime(dateTime).diff();
   }
 
   /**
@@ -288,17 +318,99 @@ export class Funding {
    * Withdraws the deposit made from the connected wallet
    * @param transaction
    */
-  public withdraw(transaction: IDaoTransaction) : void {
-    //TODO wire up the withdraw method
-    this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+  public async withdraw(transaction: IDaoTransaction) : Promise<void> {
+    const withdrawModal: IAlertModel = {
+      header: `You are about to withdraw ${this.withCommas(transaction.token.amount)} ${transaction.token.symbol} from the deal`,
+      message:
+        "<p>Are you sure you want to withdraw your funds?</p>",
+      buttonTextPrimary: "Withdraw",
+      buttonTextSecondary: "Cancel",
+      buttons: ShowButtonsEnum.Both,
+    };
+    // show a modal confirming the user wants to withdraw their funds
+    const dialogResult = await this.alertService.showAlert(withdrawModal);
+    if (!dialogResult.wasCancelled){
+      //TODO wire up the withdraw method
+      this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+    }
   }
 
   /**
-   * Opens a new window to the transaction id on the blockchain
-   * @param txid
+   * Initiates the token swap. Called by the "Initiate Token Swap" button on the UI
+   *  - pops up a modal to verify the user wants to initiate the swap
+   *  - does nothing if they hit cancel
+   *  - if they hit "Initiate" it will execute and show the congrats modal
    */
-  public viewTransaction(txid: string): void{
-    //TODO wire up the view transaction method
-    this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+  public async initiateSwap(): Promise<void> {
+    const swapModal: IAlertModel = {
+      header: "Initiate token swap",
+      message:
+        `<p>You are about to initiate token swapping between the following two DAOs. Do you want to initiate these swaps?</p>
+        <div class='modal-content'>${this.getDaoHtmlForSwap(this.daoRelatedToWallet)}${this.getDaoHtmlForSwap(this.otherDao)}</div>`,
+      buttonTextPrimary: "Initiate Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
+      buttonTextSecondary: "Cancel",
+      buttons: ShowButtonsEnum.Both,
+      data: {
+        gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
+      },
+    };
+    // show a modal confirming the user wants to initiate the swap
+    const dialogResult = await this.alertService.showAlert(swapModal);
+    if (!dialogResult.wasCancelled){
+      //the user said they wanted to initiate the swap so call the swap contract
+      //TODO wire up the initiate swap method to the contract
+      this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+
+      //if the swap succeeded, show the 'congrats' modal
+      //TODO add the if statement if the token swap was successfully initiated then show the congrats popup
+      const congratulatePopupModel: IAlertModel = {
+        header: "Congratulations!",
+        message: "<p class='excitement'>You have successfully initiated the token swaps!</p>",
+        confetti: true,
+        buttonTextPrimary: "Close",
+        className: "congratulatePopup",
+      };
+      await this.alertService.showAlert(congratulatePopupModel);
+    }
   }
+
+  /**
+   * Gets the HTML for the dao token swap modal popup
+   * @param dao
+   * @returns string
+   */
+  private getDaoHtmlForSwap(dao: IDAO) : string{
+    return `
+      <div>
+        <h6>${dao.name} treasury address</h6>
+        <div class="dao">
+          ${dao.treasury_address} 
+          <div class="buttons">
+            <copy-to-clipboard-button text-to-copy="${dao.treasury_address}"></copy-to-clipboard-button>
+            <svg class="etherscan-button" ptooltip="Inspect on Etherscan" click.delegate="data.gotoEtherscan('${dao.treasury_address}')" width="17" height="17" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+              <path d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z" fill="#F9F6F9"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      `;
+  }
+
+  /**
+   * Formats a number with commas and two decimals
+   * @param number
+   * @returns string
+   */
+  withCommas(number: string | number) : string {
+    return this.numberService.toString(Number(number), {thousandSeparated: true, mantissa: 2});
+  }
+
+  /**
+   * Opens a new window to the transaction id or address on the blockchain
+   * @param address
+   * @param tx
+   */
+  gotoEtherscan = (address: string, tx = false): void => {
+    Utils.goto(this.ethereumService.getEtherscanLink(address, tx));
+  };
 }

@@ -13,14 +13,18 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="!daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length || !swapCompletedNoVestedAmount"
+      if.to-view="daoRelatedToWallet.tokens && daoRelatedToWallet.tokens.length && !swapCompleted"
     >
       <div class="box-container">
         <div class="box-header">
           <div class="heading heading3 title gradient">${daoRelatedToWallet.name} Deposit</div>
-          <chip color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}">
+          <chip
+            color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
+            if.to-view="fundingDaysLeft >= 0"
+          >
             <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
           </chip>
+          <chip color="danger" if.to-view="fundingFailed">Target not reached</chip>
         </div>
         <div class="box-content">
           <div class="tokens">
@@ -60,11 +64,19 @@
         </div>
         <div class="container-footer">
           <div class="contracts">
-            <p if.to-view="!isProposalLead">
+            <p>
               <i class="fas fa-info-circle"></i>
-              <span>
+              <span if.to-view="fundingFailed">
+                The deal has failed as one or more parties failed to deposit their funds within the
+                given period of time. Please go to the Transactions below and withdraw your funds.
+                You can withdraw your funds at any time. Funds are safe.
+              </span>
+              <span if.to-view="!fundingFailed && !dealTargetReached">
                 You're depositing on behalf of ${daoRelatedToWallet.name}. This deal needs to be
-                funded and executed within ${getTimeLeft()}.
+                funded and executed within ${fundingDaysLeft} days.
+              </span>
+              <span if.to-view="!fundingFailed && dealTargetReached">
+                All parties have deposited their funds. Anyone can now initiate the swap.
               </span>
             </p>
             <div>
@@ -77,7 +89,7 @@
             </div>
           </div>
           <div class="deposit">
-            <div class="form" if.to-view="!isProposalLead">
+            <div class="form" if.to-view="!isProposalLead && !dealTargetReached && !fundingFailed">
               <div>
                 <div class="inputs">
                   <pselect
@@ -119,16 +131,27 @@
     <section class="section swap-status">
       <div class="heading heading3 title gradient">Token Swap Status</div>
       <div class="status-cards">
-        <status-card dao.bind="daoRelatedToWallet"></status-card>
-        <div class="swap ${swapCompletedNoVestedAmount && 'complete'}">
+        <status-card
+          dao.bind="daoRelatedToWallet"
+          swap-completed.bind="swapCompleted"
+          funding-failed.bind="fundingFailed"
+        ></status-card>
+        <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
           <i class="fas fa-arrow-right"></i>
-          <i
-            if.to-view="swapCompletedNoVestedAmount"
-            class="fas fa-check-circle success center"
-          ></i>
+          <i if.to-view="swapCompleted" class="fas fa-check-circle success center"></i>
+          <i if.to-view="fundingFailed" class="fas fa-times-circle danger center"></i>
           <i class="fas fa-arrow-left"></i>
         </div>
-        <status-card dao.bind="otherDao"></status-card>
+        <status-card
+          dao.bind="otherDao"
+          swap-completed.bind="swapCompleted"
+          funding-failed.bind="fundingFailed"
+        ></status-card>
+      </div>
+      <div class="section initiate-swap" if.to-view="dealTargetReached">
+        <pbutton type="primary" click.delegate="initiateSwap()">
+          Initiate swap <i class="fas">&#xf021;</i>
+        </pbutton>
       </div>
     </section>
     <section class="section transactions">
@@ -158,28 +181,71 @@
               <i class="fas fa-arrow-${getTypeIcon(transaction.type)}"></i> ${transaction.type}
             </div>
             <div class="amount cell body">
-              <div>
+              <div ptooltip.to-view="transaction.token.amount">
                 <img src="${transaction.token.logoURI}" />
                 <span
-                  >${transaction.type.toLowerCase() === "deposit" ? '+' :
-                  '-'}${transaction.token.amount}${" "}${transaction.token.symbol}</span
+                  >${withCommas(transaction.token.amount)}${" "}${transaction.token.symbol}</span
                 >
               </div>
             </div>
             <div class="address cell body">
               <div>
-                <div>FROM</div>
-                ${transaction.address | smallHexString}
+                <!-- <div class="transactionType">${transaction.type === "deposit" ? "FROM" : "TO"}</div> -->
+                <div class="addressLink">
+                  <span ptooltip.to-view="transaction.address"
+                    >${transaction.address | smallHexString}</span
+                  >
+                  <div class="buttons">
+                    <copy-to-clipboard-button
+                      text-to-copy.to-view="transaction.address"
+                    ></copy-to-clipboard-button>
+                    <!-- same as externalLinkIcon.svg -->
+                    <svg
+                      class="etherscan-button"
+                      ptooltip="Inspect on Etherscan"
+                      click.delegate="gotoEtherscan(transaction.address)"
+                      width="17"
+                      height="17"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z"
+                        fill="#F9F6F9"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="age cell body">${getFormattedTime(transaction.createdAt)}</div>
             <div class="txid cell body">
-              <a click.delegate="viewTransaction(transaction.txid)"
-                >View <i class="fas fa-arrow-right"></i
+              <a
+                click.delegate="gotoEtherscan(transaction.txid,true)"
+                ptooltip="Inspect on Etherscan"
+                >View
+                <svg
+                  class="etherscan-button"
+                  width="17"
+                  height="17"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z"
+                    fill="#F9F6F9"
+                  /></svg
               ></a>
             </div>
             <div class="withdraw cell body">
-              <pbutton type="secondary" click.delegate="withdraw(transaction)">WITHDRAW</pbutton>
+              <pbutton
+                if.to-view="ethereumService.defaultAccountAddress === transaction.address && transaction.type === 'deposit'"
+                type="secondary"
+                click.delegate="withdraw(transaction)"
+                >WITHDRAW</pbutton
+              >
             </div>
           </div>
         </template>
