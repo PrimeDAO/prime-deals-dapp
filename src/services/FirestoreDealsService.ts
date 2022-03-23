@@ -43,10 +43,11 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
     return this.firestoreService.updateRepresentativeVote(dealId, accountAddress, dao, yes);
   }
 
-  deleteAllVotes(dealId: string, accountAddress: string): Promise<void> {
+  deleteAllVotes(_dealId: string, _accountAddress: string): Promise<void> {
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addClauseDiscussion<TRegistration>(dealId: string, accountAddress: string, clauseId: string, discussionId: string): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
