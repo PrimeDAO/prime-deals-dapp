@@ -57,7 +57,7 @@
     </div>
 
     <div class="section all-deals" if.to-view="!gridDeals || gridDeals.length">
-      <div class="heading02Gradient">${cardIndex==0 ? "All open proposals" : "All partnered deals"}</div>
+      <div class="heading02Gradient">${dealDisplayText}</div>
       <div if.to-view="!gridDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       <!-- Desktop grid -->
       <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">

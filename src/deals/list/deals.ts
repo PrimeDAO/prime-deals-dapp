@@ -153,6 +153,15 @@ export class Deals {
   }
 
   /**
+   * Gets the title display text for the all deals grid
+   */
+  @computedFrom("showMine", "cardIndex")
+  get dealDisplayText() : string{
+    const prefix = this.showMine ? "My" : "All";
+    return this.cardIndex === 0 ? `${prefix} open proposals` : `${prefix} partnered deals`;
+  }
+
+  /**
    * Flips the toggle for whether or not deals for user are shown and also checks visbility
    */
   private toggleMyDeals(): void {
