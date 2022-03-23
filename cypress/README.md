@@ -68,6 +68,10 @@ cy.get("[data-test='open-proposal-button']").click()
 cy.url().should("include", "deals/open");
 ```
 
+### Tags
+- `@focus` - only run focused Scenario in .feature file
+- `@regression` - Indicate Scenario is to cover a regression in the code
+
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
 

@@ -36,7 +36,7 @@ export class NumericInput {
   /**
    * if isWei, then the number of decimals involved in the conversion
    */
-  @bindable.number public decimals?: number = 18;
+  @bindable.number public decimals?;
   @bindable.booleanAttr public outputAsString?: boolean = false;
   @bindable.string public placeholder = "";
 

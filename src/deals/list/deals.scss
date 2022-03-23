@@ -1,4 +1,7 @@
 @import "styles/styles.scss";
+pbutton button.secondary {
+  padding: 14px 28px;
+}
 .page.deals {
   .section {
     &.no-deals {
@@ -39,6 +42,7 @@
       }
       pform-input {
         display: flex;
+        cursor: pointer;
         .formInputLabelTitle {
           text-transform: uppercase;
           color: $Neutral02;
@@ -205,15 +209,23 @@
           &.header {
             .cell {
               border-bottom: 1px solid $Secondary02;
+              font-size: 14px;
+              font-weight: 700;
+              color: $Neutral04;
             }
           }
           &.body {
-            .cell {
+            .cell,
+            .cell > div.icons > div.dao > div.name {
+              font-size: 16px;
+              font-weight: 400;
+              font-family: Inter;
+              color: $Neutral03;
               &.title {
-                color: $Secondary05;
                 white-space: normal;
                 padding-right: 35px;
               }
+              border-bottom: 1px solid $Border01;
             }
             &:hover {
               color: inherit;

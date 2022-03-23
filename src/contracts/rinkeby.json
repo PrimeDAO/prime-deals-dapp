@@ -1217,13 +1217,13 @@
       ]
     },
     "TokenSwapModule": {
-      "address": "0x160bF98E6eDBd2CB54BBDF694831063C03c4846B",
+      "address": "0xB9d6709EA15f0e52F959636756dE443F865c6410",
       "abi": [
         {
           "inputs": [
             {
               "internalType": "address",
-              "name": "_dealmanager",
+              "name": "_dealManager",
               "type": "address"
             }
           ],
@@ -1285,9 +1285,9 @@
             },
             {
               "indexed": true,
-              "internalType": "bytes",
+              "internalType": "bytes32",
               "name": "metadata",
-              "type": "bytes"
+              "type": "bytes32"
             },
             {
               "indexed": false,
@@ -1384,9 +1384,9 @@
               "type": "uint256[][]"
             },
             {
-              "internalType": "bytes",
+              "internalType": "bytes32",
               "name": "_metadata",
-              "type": "bytes"
+              "type": "bytes32"
             },
             {
               "internalType": "uint32",
@@ -1460,9 +1460,9 @@
         {
           "inputs": [
             {
-              "internalType": "bytes",
+              "internalType": "bytes32",
               "name": "_metadata",
-              "type": "bytes"
+              "type": "bytes32"
             }
           ],
           "name": "getTokenswapFromMetadata",
@@ -1500,9 +1500,9 @@
                   "type": "uint32"
                 },
                 {
-                  "internalType": "bytes",
+                  "internalType": "bytes32",
                   "name": "metadata",
-                  "type": "bytes"
+                  "type": "bytes32"
                 },
                 {
                   "internalType": "enum ModuleBase.Status",
@@ -1540,9 +1540,9 @@
         {
           "inputs": [
             {
-              "internalType": "bytes",
+              "internalType": "bytes32",
               "name": "",
-              "type": "bytes"
+              "type": "bytes32"
             }
           ],
           "name": "metadataToDealId",
@@ -1603,9 +1603,9 @@
               "type": "uint32"
             },
             {
-              "internalType": "bytes",
+              "internalType": "bytes32",
               "name": "metadata",
-              "type": "bytes"
+              "type": "bytes32"
             },
             {
               "internalType": "enum ModuleBase.Status",
