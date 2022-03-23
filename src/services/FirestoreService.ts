@@ -260,7 +260,7 @@ export class FirestoreService {
    * @param dealId string
    * @param value boolean
    */
-  public async setDealIsWithdrawn(dealId: string, value: boolean): Promise<void> {
+  public async updateDealIsWithdrawn(dealId: string, value: boolean): Promise<void> {
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       await setDoc(
@@ -280,7 +280,7 @@ export class FirestoreService {
    * @param dealId string
    * @param value boolean
    */
-  public async setDealIsRejected(dealId: string, value: boolean): Promise<void> {
+  public async updateDealIsRejected(dealId: string, value: boolean): Promise<void> {
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       await setDoc(

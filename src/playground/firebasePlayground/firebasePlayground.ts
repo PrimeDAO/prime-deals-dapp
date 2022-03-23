@@ -54,17 +54,17 @@ export class FirebasePlayground {
     this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionHash);
   }
 
-  async setDealIsWithdrawn(dealId: string, value: boolean) {
+  async updateDealIsWithdrawn(dealId: string, value: boolean) {
     try {
-      await this.firestoreService.setDealIsWithdrawn(dealId, value);
+      await this.firestoreService.updateDealIsWithdrawn(dealId, value);
     } catch (error){
       console.error(error);
     }
   }
 
-  async setDealIsRejected(dealId: string, value: boolean) {
+  async updateDealIsRejected(dealId: string, value: boolean) {
     try {
-      await this.firestoreService.setDealIsRejected(dealId, value);
+      await this.firestoreService.updateDealIsRejected(dealId, value);
     } catch (error){
       console.error(error);
     }

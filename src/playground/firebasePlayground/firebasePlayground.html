@@ -39,13 +39,13 @@
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="isWithdrawnDealId" placeholder="DealId"></pinput-text>
-    <pbutton type="primary" click.delegate="setDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
-    <pbutton type="primary" click.delegate="setDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
+    <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
+    <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
   </div>
   <div style="display: flex;">
     <pinput-text value.bind="isRejectedDealId" placeholder="DealId"></pinput-text>
-    <pbutton type="primary" click.delegate="setDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
-    <pbutton type="primary" click.delegate="setDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
+    <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
+    <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
   </div>
   <h3>All deals</h3>
   <div>

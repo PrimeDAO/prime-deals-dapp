@@ -102,4 +102,32 @@ export abstract class IDataSourceDeals2 {
     registration: TRegistration): Promise<TDealDocument> {
     throw new Error("Method not implemented.");
   }
+
+  /**
+   * Update isWithdrawn flag
+   * @param dealId
+   * @param accountAddress
+   * @param value
+   */
+  updateDealIsWithdrawn(
+    dealId: IDealIdType,
+    accountAddress: Address,
+    value: boolean,
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * Update isRejected flag
+   * @param dealId
+   * @param accountAddress
+   * @param value
+   */
+  updateDealIsRejected(
+    dealId: IDealIdType,
+    accountAddress: Address,
+    value: boolean,
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }

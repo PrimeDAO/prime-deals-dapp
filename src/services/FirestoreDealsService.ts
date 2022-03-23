@@ -20,8 +20,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
   }
 
   createDeal<TDealDocument, TRegistration>(accountAddress: string, registration: TRegistration): Promise<TDealDocument> {
-    // check if account address is currently authenticated user
-    if (accountAddress !== firebaseAuth.currentUser.uid) {
+    if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
@@ -29,8 +28,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
   }
 
   updateRegistration<TRegistration>(dealId: string, accountAddress: string, registration: TRegistration): Promise<void> {
-    // check if account address is currently authenticated user
-    if (accountAddress !== firebaseAuth.currentUser.uid) {
+    if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
@@ -38,8 +36,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
   }
 
   updateVote(dealId: string, accountAddress: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", yes: boolean): Promise<void> {
-    // check if account address is currently authenticated user
-    if (accountAddress !== firebaseAuth.currentUser.uid) {
+    if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
@@ -51,11 +48,35 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
   }
 
   addClauseDiscussion<TRegistration>(dealId: string, accountAddress: string, clauseId: string, discussionId: string): Promise<void> {
-    // check if account address is currently authenticated user
-    if (accountAddress !== firebaseAuth.currentUser.uid) {
+    if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
     return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionId);
+  }
+
+  updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {
+    if (!this.isUserAuthenticated(accountAddress)) {
+      return;
+    }
+
+    return this.firestoreService.updateDealIsWithdrawn(dealId, value);
+  }
+
+  updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
+    if (!this.isUserAuthenticated(accountAddress)) {
+      return;
+    }
+
+    return this.firestoreService.updateDealIsRejected(dealId, value);
+  }
+
+  /**
+   * check if provided accountAddress is currently authenticated user
+   * @param accountAddress string
+   * @returns boolean
+   */
+  private isUserAuthenticated(accountAddress: string) {
+    return accountAddress.toLowerCase() === firebaseAuth.currentUser.uid.toLowerCase();
   }
 }
