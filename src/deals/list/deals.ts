@@ -40,9 +40,9 @@ export class Deals {
     return this.gridDeals.slice(0, 10);
   }
 
-  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress")
+  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress", "dealService.openProposals", "dealService.partneredDeals")
   public get gridDeals(): DealTokenSwap[] {
-    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress)];
+    return this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress);
   }
 
   public async attached(): Promise<void> {
