@@ -14,7 +14,12 @@ export class E2eDiscussion {
     return cy.get("[data-test='discussions-list']");
   }
 
-  public static clickSingleComment({numberOfReplies}: {numberOfReplies: number}) {
+  public static clickSingleComment({numberOfReplies}: {numberOfReplies?: number}) {
+    if (numberOfReplies === undefined) {
+      cy.get("[data-test='single-comment']").click();
+      return this;
+    }
+
     cy.get("[data-test='single-comment']").within(() => {
       // Click on first comment, that satisfies match
       cy.contains("[data-test='number-of-replies']", new RegExp(`^${numberOfReplies}$`))
@@ -39,6 +44,14 @@ When("I choose a Single Comment without replies", () => {
   E2eDiscussion
     .clickSingleComment({numberOfReplies: 0})
     .waitForNoCommentsText();
+});
+
+When("I choose a Single Comment with replies", () => {
+  // TODO: We assume a specific comment setup
+  //  Can/should this be generalized?
+  //  Eg. the first comment in the specific deal (of this test case), has what we need
+  E2eDiscussion
+    .clickSingleComment({numberOfReplies: 0});
 });
 
 Then("I should not be able to see Discussions", () => {

@@ -13,7 +13,9 @@ Feature: Discussions - Wallet
     When I choose a Single Comment without replies
     Then I cannot add a Comment
 
+  @focus
   Scenario: Wallet - Disconnected - Single Comments - Comment actions
+    When I choose a Single Comment with replies
     # And I cannot reply to a Comment
     # And I cannot like a Comment
     # And I cannot dislike a Comment
