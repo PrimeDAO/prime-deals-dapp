@@ -1,7 +1,7 @@
 import { isEqual } from "lodash";
-import { DEALS_COLLECTION, firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
+import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealSharedTypes";
-import { IFirebaseDocument } from "../../src/services/FirestoreTypes";
+import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
@@ -48,8 +48,8 @@ export const resetVotes = async (
 ): Promise<void> => {
   // delete current votes
   const votes = await Promise.all([
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).listDocuments(),
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).listDocuments(),
+    firestore.collection(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).listDocuments(),
+    firestore.collection(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).listDocuments(),
   ]);
 
   votes.forEach(daoVotes => {
@@ -77,12 +77,12 @@ export const initializeVotes = (
   partnerDaoRepresentativesAddresses: string[],
 ): void => {
   primaryDaoRepresentativesAddresses.forEach(address => {
-    const voteRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
+    const voteRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
     batch.set(voteRef, {vote: null});
   });
 
   partnerDaoRepresentativesAddresses.forEach(address => {
-    const voteRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
+    const voteRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
     batch.set(voteRef, {vote: null});
   });
 };
@@ -121,8 +121,8 @@ export const initializeVotingSummary = (
  */
 export const generateVotingSummary = async (dealId: string): Promise<IDealVotingSummary> => {
   const votes = await Promise.all([
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).get(),
-    firestore.collection(`/${DEALS_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).get(),
+    firestore.collection(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PRIMARY_DAO_VOTES_COLLECTION}`).get(),
+    firestore.collection(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}/${PARTNER_DAO_VOTES_COLLECTION}`).get(),
   ]);
   const primaryDAOVotes: Array<IFirebaseDocument<{vote: boolean}>> = getDocumentsFromQuerySnapshot(votes[0]);
   const partnerDAOVotes: Array<IFirebaseDocument<{vote: boolean}>> = getDocumentsFromQuerySnapshot(votes[1]);

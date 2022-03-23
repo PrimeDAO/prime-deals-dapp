@@ -4,10 +4,10 @@ import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealSharedTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
+import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
-export const DEALS_COLLECTION = "deals";
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 
@@ -55,7 +55,7 @@ export const createCustomToken = functions.https.onRequest(
  * Run every time a new document (a deal) in deals collection is created
  */
 export const buildDealStructure = functions.firestore
-  .document(`${DEALS_COLLECTION}/{dealId}`)
+  .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
   .onCreate(async (snapshot, context) => {
     const deal = snapshot.data() as IDealTokenSwapDocument;
 
@@ -67,17 +67,15 @@ export const buildDealStructure = functions.firestore
     // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
-    const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
+    const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-    // adds meta object to the deal document
+    // adds some meta information to the deal document
     batch.set(
       dealRef,
       {
-        meta: {
-          isReady: true, // set the "isReady" flag to true. Firestore rules should block any operations on deals with flag "isReady" set to false
-          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-        },
+        isReady: true, // set the "isReady" flag to true. Firestore rules should block any operations on deals with flag "isReady" set to false
+        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+        votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
       },
       { merge: true }, // merges provided object with the existing data
     );
@@ -93,7 +91,7 @@ export const buildDealStructure = functions.firestore
  * Run every time a document (a deal) in deals collection is updated
  */
 export const updateDealStructure = functions.firestore
-  .document(`${DEALS_COLLECTION}/{dealId}`)
+  .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
   .onUpdate(async (change, context) => {
     const dealId: string = context.params.dealId;
     const oldDeal = change.before.data() as IDealTokenSwapDocument;
@@ -123,10 +121,8 @@ export const updateDealStructure = functions.firestore
         registrationData: {
           modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
         },
-        meta: {
-          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-        },
+        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+        votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
       },
       {merge: true}, // merges provided object with the existing data
     );
@@ -138,7 +134,7 @@ export const updateDealStructure = functions.firestore
  * Run every time a document in a deal subcollection is updated
  */
 export const onVoteUpdate = functions.firestore
-  .document(`${DEALS_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
+  .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
   .onUpdate(async (change, context) => {
     const dealSubcollection = context.params.collection;
 
@@ -152,7 +148,7 @@ export const onVoteUpdate = functions.firestore
     // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
-    const dealRef = firestore.doc(`/${DEALS_COLLECTION}/${dealId}`);
+    const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
     // generate updated voting summary after a vote was updated
     const votingSummary = await generateVotingSummary(dealId);
@@ -160,9 +156,7 @@ export const onVoteUpdate = functions.firestore
     batch.set(
       dealRef,
       {
-        meta: {
-          votingSummary,
-        },
+        votingSummary,
       },
       {merge: true}, // merges provided object with the existing data
     );

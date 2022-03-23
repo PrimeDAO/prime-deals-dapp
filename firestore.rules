@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isReadyDeal() {
-      return resource.data.meta.isReady;
+      return resource.data.isReady;
     }
 
     function isPublicDeal() {
@@ -14,7 +14,7 @@ service cloud.firestore {
     }
 
     function userIsRepresentative() {
-      return request.auth.uid in resource.data.meta.representativesAddresses;
+      return request.auth.uid in resource.data.representativesAddresses;
     }
 
     function userIsAuthenticated() {
@@ -25,19 +25,19 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['discussions']);
     }
 
-    match /deals/{deal} {
+    match /deals-token-swap/{deal} {
       allow read: if isReadyDeal() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
-      allow create: if userIsAuthenticated() && !request.resource.data.meta.isReady;
-      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.meta.isReady;
+      allow create: if userIsAuthenticated() && !request.resource.data.isReady;
+      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.isReady;
       allow delete: if false;
     }
     
-    match /deals/{deal}/primary-dao-votes/{representative} {
+    match /deals-token-swap/{deal}/primary-dao-votes/{representative} {
     	allow read, create, delete: if false;
     	allow update: if request.auth.uid == resource.id;
     }
 
-    match /deals/{deal}/partner-dao-votes/{representative} {
+    match /deals-token-swap/{deal}/partner-dao-votes/{representative} {
     	allow read, create, delete: if false;
     	allow update: if request.auth.uid == resource.id;
     }
