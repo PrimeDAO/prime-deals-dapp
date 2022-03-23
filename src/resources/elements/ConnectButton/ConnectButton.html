@@ -1,4 +1,4 @@
-<template>
+<template data-test="connect-button">
   <div class="connectButtonContainer ${accountAddress ? 'connected' : ''}">
     <div class="connectedButtons" if.to-view="accountAddress">
       <template if.to-view="!hideBalances">
