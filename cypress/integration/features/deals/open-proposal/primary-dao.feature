@@ -15,6 +15,7 @@ Feature: Create Open Proposal Primary DAO stage
     Then I can add link to DAO avatar
 
   Scenario: Add and remove social media fields in Primary DAO stage
+    When I add social medias
     Then I can add up to 5 social media
     Then I can remove all social media
 

@@ -5,6 +5,7 @@
   <require from="./dealClauses/dealClauses"></require>
   <require from="./dealDiscussion/dealDiscussion"></require>
   <require from="./dealDescription/dealDescription"></require>
+  <require from="../deals/timeLeft/timeLeft"></require>
 
   <main class="page animated-page au-animate dealDashboardContainer">
     <deal-menubar deal.bind="deal"></deal-menubar>
@@ -15,7 +16,12 @@
       </h1>
 
       <let deal-privacy-text="${deal.registrationData.isPrivate ? 'Private' : 'Public'}"></let>
-      <h2 data-test="dealStatus">• ${deal.status}, Recently updated (${dealPrivacyText})</h2>
+      <h2 data-test="dealStatus">
+        <time-left deal.to-view="deal" hide-icons largest>
+          <span slot="before">•</span>
+          <span>(${dealPrivacyText})</span>
+        </time-left>
+      </h2>
     </section>
 
     <aside class="aside">

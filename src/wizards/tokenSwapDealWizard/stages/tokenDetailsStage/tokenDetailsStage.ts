@@ -6,8 +6,10 @@ import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { TokenDetails } from "../../components/tokenDetails/tokenDetails";
+import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
+import { TokenService } from "services/TokenService";
 
-type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ("edit" | "view")[]>;
+type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
 @autoinject
 export class TokenDetailsStage {
@@ -100,18 +102,15 @@ export class TokenDetailsStage {
 
       name: "",
       symbol: "",
-      decimals: 18,
+      decimals: TokenService.DefaultDecimals,
       logoURI: "",
     });
-    this.checkedForUnsavedChanges();
   }
 
-  deleteToken(token: IToken, tokens: IToken[], forms: TokenDetails[]): void {
-    const index = tokens.indexOf(token);
-    if (index !== -1) {
-      forms.splice(index, 1);
-      tokens.splice(index, 1);
-    }
+  deleteToken(index: number, tokens: IToken[], forms: TokenDetails[], tokensViewModes: ViewMode[]): void {
+    forms.splice(index, 1);
+    tokens.splice(index, 1);
+    tokensViewModes.splice(index, 1);
     this.checkedForUnsavedChanges();
   }
 
@@ -138,7 +137,7 @@ export class TokenDetailsStage {
   }
 
   private isCreatingPartneredDealLike(wizardType: WizardType): boolean {
-    return [WizardType.createPartneredDeal, WizardType.makeAnOffer].includes(wizardType);
+    return [WizardType.createPartneredDeal, WizardType.makeAnOffer, WizardType.editPartneredDeal].includes(wizardType);
   }
 
   private isCreatingDealLike(wizardType: WizardType): boolean {
