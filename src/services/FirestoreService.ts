@@ -2,7 +2,7 @@ import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
-import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IDealRegistrationTokenSwap, IFirestoreTimestamp } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
 import { map, mergeAll } from "rxjs/operators";
@@ -41,6 +41,7 @@ export class FirestoreService {
           createdByAddress: firebaseAuth.currentUser.uid,
         },
         isDocumentReady: false,
+        createdAt: serverTimestamp() as unknown as IFirestoreTimestamp,
       };
 
       await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
