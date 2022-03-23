@@ -1,9 +1,8 @@
 @import "../../resources/elements/primeDesignSystem/variables";
 
 deal-description {
-  width: $sectionWidth;
   margin-bottom: 100px;
-  word-wrap: break-word;
+  overflow-wrap: anywhere;
   font-family: Inter;
   line-height: 24px;
 

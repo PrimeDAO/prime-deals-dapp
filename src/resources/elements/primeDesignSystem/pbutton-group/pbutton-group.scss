@@ -1,0 +1,30 @@
+pbutton-group {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+
+  pbutton {
+    flex: 1;
+  }
+
+  pbutton:first-child {
+    button {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  pbutton:last-child {
+    button {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  pbutton:not(:first-child):not(:last-child) {
+    button {
+      border-radius: 0;
+    }
+  }
+
+}
