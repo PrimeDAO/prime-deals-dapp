@@ -45,13 +45,15 @@ export class Deals {
     return [...this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress)];
   }
 
-  public attached(): void {
-    if (dealsLoadedOnce) return;
-    this.dealService.ensureAllDealsInitialized();
-    this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
-    this.sortDirection = SortOrder.DESC;
-    this.sort("age");
-    dealsLoadedOnce = true;
+  public async attached(): Promise<void> {
+    if (!dealsLoadedOnce) {
+      await this.dealService.ensureAllDealsInitialized();
+      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      this.sortDirection = SortOrder.DESC;
+      this.sort("age");
+      // eslint-disable-next-line require-atomic-updates
+      dealsLoadedOnce = true;
+    }
   }
 
   /**
