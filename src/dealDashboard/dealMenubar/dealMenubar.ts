@@ -1,8 +1,9 @@
-import { autoinject, bindable } from "aurelia-framework";
+import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealMenubar.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AlertService } from "../../services/AlertService";
+import { DealStatus } from "../../entities/IDealTypes";
 
 @autoinject
 export class DealMenubar {
@@ -19,15 +20,25 @@ export class DealMenubar {
     this.eventAggregator.publish("showMessage", "Deal URL copied");
   }
 
-  closeDeal() {
-    // We need to talk about this. There is no "onOK" property that handles custom logic when clicking the primary button
-    this.alertService.showAlert({
+  @computedFrom("deal.status")
+  get canEdit() {
+    return ![DealStatus.funding, DealStatus.swapping].includes(this.deal.status);
+  }
+
+  async closeDeal() {
+    const result = await this.alertService.showAlert({
       header: "You will be closing the deal and will not be able to re-activate it.",
       message: "Are you sure you want to close the deal?",
       buttons: 3,
-      buttonTextPrimary: "Cancel",
-      buttonTextSecondary: "Continue",
+      buttonTextPrimary: "Continue",
+      buttonTextSecondary: "Cancel",
     });
+
+    if (result.wasCancelled) {
+      return;
+    }
+
+    this.deal.close();
   }
 
 }
