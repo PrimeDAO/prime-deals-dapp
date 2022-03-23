@@ -1,0 +1,50 @@
+<template>
+  <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
+    <img class="dao-logo" src.bind="dao.logoURI">
+    <div class="accordion-title bodySmallText">
+      ${dao.name}
+    </div>
+    <div class="votes-statuses-circles">
+      <div class="vote-status-circle vote-success"></div>
+      <div class="vote-status-circle vote-rejected"></div>
+      <div class="vote-status-circle vote-success"></div>
+      <div class="vote-status-circle-delimiter"></div>
+      <div class="vote-status-circle vote-rejected"></div>
+      <div class="vote-status-circle vote-success"></div>
+    </div>
+    <i class="fas fa-angle-up arrow"></i>
+  </div>
+
+  <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
+      <etherscanlink address.bind="representative.address"
+                     text="${representative.address | smallHexString}">
+      </etherscanlink>
+      accepted
+      <span class="representative-vote representative-vote-accepted">
+        <i class="fas fa-check-circle"></i>
+      </span>
+    </p>
+
+    <!-- Temporary demo code for showcasing different states -> can be deleted after database is available -->
+    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
+      <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}">
+      </etherscanlink>
+      rejected
+      <span class="representative-vote representative-vote-rejected">
+        <i class="fas fa-times-circle"></i>
+      </span>
+    </p>
+
+    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
+      <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}">
+      </etherscanlink>
+      hasn’t voted
+      <span class="representative-vote">
+        <i class="fas fa-question-circle"></i>
+      </span>
+    </p>
+    <!-- End of "Temporary demo code" -->
+  </div>
+
+</template>
