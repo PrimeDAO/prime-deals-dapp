@@ -311,15 +311,14 @@ export class DealTokenSwap implements IDeal {
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
-      // TODO: when we are getting real deals from storage and have a real id.
-      const metadata = Utils.asciiToHex(this.id); // should be same as tokenSwapInfo.metadata
-      this.contractDealId = await this.moduleContract.metadataToDealId(metadata);
-      if (this.contractDealId) {
-        const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
-        this.isExecuted = tokenSwapInfo.status === 3;
-      } else {
-        this.isExecuted = false;
-      }
+      this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
+      // not needed, is done by DealService
+      // if (this.contractDealId) {
+      //   const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
+      //   this.isExecuted = tokenSwapInfo.status === 3;
+      // } else {
+      //   this.isExecuted = false;
+      // }
 
       this.isWithdrawn = this.isRejected = false; // <== TODO: get these from Deal storage
     }
