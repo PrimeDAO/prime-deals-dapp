@@ -25,16 +25,16 @@
     </hgroup>
     <div class="sticky-area">
       <section class="comments container">
-        <div if.bind="isLoading.discussions" class="comment isLoading">
+        <div if.bind="isLoading.discussions" data-test="comments-loading" class="comment isLoading">
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
 
-        <div else class="no comment">
+        <div else data-test="no-comments-text" class="no comment">
           ${noCommentsText}
         </div>
 
-        <div 
+        <div
           if.bind="!isLoading.discussions && threadComments.length"
           repeat.for="comment of threadComments"
           ref="refComments[$index]"
@@ -57,7 +57,7 @@
       <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton> -->
 
       <!-- Comment Input -->
-      <section if.bind="isAuthorized && isMember" class="action container">
+      <section data-test="comment-input-section" if.bind="isAuthorized && isMember" class="action container">
         <div if.bind="isReply" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>

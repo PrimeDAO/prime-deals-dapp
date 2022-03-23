@@ -1,4 +1,4 @@
-<template>
+<template data-test="deal-clauses">
   <header>
     <h2 class="subtitle heading heading3">Deal Clauses</h2>
   </header>
@@ -9,6 +9,7 @@
       <span class="marker">${$index + 1}</span>
       <span class="body">${clause.text}</span>
       <span
+        data-test="add-or-read-button"
         class="button"
         click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)"
         if.to-view="authorized"
