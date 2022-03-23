@@ -25,9 +25,13 @@ interface ITokenSwapCreatedArgs {
   // unix timestamp of the execution
   // executionDate: BigNumber; // trying to get them to switch to uint type
   // hash of the deal information.
-  metadata: { hash: string };
+  metadata: string;
   // status of the deal
   status: number; // 3 ("DONE") means the deal has been executed
+}
+
+interface IExecutedDeal {
+  executedAt: Date;
 }
 
 export interface IDaoPartner {
@@ -106,7 +110,7 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
       case Networks.Rinkeby:
-        StartingBlockNumber = 10367781;
+        StartingBlockNumber = 10376393;
         break;
       default:
         StartingBlockNumber = 0;
@@ -119,16 +123,16 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    this.getDeals();
-    // this.getDAOsInformation();
+    this.getDeals(await this.getExecutedDealInfo());
   }
 
-  private async getDeals(): Promise<void> {
+  private async getDeals(executedDealIds: Map<string, IExecutedDeal>): Promise<void> {
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
         if (!this.deals?.size) {
           try {
+
             const dealsMap = new Map<Address, DealTokenSwap>();
 
             /**
@@ -138,6 +142,13 @@ export class DealService {
 
             for (const dealId of dealIds) {
               const deal = this.createDealFromConfig(dealId);
+
+              const executedDeal = executedDealIds.get(dealId);
+              if (executedDeal) { // should only happen for test data
+                deal.isExecuted = true;
+                deal.executedAt = executedDeal.executedAt;
+              }
+
               dealsMap.set(dealId, deal);
               /**
                * remove the deal if it is corrupt
@@ -148,9 +159,9 @@ export class DealService {
                 }
               });
               this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
+
               deal.initialize(); // set this off asyncronously.
             }
-            this.hydrateDealsExecuted(dealsMap);
             this.deals = dealsMap;
             this.initializing = false;
             resolve();
@@ -167,24 +178,22 @@ export class DealService {
     );
   }
 
-  private async hydrateDealsExecuted(dealsMap: Map<Address, DealTokenSwap>): Promise<void> {
+  private async getExecutedDealInfo(): Promise<Map<string, IExecutedDeal>> {
     // commented-out until we have working contract code for retrieving the metadata
-    // const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-    // const filter = moduleContract.filters.TokenSwapCreated();
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapCreated();
+    const dealIds = new Map<string, IExecutedDeal>();
 
-    // await moduleContract.queryFilter(filter, StartingBlockNumber)
-    //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
-    //     for (const event of events) {
-    //       const params = event.args;
-    //       // const dealId = parseBytes32String(params.metadata.hash.slice(2));
-    //       const dealId = parseBytes32String(params.metadata.hash);
-    //       const deal = dealsMap.get(dealId);
-    //       if (deal) { // should only happen for test data
-    //         deal.isExecuted = true;
-    //         deal.executedAt = new Date((await event.getBlock()).timestamp * 1000);
-    //       }
-    //     }
-    //   });
+    await moduleContract.queryFilter(filter, StartingBlockNumber)
+      .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          const dealId = parseBytes32String(params.metadata);
+          dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
+        }
+      });
+
+    return dealIds;
   }
 
   private createDealFromConfig(dealId: Hash): DealTokenSwap {
