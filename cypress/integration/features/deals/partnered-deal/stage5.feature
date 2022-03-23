@@ -71,7 +71,7 @@ Feature: "Token Details" stage (Stage 5)
 
   Scenario: Validates if the wallet address has the correct format
     Given I want to fill in information for the "Primary DAO Tokens" section
-    When I fill in the "Token address" field with an invalid address
+    When I fill in the "Token address" field with an invalid address "invalid address"
     And I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Please enter a valid ethereum address" error message for the "Token address" field

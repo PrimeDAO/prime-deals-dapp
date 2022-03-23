@@ -99,13 +99,13 @@ export class TokenDetails {
 
       this.token.name = tokenInfo.name;
       this.token.symbol = tokenInfo.symbol;
-      this.token.decimals = tokenInfo.decimals;
+      this.token.decimals = tokenInfo.decimals ?? TokenService.DefaultDecimals;
       this.token.logoURI = tokenInfo.logoURI;
     } catch (error) {
       this.token.name = undefined;
       this.token.logoURI = undefined;
       this.token.symbol = undefined;
-      this.token.decimals = undefined;
+      this.token.decimals = TokenService.DefaultDecimals;
     }
 
     this.tokenDetailsNotFound.name = !this.token.name;
@@ -157,6 +157,14 @@ export class TokenDetails {
       this.token.amount = undefined;
       this.getTokenInfo(address);
     });
+    this.aureliaHelperService.createPropertyWatch(this.token, "decimals", decimals => {
+      if (decimals === undefined) {
+        this.token.decimals = TokenService.DefaultDecimals;
+      }
+
+      // Clear amount after every decimal change
+      this.token.amount = undefined;
+    });
     this.aureliaHelperService.createPropertyWatch(this.token, "logoURI", () => {
       this.checkURL();
     });
@@ -183,6 +191,8 @@ export class TokenDetails {
       .ensure<string>(data => data.symbol)
       .required()
       .ensure<number>(data => data.decimals)
+      .min(0)
+      .max(18)
       .required()
       .ensure<string>(data => data.logoURI)
       .required()

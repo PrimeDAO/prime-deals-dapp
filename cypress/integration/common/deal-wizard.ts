@@ -19,6 +19,13 @@ const stageTitlesToURLs = {
 export let sectionTitle = "";
 
 export function withinWizardSection() {
+  if (sectionTitle === "") {
+    const sectionErrorMessage = "Please specify the section you are targeting in the Wizard.\n"
+      + "Use the following step:\n\n"
+      + "  Given I want to fill in information for the \"<sectionName>\" section";
+    throw Error(sectionErrorMessage);
+  }
+
   return cy.contains("[data-test='section-title']", sectionTitle).parents(".stageSection");
 }
 
@@ -40,6 +47,14 @@ When("I go to previous step", () => {
 
 When("I try to proceed to next step", () => {
   cy.get("[data-test='wizard-proceed-button']").click();
+});
+
+When("I use the stepper to go to the {string} step", (stepName: string) => {
+  cy.url().then(url => {
+    const oldUrl = url;
+    cy.contains("[data-test='pstepper-step-name']", stepName).click();
+    cy.url().should("not.equal", oldUrl);
+  });
 });
 
 When("I try to submit the registration data", () => {
@@ -99,8 +114,7 @@ Then("I am presented with the {string} {string} stage", (wizardTitle: keyof type
   cy.url().should("contain", `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
 });
 
-When("I fill in the {string} field with an invalid address", (field: string) => {
-  const invalidAddress = "invalid address";
+When("I fill in the {string} field with an invalid address {string}", (field: string, invalidAddress: string) => {
   withinWizardSection().within(() => {
     cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
       cy.get("input, textarea").type(invalidAddress);
