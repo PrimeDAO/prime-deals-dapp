@@ -6,11 +6,12 @@ import "./dealRepresentativesVotes.scss";
 export class DealRepresentativesVotes {
   @bindable dao: IDAO;
 
-  showMore = false
-  panel: HTMLElement
+  showMore = false;
 
-  @computedFrom('showMore')
+  panel: HTMLElement;
+
+  @computedFrom("showMore")
   get maxHeight() {
-    return this.showMore ? this.panel.scrollHeight + 'px' : ''
+    return this.showMore ? this.panel.scrollHeight + "px" : "";
   }
 }
