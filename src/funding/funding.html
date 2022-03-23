@@ -13,13 +13,13 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="!daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length"
+      if.to-view="!daoRelatedToWallet.tokens || daoRelatedToWallet.tokens.length || !swapCompletedNoVestedAmount"
     >
       <div class="box-container">
         <div class="box-header">
           <div class="heading heading3 title gradient">${daoRelatedToWallet.name} Deposit</div>
-          <chip color="warning">
-            <span class="icon far fa-clock" slot="icon"></span>${getTimeLeft()} left
+          <chip color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}">
+            <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
           </chip>
         </div>
         <div class="box-content">
@@ -120,14 +120,26 @@
       <div class="heading heading3 title gradient">Token Swap Status</div>
       <div class="status-cards">
         <status-card dao.bind="daoRelatedToWallet"></status-card>
-        <div class="swap"><i class="fas fa-arrow-right"></i><i class="fas fa-arrow-left"></i></div>
+        <div class="swap ${swapCompletedNoVestedAmount && 'complete'}">
+          <i class="fas fa-arrow-right"></i>
+          <i
+            if.to-view="swapCompletedNoVestedAmount"
+            class="fas fa-check-circle success center"
+          ></i>
+          <i class="fas fa-arrow-left"></i>
+        </div>
         <status-card dao.bind="otherDao"></status-card>
       </div>
     </section>
     <section class="section transactions">
       <h1 class="title heading heading1 gradient">Transactions</h1>
-
-      <div class="grid transactions-grid">
+      <div
+        class="no-transactions heading02"
+        if.to-view="!transactions || transactions.length === 0"
+      >
+        There are no transactions for this deal
+      </div>
+      <div class="grid transactions-grid" if.to-view="transactions && transactions.length > 0">
         <div class="row header">
           <div class="cell dao header">DAO</div>
           <div class="cell type header">TYPE</div>

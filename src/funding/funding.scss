@@ -288,7 +288,12 @@ $hover-transition-speed-slow: 0.4s;
         .swap {
           place-self: center;
           display: grid;
-          grid-template-row: 1fr 1fr;
+          .center {
+            margin: 15px 0;
+          }
+          &.complete {
+            color: $Border01;
+          }
         }
       }
     }
@@ -392,6 +397,16 @@ $hover-transition-speed-slow: 0.4s;
               }
             }
           }
+        }
+      }
+      .no-transactions {
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+        border-top: 1px solid $Secondary02;
+        padding-top: 30px;
+        pbutton {
+          margin-top: 30px;
         }
       }
     }

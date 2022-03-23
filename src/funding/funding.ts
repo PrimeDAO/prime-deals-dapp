@@ -17,6 +17,7 @@ import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
+import moment from "moment-timezone";
 const converter = new EthweiValueConverter();
 @autoinject
 export class Funding {
@@ -31,11 +32,13 @@ export class Funding {
   private selectedToken: number;
   private walletBalance: BigNumber;
   private depositAmount: BigNumber;
+  private fundingDaysLeft: number;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
   private transactions: IDaoTransaction[] = [];
   private loadingTransactions = false; //TODO set this to true by default and false after transactions load
   private seeingMore = false;
+  private swapCompletedNoVestedAmount = false;
 
   constructor(
     private router: Router,
@@ -90,7 +93,22 @@ export class Funding {
       this.setTokenContractInfo(x);
     });
 
+    //TODO figure out what the vested amount is from the deal
+    //this.swapCompletedNoVestedAmount = this.deal.isCompleted && this.deal.vestedAmount <= 0
+    this.swapCompletedNoVestedAmount = true;
+
     //TODO: Check the time left on the funding period and if there is no time left set "Target Not Reached" for each DAO status
+    const d = new Date(); //TODO comment out - test data
+    d.setDate(d.getDate() - 40); //TODO comment out - test data
+    this.deal.executedAt = d; //TODO comment out - test data
+    if (this.deal.executedAt && this.deal.executionPeriod){
+      const executionTime = this.deal.executedAt;
+      executionTime.setSeconds(executionTime.getSeconds() + this.deal.executionPeriod);
+      const finalDate = moment(executionTime);
+      const now = moment();
+      this.fundingDaysLeft = finalDate.diff(now, "days");
+      console.log("End date", this.fundingDaysLeft);
+    }
 
     //get contract token information from the DAO related to the wallet
     this.daoRelatedToWallet.tokens.forEach((x: ITokenFunding, index) => {
@@ -122,7 +140,7 @@ export class Funding {
    */
   private setTokenContractInfo(token: ITokenFunding): void{
     //get the additional token information from the contract for this token
-    token.deposited = converter.fromView(12, 18); //TODO get total amount of deposited tokens from the DepositContract
+    token.deposited = converter.fromView(100, 18); //TODO get total amount of deposited tokens from the DepositContract
     token.target = converter.fromView(100, 18); //TODO get the target amount of tokens to be reached
     // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
     token.required = converter.fromView(Number(converter.toView(token.target, token.decimals)) - Number(converter.toView(token.deposited, token.decimals)), token.decimals);
@@ -187,14 +205,6 @@ export class Funding {
         this.depositAmount = remainingNeeded;
       }
     }
-  }
-
-  /**
-   * Gets the time left unti the funding period ends
-   */
-  private getTimeLeft(): string{
-    //TODO find out how to get the correct time left from the contract
-    return "5 days";
   }
 
   /**
