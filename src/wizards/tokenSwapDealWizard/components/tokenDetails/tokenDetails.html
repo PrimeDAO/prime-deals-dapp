@@ -7,14 +7,14 @@
         helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
         input-reference.bind="addressInput"
         label="Token Address"
-        label-info="Make sure to use the native contract address of the token.">
+        label-info="Make sure to use the native contract address of the token">
         <pinput-text
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
           value.bind="token.address & validate"
           view-model.ref="addressInput"></pinput-text>
       </pform-input>
-      <div class="detailsTable" if.bind="showTokenDetails">
+      <div data-test="tokenDetailsMetadata" class="detailsTable" if.bind="showTokenDetails">
         <div class="detailsCell">
           <p>Name</p>
           <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>
@@ -26,10 +26,17 @@
           <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
           <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
         </div>
-        <div class="detailsCell">
+        <div data-test="proposal-decimals-field" class="detailsCell">
           <p>Decimals</p>
           <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
-          <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>
+          <pform-input data-test="proposal-token-decimals-field"
+            input-reference.bind="decimalsInput">
+            <pinput-numeric
+              if.bind="tokenDetailsNotFound.decimals"
+              not-wei
+              value.bind="token.decimals & validate"
+              view-model.ref="decimalsInput"></pinput-numeric>
+          </pform-input>
         </div>
         <div class="detailsCell">
           <p>
@@ -62,11 +69,11 @@
           left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
           disabled.bind="!token.amount"
           right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
-          left.bind="token.instantTransferAmount | ethwei & validate"
+          left.bind="token.instantTransferAmount | ethwei:token.decimals & validate"
           view-model.ref="rangeSlider"
-          max-value.bind="token.amount | ethwei"
+          max-value.bind="token.amount | ethwei:token.decimals"
           not-wei
-          right.bind="token.vestedTransferAmount | ethwei & validate"></prange-slider>
+          right.bind="token.vestedTransferAmount | ethwei:token.decimals & validate"></prange-slider>
       </pform-input>
 
       <pform-input label="Vesting Set-up"
@@ -133,7 +140,7 @@
           <p>Total Amount of Tokens to Swap</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
-              value.to-view="token.amount | ethwei"></formatted-number>
+              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -144,7 +151,7 @@
           <p>Instant transfer</p>
           <p>
             <formatted-number if.bind="token.instantTransferAmount" thousands-separated
-              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -155,7 +162,7 @@
           <p>Vested transfer</p>
           <p>
             <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-              value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>

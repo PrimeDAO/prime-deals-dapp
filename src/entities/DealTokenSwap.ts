@@ -281,9 +281,16 @@ export class DealTokenSwap implements IDeal {
 
       const daoDepositContracts = new Map<IDAO, any>();
 
-      daoDepositContracts.set(this.primaryDao, await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address));
+      daoDepositContracts.set(this.primaryDao,
+        this.contractsService.getContractAtAddress(
+          ContractNames.DAODEPOSITMANAGER,
+          await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address)));
+
       if (this.registrationData.partnerDAO) {
-        daoDepositContracts.set(this.partnerDao, await this.dealManager.daoDepositManager(this.registrationData.partnerDAO.treasury_address));
+        daoDepositContracts.set(this.partnerDao,
+          this.contractsService.getContractAtAddress(
+            ContractNames.DAODEPOSITMANAGER,
+            await this.dealManager.daoDepositManager(this.registrationData.partnerDAO.treasury_address)));
       }
 
       this.daoDepositContracts = daoDepositContracts;
@@ -407,7 +414,7 @@ export class DealTokenSwap implements IDeal {
     const transactions = new Array<IDaoTransaction>();
     const depositContract = this.daoDepositContracts.get(dao);
 
-    const depositFilter = depositContract.filters.Deposit();
+    const depositFilter = depositContract.filters.Deposited();
     await depositContract.queryFilter(depositFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {
@@ -424,7 +431,7 @@ export class DealTokenSwap implements IDeal {
         }
       });
 
-    const withdrawFilter = depositContract.filters.Withdraw();
+    const withdrawFilter = depositContract.filters.Withdrawn();
     await depositContract.queryFilter(withdrawFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {

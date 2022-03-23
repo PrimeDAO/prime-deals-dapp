@@ -4,15 +4,16 @@
   <require from="../dao-icon-name/dao-icon-name"></require>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
-      <pform-input
+      <pform-input if.to-view="ethereumService.defaultAccountAddress" click.delegate="toggleMyDeals()"
         label="Show my deals only">
-        <ptoggle if.to-view="!ethereumService.defaultAccountAddress"
-          click.delegate="ethereumService.ensureConnected()"
-          ptooltip="Connect your wallet to see your deals"></ptoggle>
-        <ptoggle if.to-view="ethereumService.defaultAccountAddress"
-          click.delegate="toggleMyDeals()"
-          value.bind="showMine"></ptoggle>
+        <ptoggle value.bind="showMine"></ptoggle>
       </pform-input>
+      <pbutton
+        if.to-view="!ethereumService.defaultAccountAddress"
+        type="secondary"
+        click.delegate="ethereumService.ensureConnected()">
+        Connect to Show My Deals
+      </pbutton>
       <pbutton
         type="primary"
         data-test='initiate-deal-button'
@@ -61,7 +62,7 @@
       <!-- Desktop grid -->
       <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
-          <div class="cell daos header sortable" click.delegate="sort('daos')">DAO'S</div>
+          <div class="cell daos header sortable" click.delegate="sort('daos')">DAOs</div>
           <div class="cell title header sortable" click.delegate="sort('title')">TITLE</div>
           <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
           <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
