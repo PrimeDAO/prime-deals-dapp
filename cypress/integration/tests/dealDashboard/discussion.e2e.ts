@@ -1,4 +1,4 @@
-import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 
 export class E2eDiscussion {
@@ -14,13 +14,21 @@ export class E2eDiscussion {
     return cy.get("[data-test='discussions-list']");
   }
 
-  public static clickSingleComment({numberOfReplies}: {numberOfReplies?: number}) {
+  public static getSingeComment() {
+    return cy.get("[data-test='single-comment']");
+  }
+
+  public static hoverSingeComment() {
+    return cy.get("[data-test='single-comment']").trigger("pointerover");
+  }
+
+  public static clickSingleComment({numberOfReplies}: {numberOfReplies?: number} = {}) {
     if (numberOfReplies === undefined) {
-      cy.get("[data-test='single-comment']").click();
+      E2eDiscussion.getSingeComment().first().click();
       return this;
     }
 
-    cy.get("[data-test='single-comment']").within(() => {
+    E2eDiscussion.getSingeComment().within(() => {
       // Click on first comment, that satisfies match
       cy.contains("[data-test='number-of-replies']", new RegExp(`^${numberOfReplies}$`))
         .first()
@@ -51,7 +59,7 @@ When("I choose a Single Comment with replies", () => {
   //  Can/should this be generalized?
   //  Eg. the first comment in the specific deal (of this test case), has what we need
   E2eDiscussion
-    .clickSingleComment({numberOfReplies: 0});
+    .clickSingleComment();
 });
 
 Then("I should not be able to see Discussions", () => {
@@ -71,3 +79,9 @@ Then("I'm informed about who can participate in Discussions", () => {
 Then("I cannot add a Comment", () => {
   E2eDiscussion.getCommentInputSection().should("not.exist");
 });
+
+Then("I can reply to that Comment", () => {
+  E2eDiscussion.hoverSingeComment();
+});
+
+And("I cannot reply to a Comment", () => {});
