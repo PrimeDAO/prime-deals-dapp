@@ -113,8 +113,8 @@ export class Deals {
       case "status":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.status, b.status, this.sortDirection);
         break;
-      case "age":
-        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt, b.registrationData.createdAt, this.sortDirection);
+      case "age": // @TODO remove "as Date" type assertion
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt as Date, b.registrationData.createdAt as Date, this.sortDirection);
         break;
       case "dealSize":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateNumber(a.totalPrice, b.totalPrice, this.sortDirection);
