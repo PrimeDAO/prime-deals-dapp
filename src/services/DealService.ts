@@ -7,7 +7,7 @@ import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { BigNumber } from "ethers";
-import { Utils } from "services/utils";
+import { parseBytes32String } from "ethers/lib/utils";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -176,7 +176,8 @@ export class DealService {
     //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
     //     for (const event of events) {
     //       const params = event.args;
-    //       const dealId = Utils.toAscii(params.metadata.hash.slice(2));
+    //       // const dealId = parseBytes32String(params.metadata.hash.slice(2));
+    //       const dealId = parseBytes32String(params.metadata.hash);
     //       const deal = dealsMap.get(dealId);
     //       if (deal) { // should only happen for test data
     //         deal.isExecuted = true;
