@@ -107,7 +107,7 @@ export class Funding {
       //if there is only one token, auto select it in the deposit form
       this.selectedToken = 0;
       //and get the wallet balance for that token
-      this.walletBalance = converter.fromView(443.12323); //TODO get wallet balance for the given token
+      this.walletBalance = converter.fromView(443.12323, 18); //TODO get wallet balance for the given token
     }
 
     //get the transactions for this deal
@@ -122,10 +122,10 @@ export class Funding {
    */
   private setTokenContractInfo(token: ITokenFunding): void{
     //get the additional token information from the contract for this token
-    token.deposited = converter.fromView(12); //TODO get total amount of deposited tokens from the DepositContract
-    token.target = converter.fromView(100); //TODO get the target amount of tokens to be reached
+    token.deposited = converter.fromView(12, 18); //TODO get total amount of deposited tokens from the DepositContract
+    token.target = converter.fromView(100, 18); //TODO get the target amount of tokens to be reached
     // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
-    token.required = converter.fromView(Number(converter.toView(token.target)) - Number(converter.toView(token.deposited)));
+    token.required = converter.fromView(Number(converter.toView(token.target, token.decimals)) - Number(converter.toView(token.deposited, token.decimals)), token.decimals);
     // calculate the percent completed based on deposited divided by target
     token.percentCompleted = (Number(token.deposited) / Number(token.target)) * 100;
   }
@@ -203,9 +203,9 @@ export class Funding {
   private depositTokens(): void {
     const tokenSymbol = this.daoRelatedToWallet.tokens[this.selectedToken].symbol;
     //TODO re-check the contract to validate how many tokens are needed for the required deposit amount
-    const recentRequiredTokens = converter.fromView(10);
+    const recentRequiredTokens = converter.fromView(10, 18);
     //TODO re-check the balance of the wallet to make sure the wallet has enough tokens
-    const recentWalletBalance = converter.fromView(120);
+    const recentWalletBalance = converter.fromView(120, 18);
     //rebind token data if it's changed
     //TODO reset all the data after checking
     // const token = this.daoRelatedToWallet.tokens[this.selectedToken] as ITokenFunding;
@@ -215,17 +215,17 @@ export class Funding {
     // token.percentCompleted = 12;
 
     if (Number(this.depositAmount) > Number(recentWalletBalance)){
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your wallet (${converter.toView(recentWalletBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount, 18)} ${tokenSymbol}) exceeds the current balance in your wallet (${converter.toView(recentWalletBalance, 18)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
       this.depositAmount = recentWalletBalance;
       return;
     }
     if (Number(this.depositAmount)> Number(recentRequiredTokens)){
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount)} ${tokenSymbol}) exceeds the required funding needed (${converter.toView(recentRequiredTokens)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount, 18)} ${tokenSymbol}) exceeds the required funding needed (${converter.toView(recentRequiredTokens, 18)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
       this.depositAmount = recentRequiredTokens;
       return;
     }
     //TODO implement the deposit of tokens
-    this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${converter.toView(this.depositAmount)} ${tokenSymbol} on behalf of ${this.daoRelatedToWallet.name}`, EventMessageType.Info, "Deposit Submitted"));
+    this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${converter.toView(this.depositAmount, 18)} ${tokenSymbol} on behalf of ${this.daoRelatedToWallet.name}`, EventMessageType.Info, "Deposit Submitted"));
     //TODO handle wallet provider transaction rejection
   }
 
@@ -240,10 +240,10 @@ export class Funding {
     if (newVal !== prevVal){
       if (newVal === 0){
         //TODO get and set the wallet balance of the currently selected token
-        this.walletBalance = converter.fromView(443.12323);
+        this.walletBalance = converter.fromView(443.12323, 18);
       } else if (newVal === 1){
         //TODO get and set the wallet balance of the currently selected token
-        this.walletBalance = converter.fromView(13.873);
+        this.walletBalance = converter.fromView(13.873, 18);
       }
     }
   }
