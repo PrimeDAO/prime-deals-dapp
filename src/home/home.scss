@@ -4,11 +4,12 @@
 
 .page.home {
   .section {
-    &.hero,
     &.deals {
       margin-bottom: 64px;
     }
-
+    &.hero {
+      margin-bottom: 16px;
+    }
     &.top {
       .heading01Gradient {
         padding-bottom: 5px;
@@ -183,8 +184,6 @@
 @media screen and (max-width: $PageBreakWidth) {
   .page.home {
     .section {
-
-
       &.top {
         width: 100%;
 
@@ -193,7 +192,8 @@
           margin-bottom: 28px;
         }
 
-        .heading01Gradient, .heading04 {
+        .heading01Gradient,
+        .heading04 {
           text-align: center;
           max-width: none;
         }
@@ -245,6 +245,7 @@
       &.hero {
         grid-template-columns: auto;
         row-gap: 28px;
+        margin-bottom: 0;
 
         .heroColumn {
           justify-content: center;

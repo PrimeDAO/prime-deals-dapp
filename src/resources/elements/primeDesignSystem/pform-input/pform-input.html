@@ -25,6 +25,7 @@
 
   <!-- Validation message section -->
   <p
+    data-test="${validationState + 'Message'}"
     class="feedbackMessage ${ validationStateExists(validationState) ? 'feedbackMessageVisible': '' } ${validationState + 'Message'}">
     ${ inputReference.disabled ? '' : validationMessage }
     <slot name="validation"></slot>

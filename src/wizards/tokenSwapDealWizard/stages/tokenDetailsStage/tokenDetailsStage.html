@@ -7,7 +7,7 @@
 
     <div class="stageSection" data-test="primary-dao-tokens">
       <div class="stageSectionSidebar">
-        <h2 class="sidebarHeader heading heading3 title">
+        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">
           <template if.bind="isOpenProposalWizard">Tokens</template>
           <template else>Primary DAO Tokens</template>
         </h2>
@@ -18,13 +18,13 @@
       <div class="stageSectionContent">
         <token-details
           repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
-          on-delete.call="deleteToken(token, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails)"
+          on-delete.call="deleteToken($index, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails, stageMetadata.primaryDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
           token.bind="token"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"
-          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1"
+          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
@@ -56,12 +56,12 @@
       <div class="stageSectionContent">
         <token-details
           repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
-          on-delete.call="deleteToken(token, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails)"
+          on-delete.call="deleteToken($index, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails, stageMetadata.partnerDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           token.bind="token"
           view-model.ref="partnerDAOTokenDetails[$index]"
-          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1"
+          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"
         ></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
@@ -82,7 +82,7 @@
 
     <div class="stageSection">
       <div class="stageSectionSidebar">
-        <h2 class="sidebarHeader heading heading3 title">Execution Period</h2>
+        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Execution Period</h2>
         <p class="sidebarText">
           After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and execute the swap on-chain.
         </p>

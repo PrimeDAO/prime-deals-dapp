@@ -7,9 +7,6 @@ Given("I go to the All Deals page", () => {
 Then("I can see Initiate A Deal button", () => {
   cy.get("[data-test='initiate-deal-button']");
 });
-And("I can see Connect Your Wallet button", () => {
-  cy.contains("button", "Connect your wallet").should("be.visible");
-});
 And("I can see Open Proposals tab", () => {
   cy.contains("span", "Open Proposals").should("be.visible").should("have.class", "active");
 });

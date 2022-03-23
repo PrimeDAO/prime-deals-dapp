@@ -42,6 +42,7 @@ export class TermsStage implements IBaseWizardStage {
 
     this.termClauses.splice(index, 1);
     this.wizardState.registrationData.terms.clauses.splice(index, 1);
+    this.stageMetadata.termsViewModes.splice(index, 1);
   }
 
   addClause() {

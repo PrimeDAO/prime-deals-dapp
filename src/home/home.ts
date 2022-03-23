@@ -8,6 +8,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 @autoinject
 export class Home {
   cardIndex = 0;
+  static MAX_DEALS_COUNT=10;
 
   featuredDeals: Array<DealTokenSwap> = [];
   allDeals: Record<"open" | "partnered", Array<DealTokenSwap>> = {
@@ -23,8 +24,8 @@ export class Home {
 
   attached(): void {
     this.dealService.ensureAllDealsInitialized();
-    this.allDeals.open = this.dealService.openProposals;
-    this.allDeals.partnered = this.dealService.partneredDeals;
+    this.allDeals.open = this.dealService.openProposals.slice(0, Home.MAX_DEALS_COUNT);
+    this.allDeals.partnered = this.dealService.partneredDeals.slice(0, Home.MAX_DEALS_COUNT);
     this.featuredDeals = this.allDeals.open.length ? this.allDeals.open : this.allDeals.partnered;
 
     this.cardIndex = this.allDeals.open.length ? 0 : 1;

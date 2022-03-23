@@ -28,10 +28,14 @@ export class AureliaHelperService {
    * @param propertyName
    * @param func
    */
-  public createPropertyWatch(
-    object: unknown,
-    propertyName: string,
+  public createPropertyWatch<T, Prop extends keyof T>(
+    object: T,
+    propertyName: Prop,
     func: (newValue: any, oldValue: any) => void): IDisposable {
+    if (typeof propertyName !== "string") {
+      throw new Error("String expected for property Watcher.");
+    }
+
     return this.bindingEngine.propertyObserver(object, propertyName)
       .subscribe((newValue, oldValue) => {
         func(newValue, oldValue);

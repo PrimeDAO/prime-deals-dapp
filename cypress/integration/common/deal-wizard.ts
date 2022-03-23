@@ -16,6 +16,23 @@ const stageTitlesToURLs = {
   "Submit": "submit",
 } as const;
 
+export let sectionTitle = "";
+
+export function withinWizardSection() {
+  if (sectionTitle === "") {
+    const sectionErrorMessage = "Please specify the section you are targeting in the Wizard.\n"
+      + "Use the following step:\n\n"
+      + "  Given I want to fill in information for the \"<sectionName>\" section";
+    throw Error(sectionErrorMessage);
+  }
+
+  return cy.contains("[data-test='section-title']", sectionTitle).parents(".stageSection");
+}
+
+Given(/^I want to fill in information for the "(.*)" section$/, (_sectionTitle: string) => {
+  sectionTitle = _sectionTitle;
+});
+
 Then("I am presented the option to choose a partner", () => {
   cy.url().should("match", /(initiate\/token-swap$)/);
 });
@@ -30,6 +47,14 @@ When("I go to previous step", () => {
 
 When("I try to proceed to next step", () => {
   cy.get("[data-test='wizard-proceed-button']").click();
+});
+
+When("I use the stepper to go to the {string} step", (stepName: string) => {
+  cy.url().then(url => {
+    const oldUrl = url;
+    cy.contains("[data-test='pstepper-step-name']", stepName).click();
+    cy.url().should("not.equal", oldUrl);
+  });
 });
 
 When("I try to submit the registration data", () => {
@@ -49,12 +74,28 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   if (!stageTitlesToURLs[stageTitle]) {
     throw new Error(`Stage  ${stageTitle} does not exist in the list`);
   }
+
+  if (wizardTitle === "Make an offer") {
+    const dealId = "open_deals_stream_hash_1";
+    const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
+    cy.visit(url).wait(1500);
+    return;
+  }
+
   cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
   const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
+});
+
+When("I'm viewing the Partnered Deal Dashboard", () => {
+  const dealId = "partnered_deals_stream_hash_2";
+  const url = `/deal/${dealId}`;
+  cy.visit(url);
+
+  cy.get(".dealDashboardContainer").should("be.visible");
 });
 
 Given("I edit a \"Partnered Deal\"", () => {
@@ -73,9 +114,23 @@ Then("I am presented with the {string} {string} stage", (wizardTitle: keyof type
   cy.url().should("contain", `/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
 });
 
+When("I fill in the {string} field with an invalid address {string}", (field: string, invalidAddress: string) => {
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input, textarea").type(invalidAddress);
+    });
+  });
+});
+
 When("I fill in the {string} field with {string}", (field: string, value: string) => {
-  cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-    cy.get("input, textarea").type(value);
+  withinWizardSection().within(() => {
+    cy.get(`[data-test='proposal-${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+      cy.get("input, textarea").type(value);
+    });
+
+    if (field === "Token address") {
+      waitForTokenAddressLoaded();
+    }
   });
 });
 
@@ -115,3 +170,22 @@ Then("I should be redirected to the Home Page", () => {
     expect(url).to.include("home");
   });
 });
+
+Then("I can proceed to the next step", () => {
+  cy.url().then(url => {
+    const oldUrl = url;
+    cy.get("[data-test='wizard-proceed-button']").click();
+    cy.url().should("not.equal", oldUrl);
+  });
+});
+
+Then("I am notified, that I am unable to proceed due to validation errors", () => {
+  cy.contains("[data-test='pPopupNotification']", "Unable to proceed, please check the page for validation errors")
+    .should("be.visible");
+});
+
+function waitForTokenAddressLoaded() {
+  cy.contains("[data-test='tokenDetails']", "Searching token address details").should("be.visible");
+  const timeoutForAddressRequest = 20000;
+  cy.contains("p", "Symbol", {timeout: timeoutForAddressRequest}).should("be.visible");
+}

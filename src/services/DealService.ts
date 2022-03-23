@@ -1,10 +1,34 @@
-import { Address, Hash } from "./EthereumService";
+import { Address, EthereumService, Hash, Networks } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
+import { BigNumber } from "ethers";
+import { parseBytes32String } from "ethers/lib/utils";
+
+interface ITokenSwapCreatedArgs {
+  module: Address,
+  dealId: number; // trying to get them to switch to uint type
+  // the participating DAOs
+  daos: Array<Address>;
+  // the tokens involved in the swap
+  tokens: Array<Address>;
+  // the token flow from the DAOs to the module
+  pathFrom: Array<Array<BigNumber>>;
+  // the token flow from the module to the DAO
+  pathTo: Array<Array<BigNumber>>;
+  // unix timestamp of the deadline
+  deadline: BigNumber; // trying to get them to switch to uint type
+  // unix timestamp of the execution
+  // executionDate: BigNumber; // trying to get them to switch to uint type
+  // hash of the deal information.
+  metadata: { hash: string };
+  // status of the deal
+  status: number; // 3 ("DONE") means the deal has been executed
+}
 
 export interface IDaoPartner {
   daoId: string,
@@ -40,6 +64,8 @@ export interface IDaoPartner {
 //   platform: number,
 // }
 
+export let StartingBlockNumber: number;
+
 @autoinject
 export class DealService {
 
@@ -57,7 +83,7 @@ export class DealService {
   private initializedPromise: Promise<void>;
 
   public get openProposals(): Array<any> {
-    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpen );
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal );
   }
 
   public get partneredDeals(): Array<any> {
@@ -72,8 +98,21 @@ export class DealService {
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,
+    private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
   ) {
+    switch (EthereumService.targetedNetwork) {
+      case Networks.Mainnet:
+        StartingBlockNumber = 0;
+        break;
+      case Networks.Rinkeby:
+        StartingBlockNumber = 10367781;
+        break;
+      default:
+        StartingBlockNumber = 0;
+        break;
+    }
+
   }
 
   public async initialize(): Promise<void> {
@@ -98,7 +137,7 @@ export class DealService {
             const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
 
             for (const dealId of dealIds) {
-              const deal = this.createSeedFromConfig(dealId);
+              const deal = this.createDealFromConfig(dealId);
               dealsMap.set(dealId, deal);
               /**
                * remove the deal if it is corrupt
@@ -111,6 +150,7 @@ export class DealService {
               this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
               deal.initialize(); // set this off asyncronously.
             }
+            this.hydrateDealsExecuted(dealsMap);
             this.deals = dealsMap;
             this.initializing = false;
             resolve();
@@ -127,7 +167,27 @@ export class DealService {
     );
   }
 
-  private createSeedFromConfig(dealId: Hash): DealTokenSwap {
+  private async hydrateDealsExecuted(dealsMap: Map<Address, DealTokenSwap>): Promise<void> {
+    // commented-out until we have working contract code for retrieving the metadata
+    // const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    // const filter = moduleContract.filters.TokenSwapCreated();
+
+    // await moduleContract.queryFilter(filter, StartingBlockNumber)
+    //   .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+    //     for (const event of events) {
+    //       const params = event.args;
+    //       // const dealId = parseBytes32String(params.metadata.hash.slice(2));
+    //       const dealId = parseBytes32String(params.metadata.hash);
+    //       const deal = dealsMap.get(dealId);
+    //       if (deal) { // should only happen for test data
+    //         deal.isExecuted = true;
+    //         deal.executedAt = new Date((await event.getBlock()).timestamp * 1000);
+    //       }
+    //     }
+    //   });
+  }
+
+  private createDealFromConfig(dealId: Hash): DealTokenSwap {
     const deal = this.container.get(DealTokenSwap);
     return deal.create(dealId);
   }
@@ -142,39 +202,4 @@ export class DealService {
       await deal.ensureInitialized();
     }
   }
-
-  public createRegistration(_registration: any): Promise<IKey> {
-    /**
-     * this should create the root CID for a Deal, populated with empty votes and discussions,
-     * and populate the registration with what is given.  Should return the root CID for the
-     * Deal.
-     */
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * TODO: move this to a `DaosService`
-   */
-  // public async getDAOsInformation(): Promise<void> {
-  //   // TODO
-  //   const allDAOs = await(await axios.get("https://backend.deepdao.io/dashboard/ksdf3ksa-937slj3/")).data.daosSummary;
-
-  //   this.DAOs = allDAOs.map((dao: IDaoAPIObject) => ({
-  //     organizationId: dao.organizationId,
-  //     daoId: dao.daoId,
-  //     name: dao.daoName,
-  //     logo: (dao.logo)
-  //       ? (dao.logo.toLocaleLowerCase().startsWith("http"))
-  //         ? dao.logo
-  //         : `https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/${dao.logo}`
-  //       : "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=35",
-  //   }));
-  // }
-
-  // public async getDAOByOrganisationID(id: string): Promise<IDaoAPIObject> {
-  //   if (!this.DAOs) await this.getDAOsInformation;
-
-  //   const dao: IDaoAPIObject = this.DAOs.filter(dao => dao.organizationId === id)[0];
-  //   return dao;
-  // }
 }

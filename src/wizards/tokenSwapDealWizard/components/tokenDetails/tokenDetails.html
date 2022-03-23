@@ -1,4 +1,4 @@
-<template>
+<template data-test="tokenDetails">
   <pcard>
     <div if.bind="viewMode === 'edit'">
 
@@ -7,15 +7,14 @@
         helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
         input-reference.bind="addressInput"
         label="Token Address"
-        label-info="Make sure to use the native contract address of the token.">
+        label-info="Make sure to use the native contract address of the token">
         <pinput-text
-          input.trigger="getTokenInfo(token.address)"
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
           value.bind="token.address & validate"
           view-model.ref="addressInput"></pinput-text>
       </pform-input>
-      <div class="detailsTable" if.bind="showTokenDetails">
+      <div data-test="tokenDetailsMetadata" class="detailsTable" if.bind="showTokenDetails">
         <div class="detailsCell">
           <p>Name</p>
           <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>
@@ -27,10 +26,17 @@
           <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
           <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
         </div>
-        <div class="detailsCell">
+        <div data-test="proposal-decimals-field" class="detailsCell">
           <p>Decimals</p>
           <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
-          <pinput-numeric if.bind="tokenDetailsNotFound.decimals" not-wei value.bind="token.decimals"></pinput-numeric>
+          <pform-input data-test="proposal-token-decimals-field"
+            input-reference.bind="decimalsInput">
+            <pinput-numeric
+              if.bind="tokenDetailsNotFound.decimals"
+              not-wei
+              value.bind="token.decimals & validate"
+              view-model.ref="decimalsInput"></pinput-numeric>
+          </pform-input>
         </div>
         <div class="detailsCell">
           <p>
@@ -40,8 +46,8 @@
               src.bind="token.logoURI">
           </p>
           <pform-input input-reference.bind="logoImageInput">
-            <pinput-text input.trigger="checkURL()" value.bind="token.logoURI & validate"
-              view-model.ref="logoImageInput"></pinput-text>
+            <pinput-text value.bind="token.logoURI & validate"
+                         view-model.ref="logoImageInput"></pinput-text>
           </pform-input>
         </div>
       </div>
@@ -50,7 +56,7 @@
         label="Total Amount of Tokens to Swap"
         label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the on-chain execution phase of the deal.">
         <pinput-numeric
-          placeholder="500.000"
+          placeholder="500.00"
           value.bind="token.amount & validate"
           decimals.bind="token.decimals"
           view-model.ref="amountInput"></pinput-numeric>
@@ -63,11 +69,11 @@
           left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
           disabled.bind="!token.amount"
           right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
-          left.bind="token.instantTransferAmount | ethwei & validate"
+          left.bind="token.instantTransferAmount | ethwei:token.decimals & validate"
           view-model.ref="rangeSlider"
-          max-value.bind="token.amount | ethwei"
+          max-value.bind="token.amount | ethwei:token.decimals"
           not-wei
-          right.bind="token.vestedTransferAmount | ethwei & validate"></prange-slider>
+          right.bind="token.vestedTransferAmount | ethwei:token.decimals & validate"></prange-slider>
       </pform-input>
 
       <pform-input label="Vesting Set-up"
@@ -76,9 +82,10 @@
           <div class="vesting-input">
             <p>Tokens vested for</p>
             <pform-input data-test="proposal-vested-period-field" input-reference.bind="vestedForInput">
-              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
+              <pinput-group
+                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric
-                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
                   not-wei
                   value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"></pinput-numeric>
@@ -89,9 +96,10 @@
           <div class="vesting-input">
             <p>with a cliff of</p>
             <pform-input data-test="proposal-cliff-period-field" input-reference.bind="cliffOfInput">
-              <pinput-group disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()">
+              <pinput-group
+                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric
-                  disabled.bind="token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
                   not-wei
                   value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
@@ -103,11 +111,11 @@
       </pform-input>
 
       <div class="tokenDetailsFooter">
-        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary">
+        <pbutton if.bind="!hideDeleteButton" class="deleteButton" click.delegate="onDelete()" type="tertiary" data-test="deleteTokenDetail">
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
-        <pbutton click.delegate="save()" is-loading.bind="saving" type="primary">Save</pbutton>
+        <pbutton click.delegate="save()" is-loading.bind="saving" type="primary" data-test="saveTokenDetail">Save</pbutton>
       </div>
     </div>
 
@@ -132,7 +140,7 @@
           <p>Total Amount of Tokens to Swap</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
-              value.to-view="token.amount | ethwei"></formatted-number>
+              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -143,7 +151,7 @@
           <p>Instant transfer</p>
           <p>
             <formatted-number if.bind="token.instantTransferAmount" thousands-separated
-              value.to-view="token.instantTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -154,7 +162,7 @@
           <p>Vested transfer</p>
           <p>
             <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-              value.to-view="token.vestedTransferAmount | ethwei"></formatted-number>
+              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>

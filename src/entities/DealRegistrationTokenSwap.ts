@@ -37,12 +37,15 @@ export interface ISocialMedia {
   url: string,
 }
 
+export interface IRepresentative {
+  address: string;
+}
 export interface IDAO {
   name: string;
   treasury_address: string;
   logoURI: string;
   social_medias: Array<ISocialMedia>;
-  representatives: Array<{address: string}>;
+  representatives: Array<IRepresentative>;
   id?: string;
   tokens?: Array<IToken>;
   platform?: Platforms;
