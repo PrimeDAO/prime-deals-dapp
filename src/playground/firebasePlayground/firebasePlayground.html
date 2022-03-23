@@ -37,12 +37,24 @@
     <pbutton type="primary" click.delegate="updateDealTitle(editDealId, editTitle)">Edit deal Title</pbutton>
   </div>
   <br>
+  <div style="display: flex;">
+    <pinput-text value.bind="isWithdrawnDealId" placeholder="DealId"></pinput-text>
+    <pbutton type="primary" click.delegate="setDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
+    <pbutton type="primary" click.delegate="setDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
+  </div>
+  <div style="display: flex;">
+    <pinput-text value.bind="isRejectedDealId" placeholder="DealId"></pinput-text>
+    <pbutton type="primary" click.delegate="setDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
+    <pbutton type="primary" click.delegate="setDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
+  </div>
   <h3>All deals</h3>
   <div>
     <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">
       <div>ID: ${deal.id}</div>
       <div>CreatedAt: ${deal.data.registrationData.createdAt.toDate()}</div>
       <div>Proposal Title: ${deal.data.registrationData.proposal.title}</div>
+      <div>isWithdrawn: ${deal.data.isWithdrawn}</div>
+      <div>isRejected: ${deal.data.isRejected}</div>
       <label>PrimaryDao representatives:</label>
       <ul>
         <li repeat.for="representative of deal.data.registrationData.primaryDAO.representatives">

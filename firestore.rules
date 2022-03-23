@@ -1,8 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isReadyDeal() {
-      return resource.data.isReady;
+    function isDocumentReady() {
+      return resource.data.isDocumentReady;
     }
 
     function isPublicDeal() {
@@ -26,9 +26,9 @@ service cloud.firestore {
     }
 
     match /deals-token-swap/{deal} {
-      allow read: if isReadyDeal() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
-      allow create: if userIsAuthenticated() && !request.resource.data.isReady;
-      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.isReady;
+      allow read: if isDocumentReady() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
+      allow create: if userIsAuthenticated() && !request.resource.data.isDocumentReady;
+      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.isDocumentReady;
       allow delete: if false;
     }
     

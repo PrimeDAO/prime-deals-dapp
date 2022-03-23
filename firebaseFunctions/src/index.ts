@@ -18,7 +18,9 @@ const cors = corsLib({
   origin: true,
 });
 
-// creates a token that is used to sign in to firebase from the frontend
+/**
+ * creates a token that is used to sign in to firebase from the frontend
+ */
 export const createCustomToken = functions.https.onRequest(
   (request, response) =>
     // Allow cross-origin requests for this function
@@ -73,9 +75,11 @@ export const buildDealStructure = functions.firestore
     batch.set(
       dealRef,
       {
-        isReady: true, // set the "isReady" flag to true. Firestore rules should block any operations on deals with flag "isReady" set to false
+        isDocumentReady: true, // set the "isDocumentReady" flag to true. Firestore rules should block any operations on deals with flag "isDocumentReady" set to false
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        isWithdrawn: false,
+        isRejected: false,
       },
       { merge: true }, // merges provided object with the existing data
     );

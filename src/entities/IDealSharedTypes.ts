@@ -20,7 +20,7 @@ export interface IDealVotingSummary {
 export interface IDealTokenSwapDocument {
   registrationData: IDealRegistrationTokenSwap;
   discussions: any; // TODO
-  isReady: boolean;
+  isDocumentReady: boolean;
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
 }

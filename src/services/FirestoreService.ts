@@ -40,7 +40,7 @@ export class FirestoreService {
           createdAt: serverTimestamp(),
           createdByAddress: firebaseAuth.currentUser.uid,
         },
-        isReady: false,
+        isDocumentReady: false,
       };
 
       await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
@@ -256,6 +256,46 @@ export class FirestoreService {
   }
 
   /**
+   * Sets deal isWithdrawn flag
+   * @param dealId string
+   * @param value boolean
+   */
+  public async setDealIsWithdrawn(dealId: string, value: boolean): Promise<void> {
+    try {
+      const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+      await setDoc(
+        ref,
+        {
+          isWithdrawn: value,
+        },
+        {merge: true},
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /**
+   * Sets deal isRejected flag
+   * @param dealId string
+   * @param value boolean
+   */
+  public async setDealIsRejected(dealId: string, value: boolean): Promise<void> {
+    try {
+      const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+      await setDoc(
+        ref,
+        {
+          isRejected: value,
+        },
+        {merge: true},
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /**
    * Gets a RxJS Observable for Firestore Query.
    *
    * Turns Firestore onSnapshot method into Observable using RxJS fromEventPattern
@@ -310,7 +350,7 @@ export class FirestoreService {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.isPrivate", "==", false),
-      where("isReady", "==", true),
+      where("isDocumentReady", "==", true),
     );
   }
 
@@ -318,7 +358,7 @@ export class FirestoreService {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("representativesAddresses", "array-contains", address),
-      where("isReady", "==", true),
+      where("isDocumentReady", "==", true),
     );
   }
 
@@ -326,7 +366,7 @@ export class FirestoreService {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.proposalLead.address", "==", address),
-      where("isReady", "==", true),
+      where("isDocumentReady", "==", true),
     );
   }
 }
