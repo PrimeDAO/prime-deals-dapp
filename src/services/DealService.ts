@@ -123,59 +123,61 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    this.getDeals(await this.getExecutedDealInfo());
+    this.getDeals();
   }
 
-  private async getDeals(executedDealIds: Map<string, IExecutedDeal>): Promise<void> {
+  private async getDeals(): Promise<void> {
+
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
-        if (!this.deals?.size) {
-          try {
+        this.getExecutedDealInfo().then((executedDealIds) => {
+          if (!this.deals?.size) {
+            try {
 
-            const dealsMap = new Map<Address, DealTokenSwap>();
+              const dealsMap = new Map<Address, DealTokenSwap>();
 
-            /**
+              /**
              * rootId is just some way of identifying where in Ceramic to search for this list of Deal ids.
              */
-            const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
+              const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
 
-            for (const dealId of dealIds) {
-              const deal = this.createDealFromConfig(dealId);
+              for (const dealId of dealIds) {
+                const deal = this.createDealFromConfig(dealId);
 
-              const executedDeal = executedDealIds.get(dealId);
-              if (executedDeal) { // should only happen for test data
-                deal.isExecuted = true;
-                deal.executedAt = executedDeal.executedAt;
-              }
+                const executedDeal = executedDealIds.get(dealId);
+                if (executedDeal) { // should only happen for test data
+                  deal.isExecuted = true;
+                  deal.executedAt = executedDeal.executedAt;
+                }
 
-              dealsMap.set(dealId, deal);
-              /**
+                dealsMap.set(dealId, deal);
+                /**
                * remove the deal if it is corrupt
                */
-              this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
-                if (newValue) { // pretty much the only case
-                  this.deals.delete(deal.id);
-                }
-              });
-              this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
+                this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
+                  if (newValue) { // pretty much the only case
+                    this.deals.delete(deal.id);
+                  }
+                });
+                this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
 
-              deal.initialize(); // set this off asyncronously.
+                deal.initialize(); // set this off asyncronously.
+              }
+              this.deals = dealsMap;
+              this.initializing = false;
+              resolve();
             }
-            this.deals = dealsMap;
-            this.initializing = false;
-            resolve();
+            catch (error) {
+              this.deals = new Map();
+              // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
+              this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
+              this.initializing = false;
+              reject();
+            }
           }
-          catch (error) {
-            this.deals = new Map();
-            // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-            this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
-            this.initializing = false;
-            reject();
-          }
-        }
-      },
-    );
+        });
+      });
   }
 
   private async getExecutedDealInfo(): Promise<Map<string, IExecutedDeal>> {
