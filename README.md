@@ -141,6 +141,16 @@ Assuming that a Firebase Project is already setup and you have access to API key
         Add it to `.env` as `FIREBASE_FUNCTIONS_URL` variable:
         
         `FIREBASE_FUNCTIONS_URL=http://localhost:5001/${projectId}/us-central1`
+
+    3. IMPORTANT Add `FIREBASE_ENVIRONMENT=local` variable to `.env` file
+
+        `FIREBASE_ENVIRONMENT` variable is used to conditionally connect the app to firebase emulators.
+        If it's set to `local` than app will connect to the running emulators, otherwise it will connect to
+        the live Firebase project with ID specified by `FIREBASE_PROJECT_ID`
+
+        Using Firebase emulators for local development is highly recommended,
+        however you are free to connect to the live project whether for convenience or for testing purposes.
+        You can do so by removing `FIREBASE_ENVIRONMENT` variable.
         
 3. Run `npm run start-dev` the app should be now using firebase emulators
 4. You should always run `npm run firebase` and `npm run start-dev` for local development

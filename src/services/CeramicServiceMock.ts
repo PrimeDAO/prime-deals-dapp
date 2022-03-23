@@ -911,7 +911,20 @@ const _registration22: IDealRegistrationTokenSwap = {
   primaryDAO: {
     id: "dao-hash-4",
     name: "MyDAO",
-    tokens: [],
+    tokens: [
+      {
+        "address": "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad",
+        "amount": "20320000000000000000000",
+        "instantTransferAmount": "10000",
+        "vestedTransferAmount": "10000",
+        "name": "Prime",
+        "symbol": "D2D",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
+        cliffOf: 1,
+        vestedFor: 1,
+      },
+    ],
     social_medias: [],
     representatives: [{address: address1}],
     treasury_address: address2,
@@ -926,7 +939,7 @@ const _registration22: IDealRegistrationTokenSwap = {
       symbol: "D2D",
       decimals: 18,
       logoURI: "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
-      amount: "200000",
+      amount: "231100000000000000000000",
       instantTransferAmount: "150000",
       vestedTransferAmount: "50000",
       vestedFor: 14 * 24 * 3600, // should be in seconds

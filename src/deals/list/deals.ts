@@ -40,18 +40,20 @@ export class Deals {
     return this.gridDeals.slice(0, 10);
   }
 
-  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress")
+  @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress", "dealService.openProposals", "dealService.partneredDeals")
   public get gridDeals(): DealTokenSwap[] {
-    return [...this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress)];
+    return this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress);
   }
 
-  public attached(): void {
-    if (dealsLoadedOnce) return;
-    this.dealService.ensureAllDealsInitialized();
-    this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
-    this.sortDirection = SortOrder.DESC;
-    this.sort("age");
-    dealsLoadedOnce = true;
+  public async attached(): Promise<void> {
+    if (!dealsLoadedOnce) {
+      await this.dealService.ensureAllDealsInitialized();
+      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      this.sortDirection = SortOrder.DESC;
+      this.sort("age");
+      // eslint-disable-next-line require-atomic-updates
+      dealsLoadedOnce = true;
+    }
   }
 
   /**
@@ -111,8 +113,8 @@ export class Deals {
       case "status":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.status, b.status, this.sortDirection);
         break;
-      case "age":
-        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt, b.registrationData.createdAt, this.sortDirection);
+      case "age": // @TODO remove "as Date" type assertion
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt as Date, b.registrationData.createdAt as Date, this.sortDirection);
         break;
       case "dealSize":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateNumber(a.totalPrice, b.totalPrice, this.sortDirection);

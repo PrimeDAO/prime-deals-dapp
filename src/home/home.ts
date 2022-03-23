@@ -22,8 +22,8 @@ export class Home {
   ) {
   }
 
-  attached(): void {
-    this.dealService.ensureAllDealsInitialized();
+  async attached(): Promise<void> {
+    await this.dealService.ensureAllDealsInitialized();
     this.allDeals.open = this.dealService.openProposals.slice(0, Home.MAX_DEALS_COUNT);
     this.allDeals.partnered = this.dealService.partneredDeals.slice(0, Home.MAX_DEALS_COUNT);
     this.featuredDeals = this.allDeals.open.length ? this.allDeals.open : this.allDeals.partnered;

@@ -12,7 +12,7 @@
         if.to-view="!ethereumService.defaultAccountAddress"
         type="secondary"
         click.delegate="ethereumService.ensureConnected()">
-        Connect to Show My Deals
+        Connect to Show Your Deals
       </pbutton>
       <pbutton
         type="primary"
@@ -22,7 +22,7 @@
         Initiate a deal
       </pbutton>
     </div>
-    <div class="section no-deals heading02" if.to-view="featuredDeals && featuredDeals.length === 0">
+    <div class="section no-deals heading02" if.to-view="dealsLoadedOnce && featuredDeals && featuredDeals.length === 0">
       ${showMine ? "You currently are not a part of any deal." : "There are no public deals available." }
       <pbutton
         type="primary"

@@ -15,24 +15,24 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 
-interface ITokenSwapInfo {
-  // the participating DAOs
-  daos: Array<Address>;
-  // the tokens involved in the swap
-  tokens: Array<Address>;
-  // the token flow from the DAOs to the module
-  pathFrom: Array<Array<BigNumber>>;
-  // the token flow from the module to the DAO
-  pathTo: Array<Array<BigNumber>>;
-  // unix timestamp of the deadline
-  deadline: BigNumber; // trying to get them to switch to uint type
-  // unix timestamp of the execution
-  executionDate: BigNumber; // trying to get them to switch to uint type
-  // hash of the deal information.
-  metadata: string;
-  // status of the deal
-  status: number; // 3 ("DONE") means the deal has been executed
-}
+// interface ITokenSwapInfo {
+//   // the participating DAOs
+//   daos: Array<Address>;
+//   // the tokens involved in the swap
+//   tokens: Array<Address>;
+//   // the token flow from the DAOs to the module
+//   pathFrom: Array<Array<BigNumber>>;
+//   // the token flow from the module to the DAO
+//   pathTo: Array<Array<BigNumber>>;
+//   // unix timestamp of the deadline
+//   deadline: BigNumber; // trying to get them to switch to uint type
+//   // unix timestamp of the execution
+//   executionDate: BigNumber; // trying to get them to switch to uint type
+//   // hash of the deal information.
+//   metadata: string;
+//   // status of the deal
+//   status: number; // 3 ("DONE") means the deal has been executed
+// }
 
 interface IDepositEventArgs {
   module: Address;
@@ -193,6 +193,14 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
+  public close() {
+    if (this.isOpenProposal) {
+      this.isWithdrawn = true;
+    } else {
+      this.isRejected = true;
+    }
+  }
+
   // public get isTargetReached(): boolean {
   //   return;
   // }
@@ -311,15 +319,14 @@ export class DealTokenSwap implements IDeal {
       const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
-      // TODO: when we are getting real deals from storage and have a real id.
-      const metadata = Utils.asciiToHex(this.id); // should be same as tokenSwapInfo.metadata
-      this.contractDealId = await this.moduleContract.metadataToDealId(metadata);
-      if (this.contractDealId) {
-        const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
-        this.isExecuted = tokenSwapInfo.status === 3;
-      } else {
-        this.isExecuted = false;
-      }
+      this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
+      // not needed, is done by DealService
+      // if (this.contractDealId) {
+      //   const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
+      //   this.isExecuted = tokenSwapInfo.status === 3;
+      // } else {
+      //   this.isExecuted = false;
+      // }
 
       this.isWithdrawn = this.isRejected = false; // <== TODO: get these from Deal storage
     }
