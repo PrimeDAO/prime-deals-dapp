@@ -15,14 +15,14 @@ deal-votes {
         margin: 20px 0 10px 0;
 
         pbutton {
-          &.accept-active {
+          &.acceptButtonActive {
             button {
               background-color: $Green;
               color: $BG02;
             }
           }
 
-          &.decline-active {
+          &.declineButtonActive {
             button {
               background-color: $Primary01;
             }
@@ -52,20 +52,17 @@ deal-votes {
         }
       }
 
-      .votes-subtitle {
+      .votesSubtitle {
         font-weight: 700;
         text-transform: uppercase;
         margin-top: 20px;
         font-family: $heading;
       }
 
-      .representatives-votes-subtitle {
+      .representativesVotesSubtitle {
         margin-bottom: 10px;
       }
 
-      .status-voting {
-        color: $Orange;
-      }
     }
 
     .funding {
@@ -82,5 +79,50 @@ deal-votes {
       }
     }
 
+
   }
+
+
+}
+
+.fundInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 36px;
+  margin-top: 40px;
+  margin-bottom: 60px;
+
+  .daoInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    gap: 16px;
+
+    .daoLogoAndName {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+      color: $Neutral03;
+    }
+
+    .tokenDetails {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      color: $Neutral02;
+    }
+  }
+
+  .fa-exchange-alt {
+    font-size: 20px;
+    margin-top: 8px;
+  }
+}
+
+
+.orangeColor {
+  color: $Orange;
 }

@@ -8,11 +8,11 @@
         You’re eligible to vote. If you choose not to vote, you will automatically reject the deal.
       </p>
       <pbutton-group>
-        <pbutton class="accept-active" full-width type="formfield">
+        <pbutton class="acceptButtonActive" full-width type="formfield">
           <i class="fas fa-check-circle"></i>
           Accept
         </pbutton>
-        <pbutton class="decline-active" full-width type="formfield">
+        <pbutton class="declineButtonActive" full-width type="formfield">
           <i class="fas fa-times-circle"></i>
           Decline
         </pbutton>
@@ -25,16 +25,16 @@
         </pbutton>
       </div>
 
-      <p class="bodySmallText votes-subtitle representatives-votes-subtitle">Votes (5/10)</p>
+      <p class="bodySmallText votesSubtitle representativesVotesSubtitle">Votes (5/10)</p>
       <deal-representatives-votes dao.bind="deal.primaryDao"></deal-representatives-votes>
       <deal-representatives-votes dao.bind="deal.partnerDao"></deal-representatives-votes>
 
-      <p class="bodySmallText votes-subtitle">Deal status</p>
-      <div class="status-voting">Voting in progress.</div>
+      <p class="bodySmallText votesSubtitle">Deal status</p>
+      <div class="orangeColor">Voting in progress.</div>
     </div>
 
     <div class="funding">
-      <pbutton class="fundButton" click.delegate="goto(`fund/${deal.id}`)"
+      <pbutton class="fundButton" click.delegate="fund()"
                if.bind="ethereumService.defaultAccountAddress" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
@@ -45,4 +45,48 @@
       </pbutton>
     </div>
   </pcard>
-</template>
+
+  <div ref="fundingModal" style="display: none;">
+    <p>The following deal will take place: </p>
+
+    <div class="fundInfo">
+
+      <div class="daoInfo">
+        <div class="daoLogoAndName">
+          <img class="daoLogo" src.bind="deal.registrationData.primaryDAO.logoURI">
+          ${deal.registrationData.primaryDAO.name}
+        </div>
+        <div class="tokenDetails">
+          <span repeat.for="tokenDetails of deal.registrationData.primaryDAO.tokens">
+            <formatted-number thousands-separated value.to-view="tokenDetails.amount | ethwei"></formatted-number>
+            <b>${tokenDetails.symbol}</b>
+          </span>
+        </div>
+      </div>
+
+      <i class="fas fa-exchange-alt"></i>
+
+      <div class="daoInfo">
+        <div class="daoLogoAndName">
+          <img class="daoLogo" src.bind="deal.registrationData.partnerDAO.logoURI">
+          ${deal.registrationData.partnerDAO.name}
+        </div>
+        <div class="tokenDetails">
+          <span repeat.for="tokenDetails of deal.registrationData.partnerDAO.tokens">
+            <formatted-number thousands-separated value.to-view="tokenDetails.amount | ethwei"></formatted-number>
+            <b>${tokenDetails.symbol}</b>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="orangeColor">
+      Note: After you start funding, the deal cannot be edited. You can edit the deal here. Editing the deal will reset
+      voting status. You are responsible for informing the deal participants of this change and getting them to cast
+      their votes again.
+    </div>
+    </temp>
+  </div>
+
