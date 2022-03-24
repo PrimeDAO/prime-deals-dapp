@@ -21,7 +21,6 @@ export class DiscussionsService {
 
   public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
-  private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
@@ -439,7 +438,7 @@ export class DiscussionsService {
     const token = localStorage.getItem("discussionToken");
 
     try {
-      const message = await this.convoVote.comments.getComment(commentId);
+      const message = await this.convo.comments.getComment(commentId);
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -449,10 +448,10 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        await this.convoVote.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
       }
 
-      const success = (await this.convoVote.comments[type](this.currentWalletAddress, token, commentId)).success;
+      const success = (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
 
       // Toggle vote locally
       if (!message[endpoints[type]].includes(this.currentWalletAddress)) {
