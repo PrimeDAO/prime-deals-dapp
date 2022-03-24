@@ -1,18 +1,17 @@
 import { autoinject, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+import { EthereumService } from "services/EthereumService";
+import { DiscussionsService } from "DealDashboard/discussionsService";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 import "./dealClauses.scss";
-import { EthereumService } from "../../services/EthereumService";
-import { DiscussionsService } from "../discussionsService";
-import { IClause } from "../../entities/DealRegistrationTokenSwap";
 
 @autoinject
 export class DealClauses {
   @bindable deal: DealTokenSwap;
   @bindable.booleanAttr authorized = false;
-  @bindable.string({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
-  private dealId: string;
   private clauses: IClause[];
 
   constructor(
@@ -35,7 +34,7 @@ export class DealClauses {
   private async addOrReadDiscussion(topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> {
     this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
       await this.discussionsService.createDiscussion(
-        this.dealId,
+        this.deal.id,
         {
           topic,
           clauseHash,
@@ -47,4 +46,9 @@ export class DealClauses {
       );
   }
 
+  authorizedChanged(): void {
+    if (this.ethereumService.defaultAccountAddress) {
+      this.discussionsService.setEnsName(this.ethereumService.defaultAccountAddress);
+    }
+  }
 }

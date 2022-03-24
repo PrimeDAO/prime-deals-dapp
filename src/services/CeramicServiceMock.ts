@@ -23,7 +23,10 @@ const discussion1: IDealDiscussion = {
   representatives: [{
     address: address5,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-23T15:38:16.528Z"),
   modifiedAt: new Date(1643031030746),
   replies: 6,
@@ -40,7 +43,10 @@ const discussion2: IDealDiscussion = {
   representatives: [{
     address: address5,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-21T15:48:32.753Z"),
   modifiedAt: new Date(1642846275332),
   replies: 10,
@@ -57,7 +63,10 @@ const discussion3: IDealDiscussion = {
   representatives: [{
     address: address4,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address1,
+    name: null,
+  },
   createdAt: new Date("2022-01-22T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
@@ -74,13 +83,15 @@ const discussion4: IDealDiscussion = {
   representatives: [{
     address: address4,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-26T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
   key: "-i90irriG3hu8xJs1g0c7LtTCtGiYmU5m3hZSfcIPz0",
 };
-
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -116,7 +127,6 @@ const _registration1: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration2: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -163,7 +173,6 @@ const _registration2: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration3: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -207,7 +216,6 @@ const _registration3: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration4: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -285,6 +293,8 @@ const _registration4: IDealRegistrationTokenSwap = {
   terms: {
     clauses: [
       {id: "clause-hash-1", text: "lorem"},
+      {id: "clause-hash-2", text: "loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem"},
+      {id: "clause-hash-3", text: "lorem\nlorem\nlorem\nlorem\nlorem\nlorem\n"},
     ],
   },
   keepAdminRights: false,
@@ -296,7 +306,6 @@ const _registration4: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration5: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -332,7 +341,6 @@ const _registration5: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration6: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -963,7 +971,6 @@ const _registration22: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration23: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -1016,7 +1023,6 @@ const _registration23: IDealRegistrationTokenSwap = {
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration24: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {

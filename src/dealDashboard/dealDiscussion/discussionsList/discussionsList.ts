@@ -1,5 +1,5 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject } from "aurelia-framework";
+import { autoinject, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -20,7 +20,7 @@ interface IDiscussionListItem extends IDealDiscussion {
 @autoinject
 export class DiscussionsList{
   @bindable deal: DealTokenSwap;
-  @bindable discussionId: string = null;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable.booleanAttr authorized: boolean;
 
   paginationConfig = {
@@ -65,10 +65,10 @@ export class DiscussionsList{
       ));
 
     this.discussionsArray.forEach((listDiscussionItem: IDiscussionListItem) => {
-      if (!listDiscussionItem.createdByName) {
+      if (!listDiscussionItem.createdBy.name) {
         this.discussionsService.loadProfile(listDiscussionItem.createdBy.address)
           .then(profile => {
-            if (profile.name) listDiscussionItem.createdByName = profile.name;
+            if (profile.name) listDiscussionItem.createdBy.name = profile.name;
           });
       }
 
