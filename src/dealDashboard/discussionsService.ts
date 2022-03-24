@@ -127,10 +127,8 @@ export class DiscussionsService {
     }
   }
 
-  public async getEnsName(address: string): Promise<string> {
+  public async setEnsName(address: string): Promise<void> {
     this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
-
-    return this.ensName;
   }
 
   /**
@@ -156,7 +154,10 @@ export class DiscussionsService {
       address: this.ethereumService.defaultAccountAddress,
       name: null,
     };
-    createdBy.name = this.ensName || (await this.getEnsName(createdBy.address));
+    if (!this.ensName) {
+      await this.setEnsName(createdBy.address);
+    }
+    createdBy.name = this.ensName;
 
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
