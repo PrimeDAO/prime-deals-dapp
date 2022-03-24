@@ -30,27 +30,32 @@ export class SubmitStage {
 
   public async onSubmit(): Promise<void> {
     try {
-      if (!this.wizardManager.dealId) {
+      this.eventAggregator.publish("deal.saving", true);
+      try {
+        if (!this.wizardManager.dealId) {
         // const newDeal = use this for the button link below
-        await this.dealService.createDeal(this.submitData);
+          await this.dealService.createDeal(this.submitData);
 
-        const congratulatePopupModel: IAlertModel = {
-          header: "Your deal has been submitted!",
-          message:
+          const congratulatePopupModel: IAlertModel = {
+            header: "Your deal has been submitted!",
+            message:
           "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
-          confetti: true,
-          buttonTextPrimary: "Go to deal (todo)",
-          className: "congratulatePopup",
-        };
+            confetti: true,
+            buttonTextPrimary: "Go to deal (todo)",
+            className: "congratulatePopup",
+          };
 
-        await this.alertService.showAlert(congratulatePopupModel);
+          await this.alertService.showAlert(congratulatePopupModel);
 
-      } else {
-        await this.dealService.updateRegistration(this.wizardManager.dealId, this.submitData);
-        this.eventAggregator.publish("handleInfo", "Your deal registration was successfully saved");
+        } else {
+          await this.dealService.updateRegistration(this.wizardManager.dealId, this.submitData);
+          this.eventAggregator.publish("handleInfo", "Your deal registration was successfully saved");
+        }
+      } catch (error) {
+        this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
       }
-    } catch (error) {
-      this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
+    } finally {
+      this.eventAggregator.publish("deal.saving", false);
     }
   }
 }
