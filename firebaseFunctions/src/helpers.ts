@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
-import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealSharedTypes";
+import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
 import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 
 /**
@@ -13,8 +13,8 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: IDealTokenSwapDocum
   updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
   delete oldDeal.registrationData.isPrivate;
   delete updatedDeal.registrationData.isPrivate;
-  delete oldDeal.registrationData.modifiedAt;
-  delete updatedDeal.registrationData.modifiedAt;
+  // delete oldDeal.registrationData.modifiedAt;
+  // delete updatedDeal.registrationData.modifiedAt;
 
   return isEqual(oldDeal, updatedDeal);
 };
@@ -27,8 +27,8 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: IDealTokenSwapDocum
 export const isRegistrationDataUpdated = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
-  delete oldDealRegistrationData.modifiedAt;
-  delete updatedDealRegistrationData.modifiedAt;
+  // delete oldDealRegistrationData.modifiedAt;
+  // delete updatedDealRegistrationData.modifiedAt;
 
   return !isEqual(oldDealRegistrationData, updatedDealRegistrationData);
 };

@@ -5,7 +5,6 @@
       margin-bottom: 20px;
       border: 1px solid;
     }
-
   </style>
   <h3>Firebase</h3>
   <br>
@@ -51,7 +50,7 @@
   <div>
     <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">
       <div>ID: ${deal.id}</div>
-      <div>CreatedAt: ${deal.data.registrationData.createdAt.toDate()}</div>
+      <!-- <div>CreatedAt: ${deal.data.registrationData.createdAt.toDate()}</div> -->
       <div>Proposal Title: ${deal.data.registrationData.proposal.title}</div>
       <div>isWithdrawn: ${deal.data.isWithdrawn}</div>
       <div>isRejected: ${deal.data.isRejected}</div>

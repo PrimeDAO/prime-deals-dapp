@@ -31,7 +31,7 @@ export class WizardManager {
   public additionalStageMetadata: Record<string, any>[] = [];
 
   private wizardType: WizardType;
-  private dealId: IKey;
+  public dealId: IKey;
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;

@@ -4,6 +4,7 @@ import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Subscription } from "rxjs";
 import { FirestoreService } from "./../../services/FirestoreService";
 import { openProposalDummyData1, partnerDealDummyData1 } from "./firebaseDummyData";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
 
 @autoinject
 export class FirebasePlayground {
@@ -11,7 +12,7 @@ export class FirebasePlayground {
   subscriptions: Array<Subscription> = [];
 
   constructor(
-    private firestoreService: FirestoreService,
+    private firestoreService: FirestoreService<IDealTokenSwapDocument, IDealRegistrationTokenSwap>,
     private ethereumService: EthereumService,
   ) {}
 

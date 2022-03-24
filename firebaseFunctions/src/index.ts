@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import { getAddress } from "ethers/lib/utils";
-import { IDealTokenSwapDocument } from "../../src/entities/IDealSharedTypes";
+import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 
@@ -75,6 +75,7 @@ export const buildDealStructure = functions.firestore
     batch.set(
       dealRef,
       {
+        id: dealId,
         isDocumentReady: true, // set the "isDocumentReady" flag to true. Firestore rules should block any operations on deals with flag "isDocumentReady" set to false
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
@@ -122,9 +123,9 @@ export const updateDealStructure = functions.firestore
     batch.set(
       change.after.ref, // reference to the updated Deal document
       {
-        registrationData: {
-          modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
-        },
+        // registrationData: {
+        //   modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        // },
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
       },

@@ -1,7 +1,7 @@
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealsData } from "entities/IDealTypes";
-import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { DealStatus, IDeal, IDealTokenSwapDocument } from "entities/IDealTypes";
+import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
@@ -61,7 +61,7 @@ export class DealTokenSwap implements IDeal {
   constructor(
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
-    private dataSourceDeals: IDataSourceDeals,
+    private dataSourceDeals: IDataSourceDeals2,
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
@@ -74,7 +74,7 @@ export class DealTokenSwap implements IDeal {
 
   private initializedPromise: Promise<void>;
   private subscriptions = new DisposableCollection();
-  private rootData: IDealsData;
+  private dealDocument: IDealTokenSwapDocument;
 
   public id: IKey;
   public dealInitialized: boolean;
@@ -82,7 +82,6 @@ export class DealTokenSwap implements IDeal {
   public initializing = true;
   public corrupt = false;
 
-  public registrationData: IDealRegistrationTokenSwap;
   /**
    * the id used by the TokenSwapModule contract to identify this this.  Is
    * generated when funding is initiated by the Proposal Lead, and obtained
@@ -96,6 +95,7 @@ export class DealTokenSwap implements IDeal {
 
   public primaryDao: IDAO;
   public partnerDao: IDAO;
+  public createdAt: Date;
 
   /**
    * is detected by the presence of an TokenSwapModule.TokenSwapExecuted event for this deal
@@ -122,6 +122,10 @@ export class DealTokenSwap implements IDeal {
   //   public get inFundingPeriod(): boolean {
   //   return this.tokenSwapCreated && ;
   // }
+
+  public get registrationData(): IDealRegistrationTokenSwap {
+    return this.dealDocument.registrationData;
+  }
 
   /**
    * Open Proposal that is open for offers, by bizdev definition
@@ -243,9 +247,10 @@ export class DealTokenSwap implements IDeal {
     return !!this.registrationData.partnerDAO;
   }
 
-  public create(id: IKey): DealTokenSwap {
+  public create(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
-    this.id = id;
+    this.dealDocument = dealDoc;
+    this.id = dealDoc.id;
     return this;
   }
 
@@ -300,15 +305,13 @@ export class DealTokenSwap implements IDeal {
   private async hydrate(): Promise<void> {
     // eslint-disable-next-line no-empty
     try {
-      this.rootData = await this.dataSourceDeals.get<IDealsData>(this.id);
-      this.registrationData = await this.dataSourceDeals.get<IDealRegistrationTokenSwap>(this.rootData.registration);
-
       this.primaryDao = this.registrationData.primaryDAO;
       this.partnerDao = this.registrationData.partnerDAO;
       this.executionPeriod = this.registrationData.executionPeriodInDays * 86400;
+      this.createdAt = new Date(); // for now until we have it in the doc
 
       await this.loadDepositContracts(); // now that we have registrationData
-      const discussionsMap = await this.dataSourceDeals.get<Record<string, string> | undefined>(this.rootData.discussions);
+      const discussionsMap = await this.dealDocument.discussions;
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
@@ -342,14 +345,14 @@ export class DealTokenSwap implements IDeal {
     return this.initializedPromise;
   }
 
-  public updateRegistration(registration: IDealRegistrationTokenSwap): Promise<void> {
-    return this.dataSourceDeals.update(this.id, JSON.stringify(registration));
-  }
-
   public addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void> {
     this.clauseDiscussions.set(clauseId, discussionKey);
-    const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
-    return this.dataSourceDeals.update(discussionKey, JSON.stringify(clauseDiscussionsObject)); // TODO check if this line works correctly
+    // const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
+    return this.dataSourceDeals.addClauseDiscussion(
+      this.id,
+      this.ethereumService.defaultAccountAddress,
+      clauseId,
+      discussionKey); // TODO check if this line works correctly
   }
 
   public async loadDealSize(): Promise<void> {
@@ -448,6 +451,20 @@ export class DealTokenSwap implements IDeal {
       });
 
     return transactions;
+  }
+
+  public withdraw(): Promise<void> {
+    if (!this.isWithdrawn) {
+      return this.dataSourceDeals.updateDealIsWithdrawn(this.id, this.ethereumService.defaultAccountAddress, true)
+        .then(() => {this.isWithdrawn = true; });
+    }
+  }
+
+  public reject(): Promise<void> {
+    if (!this.isRejected) {
+      return this.dataSourceDeals.updateDealIsRejected(this.id, this.ethereumService.defaultAccountAddress, true)
+        .then(() => {this.isRejected = true; });
+    }
   }
 
   /**

@@ -84,9 +84,9 @@ export interface IDealRegistrationTokenSwap {
   keepAdminRights: boolean;
   offersPrivate: boolean;
   isPrivate: boolean;
-  createdAt: IFirestoreTimestamp | Date | null; // @TODO remove "Date" as it's needed temporary for the mocked data
-  modifiedAt: IFirestoreTimestamp | null;
-  createdByAddress: string | null;
+  // createdAt: IFirestoreTimestamp | Date | null; // @TODO remove "Date" as it's needed temporary for the mocked data
+  // modifiedAt: IFirestoreTimestamp | null;
+  // createdByAddress: string | null;
   executionPeriodInDays: number;
   dealType: "token-swap"/* | "co-liquidity"*/;
 }
@@ -112,9 +112,9 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public keepAdminRights: boolean;
   public offersPrivate: boolean;
   public isPrivate: boolean;
-  public createdAt: IFirestoreTimestamp | null;
-  public modifiedAt: IFirestoreTimestamp | null;
-  public createdByAddress: string | null;
+  // public createdAt: IFirestoreTimestamp | null;
+  // public modifiedAt: IFirestoreTimestamp | null;
+  // public createdByAddress: string | null;
   public executionPeriodInDays: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
@@ -144,8 +144,8 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
-    this.createdAt = null;
-    this.modifiedAt = null;
-    this.createdByAddress = null;
+    // this.createdAt = null;
+    // this.modifiedAt = null;
+    // this.createdByAddress = null;
   }
 }

@@ -1,22 +1,29 @@
-import { IKey } from "services/DataSourceDealsTypes";
+import { IDealRegistrationTokenSwap, IFirestoreTimestamp } from "./DealRegistrationTokenSwap";
+export interface IDealDAOVotingSummary {
+  total: number;
+  accepted: number;
+  rejected: number;
+  votes: {
+    address: string;
+    vote: boolean;
+  }[];
+}
 
-export interface IDealsData {
-  votes: IKey;
-  /**
-   * CID for json that looks like:
-   *
-   * {
-   *   "clauseId1": "discussionsKey1",
-   *   "clauseId2": "discussionsKey2",
-   *   "clauseId3": "discussionsKey3",
-   * }
-   */
-  discussions: IKey;
-  /**
-   * CID for json that confirms to IDealRegistrationTokenSwap
-   */
-  registration: IKey;
-  status: DealStatus;
+export interface IDealVotingSummary {
+  primaryDAO: IDealDAOVotingSummary,
+  partnerDAO: IDealDAOVotingSummary,
+  total: number;
+  votesGiven: number;
+}
+
+export interface IDealTokenSwapDocument {
+  id: string;
+  registrationData: IDealRegistrationTokenSwap;
+  discussions: any; // TODO
+  isDocumentReady: boolean;
+  representativesAddresses: Array<string>;
+  votingSummary: IDealVotingSummary;
+  createdAt: IFirestoreTimestamp,
 }
 
 export enum DealStatus {
@@ -30,14 +37,13 @@ export enum DealStatus {
 }
 
 export interface IDeal {
-  id: IKey;
+  id: string;
   corrupt: boolean;
   clauseDiscussions: Map<string, string>;
   registrationData: any;
   initialize(): Promise<void>;
-  create(id: IKey): IDeal;
+  create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
   ensureInitialized(): Promise<void>;
-  updateRegistration(registration: Record<string, any>): Promise<void>;
   addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
   status: DealStatus;
 }
