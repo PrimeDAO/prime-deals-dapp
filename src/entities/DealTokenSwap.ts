@@ -193,6 +193,14 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
+  public close() {
+    if (this.isOpenProposal) {
+      this.isWithdrawn = true;
+    } else {
+      this.isRejected = true;
+    }
+  }
+
   // public get isTargetReached(): boolean {
   //   return;
   // }

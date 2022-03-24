@@ -77,7 +77,8 @@ html {
       white-space: nowrap;
       cursor: pointer;
       &:hover {
-        text-decoration: underline;
+        color: $Neutral04;
+        text-underline: none;
       }
     }
 
