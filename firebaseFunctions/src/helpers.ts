@@ -13,24 +13,34 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: IDealTokenSwapDocum
   updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
   delete oldDeal.registrationData.isPrivate;
   delete updatedDeal.registrationData.isPrivate;
-  // delete oldDeal.registrationData.modifiedAt;
-  // delete updatedDeal.registrationData.modifiedAt;
+  delete oldDeal.modifiedAt;
+  delete updatedDeal.modifiedAt;
 
   return isEqual(oldDeal, updatedDeal);
 };
 
 /**
- * Checks if registration data was updated (any part of it apart from modifiedAt field)
+ * Checks if registration data was updated
  *
  * Intended to be used inside a callback function triggered on deal document update
  */
 export const isRegistrationDataUpdated = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
-  // delete oldDealRegistrationData.modifiedAt;
-  // delete updatedDealRegistrationData.modifiedAt;
 
   return !isEqual(oldDealRegistrationData, updatedDealRegistrationData);
+};
+
+/**
+ * Checks if the only update to the deal document was the modifiedAt field
+ */
+export const isModifiedAtOnlyUpdate = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
+  oldDeal = JSON.parse(JSON.stringify(oldDeal));
+  updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
+  delete oldDeal.modifiedAt;
+  delete updatedDeal.modifiedAt;
+
+  return isEqual(oldDeal, updatedDeal);
 };
 
 /**

@@ -4,7 +4,7 @@ import * as corsLib from "cors";
 import { v4 as uuidv4 } from "uuid";
 import { getAddress } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
-import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
@@ -55,47 +55,8 @@ export const createCustomToken = functions.https.onRequest(
     }),
 );
 
-// /**
-//  * Run every time a new document (a deal) in deals collection is created
-//  */
-// export const buildDealStructure = functions.firestore
-//   .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-//   .onCreate(async (snapshot, context) => {
-//     const deal = snapshot.data() as IDealTokenSwapDocument;
-
-//     const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
-//     const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
-
-//     const dealId: string = context.params.dealId;
-
-//     // Creates a write batch, used for performing multiple writes as a single atomic operation.
-//     const batch = firestore.batch();
-
-//     const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
-
-//     // adds some meta information to the deal document
-//     batch.set(
-//       dealRef,
-//       {
-//         id: dealId,
-//         isDocumentReady: true, // set the "isDocumentReady" flag to true. Firestore rules should block any operations on deals with flag "isDocumentReady" set to false
-//         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-//         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-//         isWithdrawn: false,
-//         isRejected: false,
-//       },
-//       { merge: true }, // merges provided object with the existing data
-//     );
-
-//     // updates batch with writes for creating vote object for each representative
-//     initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
-
-//     // commits all writes added to the batch
-//     await batch.commit();
-//   });
-
 /**
- * Run every time a document (a deal) in deals collection is updated
+ * Run every time a document (a deal) in deals-token-swap collection is updated
  */
 export const updateDealStructure = functions.firestore
   .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
@@ -104,31 +65,36 @@ export const updateDealStructure = functions.firestore
     const oldDeal = change.before.data() as IDealTokenSwapDocument;
     const updatedDeal = change.after.data() as IDealTokenSwapDocument;
 
-    // Proceed only if registration data was updated and the update was done to field/fields other than the privacy flag
-    if (
-      !updatedDeal ||
-      !isRegistrationDataUpdated(oldDeal, updatedDeal) ||
-      isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
-    ) {
+    // In case it was a delete operation, or the only update was modifiedAt field
+    if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
       return;
     }
 
     // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();
 
-    // get updated representatives address for both DAOs
-    const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
-    const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
+    const dealUpdates: Partial<IDealTokenSwapDocument> = {
+      modifiedAt: new Date().toISOString(),
+    };
 
-    await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+    // If registration data was updated and the update was done to field/fields other than the privacy flag
+    if (
+      isRegistrationDataUpdated(oldDeal, updatedDeal) &&
+      !isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
+    ) {
+      // get updated representatives address for both DAOs
+      const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
+      const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
+
+      await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+
+      dealUpdates.representativesAddresses = [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses];
+      dealUpdates.votingSummary = initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+    }
 
     batch.set(
       change.after.ref, // reference to the updated Deal document
-      {
-        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-        votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-        modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
-      },
+      dealUpdates,
       {merge: true}, // merges provided object with the existing data
     );
 
@@ -162,6 +128,7 @@ export const onVoteUpdate = functions.firestore
       dealRef,
       {
         votingSummary,
+        modifiedAt: new Date().toISOString(),
       },
       {merge: true}, // merges provided object with the existing data
     );
@@ -217,7 +184,6 @@ export const createDeal = functions.https.onRequest(
       const dealData: Partial<IDealTokenSwapDocument> = {
         id: dealId,
         registrationData,
-        isDocumentReady: true,
         createdByAddress: decodedIdToken.uid,
         createdAt: date,
         modifiedAt: date,
@@ -232,7 +198,7 @@ export const createDeal = functions.https.onRequest(
 
       const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-      // adds some meta information to the deal document
+      // set deal document
       batch.set(
         dealRef,
         dealData,

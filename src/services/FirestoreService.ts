@@ -1,7 +1,7 @@
 import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, addDoc, serverTimestamp } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
@@ -31,7 +31,7 @@ export class FirestoreService<
    * @param registrationData TRegistrationData
    * @returns Promise<void>
    */
-  public async createDealTokenSwap(registrationData: TRegistrationData): Promise<void> {
+  public async createDealTokenSwap(registrationData: TRegistrationData): Promise<IDealTokenSwapDocument> {
     try {
       if (!firebaseAuth.currentUser) {
         // this check is just for the UI purposes, write access is handled by firestore.rules
@@ -363,7 +363,6 @@ export class FirestoreService<
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.isPrivate", "==", false),
-      where("isDocumentReady", "==", true),
     );
   }
 
@@ -371,7 +370,6 @@ export class FirestoreService<
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("representativesAddresses", "array-contains", address),
-      where("isDocumentReady", "==", true),
     );
   }
 
@@ -379,7 +377,6 @@ export class FirestoreService<
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.proposalLead.address", "==", address),
-      where("isDocumentReady", "==", true),
     );
   }
 }
