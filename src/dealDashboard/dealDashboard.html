@@ -34,7 +34,7 @@
     <deal-clauses
       authorized.bind="authorized"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
+      discussion-id.two-way="discussionId"
       if.to-view="authorized || !deal.registrationData.isPrivate"
     ></deal-clauses>
 
@@ -42,7 +42,7 @@
     <deal-discussion
       authorized.bind="authorized"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
+      discussion-id.two-way="discussionId"
       show.bind="authorized || !deal.registrationData.isPrivate"
     ></deal-discussion>
   </main>
