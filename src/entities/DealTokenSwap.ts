@@ -323,7 +323,8 @@ export class DealTokenSwap implements IDeal {
       //   this.isExecuted = false;
       // }
 
-      this.isWithdrawn = this.isRejected = false; // <== TODO: get these from Deal storage
+      this.isWithdrawn = this.dealDocument.isWithdrawn;
+      this.isRejected = this.dealDocument.isRejected;
     }
     catch (error) {
       this.corrupt = true;
