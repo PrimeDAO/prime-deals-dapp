@@ -475,5 +475,117 @@ $hover-transition-speed-slow: 0.4s;
         }
       }
     }
+    &.swap-status {
+      .claim-tokens {
+        margin-top: 30px;
+        .box-container {
+          border-radius: 10px;
+          background-color: $BG02;
+          width: 100%;
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          .token-grid {
+            padding: 20px 24px;
+            .grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr 1fr;
+              margin-bottom: 20px;
+              font-size: 16px;
+              .row {
+                cursor: default;
+                /**
+                 * so the grid will be composed of the contents of the row element,
+                 * not the row element itself.
+                 */
+                display: contents;
+                &:hover {
+                  text-decoration: none;
+                }
+                .cell {
+                  &.header {
+                    padding: 10px 0;
+                    text-transform: uppercase;
+                    border-bottom: 1px solid $Secondary02;
+                    font-size: 14px;
+                    font-weight: 700;
+                    font-family: Aeonik;
+                    color: $Neutral04;
+                    &.claimable,
+                    &.locked,
+                    &.total {
+                      text-align: right;
+                    }
+                  }
+                  &.body {
+                    padding: 18px 0 0 0;
+                    display: flex;
+                    align-items: center;
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: $Neutral04;
+                    &.claimable,
+                    &.locked,
+                    &.total {
+                      justify-self: right;
+                    }
+                    .Dao .name {
+                      font-size: 16px;
+                      font-weight: 400;
+                      color: $Neutral04;
+                    }
+                  }
+                  /**
+                   * for when columns get scrunched together
+                   */
+                  &:not(:nth-of-type(n + 7)) {
+                    padding-right: 12px;
+                  }
+                }
+              }
+            }
+          }
+          .contract {
+            padding: 20px 24px 38px 24px;
+            background-color: $Border01;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            display: grid;
+            p {
+              font-size: 14px;
+              color: $Neutral02;
+              line-height: 17px;
+              margin-bottom: 20px;
+              padding-top: 7px;
+              display: grid;
+              grid-template-columns: 30px auto;
+              i {
+                font-size: 20px;
+                margin-top: 3px;
+              }
+            }
+            a {
+              font-size: 14px;
+              font-weight: 400;
+              margin: 0 20px 10px 0;
+              display: block;
+              color: $Neutral04;
+              i {
+                color: $Secondary05;
+                margin-left: 5px;
+                -webkit-transform: rotate(-45deg);
+                -moz-transform: rotate(-45deg);
+                -ms-transform: rotate(-45deg);
+                -o-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+              }
+            }
+            pbutton {
+              margin-top: 17px;
+              justify-self: center;
+            }
+          }
+        }
+      }
+    }
   }
 }

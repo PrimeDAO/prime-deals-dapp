@@ -32,7 +32,6 @@ export class Funding {
   private fundingFailed = false;
   private loadingTransactions = false;
   private refSelectToken: HTMLSelectElement;
-  //TODO set this to true by default and false after transactions load
   private seeingMore = false;
   @observable
   private selectedToken: number;
@@ -40,10 +39,10 @@ export class Funding {
   private tokenDepositContractUrl = "";
   private tokenSelectData: IPSelectItemConfig[] = [];
   private tokenSwapModuleContractUrl = "";
+  private tokensToClaim: IDaoClaimToken[] = [];
   private transactions: IDaoTransaction[] = [];
   private vestedAmount = 0;
   private walletBalance: BigNumber;
-  private tokensToClaim: IDaoClaimToken[] = [];
 
   /**
    * Opens a new window to the transaction id or address on the blockchain
@@ -64,6 +63,7 @@ export class Funding {
     private alertService: AlertService,
     private bindingEngine: BindingEngine,
   ) {
+    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
     this.bindingEngine
       .propertyObserver(this.ethereumService, "defaultAccountAddress")
       .subscribe(() => {
@@ -85,6 +85,7 @@ export class Funding {
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
     await this.deal.ensureInitialized();
+    //Make sure the connected wallet is part of this deal. Otherwise redirect to home page.
     this.verifySecurity();
     //TODO get the tokenDepositContractUrl and set it
     //TODO get the tokenSwapModuleContractUrl and set it

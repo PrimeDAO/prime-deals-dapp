@@ -134,7 +134,7 @@
           Initiate swap <i class="fas">&#xf021;</i>
         </pbutton>
       </div>
-      <div class="claim-tokens">
+      <div class="claim-tokens" if.to-view="deal.isClaiming">
         <div class="box-container">
           <div class="token-grid">
             <h4 class="title heading heading3 gradient">Claim Tokens</h4>
@@ -167,7 +167,24 @@
               </template>
             </div>
           </div>
-          <div class="contract"></div>
+          <div class="contract">
+            <p>
+              <i class="fas fa-info-circle"></i>
+              <span>
+                This will be text talking about claiming your tokens. There will probably be
+                different text here at some point.
+              </span>
+            </p>
+            <div>
+              <a href="${tokenDepositContractUrl}" target="_blank" rel="noopener noreferrer"
+                >DepositContract Contract <i class="fas fa-arrow-right"></i
+              ></a>
+              <a href="${tokenSwapModuleContractUrl}" target="_blank" rel="noopener noreferrer"
+                >TokenSwapModule Contract <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+            <pbutton type="primary">Claim Tokens</pbutton>
+          </div>
         </div>
       </div>
     </swap-status>
