@@ -20,10 +20,6 @@
         funding-failed.bind="fundingFailed"
       ></status-card>
     </div>
-    <div class="section initiate-swap" if.to-view="dealTargetReached">
-      <pbutton type="primary" click.delegate="initiateSwap()">
-        Initiate swap <i class="fas">&#xf021;</i>
-      </pbutton>
-    </div>
+    <slot></slot>
   </section>
 </template>

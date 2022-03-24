@@ -48,11 +48,17 @@ export type DealTransactionType = "deposit" | "withdraw";
 export interface IDaoTransaction {
   dao: IDAO, //dao that this transaction is related to in registration data
   type: DealTransactionType, // deposit or withdraw
-  token: IToken, //only need iconURI, amount and symbol
+  token: IToken, //only need iconURI, decimals, amount and symbol
   address: string, //from/to address
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
   depositId: number,
+}
+
+export interface IDaoClaimToken {
+  token: IToken, //only need iconURI, symbol and decimals
+  claimable: number,
+  locked: number
 }
 
 @autoinject
