@@ -308,7 +308,7 @@ export class DealTokenSwap implements IDeal {
       this.primaryDao = this.registrationData.primaryDAO;
       this.partnerDao = this.registrationData.partnerDAO;
       this.executionPeriod = this.registrationData.executionPeriodInDays * 86400;
-      this.createdAt = new Date(); // for now until we have it in the doc
+      this.createdAt = new Date(this.dealDocument.createdAt);
 
       await this.loadDepositContracts(); // now that we have registrationData
       const discussionsMap = await this.dealDocument.discussions;

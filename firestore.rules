@@ -27,7 +27,8 @@ service cloud.firestore {
 
     match /deals-token-swap/{deal} {
       allow read: if isDocumentReady() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
-      allow create: if userIsAuthenticated() && !request.resource.data.isDocumentReady;
+      allow create: if userIsAuthenticated() &&
+        !request.resource.data.isDocumentReady; // this is checking request data, i.e. what is about to be written
       allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.isDocumentReady;
       allow delete: if false;
     }

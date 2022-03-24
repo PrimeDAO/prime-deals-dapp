@@ -1,13 +1,14 @@
 import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, addDoc } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
 import { map, mergeAll } from "rxjs/operators";
 import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import axios from "axios";
 
 const VOTES_COLLECTIONS = {
   PRIMARY_DAO: "primary-dao-votes",
@@ -37,15 +38,25 @@ export class FirestoreService<
         throw new Error("User not authenticated");
       }
 
-      const dealData: Partial<DocumentData> = {
-        registrationData: JSON.parse(JSON.stringify(registrationData)),
-        // createdAt: serverTimestamp(),
-        // createdByAddress: firebaseAuth.currentUser.uid,
-        isDocumentReady: false,
-        // createdAt: serverTimestamp() as unknown as IFirestoreTimestamp,
-      };
+      const idToken = await firebaseAuth.currentUser.getIdToken();
 
-      await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
+      const response = await axios.post(
+        `${process.env.FIREBASE_FUNCTIONS_URL}/createDeal`,
+        {registrationData},
+        {headers: {Authorization: `Bearer ${idToken}`}},
+      );
+
+      return response.data;
+
+      //   const dealData: Partial<IDealTokenSwapDocument> = {
+      //     registrationData: JSON.parse(JSON.stringify(registrationData)),
+      //     isDocumentReady: false,
+      //     createdByAddress: firebaseAuth.currentUser.uid,
+      //     createdAt: serverTimestamp() as unknown as IFirestoreTimestamp,
+      //     modifiedAt: serverTimestamp() as unknown as IFirestoreTimestamp,
+      //   };
+
+    //   await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
     } catch (error) {
       throw new Error(error);
     }

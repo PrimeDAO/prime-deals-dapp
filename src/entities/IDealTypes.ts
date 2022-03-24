@@ -1,4 +1,4 @@
-import { IDealRegistrationTokenSwap, IFirestoreTimestamp } from "./DealRegistrationTokenSwap";
+import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 export interface IDealDAOVotingSummary {
   total: number;
   accepted: number;
@@ -23,7 +23,11 @@ export interface IDealTokenSwapDocument {
   isDocumentReady: boolean;
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
-  createdAt: IFirestoreTimestamp,
+  createdAt: string,
+  modifiedAt: string,
+  createdByAddress: string;
+  isWithdrawn: boolean,
+  isRejected: boolean,
 }
 
 export enum DealStatus {

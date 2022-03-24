@@ -1,10 +1,12 @@
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
+import { v4 as uuidv4 } from "uuid";
 import { getAddress } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
@@ -53,44 +55,44 @@ export const createCustomToken = functions.https.onRequest(
     }),
 );
 
-/**
- * Run every time a new document (a deal) in deals collection is created
- */
-export const buildDealStructure = functions.firestore
-  .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-  .onCreate(async (snapshot, context) => {
-    const deal = snapshot.data() as IDealTokenSwapDocument;
+// /**
+//  * Run every time a new document (a deal) in deals collection is created
+//  */
+// export const buildDealStructure = functions.firestore
+//   .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+//   .onCreate(async (snapshot, context) => {
+//     const deal = snapshot.data() as IDealTokenSwapDocument;
 
-    const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
-    const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
+//     const primaryDaoRepresentativesAddresses = deal.registrationData.primaryDAO.representatives.map(item => item.address);
+//     const partnerDaoRepresentativesAddresses = deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-    const dealId: string = context.params.dealId;
+//     const dealId: string = context.params.dealId;
 
-    // Creates a write batch, used for performing multiple writes as a single atomic operation.
-    const batch = firestore.batch();
+//     // Creates a write batch, used for performing multiple writes as a single atomic operation.
+//     const batch = firestore.batch();
 
-    const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+//     const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-    // adds some meta information to the deal document
-    batch.set(
-      dealRef,
-      {
-        id: dealId,
-        isDocumentReady: true, // set the "isDocumentReady" flag to true. Firestore rules should block any operations on deals with flag "isDocumentReady" set to false
-        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-        votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-        isWithdrawn: false,
-        isRejected: false,
-      },
-      { merge: true }, // merges provided object with the existing data
-    );
+//     // adds some meta information to the deal document
+//     batch.set(
+//       dealRef,
+//       {
+//         id: dealId,
+//         isDocumentReady: true, // set the "isDocumentReady" flag to true. Firestore rules should block any operations on deals with flag "isDocumentReady" set to false
+//         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+//         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+//         isWithdrawn: false,
+//         isRejected: false,
+//       },
+//       { merge: true }, // merges provided object with the existing data
+//     );
 
-    // updates batch with writes for creating vote object for each representative
-    initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+//     // updates batch with writes for creating vote object for each representative
+//     initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
-    // commits all writes added to the batch
-    await batch.commit();
-  });
+//     // commits all writes added to the batch
+//     await batch.commit();
+//   });
 
 /**
  * Run every time a document (a deal) in deals collection is updated
@@ -123,11 +125,9 @@ export const updateDealStructure = functions.firestore
     batch.set(
       change.after.ref, // reference to the updated Deal document
       {
-        // registrationData: {
-        //   modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
-        // },
         representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
         votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        modifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
       },
       {merge: true}, // merges provided object with the existing data
     );
@@ -168,3 +168,89 @@ export const onVoteUpdate = functions.firestore
 
     return batch.commit();
   });
+
+export const createDeal = functions.https.onRequest(
+  (request, response) =>
+  // Allow cross-origin requests for this function
+    cors(request, response, async () => {
+      if (request.method !== "POST") {
+        return response.sendStatus(403);
+      }
+
+      if (!request.body.registrationData) {
+        return response.sendStatus(400);
+      }
+
+      functions.logger.log("Check if request is authorized with Firebase ID token");
+
+      if ((!request.headers.authorization || !request.headers.authorization.startsWith("Bearer "))) {
+        functions.logger.error(
+          "No Firebase ID token was passed as a Bearer token in the Authorization header.",
+          "Make sure you authorize your request by providing the following HTTP header:",
+          "Authorization: Bearer <Firebase ID Token>",
+        );
+        return response.sendStatus(403);
+      }
+
+      functions.logger.log("Found \"Authorization\" header");
+
+      // Read the Token from the Authorization header.
+      const idToken = request.headers.authorization.split("Bearer ")[1];
+      let decodedIdToken: firebaseAdmin.auth.DecodedIdToken;
+
+      try {
+        decodedIdToken = await admin.auth().verifyIdToken(idToken);
+        functions.logger.log("ID Token correctly decoded", decodedIdToken);
+      } catch (error) {
+        functions.logger.error("Error while verifying Firebase ID token:", error);
+        return response.sendStatus(403);
+      }
+
+      const registrationData: IDealRegistrationTokenSwap = request.body.registrationData;
+
+      const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
+      const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
+
+      const dealId = uuidv4();
+      const date = new Date().toISOString();
+
+      const dealData: Partial<IDealTokenSwapDocument> = {
+        id: dealId,
+        registrationData,
+        isDocumentReady: true,
+        createdByAddress: decodedIdToken.uid,
+        createdAt: date,
+        modifiedAt: date,
+        representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+        votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+        isWithdrawn: false,
+        isRejected: false,
+      };
+
+      // Creates a write batch, used for performing multiple writes as a single atomic operation.
+      const batch = firestore.batch();
+
+      const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+
+      // adds some meta information to the deal document
+      batch.set(
+        dealRef,
+        dealData,
+      );
+
+      // updates batch with writes for creating vote object for each representative
+      initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+
+      try {
+        // commits all writes added to the batch
+        await batch.commit();
+
+        const deal = (await dealRef.get()).data();
+
+        return response.status(200).send(deal);// .json(deal);
+      } catch (error){
+        functions.logger.error("Error while creating a deal:", error);
+        return response.sendStatus(500);
+      }
+    }),
+);

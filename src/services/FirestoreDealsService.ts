@@ -24,15 +24,18 @@ export class FirestoreDealsService<
     let deals: Array<IFirebaseDocument<TDealDocument>>;
 
     if (accountAddress) {
-      deals = await this.firestoreService.getAllPublicDeals();
-    } else {
+      if (!this.isUserAuthenticated(accountAddress)) {
+        return;
+      }
+
       deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
+    } else {
+      deals = await this.firestoreService.getAllPublicDeals();
     }
     return deals.map((deal) => deal.data);
   }
 
   public createDeal<TDealDocument, TRegistrationData>(accountAddress: string, registration: TRegistrationData): Promise<TDealDocument> {
-
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -90,6 +93,10 @@ export class FirestoreDealsService<
    * @returns boolean
    */
   private isUserAuthenticated(accountAddress: string) {
+    if (!firebaseAuth.currentUser) {
+      return;
+    }
+
     return accountAddress.toLowerCase() === firebaseAuth.currentUser.uid.toLowerCase();
   }
 }
