@@ -162,7 +162,7 @@ export class TokenService {
     tokenInfos.forEach((tokenInfo) => {
       if ((tokenInfo.price === undefined) || override) {
 
-        const cachedPrice = this.tokenPrices.get(tokenInfo.address);
+        const cachedPrice = this.tokenPrices.get(tokenInfo.address.toLowerCase());
 
         if (!override && (cachedPrice!== undefined)) {
           tokenInfo.price = cachedPrice;
@@ -189,7 +189,7 @@ export class TokenService {
             const tokenId = keys[i];
             const tokenInfo = tokensByGeckoId.get(tokenId);
             tokenInfo.price = response.data[tokenId].usd;
-            this.tokenPrices.set(tokenInfo.address, tokenInfo.price);
+            this.tokenPrices.set(tokenInfo.address.toLowerCase(), tokenInfo.price);
           }
         })
         .catch((error) => {
@@ -270,7 +270,7 @@ export class TokenService {
       return axios.get(uri)
         .then((response) => {
           tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
-          this.tokenPrices.set(tokenInfo.address, tokenInfo.price);
+          this.tokenPrices.set(tokenInfo.address.toLowerCase(), tokenInfo.price);
           // tokenInfo.priceChangePercentage_24h = response.data.market_data.price_change_percentage_24h ?? 0;
           if (!tokenInfo.logoURI || (tokenInfo.logoURI === TokenService.DefaultLogoURI)) {
             tokenInfo.logoURI = response.data.image.thumb;
