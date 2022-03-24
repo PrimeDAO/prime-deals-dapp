@@ -45,7 +45,7 @@
             author.bind="dealDiscussion.createdBy.address"
             profile.bind="threadProfiles[comment.author]"
             loading.bind="isLoading"
-            highlighted.bind="comment._id === replyToMessage._id"
+            highlighted.bind="comment._id === replyToComment._id"
             index="${$index}"
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
@@ -57,20 +57,20 @@
 
       <!-- Comment Input -->
       <section if.bind="isAuthorized && isMember" class="action container">
-        <div if.bind="replyToMessage" class="replyState">
+        <div if.bind="replyToComment" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
-            <span if.bind="replyToMessage && replyToMessage.authorName">
-              Reply to ${replyToMessage.authorName}
+            <span if.bind="replyToComment && replyToComment.authorName">
+              Reply to ${replyToComment.authorName}
             </span>
-            <span else if.bind="replyToMessage && replyToMessage.author">
-              Reply to ${replyToMessage.author | smallHexString}
+            <span else if.bind="replyToComment && replyToComment.author">
+              Reply to ${replyToComment.author | smallHexString}
             </span>
             <button click.delegate="closeReply()">
               <i class="fas fa-times"></i>
             </button>
           </p>
-          <pre class="subtitle">${replyToMessage.text}</pre>
+          <pre class="subtitle">${replyToComment.text}</pre>
         </div>
         <div else>
           <p class="action heading heading3">
@@ -79,7 +79,7 @@
         </div>
         <ptextarea
           ref="refCommentInput"
-          placeholder="${replyToMessage? 'Type your reply here...' : 'Type your comment here...'}"
+          placeholder="${replyToComment? 'Type your reply here...' : 'Type your comment here...'}"
           value.two-way="comment"
           rows="2"
           validation-state="${isLoading.commenting ? 'validating' : ''}"
@@ -93,7 +93,7 @@
           disabled.bind="isLoading.commenting || !comment.length"
           loading.bind="isLoading.commenting"
           click.delegate="addComment()">
-          ${replyToMessage ? "Reply" : "Comment"}
+          ${replyToComment ? "Reply" : "Comment"}
         </pbutton>
       </section>
       <span ref="refThreadEnd"></span>

@@ -28,7 +28,7 @@ export class DiscussionThread {
   private atTop = false;
   private scrollEvent: EventListener;
   private comment = "";
-  private replyToMessage: IComment;
+  private replyToComment: IComment;
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
@@ -272,7 +272,7 @@ export class DiscussionThread {
           ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
           ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
         ],
-        this.replyToMessage?._id || "",
+        this.replyToComment?._id || "",
       );
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -280,7 +280,7 @@ export class DiscussionThread {
       this.refThreadEnd.scrollIntoView({
         behavior: "smooth",
       });
-      this.replyToMessage = null;
+      this.replyToComment = null;
     } catch (err) {
       this.eventAggregator.publish("handleFailure", "An error occurred while adding a comment. " + err.message);
     } finally {
@@ -289,11 +289,11 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    if (!this.replyToMessage) {
-      this.replyToMessage = this.threadComments.find((comment) => comment._id === _id) || null;
+    if (!this.replyToComment) {
+      this.replyToComment = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
     } else {
-      this.replyToMessage = null;
+      this.replyToComment = null;
     }
   }
 
@@ -337,7 +337,7 @@ export class DiscussionThread {
   }
 
   closeReply() {
-    this.replyToMessage = null;
+    this.replyToComment = null;
   }
 
   private navigateTo() {
