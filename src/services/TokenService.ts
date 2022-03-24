@@ -16,15 +16,15 @@ import { TimingService } from "services/TimingService";
 @autoinject
 export class TokenService {
 
-  erc20Abi: any;
-  tokenInfos = new Map<Address, ITokenInfo>();
-  queue: Subject<() => Promise<void>>;
-  tokenLists: TokenListMap;
-  devFundingTokens: Array<Address>;
+  private erc20Abi: any;
+  private tokenInfos = new Map<Address, ITokenInfo>();
+  private queue: Subject<() => Promise<void>>;
+  private tokenLists: TokenListMap;
+  private tokenPrices: Map<Address, number>;
 
-  static DefaultLogoURI = "/genericToken.svg";
-  static DefaultNameSymbol = "N/A";
-  static DefaultDecimals = 0;
+  public static DefaultLogoURI = "/genericToken.svg";
+  public static DefaultNameSymbol = "N/A";
+  public static DefaultDecimals = 0;
 
   constructor(
     private consoleLogService: ConsoleLogService,
@@ -35,6 +35,8 @@ export class TokenService {
 
     this.erc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
     this.queue = new Subject<() => Promise<void>>();
+    this.tokenPrices = new Map<Address, number>();
+
     // this will initiate the execution of the promises
     // each promise is executed after the previous one has resolved
     this.queue.pipe(concatMap((resolver: () => Promise<void>) => {
@@ -151,19 +153,26 @@ export class TokenService {
    * Note this does not get the token logo.
    * @param tokenInfos
    */
-  public async getTokenPrices(tokenInfos: Array<ITokenInfo>): Promise<void> {
+  public async getTokenPrices(tokenInfos: Array<ITokenInfo>, override = false): Promise<void> {
 
     TimingService.start("getTokenPrices");
 
     const tokensByGeckoId = new Map<string, ITokenInfo>();
 
     tokenInfos.forEach((tokenInfo) => {
-      if (tokenInfo.price === undefined) {
-        if (!tokenInfo.id) {
-          tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
-        }
-        if (tokenInfo.id) {
-          tokensByGeckoId.set(tokenInfo.id, tokenInfo);
+      if ((tokenInfo.price === undefined) || override) {
+
+        const cachedPrice = this.tokenPrices.get(tokenInfo.address);
+
+        if (!override && (cachedPrice!== undefined)) {
+          tokenInfo.price = cachedPrice;
+        } else {
+          if (!tokenInfo.id) {
+            tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
+          }
+          if (tokenInfo.id) {
+            tokensByGeckoId.set(tokenInfo.id, tokenInfo);
+          }
         }
       }
     });
@@ -180,6 +189,7 @@ export class TokenService {
             const tokenId = keys[i];
             const tokenInfo = tokensByGeckoId.get(tokenId);
             tokenInfo.price = response.data[tokenId].usd;
+            this.tokenPrices.set(tokenInfo.address, tokenInfo.price);
           }
         })
         .catch((error) => {
@@ -260,6 +270,7 @@ export class TokenService {
       return axios.get(uri)
         .then((response) => {
           tokenInfo.price = response.data.market_data.current_price.usd ?? 0;
+          this.tokenPrices.set(tokenInfo.address, tokenInfo.price);
           // tokenInfo.priceChangePercentage_24h = response.data.market_data.price_change_percentage_24h ?? 0;
           if (!tokenInfo.logoURI || (tokenInfo.logoURI === TokenService.DefaultLogoURI)) {
             tokenInfo.logoURI = response.data.image.thumb;
