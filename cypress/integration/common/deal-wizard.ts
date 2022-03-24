@@ -78,7 +78,8 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   if (wizardTitle === "Make an offer") {
     const dealId = "open_deals_stream_hash_1";
     const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
-    cy.visit(url).wait(1500);
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;
   }
 
