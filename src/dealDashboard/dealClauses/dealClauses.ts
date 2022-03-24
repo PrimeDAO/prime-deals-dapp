@@ -45,6 +45,6 @@ export class DealClauses {
           isPublic: true,
         },
       );
+    this.discussionsService.autoScrollAfter(0);
   }
-
 }
