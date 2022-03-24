@@ -28,8 +28,7 @@ export class DiscussionThread {
   private atTop = false;
   private scrollEvent: EventListener;
   private comment = "";
-  private isReply = false;
-  private replyToOriginalMessage: IComment;
+  private replyToMessage: IComment;
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
@@ -273,7 +272,7 @@ export class DiscussionThread {
           ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
           ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
         ],
-        this.isReply ? this.replyToOriginalMessage._id : null,
+        this.replyToMessage?._id || "",
       );
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -281,22 +280,20 @@ export class DiscussionThread {
       this.refThreadEnd.scrollIntoView({
         behavior: "smooth",
       });
-      this.isReply = false;
-      this.replyToOriginalMessage = null;
+      this.replyToMessage = null;
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish("handleFailure", "An error occurred while adding a comment. " + err.message);
     } finally {
       this.isLoading.commenting = false;
     }
-
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isReply = !this.isReply;
-    this.replyToOriginalMessage = null;
-    if (this.isReply) {
+    if (!this.replyToMessage) {
+      this.replyToMessage = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
-      this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
+    } else {
+      this.replyToMessage = null;
     }
   }
 
@@ -340,8 +337,7 @@ export class DiscussionThread {
   }
 
   closeReply() {
-    this.isReply = false;
-    this.replyToOriginalMessage = null;
+    this.replyToMessage = null;
   }
 
   private navigateTo() {
