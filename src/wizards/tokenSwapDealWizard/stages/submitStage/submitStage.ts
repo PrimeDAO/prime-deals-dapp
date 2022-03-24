@@ -13,7 +13,7 @@ export class SubmitStage {
   public wizardManager: WizardManager;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   private submitData: IDealRegistrationTokenSwap;
-  private privacyText: string;
+  private isOpenProposalLike = false;
 
   constructor(
     private wizardService: WizardService,
@@ -26,8 +26,8 @@ export class SubmitStage {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
+    this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.submitData = this.wizardState.registrationData;
-    this.setPrivacyText(stageMeta.wizardType);
   }
 
   public async onSubmit(): Promise<void> {
@@ -47,24 +47,5 @@ export class SubmitStage {
     } catch (error) {
       this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
     }
-  }
-
-  private setPrivacyText(wizardType: WizardType): void {
-    if (this.isPartneredDealLike(wizardType)) {
-      this.privacyText = "Make Deal Private";
-    } else if (this.isOpenProposalLike(wizardType)) {
-      this.privacyText = "Make Offers Private";
-    }
-  }
-
-  private isPartneredDealLike(wizardType: WizardType): boolean {
-    return [WizardType.createPartneredDeal, WizardType.makeAnOffer, WizardType.editPartneredDeal].includes(wizardType);
-  }
-
-  private isOpenProposalLike(wizardType: WizardType): boolean {
-    return [
-      WizardType.createOpenProposal,
-      WizardType.editOpenProposal,
-    ].includes(wizardType);
   }
 }
