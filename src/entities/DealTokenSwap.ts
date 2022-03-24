@@ -250,7 +250,7 @@ export class DealTokenSwap implements IDeal {
   public create(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
     this.initializedPromise = Utils.waitUntilTrue(() => !this.initializing, 9999999999);
     this.dealDocument = dealDoc;
-    this.id = dealDoc.id;
+    this.id = dealDoc.id.slice(0, 31); // TODO fix this!
     return this;
   }
 
