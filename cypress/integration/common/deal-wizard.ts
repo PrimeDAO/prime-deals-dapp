@@ -78,16 +78,19 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   if (wizardTitle === "Make an offer") {
     const dealId = "open_deals_stream_hash_1";
     const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
-    cy.visit(url).wait(1500);
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;
   }
 
-  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
   const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 When("I'm viewing the Partnered Deal Dashboard", () => {
@@ -102,6 +105,7 @@ Given("I edit a \"Partnered Deal\"", () => {
   const dealId = "partnered_deals_stream_hash_3";
   const url = `partnered-deal/${dealId}/edit/submit`;
   cy.visit(url);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
