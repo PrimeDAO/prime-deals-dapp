@@ -408,7 +408,10 @@ export class DiscussionsService {
         localStorage.getItem("discussionToken"),
         commentId,
       );
-      this.comments = this.comments.filter(comment => comment._id !== commentId);
+      this.comments = this.comments.filter((comment: IComment) => comment._id !== commentId);
+      this.comments.map((comment: IComment) => {
+        if (comment.replyTo === commentId) comment.replyTo = "deleted";
+      });
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
     }
