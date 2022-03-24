@@ -376,6 +376,10 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
+  /**
+   * Enters the funding stage
+   * @returns
+   */
   public createSwap(): Promise<TransactionReceipt> {
     const daoAddresses = [
       this.primaryDao.treasury_address,
