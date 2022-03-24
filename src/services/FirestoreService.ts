@@ -1,3 +1,4 @@
+import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
@@ -24,6 +25,7 @@ export class FirestoreService<
 
   constructor(
     private firebaseService: FirebaseService,
+    private axiosService: AxiosService,
   ){}
 
   /**
@@ -48,6 +50,7 @@ export class FirestoreService<
 
       return response.data;
     } catch (error) {
+      this.axiosService.axiosErrorHandler(error);
       throw new Error(error);
     }
   }
