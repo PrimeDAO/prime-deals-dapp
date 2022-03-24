@@ -100,7 +100,7 @@ When("I'm viewing the Partnered Deal Dashboard", () => {
   const url = `/deal/${dealId}`;
   cy.visit(url);
 
-  cy.get(".dealDashboardContainer").should("be.visible");
+  cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
 });
 
 Given("I edit a \"Partnered Deal\"", () => {
