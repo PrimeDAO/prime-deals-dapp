@@ -87,12 +87,14 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
     return;
   }
 
-  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
   const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 When("I'm viewing the Partnered Deal Dashboard", () => {

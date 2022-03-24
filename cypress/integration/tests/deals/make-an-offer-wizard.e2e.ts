@@ -6,6 +6,7 @@ const avatarUrl = "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/sna
 
 Given("I navigate to make an offer wizard", () => {
   cy.visit(`/make-an-offer/${proposalId}/proposal`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I navigate to make an offer Primary DAO stage", () => {

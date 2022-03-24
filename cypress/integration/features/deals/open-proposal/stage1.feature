@@ -18,6 +18,7 @@ Feature: "Proposal" stage (Stage 1)
     And I am presented with the "Description is required" error message for the "Description" field
 
   Scenario: Validates summary and description being too short
+    Given I want to fill in information for the "Proposal" section
     When I fill in the "Summary" field with "short"
     And I fill in the "Description" field with "short"
     And I try to proceed to next step
@@ -26,6 +27,7 @@ Feature: "Proposal" stage (Stage 1)
     And I am presented with the "Description must be at least 10 characters" error message for the "Description" field
 
   Scenario: I proceed from proposal stage after filling required fields correctly
+    Given I want to fill in information for the "Proposal" section
     When I fill in the "Title" field with "title"
     And I fill in the "Summary" field with "some summary"
     And I fill in the "Description" field with "some description"
