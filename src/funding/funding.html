@@ -1,7 +1,7 @@
 <template>
   <require from="../deals/dao-icon-name/dao-icon-name"></require>
   <require from="../resources/elements/chip/chip"></require>
-  <require from="./status-card/status-card"></require>
+  <require from="./swap-status/swap-status"></require>
   <main class="page animated-page au-animate fundContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">
@@ -13,11 +13,11 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="daoRelatedToWallet.tokens && daoRelatedToWallet.tokens.length && !swapCompleted"
+      if.to-view="deal.daoRelatedToWallet.tokens && deal.daoRelatedToWallet.tokens.length && !swapCompleted"
     >
       <div class="box-container">
         <div class="box-header">
-          <div class="heading heading3 title gradient">${daoRelatedToWallet.name} Deposit</div>
+          <div class="heading heading3 title gradient">${deal.daoRelatedToWallet.name} Deposit</div>
           <chip
             color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
             if.to-view="fundingDaysLeft >= 0"
@@ -37,7 +37,7 @@
                 <div class="cell completed header">Completed</div>
                 <div class="cell percent header">%</div>
               </div>
-              <template repeat.for="token of daoRelatedToWallet.tokens | sort:sortEvaluator">
+              <template repeat.for="token of deal.daoRelatedToWallet.tokens | sort:sortEvaluator">
                 <div class="row body">
                   <div class="token cell body">
                     <dao-icon-name
@@ -72,8 +72,8 @@
                 You can withdraw your funds at any time. Funds are safe.
               </span>
               <span if.to-view="!fundingFailed && !dealTargetReached">
-                You're depositing on behalf of ${daoRelatedToWallet.name}. This deal needs to be
-                funded and executed within ${fundingDaysLeft} days.
+                You're depositing on behalf of ${deal.daoRelatedToWallet.name}. This deal needs to
+                be funded and executed within ${fundingDaysLeft} days.
               </span>
               <span if.to-view="!fundingFailed && dealTargetReached">
                 All parties have deposited their funds. Anyone can now initiate the swap.
@@ -93,7 +93,7 @@
               <div>
                 <div class="inputs">
                   <pselect
-                    disabled.bind="daoRelatedToWallet.tokens.length === 1"
+                    disabled.bind="deal.daoRelatedToWallet.tokens.length === 1"
                     placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
@@ -109,7 +109,7 @@
                     >Max</pbutton
                   >
                   <span class="balance" if.to-view="walletBalance">
-                    Your ${daoRelatedToWallet.tokens[selectedToken].symbol} Balance:
+                    Your ${deal.daoRelatedToWallet.tokens[selectedToken].symbol} Balance:
                     <formatted-number
                       value="${walletBalance | ethwei:token.decimals}"
                       mantissa="2"
@@ -128,32 +128,7 @@
         </div>
       </div>
     </section>
-    <section class="section swap-status">
-      <div class="heading heading3 title gradient">Token Swap Status</div>
-      <div class="status-cards">
-        <status-card
-          dao.bind="daoRelatedToWallet"
-          swap-completed.bind="swapCompleted"
-          funding-failed.bind="fundingFailed"
-        ></status-card>
-        <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
-          <i class="fas fa-arrow-right"></i>
-          <i if.to-view="swapCompleted" class="fas fa-check-circle success center"></i>
-          <i if.to-view="fundingFailed" class="fas fa-times-circle danger center"></i>
-          <i class="fas fa-arrow-left"></i>
-        </div>
-        <status-card
-          dao.bind="otherDao"
-          swap-completed.bind="swapCompleted"
-          funding-failed.bind="fundingFailed"
-        ></status-card>
-      </div>
-      <div class="section initiate-swap" if.to-view="dealTargetReached">
-        <pbutton type="primary" click.delegate="initiateSwap()">
-          Initiate swap <i class="fas">&#xf021;</i>
-        </pbutton>
-      </div>
-    </section>
+    <swap-status deal.bind="deal"></swap-status>
     <section class="section transactions">
       <h1 class="title heading heading1 gradient">Transactions</h1>
       <div

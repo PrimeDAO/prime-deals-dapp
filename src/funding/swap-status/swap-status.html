@@ -1,0 +1,29 @@
+<template>
+  <require from="../status-card/status-card"></require>
+  <section class="section swap-status">
+    <div class="heading heading3 title gradient">Token Swap Status</div>
+    <div class="status-cards">
+      <status-card
+        dao.bind="deal.daoRelatedToWallet"
+        swap-completed.bind="swapCompleted"
+        funding-failed.bind="fundingFailed"
+      ></status-card>
+      <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
+        <i class="fas fa-arrow-right"></i>
+        <i if.to-view="swapCompleted" class="fas fa-check-circle success center"></i>
+        <i if.to-view="fundingFailed" class="fas fa-times-circle danger center"></i>
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <status-card
+        dao.bind="deal.otherDao"
+        swap-completed.bind="swapCompleted"
+        funding-failed.bind="fundingFailed"
+      ></status-card>
+    </div>
+    <div class="section initiate-swap" if.to-view="dealTargetReached">
+      <pbutton type="primary" click.delegate="initiateSwap()">
+        Initiate swap <i class="fas">&#xf021;</i>
+      </pbutton>
+    </div>
+  </section>
+</template>

@@ -167,6 +167,34 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
+   * Gets the DAO based on the connected wallet address
+   */
+  @computedFrom("ethereumService.defaultAccountAddress")
+  public get daoRelatedToWallet(): IDAO{
+    return this.getDao(true);
+  }
+
+  /**
+   * Gets the non-related DAO based on the connected wallet address
+   */
+  @computedFrom("ethereumService.defaultAccountAddress")
+  public get otherDao(): IDAO {
+    return this.getDao(false);
+  }
+
+  /**
+   * Gets the DAO based on the connected wallet address
+   */
+  private getDao(relatedToWallet: boolean) : IDAO {
+    if (this.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
+      //the connected wallet is a representative of the partner DAO
+      return relatedToWallet ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
+    }
+    //the connceted wallet is either a representative of the primary DAO or the proposal lead
+    return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+  }
+
+  /**
    * poor naming of this status by bizdev because it is being defined to
    * actually be the funding period when swapping (claiming) isn't actually occurring.
    */
