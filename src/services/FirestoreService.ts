@@ -47,16 +47,6 @@ export class FirestoreService<
       );
 
       return response.data;
-
-      //   const dealData: Partial<IDealTokenSwapDocument> = {
-      //     registrationData: JSON.parse(JSON.stringify(registrationData)),
-      //     isDocumentReady: false,
-      //     createdByAddress: firebaseAuth.currentUser.uid,
-      //     createdAt: serverTimestamp() as unknown as IFirestoreTimestamp,
-      //     modifiedAt: serverTimestamp() as unknown as IFirestoreTimestamp,
-      //   };
-
-    //   await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
     } catch (error) {
       throw new Error(error);
     }
