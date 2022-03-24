@@ -91,6 +91,14 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
+Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wizardTitlesToURLs) => {
+  if (!wizardTitlesToURLs[wizardTitle]) {
+    throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
+  }
+
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/submit`);
+});
+
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
   const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
@@ -181,6 +189,7 @@ Then("I should get an error notification", () => {
 });
 
 Then("I should be redirected to the Home Page", () => {
+  cy.get("[data-test='home-page']").should("be.visible");
   cy.url().then(url => {
     expect(url).to.include("home");
   });
