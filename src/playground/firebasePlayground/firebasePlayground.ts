@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { EthereumService } from "./../../services/EthereumService";
 import { autoinject } from "aurelia-framework";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
