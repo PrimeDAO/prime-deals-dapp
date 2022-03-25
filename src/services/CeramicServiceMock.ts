@@ -914,7 +914,7 @@ const _registration22: IDealRegistrationTokenSwap = {
     tokens: [
       {
         "address": "0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad",
-        "amount": "20320000000000000000000",
+        "amount": "20320000",
         "instantTransferAmount": "10000",
         "vestedTransferAmount": "10000",
         "name": "Prime",
@@ -925,7 +925,9 @@ const _registration22: IDealRegistrationTokenSwap = {
         vestedFor: 1,
       },
     ],
-    social_medias: [],
+    social_medias: [
+      {name: "Facebook", url: "http://facebook.com/their-dao"},
+    ],
     representatives: [{address: address1}],
     treasury_address: address2,
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
@@ -939,7 +941,7 @@ const _registration22: IDealRegistrationTokenSwap = {
       symbol: "D2D",
       decimals: 18,
       logoURI: "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
-      amount: "231100000000000000000000",
+      amount: "231100000",
       instantTransferAmount: "150000",
       vestedTransferAmount: "50000",
       vestedFor: 14 * 24 * 3600, // should be in seconds

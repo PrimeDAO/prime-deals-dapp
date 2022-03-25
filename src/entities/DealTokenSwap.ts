@@ -214,7 +214,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   public get allRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO.representatives);
+    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO?.representatives ?? []);
   }
 
   public get majorityHasVoted(): boolean {
@@ -362,25 +362,23 @@ export class DealTokenSwap implements IDeal {
 
   public async loadDealSize(): Promise<void> {
     // if the total price is already figured out we don't need to try again
-    if (this.totalPrice === undefined) {
-      try {
-        let total = 0;
-        const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
-        const tokens: Array<ITokenInfo> = allTokens.map(x => ({
-          address: x.address,
-          decimals: x.decimals,
-          logoURI: x.logoURI,
-          id: "",
-          name: x.name,
-          symbol: x.symbol,
-        }));
-        await this.tokenService.getTokenPrices(tokens);
-        allTokens.forEach(x => {
-          const currentToken = tokens.find(y => y.symbol === x.symbol);
-          total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
-        });
-        this.totalPrice = total;
-      } catch { this.totalPrice = 0; }
+    if (this.totalPrice) {
+      return;
+    }
+
+    try {
+      const dealTokens = this.primaryDao.tokens.concat(this.partnerDao?.tokens ?? []);
+      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+      await this.tokenService.getTokenPrices(tokensDetails);
+
+      this.totalPrice = dealTokens.reduce((sum, item) => {
+        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+        return sum + (tokenDetails?.price ?? 0) * Number(item.amount);
+      }, 0);
+    } catch {
+      this.totalPrice = 0;
     }
   }
 
