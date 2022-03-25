@@ -3,7 +3,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { AlertService, IAlertModel } from "services/AlertService";
 import { IWizardState, WizardService } from "wizards/services/WizardService";
-import { IStageMeta } from "wizards/tokenSwapDealWizard/dealWizardTypes";
+import { IStageMeta, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { WizardManager } from "wizards/tokenSwapDealWizard/wizardManager";
 import "./submitStage.scss";
 import { DealService } from "services/DealService";
@@ -13,6 +13,7 @@ export class SubmitStage {
   public wizardManager: WizardManager;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   private submitData: IDealRegistrationTokenSwap;
+  private isOpenProposalLike = false;
 
   constructor(
     private wizardService: WizardService,
@@ -25,6 +26,7 @@ export class SubmitStage {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
+    this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.submitData = this.wizardState.registrationData;
   }
 

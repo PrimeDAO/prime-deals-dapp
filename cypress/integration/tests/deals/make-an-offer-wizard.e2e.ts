@@ -10,6 +10,7 @@ Given("I navigate to make an offer wizard", () => {
 
 Given("I navigate to make an offer Primary DAO stage", () => {
   cy.visit(`/make-an-offer/${proposalId}/primary-dao`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Then("I can see DAO details section with pre-filled disabled fields", () => {
