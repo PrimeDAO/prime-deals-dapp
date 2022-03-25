@@ -1,6 +1,6 @@
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo } from "entities/IDealTypes";
 import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -214,8 +214,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   public get majorityHasVoted(): boolean {
-    return;
-    //return this.votes?.length > (this.allRepresentatives.length / 2);
+    return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
   }
 
   public get status(): DealStatus {
@@ -230,9 +229,9 @@ export class DealTokenSwap implements IDeal {
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }
 
-  // public get votes(): Array<IVoteInfo> {
-  //   return this.rootData.votes;
-  // }
+  public get allVotes(): Array<IVoteInfo> {
+    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  }
 
   /**
    * key is the clauseId, value is the discussion key

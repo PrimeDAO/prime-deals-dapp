@@ -1,12 +1,15 @@
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
+
+export interface IVoteInfo {
+  address: string;
+  vote: boolean;
+}
+
 export interface IDealDAOVotingSummary {
   totalSubmittable: number;
   acceptedVotesCount: number;
   rejectedVotesCount: number;
-  votes: {
-    address: string;
-    vote: boolean;
-  }[];
+  votes: IVoteInfo[];
 }
 
 export interface IDealVotingSummary {
