@@ -15,22 +15,15 @@ export class DealInfo {
   }
 
   attached() {
-    this.timeLeftToExecute = this.getTimeLeftToExecute();
+    this.timeLeftToExecute = this.deal.timeLeftToExecute;
     this.timeLeftToExecuteInterval = window.setInterval(() => {
-      this.timeLeftToExecute = this.getTimeLeftToExecute();
+      this.timeLeftToExecute = this.deal.timeLeftToExecute;
     }, 1000);
     this.deal.loadDealSize();
   }
 
   getSocialMediaDetails(socialMediaName: string) {
     return availableSocialMedias.find(socialMedia => socialMedia.name === socialMediaName);
-  }
-
-  getTimeLeftToExecute(): number | undefined {
-    if (!this.deal.executedAt) {
-      return;
-    }
-    return this.deal.executedAt.getTime() + this.deal.executionPeriod * 1000 - new Date().getTime();
   }
 
   detached() {

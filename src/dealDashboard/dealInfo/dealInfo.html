@@ -90,9 +90,7 @@
     <div class="infoSection" if.bind="deal.executedAt">
       <span class="bodySmallTextBold infoTitle">Time left to execute</span>
       <span class="textRight">
-        ${ timeLeftToExecute | timespan
-      :
-      "largest2"}
+        ${ timeLeftToExecute | timespan:"largest2"}
       </span>
     </div>
 

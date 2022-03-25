@@ -139,6 +139,13 @@ export class DealTokenSwap implements IDeal {
     return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
   }
 
+  get timeLeftToExecute(): number | undefined {
+    if (!this.executedAt) {
+      return;
+    }
+    return this.executedAt.getTime() + this.executionPeriod * 1000 - new Date().getTime();
+  }
+
   /**
    * Same as isVoting, by bizdev definition
    * @returns
