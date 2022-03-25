@@ -13,7 +13,11 @@ Feature: Discussions - Single Comment
     When I view a single Comment
     Then I can like Comments from others
 
-  # Scenario: Single comments - Like - Cannot like own comment
+  @focus
+  Scenario: Single comments - Like - Cannot like own comment
+    When I view my own Comment
+    Then I cannot like my own Comment
+
   # Scenario: Single comments - Like - Disables other buttons
   # Scenario: Single comments - Dislike
 

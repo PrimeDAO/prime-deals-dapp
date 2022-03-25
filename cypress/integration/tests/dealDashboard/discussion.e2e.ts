@@ -4,7 +4,7 @@ import { E2eWallet } from "../wallet.e2e";
 
 interface ICommentOptions {
   notAuthor?: boolean;
-
+  isAuthor?: boolean;
 }
 
 export class E2eDiscussion {
@@ -43,21 +43,35 @@ export class E2eDiscussion {
   }
 
   public static getSingleComment(commentOptions?: ICommentOptions) {
-    // Wait for comment fully loaded
+    cy.log("Wait for comment fully loaded");
     E2eDiscussion.getSingleCommentAuthor().should("be.visible");
 
     if (commentOptions?.notAuthor) {
       return E2eDiscussion.getSingleCommentNotAuthor();
+    } else if (commentOptions?.isAuthor) {
+      return E2eDiscussion.getSingleCommentFromAuthor();
     } else {
       return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
     }
   }
 
   private static getSingleCommentNotAuthor() {
+    cy.log(" -- getSingleCommentNotAuthor");
+
     return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT})
       .find("[data-test='comment-author']:not(:contains("+ E2eWallet.getSmallHexAddress() +"))")
       .last()
-      .parentsUntil("[data-test='single-comment']");
+      .parents("[data-test='single-comment']");
+  }
+
+  private static getSingleCommentFromAuthor() {
+    cy.log(" -- getSingleCommentFromAuthor");
+
+    return cy.contains("[data-test='single-comment'] [data-test='comment-author']", E2eWallet.getSmallHexAddress(), {timeout: PAGE_LOADING_TIMEOUT})
+      .should("have.length", 1)
+      .first()
+      .parents("[data-test='single-comment']")
+      .last();
   }
 
   public static getSingleCommentAuthor() {
@@ -67,6 +81,8 @@ export class E2eDiscussion {
   }
 
   public static hoverSingleComment(commentOptions?: ICommentOptions) {
+    cy.log( "hoverSingleComment" );
+
     return E2eDiscussion.getSingleComment(commentOptions).within(() => {
       cy.get("[data-test='single-comment-action']").invoke("show");
     });
@@ -128,6 +144,11 @@ When("I view a single Comment", () => {
   E2eDiscussion.hoverSingleComment();
 });
 
+When("I view my own Comment", () => {
+  E2eDiscussion.getSingleComment({isAuthor: true}).find("pre").invoke("text").then(console.log);
+  E2eDiscussion.hoverSingleComment({isAuthor: true});
+});
+
 Then("I should not be able to see Discussions", () => {
   E2eDiscussion.getDealClauses().should("not.exist");
 });
@@ -183,6 +204,10 @@ Then("I should not see the Comment actions", () => {
 Then("I can like Comments from others", () => {
   E2eDiscussion.hoverSingleComment({notAuthor: true});
   E2eDiscussion.getLikeAction({notAuthor: true}).should("be.visible");
+});
+
+Then("I cannot like my own Comment", () => {
+  E2eDiscussion.getLikeAction({isAuthor: true}).should("not.exist");
 });
 
 And("I cannot reply to a Comment", () => {
