@@ -1,4 +1,4 @@
-import { autoinject, bindable, computedFrom } from "aurelia-framework";
+import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -18,7 +18,7 @@ import { Types } from "ably";
 
 @autoinject
 export class DiscussionThread {
-  @bindable discussionId: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
   private refThread: HTMLElement;
   private refThreadEnd: HTMLSpanElement;
@@ -28,8 +28,7 @@ export class DiscussionThread {
   private atTop = false;
   private scrollEvent: EventListener;
   private comment = "";
-  private isReply = false;
-  private replyToOriginalMessage: IComment;
+  private replyToComment: IComment;
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
@@ -78,12 +77,6 @@ export class DiscussionThread {
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.initialize();
     });
-
-    this.scrollEvent = () => {
-      this.atTop = (this.refTitle.getBoundingClientRect().y) <= 95;
-    };
-
-    document.addEventListener("scroll", this.scrollEvent);
   }
 
   detached(): void {
@@ -97,9 +90,9 @@ export class DiscussionThread {
     }
   }
 
-  @computedFrom("isLoading.discussions", "isMember", "threadComments.length")
+  @computedFrom("isLoading.discussions", "isMember", "threadComments")
   private get noCommentsText(): string {
-    if (!this.isLoading.discussions && !this.threadComments.length) {
+    if (!this.isLoading.discussions && !this.threadComments?.length) {
       return (!this.isMember && this.deal.registrationData.isPrivate)
         ? "This discussion is private."
         : "This discussion has no comments yet.";
@@ -200,6 +193,14 @@ export class DiscussionThread {
     this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
     this.isLoading.discussions = false;
 
+    // Author profile for the discussion header
+    this.isLoading[this.dealDiscussion.createdBy.address] = true;
+    this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
+      .then(profile => {
+        this.dealDiscussion.createdBy.name = profile.name || null;
+        this.isLoading[this.dealDiscussion.createdBy.address] = false;
+      });
+
     if (this.threadComments && this.dealDiscussion) {
       this.subscribeToDiscussion(discussionId);
 
@@ -210,14 +211,6 @@ export class DiscussionThread {
         r[e._id] = e;
         return r;
       }, {});
-
-      // Author profile for the discussion header
-      this.isLoading[this.dealDiscussion.createdBy.address] = true;
-      this.discussionsService.loadProfile(this.dealDiscussion.createdBy.address)
-        .then(profile => {
-          this.dealDiscussion.createdByName = profile.name || null;
-          this.isLoading[this.dealDiscussion.createdBy.address] = false;
-        });
 
       /* Comments author profiles */
       this.threadComments.forEach((comment: IComment) => {
@@ -270,7 +263,7 @@ export class DiscussionThread {
     if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
     try {
-      this.threadComments = await this.discussionsService.addComment(
+      await this.discussionsService.addComment(
         this.discussionId,
         this.comment,
         this.deal.registrationData.isPrivate,
@@ -279,7 +272,7 @@ export class DiscussionThread {
           ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
           ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
         ],
-        this.replyToOriginalMessage ? this.replyToOriginalMessage._id : null,
+        this.replyToComment?._id || "",
       );
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -287,22 +280,21 @@ export class DiscussionThread {
       this.refThreadEnd.scrollIntoView({
         behavior: "smooth",
       });
-      this.isReply = false;
+      this.replyToComment = null;
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish("handleFailure", "An error occurred while adding a comment. " + err.message);
     } finally {
       this.isLoading.commenting = false;
     }
-
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isReply = !this.isReply;
-    if (this.isReply) {
+    if (!this.replyToComment) {
+      this.replyToComment = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
+    } else {
+      this.replyToComment = null;
     }
-
-    this.replyToOriginalMessage = this.threadComments.find((comment) => comment._id === _id);
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
@@ -345,8 +337,7 @@ export class DiscussionThread {
   }
 
   closeReply() {
-    this.isReply = false;
-    this.replyToOriginalMessage = null;
+    this.replyToComment = null;
   }
 
   private navigateTo() {

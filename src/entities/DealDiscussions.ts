@@ -46,8 +46,10 @@ export interface IDealDiscussion {
   discussionId: Hash;
   createdAt: Date | null;
   modifiedAt: Date | null;
-  createdBy: {address: string} | null;
-  createdByName?: string | null;
+  createdBy: {
+    address: string,
+    name?: string | null;
+  } | null;
   representatives: Array<{address: string}>;
   admins: Array<{address: string}>;
   topic: string;
@@ -62,7 +64,7 @@ export class DealDiscussion implements IDealDiscussion {
   public isPrivate: boolean;
   public createdAt: Date | null;
   public modifiedAt: Date | null;
-  public createdBy: {address: string} | null;
+  public createdBy: {address: string, name?: string | null} | null;
   public representatives: Array<{address: string}>;
   public admins: Array<{address: string}>;
   public topic: string;

@@ -21,10 +21,10 @@ export class DiscussionsService {
 
   public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
-  private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
+  private ensName: string;
 
   constructor(
     private ethereumService: EthereumService,
@@ -126,6 +126,10 @@ export class DiscussionsService {
     }
   }
 
+  public async setEnsName(address: string): Promise<void> {
+    this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
+  }
+
   /**
    * Creates a new discussion (if not already exists) stores it in the data storage and updates the discussion object.
    * If the discussion already exists, it returns the existing discussion ID.
@@ -145,7 +149,15 @@ export class DiscussionsService {
     }): Promise<string> {
 
     const discussions = this.discussions || {};
-    const createdBy = {address: this.ethereumService.defaultAccountAddress};
+    const createdBy = {
+      address: this.ethereumService.defaultAccountAddress,
+      name: null,
+    };
+    if (!this.ensName) {
+      await this.setEnsName(createdBy.address);
+    }
+    createdBy.name = this.ensName;
+
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
@@ -337,7 +349,7 @@ export class DiscussionsService {
   * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
   * @returns void
   */
-  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment[]> {
+  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -348,7 +360,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Please connect your wallet to add a comment"),
         );
-        return this.comments;
+        return null;
       }
     }
 
@@ -377,7 +389,7 @@ export class DiscussionsService {
       data.text = comment;
       this.comments.push(data);
       this.updateDiscussionListStatus(discussionId, new Date(parseInt(data.createdOn)));
-      return this.comments;
+      return data;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
     }
@@ -441,7 +453,7 @@ export class DiscussionsService {
     const token = localStorage.getItem("discussionToken");
 
     try {
-      const message = await this.convoVote.comments.getComment(commentId);
+      const message = await this.convo.comments.getComment(commentId);
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -451,10 +463,10 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        await this.convoVote.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
       }
 
-      const success = (await this.convoVote.comments[type](this.currentWalletAddress, token, commentId)).success;
+      const success = (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
 
       // Toggle vote locally
       if (!message[endpoints[type]].includes(this.currentWalletAddress)) {
@@ -483,7 +495,7 @@ export class DiscussionsService {
       address: authorWalletAddress,
       // image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
       image: "",
-      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || "",
+      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || null,
     };
   }
 
