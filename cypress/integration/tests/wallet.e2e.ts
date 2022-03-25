@@ -1,4 +1,14 @@
+import "reflect-metadata";
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Utils } from "../../../src/services/utils";
+
+export class E2eWallet {
+  public static currentWalletAddress = "";
+
+  public static getSmallHexAddress() {
+    return Utils.smallHexString(E2eWallet.currentWalletAddress);
+  }
+}
 
 export class E2eNavbar {
   public static getConnectWalletButton() {
@@ -12,7 +22,8 @@ export class E2eNavbar {
 
 Given("I connect to the wallet with address {string}", (address: string) => {
   localStorage.setItem("PRIME_E2E_ADDRESS", address);
-  /* prettier-ignore */ console.log("TCL ~ file: wallet.e2e.ts ~ line 7 ~ Given ~ address", address);
+  E2eWallet.currentWalletAddress = address;
+
   cy.contains("button", "Connect to a Wallet").click();
 
   cy.get("ux-dialog-container").within(() => {

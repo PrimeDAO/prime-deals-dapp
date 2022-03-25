@@ -1,5 +1,11 @@
 import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
+import { E2eWallet } from "../wallet.e2e";
+
+interface ICommentOptions {
+  notAuthor?: boolean;
+
+}
 
 export class E2eDiscussion {
   public static replyToAddress = "";
@@ -36,17 +42,22 @@ export class E2eDiscussion {
     return this;
   }
 
-  public static getSingleComment() {
+  public static getSingleComment(commentOptions?: ICommentOptions) {
+    // Wait for comment fully loaded
     E2eDiscussion.getSingleCommentAuthor().should("be.visible");
-    return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
+
+    if (commentOptions?.notAuthor) {
+      return E2eDiscussion.getSingleCommentNotAuthor();
+    } else {
+      return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
+    }
   }
 
-  public static getSingleCommentNotAuthor() {
+  private static getSingleCommentNotAuthor() {
     return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT})
-      .contains("[data-test='comment-author']", new RegExp(`^${numberOfReplies}$`));
-
-    E2eDiscussion.getSingleCommentAuthor().should("be.visible");
-    return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
+      .find("[data-test='comment-author']:not(:contains("+ E2eWallet.getSmallHexAddress() +"))")
+      .last()
+      .parentsUntil("[data-test='single-comment']");
   }
 
   public static getSingleCommentAuthor() {
@@ -55,20 +66,26 @@ export class E2eDiscussion {
       .find("[data-test='comment-author']", {timeout: PAGE_LOADING_TIMEOUT}); // Comment author info fetched from 3rd party
   }
 
-  public static hoverSingleComment() {
-    return E2eDiscussion.getSingleComment().within(() => {
+  public static hoverSingleComment(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions).within(() => {
       cy.get("[data-test='single-comment-action']").invoke("show");
     });
   }
 
-  public static getReplyActionButton() {
-    return E2eDiscussion.getSingleComment()
+  public static getLikeAction(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
+      .find("[data-test='single-comment-action']")
+      .find("[data-test='like-button']");
+  }
+
+  public static getReplyActionButton(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
       .find("[data-test='single-comment-action']")
       .contains("button", "Reply");
   }
 
-  public static getCancelActionButton() {
-    return E2eDiscussion.getSingleComment()
+  public static getCancelActionButton(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
       .find("[data-test='single-comment-action']")
       .contains("button", "Cancel");
   }
@@ -163,8 +180,9 @@ Then("I should not see the Comment actions", () => {
   E2eDiscussion.getSingleComment().find("[data-test='single-comment-action']").should("not.exist");
 });
 
-Then("I can like that Comment", () => {
-  E2eDiscussion.getSingleCommentNotAuthor();
+Then("I can like Comments from others", () => {
+  E2eDiscussion.hoverSingleComment({notAuthor: true});
+  E2eDiscussion.getLikeAction({notAuthor: true}).should("be.visible");
 });
 
 And("I cannot reply to a Comment", () => {

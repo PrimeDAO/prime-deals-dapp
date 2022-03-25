@@ -9,9 +9,9 @@ Feature: Discussions - Single Comment
   # Scenario: Single comments - Create (disabled)
   # Scenario: Single comments - Activity
 
-  Scenario: Single comments - Like
+  Scenario: Single comments - Like - Other comments
     When I view a single Comment
-    Then I can like that Comment
+    Then I can like Comments from others
 
   # Scenario: Single comments - Like - Cannot like own comment
   # Scenario: Single comments - Like - Disables other buttons

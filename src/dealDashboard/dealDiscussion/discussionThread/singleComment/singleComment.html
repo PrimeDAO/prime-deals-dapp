@@ -26,13 +26,13 @@
             is-loading.bind="loading['isVoting ' + comment._id] && pressed.up"
             disabled.bind="loading['isVoting ' + comment._id]"
             click.delegate="vote('toggleUpvote')">
-            <i class="fas fa-thumbs-up ${isThumbUp}"></i>
+            <i data-test="like-button" class="fas fa-thumbs-up ${isThumbUp}"></i>
           </pbutton>
           <pbutton type="tertiary"
             is-loading.bind="loading['isVoting ' + comment._id] && pressed.down"
             disabled.bind="loading['isVoting ' + comment._id]"
             click.delegate="vote('toggleDownvote')">
-            <i class="fas fa-thumbs-down ${isThumbDown}"></i>
+            <i data-test="dislike-button" class="fas fa-thumbs-down ${isThumbDown}"></i>
           </pbutton>
           <pbutton
             type="tertiary"
