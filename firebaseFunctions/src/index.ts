@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
-import { v4 as uuidv4 } from "uuid";
+import * as shortUuid from "short-uuid";
 import { getAddress } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
@@ -178,7 +178,7 @@ export const createDeal = functions.https.onRequest(
       const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
       const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-      const dealId = uuidv4();
+      const dealId = shortUuid.generate();
       const date = new Date().toISOString();
 
       const dealData: Partial<IDealTokenSwapDocument> = {
