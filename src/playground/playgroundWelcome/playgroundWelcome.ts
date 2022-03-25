@@ -7,6 +7,7 @@ export class PlaygroundWelcome {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   activate(params): void {
+    console.log("TCL ~ file: playgroundWelcome.ts ~ line 10 ~ PlaygroundWelcome ~ activate ~ params", params);
     if (params.componentName) {
       const { componentName } = params;
       this.componentName = componentName;
@@ -16,6 +17,7 @@ export class PlaygroundWelcome {
         this.viewModel = undefined;
       } else {
         this.viewModel = `../${componentName}/${componentName}`;
+        console.log("TCL ~ file: playgroundWelcome.ts ~ line 19 ~ PlaygroundWelcome ~ activate ~ this.viewModel", this.viewModel);
         this.view = undefined;
       }
     }
