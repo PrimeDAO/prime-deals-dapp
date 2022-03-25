@@ -231,7 +231,7 @@ export class DiscussionsService {
       this.discussions[discussionId].modifiedAt = timestamp;
 
     this.dataSourceDeals.addClauseDiscussion(
-      "dealId",
+      this.discussions[discussionId].dealId,
       this.ethereumService.defaultAccountAddress,
       `${this.discussions[discussionId].clauseIndex}`,
       this.discussions[discussionId],
