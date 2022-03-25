@@ -1,7 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { firebaseAuth } from "./FirebaseService";
 import { FirestoreService } from "./FirestoreService";
-import { IDataSourceDeals2 } from "./DataSourceDealsTypes";
+import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address } from "services/EthereumService";
@@ -10,7 +10,7 @@ import { IFirebaseDocument } from "services/FirestoreTypes";
 @autoinject
 export class FirestoreDealsService<
   TDealDocument extends IDealTokenSwapDocument,
-  TRegistrationData extends IDealRegistrationTokenSwap> implements IDataSourceDeals2 {
+  TRegistrationData extends IDealRegistrationTokenSwap> implements IDataSourceDeals {
 
   constructor(
     private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
@@ -63,12 +63,12 @@ export class FirestoreDealsService<
     return;
   }
 
-  public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussionId: string): Promise<void> {
+  public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussion: any): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
-    return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionId);
+    return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussion);
   }
 
   public updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {

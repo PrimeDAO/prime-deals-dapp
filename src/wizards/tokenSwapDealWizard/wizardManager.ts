@@ -1,4 +1,4 @@
-import { IKey } from "./../../services/DataSourceDealsTypes";
+import { IDealIdType } from "./../../services/DataSourceDealsTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { PLATFORM } from "aurelia-pal";
@@ -31,7 +31,7 @@ export class WizardManager {
   public additionalStageMetadata: Record<string, any>[] = [];
 
   private wizardType: WizardType;
-  public dealId: IKey;
+  public dealId: IDealIdType;
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;
@@ -105,7 +105,7 @@ export class WizardManager {
   ) {
   }
 
-  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IKey}, routeConfig: RouteConfig): Promise<void> {
+  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];

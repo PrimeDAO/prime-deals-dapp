@@ -22,7 +22,7 @@ export interface IDealVotingSummary {
 export interface IDealTokenSwapDocument {
   id: string;
   registrationData: IDealRegistrationTokenSwap;
-  discussions: any; // TODO
+  clauseDiscussions: Record<string, any>; // TODO should be IDealDiscussion, but breaks firebaseFunctions build
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
   createdAt: string,
@@ -45,11 +45,11 @@ export enum DealStatus {
 export interface IDeal {
   id: string;
   corrupt: boolean;
-  clauseDiscussions: Map<string, string>;
+  clauseDiscussions: Map<string, any>;
   registrationData: any;
   initialize(): Promise<void>;
   create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
   ensureInitialized(): Promise<void>;
-  addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
+  addClauseDiscussion(clauseId: string, discussion: any): Promise<void>;
   status: DealStatus;
 }

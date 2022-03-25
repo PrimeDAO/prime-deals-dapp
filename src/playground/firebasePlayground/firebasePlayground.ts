@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { IDealDiscussion } from "entities/DealDiscussions";
 import { EthereumService } from "./../../services/EthereumService";
 import { autoinject } from "aurelia-framework";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
@@ -52,8 +53,28 @@ export class FirebasePlayground {
     this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 
-  addClauseDiscussion(dealId: string, clauseId: string, discussionHash: string) {
-    this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionHash);
+  addDealDiscussion(dealId: string, clauseIndex: number) {
+    const discussion: IDealDiscussion = {
+      dealId,
+      version: "0.0.1",
+      discussionId: new Date().toISOString(),
+      topic: "Topic",
+      clauseIndex,
+      createdBy: {
+        address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      },
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      replies: 0,
+      representatives: [{
+        address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      }],
+      admins: [{
+        address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      }],
+      key: new Date().toISOString(),
+    };
+    this.firestoreService.addClauseDiscussion(dealId, `${clauseIndex}`, discussion);
   }
 
   async updateDealIsWithdrawn(dealId: string, value: boolean) {
