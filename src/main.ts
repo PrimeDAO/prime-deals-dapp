@@ -36,7 +36,8 @@ export function configure(aurelia: Aurelia): void {
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
-  const isCypress = (window as any).Cypress;
+  // const isCypress = (window as any).Cypress;
+  const isCypress = true;
 
   if (inDev) {
     aurelia.use.developmentLogging(); // everything
