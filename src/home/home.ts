@@ -23,9 +23,6 @@ export class Home {
   }
 
   async attached(): Promise<void> {
-    // console.clear();
-    /* prettier-ignore */ console.log("TCL ~ file: home.ts ~ line 25 ~ Home ~ attached ~ attached");
-    // debugger;
     await this.dealService.ensureAllDealsInitialized();
     this.allDeals.open = this.dealService.openProposals.slice(0, Home.MAX_DEALS_COUNT);
     this.allDeals.partnered = this.dealService.partneredDeals.slice(0, Home.MAX_DEALS_COUNT);

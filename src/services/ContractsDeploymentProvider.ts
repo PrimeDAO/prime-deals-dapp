@@ -47,7 +47,6 @@ export class ContractsDeploymentProvider {
   }
 
   public static getContractAddress(contractName: string): Address {
-    // /* prettier-ignore */ console.trace("TCL ~ file: ContractsDeploymentProvider.ts ~ line 51 ~ ContractsDeploymentProvider ~ getContractAddress ~ contractName", contractName);
     return ContractsDeploymentProvider.contractInfosJson.contracts[contractName]?.address;
   }
 }

@@ -128,7 +128,6 @@ export class DealService {
 
   private async getDeals(): Promise<void> {
 
-    /* prettier-ignore */ console.log("TCL ~ file: DealService.ts ~ line 112 ~ DealService ~ getDeals ~ getDeals");
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
@@ -142,7 +141,6 @@ export class DealService {
              * rootId is just some way of identifying where in Ceramic to search for this list of Deal ids.
              */
               const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
-              /* prettier-ignore */ console.log("TCL ~ file: DealService.ts ~ line 124 ~ DealService ~ getDeals ~ dealIds", dealIds);
 
               for (const dealId of dealIds) {
                 const deal = this.createDealFromConfig(dealId);
@@ -167,7 +165,6 @@ export class DealService {
                 deal.initialize(); // set this off asyncronously.
               }
               this.deals = dealsMap;
-              /* prettier-ignore */ console.log("TCL ~ file: DealService.ts ~ line 142 ~ DealService ~ getDeals ~ dealsMap", dealsMap);
               this.initializing = false;
               resolve();
             }
@@ -211,7 +208,6 @@ export class DealService {
   }
 
   public async ensureAllDealsInitialized(): Promise<void> {
-    /* prettier-ignore */ console.log("TCL ~ file: DealService.ts ~ line 184 ~ DealService ~ ensureAllDealsInitialized ~ ensureAllDealsInitialized");
     await this.ensureInitialized();
     for (const deal of this.dealsArray) {
       await deal.ensureInitialized();

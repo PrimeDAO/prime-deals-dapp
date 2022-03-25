@@ -70,8 +70,7 @@ export class EthereumService {
     private disclaimerService: DisclaimerService,
     private consoleLogService: ConsoleLogService,
     private storageService: BrowserStorageService,
-  ) {
-  }
+  ) { }
 
   public static ProviderEndpoints = {
     "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
@@ -123,6 +122,7 @@ export class EthereumService {
   };
 
   public initialize(network: AllowedNetworks): void {
+
     if (!network) {
       throw new Error("Ethereum.initialize: `network` must be specified");
     }

@@ -39,6 +39,7 @@ export class ContractsService {
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService) {
+
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
       if (account !== this.accountAddress) {
         this.accountAddress = account;

@@ -285,7 +285,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async loadDepositContracts(): Promise<void> {
-    return;
     if (this.registrationData) {
 
       const daoDepositContracts = new Map<IDAO, any>();
