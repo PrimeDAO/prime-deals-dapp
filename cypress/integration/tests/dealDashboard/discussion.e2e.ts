@@ -78,10 +78,10 @@ export class E2eDiscussion {
     return cy.get("[data-test='comment-input-section']");
   }
 
-  public static getCommentInputReply() {
+  public static getCommentInputButton() {
     return E2eDiscussion
       .getCommentInputSection()
-      .find("[data-test='comment-input-reply'] button");
+      .find("[data-test='comment-input-button'] button");
   }
 }
 
@@ -133,7 +133,8 @@ Then("I can reply to that Comment", () => {
   });
 
   // Side effects around the comment input section
-  E2eDiscussion.getCommentInputReply().should("be.disabled");
+  E2eDiscussion.getCommentInputButton().should("be.disabled").should("contain.text", "Reply");
+
   E2eDiscussion.getReplyToContainer().should("be.visible");
 });
 
@@ -141,6 +142,13 @@ Then("I can see who I am replying to", () => {
   E2eDiscussion.getReplyToContainer().within(() => {
     cy.contains("[data-test='reply-to-address']", E2eDiscussion.replyToAddress).should("be.visible");
   });
+});
+
+Then("I can cancel replying that Comment again", () => {
+  E2eDiscussion.getCancelActionButton().click();
+
+  E2eDiscussion.getReplyToContainer().should("not.exist");
+  E2eDiscussion.getCommentInputButton().should("be.disabled").should("contain.text", "Comment");
 });
 
 And("I cannot reply to a Comment", () => {

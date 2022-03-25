@@ -25,7 +25,12 @@ Feature: Discussions - Single Comment
     When I view a single Comment
     Then I can reply to that Comment
     And I can see who I am replying to
+    And I can cancel replying that Comment again
 
-  # Scenario: Single comments - Reply - to every comment
-  # Scenario: Single comments - Reply (disabled)
+  # TODO: This scenario is covered by "Scenario: Single comments - Reply"
+  #   But should have it's own test.
+  #   Currently, it's not separate, because fetching Comments testing takes too long
   # Scenario: Single comments - Reply - Close/Cancel reply
+
+  # Scenario: Single comments - Reply (disabled)
+
