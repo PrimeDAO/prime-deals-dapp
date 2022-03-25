@@ -108,19 +108,19 @@ export const initializeVotingSummary = (
 ): IDealVotingSummary => {
   return {
     primaryDAO: {
-      total: primaryDaoRepresentativesAddresses.length,
-      accepted: 0,
-      rejected: 0,
+      totalVotesCount: primaryDaoRepresentativesAddresses.length,
+      acceptedVotesCount: 0,
+      rejectedVotesCount: 0,
       votes: primaryDaoRepresentativesAddresses.map(address => ({address, vote: null})),
     },
     partnerDAO: {
-      total: partnerDaoRepresentativesAddresses.length,
-      accepted: 0,
-      rejected: 0,
+      totalVotesCount: partnerDaoRepresentativesAddresses.length,
+      acceptedVotesCount: 0,
+      rejectedVotesCount: 0,
       votes: partnerDaoRepresentativesAddresses.map(address => ({address, vote: null})),
     },
-    total: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-    votesGiven: 0,
+    totalVotesCount: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
+    givenVotesCount: 0,
   };
 };
 
@@ -143,8 +143,8 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
   return {
     primaryDAO,
     partnerDAO,
-    total: primaryDAO.total + partnerDAO.total,
-    votesGiven: primaryDAO.accepted + primaryDAO.rejected + partnerDAO.accepted + partnerDAO.rejected,
+    totalVotesCount: primaryDAO.totalVotesCount + partnerDAO.totalVotesCount,
+    givenVotesCount: primaryDAO.acceptedVotesCount + primaryDAO.rejectedVotesCount + partnerDAO.acceptedVotesCount + partnerDAO.rejectedVotesCount,
   };
 };
 
@@ -153,9 +153,9 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
  */
 const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDealDAOVotingSummary => {
   return {
-    total: daoVotes.length,
-    accepted: daoVotes.filter(vote => vote.data.vote).length,
-    rejected: daoVotes.filter(vote => vote.data.vote === false).length,
+    totalVotesCount: daoVotes.length,
+    acceptedVotesCount: daoVotes.filter(vote => vote.data.vote).length,
+    rejectedVotesCount: daoVotes.filter(vote => vote.data.vote === false).length,
     votes: daoVotes.map(vote => ({address: vote.id, vote: vote.data.vote})),
   };
 };
