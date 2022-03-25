@@ -315,13 +315,6 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
-      // not needed, is done by DealService
-      // if (this.contractDealId) {
-      //   const tokenSwapInfo: ITokenSwapInfo = await this.moduleContract.tokenSwaps(this.contractDealId);
-      //   this.isExecuted = tokenSwapInfo.status === 3;
-      // } else {
-      //   this.isExecuted = false;
-      // }
 
       this.isWithdrawn = this.dealDocument.isWithdrawn;
       this.isRejected = this.dealDocument.isRejected;
