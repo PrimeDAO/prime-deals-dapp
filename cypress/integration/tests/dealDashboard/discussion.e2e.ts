@@ -41,6 +41,14 @@ export class E2eDiscussion {
     return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
   }
 
+  public static getSingleCommentNotAuthor() {
+    return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT})
+      .contains("[data-test='comment-author']", new RegExp(`^${numberOfReplies}$`));
+
+    E2eDiscussion.getSingleCommentAuthor().should("be.visible");
+    return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
+  }
+
   public static getSingleCommentAuthor() {
     return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT})
       .last()
@@ -153,6 +161,10 @@ Then("I can cancel replying that Comment again", () => {
 
 Then("I should not see the Comment actions", () => {
   E2eDiscussion.getSingleComment().find("[data-test='single-comment-action']").should("not.exist");
+});
+
+Then("I can like that Comment", () => {
+  E2eDiscussion.getSingleCommentNotAuthor();
 });
 
 And("I cannot reply to a Comment", () => {
