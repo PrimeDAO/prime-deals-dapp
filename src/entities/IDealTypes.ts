@@ -1,6 +1,6 @@
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 export interface IDealDAOVotingSummary {
-  totalVotesCount: number;
+  totalSubmittable: number;
   acceptedVotesCount: number;
   rejectedVotesCount: number;
   votes: {
@@ -12,8 +12,8 @@ export interface IDealDAOVotingSummary {
 export interface IDealVotingSummary {
   primaryDAO: IDealDAOVotingSummary,
   partnerDAO: IDealDAOVotingSummary,
-  totalVotesCount: number;
-  givenVotesCount: number;
+  totalSubmittable: number;
+  totalSubmitted: number;
 }
 
 export interface IDealTokenSwapDocument {

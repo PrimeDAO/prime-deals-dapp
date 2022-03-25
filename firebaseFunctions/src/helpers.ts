@@ -108,19 +108,19 @@ export const initializeVotingSummary = (
 ): IDealVotingSummary => {
   return {
     primaryDAO: {
-      totalVotesCount: primaryDaoRepresentativesAddresses.length,
+      totalSubmittable: primaryDaoRepresentativesAddresses.length,
       acceptedVotesCount: 0,
       rejectedVotesCount: 0,
       votes: primaryDaoRepresentativesAddresses.map(address => ({address, vote: null})),
     },
     partnerDAO: {
-      totalVotesCount: partnerDaoRepresentativesAddresses.length,
+      totalSubmittable: partnerDaoRepresentativesAddresses.length,
       acceptedVotesCount: 0,
       rejectedVotesCount: 0,
       votes: partnerDaoRepresentativesAddresses.map(address => ({address, vote: null})),
     },
-    totalVotesCount: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-    givenVotesCount: 0,
+    totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
+    totalSubmitted: 0,
   };
 };
 
@@ -143,8 +143,8 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
   return {
     primaryDAO,
     partnerDAO,
-    totalVotesCount: primaryDAO.totalVotesCount + partnerDAO.totalVotesCount,
-    givenVotesCount: primaryDAO.acceptedVotesCount + primaryDAO.rejectedVotesCount + partnerDAO.acceptedVotesCount + partnerDAO.rejectedVotesCount,
+    totalSubmittable: primaryDAO.totalSubmittable + partnerDAO.totalSubmittable,
+    totalSubmitted: primaryDAO.acceptedVotesCount + primaryDAO.rejectedVotesCount + partnerDAO.acceptedVotesCount + partnerDAO.rejectedVotesCount,
   };
 };
 
@@ -153,7 +153,7 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
  */
 const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDealDAOVotingSummary => {
   return {
-    totalVotesCount: daoVotes.length,
+    totalSubmittable: daoVotes.length,
     acceptedVotesCount: daoVotes.filter(vote => vote.data.vote).length,
     rejectedVotesCount: daoVotes.filter(vote => vote.data.vote === false).length,
     votes: daoVotes.map(vote => ({address: vote.id, vote: vote.data.vote})),
