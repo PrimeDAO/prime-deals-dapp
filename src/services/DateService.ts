@@ -265,7 +265,7 @@ export class DateService {
       }
     }
 
-    if (!stop && !shouldStopOnLargest2(largestTwoCounter) && ((hours ||
+    if (!stop && ((is2ndLargest(largestTwoCounter) || hours ||
       // show zero if not the first or is the res
       firstResolution ||
       (resolution === TimespanResolution.hours)) &&
@@ -282,7 +282,7 @@ export class DateService {
       }
     }
 
-    if (!stop && !shouldStopOnLargest2(largestTwoCounter) && ((minutes ||
+    if (!stop && !shouldStopOnLargest2(largestTwoCounter) && ((((is2ndLargest(largestTwoCounter)) || minutes) ||
       // show zero if not the first or is the res
       firstResolution ||
       (resolution === TimespanResolution.minutes)) &&
@@ -530,6 +530,10 @@ export class DateService {
 
 function shouldStopOnLargest2(largestCounter: number) {
   return largestCounter === 2;
+}
+
+function is2ndLargest(largestCounter: number) {
+  return largestCounter === 1;
 }
 
 interface IFormat {
