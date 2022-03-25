@@ -186,9 +186,7 @@ export class EthereumService {
       account = null;
     }
     console.info(`account changed: ${account}`);
-
-    const mockAddress = localStorage.getItem("PRIME_E2E_ADDRESS");
-    this.eventAggregator.publish("Network.Changed.Account", mockAddress);
+    this.eventAggregator.publish("Network.Changed.Account", account);
   }
   private fireChainChangedHandler(info: IChainEventInfo) {
     console.info(`chain changed: ${info.chainId}`);
@@ -232,8 +230,8 @@ export class EthereumService {
   private async connect(): Promise<void> {
     if (!this.walletProvider) {
       this.ensureWeb3Modal();
-      // const web3ModalProvider = await this.web3Modal.connect();
-      this.setProvider();
+      const web3ModalProvider = await this.web3Modal.connect();
+      this.setProvider(web3ModalProvider);
     }
   }
 
@@ -274,7 +272,7 @@ export class EthereumService {
           const account = getAddress(accounts[0]);
           if (this.disclaimerService.getPrimeDisclaimed(account)) {
             this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-            this.setProvider();
+            this.setProvider(provider);
           }
         }
       }
@@ -308,18 +306,45 @@ export class EthereumService {
     return network;
   }
 
-  private async setProvider(): Promise<void> {
-    // this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
-    // this.defaultAccountAddress = await this.getDefaultAccountAddress();
-    // this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
-    const mockAddress = localStorage.getItem("PRIME_E2E_ADDRESS");
-    this.defaultAccountAddress = mockAddress;
-    /**
-       * because the events aren't fired on first connection
-       */
-    // this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
-    this.fireAccountsChangedHandler(this.defaultAccountAddress);
-    return;
+  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
+    try {
+      if (web3ModalProvider) {
+        const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
+        (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
+        const network = await this.getNetwork(walletProvider);
+        if (network.name !== EthereumService.targetedNetwork) {
+          this.eventAggregator.publish("Network.wrongNetwork", { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
+          return;
+        }
+        /**
+           * we will keep the original readonly provider which should still be fine since
+           * the targeted network cannot have changed.
+           */
+        this.walletProvider = walletProvider;
+        this.web3ModalProvider = web3ModalProvider;
+        this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
+        this.defaultAccountAddress = await this.getDefaultAccountAddress();
+        /**
+           * because the events aren't fired on first connection
+           */
+        this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
+        this.fireAccountsChangedHandler(this.defaultAccountAddress);
+
+        this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
+
+        this.web3ModalProvider.on("chainChanged", this.handleChainChanged);
+
+        this.web3ModalProvider.on("disconnect", this.handleDisconnect);
+
+        // this.cachedProvider = this.walletProvider;
+        // this.cachedWalletAccount = this.defaultAccountAddress;
+      }
+    } catch (error) {
+      this.consoleLogService.logMessage(`Error connecting to wallet provider ${error?.message}`, "error");
+      // this.cachedProvider = null;
+      // this.cachedWalletAccount = null;
+      // this.web3Modal?.clearCachedProvider();
+    }
   }
 
   // private cachedProviderKey = "cachedWalletProvider";
@@ -402,7 +427,7 @@ export class EthereumService {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexChainId }],
         });
-        this.setProvider();
+        this.setProvider(provider as any);
         return true;
       }
     } catch (err) {
