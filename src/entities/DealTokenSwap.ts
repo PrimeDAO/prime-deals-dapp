@@ -1,6 +1,6 @@
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVoteInfo } from "entities/IDealTypes";
 import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -472,6 +472,30 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
+  public vote(upDown: boolean, whichDao: IDAO): Promise<void> {
+
+    const daoVotingSummary = this.daoVotingSummary(whichDao);
+
+    const daoVotes = this.votesArrayToMap(daoVotingSummary.votes);
+
+    if (upDown !== daoVotes.get(this.ethereumService.defaultAccountAddress)) {
+      return this.dataSourceDeals.updateVote(
+        this.id,
+        this.ethereumService.defaultAccountAddress,
+        whichDao === this.primaryDao ? "PRIMARY_DAO" : "PARTNER_DAO",
+        upDown);
+    }
+  }
+
+  private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
+    return whichDao === this.primaryDao ?
+      this.dealDocument.votingSummary.primaryDAO :
+      this.dealDocument.votingSummary.partnerDAO;
+  }
+
+  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean> {
+    return new Map<Address, boolean>(votes.map((voteInfo) => [ voteInfo.address, voteInfo.vote]));
+  }
   /**
    * pulled from deal-contracts
    * @returns
