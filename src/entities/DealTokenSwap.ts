@@ -96,24 +96,52 @@ export class DealTokenSwap implements IDeal {
   public primaryDao: IDAO;
   public partnerDao: IDAO;
   public createdAt: Date;
-
   /**
-   * is detected by the presence of an TokenSwapModule.TokenSwapExecuted event for this deal
+   * isExecuted and executedAt are both detected by the presence of an TokenSwapModule.TokenSwapExecuted event
+   * for this deal. They are initialized by DealService when this entity is created.
    */
   public isExecuted = false;
+  public executedAt: Date;
+
+  @computedFrom("dealDocument.registrationData")
+  public get registrationData(): IDealRegistrationTokenSwap {
+    return this.dealDocument.registrationData;
+  }
+
+  /**
+   * Open Proposal that is open for offers, by bizdev definition
+   * @returns
+   */
+  @computedFrom("isOpenProposal", "isWithdrawn")
+  public get isActive(): boolean {
+    return this.isOpenProposal && !this.isWithdrawn;
+  }
+
+  @computedFrom("isPartnered", "majorityHasVoted")
+  public get isApproved(): boolean {
+    return this.isPartnered && this.majorityHasVoted;
+  }
+
+  @computedFrom("isPartnered", "fundingWasInitiated", "isRejected")
+  public get isVoting(): boolean {
+    return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
+  }
+
+  @computedFrom("dealDocument.isWithdrawn")
+  public get isWithdrawn(): boolean {
+    return this.dealDocument.isWithdrawn;
+  }
+  @computedFrom("dealDocument.isRejected")
+  public get isRejected(): boolean {
+    return this.dealDocument.isRejected;
+  }
+
   /**
    * in seconds, duration from execution to expired
    */
-  public executionPeriod: number;
-  public executedAt: Date;
-  /**
-   * stored in the doc
-   */
-  public isWithdrawn: boolean;
-  /**
-   * stored in the doc.
-   */
-  public isRejected: boolean;
+  public get executionPeriod(): number {
+    return this.registrationData.executionPeriodInDays * 86400;
+  }
 
   // public get fundingPeriodDuration(): number {
   //   return this.registrationData.
@@ -123,49 +151,37 @@ export class DealTokenSwap implements IDeal {
   //   return this.tokenSwapCreated && ;
   // }
 
-  public get registrationData(): IDealRegistrationTokenSwap {
-    return this.dealDocument.registrationData;
-  }
-
-  /**
-   * Open Proposal that is open for offers, by bizdev definition
-   * @returns
-   */
-  public get isActive(): boolean {
-    return this.isOpenProposal && !this.isWithdrawn;
-  }
-
-  public get isApproved(): boolean {
-    return this.isPartnered && this.majorityHasVoted;
-  }
-
-  public get isVoting(): boolean {
-    return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
-  }
+  // public get isTargetReached(): boolean {
+  //   return;
+  // }
 
   /**
    * Same as isVoting, by bizdev definition
    * @returns
    */
+  @computedFrom("isVoting")
   public get isNegotiating(): boolean {
     return this.isVoting;
   }
 
+  @computedFrom("contractDealId")
   public get fundingWasInitiated(): boolean {
     return !!this.contractDealId;
   }
 
-  @computedFrom("executedAt", "executionPeriod")
+  @computedFrom("isExecuted", "executedAt", "executionPeriod")
   public get fundingPeriodHasExpired(): boolean {
     const now = Date.now();
     return this.isExecuted ?
       (now > (this.executedAt.valueOf() + (this.executionPeriod * 1000))) : false;
   }
 
+  @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
     return this.fundingPeriodHasExpired;
   }
 
+  @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
   public get isFunding(): boolean {
     return this.fundingWasInitiated && !this.isExecuted && !this.fundingPeriodHasExpired;
   }
@@ -174,10 +190,12 @@ export class DealTokenSwap implements IDeal {
    * poor naming of this status by bizdev because it is being defined to
    * actually be the funding period when swapping (claiming) isn't actually occurring.
    */
+  @computedFrom("isFunding")
   public get isSwapping(): boolean {
     return this.isFunding;
   }
 
+  @computedFrom("isExecuted")
   public get isClaiming(): boolean {
     return this.isExecuted;
   }
@@ -185,6 +203,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * same as isClaiming, by bizdev definition
    */
+  @computedFrom("isClaiming")
   public get isCompleted(): boolean {
     return this.isClaiming;
   }
@@ -193,38 +212,38 @@ export class DealTokenSwap implements IDeal {
    * withdrawn or rejected
    * @returns
    */
+  @computedFrom("isWithdrawn", "isRejected")
   public get isClosed(): boolean {
     return this.isWithdrawn || this.isRejected;
   }
 
-  public close() {
-    if (this.isOpenProposal) {
-      this.isWithdrawn = true;
-    } else {
-      this.isRejected = true;
-    }
-  }
-
-  // public get isTargetReached(): boolean {
-  //   return;
-  // }
-
+  @computedFrom("registrationData.primaryDAO.representatives")
   public get primaryRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.partnerDAO.representatives;
+    return this.registrationData.primaryDAO.representatives;
   }
 
+  @computedFrom("registrationData.partnerDAO.representatives")
   public get partnerRepresentatives(): Array<IRepresentative> {
     return this.registrationData.partnerDAO.representatives;
   }
 
+  @computedFrom("registrationData.primaryDAO.representatives", "registrationData.partnerDAO.representatives")
   public get allRepresentatives(): Array<IRepresentative> {
     return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO.representatives);
   }
 
+  @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
   public get majorityHasVoted(): boolean {
     return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
   }
 
+  // TODO: observe the right things here to recompute when votes have changed
+  @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
+  public get allVotes(): Array<IVoteInfo> {
+    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  }
+
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isClosed", "isNegotiating", "isFunding", "isSwapping")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
     else if (this.isCompleted) { return DealStatus.completed; }
@@ -237,19 +256,17 @@ export class DealTokenSwap implements IDeal {
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }
 
-  public get allVotes(): Array<IVoteInfo> {
-    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
-  }
-
   /**
    * key is the clauseId, value is the discussion key
    */
   public clauseDiscussions: Map<string, string>;
 
+  @computedFrom("registrationData.partnerDAO")
   public get isOpenProposal(): boolean {
     return !this.registrationData.partnerDAO;
   }
 
+  @computedFrom("registrationData.partnerDAO")
   public get isPartnered(): boolean {
     return !!this.registrationData.partnerDAO;
   }
@@ -314,7 +331,6 @@ export class DealTokenSwap implements IDeal {
     try {
       this.primaryDao = this.registrationData.primaryDAO;
       this.partnerDao = this.registrationData.partnerDAO;
-      this.executionPeriod = this.registrationData.executionPeriodInDays * 86400;
       this.createdAt = new Date(this.dealDocument.createdAt);
 
       await this.loadDepositContracts(); // now that we have registrationData
@@ -322,9 +338,6 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
-
-      this.isWithdrawn = this.dealDocument.isWithdrawn;
-      this.isRejected = this.dealDocument.isRejected;
     }
     catch (error) {
       this.corrupt = true;
@@ -458,17 +471,27 @@ export class DealTokenSwap implements IDeal {
     return transactions;
   }
 
+  public close(): Promise<void> {
+    if (this.isOpenProposal) {
+      return this.withdraw();
+    } else {
+      return this.reject();
+    }
+  }
+
   public withdraw(): Promise<void> {
     if (!this.isWithdrawn) {
       return this.dataSourceDeals.updateDealIsWithdrawn(this.id, this.ethereumService.defaultAccountAddress, true)
-        .then(() => {this.isWithdrawn = true; });
+      // TOTO: when is this updated? .then(() => {this.isWithdrawn = true; })
+      ;
     }
   }
 
   public reject(): Promise<void> {
     if (!this.isRejected) {
       return this.dataSourceDeals.updateDealIsRejected(this.id, this.ethereumService.defaultAccountAddress, true)
-        .then(() => {this.isRejected = true; });
+      // TOTO: when is this updated? .then(() => {this.isRejected = true; })
+      ;
     }
   }
 
