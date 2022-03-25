@@ -1,7 +1,6 @@
 import * as moment from "moment-timezone";
 
 import { autoinject } from "aurelia-framework";
-
 import Moment = moment.Moment;
 
 @autoinject
@@ -300,8 +299,11 @@ export class DateService {
       // }
     }
 
-    if (!stop && !shouldStopOnLargest2(largestTwoCounter) && resolution <= TimespanResolution.seconds) {
-
+    if (!stop && !shouldStopOnLargest2(largestTwoCounter) && ((seconds ||
+        // show zero if not the first or is the res
+        firstResolution ||
+        (resolution === TimespanResolution.seconds)) &&
+      (resolution <= TimespanResolution.seconds))) {
       result += `${result.length ? ", " : ""}${seconds}${abbrev ? "s" : (seconds === 1 ? " second" : " seconds")}`;
 
       if (largest2) {

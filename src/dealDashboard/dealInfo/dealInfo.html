@@ -45,6 +45,12 @@
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
       ${deal.allRepresentatives.length}
     </div>
+    <div class="infoSection" if.bind="deal.isOpenProposal">
+      <span class="bodySmallTextBold infoTitle">Deal Lead</span>
+      <etherscanlink address.bind="deal.registrationData.proposalLead.address"
+                     text="${deal.registrationData.proposalLead.address | smallHexString}">
+      </etherscanlink>
+    </div>
 
     <hr>
 
@@ -81,11 +87,13 @@
       <span class="bodySmallTextBold infoTitle">Total funds value</span>
       ${deal.totalPrice | currency}
     </div>
-    <div class="infoSection">
+    <div class="infoSection" if.bind="deal.executedAt">
       <span class="bodySmallTextBold infoTitle">Time left to execute</span>
-      <span class="textRight">${deal.executionPeriod * 1000 | timespan
+      <span class="textRight">
+        ${ timeLeftToExecute | timespan
       :
-      "largest2"}</span>
+      "largest2"}
+      </span>
     </div>
 
     <hr>
