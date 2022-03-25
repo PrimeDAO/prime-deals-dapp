@@ -19,7 +19,6 @@ Feature: Discussions - Single Comment
   # Scenario: Single comments - Delete - Replied to
   # Scenario: Single comments - Delete - Only mine
 
-  @focus
   Scenario: Single comments - Reply
     Given I choose a single Topic with replies
     When I view a single Comment
