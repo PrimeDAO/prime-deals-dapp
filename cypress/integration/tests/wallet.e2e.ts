@@ -30,3 +30,8 @@ Given("I'm a Public viewer", () => {
   E2eNavbar.getConnectWalletButton().should("be.visible");
   E2eNavbar.getUserAddress().should("not.exist");
 });
+
+Given("I'm not connected to a wallet", () => {
+  E2eNavbar.getConnectWalletButton().should("be.visible");
+  E2eNavbar.getUserAddress().should("not.exist");
+});

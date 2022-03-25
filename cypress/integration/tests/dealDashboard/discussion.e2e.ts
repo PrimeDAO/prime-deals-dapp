@@ -151,5 +151,9 @@ Then("I can cancel replying that Comment again", () => {
   E2eDiscussion.getCommentInputButton().should("be.disabled").should("contain.text", "Comment");
 });
 
+Then("I should not see the Comment actions", () => {
+  E2eDiscussion.getSingleComment().find("[data-test='single-comment-action']").should("not.exist");
+});
+
 And("I cannot reply to a Comment", () => {
 });
