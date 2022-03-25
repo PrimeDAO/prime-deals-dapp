@@ -58,13 +58,13 @@
 
       <!-- Comment Input -->
       <section data-test="comment-input-section" if.bind="isAuthorized && isMember" class="action container">
-        <div if.bind="isReply" class="replyState">
+        <div if.bind="isReply" data-test="reply-to-container" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
-            <span if.bind="replyToOriginalMessage && replyToOriginalMessage.authorName">
+            <span if.bind="replyToOriginalMessage && replyToOriginalMessage.authorName" data-test="reply-to-address">
               Reply to ${replyToOriginalMessage.authorName}
             </span>
-            <span else if.bind="replyToOriginalMessage && replyToOriginalMessage.author">
+            <span else if.bind="replyToOriginalMessage && replyToOriginalMessage.author" data-test="reply-to-address">
               Reply to ${replyToOriginalMessage.author | smallHexString}
             </span>
             <button click.delegate="closeReply()">
@@ -88,6 +88,7 @@
           class="comment-input">
         </ptextarea>
         <pbutton
+          data-test="comment-input-reply"
           class="action do"
           type="primary"
           full-width

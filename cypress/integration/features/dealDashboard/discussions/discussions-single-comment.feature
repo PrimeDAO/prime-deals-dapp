@@ -21,8 +21,10 @@ Feature: Discussions - Single Comment
 
   @focus
   Scenario: Single comments - Reply
-    When I choose a Single Comment with replies
+    Given I choose a single Topic with replies
+    When I view a single Comment
     Then I can reply to that Comment
+    And I can see who I am replying to
 
   # Scenario: Single comments - Reply - to every comment
   # Scenario: Single comments - Reply (disabled)
