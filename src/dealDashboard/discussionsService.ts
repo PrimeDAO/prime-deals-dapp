@@ -115,11 +115,10 @@ export class DiscussionsService {
    * @param clauseDiscussions A map of clause discussions
    * @returns void
    */
-  public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
+  public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
-    for (const [, value] of clauseDiscussions.entries()) {
-      const discussion = this.dataSourceDeals.get<IDealDiscussion>(value);
-      this.discussions[value] = {
+    for (const [, discussion] of clauseDiscussions.entries()) {
+      this.discussions[discussion.discussionId] = {
         ...discussion,
         lastModified: this.dateService.formattedTime(discussion.modifiedAt).diff(),
       };
@@ -144,7 +143,6 @@ export class DiscussionsService {
       admins?: Array<string>,
     }): Promise<string> {
 
-    const discussions = this.discussions || {};
     const createdBy = {address: this.ethereumService.defaultAccountAddress};
     const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
@@ -162,7 +160,8 @@ export class DiscussionsService {
         ["encrypt", "decrypt"],
       );
 
-      discussions[discussionId] = {
+      const discussion = {
+        dealId,
         version: "0.0.1",
         discussionId,
         topic: args.topic,
@@ -177,13 +176,12 @@ export class DiscussionsService {
         key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 
-      const dealData = await this.dealService.deals.get(dealId);
+      const dealData = this.dealService.deals.get(dealId);
       await dealData.addClauseDiscussion(
         args.clauseHash,
-        discussionId,
+        discussion,
       );
-      this.dealService.deals.set(dealId, dealData);
-      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
+
       this.updateDiscussionListStatus(discussionId, new Date());
 
       return discussionId;
@@ -220,7 +218,12 @@ export class DiscussionsService {
     if (timestamp)
       this.discussions[discussionId].modifiedAt = timestamp;
 
-    this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
+    this.dataSourceDeals.addClauseDiscussion(
+      "dealId",
+      this.ethereumService.defaultAccountAddress,
+      `${this.discussions[discussionId].clauseIndex}`,
+      this.discussions[discussionId],
+    );
   }
 
   public async importKey(discussionId: string): Promise<CryptoKey> {

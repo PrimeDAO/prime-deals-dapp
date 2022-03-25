@@ -54,6 +54,7 @@ export interface IDealDiscussion {
   clauseIndex: number | null;
   replies: number;
   key: string;
+  dealId: string;
 }
 
 export class DealDiscussion implements IDealDiscussion {
@@ -70,4 +71,5 @@ export class DealDiscussion implements IDealDiscussion {
   public clauseIndex: number | null;
   public replies: number;
   public key: string;
+  public dealId: string;
 }

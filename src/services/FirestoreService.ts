@@ -10,6 +10,7 @@ import { map, mergeAll } from "rxjs/operators";
 import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
+import { IDealDiscussion } from "entities/DealDiscussions";
 
 const VOTES_COLLECTIONS = {
   PRIMARY_DAO: "primary-dao-votes",
@@ -239,29 +240,6 @@ export class FirestoreService<
   }
 
   /**
-   * Adds deal clause -> discussion to Firestore discussions map
-   *
-   * @param dealId string
-   * @param clauseId string
-   * @param discussionHash string
-   * @returns Promise<void>
-   */
-  public async addClauseDiscussion(dealId: string, clauseId: string, discussionHash: string) {
-    try {
-      const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
-      await setDoc(
-        ref,
-        {
-          discussions: {[clauseId]: discussionHash},
-        },
-        {merge: true},
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  /**
    * Sets deal isWithdrawn flag
    * @param dealId string
    * @param value boolean
@@ -299,6 +277,28 @@ export class FirestoreService<
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  /**
+   * Adds dealDiscussion to discussions map in a deal document
+   * @param dealId string
+   * @param discussion IDealDiscussion
+   */
+  public async addClauseDiscussion(dealId: string, clauseId: string, discussion: IDealDiscussion): Promise<void> {
+    try {
+      const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+
+      await setDoc(
+        ref,
+        {
+          clauseDiscussions: {[clauseId]: discussion},
+        },
+        {merge: true},
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+
   }
 
   /**

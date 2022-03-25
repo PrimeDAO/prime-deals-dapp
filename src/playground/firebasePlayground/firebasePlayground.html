@@ -25,10 +25,9 @@
   <pbutton type="primary" click.delegate="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
   <br>
   <div style="display: flex;">
-    <pinput-text value.bind="clauseDealId" placeholder="dealId"></pinput-text>
-    <pinput-text value.bind="clauseId" placeholder="clauseId"></pinput-text>
-    <pinput-text value.bind="discussionHash" placeholder="discussionHash"></pinput-text>
-    <pbutton type="primary" click.delegate="addClauseDiscussion(clauseDealId, clauseId, discussionHash)">Add deal clause discussion</pbutton>
+    <pinput-text value.bind="discussionDealId" placeholder="dealId"></pinput-text>
+    <pinput-text value.bind="clauseIndex" placeholder="clauseIndex"></pinput-text>
+    <pbutton type="primary" click.delegate="addDealDiscussion(discussionDealId, clauseIndex)">Add deal clause discussion</pbutton>
   </div>
   <br>
   <div style="display: flex;">

@@ -1,7 +1,8 @@
+import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
 import { DealStatus, IDeal, IDealTokenSwapDocument } from "entities/IDealTypes";
-import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
@@ -61,7 +62,7 @@ export class DealTokenSwap implements IDeal {
   constructor(
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
-    private dataSourceDeals: IDataSourceDeals2,
+    private dataSourceDeals: IDataSourceDeals,
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
@@ -76,7 +77,7 @@ export class DealTokenSwap implements IDeal {
   private subscriptions = new DisposableCollection();
   private dealDocument: IDealTokenSwapDocument;
 
-  public id: IKey;
+  public id: IDealIdType;
   public dealInitialized: boolean;
   public totalPrice?: number;
   public initializing = true;
@@ -237,7 +238,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * key is the clauseId, value is the discussion key
    */
-  public clauseDiscussions: Map<string, string>;
+  public clauseDiscussions: Map<string, IDealDiscussion>;
 
   public get isOpenProposal(): boolean {
     return !this.registrationData.partnerDAO;
@@ -311,8 +312,7 @@ export class DealTokenSwap implements IDeal {
       this.createdAt = new Date(this.dealDocument.createdAt);
 
       await this.loadDepositContracts(); // now that we have registrationData
-      const discussionsMap = await this.dealDocument.discussions;
-      this.clauseDiscussions = new Map(Object.entries(discussionsMap ?? {}));
+      this.clauseDiscussions = this.dealDocument.clauseDiscussions ? new Map(Object.entries(this.dealDocument.clauseDiscussions)) : new Map();
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
       // not needed, is done by DealService
@@ -346,14 +346,15 @@ export class DealTokenSwap implements IDeal {
     return this.initializedPromise;
   }
 
-  public addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void> {
-    this.clauseDiscussions.set(clauseId, discussionKey);
-    // const clauseDiscussionsObject = Object.fromEntries(this.clauseDiscussions);
+  public addClauseDiscussion(clauseId: string, discussion: IDealDiscussion): Promise<void> {
     return this.dataSourceDeals.addClauseDiscussion(
       this.id,
       this.ethereumService.defaultAccountAddress,
       clauseId,
-      discussionKey); // TODO check if this line works correctly
+      discussion,
+    ).then(() => {
+      this.clauseDiscussions.set(clauseId, discussion);
+    });
   }
 
   public async loadDealSize(): Promise<void> {

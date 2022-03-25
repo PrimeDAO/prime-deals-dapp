@@ -12,7 +12,6 @@ export class DealClauses {
   @bindable.booleanAttr authorized = false;
   @bindable.string({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
-  private dealId: string;
   private clauses: IClause[];
 
   constructor(
@@ -35,7 +34,7 @@ export class DealClauses {
   private async addOrReadDiscussion(topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> {
     this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
       await this.discussionsService.createDiscussion(
-        this.dealId,
+        this.deal.id,
         {
           topic,
           clauseHash,
