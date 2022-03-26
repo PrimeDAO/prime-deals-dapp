@@ -136,21 +136,6 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.isRejected;
   }
 
-  /**
-   * in seconds, duration from execution to expired
-   */
-  public get executionPeriod(): number {
-    return this.registrationData.executionPeriodInDays * 86400;
-  }
-
-  // public get fundingPeriodDuration(): number {
-  //   return this.registrationData.
-  // }
-
-  //   public get inFundingPeriod(): boolean {
-  //   return this.tokenSwapCreated && ;
-  // }
-
   // public get isTargetReached(): boolean {
   //   return;
   // }
@@ -169,11 +154,32 @@ export class DealTokenSwap implements IDeal {
     return !!this.contractDealId;
   }
 
-  @computedFrom("isExecuted", "executedAt", "executionPeriod")
+  /**
+   * in seconds, duration from execution to expired
+   */
+  @computedFrom("registrationData.executionPeriodInDays")
+  public get executionPeriod(): number {
+    return this.registrationData.executionPeriodInDays * 86400;
+  }
+
+  /**
+   * execution period is poorly named
+   */
+  @computedFrom("executionPeriod")
+  public get fundingPeriod(): number {
+    return this.executionPeriod;
+  }
+
+  @computedFrom("isExecuted", "executedAt", "fundingPeriod")
   public get fundingPeriodHasExpired(): boolean {
     const now = Date.now();
     return this.isExecuted ?
-      (now > (this.executedAt.valueOf() + (this.executionPeriod * 1000))) : false;
+      (now > (this.executedAt.valueOf() + (this.fundingPeriod * 1000))) : false;
+  }
+
+  @computedFrom("isExecuted", "fundingPeriodHasExpired")
+  public get isInFundingPeriod(): boolean {
+    return this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
   @computedFrom("fundingPeriodHasExpired")
@@ -404,7 +410,7 @@ export class DealTokenSwap implements IDeal {
     ];
     const { tokens, pathTo, pathFrom } = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
-    const deadline = this.executionPeriod;
+    const deadline = this.fundingPeriod;
 
     const dealParameters = [
       daoAddresses,
