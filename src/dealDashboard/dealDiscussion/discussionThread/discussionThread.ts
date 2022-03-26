@@ -67,11 +67,6 @@ export class DiscussionThread {
     return this.discussionsService.comments;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress")
-  private get checkIsAuthorized(): boolean {
-    return !!this.ethereumService.defaultAccountAddress;
-  }
-
   attached(): void {
     this.initialize();
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
@@ -102,8 +97,6 @@ export class DiscussionThread {
 
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
-
-    this.isAuthorized = this.checkIsAuthorized;
 
     // Only member (representatives) can add a comments to a discussion
     this.isMember = (
