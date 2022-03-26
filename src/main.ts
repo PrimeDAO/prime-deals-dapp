@@ -1,3 +1,4 @@
+import { FirestoreDealsService } from "./services/FirestoreDealsService";
 import { PinataIpfsClient } from "./services/PinataIpfsClient";
 import { Aurelia } from "aurelia-framework";
 import * as environment from "../config/environment.json";
@@ -17,6 +18,7 @@ import { TokenService } from "services/TokenService";
 import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals2 } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
@@ -32,6 +34,7 @@ export function configure(aurelia: Aurelia): void {
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
   aurelia.use.singleton(IDataSourceDeals, CeramicServiceMock);
+  aurelia.use.singleton(IDataSourceDeals2, FirestoreDealsService);
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";

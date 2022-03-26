@@ -1,13 +1,15 @@
+import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, serverTimestamp, addDoc } from "firebase/firestore";
-import { IDealRegistrationTokenSwap, IFirestoreTimestamp } from "entities/DealRegistrationTokenSwap";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
 import { map, mergeAll } from "rxjs/operators";
 import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
-import { IDealTokenSwapDocument } from "entities/IDealSharedTypes";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import axios from "axios";
 
 const VOTES_COLLECTIONS = {
   PRIMARY_DAO: "primary-dao-votes",
@@ -15,37 +17,40 @@ const VOTES_COLLECTIONS = {
 };
 
 @autoinject
-export class FirestoreService {
+export class FirestoreService<
+  TDealDocument extends IDealTokenSwapDocument,
+  TRegistrationData extends IDealRegistrationTokenSwap> {
+
   public deals = [];
 
   constructor(
     private firebaseService: FirebaseService,
+    private axiosService: AxiosService,
   ){}
 
   /**
    * Creates new Deal document with registrationData inside Firestore deals collection
-   * @param registrationData IDealRegistrationTokenSwap
+   * @param registrationData TRegistrationData
    * @returns Promise<void>
    */
-  public async createDealTokenSwap(registrationData: IDealRegistrationTokenSwap): Promise<void> {
+  public async createDealTokenSwap(registrationData: TRegistrationData): Promise<IDealTokenSwapDocument> {
     try {
       if (!firebaseAuth.currentUser) {
         // this check is just for the UI purposes, write access is handled by firestore.rules
         throw new Error("User not authenticated");
       }
 
-      const dealData: Partial<IDealTokenSwapDocument> = {
-        registrationData: {
-          ...JSON.parse(JSON.stringify(registrationData)),
-          createdAt: serverTimestamp(),
-          createdByAddress: firebaseAuth.currentUser.uid,
-        },
-        isDocumentReady: false,
-        createdAt: serverTimestamp() as unknown as IFirestoreTimestamp,
-      };
+      const idToken = await firebaseAuth.currentUser.getIdToken();
 
-      await addDoc(collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION), dealData);
+      const response = await axios.post(
+        `${process.env.FIREBASE_FUNCTIONS_URL}/createDeal`,
+        {registrationData},
+        {headers: {Authorization: `Bearer ${idToken}`}},
+      );
+
+      return response.data;
     } catch (error) {
+      this.axiosService.axiosErrorHandler(error);
       throw new Error(error);
     }
   }
@@ -53,12 +58,12 @@ export class FirestoreService {
   /**
    * Updates Deal document with provided registration data
    * @param dealId string
-   * @param registrationData IDealRegistrationTokenSwap
+   * @param registrationData TRegistrationData
    * @returns Promise<void>
    */
   public async updateTokenSwapRegistrationData(
     dealId: string,
-    registrationData: IDealRegistrationTokenSwap,
+    registrationData: TRegistrationData,
   ): Promise<void> {
     try {
       const dealRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
@@ -99,9 +104,9 @@ export class FirestoreService {
    * Reads deal by ID from Firestore
    *
    * @param dealId string
-   * @returns Promise<IFirebaseDocument<IDealTokenSwapDocument>>
+   * @returns Promise<IFirebaseDocument<TDealDocument>>
    */
-  public async getDealById(dealId: string): Promise<IFirebaseDocument<IDealTokenSwapDocument>> {
+  public async getDealById(dealId: string): Promise<IFirebaseDocument<TDealDocument>> {
     try {
       const docRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       const docSnapshot = await getDoc(docRef);
@@ -110,7 +115,7 @@ export class FirestoreService {
       // (docSnapshot could be returned with no data if the document has nested collections and no data)
       if (docSnapshot.exists()) {
         return {
-          data: docSnapshot.data() as IDealTokenSwapDocument,
+          data: docSnapshot.data() as TDealDocument,
           id: docSnapshot.id,
         };
       } else {
@@ -124,10 +129,10 @@ export class FirestoreService {
   /**
    * Reads all public deals from Firestore
    *
-   * @returns Promise<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getAllPublicDeals(): Promise<Array<IFirebaseDocument<IDealTokenSwapDocument>>> {
-    return await this.getDocuments<IDealTokenSwapDocument>(this.allPublicDealsQuery());
+  public async getAllPublicDeals<TDealDocument>(): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return await this.getDealDocuments(this.allPublicDealsQuery());
   }
 
   /**
@@ -136,10 +141,10 @@ export class FirestoreService {
    * NOTE: provided address needs to be authenticated to Firebase to read private deals
    *
    * @param address string
-   * @returns Promise<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<IDealTokenSwapDocument>>> {
-    return await this.getDocuments<IDealTokenSwapDocument>(this.representativeDealsQuery(address));
+  public async getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return await this.getDealDocuments(this.representativeDealsQuery(address));
   }
 
   /**
@@ -148,10 +153,10 @@ export class FirestoreService {
    * NOTE: provided address needs to be authenticated to Firebase to read private deals
    *
    * @param address string
-   * @returns Promise<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<IDealTokenSwapDocument>>> {
-    return await this.getDocuments<IDealTokenSwapDocument>(this.proposalLeadDealsQuery(address));
+  public async getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return await this.getDealDocuments(this.proposalLeadDealsQuery(address));
   }
 
   /**
@@ -160,9 +165,9 @@ export class FirestoreService {
    * NOTE: provided address needs to be authenticated to Firebase to read private deals
    *
    * @param address string
-   * @returns Promise<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getAllDealsForTheUser(address: Address): Promise<Array<IFirebaseDocument<IDealTokenSwapDocument>>> {
+  public async getAllDealsForTheUser<TDealDocument>(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
     try {
       // Awaits all the queries to resolve
       const deals = await Promise.all([this.getAllPublicDeals(), this.getRepresentativeDeals(address), this.getProposalLeadDeals(address)]);
@@ -179,9 +184,9 @@ export class FirestoreService {
    *
    * That include all public deals and deals for which authenticated user is a representative or the Proposal Lead
    *
-   * @returns Observable<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
-  public subscribeToAllDealsForUser(): Observable<Array<IFirebaseDocument<IDealTokenSwapDocument>>> {
+  public subscribeToAllDealsForUser(): Observable<Array<IFirebaseDocument<TDealDocument>>> {
     // Observable of all public deals
     const allPublicDeals = this.getObservableOfQuery<Array<IFirebaseDocument>>(this.allPublicDealsQuery());
 
@@ -227,7 +232,7 @@ export class FirestoreService {
   /**
    * Observes all public deals in Firestore
    *
-   * @returns Observable<IFirebaseDocument<IDealTokenSwapDocument>[]>
+   * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
   public subscribeToAllPublicDeals(): Observable<Array<IFirebaseDocument>> {
     return this.getObservableOfQuery<Array<IFirebaseDocument>>(this.allPublicDealsQuery());
@@ -309,7 +314,7 @@ export class FirestoreService {
       (handler) => onSnapshot(
         q,
         (querySnapshot: QuerySnapshot<DocumentData>) => {
-          handler(this.getDocumentsFromQuerySnapshot(querySnapshot));
+          handler(this.getDealDocumentsFromQuerySnapshot(querySnapshot));
         },
       ),
       (handler, unsubscribe: Unsubscribe) => {
@@ -324,7 +329,7 @@ export class FirestoreService {
    * @param querySnapshot QuerySnapshot<DocumentData>
    * @returns IFirebaseDocument[]
    */
-  private getDocumentsFromQuerySnapshot<T>(querySnapshot: QuerySnapshot<DocumentData>): Array<IFirebaseDocument<T>> {
+  private getDealDocumentsFromQuerySnapshot<T>(querySnapshot: QuerySnapshot<DocumentData>): Array<IFirebaseDocument<T>> {
     return querySnapshot.docs
       // Filters out documents that don't exist
       // (doc could be returned with no data if the document has nested collections and no data)
@@ -341,17 +346,16 @@ export class FirestoreService {
    * @param q Query
    * @returns Promise<IFirebaseDocument[]>
    */
-  private async getDocuments<T>(q: Query<DocumentData>): Promise<Array<IFirebaseDocument<T>>> {
+  private async getDealDocuments<T>(q: Query<DocumentData>): Promise<Array<IFirebaseDocument<T>>> {
     const querySnapshot = await getDocs(q);
 
-    return this.getDocumentsFromQuerySnapshot<T>(querySnapshot);
+    return this.getDealDocumentsFromQuerySnapshot<T>(querySnapshot);
   }
 
   private allPublicDealsQuery(): Query<DocumentData> {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.isPrivate", "==", false),
-      where("isDocumentReady", "==", true),
     );
   }
 
@@ -359,7 +363,6 @@ export class FirestoreService {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("representativesAddresses", "array-contains", address),
-      where("isDocumentReady", "==", true),
     );
   }
 
@@ -367,7 +370,6 @@ export class FirestoreService {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.proposalLead.address", "==", address),
-      where("isDocumentReady", "==", true),
     );
   }
 }

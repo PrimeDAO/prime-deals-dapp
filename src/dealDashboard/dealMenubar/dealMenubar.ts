@@ -38,7 +38,13 @@ export class DealMenubar {
       return;
     }
 
-    this.deal.close();
+    this.eventAggregator.publish("deal.closing", true);
+    try {
+      await this.deal.close();
+      this.eventAggregator.publish("handleInfo", "Your deal was successfully closed");
+    } finally {
+      this.eventAggregator.publish("deal.closing", false);
+    }
   }
 
 }

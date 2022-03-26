@@ -1,3 +1,5 @@
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Address, Hash } from "./EthereumService";
 
@@ -40,12 +42,23 @@ export abstract class IDataSourceDeals2 {
     throw new Error("Method not implemented.");
   }
   /**
+   * Create a new Deal
+   * @param accountAddress
+   * @param registration
+   */
+  createDeal<TDealDocument extends IDealTokenSwapDocument, TRegistration extends IDealRegistrationTokenSwap>(
+    accountAddress: Address,
+    registration: TRegistration): Promise<TDealDocument> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Get the collection of deal documents
    *
    * @param accountAddress if set then can include private deals that
    * they are allowed to see
    */
-  getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
+  getDeals<TDealDocument extends IDealTokenSwapDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
     throw new Error("Method not implemented.");
   }
   /**
@@ -72,7 +85,7 @@ export abstract class IDataSourceDeals2 {
    * @param accountAddress
    * @param registration
    */
-  updateRegistration<TRegistration>(
+  updateRegistration<TRegistration extends IDealRegistrationTokenSwap>(
     dealId: IDealIdType,
     accountAddress: Address,
     registration: TRegistration): Promise<void> {
@@ -85,21 +98,11 @@ export abstract class IDataSourceDeals2 {
    * @param clauseId
    * @param discussionId
    */
-  addClauseDiscussion<TRegistration>(
+  addClauseDiscussion(
     dealId: IDealIdType,
     accountAddress: Address,
     clauseId: string,
     discussionId: Hash): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  /**
-   * Create a new Deal
-   * @param accountAddress
-   * @param registration
-   */
-  createDeal<TDealDocument, TRegistration>(
-    accountAddress: Address,
-    registration: TRegistration): Promise<TDealDocument> {
     throw new Error("Method not implemented.");
   }
 

@@ -23,7 +23,10 @@ const discussion1: IDealDiscussion = {
   representatives: [{
     address: address5,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-23T15:38:16.528Z"),
   modifiedAt: new Date(1643031030746),
   replies: 6,
@@ -40,7 +43,10 @@ const discussion2: IDealDiscussion = {
   representatives: [{
     address: address5,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-21T15:48:32.753Z"),
   modifiedAt: new Date(1642846275332),
   replies: 10,
@@ -57,7 +63,10 @@ const discussion3: IDealDiscussion = {
   representatives: [{
     address: address4,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address1,
+    name: null,
+  },
   createdAt: new Date("2022-01-22T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
@@ -74,13 +83,15 @@ const discussion4: IDealDiscussion = {
   representatives: [{
     address: address4,
   }],
-  createdBy: {address: address4},
+  createdBy: {
+    address: address4,
+    name: "myName.ens",
+  },
   createdAt: new Date("2022-01-26T20:57:43.707Z"),
   modifiedAt: null,
   replies: 0,
   key: "-i90irriG3hu8xJs1g0c7LtTCtGiYmU5m3hZSfcIPz0",
 };
-
 const _registration1: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -110,13 +121,12 @@ const _registration1: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: true,
-  createdAt: new Date("2022-01-27"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // // createdAt: new Date("2022-01-27"),
+  // // modifiedAt: null,
+  // // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration2: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -157,13 +167,12 @@ const _registration2: IDealRegistrationTokenSwap = {
   keepAdminRights: true,
   offersPrivate: true,
   isPrivate: false,
-  createdAt: new Date("2022-02-02"),
-  modifiedAt: null,
-  createdByAddress: address4,
+  // createdAt: new Date("2022-02-02"),
+  // modifiedAt: null,
+  // createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration3: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -201,13 +210,12 @@ const _registration3: IDealRegistrationTokenSwap = {
   keepAdminRights: true,
   offersPrivate: true,
   isPrivate: false,
-  createdAt: new Date("2022-02-01"),
-  modifiedAt: null,
-  createdByAddress: address4,
+  // createdAt: new Date("2022-02-01"),
+  // modifiedAt: null,
+  // createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration4: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -285,18 +293,19 @@ const _registration4: IDealRegistrationTokenSwap = {
   terms: {
     clauses: [
       {id: "clause-hash-1", text: "lorem"},
+      {id: "clause-hash-2", text: "loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem"},
+      {id: "clause-hash-3", text: "lorem\nlorem\nlorem\nlorem\nlorem\nlorem\n"},
     ],
   },
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-02"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-02"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration5: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -326,13 +335,12 @@ const _registration5: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-03"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-03"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration6: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -362,9 +370,9 @@ const _registration6: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-04"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-04"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -397,9 +405,9 @@ const _registration7: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-05"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-05"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -432,9 +440,9 @@ const _registration8: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-10"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-10"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -467,9 +475,9 @@ const _registration9: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-09"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-09"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -502,9 +510,9 @@ const _registration10: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-08"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-08"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -537,9 +545,9 @@ const _registration11: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-07"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-07"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -572,9 +580,9 @@ const _registration12: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-11"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-11"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -607,9 +615,9 @@ const _registration13: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-19"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-19"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -642,9 +650,9 @@ const _registration14: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-12"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-12"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -677,9 +685,9 @@ const _registration15: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-18"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-18"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -712,9 +720,9 @@ const _registration16: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-13"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-13"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -747,9 +755,9 @@ const _registration17: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-17"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-17"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -782,9 +790,9 @@ const _registration18: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-14"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-14"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -817,9 +825,9 @@ const _registration19: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-16"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-16"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -852,9 +860,9 @@ const _registration20: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-15"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-15"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -887,9 +895,9 @@ const _registration21: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-24"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-24"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
@@ -957,13 +965,12 @@ const _registration22: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-01-24"),
-  modifiedAt: null,
-  createdByAddress: "",
+  // createdAt: new Date("2022-01-24"),
+  // modifiedAt: null,
+  // createdByAddress: "",
   executionPeriodInDays: 50,
   dealType: "token-swap",
 };
-
 const _registration23: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -1046,13 +1053,12 @@ const _registration23: IDealRegistrationTokenSwap = {
   keepAdminRights: false,
   offersPrivate: false,
   isPrivate: false,
-  createdAt: new Date("2022-02-02"),
-  modifiedAt: null,
-  createdByAddress: address4,
+  // createdAt: new Date("2022-02-02"),
+  // modifiedAt: null,
+  // createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
-
 const _registration24: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
@@ -1099,9 +1105,9 @@ const _registration24: IDealRegistrationTokenSwap = {
   keepAdminRights: true,
   offersPrivate: true,
   isPrivate: false,
-  createdAt: new Date("2022-02-02"),
-  modifiedAt: null,
-  createdByAddress: address4,
+  // createdAt: new Date("2022-02-02"),
+  // modifiedAt: null,
+  // createdByAddress: address4,
   executionPeriodInDays: 45,
   dealType: "token-swap",
 };
