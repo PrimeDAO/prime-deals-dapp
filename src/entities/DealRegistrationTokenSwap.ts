@@ -1,3 +1,5 @@
+// Importing external dependencies in this file breaks firebase function which import interfaces from here
+
 export interface IProposal {
   title: string,
   summary: string,
@@ -76,9 +78,6 @@ export interface IDealRegistrationTokenSwap {
   keepAdminRights: boolean;
   offersPrivate: boolean;
   isPrivate: boolean;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
-  createdByAddress: string | null;
   executionPeriodInDays: number;
   dealType: "token-swap"/* | "co-liquidity"*/;
 }
@@ -104,9 +103,6 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public keepAdminRights: boolean;
   public offersPrivate: boolean;
   public isPrivate: boolean;
-  public createdAt: Date | null;
-  public modifiedAt: Date | null;
-  public createdByAddress: string | null;
   public executionPeriodInDays: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
@@ -136,8 +132,5 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
-    this.createdAt = null;
-    this.modifiedAt = null;
-    this.createdByAddress = null;
   }
 }

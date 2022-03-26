@@ -81,7 +81,7 @@
             <div class="status cell body hot sortable">
               <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
             </div>
-            <div class="age cell body hot sortable">${getFormattedTime(deal.registrationData.createdAt)}</div>
+            <div class="age cell body hot sortable">${getFormattedTime(deal.createdAt)}</div>
             <div class="dealSize cell body hot sortable">
               <span if.to-view="cardIndex === 1 && deal.totalPrice === undefined"><i class="spinner fa fas fa-circle-notch fa-spin"></i></span>
               <span if.to-view="cardIndex === 1 && deal.totalPrice !== undefined">${getPrice(deal) | currency}</span>
