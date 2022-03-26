@@ -1,0 +1,12 @@
+@import "styles/styles.scss";
+
+.etherscan-button {
+    outline: none;
+    path {
+      fill: $Secondary05;
+    }
+    cursor: pointer;
+    &:hover > path {
+      fill: $White;
+    }
+  }

@@ -1,5 +1,4 @@
 <template>
-  <require from="../deals/dao-icon-name/dao-icon-name"></require>
   <require from="../resources/elements/chip/chip"></require>
   <require from="./swap-status/swap-status"></require>
   <main class="page animated-page au-animate fundContainer">
@@ -28,38 +27,7 @@
         </div>
         <div class="box-content">
           <div class="tokens">
-            <div class="grid tokenGrid">
-              <div class="row header">
-                <div class="cell token header">Token</div>
-                <div class="cell target header">Target</div>
-                <div class="cell deposited header">Deposited</div>
-                <div class="cell required header">Required</div>
-                <div class="cell completed header">Completed</div>
-                <div class="cell percent header">%</div>
-              </div>
-              <template repeat.for="token of deal.daoRelatedToWallet.tokens | sort:sortEvaluator">
-                <div class="row body">
-                  <div class="token cell body">
-                    <dao-icon-name
-                      primary-dao.to-view="token"
-                      icon-size="24"
-                      use-token-symbol.to-view="true"
-                    ></dao-icon-name>
-                  </div>
-                  <div class="target cell body">${token.target | ethwei:token.decimals}</div>
-                  <div class="deposited cell body">${token.deposited | ethwei:token.decimals}</div>
-                  <div class="required cell body">${token.required | ethwei:token.decimals}</div>
-                  <div class="completed cell body">
-                    <progress-bar
-                      style="height: 10px; width: 100%"
-                      max.bind="token.target"
-                      current.bind="token.deposited"
-                    ></progress-bar>
-                  </div>
-                  <div class="percent cell body">${token.percentCompleted}%</div>
-                </div>
-              </template>
-            </div>
+            <grid id="token-grid" rows.bind="deal.daoRelatedToWallet.tokens" columns.bind="transactionGridColumns" condensed.bind="true" ></grid>
           </div>
         </div>
         <div class="container-footer">
@@ -196,94 +164,7 @@
       >
         There are no transactions for this deal
       </div>
-      <div class="grid transactions-grid" if.to-view="transactions && transactions.length > 0">
-        <div class="row header">
-          <div class="cell dao header">DAO</div>
-          <div class="cell type header">TYPE</div>
-          <div class="cell amount header">AMOUNT</div>
-          <div class="cell address header">ADDRESS</div>
-          <div class="cell age header">AGE</div>
-          <div class="cell txid header">TxID</div>
-          <div class="cell withdraw header"></div>
-        </div>
-        <template repeat.for="transaction of transactions | sort:sortEvaluator">
-          <div class="row body" if.to-view="!loadingTransactions && (($index < 10) || seeingMore)">
-            <div class="dao cell body">
-              <dao-icon-name primary-dao.to-view="transaction.dao"></dao-icon-name>
-            </div>
-            <div class="type cell body">
-              <i class="fas fa-arrow-${getTypeIcon(transaction.type)}"></i> ${transaction.type}
-            </div>
-            <div class="amount cell body">
-              <div ptooltip.to-view="transaction.token.amount">
-                <img src="${transaction.token.logoURI}" />
-                <span
-                  >${withCommas(transaction.token.amount)}${" "}${transaction.token.symbol}</span
-                >
-              </div>
-            </div>
-            <div class="address cell body">
-              <div>
-                <!-- <div class="transactionType">${transaction.type === "deposit" ? "FROM" : "TO"}</div> -->
-                <div class="addressLink">
-                  <span ptooltip.to-view="transaction.address"
-                    >${transaction.address | smallHexString}</span
-                  >
-                  <div class="buttons">
-                    <copy-to-clipboard-button
-                      text-to-copy.to-view="transaction.address"
-                    ></copy-to-clipboard-button>
-                    <!-- same as externalLinkIcon.svg -->
-                    <svg
-                      class="etherscan-button"
-                      ptooltip="Inspect on Etherscan"
-                      click.delegate="gotoEtherscan(transaction.address)"
-                      width="17"
-                      height="17"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z"
-                        fill="#F9F6F9"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="age cell body">${getFormattedTime(transaction.createdAt)}</div>
-            <div class="txid cell body">
-              <a
-                click.delegate="gotoEtherscan(transaction.txid,true)"
-                ptooltip="Inspect on Etherscan"
-                >View
-                <svg
-                  class="etherscan-button"
-                  width="17"
-                  height="17"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z"
-                    fill="#F9F6F9"
-                  /></svg
-              ></a>
-            </div>
-            <div class="withdraw cell body">
-              <pbutton
-                if.to-view="ethereumService.defaultAccountAddress === transaction.address && transaction.type === 'deposit'"
-                type="secondary"
-                click.delegate="withdraw(transaction)"
-                >WITHDRAW</pbutton
-              >
-            </div>
-          </div>
-        </template>
-      </div>
+      <grid id="transactions-grid" rows.bind="transactions" columns.bind="transactionColumns" condensed.bind="false" ></grid>
       <template if.to-view="transactions.length > 10">
         <div if.to-view="!loadingTransactions && !seeingMore" class="seeMore">
           <div class="arrow">&darr;</div>

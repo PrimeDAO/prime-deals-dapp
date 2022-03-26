@@ -2,9 +2,12 @@ import { bindable, computedFrom, autoinject, View } from "aurelia-framework";
 import { InlineViewStrategy } from "aurelia-templating";
 import "./grid.scss";
 import { SortOrder, SortService } from "services/SortService";
+import { Utils } from "services/utils";
 
 @autoinject
 export class Grid {
+  @bindable id?: string;
+  @bindable condensed = false;
   @bindable public rows: [] = [];
   @bindable public columns: { field: string, width: string }[] = [];
   @bindable public selectable = false;
@@ -21,8 +24,8 @@ export class Grid {
     this.parent = owningView;
   }
 
-  getBuffedVm(row:any){
-    return {...this.parent.bindingContext, ...row, row: row};
+  getBuffedVm(row: any) {
+    return { ...this.parent.bindingContext, ...row, row: row };
   }
 
   sort(columnName: string) {
@@ -31,11 +34,16 @@ export class Grid {
     } else {
       this.sortColumn = columnName;
     }
-    this.sortEvaluator = (a, b) => SortService.evaluateString(a[columnName], b[columnName], this.sortDirection);
+    this.sortEvaluator = (a, b) =>
+      !isNaN(Utils.getPropertyFromString(a, columnName)) ?
+        SortService.evaluateNumber(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection) :
+        Utils.getPropertyFromString(a, columnName) instanceof Date ?
+          SortService.evaluateDateTimeAsDate(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection) :
+          SortService.evaluateString(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection);
   }
 
   viewStrategy(html: string) {
-    return new InlineViewStrategy(!html.startsWith("<template>") ? `<template>${html}</template>` : html, [this.parent]);
+    return new InlineViewStrategy(!html.startsWith("<template>") ? `<template>${html}</template>` : html);
   }
 
   @computedFrom("columns")

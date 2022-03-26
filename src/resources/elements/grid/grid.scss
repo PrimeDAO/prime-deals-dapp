@@ -1,9 +1,11 @@
 @import "styles/styles.scss";
-#grid {
+.prime-grid {
   margin-bottom: 20px;
   font-size: 16px;
 
   .row {
+  
+
     cursor: default;
     /**
        * so the grid will be composed of the contents of the row element,
@@ -17,6 +19,7 @@
 
     .cell.header {
       padding: 10px 0;
+      text-transform: uppercase;
     }
 
     &.body.hot {
@@ -28,10 +31,19 @@
     }
 
     .cell {
+      border-bottom: 1px solid $Border01;
+      &.condensed {
+        border-bottom: none;
+      }
+
       &.body {
         height: 74px;
         display: flex;
         align-items: center;
+
+        &.condensed{
+          height:40px;
+        }
       }
       /**
          * for when columns get scrunched together

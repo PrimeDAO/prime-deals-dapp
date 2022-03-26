@@ -8,6 +8,10 @@ export class Utils {
     return new Promise((resolve: (args: any[]) => void): any => setTimeout(resolve, milliseconds));
   }
 
+  public static getPropertyFromString = <T>(object:any, path:string, defaultValue?:T) => path
+    .split(".")
+    .reduce((o, p) => o ? o[p] : defaultValue, object);
+
   public static smallHexString(str: string): string {
     if (!str) {
       return "";

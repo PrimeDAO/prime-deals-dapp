@@ -1013,7 +1013,7 @@ const _registration23: IDealRegistrationTokenSwap = {
       },
     ],
     social_medias: [],
-    representatives: [{address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA"}],
+    representatives: [{address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA"}, {address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8"}],
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/compound.png",
     platform: Platforms.Moloch,
     treasury_address: "0xD4717ee259f8736af189F968Dadc6939c1568200",

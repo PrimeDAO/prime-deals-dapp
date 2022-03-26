@@ -1,4 +1,4 @@
-import { IDAO, IToken } from "./../../entities/DealRegistrationTokenSwap";
+import { IDAO, IToken } from "../../../entities/DealRegistrationTokenSwap";
 import "./dao-icon-name.scss";
 import { containerless, bindable } from "aurelia-framework";
 

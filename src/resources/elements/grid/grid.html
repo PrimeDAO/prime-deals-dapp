@@ -1,31 +1,31 @@
 <template>
-  <div class="grid" style="grid-template-columns:${gridTemplateColumnText}">
+  <div id="${id}" class="prime-grid" style="grid-template-columns:${gridTemplateColumnText}">
     <div class="row header">
       <div
         repeat.for="column of columns"
-        class="cell header ${column.sortable ? 'sortable' : ''}"
+        class="cell header ${column.sortable ? 'sortable' : ''} ${column.headerClass}"
         click.delegate="column.sortable && sort(column.field)"
       >
-        ${column.headerText}
+        ${column.headerText === undefined ? column.field : column.headerText}
       </div>
     </div>
     <template repeat.for="row of rows | sort:sortEvaluator">
-      <template if.bind="!selectable">
-        <div repeat.for="column of columns" class="cell body hot">
+      <div if.bind="!selectable" class="row">
+        <div repeat.for="column of columns" class="cell body hot ${condensed ? 'condensed' : ''}">
           <compose
-            if.bind="column.render"
-            view.bind="viewStrategy(column.render)"
+            if.bind="column.template"
+            view.bind="viewStrategy(column.template)"
             view-model.bind="getBuffedVm(row)"
             containerless
           ></compose>
           <template else>${row[column.field]}</template>
         </div>
-      </template>
+      </div>
       <a else class="row body hot" select.delegate="select(row)">
-        <div repeat.for="column of columns" class="cell body hot">
+        <div repeat.for="column of columns" class="cell body hot ${condensed ? 'condensed' : ''}">
           <compose
-            if.bind="column.render"
-            view.bind="viewStrategy(column.render)"
+            if.bind="column.template"
+            view.bind="viewStrategy(column.template)"
             view-model.bind="getBuffedVm(row)"
             containerless
           ></compose>

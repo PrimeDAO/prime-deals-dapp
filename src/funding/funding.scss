@@ -171,23 +171,9 @@ $hover-transition-speed-slow: 0.4s;
               }
             }
 
-            .tokenGrid {
-              display: grid;
-              grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 1fr 0.2fr;
-
-              .row {
-                &.header {
-                  .cell {
-                    border-bottom: 1px solid $Secondary02;
-                  }
-                }
-                &.body {
-                  .cell {
-                    &.required {
-                      color: $Orange;
-                    }
-                  }
-                }
+            #token-grid {
+              .required {
+                color: $Orange;
               }
             }
           }
@@ -327,10 +313,12 @@ $hover-transition-speed-slow: 0.4s;
       }
     }
     &.transactions {
-      .transactions-grid {
-        margin-bottom: 20px;
-        display: grid;
-        grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.2fr 0.25fr;
+      #transactions-grid {
+        &:not(grid) {
+          margin-bottom: 20px;
+          display: grid;
+          grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.2fr 0.25fr;
+        }
 
         .row {
           &.body {
@@ -376,7 +364,7 @@ $hover-transition-speed-slow: 0.4s;
                   font-family: Aeonik;
                 }
               }
-              &.withdraw {
+              div.withdraw {
                 pbutton {
                   button {
                     font-size: 9px;
@@ -390,40 +378,17 @@ $hover-transition-speed-slow: 0.4s;
                   font-size: 14px;
                   font-weight: 700;
                 }
-                .addressLink {
-                  display: grid;
-                  grid-template-columns: auto auto;
-                  grid-column-gap: 10px;
-                  .buttons {
-                    display: flex;
-                    column-gap: 4px;
-                    align-items: center;
-
-                    .etherscan-button {
-                      outline: none;
-                      path {
-                        fill: $Secondary05;
-                      }
-                      cursor: pointer;
-                      &:hover > path {
-                        fill: $White;
-                      }
-                    }
-                  }
-                }
               }
-              &.type {
+              div.type {
                 text-transform: capitalize;
                 i {
                   padding-right: 10px;
                 }
               }
-              &.amount {
-                div {
-                  display: grid;
-                  grid-template-columns: 24px auto;
-                  grid-column-gap: 11px;
-                }
+              div.amount {
+                display: grid;
+                grid-template-columns: 24px auto;
+                grid-column-gap: 11px;
               }
               &.txid {
                 a {

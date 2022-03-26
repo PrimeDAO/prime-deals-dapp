@@ -11,9 +11,9 @@ import "./funding.scss";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EthereumService } from "services/EthereumService";
-import {Router} from "aurelia-router";
+import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
-import {autoinject, computedFrom, BindingEngine} from "aurelia-framework";
+import { autoinject, computedFrom, BindingEngine } from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
@@ -22,8 +22,40 @@ import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 const converter = new EthweiValueConverter();
 
+const transactionColumns:
+{ field: string, headerText?: string, sortable?: boolean, width: string, headerClass?: string, template?: string }[] = [
+  { field: "dao.name", width: ".5fr", sortable: true, headerText: "dao", template: "<dao-icon-name icon-size.bind='24' primary-dao.to-view='dao'></dao-icon-name>" },
+  { field: "type", width: ".5fr", sortable: true, template: "<div class='type'><i class='fas fa-arrow-${getTypeIcon(type)}'></i> ${type}</div>" },
+  { field: "token.amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount' ptooltip.to-view='token.amount'><img src='${token.logoURI}' /><span>${withCommas(token.amount)} ${token.symbol}</span></div>"},
+  { field: "address", width: ".5fr", sortable: true, template: `
+<address-link address.to-view="address" >
+  
+  ` },
+  { field: "createdAt", width: ".5fr", headerText: "age", sortable: true, template: "${getFormattedTime(createdAt)}" },
+  { field: "address", width: ".2fr", headerText: "TxID", sortable: false, template: "<etherscan-button href-text='View' address.to-view=\"address\"></etherscan-button>" },
+  { field: "address", width: ".25fr", sortable: false, headerText: "", template: `
+  <div class="withdraw">
+  <pbutton
+  if.to-view="ethereumService.defaultAccountAddress === address && type === 'deposit'"
+  type="secondary"
+  click.delegate="withdraw(row)"
+  >WITHDRAW</pbutton></div>  ` },
+];
+
+const transactionGridColumns:{ field: string, headerText?: string, sortable?: boolean, width: string, headerClass?: string, template?: string }[] = [
+
+  {field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
+  {field: "target", sortable: true, width: ".5fr", template: "${target | ethwei:row.decimals}" },
+  {field: "deposited", sortable: true, width: ".5fr", template: "${deposited | ethwei:row.decimals}" },
+  {field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${target | ethwei:row.decimals}</div>" },
+  {field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<progress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></progress-bar>" },
+  {field: "percentCompleted", sortable: true, headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
+];
+
 @autoinject
 export class Funding {
+  private transactionColumns = transactionColumns;
+  private transactionGridColumns = transactionGridColumns;
   private deal: DealTokenSwap;
   private dealId: string;
   private dealTargetReached = false;
@@ -76,7 +108,7 @@ export class Funding {
    * @return boolean
    */
   @computedFrom("ethereumService.defaultAccountAddress")
-  public get isProposalLead(): boolean{
+  public get isProposalLead(): boolean {
     return this.ethereumService.defaultAccountAddress === this.deal.registrationData.proposalLead.address;
   }
 
@@ -91,7 +123,7 @@ export class Funding {
     //TODO get the tokenSwapModuleContractUrl and set it
   }
 
-  public async bind() : Promise<void> {
+  public async bind(): Promise<void> {
     //get contract token information from the other DAO
     this.deal.otherDao.tokens.forEach((x: ITokenFunding) => {
       this.setTokenContractInfo(x);
@@ -110,7 +142,7 @@ export class Funding {
     const d = new Date(); //TODO comment out - test data
     d.setDate(d.getDate() - 46); //TODO comment out - test data
     this.deal.executedAt = d; //TODO comment out - test data
-    if (this.deal.executedAt && this.deal.executionPeriod){
+    if (this.deal.executedAt && this.deal.executionPeriod) {
       const executionTime = this.deal.executedAt;
       executionTime.setSeconds(executionTime.getSeconds() + this.deal.executionPeriod);
       const finalDate = moment(executionTime);
@@ -130,7 +162,7 @@ export class Funding {
       });
     });
 
-    if (this.deal.daoRelatedToWallet.tokens.length === 1){
+    if (this.deal.daoRelatedToWallet.tokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
       this.selectedToken = 0;
       //and get the wallet balance for that token
@@ -149,11 +181,11 @@ export class Funding {
       txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
     });
     this.transactions.push({
-      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
+      address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8",
       createdAt: new Date(),
       dao: this.deal.daoRelatedToWallet,
       depositId: 1234,
-      token: this.deal.daoRelatedToWallet.tokens[0],
+      token: this.deal.daoRelatedToWallet.tokens[1],
       type: "deposit",
       txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
     });
@@ -183,7 +215,7 @@ export class Funding {
     console.log(this.tokensToClaim);
   }
 
-  public async canActivate(){
+  public async canActivate() {
     await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
   }
 
@@ -192,18 +224,18 @@ export class Funding {
    * @param dateTime
    * @returns string
    */
-  public getFormattedTime(dateTime: Date): string {
+  public getFormattedTime = (dateTime: Date): string => {
     return this.dateService.formattedTime(dateTime).diff();
-  }
+  };
 
   /**
    * Gets the icon name for the transaction type
    * @param type
    * @returns string
    */
-  public getTypeIcon(type: string): string {
+  public getTypeIcon = (type: string): string => {
     return type.toLowerCase() === "deposit" ? "down success" : "up danger";
-  }
+  };
 
   /**
    * Initiates the token swap. Called by the "Initiate Token Swap" button on the UI
@@ -226,7 +258,7 @@ export class Funding {
     };
     // show a modal confirming the user wants to initiate the swap
     const dialogResult = await this.alertService.showAlert(swapModal);
-    if (!dialogResult.wasCancelled){
+    if (!dialogResult.wasCancelled) {
       //the user said they wanted to initiate the swap so call the swap contract
       //TODO wire up the initiate swap method to the contract
       this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
@@ -257,15 +289,15 @@ export class Funding {
    * @param number
    * @returns string
    */
-  public withCommas(number: string | number) : string {
-    return this.numberService.toString(Number(number), {thousandSeparated: true, mantissa: 2});
-  }
+  public withCommas = (number: string | number): string => {
+    return this.numberService.toString(Number(number), { thousandSeparated: true, mantissa: 2 });
+  };
 
   /**
    * Withdraws the deposit made from the connected wallet
    * @param transaction
    */
-  public async withdraw(transaction: IDaoTransaction) : Promise<void> {
+  public withdraw = async(transaction: IDaoTransaction): Promise<void> => {
     const withdrawModal: IAlertModel = {
       header: `You are about to withdraw ${this.withCommas(transaction.token.amount)} ${transaction.token.symbol} from the deal`,
       message:
@@ -276,23 +308,23 @@ export class Funding {
     };
     // show a modal confirming the user wants to withdraw their funds
     const dialogResult = await this.alertService.showAlert(withdrawModal);
-    if (!dialogResult.wasCancelled){
+    if (!dialogResult.wasCancelled) {
       //TODO wire up the withdraw method
       this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
     }
-  }
+  };
 
   /**
    * Checks the user's input to make sure they aren't trying to deposit more than their wallet balance
    * or the remaining needed tokens for that contract
    */
   private checkMaxAmount(): void {
-    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken){
+    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken) {
       const remainingNeeded = (this.deal.daoRelatedToWallet.tokens[this.selectedToken] as ITokenFunding)?.required;
       if (Number(this.walletBalance) < Number(this.depositAmount)) {
         //set the deposit amount = wallet balance if the amount the user entered is higher than the wallet balance
         this.depositAmount = this.walletBalance;
-      } else if (Number(this.depositAmount) > Number(remainingNeeded)){
+      } else if (Number(this.depositAmount) > Number(remainingNeeded)) {
         //set the deposit amount = remaining needed amount if the amount the user entered is higher than the remaining amount
         this.depositAmount = remainingNeeded;
       }
@@ -316,12 +348,12 @@ export class Funding {
     // token.target = converter.fromView(120);
     // token.percentCompleted = 12;
 
-    if (Number(this.depositAmount) > Number(recentWalletBalance)){
+    if (Number(this.depositAmount) > Number(recentWalletBalance)) {
       this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount, 18)} ${tokenSymbol}) exceeds the current balance in your wallet (${converter.toView(recentWalletBalance, 18)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
       this.depositAmount = recentWalletBalance;
       return;
     }
-    if (Number(this.depositAmount)> Number(recentRequiredTokens)){
+    if (Number(this.depositAmount) > Number(recentRequiredTokens)) {
       this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${converter.toView(this.depositAmount, 18)} ${tokenSymbol}) exceeds the required funding needed (${converter.toView(recentRequiredTokens, 18)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
       this.depositAmount = recentRequiredTokens;
       return;
@@ -337,7 +369,7 @@ export class Funding {
    * @param dao
    * @returns string
    */
-  private getDaoHtmlForSwap(dao: IDAO) : string{
+  private getDaoHtmlForSwap(dao: IDAO): string {
     return `
       <div>
         <h6>${dao.name} treasury address</h6>
@@ -366,16 +398,16 @@ export class Funding {
    * @param newVal
    * @param prevVal
    */
-  private selectedTokenChanged(newVal: number | string, prevVal: number | string): void{
+  private selectedTokenChanged(newVal: number | string, prevVal: number | string): void {
     this.depositAmount = null;
     if (typeof newVal === "string") newVal = Number(newVal);
     if (typeof prevVal === "string") prevVal = Number(prevVal);
     //TODO When the selected token changes, change the wallet balance for the new token
-    if (newVal !== prevVal){
-      if (newVal === 0){
+    if (newVal !== prevVal) {
+      if (newVal === 0) {
         //TODO get and set the wallet balance of the currently selected token
         this.walletBalance = converter.fromView(443.12323, 18);
-      } else if (newVal === 1){
+      } else if (newVal === 1) {
         //TODO get and set the wallet balance of the currently selected token
         this.walletBalance = converter.fromView(13.873, 18);
       }
@@ -385,10 +417,10 @@ export class Funding {
   /**
    * Calculate the max amount of tokens the user is able to deposit
    */
-  private async setMax(): Promise<void>{
-    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken){
+  private async setMax(): Promise<void> {
+    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken) {
       const remainingNeeded = (this.deal.daoRelatedToWallet.tokens[this.selectedToken] as ITokenFunding).required;
-      if (Number(remainingNeeded) < Number(this.walletBalance)){
+      if (Number(remainingNeeded) < Number(this.walletBalance)) {
         //the wallet has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
         this.eventAggregator.publish("handleInfo", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
@@ -405,7 +437,7 @@ export class Funding {
   /**
    * Sets the additional token info from the contract
    */
-  private setTokenContractInfo(token: ITokenFunding): void{
+  private setTokenContractInfo(token: ITokenFunding): void {
     //get the additional token information from the contract for this token
     token.deposited = converter.fromView(80, 18); //TODO get total amount of deposited tokens from the DepositContract
     token.target = converter.fromView(100, 18); //TODO get the target amount of tokens to be reached
@@ -418,12 +450,12 @@ export class Funding {
   /**
    * Verifies the current wallet has access to this page and if it doesn't, redirect them
    */
-  private verifySecurity():void{
+  private verifySecurity(): void {
     if (!this.deal || !this.deal.registrationData) return;
     if (!this.deal.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-            !this.deal.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-            this.ethereumService.defaultAccountAddress !== this.deal.registrationData.proposalLead.address
-    ){
+      !this.deal.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
+      this.ethereumService.defaultAccountAddress !== this.deal.registrationData.proposalLead.address
+    ) {
       //redirect user to the home page if not the proposal lead or one of the deal's representatives
       this.router.navigate("home");
     }
