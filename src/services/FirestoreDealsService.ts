@@ -23,6 +23,8 @@ export class FirestoreDealsService<
   public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
     let deals: Array<IFirebaseDocument<TDealDocument>>;
 
+    await this.firestoreService.ensureAuthenticationIsSynced();
+
     if (accountAddress) {
       if (!this.isUserAuthenticated(accountAddress)) {
         return;
