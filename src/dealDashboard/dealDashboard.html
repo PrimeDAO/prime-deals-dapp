@@ -25,7 +25,7 @@
     </section>
 
     <aside class="aside">
-      <deal-votes deal.bind="deal"></deal-votes>
+      <deal-votes deal.bind="deal" if.bind="!deal.isOpenProposal"></deal-votes>
       <deal-info deal.bind="deal"></deal-info>
     </aside>
 

@@ -15,24 +15,24 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 
-interface ITokenSwapInfo {
-  // the participating DAOs
-  daos: Array<Address>;
-  // the tokens involved in the swap
-  tokens: Array<Address>;
-  // the token flow from the DAOs to the module
-  pathFrom: Array<Array<BigNumber>>;
-  // the token flow from the module to the DAO
-  pathTo: Array<Array<BigNumber>>;
-  // unix timestamp of the deadline
-  deadline: BigNumber; // trying to get them to switch to uint type
-  // unix timestamp of the execution
-  executionDate: BigNumber; // trying to get them to switch to uint type
-  // hash of the deal information.
-  metadata: string;
-  // status of the deal
-  status: number; // 3 ("DONE") means the deal has been executed
-}
+// interface ITokenSwapInfo {
+//   // the participating DAOs
+//   daos: Array<Address>;
+//   // the tokens involved in the swap
+//   tokens: Array<Address>;
+//   // the token flow from the DAOs to the module
+//   pathFrom: Array<Array<BigNumber>>;
+//   // the token flow from the module to the DAO
+//   pathTo: Array<Array<BigNumber>>;
+//   // unix timestamp of the deadline
+//   deadline: BigNumber; // trying to get them to switch to uint type
+//   // unix timestamp of the execution
+//   executionDate: BigNumber; // trying to get them to switch to uint type
+//   // hash of the deal information.
+//   metadata: string;
+//   // status of the deal
+//   status: number; // 3 ("DONE") means the deal has been executed
+// }
 
 interface IDepositEventArgs {
   module: Address;
@@ -225,6 +225,14 @@ export class DealTokenSwap implements IDeal {
    */
   public get isClosed(): boolean {
     return this.isWithdrawn || this.isRejected;
+  }
+
+  public close() {
+    if (this.isOpenProposal) {
+      this.isWithdrawn = true;
+    } else {
+      this.isRejected = true;
+    }
   }
 
   // public get isTargetReached(): boolean {
