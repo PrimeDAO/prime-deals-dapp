@@ -6,6 +6,7 @@ import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address } from "services/EthereumService";
 import { IFirebaseDocument } from "services/FirestoreTypes";
+import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class FirestoreDealsService<
@@ -14,6 +15,7 @@ export class FirestoreDealsService<
 
   constructor(
     private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
+    private consoleLogService: ConsoleLogService,
   ) {}
 
   initialize(): void {
@@ -29,9 +31,10 @@ export class FirestoreDealsService<
       if (!this.isUserAuthenticated(accountAddress)) {
         return;
       }
-
+      this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
       deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
     } else {
+      this.consoleLogService.logMessage("getting all public deals");
       deals = await this.firestoreService.getAllPublicDeals();
     }
     return deals.map((deal) => deal.data);

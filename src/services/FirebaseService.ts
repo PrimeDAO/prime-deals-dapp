@@ -31,12 +31,14 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
 @autoinject
 export class FirebaseService {
 
-  public authenticationIsSynced = false;
+  public authenticationIsSynced = true;
 
   constructor(
     private eventAggregator: EventAggregator,
   ) {
-    // Listen to changes of the connected wallet address
+  }
+
+  public initialize(): void {
     this.eventAggregator.subscribe("Network.Changed.Account", (address: Address) => {
       this.syncFirebaseAuthentication(address);
     });
