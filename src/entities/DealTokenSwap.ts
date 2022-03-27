@@ -140,11 +140,12 @@ export class DealTokenSwap implements IDeal {
   //   return;
   // }
 
+  @computedFrom("isExecuted", "executedAt", "executionPeriod")
   get timeLeftToExecute(): number | undefined {
-    if (!this.executedAt) {
+    if (this.isExecuted) {
       return;
     }
-    return this.executedAt.getTime() + this.executionPeriod * 1000 - new Date().getTime();
+    return (this.executedAt.getTime() + this.executionPeriod * 1000) - Date.now();
   }
 
   /**
