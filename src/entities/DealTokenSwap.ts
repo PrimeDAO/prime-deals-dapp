@@ -177,11 +177,6 @@ export class DealTokenSwap implements IDeal {
       (now > (this.executedAt.valueOf() + (this.fundingPeriod * 1000))) : false;
   }
 
-  @computedFrom("isExecuted", "fundingPeriodHasExpired")
-  public get isInFundingPeriod(): boolean {
-    return this.isExecuted && !this.fundingPeriodHasExpired;
-  }
-
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
     return this.fundingPeriodHasExpired;
