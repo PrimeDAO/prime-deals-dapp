@@ -21,11 +21,11 @@ export class SingleComment {
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;
-  @bindable commentAction;
+  @bindable private commentAction;
+  @bindable private isAuthorized = false;
 
   private connectedAddress: string;
   private dealClauseId: string;
-  private isConnected = false;
   private pressed = {
     up: false,
     down: false,
@@ -41,7 +41,6 @@ export class SingleComment {
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
-    this.isConnected = !!this.connectedAddress;
     this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
     this.commentTimeInterval = setInterval((): void => {
       this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();

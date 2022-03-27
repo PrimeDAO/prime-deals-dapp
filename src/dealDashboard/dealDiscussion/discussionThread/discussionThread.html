@@ -49,6 +49,7 @@
             index="${$index}"
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
+            is-authorized.bind="isAuthorized && isMember"
             comment.bind="comment">
           </single-comment>
         </div>

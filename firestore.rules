@@ -1,10 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isDocumentReady() {
-      return resource.data.isDocumentReady;
-    }
-
     function isPublicDeal() {
       return !resource.data.registrationData.isPrivate;
     }
@@ -26,10 +22,9 @@ service cloud.firestore {
     }
 
     match /deals-token-swap/{deal} {
-      allow read: if isDocumentReady() && (isPublicDeal() || userIsProposalLead() || userIsRepresentative());
-      allow create: if userIsAuthenticated() && !request.resource.data.isDocumentReady;
-      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions()); // && !request.resource.data.isDocumentReady;
-      allow delete: if false;
+      allow read: if isPublicDeal() || userIsProposalLead() || userIsRepresentative();
+      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions());
+      allow create, delete: if false;
     }
     
     match /deals-token-swap/{deal}/primary-dao-votes/{representative} {
