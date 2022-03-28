@@ -1,13 +1,15 @@
-import { Address, EthereumService, Hash, Networks } from "./EthereumService";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { Address, EthereumService, Networks } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { IDataSourceDeals, IKey } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { BigNumber } from "ethers";
 import { parseBytes32String } from "ethers/lib/utils";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -34,40 +36,6 @@ interface IExecutedDeal {
   executedAt: Date;
 }
 
-export interface IDaoPartner {
-  daoId: string,
-  organizationId: string,
-  title: string,
-  logo: string,
-  totalNumMembers: number
-  totalNumProposals: number
-  totalNumVoters: number
-  totalValueUSD: number
-  totalInUSD: number
-  totalOutUSD: number
-  votersParticipation: number
-  name: string,
-  platform: string,
-  thumbName: string
-}
-
-// export interface IDaoAPIObject {
-//   daoName: string,
-//   organizationId: string,
-//   daoId: string,
-//   logo: string,
-//   daosArr: Array<IDaoPartner>,
-//   totalNumMembers: number,
-//   totalNumProposals: number,
-//   totalNumVoters: number,
-//   totalValueUSD: number,
-//   totalInUSD: number,
-//   totalOutUSD: number,
-//   votersParticipation: number,
-//   thumbName: string,
-//   platform: number,
-// }
-
 export let StartingBlockNumber: number;
 
 @autoinject
@@ -77,6 +45,7 @@ export class DealService {
    * key is a ceramic Hash
    */
   public deals: Map<IKey, DealTokenSwap>;
+  private executedDealIds: Map<string, IExecutedDeal>;
 
   @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
@@ -98,12 +67,13 @@ export class DealService {
   // public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: IDataSourceDeals,
+    private dataSourceDeals: IDataSourceDeals2,
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
+    private ethereumService: EthereumService,
   ) {
     switch (EthereumService.targetedNetwork) {
       case Networks.Mainnet:
@@ -116,7 +86,16 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
     }
-
+    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+      if (!this.initializing) {
+        try {
+          this.eventAggregator.publish("deals.loading", true);
+          await this.getDeals(true);
+        } finally {
+          this.eventAggregator.publish("deals.loading", false);
+        }
+      }
+    });
   }
 
   public async initialize(): Promise<void> {
@@ -126,56 +105,42 @@ export class DealService {
     this.getDeals();
   }
 
-  private async getDeals(): Promise<void> {
+  private async getDeals(force = false): Promise<void> {
+
+    this.initializing = true;
 
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
-        this.getExecutedDealInfo().then((executedDealIds) => {
-          if (!this.deals?.size) {
-            try {
+        this.getExecutedDealInfo().then(() => {
+          this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+            if (force || !this.deals?.size) {
+              try {
 
-              const dealsMap = new Map<Address, DealTokenSwap>();
-
-              /**
-             * rootId is just some way of identifying where in Ceramic to search for this list of Deal ids.
-             */
-              const dealIds = this.dataSourceDeals.get<Array<string>>("root_stream_id");
-
-              for (const dealId of dealIds) {
-                const deal = this.createDealFromConfig(dealId);
-
-                const executedDeal = executedDealIds.get(dealId);
-                if (executedDeal) { // should only happen for test data
-                  deal.isExecuted = true;
-                  deal.executedAt = executedDeal.executedAt;
+                if (!dealDocs) {
+                  throw new Error("Deals are not accessible");
                 }
+                const dealsMap = new Map<Address, DealTokenSwap>();
 
-                dealsMap.set(dealId, deal);
-                /**
-               * remove the deal if it is corrupt
-               */
-                this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
-                  if (newValue) { // pretty much the only case
-                    this.deals.delete(deal.id);
-                  }
-                });
-                this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
+                // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
 
-                deal.initialize(); // set this off asyncronously.
+                for (const dealDoc of dealDocs) {
+                  this._createDeal(dealDoc, dealsMap);
+                }
+                this.deals = dealsMap;
+                resolve();
               }
-              this.deals = dealsMap;
-              this.initializing = false;
-              resolve();
+              catch (error) {
+                this.deals = new Map();
+                // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
+                this.eventAggregator.publish("handleException", error);
+                reject();
+              }
+              finally {
+                this.initializing = false;
+              }
             }
-            catch (error) {
-              this.deals = new Map();
-              // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-              this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
-              this.initializing = false;
-              reject();
-            }
-          }
+          });
         });
       });
   }
@@ -195,12 +160,21 @@ export class DealService {
         }
       });
 
+    // TODO figure out how to gkeep this up-to-date
+    this.executedDealIds = dealIds;
     return dealIds;
   }
 
-  private createDealFromConfig(dealId: Hash): DealTokenSwap {
+  private createDealFromDoc(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
     const deal = this.container.get(DealTokenSwap);
-    return deal.create(dealId);
+
+    const executedDeal = this.executedDealIds.get(dealDoc.id);
+    if (executedDeal) { // should only happen for test data
+      deal.isExecuted = true;
+      deal.executedAt = executedDeal.executedAt;
+    }
+
+    return deal.create(dealDoc);
   }
 
   public ensureInitialized(): Promise<void> {
@@ -212,5 +186,41 @@ export class DealService {
     for (const deal of this.dealsArray) {
       await deal.ensureInitialized();
     }
+  }
+
+  public async createDeal(registrationData: IDealRegistrationTokenSwap): Promise<DealTokenSwap> {
+    const dealDoc = await this.dataSourceDeals.createDeal(this.ethereumService.defaultAccountAddress, registrationData);
+    return this._createDeal(dealDoc);
+  }
+
+  public async updateRegistration(dealId: string, registrationData: IDealRegistrationTokenSwap): Promise<void> {
+    return this.dataSourceDeals.updateRegistration(
+      dealId,
+      this.ethereumService.defaultAccountAddress,
+      registrationData);
+  }
+
+  private _createDeal(
+    dealDoc: IDealTokenSwapDocument,
+    dealsMap?: Map<Address, DealTokenSwap>,
+  ): DealTokenSwap {
+    const deal = this.createDealFromDoc(dealDoc);
+
+    if (!dealsMap) {
+      dealsMap = this.deals;
+    }
+
+    dealsMap.set(deal.id, deal);
+    /**
+     * remove the deal if it is corrupt
+     */
+    this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
+      if (newValue) { // pretty much the only case
+        this.deals.delete(deal.id); // yes, this.deals
+      }
+    });
+    this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
+    deal.initialize(); // asynchronous
+    return deal;
   }
 }

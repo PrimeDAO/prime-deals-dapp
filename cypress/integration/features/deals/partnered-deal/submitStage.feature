@@ -2,6 +2,13 @@ Feature: Submit Stage - Open Deal (Partnered Deal)
   Scenario: View registration data
     # Then all the wizard registration data should be presented
 
+  # @todo: Uncomment, when have steps for going through whole registration wizard
+  # Scenario: Overview - Privacy label - Edit
+  #   Given I edit a "Partnered Deal"
+  #   And I'm in the "Submit" stage
+  #   Then the I should get the correct label "Make Deal Private" for the Privacy part
+
+
   Scenario: Prevent navigation - Direct navigation
     Given I navigate to the "Partnered Deal" "Submit" stage
     Then I should be redirected to the Home Page
