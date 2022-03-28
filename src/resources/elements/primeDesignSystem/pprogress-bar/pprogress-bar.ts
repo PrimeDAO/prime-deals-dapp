@@ -1,12 +1,13 @@
-import "./progress-bar.scss";
+import "./pprogress-bar.scss";
 import { bindable } from "aurelia-framework";
+import { customElement } from "aurelia-framework";
 
-export class ProgressBar {
+@customElement("pprogress-bar")
+export class PProgressBar {
   @bindable max: number;
   @bindable current: number;
   @bindable percent: number;
   @bindable color: string;
-
   constructor() {
     // you can inject the element or any DI in the constructor
   }

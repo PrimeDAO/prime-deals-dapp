@@ -1,5 +1,4 @@
 <template>
-  <require from="../resources/elements/chip/chip"></require>
   <require from="./swap-status/swap-status"></require>
   <main class="page animated-page au-animate fundContainer">
     <section class="section top">
@@ -17,17 +16,22 @@
       <div class="box-container">
         <div class="box-header">
           <div class="heading heading3 title gradient">${deal.daoRelatedToWallet.name} Deposit</div>
-          <chip
+          <pchip
             color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
             if.to-view="fundingDaysLeft >= 0"
           >
             <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
-          </chip>
-          <chip color="danger" if.to-view="fundingFailed">Target not reached</chip>
+          </pchip>
+          <pchip color="danger" if.to-view="deal.isFailed">Target not reached</pchip>
         </div>
         <div class="box-content">
           <div class="tokens">
-            <grid id="token-grid" rows.bind="deal.daoRelatedToWallet.tokens" columns.bind="transactionGridColumns" condensed.bind="true" ></grid>
+            <pgrid
+              id="token-grid"
+              rows.bind="deal.daoRelatedToWallet.tokens"
+              columns.bind="tokenGridColumns"
+              condensed.bind="true"
+            ></pgrid>
           </div>
         </div>
         <div class="container-footer">
@@ -71,6 +75,7 @@
                     css="pInput"
                     value.bind="depositAmount"
                     keyup.delegate="checkMaxAmount()"
+                    decimals.bind="deal.daoRelatedToWallet.tokens[selectedToken].decimals"
                   >
                   </numeric-input>
                   <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
@@ -88,7 +93,7 @@
               <pbutton
                 type="primary"
                 click.delegate="depositTokens()"
-                disabled.bind="!selectToken && !depositAmount"
+                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
                 >Deposit</pbutton
               >
             </div>
@@ -164,7 +169,12 @@
       >
         There are no transactions for this deal
       </div>
-      <grid id="transactions-grid" rows.bind="transactions" columns.bind="transactionColumns" condensed.bind="false" ></grid>
+      <pgrid
+        id="transactions-grid"
+        rows.bind="transactions"
+        columns.bind="transactionColumns"
+        condensed.bind="false"
+      ></pgrid>
       <template if.to-view="transactions.length > 10">
         <div if.to-view="!loadingTransactions && !seeingMore" class="seeMore">
           <div class="arrow">&darr;</div>

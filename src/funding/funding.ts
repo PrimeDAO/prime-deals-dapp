@@ -13,7 +13,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EthereumService } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
-import { autoinject, computedFrom, BindingEngine } from "aurelia-framework";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
@@ -42,26 +42,24 @@ const transactionColumns:
   >WITHDRAW</pbutton></div>  ` },
 ];
 
-const transactionGridColumns:{ field: string, headerText?: string, sortable?: boolean, width: string, headerClass?: string, template?: string }[] = [
-
+const tokenGridColumns:{ field: string, headerText?: string, sortable?: boolean, width: string, headerClass?: string, template?: string }[] = [
   {field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
   {field: "target", sortable: true, width: ".5fr", template: "${target | ethwei:row.decimals}" },
   {field: "deposited", sortable: true, width: ".5fr", template: "${deposited | ethwei:row.decimals}" },
   {field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${target | ethwei:row.decimals}</div>" },
-  {field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<progress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></progress-bar>" },
+  {field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></pprogress-bar>" },
   {field: "percentCompleted", sortable: true, headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
 ];
 
 @autoinject
 export class Funding {
   private transactionColumns = transactionColumns;
-  private transactionGridColumns = transactionGridColumns;
+  private tokenGridColumns = tokenGridColumns;
   private deal: DealTokenSwap;
   private dealId: string;
   private dealTargetReached = false;
   private depositAmount: BigNumber;
   private fundingDaysLeft: number;
-  private fundingFailed = false;
   private loadingTransactions = false;
   private refSelectToken: HTMLSelectElement;
   private seeingMore = false;
@@ -93,14 +91,8 @@ export class Funding {
     private eventAggregator: EventAggregator,
     private numberService: NumberService,
     private alertService: AlertService,
-    private bindingEngine: BindingEngine,
   ) {
-    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
-    this.bindingEngine
-      .propertyObserver(this.ethereumService, "defaultAccountAddress")
-      .subscribe(() => {
-        this.verifySecurity();
-      });
+
   }
 
   /**
@@ -122,7 +114,6 @@ export class Funding {
     //TODO get the tokenDepositContractUrl and set it
     //TODO get the tokenSwapModuleContractUrl and set it
   }
-
   public async bind(): Promise<void> {
     //get contract token information from the other DAO
     this.deal.otherDao.tokens.forEach((x: ITokenFunding) => {
@@ -172,7 +163,7 @@ export class Funding {
     //get the transactions for this deal
     this.deal.daoRelatedToWallet.tokens[0].amount = "12304.23423524343122343232243";
     this.transactions.push({
-      address: "0xdb6a67c15a0f10e1656517c463152c22468b78b8",
+      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
       createdAt: new Date(),
       dao: this.deal.daoRelatedToWallet,
       depositId: 1234,
@@ -198,9 +189,6 @@ export class Funding {
 
     //TODO subscribe to an event when a transaction happens on the blockchain and update the grid's transaction data
 
-    //this.fundingFailed = this.deal.isFailed;
-    this.fundingFailed = true; //TODO comment test data
-
     //TODO wire up to get the claim tokens data
     this.tokensToClaim.push({
       token: this.deal.daoRelatedToWallet.tokens[0],
@@ -217,6 +205,10 @@ export class Funding {
 
   public async canActivate() {
     await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
+    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
+    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+      this.verifySecurity();
+    });
   }
 
   /**
