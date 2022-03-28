@@ -2,6 +2,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import { ValidationController } from "aurelia-validation";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import "./daoStageContent.scss";
+import { availableSocialMedias } from "../../dealWizardTypes";
 
 export class DaoStageContent {
   @bindable name: string;
@@ -9,22 +10,7 @@ export class DaoStageContent {
   @bindable data: IDAO;
   @bindable form: ValidationController;
 
-  availableSocialMedias = [{
-    text: "Twitter",
-    value: "Twitter",
-  }, {
-    text: "Discord",
-    value: "Discord",
-  }, {
-    text: "Telegram",
-    value: "Telegram",
-  }, {
-    text: "Reddit",
-    value: "Reddit",
-  }, {
-    text: "LinkedIn",
-    value: "LinkedIn",
-  }];
+  availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 
   addRepresentative() {
     this.data.representatives.push({address: ""});
