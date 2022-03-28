@@ -58,7 +58,8 @@
         </div>
         <div class="tokenDetails">
           <span repeat.for="tokenDetails of deal.registrationData.primaryDAO.tokens">
-            <formatted-number thousands-separated value.to-view="tokenDetails.amount | ethwei"></formatted-number>
+            <formatted-number thousands-separated
+                              value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
             <b>${tokenDetails.symbol}</b>
           </span>
         </div>
@@ -73,7 +74,8 @@
         </div>
         <div class="tokenDetails">
           <span repeat.for="tokenDetails of deal.registrationData.partnerDAO.tokens">
-            <formatted-number thousands-separated value.to-view="tokenDetails.amount | ethwei"></formatted-number>
+            <formatted-number thousands-separated
+                              value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
             <b>${tokenDetails.symbol}</b>
           </span>
         </div>
@@ -90,3 +92,4 @@
     </temp>
   </div>
 
+</template>

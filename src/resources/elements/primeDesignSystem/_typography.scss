@@ -76,6 +76,11 @@
   font-weight: 400;
 }
 
+.bodySmallTextBold {
+  @extend .bodySmallText;
+  font-weight: 700;
+}
+
 
 @media screen and (max-width: $PageBreakWidth) {
   .heading01Gradient {

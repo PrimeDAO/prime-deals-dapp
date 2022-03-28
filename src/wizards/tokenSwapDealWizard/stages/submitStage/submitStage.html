@@ -78,7 +78,10 @@
         </section>
 
         <section class="stageSectionContent">
-          <div class="submitContentLabel">Private Offers</div>
+          <div class="submitContentLabel">
+            <template if.bind="isOpenProposalLike">Make Offers Private</template>
+            <template else>Make Deal Private</template>
+          </div>
           <div class="submitContent">
             <ptoggle value.bind="submitData.isPrivate" disabled></ptoggle>
           </div>

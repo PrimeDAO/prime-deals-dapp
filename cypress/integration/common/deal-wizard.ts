@@ -33,6 +33,10 @@ Given(/^I want to fill in information for the "(.*)" section$/, (_sectionTitle: 
   sectionTitle = _sectionTitle;
 });
 
+Given("I'm in the {string} stage", (stageTitle: string) => {
+  cy.contains("[data-test='pstepper-step']", stageTitle).click();
+});
+
 Then("I am presented the option to choose a partner", () => {
   cy.url().should("match", /(initiate\/token-swap$)/);
 });
@@ -112,6 +116,13 @@ When("I'm viewing the Partnered Deal Dashboard", () => {
 Given("I edit a \"Partnered Deal\"", () => {
   const dealId = "partnered_deals_stream_hash_3";
   const url = `partnered-deal/${dealId}/edit/submit`;
+  cy.visit(url);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+});
+
+Given("I edit an \"Open Proposal\"", () => {
+  const dealId = "open_deals_stream_hash_1";
+  const url = `open-proposal/${dealId}/edit/submit`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });

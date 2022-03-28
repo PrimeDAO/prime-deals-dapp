@@ -48,4 +48,12 @@ export class PTooltip {
       this.tooltip.disable();
     }
   }
+
+  contentChanged(content: string) {
+    if (content) {
+      this.tooltip.enable();
+    } else {
+      this.tooltip.disable();
+    }
+  }
 }
