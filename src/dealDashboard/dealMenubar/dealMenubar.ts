@@ -22,7 +22,7 @@ export class DealMenubar {
 
   @computedFrom("deal.status")
   get canEdit() {
-    return ![DealStatus.funding, DealStatus.swapping].includes(this.deal.status);
+    return ![DealStatus.funding].includes(this.deal.status);
   }
 
   async cancelDeal() {

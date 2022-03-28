@@ -39,7 +39,6 @@ export enum DealStatus {
   cancelled = "Cancelled",
   negotiating = "Negotiating",
   funding = "Funding in progress",
-  swapping = "Swapping",
 }
 
 export interface IDeal {

@@ -204,15 +204,6 @@ export class DealTokenSwap implements IDeal {
     return this.fundingWasInitiated && !this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
-  /**
-   * poor naming of this status by bizdev because it is being defined to
-   * actually be the funding period when swapping (claiming) isn't actually occurring.
-   */
-  @computedFrom("isFunding")
-  public get isSwapping(): boolean {
-    return this.isFunding;
-  }
-
   @computedFrom("isExecuted")
   public get isClaiming(): boolean {
     return this.isExecuted;
@@ -261,7 +252,7 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
   }
 
-  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
     else if (this.isCompleted) { return DealStatus.completed; }
@@ -269,7 +260,6 @@ export class DealTokenSwap implements IDeal {
     else if (this.isCancelled) { return DealStatus.cancelled; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
-    else if (this.isSwapping) { return DealStatus.swapping; }
     // else if (this.isTargetReached) { return DealStatus.targetReached; }
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }
