@@ -63,8 +63,9 @@ export class FirebasePlayground {
       createdBy: {
         address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
       },
-      createdAt: new Date(),
-      modifiedAt: new Date(),
+      clauseId: "asd",
+      createdAt: new Date().toISOString(),
+      modifiedAt: new Date().toISOString(),
       replies: 0,
       representatives: [{
         address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",

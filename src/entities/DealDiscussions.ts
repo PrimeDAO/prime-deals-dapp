@@ -44,8 +44,8 @@ export enum VoteType {
 export interface IDealDiscussion {
   version: string;
   discussionId: Hash;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
+  createdAt: string | null;
+  modifiedAt: string | null;
   createdBy: {
     address: string,
     name?: string | null;
@@ -54,6 +54,7 @@ export interface IDealDiscussion {
   admins: Array<{address: string}>;
   topic: string;
   clauseIndex: number | null;
+  clauseId: string | null;
   replies: number;
   key: string;
   dealId: string;
@@ -63,9 +64,10 @@ export class DealDiscussion implements IDealDiscussion {
   public discussionId: Hash;
   public version: string;
   public isPrivate: boolean;
-  public createdAt: Date | null;
-  public modifiedAt: Date | null;
+  public createdAt: string | null;
+  public modifiedAt: string | null;
   public createdBy: {address: string, name?: string | null} | null;
+  public clauseId: string;
   public representatives: Array<{address: string}>;
   public admins: Array<{address: string}>;
   public topic: string;

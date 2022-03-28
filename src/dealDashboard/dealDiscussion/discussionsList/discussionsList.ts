@@ -60,7 +60,7 @@ export class DiscussionsList{
         {
           id: key,
           ...this.discussionsService.discussions[key],
-          lastModified: this.dateService.formattedTime(this.discussionsService.discussions[key].modifiedAt).diff(),
+          lastModified: this.dateService.formattedTime(new Date(this.discussionsService.discussions[key].modifiedAt)).diff(),
         }
       ));
 
@@ -73,7 +73,7 @@ export class DiscussionsList{
       }
 
       this.times.intervals.push(setInterval((): void => {
-        listDiscussionItem.lastModified = this.dateService.formattedTime(listDiscussionItem.modifiedAt).diff();
+        listDiscussionItem.lastModified = this.dateService.formattedTime(new Date(listDiscussionItem.modifiedAt)).diff();
       }, 30000));
     });
 

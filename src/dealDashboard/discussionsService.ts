@@ -118,9 +118,10 @@ export class DiscussionsService {
   public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
     for (const [, discussion] of clauseDiscussions.entries()) {
-      this.discussions[discussion.discussionId] = {
+      console.log(discussion);
+      this.discussions[discussion.clauseId] = {
         ...discussion,
-        lastModified: this.dateService.formattedTime(discussion.modifiedAt).diff(),
+        lastModified: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
     }
   }
@@ -178,9 +179,10 @@ export class DiscussionsService {
         discussionId,
         topic: args.topic,
         clauseIndex: args.clauseIndex,
+        clauseId: args.clauseHash,
         createdBy,
-        createdAt: new Date(),
-        modifiedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
         lastModified: "< 1 min",
         replies: 0,
         representatives: [...new Set([...args.representatives])],
@@ -193,6 +195,8 @@ export class DiscussionsService {
         args.clauseHash,
         discussion,
       );
+
+      this.discussions[discussion.discussionId] = discussion;
 
       this.updateDiscussionListStatus(discussionId, new Date());
 
@@ -228,7 +232,7 @@ export class DiscussionsService {
     if (this.comments.length)
       this.discussions[discussionId].replies = this.comments.length;
     if (timestamp)
-      this.discussions[discussionId].modifiedAt = timestamp;
+      this.discussions[discussionId].modifiedAt = timestamp.toISOString();
 
     this.dataSourceDeals.addClauseDiscussion(
       this.discussions[discussionId].dealId,
