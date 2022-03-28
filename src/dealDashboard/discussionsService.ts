@@ -119,7 +119,7 @@ export class DiscussionsService {
     this.discussions = {};
     for (const [, discussion] of clauseDiscussions.entries()) {
       console.log(discussion);
-      this.discussions[discussion.clauseId] = {
+      this.discussions[discussion.discussionId] = {
         ...discussion,
         lastModified: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
@@ -140,9 +140,8 @@ export class DiscussionsService {
   public async createDiscussion(
     dealId: string,
     args: {
-      clauseHash: string | null,
+      discussionId: string | null,
       topic: string,
-      clauseIndex: number | null,
       isPublic: boolean,
       representatives?: Array<{address: string}>,
       admins?: Array<string>,
@@ -156,8 +155,6 @@ export class DiscussionsService {
       await this.setEnsName(createdBy.address);
     }
     createdBy.name = this.ensName;
-
-    const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
@@ -176,10 +173,8 @@ export class DiscussionsService {
       const discussion = {
         dealId,
         version: "0.0.1",
-        discussionId,
+        discussionId: args.discussionId,
         topic: args.topic,
-        clauseIndex: args.clauseIndex,
-        clauseId: args.clauseHash,
         createdBy,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
@@ -192,15 +187,15 @@ export class DiscussionsService {
 
       const dealData = this.dealService.deals.get(dealId);
       await dealData.addClauseDiscussion(
-        args.clauseHash,
+        args.discussionId,
         discussion,
       );
 
       this.discussions[discussion.discussionId] = discussion;
 
-      this.updateDiscussionListStatus(discussionId, new Date());
+      this.updateDiscussionListStatus(discussion.discussionId, new Date());
 
-      return discussionId;
+      return discussion.discussionId;
     }
   }
 
@@ -237,7 +232,7 @@ export class DiscussionsService {
     this.dataSourceDeals.addClauseDiscussion(
       this.discussions[discussionId].dealId,
       this.ethereumService.defaultAccountAddress,
-      `${this.discussions[discussionId].clauseIndex}`,
+      discussionId,
       this.discussions[discussionId],
     );
   }

@@ -289,14 +289,14 @@ export class FirestoreService<
    * @param dealId string
    * @param discussion IDealDiscussion
    */
-  public async addClauseDiscussion(dealId: string, clauseId: string, discussion: IDealDiscussion): Promise<void> {
+  public async addClauseDiscussion(dealId: string, discussion: IDealDiscussion): Promise<void> {
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
 
       await setDoc(
         ref,
         {
-          clauseDiscussions: {[clauseId]: discussion},
+          clauseDiscussions: {[discussion.discussionId]: discussion},
         },
         {merge: true},
       );

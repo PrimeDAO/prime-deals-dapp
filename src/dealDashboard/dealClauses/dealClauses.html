@@ -9,10 +9,9 @@
       repeat.for="clause of clauses">
       <span class="marker">${$index + 1}</span>
       <pre class="body">${clause.text}</pre>
-      ${clause.id}
       <span
         class="button"
-        click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)"
+        click.delegate="addOrReadDiscussion(clause.text, clause.id)"
         if.to-view="authorized">
         <div
           if.to-view="!discussionsService.discussions[clause.id]">Begin A Discussion</div>

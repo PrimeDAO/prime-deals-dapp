@@ -53,17 +53,15 @@ export class FirebasePlayground {
     this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 
-  addDealDiscussion(dealId: string, clauseIndex: number) {
+  addDealDiscussion(dealId: string) {
     const discussion: IDealDiscussion = {
       dealId,
       version: "0.0.1",
       discussionId: new Date().toISOString(),
       topic: "Topic",
-      clauseIndex,
       createdBy: {
         address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
       },
-      clauseId: "asd",
       createdAt: new Date().toISOString(),
       modifiedAt: new Date().toISOString(),
       replies: 0,
@@ -75,7 +73,7 @@ export class FirebasePlayground {
       }],
       key: new Date().toISOString(),
     };
-    this.firestoreService.addClauseDiscussion(dealId, `${clauseIndex}`, discussion);
+    this.firestoreService.addClauseDiscussion(dealId, discussion);
   }
 
   async updateDealIsWithdrawn(dealId: string, value: boolean) {

@@ -35,6 +35,11 @@ export class DiscussionsList{
     intervals: Array(typeof setInterval),
   };
 
+  private findClauseIndex(discussionId: string): string {
+    const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
+    return (discussionsIds.indexOf(discussionId) + 1).toString() || "-";
+  }
+
   constructor(
     private eventAggregator: EventAggregator,
     private router: Router,

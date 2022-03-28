@@ -1,3 +1,4 @@
+import { IDealDiscussion } from "./DealDiscussions";
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
 export interface IVoteInfo {
@@ -22,7 +23,7 @@ export interface IDealVotingSummary {
 export interface IDealTokenSwapDocument {
   id: string;
   registrationData: IDealRegistrationTokenSwap;
-  clauseDiscussions: Record<string, any>; // TODO should be IDealDiscussion, but breaks firebaseFunctions build
+  clauseDiscussions: Record<string, IDealDiscussion>; // TODO should be IDealDiscussion, but breaks firebaseFunctions build
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
   createdAt: string,
@@ -45,7 +46,7 @@ export enum DealStatus {
 export interface IDeal {
   id: string;
   corrupt: boolean;
-  clauseDiscussions: Map<string, any>;
+  clauseDiscussions: Map<string, IDealDiscussion>;
   registrationData: any;
   initialize(): Promise<void>;
   create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;

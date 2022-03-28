@@ -368,14 +368,14 @@ export class DealTokenSwap implements IDeal {
     return this.initializedPromise;
   }
 
-  public addClauseDiscussion(clauseId: string, discussion: IDealDiscussion): Promise<void> {
+  public addClauseDiscussion(discussionId: string, discussion: IDealDiscussion): Promise<void> {
     return this.dataSourceDeals.addClauseDiscussion(
       this.id,
       this.ethereumService.defaultAccountAddress,
-      clauseId,
+      discussionId,
       discussion,
     ).then(() => {
-      this.clauseDiscussions.set(clauseId, discussion);
+      this.clauseDiscussions.set(discussionId, discussion);
     });
   }
 

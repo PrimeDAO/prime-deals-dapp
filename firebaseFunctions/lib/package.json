@@ -1,0 +1,176 @@
+{
+    "name": "@primedao/prime-deals-dapp",
+    "version": "0.0.0",
+    "description": "The PrimeDAO’s Home for DAO to DAO Deals",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PrimeDAO/prime-deals-dapp"
+    },
+    "author": "CL Cybernetix GmbH",
+    "homepage": "./",
+    "license": "MIT",
+    "scripts": {
+        "build": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env production extractCss",
+        "build-kovan": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=kovan webpack --env production extractCss",
+        "build-rinkeby": "cross-env DOTENV_CONFIG_PATH=.env.production NETWORK=rinkeby webpack --env production extractCss",
+        "build-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack --env development extractCss",
+        "build-dev-mainnet": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=mainnet webpack --env development extractCss",
+        "serve": "serve -s dist --listen=3340 --cors",
+        "serve-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env development",
+        "serve-dev-mainnet": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=mainnet webpack-dev-server --env development",
+        "start-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env development --open",
+        "analyze": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env production analyze",
+        "test": "au test",
+        "e2e": "npx cypress open",
+        "e2e-run": "npx cypress run",
+        "lint": "eslint --ext .ts ./src ./test ./cypress",
+        "lint.fix": "npm run lint -- --fix",
+        "fetchContracts": "node scripts/fetchContracts.js",
+        "firebase": "npm run firebase-emulators:start",
+        "firebase:all": "npm run firebase-functions:watch & npm run firebase-emulators:start",
+        "firebase-export": "firebase emulators:export --force firebase_seed",
+        "firebase-emulators:start": "firebase emulators:start --project=default --import=firebase_seed",
+        "firebase-functions:watch": "cd firebaseFunctions && npm run build:watch",
+        "firebase-deploy:development": "firebase deploy --project=development",
+        "firebase-deploy:staging": "firebase deploy --project=staging",
+        "firebase-deploy:master": "firebase deploy --project=production",
+        "postinstall": "cd firebaseFunctions && npm ci && npm run build"
+    },
+    "dependencies": {
+        "@makerdao/multicall": "^0.12.0",
+        "@metamask/detect-provider": "^1.2.0",
+        "@stackoverflow/stacks": "^0.74.0",
+        "@theconvospace/sdk": "^0.3.29",
+        "@toruslabs/torus-embed": "1.8.6",
+        "@walletconnect/web3-provider": "^1.3.6",
+        "ably": "^1.2.17",
+        "aurelia-animator-css": "^1.0.4",
+        "aurelia-bootstrapper": "^2.3.3",
+        "aurelia-dialog": "^2.0.0",
+        "aurelia-event-aggregator": "^1.0.3",
+        "aurelia-typed-observable-plugin": "^0.4.2",
+        "aurelia-validation": "^2.0.0-rc2",
+        "axios": "^0.21.4",
+        "bignumber.js": "^9.0.1",
+        "cids": "^1.1.7",
+        "dompurify": "^2.2.9",
+        "ethers": "^5.3.0",
+        "firebase": "^9.6.8",
+        "json-to-graphql-query": "^2.0.0",
+        "litepicker": "^2.0.11",
+        "marked": "^2.0.7",
+        "moment-timezone": "^0.5.31",
+        "numeral": "^2.0.6",
+        "rxjs": "^6.6.3",
+        "slim-select": "^1.27.1",
+        "the-new-css-reset": "^1.4.4",
+        "tippy.js": "^6.2.7",
+        "web3modal": "^1.9.0"
+    },
+    "devDependencies": {
+        "@badeball/cypress-cucumber-preprocessor": "^6.0.0",
+        "@cypress/webpack-preprocessor": "^5.11.0",
+        "@types/jest": "^26.0.14",
+        "@types/node": "^14.11.2",
+        "@types/webpack": "^4.41.22",
+        "@typescript-eslint/eslint-plugin": "^5.9.1",
+        "@typescript-eslint/parser": "^5.9.1",
+        "ajv": "^8.8.2",
+        "app-settings-loader": "^2.0.4",
+        "aurelia-cli": "^2.0.2",
+        "aurelia-loader-nodejs": "^1.1.0",
+        "aurelia-pal-nodejs": "^2.0.0",
+        "aurelia-testing": "^1.0.0",
+        "aurelia-webpack-plugin": "^5.0.3",
+        "babel-eslint": "^10.1.0",
+        "clean-webpack-plugin": "^4.0.0",
+        "copy-webpack-plugin": "^10.2.4",
+        "cross-env": "^7.0.3",
+        "css-loader": "^6.6.0",
+        "cypress": "^9.2.0",
+        "dotenv": "^8.2.0",
+        "duplicate-package-checker-webpack-plugin": "^3.0.0",
+        "eslint": "^8.6.0",
+        "eslint-plugin-cypress": "^2.12.1",
+        "eslint-plugin-rxjs": "^2.1.2",
+        "expose-loader": "^3.1.0",
+        "firebase-tools": "^10.2.2",
+        "fs-extra": "^9.0.1",
+        "glob": "^7.1.7",
+        "gulp": "^4.0.2",
+        "gulp-eslint": "^6.0.0",
+        "html-loader": "^3.1.0",
+        "html-webpack-plugin": "^5.5.0",
+        "jest": "^26.4.2",
+        "jest-cli": "^26.4.2",
+        "jest-transform-stub": "^2.0.0",
+        "json-loader": "^0.5.7",
+        "mini-css-extract-plugin": "^2.5.3",
+        "minimatch": "^3.0.4",
+        "node-sass": "^4.14.1",
+        "promise-polyfill": "^8.1.3",
+        "sass-loader": "^12.4.0",
+        "serve": "^11.3.2",
+        "style-loader": "^3.3.1",
+        "tree-kill": "^1.2.2",
+        "ts-jest": "^26.4.1",
+        "ts-loader": "^9.2.6",
+        "typescript": "^4.0.3",
+        "wallaby-webpack": "^3.9.16",
+        "webpack": "^5.68.0",
+        "webpack-bundle-analyzer": "^4.5.0",
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.7.4"
+    },
+    "engines": {
+        "node": ">=14.11.0 <15"
+    },
+    "browser": {
+        "http": false
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^aurelia-binding$": "<rootDir>/node_modules/aurelia-binding"
+        },
+        "modulePaths": [
+            "<rootDir>/src",
+            "<rootDir>/node_modules"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "js",
+            "json"
+        ],
+        "transform": {
+            "^.+\\.(css|less|sass|scss|styl|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "jest-transform-stub",
+            "^.+\\.ts$": "ts-jest"
+        },
+        "testRegex": "\\.spec\\.(ts|js)$",
+        "setupFiles": [
+            "<rootDir>/test/jest-pretest.ts"
+        ],
+        "testEnvironment": "node",
+        "collectCoverage": true,
+        "collectCoverageFrom": [
+            "src/**/*.{js,ts}",
+            "!**/*.spec.{js,ts}",
+            "!**/node_modules/**",
+            "!**/test/**"
+        ],
+        "coverageDirectory": "<rootDir>/test/coverage-jest",
+        "coverageReporters": [
+            "json",
+            "lcov",
+            "text",
+            "html"
+        ]
+    },
+    "cypress-cucumber-preprocessor": {
+        "stepDefinitions": [
+            "cypress/integration/[filepath]/**/*.{js,ts}",
+            "cypress/integration/[filepath].{js,ts}",
+            "cypress/integration/**/*.{js,ts}",
+            "cypress/integration/common/**/*.{js,ts}"
+        ]
+    }
+}

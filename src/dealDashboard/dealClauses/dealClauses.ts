@@ -31,20 +31,25 @@ export class DealClauses {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private async addOrReadDiscussion(topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> {
-    this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
-      await this.discussionsService.createDiscussion(
+  private async addOrReadDiscussion(topic: string, clauseId: string | null): Promise<void> {
+    console.log("addOrReadDiscussion", topic, clauseId);
+
+    if (this.deal.clauseDiscussions.get(clauseId)) {
+      this.discussionId = clauseId;
+    } else {
+      // If no discussion hash provided- create a new discussion
+      this.discussionId = await this.discussionsService.createDiscussion(
         this.deal.id,
         {
           topic,
-          clauseHash,
-          clauseIndex,
+          discussionId: clauseId,
           admins: [this.ethereumService.defaultAccountAddress],
           representatives: [{address: this.ethereumService.defaultAccountAddress}],
           isPublic: true,
         },
       );
-    this.discussionsService.autoScrollAfter(0);
+      this.discussionsService.autoScrollAfter(0);
+    }
   }
 
   authorizedChanged(): void {
