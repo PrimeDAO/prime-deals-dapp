@@ -1,11 +1,10 @@
 <template>
-  <require from="../../resources/elements/chip/chip"></require>
   <pcard>
     <header>
       <div class="daoName">
         <dao-icon-name primary-dao.to-view="dao"></dao-icon-name>
       </div>
-      <chip color="${chipColor}"> ${status} </chip>
+      <pchip color="${chipColor}"> ${status} </pchip>
     </header>
     <div class="content">
       <div class="token-progress" repeat.for="token of dao.tokens" if.to-view="!swapCompleted">
@@ -19,7 +18,7 @@
             <div>${token.percentCompleted}%</div>
           </div>
           <div class="progress-bar">
-            <progress-bar max.bind="token.target" current.bind="token.deposited"></progress-bar>
+            <pprogress-bar max.bind="token.target" current.bind="token.deposited"></pprogress-bar>
           </div>
         </div>
       </div>

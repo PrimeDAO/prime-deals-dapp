@@ -1,11 +1,13 @@
 import { bindable, computedFrom, autoinject, View } from "aurelia-framework";
+import { customElement } from "aurelia-framework";
 import { InlineViewStrategy } from "aurelia-templating";
-import "./grid.scss";
+import "./pgrid.scss";
 import { SortOrder, SortService } from "services/SortService";
 import { Utils } from "services/utils";
 
 @autoinject
-export class Grid {
+@customElement("pgrid")
+export class PGrid {
   @bindable id?: string;
   @bindable condensed = false;
   @bindable public rows: [] = [];
@@ -48,7 +50,7 @@ export class Grid {
 
   @computedFrom("columns")
   get gridTemplateColumnText() {
-    return this.columns.map(y => y.width).join(" ");
+    return this.columns?.map(y => y.width).join(" ");
   }
 
 }

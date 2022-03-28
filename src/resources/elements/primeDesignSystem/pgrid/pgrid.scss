@@ -4,8 +4,6 @@
   font-size: 16px;
 
   .row {
-  
-
     cursor: default;
     /**
        * so the grid will be composed of the contents of the row element,
@@ -41,8 +39,8 @@
         display: flex;
         align-items: center;
 
-        &.condensed{
-          height:40px;
+        &.condensed {
+          height: 40px;
         }
       }
       /**
@@ -103,6 +101,21 @@
     &.header {
       .cell {
         border-bottom: 1px solid $Secondary02;
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 24px;
+        font-family: Aeonik;
+      }
+    }
+    .cell {
+      &.body {
+        &.cell {
+          font-size: 16px;
+          font-family: Aeonik;
+          font-weight: 400;
+          color: $Neutral03;
+        }
       }
     }
     &.body {

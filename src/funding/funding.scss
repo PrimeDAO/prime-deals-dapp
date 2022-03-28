@@ -314,50 +314,10 @@ $hover-transition-speed-slow: 0.4s;
     }
     &.transactions {
       #transactions-grid {
-        &:not(grid) {
-          margin-bottom: 20px;
-          display: grid;
-          grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.2fr 0.25fr;
-        }
-
         .row {
-          &.body {
-            .cell {
-              &.required {
-                color: $Orange;
-              }
-            }
-          }
-          cursor: default;
-          /**
-             * so the grid will be composed of the contents of the row element,
-             * not the row element itself.
-             */
-          display: contents;
-
-          &:hover {
-            text-decoration: none;
-          }
-
-          .cell.header {
-            padding: 10px 0;
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 24px;
-            font-family: Aeonik;
-          }
-
           .cell {
             &.body {
-              display: flex;
-              align-items: center;
               &.cell {
-                border-bottom: 1px solid $Border01;
-                padding: 20px 0;
-                font-size: 16px;
-                font-family: Aeonik;
-                font-weight: 400;
-                color: $Neutral03;
                 .Dao .name {
                   font-size: 16px;
                   font-weight: 400;
@@ -372,13 +332,6 @@ $hover-transition-speed-slow: 0.4s;
                   }
                 }
               }
-              &.address {
-                .transactionType {
-                  color: $Secondary05;
-                  font-size: 14px;
-                  font-weight: 700;
-                }
-              }
               div.type {
                 text-transform: capitalize;
                 i {
@@ -389,41 +342,9 @@ $hover-transition-speed-slow: 0.4s;
                 display: grid;
                 grid-template-columns: 24px auto;
                 grid-column-gap: 11px;
-              }
-              &.txid {
-                a {
-                  display: flex;
-                  column-gap: 4px;
-                  align-items: center;
-                  .etherscan-button {
-                    outline: none;
-                    path {
-                      fill: $Secondary05;
-                    }
-                    cursor: pointer;
-                    &:hover > path {
-                      fill: $White;
-                    }
-                  }
+                span {
+                  align-self: center;
                 }
-              }
-              &.withdraw {
-                justify-content: right;
-              }
-            }
-            /**
-               * for when columns get scrunched together
-               */
-            &:not(:nth-of-type(n + 7)) {
-              padding-right: 12px;
-            }
-
-            &.header {
-              &.sortable {
-                cursor: pointer;
-              }
-              &.cell {
-                border-bottom: 1px solid $Secondary02;
               }
             }
           }

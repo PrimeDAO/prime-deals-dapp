@@ -1,0 +1,24 @@
+<template>
+  <p>
+    The grid component takes two main variables: Rows and Columns. The rows will the raw data passed
+    in. The columns will be the header names and the aurelia template that will render inside of
+    that column's cell for each data element.
+  </p>
+  <br />
+  <h2>Full grid</h2>
+  <br />
+  <pgrid
+    id="transactions-grid"
+    rows.bind="data"
+    columns.bind="columns"
+    condensed.bind="false"
+  ></pgrid>
+  <br />
+  <h2>Condensed grid</h2>
+  <br /><pgrid
+    id="token-grid"
+    rows.bind="condensedData"
+    columns.bind="condensedColumns"
+    condensed.bind="true"
+  ></pgrid>
+</template>
