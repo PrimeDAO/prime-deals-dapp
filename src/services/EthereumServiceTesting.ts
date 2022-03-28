@@ -1,69 +1,26 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 const ADDRESS = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
 
 import detectEthereumProvider from "@metamask/detect-provider";
 import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { BigNumber, BigNumberish, ethers, Signer } from "ethers";
+import { ethers, Signer } from "ethers";
 import { BaseProvider, ExternalProvider, Web3Provider, Network } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
-import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
+import { getAddress } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
-import { Utils } from "services/utils";
-import { EthereumService } from "./EthereumService";
+import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, IChainEventInfo, Networks } from "./EthereumService";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
   on(eventName: "chainChanged", handler: (chainId: number) => void);
   on(eventName: "connect", handler: (info: { chainId: number }) => void);
   on(eventName: "disconnect", handler: (error: { code: number; message: string }) => void);
-}
-
-export type Address = string;
-export type Hash = string;
-
-export interface IBlockInfoNative {
-  hash: Hash;
-  /**
-   * previous block
-   */
-  parentHash: Hash;
-  /**
-   *The height(number) of this
-   */
-  number: number;
-  timestamp: number;
-  /**
-   * The maximum amount of gas that this block was permitted to use. This is a value that can be voted up or voted down by miners and is used to automatically adjust the bandwidth requirements of the network.
-   */
-  gasLimit: BigNumber;
-  /**
-   * The total amount of gas used by all transactions in this
-   */
-  gasUsed: BigNumber
-  transactions: Array<Hash>;
-}
-
-export interface IBlockInfo extends IBlockInfoNative {
-  blockDate: Date;
-}
-
-export type AllowedNetworks = "mainnet" | "kovan" | "rinkeby";
-
-export enum Networks {
-  Mainnet = "mainnet",
-  Rinkeby = "rinkeby",
-  Kovan = "kovan",
-}
-
-export interface IChainEventInfo {
-  chainId: number;
-  chainName: AllowedNetworks;
-  provider: Web3Provider;
 }
 
 @autoinject
@@ -80,33 +37,6 @@ export class EthereumServiceTesting {
     "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
     "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
   };
-  private static providerOptions = {
-    torus: {
-      package: Torus, // required
-      options: {
-        network: "",
-        // networkParams: {
-        //   host: "https://localhost:8545", // optional
-        //   chainId: 1337, // optional
-        //   networkId: 1337, // optional
-        // },
-        // config: {
-        //   buildEnv: "development", // optional
-        // },
-      },
-    },
-    // TODO: test with walletconnect
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        rpc: {
-          1: EthereumService.ProviderEndpoints[Networks.Mainnet],
-          4: EthereumService.ProviderEndpoints[Networks.Rinkeby],
-          42: EthereumService.ProviderEndpoints[Networks.Kovan],
-        },
-      },
-    },
-  };
 
   public static targetedNetwork: AllowedNetworks;
   public static targetedChainId: number;
@@ -115,14 +45,6 @@ export class EthereumServiceTesting {
    * provided by ethers
    */
   public readOnlyProvider: BaseProvider;
-
-  private blockSubscribed: boolean;
-
-  private handleNewBlock = async (blockNumber: number): Promise<void> => {
-    const block = await this.getBlock(blockNumber);
-    this.lastBlock = block;
-    this.eventAggregator.publish("Network.NewBlock", block);
-  };
 
   public initialize(network: AllowedNetworks): void {
 
@@ -142,11 +64,6 @@ export class EthereumServiceTesting {
     // comment out to run DISCONNECTED
     this.readOnlyProvider = ethers.getDefaultProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]);
     this.readOnlyProvider.pollingInterval = 15000;
-
-    if (!this.blockSubscribed) {
-      this.readOnlyProvider.on("block", (blockNumber: number) => this.handleNewBlock(blockNumber));
-      this.blockSubscribed = true;
-    }
   }
 
   private web3Modal: Web3Modal;
@@ -314,107 +231,15 @@ export class EthereumServiceTesting {
     this.fireAccountsChangedHandler(ADDRESS);
 
     return;
-
-    try {
-      if (web3ModalProvider) {
-        const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
-        (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
-        const network = await this.getNetwork(walletProvider);
-        if (network.name !== EthereumService.targetedNetwork) {
-          this.eventAggregator.publish("Network.wrongNetwork", { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
-          return;
-        }
-        /**
-           * we will keep the original readonly provider which should still be fine since
-           * the targeted network cannot have changed.
-           */
-        this.walletProvider = walletProvider;
-        this.web3ModalProvider = web3ModalProvider;
-        this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
-        this.defaultAccountAddress = await this.getDefaultAccountAddress();
-        /**
-           * because the events aren't fired on first connection
-           */
-        // this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
-        this.fireAccountsChangedHandler(this.defaultAccountAddress);
-
-        this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
-
-        this.web3ModalProvider.on("chainChanged", this.handleChainChanged);
-
-        this.web3ModalProvider.on("disconnect", this.handleDisconnect);
-
-        // this.cachedProvider = this.walletProvider;
-        // this.cachedWalletAccount = this.defaultAccountAddress;
-      }
-    } catch (error) {
-      this.consoleLogService.logMessage(`Error connecting to wallet provider ${error?.message}`, "error");
-      // this.cachedProvider = null;
-      // this.cachedWalletAccount = null;
-      // this.web3Modal?.clearCachedProvider();
-    }
   }
-
-  // private cachedProviderKey = "cachedWalletProvider";
-  // private cachedWalletAccountKey = "cachedWalletAccount";
-
-  // private get cachedProvider(): any {
-  //   return JSON.parse(this.storageService.lsGet(this.cachedProviderKey));
-  // }
-
-  // private set cachedProvider(provider: any) {
-  //   if (provider) {
-  //     this.storageService.lsSet(this.cachedProviderKey, JSON.stringify(provider));
-  //   } else {
-  //     this.storageService.lsRemove(this.cachedProviderKey);
-  //   }
-  // }
-
-  // private get cachedWalletAccount(): Address {
-  //   return this.storageService.lsGet(this.cachedWalletAccountKey);
-  // }
-
-  // private set cachedWalletAccount(account: Address) {
-  //   if (account) {
-  //     this.storageService.lsSet(this.cachedWalletAccountKey, account);
-  //   } else {
-  //     this.storageService.lsRemove(this.cachedWalletAccountKey);
-  //   }
-  // }
-
-  private handleAccountsChanged = async (accounts: Array<Address>) => {
-    this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
-    this.defaultAccountAddress = await this.getDefaultAccountAddress();
-    this.fireAccountsChangedHandler(accounts?.[0]);
-  };
-
-  private handleChainChanged = async (chainId: number) => {
-    const network = ethers.providers.getNetwork(Number(chainId));
-
-    if (network.name !== EthereumService.targetedNetwork) {
-      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
-      return;
-    }
-    else {
-      this.fireChainChangedHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
-    }
-  };
-
-  private handleDisconnect = (error: { code: number; message: string }) => {
-    this.disconnect(error);
-  };
 
   public disconnect(error: { code: number; message: string }): void {
     // this.cachedProvider = null;
     // this.cachedWalletAccount = null;
     // this.web3Modal?.clearCachedProvider(); // so web3Modal will let the user reconnect
-    this.web3ModalProvider?.removeListener("accountsChanged", this.handleAccountsChanged);
-    this.web3ModalProvider?.removeListener("chainChanged", this.handleChainChanged);
-    this.web3ModalProvider?.removeListener("disconnect", this.handleDisconnect);
     this.defaultAccount = undefined;
     this.defaultAccountAddress = undefined;
     this.fireAccountsChangedHandler(null);
-    this.web3ModalProvider = undefined;
     this.walletProvider = undefined;
     this.fireDisconnectHandler(error);
   }
@@ -452,62 +277,16 @@ export class EthereumServiceTesting {
   }
 
   public async addTokenToMetamask(
-    tokenAddress: Address,
-    tokenSymbol: string,
-    tokenDecimals: number,
-    tokenImage: string,
+    _tokenAddress: Address,
+    _tokenSymbol: string,
+    _tokenDecimals: number,
+    _tokenImage: string,
   ): Promise<boolean> {
-
-    let wasAdded = false;
-
-    if (this.walletProvider) {
-
-      if (this.getMetamaskHasToken(tokenAddress)) {
-        return true;
-      }
-
-      try {
-      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-        wasAdded = await (this.web3ModalProvider as any).request({
-          method: "wallet_watchAsset",
-          params: {
-            type: "ERC20", // Initially only supports ERC20, but eventually more!
-            options: {
-              address: tokenAddress, // The address that the token is at.
-              symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-              decimals: tokenDecimals, // The number of decimals in the token
-              image: tokenImage, // A string url of the token logo
-            },
-          },
-        });
-
-        if (wasAdded) {
-          this.setMetamaskHasToken(tokenAddress);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    return wasAdded;
+    return Promise.resolve(false);
   }
 
-  public getMetamaskHasToken(tokenAddress: Address): boolean {
-    if (!this.defaultAccountAddress) {
-      throw new Error("metamaskHasToken: no account");
-    }
-    return !!this.storageService.lsGet(this.getKeyForMetamaskHasToken(tokenAddress));
-  }
-
-  private getKeyForMetamaskHasToken(tokenAddress: Address): string {
-    return `${this.defaultAccountAddress}_${tokenAddress}`;
-  }
-
-  private setMetamaskHasToken(tokenAddress: Address): void {
-    if (!this.defaultAccountAddress) {
-      throw new Error("metamaskHasToken: no account");
-    }
-    this.storageService.lsSet(this.getKeyForMetamaskHasToken(tokenAddress), true);
+  public getMetamaskHasToken(_tokenAddress: Address): boolean {
+    return false;
   }
 
   public lastBlock: IBlockInfo;
@@ -515,9 +294,7 @@ export class EthereumServiceTesting {
   /**
    * so unit tests will be able to complete
    */
-  public dispose(): void {
-    this.readOnlyProvider.off("block", (blockNumber: number) => this.handleNewBlock(blockNumber));
-  }
+  public dispose(): void {}
 
   private async getBlock(blockNumber: number): Promise<IBlockInfo> {
     const block = await this.readOnlyProvider.getBlock(blockNumber) as unknown as IBlockInfo;
@@ -536,45 +313,6 @@ export class EthereumServiceTesting {
     return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
   }
 }
-
-/**
- * @param ethValue
- * @param decimals Can be a number or:
- *  "wei",
- *  "kwei",
- *  "mwei",
- *  "gwei",
- *  "szabo",
- *  "finney",
- *  "ether",
- * @returns
- */
-export const toWei = (ethValue: BigNumberish, decimals: string | number): BigNumber => {
-  const t = typeof ethValue;
-  if (t === "string" || t === "number") {
-    // avoid underflows
-    ethValue = Utils.truncateDecimals(Number(ethValue), Number(decimals));
-  }
-  return parseUnits(ethValue.toString(), decimals);
-};
-
-/**
- * @param weiValue
- * @param decimals Can be a number or:
- *  "wei",
- *  "kwei",
- *  "mwei",
- *  "gwei",
- *  "szabo",
- *  "finney",
- *  "ether",
- * @returns
- */
-export const fromWei = (weiValue: BigNumberish, decimals: string | number): string => {
-  return formatUnits(weiValue.toString(), decimals);
-};
-
-export const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 // /* eslint-disable @typescript-eslint/no-unused-vars */
 // /* eslint-disable no-console */
