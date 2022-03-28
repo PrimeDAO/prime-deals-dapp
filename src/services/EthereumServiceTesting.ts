@@ -187,8 +187,10 @@ export class EthereumServiceTesting {
     }
     console.info(`account changed: ${account}`);
 
-    const mockAddress = localStorage.getItem("PRIME_E2E_ADDRESS");
-    this.eventAggregator.publish("Network.Changed.Account", mockAddress);
+    if (account !== null) {
+      account = localStorage.getItem("PRIME_E2E_ADDRESS");
+    }
+    this.eventAggregator.publish("Network.Changed.Account", account);
   }
   private fireChainChangedHandler(info: IChainEventInfo) {
     console.info(`chain changed: ${info.chainId}`);
@@ -372,6 +374,7 @@ export class EthereumServiceTesting {
   };
 
   public disconnect(error: { code: number; message: string }): void {
+    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 375 ~ EthereumServiceTesting ~ disconnect ~ disconnect");
     // this.cachedProvider = null;
     // this.cachedWalletAccount = null;
     // this.web3Modal?.clearCachedProvider(); // so web3Modal will let the user reconnect
@@ -487,6 +490,7 @@ export class EthereumServiceTesting {
   }
 
   private async getBlock(blockNumber: number): Promise<IBlockInfo> {
+    return;
     const block = await this.readOnlyProvider.getBlock(blockNumber) as unknown as IBlockInfo;
     block.blockDate = new Date(block.timestamp * 1000);
     return block;
