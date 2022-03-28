@@ -4,6 +4,7 @@ import { Aurelia } from "aurelia-framework";
 import * as environment from "../config/environment.json";
 import { PLATFORM } from "aurelia-pal";
 import { AllowedNetworks, EthereumService, Networks } from "services/EthereumService";
+import { IEthereumService } from "services/IEthereumService";
 import { EventConfigException } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ContractsService } from "services/ContractsService";
@@ -20,8 +21,9 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDataSourceDeals2 } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
-import { EthereumServiceTesting } from "services/EthereumServiceTesting";
+// import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirebaseService } from "services/FirebaseService";
+import { EthereumServiceTesting } from "../cypress/integration/common/EthereumServiceTesting";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -40,8 +42,6 @@ export function configure(aurelia: Aurelia): void {
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
-  // const isCypress = (window as any).Cypress;
-  const isCypress = true;
 
   if (inDev) {
     aurelia.use.developmentLogging(); // everything
@@ -64,15 +64,23 @@ export function configure(aurelia: Aurelia): void {
       const firebaseService = aurelia.container.get(FirebaseService);
       firebaseService.initialize();
 
-      if (isCypress) {
-        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+      const cypress = (window as any).Cypress;
+      if (cypress) {
+        console.log("TCL ~ file: main.ts ~ line 68 ~ aurelia.start ~ cypress");
+        // cypress.registerApplicationForTesting(aurelia);
+        aurelia.use.singleton(IEthereumService, EthereumServiceTesting);
+      } else {
+        aurelia.use.singleton(IEthereumService, EthereumService);
       }
 
-      const ethereumService = aurelia.container.get(EthereumService);
+      const ethereumService = aurelia.container.get(IEthereumService);
+      // const ethereumService = aurelia.container.get(EthereumService);
+      console.log("TCL ~ file: main.ts ~ line 77 ~ aurelia.start ~ initialize");
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
 
-      const targetNetwork = isCypress ? EthereumServiceTesting.targetedNetwork : EthereumService.targetedNetwork;
-      // const targetNetwork = isCypress ? EthereumService.targetedNetwork : EthereumService.targetedNetwork;
+      // const targetNetwork = isCypress ? EthereumServiceTesting.targetedNetwork : EthereumService.targetedNetwork;
+      const targetNetwork = EthereumService.targetedNetwork;
+      console.log("TCL ~ file: main.ts ~ line 77 ~ aurelia.start ~ targetNetwork", targetNetwork);
 
       ContractsDeploymentProvider.initialize(targetNetwork);
       // ContractsDeploymentProvider.initialize(EthereumServiceTesting.targetedNetwork);

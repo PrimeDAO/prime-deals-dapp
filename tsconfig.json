@@ -24,7 +24,7 @@
     "src",
     "test",
     "firebaseFunctions/src"
-  ],
+, "cypress/integration/common/EthereumServiceTesting.ts"  ],
   "exclude": [
     "test/coverage-jest"
   ],

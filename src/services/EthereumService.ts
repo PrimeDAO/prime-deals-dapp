@@ -237,6 +237,7 @@ export class EthereumService implements IEthereumService {
   }
 
   public ensureConnected(): boolean {
+    console.log("TCL ~ file: EthereumService.ts ~ line 240 ~ EthereumService ~ ensureConnected ~ ensureConnected");
     if (!this.defaultAccountAddress) {
       // TODO: make this await until we're either connected or not?
       this.connect();

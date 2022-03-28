@@ -1,11 +1,18 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
-    "baseUrl": "../node_modules",
+    // "strict": true,
+    // "baseUrl": "../node_modules",
     "types": [
       "cypress"
-    ]
+    ],
+    "paths": {
+      "services/ConsoleLogService": ["../src/services/ConsoleLogService"],
+      "services/DisclaimerService": ["../src/services/DisclaimerService"],
+      "services/EthereumService": ["../src/services/EthereumService"],
+      "services/EthereumServiceTesting": ["../src/services/EthereumServiceTesting"],
+      "services/utils": ["../src/services/utils"],
+    }
   },
   "include": [
     "**/*.ts"

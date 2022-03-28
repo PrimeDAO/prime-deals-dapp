@@ -13,7 +13,11 @@
 
 /* eslint-disable */
 const { ProvidePlugin } = require("webpack");
+const  path  = require("path");
 const webpack = require("@cypress/webpack-preprocessor");
+const webpackFunc = require("../../webpack.config")
+const options = webpackFunc({development:true});
+console.log('TCL ~ file: index.js ~ line 19 ~ options', options)
 
 module.exports = (on, config) => {
   // bind to the event we care about
@@ -22,10 +26,22 @@ module.exports = (on, config) => {
   // });
   on("file:preprocessor", webpack({
     webpackOptions: {
+      ...options,
       resolve: {
         extensions: [".ts", ".js"],
         alias: {
           process: 'process/browser',
+          buffer: 'buffer',
+          services: path.resolve(__dirname, '../../src/services'),
+          resources: path.resolve(__dirname, '../../src/resources'),
+        },
+        fallback: {
+          crypto: require.resolve( 'crypto-browserify' ),
+          stream: require.resolve( 'stream-browserify' ),
+          os: require.resolve( 'os-browserify/browser' ),
+          http: require.resolve( 'stream-http' ),
+          https: require.resolve( 'https-browserify' ),
+          buffer: require.resolve( 'buffer/' ),
         }
       },
       devtool: 'cheap-module-source-map',
@@ -61,7 +77,8 @@ module.exports = (on, config) => {
           process: 'process/browser',
           Buffer: ['buffer', 'Buffer'],
         }),
-      ]
+      ],
+      output: undefined
     }
   }));
 };

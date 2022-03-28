@@ -16,6 +16,7 @@ import { autoinject } from "aurelia-framework";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Utils } from "services/utils";
+import { EthereumService } from "./EthereumService";
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 interface IEIP1193 {
@@ -126,6 +127,7 @@ interface IIEthereumService {
 export abstract class IEthereumService implements IIEthereumService {
   readOnlyProvider: ethers.providers.BaseProvider;
   initialize(network: AllowedNetworks): void {
+    console.log("TCL ~ file: IEthereumService.ts ~ line 129 ~ IEthereumService ~ initialize ~ initialize");
     throw new Error("Method not implemented.");
   }
   getDefaultSigner(): ethers.Signer {
