@@ -6,9 +6,7 @@
     position: absolute;
     left: 0;
     min-width: 100%;
-    opacity: 0.5;
-    background-color: $Border01;
-    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.6);
     display: none; // set to flex by the view model
     justify-content: center;
     align-items: center;
@@ -21,7 +19,7 @@
       transform: translateX(-50%);
       i {
         font-size: 38px;
-        color: $Primary01;
+        color: #b783ac;
         margin-bottom: 16px;
       }
     }
