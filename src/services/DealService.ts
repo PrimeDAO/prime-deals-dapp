@@ -36,40 +36,6 @@ interface IExecutedDeal {
   executedAt: Date;
 }
 
-export interface IDaoPartner {
-  daoId: string,
-  organizationId: string,
-  title: string,
-  logo: string,
-  totalNumMembers: number
-  totalNumProposals: number
-  totalNumVoters: number
-  totalValueUSD: number
-  totalInUSD: number
-  totalOutUSD: number
-  votersParticipation: number
-  name: string,
-  platform: string,
-  thumbName: string
-}
-
-// export interface IDaoAPIObject {
-//   daoName: string,
-//   organizationId: string,
-//   daoId: string,
-//   logo: string,
-//   daosArr: Array<IDaoPartner>,
-//   totalNumMembers: number,
-//   totalNumProposals: number,
-//   totalNumVoters: number,
-//   totalValueUSD: number,
-//   totalInUSD: number,
-//   totalOutUSD: number,
-//   votersParticipation: number,
-//   thumbName: string,
-//   platform: number,
-// }
-
 export let StartingBlockNumber: number;
 
 @autoinject
@@ -120,7 +86,16 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
     }
-
+    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+      if (!this.initializing) {
+        try {
+          this.eventAggregator.publish("deals.loading", true);
+          await this.getDeals(true);
+        } finally {
+          this.eventAggregator.publish("deals.loading", false);
+        }
+      }
+    });
   }
 
   public async initialize(): Promise<void> {
@@ -130,16 +105,21 @@ export class DealService {
     this.getDeals();
   }
 
-  private async getDeals(): Promise<void> {
+  private async getDeals(force = false): Promise<void> {
+
+    this.initializing = true;
 
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
         this.getExecutedDealInfo().then(() => {
           this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
-            if (!this.deals?.size) {
+            if (force || !this.deals?.size) {
               try {
 
+                if (!dealDocs) {
+                  throw new Error("Deals are not accessible");
+                }
                 const dealsMap = new Map<Address, DealTokenSwap>();
 
                 // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
@@ -148,15 +128,16 @@ export class DealService {
                   this._createDeal(dealDoc, dealsMap);
                 }
                 this.deals = dealsMap;
-                this.initializing = false;
                 resolve();
               }
               catch (error) {
                 this.deals = new Map();
                 // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-                this.eventAggregator.publish("handleException", new Error("Sorry, an error occurred"));
-                this.initializing = false;
+                this.eventAggregator.publish("handleException", error);
                 reject();
+              }
+              finally {
+                this.initializing = false;
               }
             }
           });

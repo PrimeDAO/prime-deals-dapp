@@ -1,6 +1,57 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
 deal-info {
   pcard.pcard {
+
+    .title {
+      margin-bottom: 24px;
+    }
+
+    color: $Neutral04;
     display: block;
-    height: 500px; // temporary. remove after design is done
+    padding: 20px 24px;
+
+    hr {
+      background-color: $Border01;
+    }
+
+    .daoDetails {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 6px;
+
+      .daoSocialLinks {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+
+        i {
+          font-size: 16px;
+          color: $Secondary05;
+        }
+      }
+    }
+
+    .tokenDetails {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+  }
+
+  .infoSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+
+    .infoTitle {
+      font-size: $font-size2;
+      min-width: 120px;
+    }
   }
 }

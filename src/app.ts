@@ -53,8 +53,6 @@ export class App {
       this.handleScrollEvent();
     });
 
-    this.firebaseService.initializeFirebaseAuthentication();
-
     this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
       this.handleOnOff(onOff);
@@ -62,6 +60,11 @@ export class App {
 
     this.eventAggregator.subscribe("deal.saving", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we register the information about your deal...";
+      this.handleOnOff(onOff);
+    });
+
+    this.eventAggregator.subscribe("deal.closing", async (onOff: boolean) => {
+      this.modalMessage = "Thank you for your patience while we close your deal...";
       this.handleOnOff(onOff);
     });
 
