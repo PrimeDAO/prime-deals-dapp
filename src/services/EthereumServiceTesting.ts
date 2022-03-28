@@ -105,12 +105,9 @@ export class EthereumServiceTesting {
   private async setProvider(): Promise<void> {
     this.defaultAccountAddress = ADDRESS;
     this.fireAccountsChangedHandler(ADDRESS);
-
-    return;
   }
 
   public disconnect(error: { code: number; message: string }): void {
-    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 113 ~ EthereumServiceTesting ~ disconnect ~ disconnect");
     this.defaultAccountAddress = undefined;
     this.fireAccountsChangedHandler(null);
     this.walletProvider = undefined;
