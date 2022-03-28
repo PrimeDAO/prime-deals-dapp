@@ -1,10 +1,10 @@
 import { TokenService } from "services/TokenService";
 import { autoinject, bindingMode } from "aurelia-framework";
-import { EthereumService } from "services/EthereumService";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./walletMenu.scss";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { Utils } from "services/utils";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class WalletMenu {
@@ -20,7 +20,7 @@ export class WalletMenu {
   thisEscHandler = this.handleEsc.bind(this);
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private tokenService: TokenService,
   ) {
     this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);

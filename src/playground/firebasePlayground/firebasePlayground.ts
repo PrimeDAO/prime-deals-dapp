@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import { EthereumService } from "./../../services/EthereumService";
 import { autoinject } from "aurelia-framework";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Subscription } from "rxjs";
 import { FirestoreService } from "./../../services/FirestoreService";
 import { openProposalDummyData1, partnerDealDummyData1 } from "./firebaseDummyData";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class FirebasePlayground {
@@ -14,7 +14,7 @@ export class FirebasePlayground {
 
   constructor(
     private firestoreService: FirestoreService<IDealTokenSwapDocument, IDealRegistrationTokenSwap>,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
   ) {}
 
   async attached() {

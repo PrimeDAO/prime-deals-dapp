@@ -1,16 +1,16 @@
-import { EthereumService } from "./EthereumService";
 /* eslint-disable require-atomic-updates */
 import { autoinject } from "aurelia-framework";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import axios from "axios";
 import { Address } from "services/EthereumService";
+import { IEthereumService } from "./IEthereumService";
 
 @autoinject
 export class WhiteListService {
 
   constructor(
     private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService) {}
+    private ethereumService: IEthereumService) {}
 
   private lists = new Map<string, Set<Address>>();
 

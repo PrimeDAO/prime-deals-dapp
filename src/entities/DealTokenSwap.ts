@@ -6,7 +6,6 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
-import { EthereumService } from "services/EthereumService";
 import { IDAO, IDealRegistrationTokenSwap, IRepresentative, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
@@ -14,6 +13,7 @@ import { ContractNames, ContractsService, IStandardEvent } from "services/Contra
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
+import { IEthereumService } from "services/IEthereumService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -60,7 +60,7 @@ export class DealTokenSwap implements IDeal {
 
   constructor(
     private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private dataSourceDeals: IDataSourceDeals2,
     private tokenService: TokenService,
     private contractsService: ContractsService,

@@ -10,6 +10,7 @@ import { ContractNames, ContractsService, IStandardEvent } from "services/Contra
 import { BigNumber } from "ethers";
 import { parseBytes32String } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import { IEthereumService } from "./IEthereumService";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -73,7 +74,7 @@ export class DealService {
     private aureliaHelperService: AureliaHelperService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
   ) {
     switch (EthereumService.targetedNetwork) {
       case Networks.Mainnet:

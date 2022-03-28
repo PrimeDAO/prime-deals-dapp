@@ -1,4 +1,3 @@
-import { EthereumService } from "services/EthereumService";
 import { autoinject, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -12,6 +11,7 @@ import { IDealDiscussion } from "entities/DealDiscussions";
 
 import "./discussionsList.scss";
 import { bindable } from "aurelia-typed-observable-plugin";
+import { IEthereumService } from "services/IEthereumService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -40,7 +40,7 @@ export class DiscussionsList{
     private router: Router,
     private dateService: DateService,
     private dealService: DealService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private discussionsService: DiscussionsService,
   ) {}
 

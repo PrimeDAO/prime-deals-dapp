@@ -3,7 +3,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
+import { Address, AllowedNetworks } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 
@@ -15,6 +15,7 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { Realtime } from "ably/promises";
 import { Types } from "ably";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class DiscussionThread {
@@ -58,7 +59,7 @@ export class DiscussionThread {
     private dateService: DateService,
     private dealService: DealService,
     private discussionsService: DiscussionsService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private eventAggregator: EventAggregator,
   ) { }
 

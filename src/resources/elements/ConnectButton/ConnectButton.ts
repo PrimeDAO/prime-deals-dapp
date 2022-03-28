@@ -1,6 +1,6 @@
 import "./ConnectButton.scss";
 
-import { Address, EthereumService } from "services/EthereumService";
+import { Address } from "services/EthereumService";
 import { ContractNames, ContractsService } from "services/ContractsService";
 import { autoinject, containerless, customElement, singleton } from "aurelia-framework";
 
@@ -10,6 +10,7 @@ import { EventConfigTransaction } from "services/GeneralEvents";
 import { TransactionReceipt } from "services/TransactionsService";
 import { Utils } from "services/utils";
 import { bindable } from "aurelia-typed-observable-plugin";
+import { IEthereumService } from "services/IEthereumService";
 
 enum Phase {
   None = "None",
@@ -37,7 +38,7 @@ export class ConnectButton {
   }
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private eventAggregator: EventAggregator,
   ) {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {

@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
+import { IEthereumService } from "services/IEthereumService";
 // import AES from "crypto-js/aes";
 // import Utf8 from "crypto-js/enc-utf8";
 
@@ -27,7 +28,7 @@ export class DiscussionsService {
   private ensName: string;
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private consoleLogService: ConsoleLogService,
     private eventAggregator: EventAggregator,
     private dealService: DealService,

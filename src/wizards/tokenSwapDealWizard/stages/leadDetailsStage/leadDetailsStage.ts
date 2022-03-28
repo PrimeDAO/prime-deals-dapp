@@ -4,9 +4,9 @@ import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import "./leadDetailsStage.scss";
-import { EthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
 import { Validation } from "../../../../services/ValidationService";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class LeadDetailsStage {
@@ -20,7 +20,7 @@ export class LeadDetailsStage {
 
   constructor(
     public wizardService: WizardService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private eventAggregator: EventAggregator,
   ) {
   }

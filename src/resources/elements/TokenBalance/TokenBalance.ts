@@ -2,9 +2,10 @@ import { ITokenInfo } from "services/TokenTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless, customElement, bindable } from "aurelia-framework";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address } from "services/EthereumService";
 import { BigNumber } from "ethers";
 import { IErc20Token, TokenService } from "services/TokenService";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 @containerless
@@ -22,7 +23,7 @@ export class TokenBalance {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private tokenService: TokenService) {
   }
 

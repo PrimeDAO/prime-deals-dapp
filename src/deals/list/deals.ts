@@ -5,10 +5,10 @@ import { autoinject, computedFrom, singleton } from "aurelia-framework";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
+import { IEthereumService } from "services/IEthereumService";
 
 let dealsLoadedOnce = false;
 /**
@@ -29,7 +29,7 @@ export class Deals {
     private readonly dealService: DealService,
     private eventAggregator: EventAggregator,
     private dateService: DateService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
   ) {
   }
   /**

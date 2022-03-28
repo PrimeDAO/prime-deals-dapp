@@ -11,9 +11,9 @@ import {
 } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
-import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
 import "../wizards.scss";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class WizardManager {
@@ -99,7 +99,7 @@ export class WizardManager {
   constructor(
     private wizardService: WizardService,
     private dealService: DealService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private router: Router,
     private eventAggregator: EventAggregator,
   ) {

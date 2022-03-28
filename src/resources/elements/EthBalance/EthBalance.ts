@@ -1,8 +1,9 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, containerless, customElement, bindable } from "aurelia-framework";
 import { DisposableCollection } from "services/DisposableCollection";
-import { EthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
+import { IEthereumService } from "services/IEthereumService";
+// import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 @containerless
@@ -17,7 +18,7 @@ export class EthBalance {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService) {
+    private ethereumService: IEthereumService) {
   }
 
   public attached(): void {

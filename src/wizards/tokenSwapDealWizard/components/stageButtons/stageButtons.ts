@@ -3,7 +3,8 @@ import { autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address } from "services/EthereumService";
+import { IEthereumService } from "services/IEthereumService";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 
 import "./stageButtons.scss";
@@ -24,7 +25,7 @@ export class stageButtons {
     public wizardService: WizardService,
     private consoleLogService: ConsoleLogService,
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
   ) {
   }
 

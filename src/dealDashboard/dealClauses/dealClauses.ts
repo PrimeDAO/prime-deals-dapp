@@ -1,10 +1,10 @@
 import { autoinject, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import "./dealClauses.scss";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 export class DealClauses {
@@ -15,7 +15,7 @@ export class DealClauses {
   private clauses: IClause[];
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private discussionsService: DiscussionsService,
   ) {
   }

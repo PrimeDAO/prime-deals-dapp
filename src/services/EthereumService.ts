@@ -12,6 +12,7 @@ import { autoinject } from "aurelia-framework";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Utils } from "services/utils";
+import { IEthereumService } from "./IEthereumService";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -64,7 +65,7 @@ export interface IChainEventInfo {
 }
 
 @autoinject
-export class EthereumService {
+export class EthereumService implements IEthereumService {
   constructor(
     private eventAggregator: EventAggregator,
     private disclaimerService: DisclaimerService,

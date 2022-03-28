@@ -1,8 +1,9 @@
 import { BigNumber, Contract, ethers, Signer } from "ethers";
-import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
+import { Address, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+import { IEthereumService } from "./IEthereumService";
 
 export enum ContractNames {
   DEALMANAGER = "DealManager"
@@ -38,7 +39,7 @@ export class ContractsService {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService) {
+    private ethereumService: IEthereumService) {
 
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
       if (account !== this.accountAddress) {

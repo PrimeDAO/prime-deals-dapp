@@ -1,9 +1,9 @@
-import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./singleComment.scss";
+import { IEthereumService } from "services/IEthereumService";
 
 interface IThreadComment extends IComment {
   createdOn: string;
@@ -34,7 +34,7 @@ export class SingleComment {
 
   constructor(
     private dateService: DateService,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private router: Router,
   ) {}
 

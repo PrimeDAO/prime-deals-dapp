@@ -1,7 +1,7 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
-import { EthereumService } from "../../../services/EthereumService";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 @customElement("usersaddress")
@@ -15,7 +15,7 @@ export class UsersAddress {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService) {
+    private ethereumService: IEthereumService) {
     this.eventAggregator.subscribe("Network.Changed.Account", () => { this.initialize(); });
   }
 

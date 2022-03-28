@@ -2,11 +2,11 @@ import axios from "axios";
 import { autoinject } from "aurelia-framework";
 import { ContractNames, ContractsService } from "./ContractsService";
 import { getAddress } from "ethers/lib/utils";
-import { EthereumService } from "services/EthereumService";
 import { ITokenInfo } from "services/TokenTypes";
 import { ethers } from "ethers";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ITokenList, TokenListMap } from "services/TokenListService";
+import { IEthereumService } from "./IEthereumService";
 // import { Multicaller } from '@/lib/utils/balancer/contract';
 
 // export interface ITags {
@@ -25,7 +25,7 @@ export type TokenInfoMap = { [address: string]: ITokenInfo };
 export default class TokenMetadataService {
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService) { }
 

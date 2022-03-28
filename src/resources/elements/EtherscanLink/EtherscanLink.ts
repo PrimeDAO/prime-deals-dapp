@@ -1,7 +1,7 @@
-﻿import { EthereumService } from "services/EthereumService";
-import { autoinject, bindingMode, computedFrom, customElement } from "aurelia-framework";
+﻿import { autoinject, bindingMode, computedFrom, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./EtherscanLink.scss";
+import { IEthereumService } from "services/IEthereumService";
 
 @autoinject
 @customElement("etherscanlink")
@@ -28,7 +28,7 @@ export class EtherscanLink {
   }
 
   constructor(
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
   ) { }
 
   public attached(): void {

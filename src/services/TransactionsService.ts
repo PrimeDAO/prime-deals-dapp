@@ -3,7 +3,8 @@ import { Utils } from "services/utils";
 import { TransactionResponse, TransactionReceipt } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
-import { EthereumService, Hash } from "services/EthereumService";
+import { Hash } from "services/EthereumService";
+import { IEthereumService } from "./IEthereumService";
 
 @autoinject
 export default class TransactionsService {
@@ -12,7 +13,7 @@ export default class TransactionsService {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private utils: Utils,
   ) { }
 

@@ -8,13 +8,13 @@ import "./styles/styles.scss";
 import "./app.scss";
 import tippy from "tippy.js";
 import { BindingSignaler } from "aurelia-templating-resources";
-import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { AlertService } from "services/AlertService";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
 import { FirebaseService } from "./services/FirebaseService";
+import { IEthereumService } from "services/IEthereumService";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -22,7 +22,7 @@ export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 export class App {
   constructor (
     private signaler: BindingSignaler,
-    private ethereumService: EthereumService,
+    private ethereumService: IEthereumService,
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
