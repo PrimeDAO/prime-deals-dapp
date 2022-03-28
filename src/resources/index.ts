@@ -8,7 +8,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
     PLATFORM.moduleName("./elements/address-link/address-link"),
     PLATFORM.moduleName("./elements/etherscan-button/etherscan-button"),
-    PLATFORM.moduleName("./elements/progress-bar/progress-bar"),
     PLATFORM.moduleName("./elements/UsersAddress/UsersAddress"),
     PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
     PLATFORM.moduleName("./elements/dao-icon-name/dao-icon-name"),
