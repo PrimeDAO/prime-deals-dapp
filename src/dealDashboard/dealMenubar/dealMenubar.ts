@@ -25,25 +25,25 @@ export class DealMenubar {
     return ![DealStatus.funding, DealStatus.swapping].includes(this.deal.status);
   }
 
-  async closeDeal() {
+  async cancelDeal() {
     const result = await this.alertService.showAlert({
-      header: "You will be closing the deal and will not be able to re-activate it.",
-      message: "Are you sure you want to close the deal?",
+      header: "You will be cancelling the deal and will not be able to re-activate it.",
+      message: "Are you sure you want to cancel your deal?",
       buttons: 3,
       buttonTextPrimary: "Continue",
-      buttonTextSecondary: "Cancel",
+      buttonTextSecondary: "Keep my deal",
     });
 
     if (result.wasCancelled) {
       return;
     }
 
-    this.eventAggregator.publish("deal.closing", true);
+    this.eventAggregator.publish("deal.cancelling", true);
     try {
       await this.deal.close();
-      this.eventAggregator.publish("handleInfo", "Your deal was successfully closed");
+      this.eventAggregator.publish("handleInfo", "Your deal was successfully cancelled");
     } finally {
-      this.eventAggregator.publish("deal.closing", false);
+      this.eventAggregator.publish("deal.cancelling", false);
     }
   }
 

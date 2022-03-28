@@ -11,10 +11,10 @@
   </a>
 
   <a
-    if.bind="!deal.isClosed || canEdit"
+    if.bind="!deal.isCancelled || canEdit"
     route-href="route.bind: deal.isOpenProposal ? 'editOpenProposal' : 'editPartneredDeal' ; params.bind: { id: deal.id, stageRoute: 'proposal' }">
     <pbutton type="secondary">Edit deal</pbutton>
   </a>
 
-  <pbutton click.delegate="closeDeal()" if.bind="!deal.isClosed" type="tertiary">Close deal</pbutton>
+  <pbutton click.delegate="cancelDeal()" if.bind="!deal.isCancelled" type="tertiary">Cancel deal</pbutton>
 </template>

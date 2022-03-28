@@ -36,7 +36,7 @@ export enum DealStatus {
   active = "Active",
   completed = "Completed",
   failed = "Failed",
-  closed = "Closed",
+  cancelled = "Cancelled",
   negotiating = "Negotiating",
   funding = "Funding in progress",
   swapping = "Swapping",
