@@ -56,7 +56,11 @@ export class EthereumServiceTesting {
       account = null;
     }
     console.info(`account changed: ${account}`);
-    this.eventAggregator.publish("Network.Changed.Account", ADDRESS);
+
+    if (account !== null) {
+      account = ADDRESS;
+    }
+    this.eventAggregator.publish("Network.Changed.Account", account);
   }
   private fireDisconnectHandler(error: { code: number; message: string }) {
     console.info(`disconnected: ${error?.code}: ${error?.message}`);
@@ -106,6 +110,7 @@ export class EthereumServiceTesting {
   }
 
   public disconnect(error: { code: number; message: string }): void {
+    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 113 ~ EthereumServiceTesting ~ disconnect ~ disconnect");
     this.defaultAccountAddress = undefined;
     this.fireAccountsChangedHandler(null);
     this.walletProvider = undefined;
