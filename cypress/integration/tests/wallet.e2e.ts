@@ -1,15 +1,7 @@
 import "reflect-metadata";
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { proposalLeadAddress1 } from "../../fixtures/dealFixtures";
-/* eslint-disable no-console */
 import { Utils } from "../../../src/services/utils";
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  interface Cypress {
-    aurelia: any;
-  }
-}
 
 export class E2eWallet {
   public static currentWalletAddress = "";
@@ -46,11 +38,6 @@ export class E2eNavbar {
 }
 
 Given("I connect to the wallet with address {string}", (address: string) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  // @ts-ignore
-  /* prettier-ignore */ console.log("TCL ~ file: wallet.e2e.ts ~ line 54 ~ Given ~ Cypress.aurelia", Cypress.aurelia);
-  // @ts-ignore
-
   localStorage.setItem("PRIME_E2E_ADDRESS", address);
   E2eWallet.currentWalletAddress = address;
 
