@@ -1,3 +1,5 @@
+const ADDRESS = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
+
 import detectEthereumProvider from "@metamask/detect-provider";
 import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
@@ -12,6 +14,7 @@ import { autoinject } from "aurelia-framework";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Utils } from "services/utils";
+import { EthereumService } from "./EthereumService";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -64,7 +67,7 @@ export interface IChainEventInfo {
 }
 
 @autoinject
-export class EthereumService {
+export class EthereumServiceTesting {
   constructor(
     private eventAggregator: EventAggregator,
     private disclaimerService: DisclaimerService,
@@ -129,7 +132,7 @@ export class EthereumService {
 
     EthereumService.targetedNetwork = network;
     EthereumService.targetedChainId = this.chainIdByName.get(network);
-    EthereumService.providerOptions.torus.options.network = network;
+    // EthereumService.providerOptions.torus.options.network = network;
 
     const readonlyEndPoint = EthereumService.ProviderEndpoints[EthereumService.targetedNetwork];
     if (!readonlyEndPoint) {
@@ -186,7 +189,7 @@ export class EthereumService {
       account = null;
     }
     console.info(`account changed: ${account}`);
-    this.eventAggregator.publish("Network.Changed.Account", account);
+    this.eventAggregator.publish("Network.Changed.Account", ADDRESS);
   }
   private fireChainChangedHandler(info: IChainEventInfo) {
     console.info(`chain changed: ${info.chainId}`);
@@ -230,8 +233,8 @@ export class EthereumService {
   private async connect(): Promise<void> {
     if (!this.walletProvider) {
       this.ensureWeb3Modal();
-      const web3ModalProvider = await this.web3Modal.connect();
-      this.setProvider(web3ModalProvider);
+      // const web3ModalProvider = await this.web3Modal.connect();
+      this.setProvider();
     }
   }
 
@@ -284,7 +287,7 @@ export class EthereumService {
       this.web3Modal = new Web3Modal({
         // network: Networks.Mainnet,
         cacheProvider: false,
-        providerOptions: EthereumService.providerOptions, // required
+        // providerOptions: EthereumService.providerOptions, // required
         theme: "dark",
       });
       /**
@@ -306,7 +309,12 @@ export class EthereumService {
     return network;
   }
 
-  private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
+  private async setProvider(web3ModalProvider?: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
+    this.defaultAccountAddress = ADDRESS;
+    this.fireAccountsChangedHandler(ADDRESS);
+
+    return;
+
     try {
       if (web3ModalProvider) {
         const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
@@ -327,7 +335,7 @@ export class EthereumService {
         /**
            * because the events aren't fired on first connection
            */
-        this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
+        // this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
         this.fireAccountsChangedHandler(this.defaultAccountAddress);
 
         this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
