@@ -146,6 +146,14 @@ export class DealTokenSwap implements IDeal {
   //   return;
   // }
 
+  @computedFrom("isExecuted", "executedAt", "executionPeriod")
+  get timeLeftToExecute(): number | undefined {
+    if (!this.isExecuted) {
+      return;
+    }
+    return (this.executedAt.getTime() + this.executionPeriod * 1000) - Date.now();
+  }
+
   /**
    * Same as isVoting, by bizdev definition
    * @returns
@@ -181,11 +189,6 @@ export class DealTokenSwap implements IDeal {
     const now = Date.now();
     return this.isExecuted ?
       (now > (this.executedAt.valueOf() + (this.fundingPeriod * 1000))) : false;
-  }
-
-  @computedFrom("isExecuted", "fundingPeriodHasExpired")
-  public get isInFundingPeriod(): boolean {
-    return this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
   @computedFrom("fundingPeriodHasExpired")
@@ -269,7 +272,7 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("registrationData.primaryDAO.representatives", "registrationData.partnerDAO.representatives")
   public get allRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO.representatives);
+    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO?.representatives ?? []);
   }
 
   @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
@@ -411,25 +414,23 @@ export class DealTokenSwap implements IDeal {
 
   public async loadDealSize(): Promise<void> {
     // if the total price is already figured out we don't need to try again
-    if (this.totalPrice === undefined) {
-      try {
-        let total = 0;
-        const allTokens = [...(this.registrationData.partnerDAO?.tokens ?? []), ...(this.registrationData.primaryDAO?.tokens ?? [])];
-        const tokens: Array<ITokenInfo> = allTokens.map(x => ({
-          address: x.address,
-          decimals: x.decimals,
-          logoURI: x.logoURI,
-          id: "",
-          name: x.name,
-          symbol: x.symbol,
-        }));
-        await this.tokenService.getTokenPrices(tokens);
-        allTokens.forEach(x => {
-          const currentToken = tokens.find(y => y.symbol === x.symbol);
-          total += (currentToken?.price ?? 0) * Number(x.amount ?? 0);
-        });
-        this.totalPrice = total;
-      } catch { this.totalPrice = 0; }
+    if (this.totalPrice) {
+      return;
+    }
+
+    try {
+      const dealTokens = this.primaryDao.tokens.concat(this.partnerDao?.tokens ?? []);
+      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+      await this.tokenService.getTokenPrices(tokensDetails);
+
+      this.totalPrice = dealTokens.reduce((sum, item) => {
+        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+        return sum + (tokenDetails?.price ?? 0) * Number(item.amount);
+      }, 0);
+    } catch {
+      this.totalPrice = 0;
     }
   }
 

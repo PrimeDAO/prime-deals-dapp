@@ -72,14 +72,15 @@ export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
-  partnerDAO: IDAO;
+  partnerDAO?: IDAO; // This is undefined for an Open Proposal
   proposalLead: IProposalLead; // this contains to address
   terms: ITerms;
   keepAdminRights: boolean;
   offersPrivate: boolean;
   isPrivate: boolean;
   executionPeriodInDays: number;
-  dealType: "token-swap"/* | "co-liquidity"*/;
+  dealType: "token-swap"/* | "co-liquidity"*/
+  ;
 }
 
 export function emptyDaoDetails(): IDAO {

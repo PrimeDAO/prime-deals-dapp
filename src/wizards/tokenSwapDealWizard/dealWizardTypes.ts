@@ -18,6 +18,33 @@ export interface IStageMeta<Settings = any> {
   settings: Settings
 }
 
+export const availableSocialMedias = [
+  {
+    name: "Twitter",
+    icon: "fab fa-twitter",
+  },
+  {
+    name: "Discord",
+    icon: "fab fa-discord",
+  },
+  {
+    name: "Telegram",
+    icon: "fab fa-telegram-plane",
+  },
+  {
+    name: "Reddit",
+    icon: "fab fa-reddit",
+  },
+  {
+    name: "Linkedin",
+    icon: "fab fa-linkedin",
+  },
+  {
+    name: "Facebook",
+    icon: "fab fa-facebook",
+  },
+];
+
 export const STAGE_ROUTE_PARAMETER = "stageRoute";
 
 export const daoStageValidationRules = (title: string) =>

@@ -55,8 +55,6 @@ export class App {
       this.handleScrollEvent();
     });
 
-    this.firebaseService.initializeFirebaseAuthentication();
-
     this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
       this.handleOnOff(onOff);

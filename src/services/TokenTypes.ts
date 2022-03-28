@@ -20,7 +20,7 @@ export interface ITokenInfo {
   address: Address;
   decimals: number;
   logoURI: string;
-  id: string; // id on coingecko
+  id?: string; // id on coingecko
   name: string; // token name,
   price?: number;
   symbol: string; // token symbol,
