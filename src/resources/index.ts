@@ -6,7 +6,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/popupNotifications/popupNotifications"),
     PLATFORM.moduleName("./elements/EtherscanLink/EtherscanLink"),
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
-    PLATFORM.moduleName("./elements/grid/grid"),
     PLATFORM.moduleName("./elements/address-link/address-link"),
     PLATFORM.moduleName("./elements/etherscan-button/etherscan-button"),
     PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
