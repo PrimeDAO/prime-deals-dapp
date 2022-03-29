@@ -48,10 +48,10 @@ And("I can see DAO representatives section with pre-filled disabled fields", () 
     cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Primary DAO - Representatives Addresses (Max. 5)");
-    cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($representatives) => {
       expect($representatives).to.have.length.greaterThan(0);
     });
-    cy.get("[data-test=\"dao-representative\"]").each(($representative) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").each(($representative) => {
       cy.wrap($representative).within(() => {
         cy.get("input").should("be.disabled");
       });
