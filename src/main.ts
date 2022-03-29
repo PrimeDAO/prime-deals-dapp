@@ -19,6 +19,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
 import { FirebaseService } from "services/FirebaseService";
+import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -58,6 +59,10 @@ export function configure(aurelia: Aurelia): void {
        */
       const firebaseService = aurelia.container.get(FirebaseService);
       firebaseService.initialize();
+
+      if ((window as any).Cypress) {
+        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+      }
 
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));

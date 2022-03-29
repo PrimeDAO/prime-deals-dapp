@@ -21,6 +21,7 @@ export class Deals {
   private cardIndex = 0;
   private seeingMore = false;
   private showMine = false;
+  private dealsLoadedOnce = dealsLoadedOnce;
   private sortColumn: string;
   private sortDirection = SortOrder.DESC;
   private sortEvaluator: (a: DealTokenSwap, b: DealTokenSwap) => number;
@@ -53,6 +54,7 @@ export class Deals {
       this.sort("age");
       // eslint-disable-next-line require-atomic-updates
       dealsLoadedOnce = true;
+      this.dealsLoadedOnce = dealsLoadedOnce;
     }
   }
 
@@ -157,8 +159,16 @@ export class Deals {
    */
   private toggleMyDeals(): void {
     this.showMine = !this.showMine;
-    if (!this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress)) {
-      this.cardIndex = 1;
+    if (this.showMine){
+      //if showing only "my deals" check to see which tab to display by default if there are no deals in either tab
+      const openDeals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
+      const partneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
+      if (openDeals){
+        this.cardIndex = 0;
+      }
+      else if (partneredDeals){
+        this.cardIndex = 1;
+      }
     }
   }
 
