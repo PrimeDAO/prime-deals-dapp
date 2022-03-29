@@ -14,7 +14,7 @@ import {
   QuerySnapshot,
   setDoc,
   Unsubscribe,
-  where
+  where,
 } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
@@ -194,8 +194,7 @@ export class FirestoreService<
       // Flattens the returned data and removes duplicates
       return Utils.uniqById<IFirebaseDocument>(deals.flat());
     } catch (error) {
-      console.error(error);
-      throw new Error("Error while getting deals");
+      throw new Error(`Error while getting deals ${error}`);
     }
   }
 
