@@ -17,6 +17,10 @@ export const firebaseApp = initializeApp({
   appId: process.env.FIREBASE_APP_ID,
 });
 
+/**
+ * Fix Cypress specific timeout issue
+ *  "Could not reach Cloud Firestore backend. Backend didn't respond within 10 seconds.""
+ */
 if (process.env.FIREBASE_ENVIRONMENT === "local") {
   initializeFirestore(firebaseApp, { experimentalForceLongPolling: true });
 }
