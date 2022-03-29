@@ -80,30 +80,30 @@
 
     <div class="stageSection">
       <div class="stageSectionSidebar">
-        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Execution Period</h2>
+        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Funding Period</h2>
         <p class="sidebarText">
-          After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and initiate the swap on-chain.
+          After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and initiate swapping.
         </p>
         <br>
         <p class="sidebarText">
-          Here you can setup the non-extendable amount of days that both parties have to complete these actions. If the representatives and the proposal lead failed to that within this agreed upon timeframe, the deal is considered Failed.
+          Here you can setup the non-extendable number of days that both parties have to complete these actions. If the representatives and the proposal lead have failed to do that within this agreed upon timeframe, the deal is considered failed.
         </p>
         <br>
         <p class="sidebarText">
-          With all of this mind, make sure that you set a reasonable Execution Period that takes in consideration the time needed to pass the deals through the governance processes of both parties.
+          With all of this mind, make sure that you set a reasonable Funding Period that takes in consideration the time needed to pass the deals through the governance processes of both parties.
         </p>
       </div>
       <div class="stageSectionContent">
         <pform-input
           class="wizardFormInput"
-          input-reference.bind="executionPeriodInput"
-          label="On-Chain Execution Period"
-          data-test="proposal-execution-period-field">
+          input-reference.bind="fundingPeriodInput"
+          label="Funding Period"
+          data-test="proposal-funding-period-field">
           <pinput-group>
             <pinput-numeric
               not-wei
-              value.bind="wizardState.registrationData.executionPeriodInDays | secondsDays & validate:form"
-              view-model.ref="executionPeriodInput"></pinput-numeric>
+              value.bind="wizardState.registrationData.fundingPeriod | secondsDays & validate:form"
+              view-model.ref="fundingPeriodInput"></pinput-numeric>
             <span slot="after">days</span>
           </pinput-group>
         </pform-input>

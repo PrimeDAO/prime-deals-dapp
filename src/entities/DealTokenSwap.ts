@@ -153,12 +153,12 @@ export class DealTokenSwap implements IDeal {
   //   return;
   // }
 
-  @computedFrom("isExecuted", "executedAt", "executionPeriod")
+  @computedFrom("isExecuted", "executedAt", "fundingPeriod")
   get timeLeftToExecute(): number | undefined {
     if (!this.isExecuted) {
       return;
     }
-    return (this.executedAt.getTime() + this.executionPeriod * 1000) - Date.now();
+    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - Date.now();
   }
 
   /**
@@ -178,17 +178,9 @@ export class DealTokenSwap implements IDeal {
   /**
    * in seconds, duration from execution to expired
    */
-  @computedFrom("registrationData.executionPeriodInDays")
-  public get executionPeriod(): number {
-    return this.registrationData.executionPeriodInDays * 86400;
-  }
-
-  /**
-   * execution period is poorly named
-   */
-  @computedFrom("executionPeriod")
+  @computedFrom("registrationData.fundingPeriod")
   public get fundingPeriod(): number {
-    return this.executionPeriod;
+    return this.registrationData.fundingPeriod * 86400;
   }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")

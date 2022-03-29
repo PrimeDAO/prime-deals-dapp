@@ -32,9 +32,9 @@ Feature: "Token Details" stage (Stage 5) - Open Proposal
     And I try to save the Token Details form
     Then I can proceed to the next step
 
-  Scenario: Proceeding to the next stage - only Execution Period
-    Given I want to fill in information for the "Execution Period" section
-    And I fill in the "Execution Period" field with "123"
+  Scenario: Proceeding to the next stage - only Funding Period
+    Given I want to fill in information for the "Funding Period" section
+    And I fill in the "Funding Period" field with "123"
     Then I can proceed to the next step
 
   #####################################################
