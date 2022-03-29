@@ -118,7 +118,6 @@ export class DiscussionsService {
   public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
     for (const [, discussion] of clauseDiscussions.entries()) {
-      console.log(discussion);
       this.discussions[discussion.discussionId] = {
         ...discussion,
         lastModified: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
@@ -229,11 +228,13 @@ export class DiscussionsService {
     if (timestamp)
       this.discussions[discussionId].modifiedAt = timestamp.toISOString();
 
-    this.dataSourceDeals.addClauseDiscussion(
-      this.discussions[discussionId].dealId,
-      this.ethereumService.defaultAccountAddress,
+    const dealDiscussion = this.discussions[discussionId];
+
+    delete dealDiscussion.lastModified;
+
+    this.dealService.deals.get(this.discussions[discussionId].dealId).addClauseDiscussion(
       discussionId,
-      this.discussions[discussionId],
+      dealDiscussion,
     );
   }
 
@@ -301,7 +302,7 @@ export class DiscussionsService {
       this.comments = await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
       });
-      if (!this.comments) return null;
+      if (!this.comments || this.comments.length === undefined) return null;
 
       this.comments = await this.comments.filter((comment: any) => {
         return !(

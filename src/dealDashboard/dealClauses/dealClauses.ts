@@ -32,8 +32,6 @@ export class DealClauses {
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
   private async addOrReadDiscussion(topic: string, clauseId: string | null): Promise<void> {
-    console.log("addOrReadDiscussion", topic, clauseId);
-
     if (this.deal.clauseDiscussions.get(clauseId)) {
       this.discussionId = clauseId;
     } else {

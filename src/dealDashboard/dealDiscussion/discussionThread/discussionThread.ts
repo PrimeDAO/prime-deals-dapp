@@ -121,9 +121,6 @@ export class DiscussionThread {
 
     if (this.isAuthorized) {
       // Loads the discussion details - necessary for thread header
-      // this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
-      console.log("Discussion (initialize):", this.deal.clauseDiscussions.get(this.discussionId));
-
       this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
 
       // Ensures comment fetching and subscription
