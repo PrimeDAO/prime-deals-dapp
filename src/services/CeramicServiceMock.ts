@@ -124,7 +124,7 @@ const _registration1: IDealRegistrationTokenSwap = {
   // // createdAt: new Date("2022-01-27"),
   // // modifiedAt: null,
   // // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration2: IDealRegistrationTokenSwap = {
@@ -170,7 +170,7 @@ const _registration2: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-02-02"),
   // modifiedAt: null,
   // createdByAddress: address4,
-  executionPeriodInDays: 45,
+  fundingPeriod: 45,
   dealType: "token-swap",
 };
 const _registration3: IDealRegistrationTokenSwap = {
@@ -213,7 +213,7 @@ const _registration3: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-02-01"),
   // modifiedAt: null,
   // createdByAddress: address4,
-  executionPeriodInDays: 45,
+  fundingPeriod: 45,
   dealType: "token-swap",
 };
 const _registration4: IDealRegistrationTokenSwap = {
@@ -303,7 +303,7 @@ const _registration4: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-02"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration5: IDealRegistrationTokenSwap = {
@@ -338,7 +338,7 @@ const _registration5: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-03"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration6: IDealRegistrationTokenSwap = {
@@ -373,7 +373,7 @@ const _registration6: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-04"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration7: IDealRegistrationTokenSwap = {
@@ -408,7 +408,7 @@ const _registration7: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-05"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration8: IDealRegistrationTokenSwap = {
@@ -443,7 +443,7 @@ const _registration8: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-10"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration9: IDealRegistrationTokenSwap = {
@@ -478,7 +478,7 @@ const _registration9: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-09"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration10: IDealRegistrationTokenSwap = {
@@ -513,7 +513,7 @@ const _registration10: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-08"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration11: IDealRegistrationTokenSwap = {
@@ -548,7 +548,7 @@ const _registration11: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-07"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration12: IDealRegistrationTokenSwap = {
@@ -583,7 +583,7 @@ const _registration12: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-11"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration13: IDealRegistrationTokenSwap = {
@@ -618,7 +618,7 @@ const _registration13: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-19"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration14: IDealRegistrationTokenSwap = {
@@ -653,7 +653,7 @@ const _registration14: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-12"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration15: IDealRegistrationTokenSwap = {
@@ -688,7 +688,7 @@ const _registration15: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-18"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration16: IDealRegistrationTokenSwap = {
@@ -723,7 +723,7 @@ const _registration16: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-13"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration17: IDealRegistrationTokenSwap = {
@@ -758,7 +758,7 @@ const _registration17: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-17"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration18: IDealRegistrationTokenSwap = {
@@ -793,7 +793,7 @@ const _registration18: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-14"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration19: IDealRegistrationTokenSwap = {
@@ -828,7 +828,7 @@ const _registration19: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-16"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration20: IDealRegistrationTokenSwap = {
@@ -863,7 +863,7 @@ const _registration20: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-15"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration21: IDealRegistrationTokenSwap = {
@@ -898,7 +898,7 @@ const _registration21: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-24"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration22: IDealRegistrationTokenSwap = {
@@ -970,7 +970,7 @@ const _registration22: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-01-24"),
   // modifiedAt: null,
   // createdByAddress: "",
-  executionPeriodInDays: 50,
+  fundingPeriod: 50,
   dealType: "token-swap",
 };
 const _registration23: IDealRegistrationTokenSwap = {
@@ -1058,7 +1058,7 @@ const _registration23: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-02-02"),
   // modifiedAt: null,
   // createdByAddress: address4,
-  executionPeriodInDays: 45,
+  fundingPeriod: 45,
   dealType: "token-swap",
 };
 const _registration24: IDealRegistrationTokenSwap = {
@@ -1110,7 +1110,7 @@ const _registration24: IDealRegistrationTokenSwap = {
   // createdAt: new Date("2022-02-02"),
   // modifiedAt: null,
   // createdByAddress: address4,
-  executionPeriodInDays: 45,
+  fundingPeriod: 45,
   dealType: "token-swap",
 };
 const MOCK_DATA = {

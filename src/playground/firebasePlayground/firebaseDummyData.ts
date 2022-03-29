@@ -5,7 +5,7 @@ export const openProposalDummyData1 = {
     "title": "Open Proposal Dummy Deal 1",
   },
   "offersPrivate": false,
-  "executionPeriodInDays": 86400,
+  "fundingPeriod": 86400,
   "isPrivate": false,
   "version": "0.0.1",
   "proposalLead": {
@@ -57,7 +57,7 @@ export const partnerDealDummyData1 = {
     "title": "Dummy Partnered Deal one",
   },
   "offersPrivate": false,
-  "executionPeriodInDays": 864000,
+  "fundingPeriod": 864000,
   "partnerDAO": {
     "treasury_address": "0x4Bf2Ae9373D0F893750a8d2159eFF2Bb76dF03dD",
     "logoURI": "https://picsum.photos/seed/picsum/200/200",

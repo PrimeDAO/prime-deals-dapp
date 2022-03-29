@@ -65,8 +65,8 @@ export class App {
       this.handleOnOff(onOff);
     });
 
-    this.eventAggregator.subscribe("deal.closing", async (onOff: boolean) => {
-      this.modalMessage = "Thank you for your patience while we close your deal...";
+    this.eventAggregator.subscribe("deal.cancelling", async (onOff: boolean) => {
+      this.modalMessage = "Thank you for your patience while we cancel your deal...";
       this.handleOnOff(onOff);
     });
 

@@ -13,8 +13,8 @@ $activeColor: $Green;
 $activeBackground: $Green-BG;
 $fundingColor: $Magenta;
 $fundingBackground: $Magenta-BG;
-$closedColor: $Grey;
-$closedBackground: $Grey-BG;
+$cancelledColor: $Grey;
+$cancelledBackground: $Grey-BG;
 
 .timeLeftContainer {
   font-size: $font-size1;
@@ -64,8 +64,8 @@ $closedBackground: $Grey-BG;
       color: $fundingColor;
     }
 
-    &.closed {
-      color: $closedColor;
+    &.cancelled {
+      color: $cancelledColor;
     }
   }
 
@@ -105,8 +105,8 @@ $closedBackground: $Grey-BG;
         background-color: $fundingBackground;
       }
 
-      &.closed {
-        background-color: $closedBackground;
+      &.cancelled {
+        background-color: $cancelledBackground;
       }
     }
   }

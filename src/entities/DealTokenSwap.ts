@@ -114,6 +114,10 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.registrationData;
   }
 
+  @computedFrom("registrationData.isPrivate")
+  public get isPrivate(): boolean {
+    return this.registrationData.isPrivate;
+  }
   /**
    * Open Proposal that is open for offers, by bizdev definition
    * @returns
@@ -137,21 +141,30 @@ export class DealTokenSwap implements IDeal {
   public get isWithdrawn(): boolean {
     return this.dealDocument.isWithdrawn;
   }
+
+  public set isWithdrawn(newValue: boolean) {
+    this.dealDocument.isWithdrawn = newValue;
+  }
+
   @computedFrom("dealDocument.isRejected")
   public get isRejected(): boolean {
     return this.dealDocument.isRejected;
+  }
+
+  public set isRejected(newValue: boolean) {
+    this.dealDocument.isRejected = newValue;
   }
 
   // public get isTargetReached(): boolean {
   //   return;
   // }
 
-  @computedFrom("isExecuted", "executedAt", "executionPeriod")
+  @computedFrom("isExecuted", "executedAt", "fundingPeriod")
   get timeLeftToExecute(): number | undefined {
     if (!this.isExecuted) {
       return;
     }
-    return (this.executedAt.getTime() + this.executionPeriod * 1000) - Date.now();
+    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - Date.now();
   }
 
   /**
@@ -171,17 +184,9 @@ export class DealTokenSwap implements IDeal {
   /**
    * in seconds, duration from execution to expired
    */
-  @computedFrom("registrationData.executionPeriodInDays")
-  public get executionPeriod(): number {
-    return this.registrationData.executionPeriodInDays * 86400;
-  }
-
-  /**
-   * execution period is poorly named
-   */
-  @computedFrom("executionPeriod")
+  @computedFrom("registrationData.fundingPeriod")
   public get fundingPeriod(): number {
-    return this.executionPeriod;
+    return this.registrationData.fundingPeriod * 86400;
   }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
@@ -236,10 +241,13 @@ export class DealTokenSwap implements IDeal {
   @computedFrom("isFunding")
   public get isSwapping(): boolean {
     return this.isFunding;
+  @computedFrom("isSwapping")
+  public get isClaiming(): boolean {
+    return this.isSwapping;
   }
 
   @computedFrom("isExecuted")
-  public get isClaiming(): boolean {
+  public get isSwapping(): boolean {
     return this.isExecuted;
   }
 
@@ -256,7 +264,7 @@ export class DealTokenSwap implements IDeal {
    * @returns
    */
   @computedFrom("isWithdrawn", "isRejected")
-  public get isClosed(): boolean {
+  public get isCancelled(): boolean {
     return this.isWithdrawn || this.isRejected;
   }
 
@@ -286,12 +294,12 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
   }
 
-  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isClosed", "isNegotiating", "isFunding", "isSwapping")
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
     else if (this.isCompleted) { return DealStatus.completed; }
     else if (this.fundingPeriodHasExpired) { return DealStatus.failed; }
-    else if (this.isClosed) { return DealStatus.closed; }
+    else if (this.isCancelled) { return DealStatus.cancelled; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
     else if (this.isSwapping) { return DealStatus.swapping; }
@@ -523,16 +531,18 @@ export class DealTokenSwap implements IDeal {
   public withdraw(): Promise<void> {
     if (!this.isWithdrawn) {
       return this.dataSourceDeals.updateDealIsWithdrawn(this.id, this.ethereumService.defaultAccountAddress, true)
-      // TOTO: when is this updated? .then(() => {this.isWithdrawn = true; })
-      ;
+        .then(() => {
+          this.isWithdrawn = true;
+        });
     }
   }
 
   public reject(): Promise<void> {
     if (!this.isRejected) {
       return this.dataSourceDeals.updateDealIsRejected(this.id, this.ethereumService.defaultAccountAddress, true)
-      // TOTO: when is this updated? .then(() => {this.isRejected = true; })
-      ;
+        .then(() => {
+          this.isRejected = true;
+        });
     }
   }
 
