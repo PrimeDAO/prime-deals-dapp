@@ -189,10 +189,8 @@ export class DiscussionsService {
         args.discussionId,
         discussion,
       );
-
+      this.comments = [];
       this.discussions[discussion.discussionId] = discussion;
-
-      this.updateDiscussionListStatus(discussion.discussionId, new Date());
 
       return discussion.discussionId;
     }
