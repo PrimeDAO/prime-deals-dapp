@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-const ADDRESS = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
-
 /* eslint-disable no-console */
 import { ethers, Signer } from "ethers";
 import { BaseProvider, Web3Provider } from "@ethersproject/providers";
@@ -58,7 +56,7 @@ export class EthereumServiceTesting {
     console.info(`account changed: ${account}`);
 
     if (account !== null) {
-      account = ADDRESS;
+      account = localStorage.getItem("PRIME_E2E_ADDRESS");
     }
     this.eventAggregator.publish("Network.Changed.Account", account);
   }
@@ -107,8 +105,9 @@ export class EthereumServiceTesting {
   }
 
   private async setProvider(): Promise<void> {
-    this.defaultAccountAddress = ADDRESS;
-    this.fireAccountsChangedHandler(ADDRESS);
+    const address = localStorage.getItem("PRIME_E2E_ADDRESS");
+    this.defaultAccountAddress = address;
+    this.fireAccountsChangedHandler(address);
   }
 
   public disconnect(error: { code: number; message: string }): void {
