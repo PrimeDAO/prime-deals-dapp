@@ -1,5 +1,3 @@
-import { Hash } from "services/EthereumService";
-
 export interface IComment {
   // Following the comment structure of `theconvo.space` api:
   _id: string,
@@ -30,7 +28,7 @@ export enum VoteType {
 
 export interface IDealDiscussion {
   version: string;
-  discussionId: Hash;
+  discussionId: string;
   createdAt: string | null;
   modifiedAt: string | null;
   createdBy: {
@@ -46,7 +44,7 @@ export interface IDealDiscussion {
 }
 
 export class DealDiscussion implements IDealDiscussion {
-  public discussionId: Hash;
+  public discussionId: string;
   public version: string;
   public isPrivate: boolean;
   public createdAt: string | null;

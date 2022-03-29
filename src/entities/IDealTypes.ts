@@ -23,7 +23,7 @@ export interface IDealVotingSummary {
 export interface IDealTokenSwapDocument {
   id: string;
   registrationData: IDealRegistrationTokenSwap;
-  clauseDiscussions: Record<string, IDealDiscussion>; // TODO should be IDealDiscussion, but breaks firebaseFunctions build
+  clauseDiscussions: Record<string, IDealDiscussion>;
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
   createdAt: string,
