@@ -18,7 +18,7 @@ Given("I fill out the Lead Details Stage", () => {
 
 Given("I fill out the Primary DAO Stage", () => {
   DealWizard.inWizardSection("Primary DAO")
-    .inField("DAO Name").fillIn(MINIMUM_OPEN_PROPOSAL.proposalLead.address)
+    .inField("DAO Name").fillIn(MINIMUM_OPEN_PROPOSAL.primaryDAO.name)
     .inField("DAO Treasury Address").fillIn(MINIMUM_OPEN_PROPOSAL.primaryDAO.treasury_address)
     .inField("DAO Avatar").fillIn(MINIMUM_OPEN_PROPOSAL.primaryDAO.logoURI);
 

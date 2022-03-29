@@ -11,7 +11,7 @@ export class E2eHomePage {
   }
 
   public static verifyNumberOfOpenProposals({atLeast}: {atLeast: number}) {
-    cy.get("[data-test='deal-summary']", {timeout: 12000})
+    cy.get("[data-test='deal-summary']", {timeout: 20000})
       .should("have.length.greaterThan", atLeast - 1); // - l for "greaterThan or equal"
   }
 
