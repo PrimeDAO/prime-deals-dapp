@@ -1,5 +1,18 @@
 import { stageTitlesToURLs, withinWizardSection, wizardTitlesToURLs } from "../deal-wizard";
 
+export type WizardField =
+ "Proposal Title"
+ | "Proposal Summary"
+ | "Proposal Description"
+ | "Proposal Lead Address"
+ | "Contact Email"
+ //  | "Primary DAO Name"
+ | "DAO Name"
+ | "DAO Treasury Address"
+ | "DAO Avatar"
+ | "DAO Representatives Addresses"
+ | "Funding Period"
+
 export class DealWizard {
   private static sectionTitle = "";
   public static getSectionTitle() {
@@ -29,26 +42,32 @@ export class DealWizard {
   }
 
   static inWizardSection(sectionTitle: string) {
-    this.sectionTitle = sectionTitle;
+    cy.then(() => {
+      this.sectionTitle = sectionTitle;
+    });
     return this;
   }
 
-  static inField(fieldTitle: string) {
-    this.fieldTitle = fieldTitle;
+  static inField(fieldTitle: WizardField) {
+    cy.then(() => {
+      this.fieldTitle = fieldTitle;
+    });
     return this;
   }
 
   static fillIn(value: string) {
-    withinWizardSection().within(() => {
-      cy.get(`[data-test='proposal-${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-        cy.get("input, textarea").type(value);
+    cy.then(() => {
+      withinWizardSection().within(() => {
+        cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+          cy.get("input, textarea").type(value);
+        });
+
+        if (this.fieldTitle === "Token address") {
+          // waitForTokenAddressLoaded();
+        }
       });
-
-      if (this.fieldTitle === "Token address") {
-        // waitForTokenAddressLoaded();
-      }
     });
-
+    return this;
   }
 
   static proceed() {

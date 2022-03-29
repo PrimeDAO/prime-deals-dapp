@@ -7,6 +7,7 @@ const address4 = "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F";
 const address5 = "0xd5804F7B89f26efeaB13440BA92A8AF3f5fCcE9b";
 const address6 = "0x3c6ad2029dbdd666dF667c3444897Bb3E758909E";
 export const proposalLeadAddress1 = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
+export const CONNECTED_PUBLIC_USER_ADDESS = "0x0000000000000000000000000000000000000000";
 const tokenAddress1 = "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad";
 
 export const openProposalId1 = "gX9QEuX34DJw5cYpAM6jpD";
@@ -90,8 +91,8 @@ const discussion4 = {
 export const MINIMUM_OPEN_PROPOSAL: IDealRegistrationTokenSwap = {
   dealType: "token-swap",
   proposal: {
-    summary: "Summary Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.",
-    description: "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.\n\nMorbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat.\n\nPraesent dapibus, neque id cursus faucibus, tortor neque egestas auguae, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.",
+    summary: "Summary Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+    description: "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.",
     title: "First Proposal",
   },
   offersPrivate: false,
@@ -99,7 +100,7 @@ export const MINIMUM_OPEN_PROPOSAL: IDealRegistrationTokenSwap = {
   isPrivate: false,
   version: "0.0.2",
   proposalLead: {
-    address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    address: proposalLeadAddress1,
     email: "",
   },
   primaryDAO: {

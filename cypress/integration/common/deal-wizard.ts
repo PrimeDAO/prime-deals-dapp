@@ -1,6 +1,6 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { openProposalId1, MINIMUM_OPEN_PROPOSAL_ID_2, partneredDealId1 } from "../../fixtures/dealFixtures";
-import { DealWizard } from "./pageObjects/dealWizard";
+import { DealWizard, WizardField } from "./pageObjects/dealWizard";
 
 export class E2eWizard {
   public static waitForWizardLoaded() {
@@ -25,15 +25,16 @@ export const stageTitlesToURLs = {
 } as const;
 
 export function withinWizardSection() {
-  const sectionTitle = DealWizard.getSectionTitle();
-  if (sectionTitle === "") {
-    const sectionErrorMessage = "Please specify the section you are targeting in the Wizard.\n"
+  return cy.then(() => {
+    const sectionTitle = DealWizard.getSectionTitle();
+    if (sectionTitle === "") {
+      const sectionErrorMessage = "Please specify the section you are targeting in the Wizard.\n"
       + "Use the following step:\n\n"
       + "  Given I want to fill in information for the \"<sectionName>\" section";
-    throw Error(sectionErrorMessage);
-  }
-
-  return cy.contains("[data-test='section-title']", sectionTitle).parents(".stageSection");
+      throw Error(sectionErrorMessage);
+    }
+    return cy.contains("[data-test='section-title']", sectionTitle).parents(".stageSection");
+  });
 }
 
 Given(/^I want to fill in information for the "(.*)" section$/, (sectionTitle: string) => {
@@ -139,8 +140,9 @@ When("I fill in the {string} field with an invalid address {string}", (field: st
   });
 });
 
-When("I fill in the {string} field with {string}", (field: string, value: string) => {
-  DealWizard.inField(field).fillIn(value);
+When("I fill in the {string} field with {string}", (field: WizardField, value: string) => {
+  DealWizard.inField(field);
+  DealWizard.fillIn(value);
 });
 
 When("I fill in the {string} field with {string} in the {string} section", (field: string, value: string, section: string) => {
@@ -153,8 +155,9 @@ When("I fill in the {string} field with {string} in the {string} section", (fiel
   });
 });
 
-Then("I am presented with the {string} error message for the {string} field", (message: string, field: string) => {
-  DealWizard.inField(field).checkErrorMessage(message);
+Then("I am presented with the {string} error message for the {string} field", (message: string, field: WizardField) => {
+  DealWizard.inField(field);
+  DealWizard.checkErrorMessage(message);
 });
 
 When("I'm in the {string} section", (sectionHeading: string) => {

@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { proposalLeadAddress1 } from "../../fixtures/dealFixtures";
+import { CONNECTED_PUBLIC_USER_ADDESS, proposalLeadAddress1 } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
 
 export class E2eWallet {
@@ -36,6 +36,10 @@ export class E2eNavbar {
     });
   }
 }
+
+Given("I'm a Connected Public user", () => {
+  E2eNavbar.connectToWallet(CONNECTED_PUBLIC_USER_ADDESS);
+});
 
 Given("I connect to the wallet with address {string}", (address: string) => {
   localStorage.setItem("PRIME_E2E_ADDRESS", address);

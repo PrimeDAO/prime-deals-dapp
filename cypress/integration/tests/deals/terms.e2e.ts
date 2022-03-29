@@ -8,7 +8,7 @@ import { EditingCard } from "../components/editingCard.e2e";
 const UPDATED = "(updated.)";
 const MAX_NUMBER_OF_CLAUSES = 10;
 
-class Terms {
+export class Terms {
   static addClauseButton() {
     return cy.get("[data-test='addClauseButton']");
   }
