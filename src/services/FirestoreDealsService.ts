@@ -23,7 +23,6 @@ export class FirestoreDealsService<
   }
 
   public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
-    console.log("TCL ~ file: FirestoreDealsService.ts ~ line 26 ~ getDeals");
     let deals: Array<IFirebaseDocument<TDealDocument>>;
 
     await this.firestoreService.ensureAuthenticationIsSynced();
