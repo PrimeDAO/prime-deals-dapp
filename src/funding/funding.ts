@@ -77,7 +77,7 @@ export class Funding {
     return this.ethereumService.defaultAccountAddress === this.deal.registrationData.proposalLead.address;
   }
 
-  public async activate(_, __, navigationInstruction) {
+  public async activate(_, __, navigationInstruction): Promise<void> {
     this.dealId = navigationInstruction.params.address;
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
@@ -106,9 +106,9 @@ export class Funding {
     const d = new Date(); //TODO comment out - test data
     d.setDate(d.getDate() - 46); //TODO comment out - test data
     this.deal.executedAt = d; //TODO comment out - test data
-    if (this.deal.executedAt && this.deal.executionPeriod) {
+    if (this.deal.executedAt && this.deal.fundingPeriod) {
       const executionTime = this.deal.executedAt;
-      executionTime.setSeconds(executionTime.getSeconds() + this.deal.executionPeriod);
+      executionTime.setSeconds(executionTime.getSeconds() + this.deal.fundingPeriod);
       const finalDate = moment(executionTime);
       const now = moment();
       this.fundingDaysLeft = finalDate.diff(now, "days");
@@ -176,7 +176,7 @@ export class Funding {
     console.log(this.tokensToClaim);
   }
 
-  public async canActivate() {
+  public async canActivate() : Promise<void> {
     await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
     //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
