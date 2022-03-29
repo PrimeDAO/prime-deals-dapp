@@ -12,7 +12,8 @@ export class PRangeSlider {
   @bindable leftLabel?: string;
   @bindable rightLabel?: string;
   @bindable maxValue = 100;
-  @bindable.booleanAttr notWei = true;
+  @bindable.booleanAttr notWei = false;
+  @bindable.number decimals: number;
   @bindable.booleanAttr hidePercentage = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) left: number | string;
   @bindable({defaultBindingMode: bindingMode.twoWay}) right: number | string;
@@ -61,8 +62,8 @@ export class PRangeSlider {
       this.alreadyUpdated = false;
       return;
     }
-    this.left = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {});
-    this.right = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {});
+    this.left = this.numberService.toString(this.percentageToAbsoluteValue(100 - this.value), {mantissa: 0});
+    this.right = this.numberService.toString(this.percentageToAbsoluteValue(this.value), {mantissa: 0});
 
     this.updateTooltips();
   }

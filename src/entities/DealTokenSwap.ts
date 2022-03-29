@@ -1,7 +1,7 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { Address, fromWei, Hash } from "./../services/EthereumService";
+import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVoteInfo } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -437,7 +437,7 @@ export class DealTokenSwap implements IDeal {
 
       this.totalPrice = dealTokens.reduce((sum, item) => {
         const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(BigNumber.from(item.amount), item.decimals) ?? 0));
+        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
       }, 0);
     } catch (error){
       console.error("Computing deal price", error);
