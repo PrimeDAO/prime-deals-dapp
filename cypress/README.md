@@ -71,6 +71,7 @@ cy.url().should("include", "deals/open");
 ### Tags
 - `@focus` - only run focused Scenario in .feature file
 - `@regression` - Indicate Scenario is to cover a regression in the code
+- `@user_journey` - Larger in scope than usual Scenarios. Captures the "user journey" to achieve more complex interactions
 
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
