@@ -1,6 +1,6 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { IDealRegistrationTokenSwap } from "../../../../src/entities/DealRegistrationTokenSwap";
-import { openProposalId1 } from "../../../fixtures/dealFixtures";
+import { E2eDealsApi } from "../../common/deal-api";
 
 export class E2eDeals {
   public static currentDeal: IDealRegistrationTokenSwap | undefined = undefined;
@@ -34,7 +34,9 @@ Then("I can read about the deal types", () => {
 });
 
 Then("I can edit the deal", () => {
-  const url = `open-proposal/${openProposalId1}`;
-  cy.visit(url);
-  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    const url = `open-proposal/${openProposalId}`;
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });

@@ -7,7 +7,7 @@ Feature: Make an offer
   ###################
 
   Scenario: All Primary DAO information is visible and disabled
-    Given I navigate to make an offer Primary DAO stage
+    When I use the stepper to go to the "Primary DAO" step
     Then I can see DAO details section with pre-filled disabled fields
     And I can see DAO representatives section with pre-filled disabled fields
 

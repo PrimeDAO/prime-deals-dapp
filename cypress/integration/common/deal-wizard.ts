@@ -1,5 +1,6 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { openProposalId1, MINIMUM_OPEN_PROPOSAL_ID_2, partneredDealId1 } from "../../fixtures/dealFixtures";
+import { MINIMUM_OPEN_PROPOSAL_ID_2 } from "../../fixtures/dealFixtures";
+import { E2eDealsApi } from "./deal-api";
 import { DealWizard, WizardField } from "./pageObjects/dealWizard";
 
 export class E2eWizard {
@@ -104,28 +105,36 @@ Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wiza
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
-  const url = `/make-an-offer/${openProposalId1}/${stageTitlesToURLs[stageTitle]}`;
-  cy.visit(url);
-  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    const url = `/make-an-offer/${openProposalId}/${stageTitlesToURLs[stageTitle]}`;
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });
 
 When("I'm viewing the Partnered Deal Dashboard", () => {
-  const url = `/deal/${partneredDealId1}`;
-  cy.visit(url);
+  E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
+    const url = `/deal/${partneredDealId}`;
+    cy.visit(url);
 
-  cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+  });
 });
 
 Given("I edit a \"Partnered Deal\"", () => {
-  const url = `partnered-deal/${partneredDealId1}/edit/submit`;
-  cy.visit(url);
-  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
+    const url = `partnered-deal/${partneredDealId}/edit/submit`;
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });
 
 Given("I edit an \"Open Proposal\"", () => {
-  const url = `open-proposal/${openProposalId1}/edit/submit`;
-  cy.visit(url);
-  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    const url = `open-proposal/${openProposalId}/edit/submit`;
+    cy.visit(url);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });
 
 Then("I am presented with the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {

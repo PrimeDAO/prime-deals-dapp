@@ -1,10 +1,12 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { openProposalId1 } from "../../../fixtures/dealFixtures";
+import { E2eDealsApi } from "../../common/deal-api";
 
 Given("I navigate to a Deal Dashboard", () => {
-  cy.visit(`/deal/${openProposalId1}`);
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    cy.visit(`/deal/${openProposalId}`);
 
-  cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+  });
 });
 Given("No thread is created for this deal", () => {
   cy.contains("discussions-list", "Discuss").should("be.visible");

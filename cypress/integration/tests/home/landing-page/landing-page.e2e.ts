@@ -25,7 +25,7 @@ Given("a step", () => {
 });
 
 And("the newly created Deal is displayed on the landing page", () => {
-  E2eNavigation.navigateToHomePage();
+  E2eNavigation.useNavbaroForHomePage();
 
   E2eHomePage.verifyNumberOfOpenProposals({atLeast: 1});
   E2eHomePage.getOpenProposal({title: MINIMUM_OPEN_PROPOSAL.proposal.title});
