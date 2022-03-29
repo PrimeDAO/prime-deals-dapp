@@ -1,13 +1,14 @@
 Feature: Landing page
     Background:
-        Given I navigate to the Deals home page
+        # Given I navigate to the Deals home page
 
     Scenario: All Deals
         Given I navigate to the All Deals page
 
     @focus
     Scenario: Initiate a Deal
-        Given I choose Deal Type
+        Given I navigate to the Deals home page
+        # Given I choose Deal Type
 
     Scenario: Open Proposals
         Given I Open Proposals
