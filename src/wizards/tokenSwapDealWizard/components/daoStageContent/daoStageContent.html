@@ -35,7 +35,7 @@
           label.bind="name + ' Avatar'"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size">
           <pinput-text
-            value.bind="data.logoURI & validate:form"
+            value.bind="data.logoURI & debounce:600 & validate:form"
             placeholder="Image URL..."
             disabled.bind="disabled">
           </pinput-text>
