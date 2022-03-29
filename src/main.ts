@@ -64,7 +64,7 @@ export function configure(aurelia: Aurelia): void {
       firebaseService.initialize();
 
       if ((window as any).Cypress) {
-        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+        // aurelia.use.singleton(EthereumService, EthereumServiceTesting);
       }
 
       const ethereumService = aurelia.container.get(EthereumService);

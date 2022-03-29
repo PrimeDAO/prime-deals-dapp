@@ -117,6 +117,7 @@ export class DealService {
         reject: (reason?: any) => void): void => {
         this.getExecutedDealInfo().then(() => {
           this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+            console.log("TCL ~ file: DealService.ts ~ line 120 ~ DealService ~ this.dataSourceDeals.getDeals<IDealTokenSwapDocument> ~ dealDocs", dealDocs);
             if (force || !this.deals?.size) {
               try {
 
