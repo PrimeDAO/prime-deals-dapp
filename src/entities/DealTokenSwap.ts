@@ -1,5 +1,5 @@
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address, Hash } from "./../services/EthereumService";
+import { Address, fromWei, Hash } from "./../services/EthereumService";
 import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVoteInfo } from "entities/IDealTypes";
 import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
@@ -93,7 +93,7 @@ export class DealTokenSwap implements IDeal {
   public daoDepositContracts: Map<IDAO, any>;
   public dealManager: any;
 
-  public primaryDao: IDAO;
+  public primaryDao?: IDAO;
   public partnerDao: IDAO;
   public createdAt: Date;
   /**
@@ -180,7 +180,7 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("registrationData.fundingPeriod")
   public get fundingPeriod(): number {
-    return this.registrationData.fundingPeriod * 86400;
+    return this.registrationData.fundingPeriod;
   }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
@@ -251,6 +251,48 @@ export class DealTokenSwap implements IDeal {
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
   public get allVotes(): Array<IVoteInfo> {
     return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  }
+
+  @computedFrom("dealDocument.votingSummary.primaryDAO.votes")
+  public get primaryDAOVotes(): Array<IVoteInfo> {
+    return this.dealDocument.votingSummary.primaryDAO.votes;
+  }
+
+  @computedFrom("dealDocument.votingSummary.partnerDAO.votes")
+  public get partnerDAOVotes(): Array<IVoteInfo> {
+    return this.dealDocument.votingSummary.partnerDAO?.votes ?? [];
+  }
+
+  @computedFrom("allVotes")
+  public get submittedVotes(): Array<IVoteInfo> {
+    return this.allVotes.filter(voteInfo => voteInfo.vote === true || voteInfo.vote === false);
+  }
+
+  representativeVote(representativeAddress: string): boolean | null {
+    return this.votesArrayToMap(this.allVotes).get(representativeAddress);
+  }
+
+  representativeVoted(representativeAddress: string): boolean {
+    const vote = this.representativeVote(representativeAddress);
+    return vote === true || vote === false;
+  }
+
+  isTheProposalLead(address: string) {
+    return this.registrationData.proposalLead.address === address;
+  }
+
+  representativeDAO(address: string): IDAO | undefined {
+    const primaryRepresentative = this.primaryRepresentatives.find(representative => representative.address = address);
+    if (primaryRepresentative) {
+      return this.primaryDao;
+    }
+
+    const partnerRepresentative = this.partnerRepresentatives.find(representative => representative.address = address);
+    if (partnerRepresentative) {
+      return this.partnerDao;
+    }
+
+    return undefined;
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
@@ -386,7 +428,7 @@ export class DealTokenSwap implements IDeal {
     }
 
     try {
-      const dealTokens = this.primaryDao.tokens.concat(this.partnerDao?.tokens ?? []);
+      const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
       const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
       const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
 
@@ -394,9 +436,10 @@ export class DealTokenSwap implements IDeal {
 
       this.totalPrice = dealTokens.reduce((sum, item) => {
         const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-        return sum + (tokenDetails?.price ?? 0) * Number(item.amount);
+        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(BigNumber.from(item.amount), item.decimals) ?? 0));
       }, 0);
-    } catch {
+    } catch (error){
+      console.error("Computing deal price", error);
       this.totalPrice = 0;
     }
   }
@@ -526,7 +569,7 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean> {
+  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean | null> {
     return new Map<Address, boolean>(votes.map((voteInfo) => [ voteInfo.address, voteInfo.vote]));
   }
   /**

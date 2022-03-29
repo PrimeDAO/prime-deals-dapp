@@ -2,7 +2,7 @@ import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
 export interface IVoteInfo {
   address: string;
-  vote: boolean;
+  vote: boolean | null;
 }
 
 export interface IDealDAOVotingSummary {

@@ -43,8 +43,10 @@ export class PPopupModal {
       this.primaryButton.focus();
     }
 
-    this.body.innerHTML= this.message;
-    this.aureliaHelperService.enhanceElement(this.body, this, true);
+    if (this.message) {
+      this.body.innerHTML = this.message;
+      this.aureliaHelperService.enhanceElement(this.body, this, true);
+    }
   }
 }
 

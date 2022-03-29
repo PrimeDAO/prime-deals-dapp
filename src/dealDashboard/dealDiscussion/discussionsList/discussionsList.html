@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <h1 class="subtitle heading heading1 gradient">
+    <h1 class="subtitle heading heading1 gradient" id="discussionsSection">
       Discuss
     </h1>
   </div>
@@ -18,7 +18,7 @@
         </span>
       </p>
     </section>
-  
+
     <!-- always when not connected -->
     <section if.to-view="!ethereumService.defaultAccountAddress">
       <p class="instructions">
@@ -42,10 +42,10 @@
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdBy.name">
-                Created by ${discussion.createdBy.name} 
+                Created by ${discussion.createdBy.name}
               </span>
               <span else>
-                Created by ${discussion.createdBy.address | smallHexString} 
+                Created by ${discussion.createdBy.address | smallHexString}
               </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
@@ -57,7 +57,7 @@
     </div>
     <div if.bind="discussions.length >= paginationConfig.listLength" class="pagination container">
       <button class="pagination button left" type="tertiary"><</button>
-      <button 
+      <button
         repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
         class="page button ${page.isActive? 'active' : ''}"
         type="tertiary">

@@ -4,13 +4,13 @@
     <div class="accordion-title bodySmallText">
       ${dao.name}
     </div>
+
     <div class="votes-statuses-circles">
-      <div class="vote-status-circle vote-success"></div>
-      <div class="vote-status-circle vote-rejected"></div>
-      <div class="vote-status-circle vote-success"></div>
-      <div class="vote-status-circle-delimiter"></div>
-      <div class="vote-status-circle vote-rejected"></div>
-      <div class="vote-status-circle vote-success"></div>
+      <template repeat.for="representative of representativesSortedByVotes()">
+        <div
+          class="vote-status-circle ${getVoteSlug(representative.address) ? 'vote-' + getVoteSlug(representative.address) : ''}"></div>
+        <div class="vote-status-circle-delimiter" if.bind="shouldShowDelimited(dao.representatives.length, $index)"></div>
+      </template>
     </div>
     <i class="fas fa-angle-up arrow"></i>
   </div>
@@ -20,31 +20,16 @@
       <etherscanlink address.bind="representative.address"
                      text="${representative.address | smallHexString}">
       </etherscanlink>
-      accepted
-      <span class="representative-vote representative-vote-accepted">
-        <i class="fas fa-check-circle"></i>
+      ${getVoteSlug(representative.address) || 'hasn’t voted'}
+      <span class="representative-vote
+            ${getVoteSlug(representative.address) ? 'representative-vote-' + getVoteSlug(representative.address) : ''}
+      ">
+        <i class="fas fa-check-circle" if.bind="deal.representativeVote(representative.address) === true"></i>
+        <i class="fas fa-times-circle" if.bind="deal.representativeVote(representative.address) === false"></i>
+        <i class="fas fa-question-circle" if.bind="deal.representativeVote(representative.address) === null"></i>
       </span>
     </p>
 
-    <!-- Temporary demo code for showcasing different states -> can be deleted after database is available -->
-    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
-      <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}">
-      </etherscanlink>
-      rejected
-      <span class="representative-vote representative-vote-rejected">
-        <i class="fas fa-times-circle"></i>
-      </span>
-    </p>
-
-    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
-      <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}">
-      </etherscanlink>
-      hasn’t voted
-      <span class="representative-vote">
-        <i class="fas fa-question-circle"></i>
-      </span>
-    </p>
-    <!-- End of "Temporary demo code" -->
   </div>
 
 </template>
