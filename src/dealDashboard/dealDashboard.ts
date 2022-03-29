@@ -27,11 +27,16 @@ export class DealDashboard {
   get authorized(): boolean {
     return (
       this.ethereumService.defaultAccountAddress &&
-      [
-        this.deal.registrationData.proposalLead?.address,
-        ...this.deal.registrationData.primaryDAO?.representatives.map(representative => representative.address) || "",
-        ...this.deal.registrationData.partnerDAO?.representatives.map(representative => representative.address) || "",
-      ].includes(this.ethereumService.defaultAccountAddress)
+      (
+        /* Open deal can not be private, and anyone can comment and begin a discussion */
+        !this.deal.registrationData.partnerDAO
+        /* In a Partnered deal only members can comment and begin a discussion */
+        || [
+          this.deal.registrationData.proposalLead?.address,
+          ...this.deal.registrationData.primaryDAO?.representatives.map(representative => representative.address) || "",
+          ...this.deal.registrationData.partnerDAO?.representatives.map(representative => representative.address) || "",
+        ].includes(this.ethereumService.defaultAccountAddress)
+      )
     );
   }
 
