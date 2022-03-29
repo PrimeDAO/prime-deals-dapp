@@ -2,7 +2,6 @@ Feature: Editing Card
   Background:
     Given I navigate to the "editingCard" component
 
-  @focus
   Scenario: Switch to Edit mode
     When I "Save" the card
     Then the content of the card should be save

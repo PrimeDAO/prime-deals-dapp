@@ -1,5 +1,5 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { openProposalId1, partneredDealId1 } from "../../fixtures/dealFixtures";
+import { openProposalId1, openProposalId2, partneredDealId1 } from "../../fixtures/dealFixtures";
 
 const wizardTitlesToURLs = {
   "Open proposal": "open-proposal",
@@ -81,7 +81,7 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   }
 
   if (wizardTitle === "Make an offer") {
-    const url = `make-an-offer/${openProposalId1}/${stageTitlesToURLs[stageTitle]}`;
+    const url = `make-an-offer/${openProposalId2}/${stageTitlesToURLs[stageTitle]}`;
     cy.visit(url);
     cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;

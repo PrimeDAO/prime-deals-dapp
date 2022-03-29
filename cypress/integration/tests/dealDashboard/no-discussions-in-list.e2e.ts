@@ -1,8 +1,8 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { openProposalId1 } from "../../../fixtures/dealFixtures";
 
 Given("I navigate to a Deal Dashboard", () => {
-  const dealId = "open_deals_stream_hash_3";
-  cy.visit(`/deal/${dealId}`);
+  cy.visit(`/deal/${openProposalId1}`);
 
   cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
 });

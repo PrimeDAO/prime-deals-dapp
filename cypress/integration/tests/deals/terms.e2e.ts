@@ -22,7 +22,7 @@ class Terms {
     return cy.get("[data-test='clauseTextarea'] textarea");
   }
   static getClausesText() {
-    return cy.get("[data-test='clauseFormInput']");
+    return cy.get("[data-test='clauseFormInput'] pre");
   }
   static getClauseError() {
     return cy.get("[data-test='errorMessage']");
@@ -124,7 +124,7 @@ Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
 });
 
 Then("I can see my existing Clauses", () => {
-  const CLAUSE_TEXT = "lorem";
+  const CLAUSE_TEXT = "something";
   Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
 });
 
