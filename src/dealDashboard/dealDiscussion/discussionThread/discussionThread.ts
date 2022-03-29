@@ -85,6 +85,12 @@ export class DiscussionThread {
     }
   }
 
+  @computedFrom("deal.clauseDiscussions", "dealDiscussion")
+  private get clauseIndex(): string {
+    const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
+    return (discussionsIds.indexOf(this.dealDiscussion.discussionId) + 1).toString() || "-";
+  }
+
   @computedFrom("isLoading.discussions", "isMember", "threadComments")
   private get noCommentsText(): string {
     if (!this.isLoading.discussions && !this.threadComments?.length) {
@@ -115,8 +121,7 @@ export class DiscussionThread {
 
     if (this.isAuthorized) {
       // Loads the discussion details - necessary for thread header
-      this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
-      this.dealDiscussion = await this.discussionsService.discussions[this.discussionId];
+      this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
 
       // Ensures comment fetching and subscription
       await this.ensureDealDiscussion(this.discussionId);

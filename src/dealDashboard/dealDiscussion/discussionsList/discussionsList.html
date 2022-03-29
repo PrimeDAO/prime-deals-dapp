@@ -36,7 +36,7 @@
           id="${discussion.id}"
           click.delegate="navigateTo(`${discussion.id}`)"
           repeat.for="discussion of discussionsArray">
-          <div class="td">${discussion.clauseIndex + 1 || "-" }</div>
+          <div class="td">${findClauseIndex(discussion.id) }</div>
           <div class="td">
             <pre>${discussion.topic}</pre>
             <p class="creator">

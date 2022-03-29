@@ -1,3 +1,4 @@
+import { IDealDiscussion } from "./DealDiscussions";
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
 export interface IVoteInfo {
@@ -22,7 +23,7 @@ export interface IDealVotingSummary {
 export interface IDealTokenSwapDocument {
   id: string;
   registrationData: IDealRegistrationTokenSwap;
-  discussions: any; // TODO
+  clauseDiscussions: Record<string, IDealDiscussion>;
   representativesAddresses: Array<string>;
   votingSummary: IDealVotingSummary;
   createdAt: string,
@@ -45,11 +46,11 @@ export enum DealStatus {
 export interface IDeal {
   id: string;
   corrupt: boolean;
-  clauseDiscussions: Map<string, string>;
+  clauseDiscussions: Map<string, IDealDiscussion>;
   registrationData: any;
   initialize(): Promise<void>;
   create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
   ensureInitialized(): Promise<void>;
-  addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
+  addClauseDiscussion(clauseId: string, discussion: any): Promise<void>;
   status: DealStatus;
 }
