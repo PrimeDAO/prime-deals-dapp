@@ -61,7 +61,14 @@ export function configure(aurelia: Aurelia): void {
       firebaseService.initialize();
 
       if ((window as any).Cypress) {
+        /**
+         * Mock wallet connection
+         */
         aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+        /**
+         * Tests can directly access FirestoreDealsService.
+         * We want that to, eg. get dealIds from the dealsArray
+         */
         const firestoreDealsService = aurelia.container.get(FirestoreDealsService);
         (window as any).Cypress.firestoreDealsService = firestoreDealsService;
       }
