@@ -1,4 +1,5 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { openProposalId1, openProposalId2, partneredDealId1 } from "../../fixtures/dealFixtures";
 
 const wizardTitlesToURLs = {
   "Open proposal": "open-proposal",
@@ -80,39 +81,45 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   }
 
   if (wizardTitle === "Make an offer") {
-    const dealId = "open_deals_stream_hash_1";
-    const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
+    const url = `make-an-offer/${openProposalId2}/${stageTitlesToURLs[stageTitle]}`;
     cy.visit(url);
     cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;
   }
 
-  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`).wait(1500);
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+});
+
+Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wizardTitlesToURLs) => {
+  if (!wizardTitlesToURLs[wizardTitle]) {
+    throw new Error(`Wizard ${wizardTitle} does not exist in the list`);
+  }
+
+  cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/submit`);
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
-  const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
+  const url = `/make-an-offer/${openProposalId1}/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 When("I'm viewing the Partnered Deal Dashboard", () => {
-  const dealId = "partnered_deals_stream_hash_2";
-  const url = `/deal/${dealId}`;
+  const url = `/deal/${partneredDealId1}`;
   cy.visit(url);
 
-  cy.get(".dealDashboardContainer").should("be.visible");
+  cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
 });
 
 Given("I edit a \"Partnered Deal\"", () => {
-  const dealId = "partnered_deals_stream_hash_3";
-  const url = `partnered-deal/${dealId}/edit/submit`;
+  const url = `partnered-deal/${partneredDealId1}/edit/submit`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I edit an \"Open Proposal\"", () => {
-  const dealId = "open_deals_stream_hash_1";
-  const url = `open-proposal/${dealId}/edit/submit`;
+  const url = `open-proposal/${openProposalId1}/edit/submit`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
@@ -179,6 +186,7 @@ Then("I should get an error notification", () => {
 });
 
 Then("I should be redirected to the Home Page", () => {
+  cy.get("[data-test='home-page']").should("be.visible");
   cy.url().then(url => {
     expect(url).to.include("home");
   });

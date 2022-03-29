@@ -115,13 +115,12 @@ export class DiscussionsService {
    * @param clauseDiscussions A map of clause discussions
    * @returns void
    */
-  public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
+  public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
-    for (const [, value] of clauseDiscussions.entries()) {
-      const discussion = this.dataSourceDeals.get<IDealDiscussion>(value);
-      this.discussions[value] = {
+    for (const [, discussion] of clauseDiscussions.entries()) {
+      this.discussions[discussion.discussionId] = {
         ...discussion,
-        lastModified: this.dateService.formattedTime(discussion.modifiedAt).diff(),
+        lastModified: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
     }
   }
@@ -140,15 +139,13 @@ export class DiscussionsService {
   public async createDiscussion(
     dealId: string,
     args: {
-      clauseHash: string | null,
+      discussionId: string | null,
       topic: string,
-      clauseIndex: number | null,
       isPublic: boolean,
       representatives?: Array<{address: string}>,
       admins?: Array<string>,
     }): Promise<string> {
 
-    const discussions = this.discussions || {};
     const createdBy = {
       address: this.ethereumService.defaultAccountAddress,
       name: null,
@@ -157,8 +154,6 @@ export class DiscussionsService {
       await this.setEnsName(createdBy.address);
     }
     createdBy.name = this.ensName;
-
-    const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
@@ -174,14 +169,14 @@ export class DiscussionsService {
         ["encrypt", "decrypt"],
       );
 
-      discussions[discussionId] = {
+      const discussion = {
+        dealId,
         version: "0.0.1",
-        discussionId,
+        discussionId: args.discussionId,
         topic: args.topic,
-        clauseIndex: args.clauseIndex,
         createdBy,
-        createdAt: new Date(),
-        modifiedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
         lastModified: "< 1 min",
         replies: 0,
         representatives: [...new Set([...args.representatives])],
@@ -189,16 +184,15 @@ export class DiscussionsService {
         key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 
-      const dealData = await this.dealService.deals.get(dealId);
+      const dealData = this.dealService.deals.get(dealId);
       await dealData.addClauseDiscussion(
-        args.clauseHash,
-        discussionId,
+        args.discussionId,
+        discussion,
       );
-      this.dealService.deals.set(dealId, dealData);
-      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
-      this.updateDiscussionListStatus(discussionId, new Date());
+      this.comments = [];
+      this.discussions[discussion.discussionId] = discussion;
 
-      return discussionId;
+      return discussion.discussionId;
     }
   }
 
@@ -230,9 +224,16 @@ export class DiscussionsService {
     if (this.comments.length)
       this.discussions[discussionId].replies = this.comments.length;
     if (timestamp)
-      this.discussions[discussionId].modifiedAt = timestamp;
+      this.discussions[discussionId].modifiedAt = timestamp.toISOString();
 
-    this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
+    const dealDiscussion = this.discussions[discussionId];
+
+    delete dealDiscussion.lastModified;
+
+    this.dealService.deals.get(this.discussions[discussionId].dealId).addClauseDiscussion(
+      discussionId,
+      dealDiscussion,
+    );
   }
 
   public async importKey(discussionId: string): Promise<CryptoKey> {
@@ -299,7 +300,7 @@ export class DiscussionsService {
       this.comments = await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
       });
-      if (!this.comments) return null;
+      if (!this.comments || this.comments.length === undefined) return null;
 
       this.comments = await this.comments.filter((comment: any) => {
         return !(

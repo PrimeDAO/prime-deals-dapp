@@ -149,17 +149,15 @@ $submitCardWidth: 645px;
   }
 
   .optionalContent {
-    color: $Neutral02;
+    color: $Neutral04;
   }
 }
-
 
 .congratulatePopup {
   margin-bottom: 18px;
   max-width: 600px;
 
   .dialogBody {
-
     .excitement {
       margin-bottom: 24px;
     }
@@ -173,14 +171,13 @@ $submitCardWidth: 645px;
       letter-spacing: 0px;
 
       a::before {
-        content: '\2192';
+        content: "\2192";
         margin-right: 8px;
       }
 
-      a>i {
+      a > i {
         margin-left: 4px;
       }
     }
   }
-
 }

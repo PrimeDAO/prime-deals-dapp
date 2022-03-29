@@ -18,7 +18,7 @@ let dealsLoadedOnce = false;
 @autoinject
 export class Deals {
 
-  private cardIndex = 0;
+  private cardIndex;
   private seeingMore = false;
   private showMine = false;
   private dealsLoadedOnce = dealsLoadedOnce;
@@ -49,7 +49,9 @@ export class Deals {
   public async attached(): Promise<void> {
     if (!dealsLoadedOnce) {
       await this.dealService.ensureAllDealsInitialized();
-      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      if (this.cardIndex === undefined) {
+        this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      }
       this.sortDirection = SortOrder.DESC;
       this.sort("age");
       // eslint-disable-next-line require-atomic-updates
@@ -131,6 +133,10 @@ export class Deals {
    * @returns
    */
   private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string) : DealTokenSwap[] {
+    if (this.cardIndex === undefined) {
+      return [];
+    }
+
     if (cardIndex === 0) {
       //open proposals
       return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
