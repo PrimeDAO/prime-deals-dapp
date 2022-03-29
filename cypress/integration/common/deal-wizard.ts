@@ -1,4 +1,5 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { openProposalId1, partneredDealId1 } from "../../fixtures/dealFixtures";
 
 const wizardTitlesToURLs = {
   "Open proposal": "open-proposal",
@@ -80,8 +81,7 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
   }
 
   if (wizardTitle === "Make an offer") {
-    const dealId = "open_deals_stream_hash_1";
-    const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
+    const url = `make-an-offer/${openProposalId1}/${stageTitlesToURLs[stageTitle]}`;
     cy.visit(url);
     cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;
@@ -100,29 +100,26 @@ Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wiza
 });
 
 Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
-  const url = `/make-an-offer/open_deals_stream_hash_1/${stageTitlesToURLs[stageTitle]}`;
+  const url = `/make-an-offer/${openProposalId1}/${stageTitlesToURLs[stageTitle]}`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 When("I'm viewing the Partnered Deal Dashboard", () => {
-  const dealId = "partnered_deals_stream_hash_2";
-  const url = `/deal/${dealId}`;
+  const url = `/deal/${partneredDealId1}`;
   cy.visit(url);
 
   cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
 });
 
 Given("I edit a \"Partnered Deal\"", () => {
-  const dealId = "partnered_deals_stream_hash_3";
-  const url = `partnered-deal/${dealId}/edit/submit`;
+  const url = `partnered-deal/${partneredDealId1}/edit/submit`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I edit an \"Open Proposal\"", () => {
-  const dealId = "open_deals_stream_hash_1";
-  const url = `open-proposal/${dealId}/edit/submit`;
+  const url = `open-proposal/${openProposalId1}/edit/submit`;
   cy.visit(url);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
