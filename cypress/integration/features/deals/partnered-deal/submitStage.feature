@@ -10,7 +10,7 @@ Feature: Submit Stage - Open Deal (Partnered Deal)
 
 
   Scenario: Prevent navigation - Direct navigation
-    Given I navigate to the "Partnered Deal" "Submit" stage
+    Given I navigate to the "Partnered Deal" Submit stage
     Then I should be redirected to the Home Page
 
   Scenario: Prevent navigation - Invalid previous stages

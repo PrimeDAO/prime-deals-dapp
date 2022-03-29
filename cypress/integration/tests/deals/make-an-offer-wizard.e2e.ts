@@ -1,15 +1,16 @@
 import { Given, Then, And } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { openProposalId1 } from "../../../fixtures/dealFixtures";
 
 // @TODO this should be changed to make an offer to a real proposal (probably via clicking "make an offer" to and open proposal)
-const proposalId = "open_deals_stream_hash_2";
-const avatarUrl = "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png";
+const avatarUrl = "https://picsum.photos/id/2/200/200";
 
 Given("I navigate to make an offer wizard", () => {
-  cy.visit(`/make-an-offer/${proposalId}/proposal`);
+  cy.visit(`/make-an-offer/${openProposalId1}/proposal`);
+  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 
 Given("I navigate to make an offer Primary DAO stage", () => {
-  cy.visit(`/make-an-offer/${proposalId}/primary-dao`);
+  cy.visit(`/make-an-offer/${openProposalId1}/primary-dao`);
   cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
 });
 

@@ -8,5 +8,6 @@
   "video": false,
   "experimentalStudio": true,
   "viewportWidth": 1920,
-  "viewportHeight": 1280
+  "viewportHeight": 1280,
+  "defaultCommandTimeout": 6000
 }

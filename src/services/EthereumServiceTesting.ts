@@ -99,7 +99,11 @@ export class EthereumServiceTesting {
    * without invoking Web3Modal nor MetaMask popups.
    */
   public async connectToConnectedProvider(): Promise<void> {
-    this.setProvider();
+    /**
+     * Note: For testing, we don't call method.
+     *   Reason: Tests don't have the concept of "already logged in address"
+     */
+    // this.setProvider();
   }
 
   private async setProvider(): Promise<void> {
