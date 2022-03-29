@@ -12,23 +12,23 @@
         <p class="subtext">
           Here's a recap of all the information you have input.
         </p>
-        <br/>
+        <br />
         <p class="subtext">
           Please, inspect all sections byword and make sure they reflect what you want to propose.
         </p>
-        <br/>
+        <br />
         <p class="subtext">
           If you spot an error, you can navigate to previous pages of this wizard to correct them before submitting your proposal.
         </p>
-        <br/>
+        <br />
         <p class="subtext">
           It's your responsibility to verify that all the relevant information is correct (e.g. treasury address, representative addresses, token addresses, token amount, etc.).
         </p>
-        <br/>
+        <br />
         <p class="subtext">
           PrimeDAO don't offer any validation process to verify your input. For instance, we cannot verify whether a treasury address is related to a certain DAO.
         </p>
-        <br/>
+        <br />
       </div>
 
       <!-- Content -->
@@ -88,9 +88,9 @@
         </section>
 
         <section class="stageSectionContent">
-          <div class="submitContentLabel-sm">On-Chain Execution Period</div>
+          <div class="submitContentLabel-sm">Funding Period</div>
           <div class="submitContent">
-            <p class="subtext" if.bind="submitData.executionPeriodInDays">${submitData.executionPeriodInDays | secondsDays} days</p>
+            <p class="subtext" if.bind="submitData.fundingPeriod">${submitData.fundingPeriod | secondsDays} days</p>
             <p class="optionalContent" else>[optional period not supplied]</p>
           </div>
         </section>
@@ -124,12 +124,12 @@
                 <h4 class="submitCardHeader">Terms</h4>
 
                 <template repeat.for="clause of submitData.terms.clauses">
-                <template if.bind="true">
-                  <div class="submitContentLabel">Clause ${$index + 1}</div>
-                  <div class="submitContent">
-                    <pre class="subtext">${clause.text}</pre>
-                  </div>
-                </template>
+                  <template if.bind="true">
+                    <div class="submitContentLabel">Clause ${$index + 1}</div>
+                    <div class="submitContent">
+                      <pre class="subtext">${clause.text}</pre>
+                    </div>
+                  </template>
               </div>
             </pcard>
           </div>

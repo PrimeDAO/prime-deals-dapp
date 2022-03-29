@@ -44,7 +44,7 @@ Feature: "Token Details" stage (Stage 5)
 
   #####################################################
 
-  # Scenario: Execution Period
+  # Scenario: Funding Period
 
   #####################################################
 
@@ -60,14 +60,14 @@ Feature: "Token Details" stage (Stage 5)
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Address is required" error message for the "Token address" field
     And I am presented with the "Amount is required" error message for the "Token amount" field
-    And I am presented with the "Execution period is required" error message for the "Execution Period" field
+    And I am presented with the "Funding Period is required" error message for the "Funding Period" field
 
   Scenario: Validates vesting fields
     When I try to proceed to next step
     Then I am presented with the "Partnered Deal" "Token Details" stage
     And I am presented with the "Address is required" error message for the "Token address" field
     And I am presented with the "Amount is required" error message for the "Token amount" field
-    And I am presented with the "Execution period is required" error message for the "Execution Period" field
+    And I am presented with the "Funding Period is required" error message for the "Funding Period" field
 
   Scenario: Validates if the wallet address has the correct format
     Given I want to fill in information for the "Primary DAO Tokens" section

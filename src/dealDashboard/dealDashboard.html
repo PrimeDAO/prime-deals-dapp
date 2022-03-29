@@ -15,7 +15,7 @@
         ${deal.registrationData.proposal.title}
       </h1>
 
-      <let deal-privacy-text="${deal.registrationData.isPrivate ? 'Private' : 'Public'}"></let>
+      <let deal-privacy-text="${deal.isPrivate ? 'Private' : 'Public'}"></let>
       <h2 data-test="dealStatus">
         <time-left deal.to-view="deal" hide-icons largest>
           <span slot="before">•</span>
@@ -35,15 +35,13 @@
       authorized.bind="authorized"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      if.to-view="authorized || !deal.registrationData.isPrivate"
-    ></deal-clauses>
+      if.to-view="authorized || !deal.isPrivate"></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
       authorized.bind="authorized"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      show.bind="authorized || !deal.registrationData.isPrivate"
-    ></deal-discussion>
+      show.bind="authorized || !deal.isPrivate"></deal-discussion>
   </main>
 </template>

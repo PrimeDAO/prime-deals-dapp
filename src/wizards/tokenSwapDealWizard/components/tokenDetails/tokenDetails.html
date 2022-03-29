@@ -47,14 +47,14 @@
           </p>
           <pform-input input-reference.bind="logoImageInput">
             <pinput-text value.bind="token.logoURI & validate"
-                         view-model.ref="logoImageInput"></pinput-text>
+              view-model.ref="logoImageInput"></pinput-text>
           </pform-input>
         </div>
       </div>
       <pform-input data-test="proposal-token-amount-field"
         input-reference.bind="amountInput"
         label="Total Amount of Tokens to Swap"
-        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the on-chain execution phase of the deal.">
+        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
         <pinput-numeric
           placeholder="500.00"
           value.bind="token.amount & validate"

@@ -1,3 +1,4 @@
+import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, Networks } from "./EthereumService";
 import { autoinject, computedFrom, Container } from "aurelia-framework";
@@ -49,7 +50,9 @@ export class DealService {
 
   @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
-    return this.deals ? Array.from(this.deals.values()) : [];
+    return this.deals ? Array.from(this.deals.values())
+      // sort in descending createdAt date order
+      .sort((a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.createdAt, b.createdAt, SortOrder.DESC)) : [];
   }
 
   public initializing = true;
@@ -114,6 +117,7 @@ export class DealService {
         reject: (reason?: any) => void): void => {
         this.getExecutedDealInfo().then(() => {
           this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+            console.log("TCL ~ file: DealService.ts ~ line 120 ~ DealService ~ this.dataSourceDeals.getDeals<IDealTokenSwapDocument> ~ dealDocs", dealDocs);
             if (force || !this.deals?.size) {
               try {
 

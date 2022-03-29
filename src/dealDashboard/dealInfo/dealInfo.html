@@ -25,9 +25,8 @@
         ${deal.registrationData.partnerDAO.name}
         <div class="daoSocialLinks">
           <a href.bind="socialMedia.url"
-             repeat.for="socialMedia of deal.registrationData.partnerDAO.social_medias"
-             target="_blank"
-          >
+            repeat.for="socialMedia of deal.registrationData.partnerDAO.social_medias"
+            target="_blank">
             <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
           </a>
         </div>
@@ -48,7 +47,7 @@
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
       <etherscanlink address.bind="deal.registrationData.proposalLead.address"
-                     text="${deal.registrationData.proposalLead.address | smallHexString}">
+        text="${deal.registrationData.proposalLead.address | smallHexString}">
       </etherscanlink>
     </div>
 
@@ -60,7 +59,7 @@
         <div class="tokenDetails" repeat.for="tokenDetails of deal.primaryDao.tokens">
           <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
           <formatted-number mantissa="0" thousands-separated
-                            value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
+            value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
           ${tokenDetails.symbol}
         </div>
         <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">Not added</span>
@@ -75,7 +74,7 @@
         <div class="tokenDetails" repeat.for="tokenDetails of deal.partnerDao.tokens">
           <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
           <formatted-number mantissa="0" thousands-separated
-                            value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
+            value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
           ${tokenDetails.symbol}
         </div>
       </div>
@@ -88,7 +87,7 @@
       ${deal.totalPrice | currency}
     </div>
     <div class="infoSection" if.bind="deal.executedAt">
-      <span class="bodySmallTextBold infoTitle">Time left to execute</span>
+      <span class="bodySmallTextBold infoTitle">Time left to initiate</span>
       <span class="textRight">
         ${ timeLeftToExecute | timespan:"largest2"}
       </span>
@@ -101,9 +100,8 @@
       <span>
         <ptoggle
           disabled.bind="deal.registrationData.proposalLead.address !== ethereumService.defaultAccountAddress"
-          ptooltip.bind="deal.registrationData.proposalLead.address === ethereumService.defaultAccountAddress ? '' : deal.registrationData.isPrivate ? 'This deal is private' : 'This deal is public'"
-          value.to-view="!deal.registrationData.isPrivate"
-        ></ptoggle>
+          ptooltip.bind="deal.registrationData.proposalLead.address === ethereumService.defaultAccountAddress ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
+          value.to-view="!deal.isPrivate"></ptoggle>
       </span>
     </div>
 
