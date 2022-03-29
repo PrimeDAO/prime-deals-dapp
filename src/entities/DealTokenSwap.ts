@@ -48,7 +48,7 @@ export type DealTransactionType = "deposit" | "withdraw";
 export interface IDaoTransaction {
   dao: IDAO, //dao that this transaction is related to in registration data
   type: DealTransactionType, // deposit or withdraw
-  token: IToken, //only need iconURI, decimals, amount and symbol
+  token: IToken, //only need iconURI, amount and symbol
   address: string, //from/to address
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
@@ -60,7 +60,6 @@ export interface IDaoClaimToken {
   claimable: number,
   locked: number
 }
-
 @autoinject
 export class DealTokenSwap implements IDeal {
 
@@ -215,16 +214,16 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * Gets the non-related DAO based on the connected wallet address
-   */
+    * Gets the non-related DAO based on the connected wallet address
+    */
   @computedFrom("ethereumService.defaultAccountAddress")
   public get otherDao(): IDAO {
     return this.getDao(false);
   }
 
   /**
-   * Gets the DAO based on the connected wallet address
-   */
+    * Gets the DAO based on the connected wallet address
+    */
   private getDao(relatedToWallet: boolean) : IDAO {
     if (this.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
       //the connected wallet is a representative of the partner DAO
@@ -233,14 +232,6 @@ export class DealTokenSwap implements IDeal {
     //the connceted wallet is either a representative of the primary DAO or the proposal lead
     return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
   }
-
-  /**
-   * poor naming of this status by bizdev because it is being defined to
-   * actually be the funding period when swapping (claiming) isn't actually occurring.
-   */
-  @computedFrom("isFunding")
-  public get isSwapping(): boolean {
-    return this.isFunding;
   @computedFrom("isSwapping")
   public get isClaiming(): boolean {
     return this.isSwapping;
