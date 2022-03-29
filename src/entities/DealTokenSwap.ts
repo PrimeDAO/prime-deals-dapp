@@ -108,6 +108,10 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.registrationData;
   }
 
+  @computedFrom("registrationData.isPrivate")
+  public get isPrivate(): boolean {
+    return this.registrationData.isPrivate;
+  }
   /**
    * Open Proposal that is open for offers, by bizdev definition
    * @returns
@@ -204,8 +208,13 @@ export class DealTokenSwap implements IDeal {
     return this.fundingWasInitiated && !this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
-  @computedFrom("isExecuted")
+  @computedFrom("isSwapping")
   public get isClaiming(): boolean {
+    return this.isSwapping;
+  }
+
+  @computedFrom("isExecuted")
+  public get isSwapping(): boolean {
     return this.isExecuted;
   }
 

@@ -3,7 +3,6 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealMenubar.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AlertService } from "../../services/AlertService";
-import { DealStatus } from "../../entities/IDealTypes";
 
 @autoinject
 export class DealMenubar {
@@ -22,7 +21,7 @@ export class DealMenubar {
 
   @computedFrom("deal.status")
   get canEdit() {
-    return ![DealStatus.funding].includes(this.deal.status);
+    return !this.deal.isExecuted && !this.deal.isCancelled;
   }
 
   async cancelDeal() {

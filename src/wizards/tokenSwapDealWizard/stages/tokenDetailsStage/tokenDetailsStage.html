@@ -24,12 +24,11 @@
           token.bind="token"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"
-          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"
-        ></token-details>
+          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
-                 if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
-                 type="primary">
+          if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
+          type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
@@ -61,12 +60,11 @@
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           token.bind="token"
           view-model.ref="partnerDAOTokenDetails[$index]"
-          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"
-        ></token-details>
+          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
-                 if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
-                 type="primary">
+          if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
+          type="primary">
           Add token
           <i class="fa fa-plus"></i>
         </pbutton>
@@ -84,7 +82,7 @@
       <div class="stageSectionSidebar">
         <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Execution Period</h2>
         <p class="sidebarText">
-          After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and execute the swap on-chain.
+          After both parties have discussed and agreed on the deal clauses they should be ready to fully fund the deal and initiate the swap on-chain.
         </p>
         <br>
         <p class="sidebarText">
