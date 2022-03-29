@@ -261,7 +261,7 @@ export class DealTokenSwap implements IDeal {
     return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
   }
 
-  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding")
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
     else if (this.isCompleted) { return DealStatus.completed; }
@@ -269,6 +269,7 @@ export class DealTokenSwap implements IDeal {
     else if (this.isCancelled) { return DealStatus.cancelled; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
+    else if (this.isSwapping) { return DealStatus.swapping; }
     // else if (this.isTargetReached) { return DealStatus.targetReached; }
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }
