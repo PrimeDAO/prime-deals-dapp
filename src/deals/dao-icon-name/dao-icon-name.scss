@@ -11,6 +11,9 @@
     grid-template-columns: 38px 26px auto;
   }
 
+  .dao {
+    overflow: hidden;
+  }
   .icon {
     transition: 0.35s ease-in-out;
     display: grid;

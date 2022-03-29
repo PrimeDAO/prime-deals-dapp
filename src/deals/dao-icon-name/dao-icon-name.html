@@ -7,10 +7,20 @@
       <img src="${registrationData.partnerDAO.logoURI}" />
     </div>
     <div class="dao">
-      <div class="name ellipses" if.to-view="registrationData.primaryDAO">
+      <div
+        class="name ellipses"
+        if.to-view="registrationData.primaryDAO"
+        ref="primaryDaoElem"
+        ptooltip.to-view="primaryDaoElem.scrollWidth > primaryDaoElem.offsetWidth ? registrationData.primaryDAO.name : ''"
+      >
         ${registrationData.primaryDAO.name}
       </div>
-      <div class="name ellipses" if.to-view="registrationData.partnerDAO">
+      <div
+        class="name ellipses"
+        if.to-view="registrationData.partnerDAO"
+        ref="partnerDaoElem"
+        ptooltip.to-view="partnerDaoElem.scrollWidth > partnerDaoElem.offsetWidth ? registrationData.partnerDAO.name : ''"
+      >
         ${registrationData.partnerDAO.name}
       </div>
     </div>
