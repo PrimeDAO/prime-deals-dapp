@@ -31,6 +31,9 @@
         Create Your Own Deal
       </pbutton>
     </div>
+    <div class="section loading" if.to-view="!dealsLoadedOnce">
+      <i class="spinner fa fas fa-circle-notch fa-spin"></i>
+    </div>
     <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
       <div class="heading02Gradient selector">
         <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
@@ -51,14 +54,10 @@
           <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
         </horizontal-scroller>
       </template>
-      <div if.to-view="!featuredDeals" class="loading">
-        <i class="fas fa-circle-notch fa-spin"></i>
-      </div>
     </div>
 
     <div class="section all-deals" if.to-view="!gridDeals || gridDeals.length">
       <div class="heading02Gradient">${cardIndex==0 ? "All open proposals" : "All partnered deals"}</div>
-      <div if.to-view="!gridDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       <!-- Desktop grid -->
       <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
