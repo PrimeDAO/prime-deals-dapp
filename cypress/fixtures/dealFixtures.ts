@@ -10,7 +10,7 @@ export const proposalLeadAddress1 = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
 const tokenAddress1 = "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad";
 
 export const openProposalId1 = "gX9QEuX34DJw5cYpAM6jpD";
-export const openProposalId2 = "wa8DKQ5ZJe1TxiVE3997QX";
+export const MINIMUM_OPEN_PROPOSAL_ID_2 = "wa8DKQ5ZJe1TxiVE3997QX";
 export const partneredDealId1 = "snrw1s6DzZCwfBJzjLJQNX";
 
 export const E2E_ADDRESSES = {
@@ -87,37 +87,64 @@ const discussion4 = {
   key: "-i90irriG3hu8xJs1g0c7LtTCtGiYmU5m3hZSfcIPz0",
 };
 
-export const OPEN_PROPOSAL_1: IDealRegistrationTokenSwap = {
-  version: "0.0.1",
+export const MINIMUM_OPEN_PROPOSAL: IDealRegistrationTokenSwap = {
+  dealType: "token-swap",
   proposal: {
-    title: "Swap tokenized carbon credits for a better world",
-    summary: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
-    description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie. Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie. Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
+    summary: "Summary Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.",
+    description: "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.\n\nMorbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat.\n\nPraesent dapibus, neque id cursus faucibus, tortor neque egestas auguae, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.",
+    title: "First Proposal",
   },
-  primaryDAO: {
-    id: "dao-hash-1",
-    name: "Creator",
-    tokens: [],
-    social_medias: [],
-    representatives: [{address: address1}, {address: address4}],
-    treasury_address: address2,
-    logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
-  },
-  partnerDAO: undefined,
+  offersPrivate: false,
+  fundingPeriod: 864000,
+  isPrivate: false,
+  version: "0.0.2",
   proposalLead: {
-    address: proposalLeadAddress1,
+    address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     email: "",
   },
-  terms: {
-    clauses: [
-      {id: "clause-hash-1", text: "lorem"},
+  primaryDAO: {
+    treasury_address: "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
+    logoURI: "https://picsum.photos/seed/picsum/400/400",
+    social_medias: [
+      {
+        url: "https://twitter.com/PrimeDAO_",
+        name: "Twitter",
+      },
+    ],
+    name: "PrimeDAO",
+    tokens: [
+      {
+        symbol: "D2D",
+        amount: "500000000000",
+        address: "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
+        vestedFor: 8640000,
+        logoURI:
+          "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
+        vestedTransferAmount: "400000000000",
+        instantTransferAmount: "100000000000",
+        decimals: 18,
+        name: "Prime",
+        cliffOf: 864000,
+      },
+    ],
+    representatives: [
+      {
+        address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      },
+      {
+        address: "0xe835f975d731Aa8515DD3Da9ec8a82e1DEF33c34",
+      },
     ],
   },
-  keepAdminRights: false,
-  offersPrivate: false,
-  isPrivate: true,
-  fundingPeriod: 50,
-  dealType: "token-swap",
+  keepAdminRights: true,
+  terms: {
+    clauses: [
+      {
+        id: "",
+        text: "Clause ONE",
+      },
+    ],
+  },
 };
 
 const _registration2: IDealRegistrationTokenSwap = {
@@ -288,7 +315,7 @@ const MOCK_DATA = {
   },
 
   // Registration Mock
-  "registration-hash-1": OPEN_PROPOSAL_1,
+  "registration-hash-1": MINIMUM_OPEN_PROPOSAL,
   "registration-hash-2": _registration2,
   "registration-hash-3": _registration3,
 

@@ -4,6 +4,7 @@ import { openProposalId1 } from "../../../fixtures/dealFixtures";
 
 export class E2eDeals {
   public static currentDeal: IDealRegistrationTokenSwap | undefined = undefined;
+  public static currentDealId: string;
 }
 
 Given("I navigate to the All Deals page", () => {

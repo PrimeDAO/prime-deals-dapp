@@ -1,6 +1,12 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { openProposalId1, openProposalId2, partneredDealId1 } from "../../fixtures/dealFixtures";
+import { openProposalId1, MINIMUM_OPEN_PROPOSAL_ID_2, partneredDealId1 } from "../../fixtures/dealFixtures";
 import { DealWizard } from "./pageObjects/dealWizard";
+
+export class E2eWizard {
+  public static waitForWizardLoaded() {
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  }
+}
 
 export const wizardTitlesToURLs = {
   "Open proposal": "open-proposal",
@@ -59,7 +65,7 @@ When("I use the stepper to go to the {string} step", (stepName: string) => {
 });
 
 When("I try to submit the registration data", () => {
-  cy.get("[data-test='wizard-submit-button']").click();
+  DealWizard.submit();
 });
 
 When("I try to navigate to the {string} stage via stepper", (stageTitle: string) => {
@@ -69,7 +75,7 @@ When("I try to navigate to the {string} stage via stepper", (stageTitle: string)
 const lastUrl = "";
 Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wizardTitlesToURLs, stageTitle: keyof typeof stageTitlesToURLs) => {
   if (wizardTitle === "Make an offer") {
-    const url = `make-an-offer/${openProposalId2}/${stageTitlesToURLs[stageTitle]}`;
+    const url = `make-an-offer/${MINIMUM_OPEN_PROPOSAL_ID_2}/${stageTitlesToURLs[stageTitle]}`;
     cy.visit(url);
     cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
     return;

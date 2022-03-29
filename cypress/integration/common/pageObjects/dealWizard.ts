@@ -63,6 +63,10 @@ export class DealWizard {
     });
   }
 
+  static submit() {
+    cy.get("[data-test='wizard-submit-button']").click();
+  }
+
   public static isInStage() {
     if (!wizardTitlesToURLs[this.wizardTitle]) {
       throw new Error(`Wizard ${this.wizardTitle} does not exist in the list`);
