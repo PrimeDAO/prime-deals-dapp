@@ -4,6 +4,18 @@ pbutton button.secondary {
 }
 .page.deals {
   .section {
+    &.loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      padding-top: 24px;
+
+      i {
+        color: $Secondary02;
+      }
+    }
+
     &.no-deals {
       display: flex;
       flex-direction: column;
@@ -100,16 +112,6 @@ pbutton button.secondary {
         }
 
         margin-bottom: 53px;
-      }
-
-      .loading {
-        text-align: center;
-        font-size: 32px;
-        padding-top: 24px;
-
-        i {
-          color: $Secondary07;
-        }
       }
     }
 
