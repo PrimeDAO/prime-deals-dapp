@@ -15,10 +15,8 @@ import DOMPurify from "dompurify";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { TimingService } from "services/TimingService";
 import { TokenService } from "services/TokenService";
-import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
-import { IDataSourceDeals2 } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
 import { FirebaseService } from "services/FirebaseService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
@@ -35,8 +33,7 @@ export function configure(aurelia: Aurelia): void {
       configuration.settings.keyboard = false;
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
-  aurelia.use.singleton(IDataSourceDeals, CeramicServiceMock);
-  aurelia.use.singleton(IDataSourceDeals2, FirestoreDealsService);
+  aurelia.use.singleton(IDataSourceDeals, FirestoreDealsService);
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
@@ -73,9 +70,6 @@ export function configure(aurelia: Aurelia): void {
       ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
-
-      const ceramicService = aurelia.container.get(CeramicServiceMock);
-      ceramicService.initialize();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));

@@ -1,35 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Address, Hash } from "./EthereumService";
-
-export type IKey = Hash;
-
-/**
- * this is a hack using a class to simulate an interface that we
- * can inject
- */
-export abstract class IDataSourceDeals {
-/**
-   * If id is not set, then will use rootId
-   * @param id
-   */
-  initialize(rootId?: IKey): void {
-    throw new Error("Method not implemented.");
-  }
-  get<T>(id?: IKey): T {
-    throw new Error("Method not implemented.");
-  }
-  /**
-   * returns the new CID
-   */
-  create(idParent: IKey, data: string): Promise<IKey> {
-    throw new Error("Method not implemented.");
-  }
-  update(id: IKey, data: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-}
+import { Address } from "./EthereumService";
 
 export type IDealIdType = string;
 
@@ -37,7 +10,7 @@ export type IDealIdType = string;
  * this is a hack using a class to simulate an interface that we
  * can inject
  */
-export abstract class IDataSourceDeals2 {
+export abstract class IDataSourceDeals {
   initialize(): void {
     throw new Error("Method not implemented.");
   }
@@ -92,7 +65,7 @@ export abstract class IDataSourceDeals2 {
     throw new Error("Method not implemented.");
   }
   /**
-   * Relate clause to a discussion
+   * Adds discussion to clauseDiscussions map
    * @param dealId
    * @param accountAddress
    * @param clauseId
@@ -102,7 +75,7 @@ export abstract class IDataSourceDeals2 {
     dealId: IDealIdType,
     accountAddress: Address,
     clauseId: string,
-    discussionId: Hash): Promise<void> {
+    discussion: IDealDiscussion): Promise<void> {
     throw new Error("Method not implemented.");
   }
 

@@ -18,7 +18,7 @@ service cloud.firestore {
     }
 
     function updateOnlyToDiscussions() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['discussions']);
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clauseDiscussions']);
     }
 
     match /deals-token-swap/{deal} {

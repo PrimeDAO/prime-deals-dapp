@@ -6,7 +6,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
-import { IDataSourceDeals2, IKey } from "services/DataSourceDealsTypes";
+import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { BigNumber } from "ethers";
 import { parseBytes32String } from "ethers/lib/utils";
@@ -43,9 +43,9 @@ export let StartingBlockNumber: number;
 export class DealService {
 
   /**
-   * key is a ceramic Hash
+   * key is a deal Id
    */
-  public deals: Map<IKey, DealTokenSwap>;
+  public deals: Map<IDealIdType, DealTokenSwap>;
   private executedDealIds: Map<string, IExecutedDeal>;
 
   @computedFrom("deals.size")
@@ -70,7 +70,7 @@ export class DealService {
   // public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: IDataSourceDeals2,
+    private dataSourceDeals: IDataSourceDeals,
     private eventAggregator: EventAggregator,
     private container: Container,
     private aureliaHelperService: AureliaHelperService,

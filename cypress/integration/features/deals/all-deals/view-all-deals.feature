@@ -9,6 +9,7 @@ Feature: View All Deals
         And I can see Open Proposals Carousel
         And I can see All Deals grid
 
+    @focus
     Scenario: View partnered deals
         When I select Partnered Deals tab
         Then I can see Partnered Deals
