@@ -45,7 +45,6 @@ export class TokenDetailsStage {
     this.wizardManager = stageMeta.wizardManager;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.stageMetadata = stageMeta.settings;
-    console.log(this.wizardState);
 
     this.wizardType = stageMeta.wizardType;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);

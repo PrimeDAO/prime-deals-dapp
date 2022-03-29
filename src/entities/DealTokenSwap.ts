@@ -440,7 +440,7 @@ export class DealTokenSwap implements IDeal {
         return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
       }, 0);
     } catch (error){
-      console.error("Computing deal price", error);
+      throw new Error(`Computing deal price ${error}`);
       this.totalPrice = 0;
     }
   }
