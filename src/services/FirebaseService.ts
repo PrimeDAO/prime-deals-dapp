@@ -4,7 +4,7 @@ import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -16,6 +16,10 @@ export const firebaseApp = initializeApp({
   projectId: process.env.FIREBASE_PROJECT_ID,
   appId: process.env.FIREBASE_APP_ID,
 });
+
+if (process.env.FIREBASE_ENVIRONMENT === "local") {
+  initializeFirestore(firebaseApp, { experimentalForceLongPolling: true });
+}
 
 export const firebaseDatabase = getFirestore();
 export const firebaseAuth = getAuth();
