@@ -83,10 +83,7 @@
                   >
                   <span class="balance" if.to-view="walletBalance">
                     Your ${deal.daoRelatedToWallet.tokens[selectedToken].symbol} Balance:
-                    <formatted-number
-                      value="${walletBalance | ethwei:token.decimals}"
-                      mantissa="2"
-                    ></formatted-number>
+                    ${withCommas(walletBalance)}
                   </span>
                 </div>
               </div>
@@ -111,34 +108,13 @@
         <div class="box-container">
           <div class="token-grid">
             <h4 class="title heading heading3 gradient">Claim Tokens</h4>
-            <div class="grid">
-              <div class="row header">
-                <div class="cell token header">Token</div>
-                <div class="cell claimable header">Claimable</div>
-                <div class="cell locked header">Locked</div>
-                <div class="cell total header">Total</div>
-              </div>
-              <template repeat.for="token of tokensToClaim">
-                <div class="row body">
-                  <div class="token cell body">
-                    <dao-icon-name
-                      primary-dao.to-view="token.token"
-                      icon-size="24"
-                      use-token-symbol.to-view="true"
-                    ></dao-icon-name>
-                  </div>
-                  <div class="claimable cell body">
-                    ${withCommas(token.claimable) | ethwei:token.decimals}
-                  </div>
-                  <div class="locked cell body">
-                    ${withCommas(token.locked) | ethwei:token.decimals}
-                  </div>
-                  <div class="total cell body">
-                    ${withCommas(token.claimable + token.locked) | ethwei:token.decimals}
-                  </div>
-                </div>
-              </template>
-            </div>
+            <pgrid
+              id="token-grid"
+              rows.bind="tokensToClaim"
+              columns.bind="claimTokenGridColumns"
+              condensed.bind="true"
+            >
+            </pgrid>
           </div>
           <div class="contract">
             <p>

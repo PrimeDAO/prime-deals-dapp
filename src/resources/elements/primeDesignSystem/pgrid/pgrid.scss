@@ -16,8 +16,12 @@
     }
 
     .cell.header {
-      padding: 10px 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
       text-transform: uppercase;
+      &.right {
+        text-align: right;
+      }
     }
 
     &.body.hot {
@@ -38,7 +42,10 @@
         height: 74px;
         display: flex;
         align-items: center;
-
+        &.right {
+          text-align: right;
+          justify-content: right;
+        }
         &.condensed {
           height: 40px;
         }
@@ -101,7 +108,8 @@
     &.header {
       .cell {
         border-bottom: 1px solid $Secondary02;
-        padding: 10px 0;
+        padding-top: 10px;
+        padding-bottom: 10px;
         font-size: 14px;
         font-weight: 700;
         line-height: 24px;

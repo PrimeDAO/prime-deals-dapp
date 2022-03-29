@@ -37,7 +37,7 @@ export class PGridDemo {
   
   ` },
       { field: "createdAt", width: ".5fr", headerText: "age", sortable: true, template: "${getFormattedTime(createdAt)}" },
-      { field: "address", width: ".2fr", headerText: "TxID", sortable: false, template: "<etherscan-button href-text='View' address.to-view=\"address\"></etherscan-button>" },
+      { field: "address", width: ".2fr", headerText: "TxID", sortable: false, template: "<etherscan-button href-text='View' address.to-view=\"address\" is-transaction=\"true\"></etherscan-button>" },
       { field: "address", width: ".25fr", sortable: false, headerText: "", template: `
   <div class="withdraw">
   <pbutton

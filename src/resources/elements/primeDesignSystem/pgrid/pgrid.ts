@@ -5,13 +5,23 @@ import "./pgrid.scss";
 import { SortOrder, SortService } from "services/SortService";
 import { Utils } from "services/utils";
 
+export interface IGridColumn {
+  field: string;
+  headerText?: string;
+  sortable?: boolean;
+  width: string;
+  headerClass?: string;
+  align?: string;
+  template?: string;
+}
+
 @autoinject
 @customElement("pgrid")
 export class PGrid {
   @bindable id?: string;
   @bindable condensed = false;
   @bindable public rows: [] = [];
-  @bindable public columns: { field: string, width: string }[] = [];
+  @bindable public columns: IGridColumn[] = [];
   @bindable public selectable = false;
   sortColumn: string;
   sortDirection: SortOrder;

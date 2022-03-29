@@ -1,6 +1,13 @@
 @import "styles/styles.scss";
-
 .etherscan-button {
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto auto;
+  grid-column-gap: 5px;
+  a {
+    display: inline-block;
+  }
+  svg {
     outline: none;
     path {
       fill: $Secondary05;
@@ -10,3 +17,4 @@
       fill: $White;
     }
   }
+}

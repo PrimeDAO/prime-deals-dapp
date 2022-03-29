@@ -8,12 +8,13 @@ import { Utils } from "services/utils";
 export class EtherscanButton {
   @bindable hrefText?:string;
   @bindable address:string;
+  @bindable isTransaction:boolean;
   constructor(private readonly ethereumService:EthereumService ) {
     // you can inject the element or any DI in the constructor
   }
 
-  public gotoEtherscan = (address: string, tx = false): void => {
-    Utils.goto(this.ethereumService.getEtherscanLink(address, tx));
+  public gotoEtherscan = (): void => {
+    Utils.goto(this.ethereumService.getEtherscanLink(this.address, this.isTransaction));
   };
 
 }

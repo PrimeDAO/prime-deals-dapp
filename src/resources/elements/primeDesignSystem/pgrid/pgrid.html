@@ -3,7 +3,7 @@
     <div class="row header">
       <div
         repeat.for="column of columns"
-        class="cell header ${column.sortable ? 'sortable' : ''} ${column.headerClass}"
+        class="cell header ${column.sortable ? 'sortable' : ''} ${column.headerClass} ${column.align}"
         click.delegate="column.sortable && sort(column.field)"
       >
         ${column.headerText === undefined ? column.field : column.headerText}
@@ -11,7 +11,10 @@
     </div>
     <template repeat.for="row of rows | sort:sortEvaluator">
       <div if.bind="!selectable" class="row">
-        <div repeat.for="column of columns" class="cell body hot ${condensed ? 'condensed' : ''}">
+        <div
+          repeat.for="column of columns"
+          class="cell body hot ${condensed ? 'condensed' : ''} ${column.align}"
+        >
           <compose
             if.bind="column.template"
             view.bind="viewStrategy(column.template)"
@@ -22,7 +25,10 @@
         </div>
       </div>
       <a else class="row body hot" select.delegate="select(row)">
-        <div repeat.for="column of columns" class="cell body hot ${condensed ? 'condensed' : ''}">
+        <div
+          repeat.for="column of columns"
+          class="cell body hot ${condensed ? 'condensed' : ''} ${column.align}"
+        >
           <compose
             if.bind="column.template"
             view.bind="viewStrategy(column.template)"
