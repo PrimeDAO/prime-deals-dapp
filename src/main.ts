@@ -62,6 +62,8 @@ export function configure(aurelia: Aurelia): void {
 
       if ((window as any).Cypress) {
         aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+        const firestoreDealsService = aurelia.container.get(FirestoreDealsService);
+        (window as any).Cypress.firestoreDealsService = firestoreDealsService;
       }
 
       const ethereumService = aurelia.container.get(EthereumService);
