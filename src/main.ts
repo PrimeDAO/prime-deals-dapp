@@ -20,6 +20,7 @@ import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
 import { FirebaseService } from "services/FirebaseService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
+import { FirestoreService } from "services/FirestoreService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -61,7 +62,16 @@ export function configure(aurelia: Aurelia): void {
       firebaseService.initialize();
 
       if ((window as any).Cypress) {
+        /**
+         * Mock wallet connection
+         */
         aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+        /**
+         * Tests can directly access FirestoreDealsService.
+         * We want that to, eg. get dealIds from the dealsArray
+         */
+        const firestoreService = aurelia.container.get(FirestoreService);
+        (window as any).Cypress.firestoreService = firestoreService;
       }
 
       const ethereumService = aurelia.container.get(EthereumService);
