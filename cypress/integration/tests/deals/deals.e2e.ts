@@ -1,4 +1,10 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { IDealRegistrationTokenSwap } from "../../../../src/entities/DealRegistrationTokenSwap";
+
+export class E2eDeals {
+  public static currentDeal: IDealRegistrationTokenSwap | undefined = undefined;
+  public static currentDealId: string;
+}
 
 Given("I navigate to the All Deals page", () => {
   cy.get("[data-test='all-deals-button']").click();
