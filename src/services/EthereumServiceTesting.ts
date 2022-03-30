@@ -49,10 +49,6 @@ export class EthereumServiceTesting {
   ]);
 
   private async fireAccountsChangedHandler(account: Address) {
-    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
-      account = null;
-    }
     console.info(`account changed: ${account}`);
 
     if (account !== null) {
@@ -101,7 +97,7 @@ export class EthereumServiceTesting {
      * Note: For testing, we don't call method.
      *   Reason: Tests don't have the concept of "already logged in address"
      */
-    // this.setProvider();
+    this.setProvider();
   }
 
   private async setProvider(): Promise<void> {
