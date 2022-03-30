@@ -114,15 +114,6 @@ Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeo
   });
 });
 
-When("I'm viewing the Partnered Deal Dashboard", () => {
-  E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
-    const url = `/deal/${partneredDealId}`;
-    cy.visit(url);
-
-    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
-  });
-});
-
 Given("I edit a \"Partnered Deal\"", () => {
   E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
     const url = `partnered-deal/${partneredDealId}/edit/submit`;

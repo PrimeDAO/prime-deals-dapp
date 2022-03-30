@@ -40,6 +40,7 @@ export class E2eDealsApi {
       const { pathname } = window.location;
       if (!E2eNavigation.isHome(pathname)) {
         E2eNavigation.navigateToHomePage();
+        console.log("TCL ~ file: deal-api.ts ~ line 44 ~ E2eDealsApi ~ cy.window ~ address", address);
         E2eNavbar.connectToWallet(address);
       }
     });

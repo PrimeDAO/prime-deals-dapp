@@ -201,7 +201,7 @@ const _registration2: IDealRegistrationTokenSwap = {
   dealType: "token-swap",
 };
 
-const _registration3: IDealRegistrationTokenSwap = {
+export const PARTNERED_DEAL: IDealRegistrationTokenSwap = {
   version: "0.0.1",
   proposal: {
     title: "Swap tokenized carbon credits for a better world",
@@ -314,7 +314,7 @@ const MOCK_DATA = {
   // Registration Mock
   "registration-hash-1": MINIMUM_OPEN_PROPOSAL,
   "registration-hash-2": _registration2,
-  "registration-hash-3": _registration3,
+  "registration-hash-3": PARTNERED_DEAL,
 
   // Discussions Mock Map
   "clause-discussions-hash-1": {
