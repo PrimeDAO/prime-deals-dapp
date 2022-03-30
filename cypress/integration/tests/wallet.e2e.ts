@@ -4,7 +4,21 @@ import { CONNECTED_PUBLIC_USER_ADDESS, proposalLeadAddress1 } from "../../fixtur
 import { Utils } from "../../../src/services/utils";
 
 export class E2eWallet {
-  public static currentWalletAddress = "";
+  public static _currentWalletAddress = "";
+  public static get currentWalletAddress() {
+    if (this._currentWalletAddress === "") {
+      const errorMessage = "[Test] Wallet address expected. Please use a step, that specifies an address.\n\n" +
+        "Quickest way to fix this, is to set:\n" +
+        "E2eWallet.currentWalletAddress = <myAddress>.\n\n" +
+        "If you wanted to test the \"Anonymous User case\", then test code likely has a bug.";
+      throw new Error(errorMessage);
+    }
+
+    return this._currentWalletAddress;
+  }
+  public static set currentWalletAddress(newAddress) {
+    this._currentWalletAddress = newAddress;
+  }
 
   public static getSmallHexAddress() {
     return Utils.smallHexString(E2eWallet.currentWalletAddress);

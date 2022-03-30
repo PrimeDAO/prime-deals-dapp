@@ -106,14 +106,6 @@ Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wiza
   cy.visit(url);
 });
 
-Given("I navigate to the Make an offer {string} stage", (stageTitle: keyof typeof stageTitlesToURLs) => {
-  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
-    const url = `/make-an-offer/${openProposalId}/${stageTitlesToURLs[stageTitle]}`;
-    cy.visit(url);
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
-  });
-});
-
 Given("I edit a \"Partnered Deal\"", () => {
   E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
     const url = `partnered-deal/${partneredDealId}/edit/submit`;

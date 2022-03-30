@@ -1,6 +1,7 @@
 Feature: Make an offer
   Background:
-    Given I navigate to make an offer wizard
+    Given I'm the Proposal Lead of an Open Proposal
+    And I navigate to make an offer wizard
 
   ###################
   # Primary DAO stage
