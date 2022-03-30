@@ -48,6 +48,11 @@ export class E2eNavbar {
       // 2. If not, connect
       cy.contains("button", "Connect to a Wallet").click();
 
+      cy.get("ux-dialog-container").within(() => {
+        cy.get(".dialogFooter .pToggle").click();
+        cy.contains("button", "Accept").click();
+      });
+
       cy.get(".navbar-container").within(() => {
         cy.get(".connectButton .address").should("be.visible");
       });

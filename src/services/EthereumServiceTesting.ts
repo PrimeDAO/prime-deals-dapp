@@ -72,7 +72,18 @@ export class EthereumServiceTesting {
   public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
-    if (!this.walletProvider) {
+    /**
+     * Difference to normal EthereumService: Only open Disclaimer, when clicking on "Connect to a Wallet" button.
+     *   In E2e tests, the disclaimer modal popped up on first load, because localStorage is always cleared.
+     */
+    let account = localStorage.getItem("PRIME_E2E_ADDRESS");
+    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 80 ~ EthereumServiceTesting ~ connect ~ account", account);
+    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
+      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
+      account = null;
+    }
+
+    if (account !== null) {
       this.setProvider();
     }
   }
@@ -93,10 +104,6 @@ export class EthereumServiceTesting {
    * without invoking Web3Modal nor MetaMask popups.
    */
   public async connectToConnectedProvider(): Promise<void> {
-    /**
-     * Note: For testing, we don't call method.
-     *   Reason: Tests don't have the concept of "already logged in address"
-     */
     this.setProvider();
   }
 
