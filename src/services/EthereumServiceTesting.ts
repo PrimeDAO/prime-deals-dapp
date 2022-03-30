@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-const ADDRESS = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
-
 /* eslint-disable no-console */
 import { ethers, Signer } from "ethers";
 import { BaseProvider, Web3Provider } from "@ethersproject/providers";
@@ -51,14 +49,10 @@ export class EthereumServiceTesting {
   ]);
 
   private async fireAccountsChangedHandler(account: Address) {
-    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
-      account = null;
-    }
     console.info(`account changed: ${account}`);
 
     if (account !== null) {
-      account = ADDRESS;
+      account = localStorage.getItem("PRIME_E2E_ADDRESS");
     }
     this.eventAggregator.publish("Network.Changed.Account", account);
   }
@@ -78,7 +72,18 @@ export class EthereumServiceTesting {
   public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
-    if (!this.walletProvider) {
+    /**
+     * Difference to normal EthereumService: Only open Disclaimer, when clicking on "Connect to a Wallet" button.
+     *   In E2e tests, the disclaimer modal popped up on first load, because localStorage is always cleared.
+     */
+    let account = localStorage.getItem("PRIME_E2E_ADDRESS");
+    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 80 ~ EthereumServiceTesting ~ connect ~ account", account);
+    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
+      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
+      account = null;
+    }
+
+    if (account !== null) {
       this.setProvider();
     }
   }
@@ -99,16 +104,13 @@ export class EthereumServiceTesting {
    * without invoking Web3Modal nor MetaMask popups.
    */
   public async connectToConnectedProvider(): Promise<void> {
-    /**
-     * Note: For testing, we don't call method.
-     *   Reason: Tests don't have the concept of "already logged in address"
-     */
-    // this.setProvider();
+    this.setProvider();
   }
 
   private async setProvider(): Promise<void> {
-    this.defaultAccountAddress = ADDRESS;
-    this.fireAccountsChangedHandler(ADDRESS);
+    const address = localStorage.getItem("PRIME_E2E_ADDRESS");
+    this.defaultAccountAddress = address;
+    this.fireAccountsChangedHandler(address);
   }
 
   public disconnect(error: { code: number; message: string }): void {
