@@ -26,6 +26,8 @@ module.exports = (on, config) => {
         extensions: [".ts", ".js"],
         alias: {
           process: 'process/browser',
+          services: '/home/hdn/dev/prime/prime-deals-dapp/src/services',
+          entities: '/home/hdn/dev/prime/prime-deals-dapp/src/entities',
         }
       },
       devtool: 'cheap-module-source-map',
