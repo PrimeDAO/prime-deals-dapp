@@ -1,7 +1,8 @@
 <template>
   <require from="../timeLeft/timeLeft"></require>
   <require from="../dao-icon-name/dao-icon-name"></require>
-  <pcard click.delegate="navigate()">
+
+  <pcard data-test="deal-summary" click.delegate="navigate()">
     <div if.to-view="!loading" class="dealSummary">
       <div class="countdown">
         <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
