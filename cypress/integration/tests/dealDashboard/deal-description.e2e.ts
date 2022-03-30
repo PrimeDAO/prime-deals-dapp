@@ -1,6 +1,6 @@
 import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 
-const MOBILE_MAX_LENGTH = 250;
+// const MOBILE_MAX_LENGTH = 250;
 
 When("the description text is long", () => {
   cy.log("TODO: create a deal with long summary text");
