@@ -11,6 +11,18 @@ export interface IComment {
   timestamp: number,
 }
 
+export interface IConvoComment {
+  _id: string;
+  text: string;
+  author: string;
+  authorENS?: string;
+  metadata: any;
+  replyTo?: string;
+  upvotes: Array<string>;
+  downvotes: Array<string>;
+  createdOn: string;
+}
+
 export interface IProfile {
   address: string,
   image: string,

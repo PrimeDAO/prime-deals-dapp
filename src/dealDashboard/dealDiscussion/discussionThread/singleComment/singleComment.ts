@@ -6,7 +6,6 @@ import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
 interface IThreadComment extends IComment {
-  createdOn: string;
   lastModified: string;
 }
 
@@ -41,9 +40,9 @@ export class SingleComment {
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
-    this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+    this.comment.lastModified = this.dateService.formattedTime(this.comment.timestamp).diff();
     this.commentTimeInterval = setInterval((): void => {
-      this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+      this.comment.lastModified = this.dateService.formattedTime(this.comment.timestamp).diff();
     }, 30000);
   }
 

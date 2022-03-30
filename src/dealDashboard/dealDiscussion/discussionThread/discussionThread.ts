@@ -7,7 +7,7 @@ import { Address, AllowedNetworks, EthereumService } from "services/EthereumServ
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 
-import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
+import { IComment, IConvoComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 
 import "./discussionThread.scss";
@@ -61,11 +61,6 @@ export class DiscussionThread {
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
   ) { }
-
-  @computedFrom("discussionsService.comments")
-  private get comments(): Array<IComment> {
-    return this.discussionsService.comments;
-  }
 
   attached(): void {
     this.initialize();
@@ -135,37 +130,57 @@ export class DiscussionThread {
   }
 
   private arrayToDictionary(comments): Record<string, IComment> {
-    return comments.reduce(function(r, e) {
+    return comments.reduce((r, e): Record<string, IComment> => {
       r[e._id] = e;
       return r;
     }, {});
   }
 
-  private updateCommentsThreadUponMessageArrival(comment: Types.Message): void {
+  private async updateCommentsThreadUponMessageArrival(comment: Types.Message): Promise<void> {
     // If a new comment is added to the thread, it is added at the end of the comments array.
-    if (!this.threadDictionary[comment.name]) {
-      this.discussionsService.importKey(this.discussionId).then(key => {
-        if (comment.data.metadata.encrypted) {
-          this.discussionsService.decryptWithAES(
-            comment.data.metadata.encrypted,
-            comment.data.metadata.iv,
-            key,
-          ).then( (decryptedComment) => {
-            comment.data.text = decryptedComment;
-            this.threadComments.push(comment.data);
-            this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(comment.timestamp));
-            this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
-            // scroll to bottom only if the user is at seeing the last message
-            if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
-              this.refThreadEnd.scrollIntoView({
-                behavior: "smooth",
-              });
-            }
-            this.isLoading.commenting = false;
-          });
-        }
-      });
+    const newComment: IComment = {
+      _id: comment.name,
+      text: comment.data.text,
+      author: comment.data.author,
+      authorName: comment.data.authorENS,
+      metadata: comment.data.metadata,
+      replyTo: comment.data.replyTo,
+      upvotes: comment.data.upvotes,
+      downvotes: comment.data.downvotes,
+      timestamp: parseFloat(comment.data.createdOn),
+    };
+
+    if (!this.threadDictionary[newComment._id]) {
+      const key = await this.discussionsService.importKey(this.discussionId);
+
+      newComment.text = (newComment.metadata.encrypted) ?
+        await this.discussionsService.decryptWithAES(
+          newComment.metadata.encrypted,
+          newComment.metadata.iv,
+          key,
+        ) :
+        newComment.text;
+
+      this.threadComments = [
+        ...(this.threadComments || []),
+        newComment,
+      ];
+
+      this.threadDictionary[newComment._id] = {
+        ...newComment,
+      };
+
+      this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(newComment.timestamp), this.threadComments.length);
+
+      // scroll to bottom only if the user is at seeing the last message
+      if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
+        this.refThreadEnd.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+      this.isLoading.commenting = false;
     }
   }
 
@@ -205,10 +220,7 @@ export class DiscussionThread {
       if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
       // Dictionary is used for replies, to easily find the comment by its id
-      this.threadDictionary = this.threadComments.reduce((r, e): Record<string, IComment> => {
-        r[e._id] = e;
-        return r;
-      }, {});
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
       /* Comments author profiles */
       this.threadComments.forEach((comment: IComment) => {
@@ -231,7 +243,7 @@ export class DiscussionThread {
       });
 
       // Update the discussion status
-      this.discussionsService.updateDiscussionListStatus(discussionId);
+      this.discussionsService.updateDiscussionListStatus(discussionId, new Date(this.threadComments[this.threadComments.length - 1].timestamp), this.threadComments.length);
     }
   }
 
@@ -261,7 +273,7 @@ export class DiscussionThread {
     if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
     try {
-      await this.discussionsService.addComment(
+      const newComment:IConvoComment = await this.discussionsService.addComment(
         this.discussionId,
         this.comment,
         this.deal.registrationData.isPrivate,
@@ -272,6 +284,27 @@ export class DiscussionThread {
         ],
         this.replyToComment?._id || "",
       );
+
+      if (newComment) {
+        this.threadComments.push({
+          _id: newComment._id,
+          text: newComment.text,
+          author: newComment.author,
+          authorName: newComment.authorENS,
+          metadata: newComment.metadata,
+          replyTo: newComment.replyTo,
+          upvotes: newComment.upvotes,
+          downvotes: newComment.downvotes,
+          timestamp: parseFloat(newComment.createdOn),
+        });
+
+        this.discussionsService
+          .updateDiscussionListStatus(
+            this.discussionId,
+            new Date(parseFloat(newComment.createdOn)),
+            this.threadComments.length,
+          );
+      }
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
 
@@ -299,7 +332,13 @@ export class DiscussionThread {
     if (this.isLoading[`isVoting ${_id}`]) return;
     this.isLoading[`isVoting ${_id}`] = true;
     try {
-      this.threadComments = await this.discussionsService.voteComment(this.discussionId, _id, type);
+      const message = await this.discussionsService.voteComment(this.discussionId, _id, type) as IComment;
+      if (message) {
+        const commentIndex = this.threadComments.findIndex(comment => comment._id === message._id);
+        this.threadComments[commentIndex].upvotes = message.upvotes;
+        this.threadComments[commentIndex].downvotes = message.downvotes;
+        this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(), this.threadComments.length);
+      }
     }
     catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
@@ -312,9 +351,15 @@ export class DiscussionThread {
     if (this.isLoading[`isDeleting ${_id}`]) return;
     this.isLoading[`isDeleting ${_id}`] = true;
     try {
-      this.threadComments = await this.discussionsService.deleteComment(this.discussionId, _id);
+      const swrComments = [...this.threadComments];
+      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+      if (!(await this.discussionsService.deleteComment(this.discussionId, _id))) {
+        /* on error, restore original comments */
+        this.threadComments = [...swrComments];
+      }
+      this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(), this.threadComments.length);
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
+      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
     } finally {
       this.isLoading[`isDeleting ${_id}`] = false;
     }
