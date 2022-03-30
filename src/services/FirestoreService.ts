@@ -1,8 +1,9 @@
+import { IDealIdType } from "services/DataSourceDealsTypes";
 import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
 import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
+import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc, DocumentReference, DocumentSnapshot } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
@@ -192,7 +193,7 @@ export class FirestoreService<
    *
    * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
-  public subscribeToAllDealsForUser(): Observable<Array<IFirebaseDocument<TDealDocument>>> {
+  public allDealsForUserObservable(): Observable<Array<IFirebaseDocument<TDealDocument>>> {
     // Observable of all public deals
     const allPublicDeals = this.getObservableOfQuery<Array<IFirebaseDocument>>(this.allPublicDealsQuery());
 
@@ -240,8 +241,22 @@ export class FirestoreService<
    *
    * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
-  public subscribeToAllPublicDeals(): Observable<Array<IFirebaseDocument>> {
+  public allPublicDealsObservable(): Observable<Array<IFirebaseDocument>> {
     return this.getObservableOfQuery<Array<IFirebaseDocument>>(this.allPublicDealsQuery());
+  }
+
+  public updatesToAllPublicDeals(): Observable<{
+    added: Array<IDealTokenSwapDocument>,
+    modified: Array<IDealTokenSwapDocument>,
+    removed: Array<IDealTokenSwapDocument>,
+  }> {
+    return this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery());
+  }
+
+  public dealDocumentObservable(dealId: IDealIdType): Observable<IFirebaseDocument<TDealDocument>> {
+    const docRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+
+    return this.getObservableOfDocument<IFirebaseDocument<TDealDocument>>(docRef);
   }
 
   /**
@@ -320,6 +335,57 @@ export class FirestoreService<
         q,
         (querySnapshot: QuerySnapshot<DocumentData>) => {
           handler(this.getDealDocumentsFromQuerySnapshot(querySnapshot));
+        },
+      ),
+      (handler, unsubscribe: Unsubscribe) => {
+        unsubscribe();
+      },
+    );
+  }
+
+  private getObservableOfQueryUpdates<T>(q: Query<DocumentData>): Observable<{
+    added: Array<T>,
+    modified: Array<T>,
+    removed: Array<T>,
+  }> {
+    return fromEventPattern(
+      (handler) => onSnapshot(
+        q,
+        (querySnapshot: QuerySnapshot<DocumentData>) => {
+          const updatedDocuments = {
+            added: [],
+            modified: [],
+            removed: [],
+          };
+          querySnapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              updatedDocuments.added.push(change.doc.data());
+            }
+            if (change.type === "modified") {
+              updatedDocuments.modified.push(change.doc.data());
+            }
+            if (change.type === "removed") {
+              updatedDocuments.removed.push(change.doc.data());
+            }
+          });
+          handler(updatedDocuments);
+        },
+      ),
+      (handler, unsubscribe: Unsubscribe) => {
+        unsubscribe();
+      },
+    );
+  }
+
+  private getObservableOfDocument<T>(ref: DocumentReference<DocumentData>): Observable<T> {
+    return fromEventPattern(
+      (handler) => onSnapshot(
+        ref,
+        (doc: DocumentSnapshot<DocumentData>) => {
+          handler({
+            id: doc.id,
+            data: doc.data() as T,
+          });
         },
       ),
       (handler, unsubscribe: Unsubscribe) => {

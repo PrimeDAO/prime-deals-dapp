@@ -21,8 +21,11 @@
   <br>
   <pbutton type="primary" click.delegate="getAllPublicDeals()">get All Public Deals</pbutton>
   <pbutton type="primary" click.delegate="getRepresentativeDeals()">Get deals where I am representative</pbutton>
+  <br>
+  <br>
   <pbutton type="primary" click.delegate="getProposalLeadDeals()">Get deals where I am Proposal Lead</pbutton>
   <pbutton type="primary" click.delegate="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
+  <br>
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="discussionDealId" placeholder="dealId"></pinput-text>
@@ -41,11 +44,26 @@
     <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
     <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
   </div>
+  <br>
   <div style="display: flex;">
     <pinput-text value.bind="isRejectedDealId" placeholder="DealId"></pinput-text>
     <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
     <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
   </div>
+  <br>
+  <div style="display: flex;">
+    <pinput-text value.bind="subscribeToDealId" placeholder="DealId"></pinput-text>
+    <pbutton type="primary" click.delegate="subscribeToDeal(subscribeToDealId)">subscribe To Deal</pbutton>
+  </div>
+  <br>
+  <div style="display: flex;">
+    <pinput-text value.bind="subscribeToDealChangesId" placeholder="DealId"></pinput-text>
+    <pbutton type="primary" click.delegate="subscribeToDealChanges(subscribeToDealChangesId)">subscribe To Deal Changes</pbutton>
+  </div>
+  <br>
+  <pbutton type="primary" click.delegate="updatesToAllPublicDeals()">updates To All Public Deals</pbutton>
+  <br>
+  <br>
   <h3>All deals</h3>
   <div>
     <div repeat.for="deal of allDeals" class="firebasePlaygroundItem">
