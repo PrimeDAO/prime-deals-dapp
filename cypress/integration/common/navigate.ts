@@ -11,6 +11,11 @@ export class E2eNavigation {
 
     cy.get("[data-test='home-page']").should("be.visible");
   }
+
+  public static isHome(pathName: string) {
+    const homePaths = ["/", "/home"];
+    return homePaths.includes(pathName);
+  }
 }
 
 Given("I navigate to the Deals home page", () => {

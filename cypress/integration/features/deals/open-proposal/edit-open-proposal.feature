@@ -2,7 +2,6 @@ Feature: Edit an Open Propsoal
   Background:
     Given I'm the Proposal Lead of an Open Proposal
     And I'm viewing the Open Proposal
-    And I'm connected to my wallet
 
   Scenario: Edit an Open Proposal
     Given I edit the Open Proposal

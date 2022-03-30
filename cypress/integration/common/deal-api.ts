@@ -1,32 +1,76 @@
 import { IDealTokenSwapDocument } from "../../../src/entities/IDealTypes";
-import { E2eWallet } from "../tests/wallet.e2e";
+import { IDealRegistrationTokenSwap } from "../../../src/entities/DealRegistrationTokenSwap";
+import { FirestoreService } from "../../../src/services/FirestoreService";
+import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
+import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
+
+interface IDealOptions {
+  address?: string;
+  isLead?: boolean;
+}
+
+const defaultDealOptions: IDealOptions = {
+  isLead: false,
+};
 
 export class E2eDealsApi {
-  private static getDealService() {
+  private static getDealService(): FirestoreService<
+  IDealTokenSwapDocument,
+  IDealRegistrationTokenSwap
+  > {
     // @ts-ignore - Hack to access firestore inside Cypress
-    return Cypress.firestoreDealsService;
+    return Cypress.firestoreService;
   }
 
   public static getDeals(
-    address: string,
+    options: IDealOptions = defaultDealOptions,
   ): Cypress.Chainable<IDealTokenSwapDocument[]> {
+    const { isLead } = options;
+    let { address } = options;
+    if (address === undefined) {
+      address = E2eWallet.currentWalletAddress;
+    }
+
     cy.log("[Test] Navigate to home page, and wait for app boostrapping");
     /**
      * Need to have the app bootstrapped, in order to use firestore
      */
-    E2eNavigation.navigateToHomePage();
+    cy.window().then((window) => {
+      const { pathname } = window.location;
+      if (!E2eNavigation.isHome(pathname)) {
+        E2eNavigation.navigateToHomePage();
+        E2eNavbar.connectToWallet(address);
+      }
+    });
 
     return cy.then(async () => {
       const firestoreDealsService = E2eDealsApi.getDealService();
-      const deals = await firestoreDealsService.getDeals(address);
-      return deals;
+      await firestoreDealsService.ensureAuthenticationIsSynced();
+
+      let deals: IFirebaseDocument<IDealTokenSwapDocument>[];
+
+      if (isLead) {
+        deals = await firestoreDealsService.getProposalLeadDeals(address);
+      } else {
+        deals = await firestoreDealsService.getAllDealsForTheUser(address);
+      }
+
+      console.log(
+        "TCL ~ file: deal-api.ts ~ line 30 ~ E2eDealsApi ~ returncy.then ~ address",
+        address,
+      );
+      console.log(
+        "TCL ~ file: deal-api.ts ~ line 30 ~ E2eDealsApi ~ returncy.then ~ deals",
+        deals,
+      );
+      return deals.map((deal) => deal.data);
     });
   }
 
-  public static getOpenProposals(address: string) {
+  public static getOpenProposals(options?: IDealOptions) {
     return cy.then(() => {
-      return this.getDeals(address).then((deals) => {
+      return this.getDeals(options).then((deals) => {
         return deals.filter((deal) => {
           return !deal.registrationData.partnerDAO;
         });
@@ -34,9 +78,9 @@ export class E2eDealsApi {
     });
   }
 
-  public static getPartneredDeals(address: string) {
+  public static getPartneredDeals(options?: IDealOptions) {
     return cy.then(() => {
-      return this.getDeals(address).then((deals) => {
+      return this.getDeals(options).then((deals) => {
         return deals.filter((deal) => {
           return deal.registrationData.partnerDAO;
         });
@@ -44,11 +88,9 @@ export class E2eDealsApi {
     });
   }
 
-  public static getFirstOpenProposalId(
-    address: string = E2eWallet.currentWalletAddress,
-  ) {
+  public static getFirstOpenProposalId(options?: IDealOptions) {
     return cy.then(() => {
-      return this.getOpenProposals(address).then((openProposals) => {
+      return this.getOpenProposals(options).then((openProposals) => {
         const id = openProposals[0].id;
         if (id === undefined) {
           throw new Error("[TEST] No Open Proposal found");
@@ -59,11 +101,9 @@ export class E2eDealsApi {
     });
   }
 
-  public static getFirstPartneredDealId(
-    address: string = E2eWallet.currentWalletAddress,
-  ) {
+  public static getFirstPartneredDealId(options?: IDealOptions) {
     return cy.then(() => {
-      return this.getPartneredDeals(address).then((partneredDeals) => {
+      return this.getPartneredDeals(options).then((partneredDeals) => {
         const id = partneredDeals[0].id;
         if (id === undefined) {
           throw new Error("[TEST] No Open Proposal found");

@@ -24,15 +24,27 @@ export class E2eNavbar {
     localStorage.setItem("PRIME_E2E_ADDRESS", address);
     E2eWallet.currentWalletAddress = address;
 
-    cy.contains("button", "Connect to a Wallet").click();
+    cy.get("[data-test='connectButton']").then(connectButton => {
+      // 1. Check if already connected
+      const text = connectButton.text();
+      if (text.trim() !== "Connect to a Wallet") {
+        return;
+      }
 
-    cy.get("ux-dialog-container").within(() => {
-      cy.get(".dialogFooter .pToggle").click();
-      cy.contains("button", "Accept").click();
-    });
+      // 2. If not, connect
+      cy.contains("button", "Connect to a Wallet").click();
 
-    cy.get(".navbar-container").within(() => {
-      cy.get(".connectButton .address").should("be.visible");
+      cy.get("ux-dialog-container").within(() => {
+        cy.get(".dialogFooter .pToggle").click();
+        cy.contains("button", "Accept").click();
+      });
+
+      cy.get(".navbar-container").within(() => {
+        cy.get(".connectButton .address").should("be.visible");
+      });
+
+      // cy.get("[data-test='modelContent']").should("be.visible");
+      // cy.get("[data-test='modelContent']").should("not.be.visible");
     });
   }
 }
