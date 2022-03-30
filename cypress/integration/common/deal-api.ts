@@ -40,7 +40,10 @@ export class E2eDealsApi {
       const { pathname } = window.location;
       if (!E2eNavigation.isHome(pathname)) {
         E2eNavigation.navigateToHomePage();
-        E2eNavbar.connectToWallet(address);
+
+        if (address !== undefined) {
+          E2eNavbar.connectToWallet(address);
+        }
       }
     });
 
@@ -50,7 +53,9 @@ export class E2eDealsApi {
 
       let deals: IFirebaseDocument<IDealTokenSwapDocument>[];
 
-      if (isLead) {
+      if (address === undefined) {
+        deals = await firestoreDealsService.getAllPublicDeals();
+      } else if (isLead) {
         deals = await firestoreDealsService.getProposalLeadDeals(address);
       } else {
         deals = await firestoreDealsService.getAllDealsForTheUser(address);
