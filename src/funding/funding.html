@@ -11,7 +11,7 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="deal.daoRelatedToWallet.tokens && deal.daoRelatedToWallet.tokens.length && !swapCompleted"
+      if.to-view="daoRelatedToWalletTokens && daoRelatedToWalletTokens.length && !this.deal.isClaiming"
     >
       <div class="box-container">
         <div class="box-header">
@@ -28,7 +28,7 @@
           <div class="tokens">
             <pgrid
               id="token-grid"
-              rows.bind="deal.daoRelatedToWallet.tokens"
+              rows.bind="daoRelatedToWalletTokens"
               columns.bind="tokenGridColumns"
               condensed.bind="true"
             ></pgrid>
@@ -40,32 +40,43 @@
               <i class="fas fa-info-circle"></i>
               <span if.to-view="fundingFailed">
                 The deal has failed as one or more parties failed to deposit their funds within the
-                given period of time. Please go to the Transactions below and withdraw your funds.
-                You can withdraw your funds at any time. Funds are safe.
+                given period of time. Please go to the Deposits below and withdraw your funds. You
+                can withdraw your funds at any time. Funds are safe.
               </span>
-              <span if.to-view="!fundingFailed && !dealTargetReached">
+              <span if.to-view="!fundingFailed && !deal.isTargetReached">
                 You're depositing on behalf of ${deal.daoRelatedToWallet.name}. This deal needs to
                 be funded and executed within ${fundingDaysLeft} days.
               </span>
-              <span if.to-view="!fundingFailed && dealTargetReached">
+              <span if.to-view="!fundingFailed && deal.isTargetReached">
                 All parties have deposited their funds. Anyone can now initiate the swap.
               </span>
             </p>
             <div>
-              <a href="${tokenDepositContractUrl}" target="_blank" rel="noopener noreferrer"
-                >DepositContract Contract <i class="fas fa-arrow-right"></i
+              <!-- TokenSwapModule Contract -->
+              <a
+                href="${gotoetherscan(deal.daoDepositContracts.get(deal.daoRelatedToWallet).address)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >DAODepositManager Contract <i class="fas fa-arrow-right"></i
               ></a>
-              <a href="${tokenSwapModuleContractUrl}" target="_blank" rel="noopener noreferrer"
+              <!-- TokenSwapModule Contract -->
+              <a
+                href="${gotoetherscan(deal.moduleContract.address)}"
+                target="_blank"
+                rel="noopener noreferrer"
                 >TokenSwapModule Contract <i class="fas fa-arrow-right"></i
               ></a>
             </div>
           </div>
           <div class="deposit">
-            <div class="form" if.to-view="!isProposalLead && !dealTargetReached && !fundingFailed">
+            <div
+              class="form"
+              if.to-view="!isProposalLead && !deal.isTargetReached && !fundingFailed"
+            >
               <div>
                 <div class="inputs">
                   <pselect
-                    disabled.bind="deal.daoRelatedToWallet.tokens.length === 1"
+                    disabled.bind="daoRelatedToWalletTokens.length === 1"
                     placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
@@ -75,15 +86,18 @@
                     css="pInput"
                     value.bind="depositAmount"
                     keyup.delegate="checkMaxAmount()"
-                    decimals.bind="deal.daoRelatedToWallet.tokens[selectedToken].decimals"
+                    decimals.bind="daoRelatedToWalletTokens[selectedToken].decimals"
                   >
                   </numeric-input>
                   <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
                     >Max</pbutton
                   >
                   <span class="balance" if.to-view="walletBalance">
-                    Your ${deal.daoRelatedToWallet.tokens[selectedToken].symbol} Balance:
-                    ${withCommas(walletBalance)}
+                    Your ${daoRelatedToWalletTokens[selectedToken].symbol} Balance:
+                    <tokenbalance
+                      formatted="0.00a"
+                      token-address.to-view="daoRelatedToWalletTokens[selectedToken].address"
+                    ></tokenbalance>
                   </span>
                 </div>
               </div>
@@ -99,7 +113,7 @@
       </div>
     </section>
     <swap-status deal.bind="deal">
-      <div class="section initiate-swap" if.to-view="dealTargetReached">
+      <div class="section initiate-swap" if.to-view="deal.isTargetReached">
         <pbutton type="primary" click.delegate="initiateSwap()">
           Initiate swap <i class="fas">&#xf021;</i>
         </pbutton>
@@ -137,26 +151,24 @@
         </div>
       </div>
     </swap-status>
-    <section class="section transactions">
-      <h1 class="title heading heading1 gradient">Transactions</h1>
-      <div
-        class="no-transactions heading02"
-        if.to-view="!transactions || transactions.length === 0"
-      >
-        There are no transactions for this deal
+    <section class="section deposits">
+      <h1 class="title heading heading1 gradient">Deposits</h1>
+      <div class="no-deposits heading02" if.to-view="!deposits || deposits.length === 0">
+        There are no deposits for this deal
       </div>
       <pgrid
-        id="transactions-grid"
-        rows.bind="transactions"
+        id="deposits-grid"
+        rows.bind="deposits"
         columns.bind="transactionColumns"
         condensed.bind="false"
+        if.to-view="deposits.length > 0"
       ></pgrid>
-      <template if.to-view="transactions.length > 10">
-        <div if.to-view="!loadingTransactions && !seeingMore" class="seeMore">
+      <template if.to-view="deposits.length > 10">
+        <div if.to-view="!loadingDeposits && !seeingMore" class="seeMore">
           <div class="arrow">&darr;</div>
           <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
         </div>
-        <div if.to-view="!loadingTransactions && seeingMore" class="seeMore">
+        <div if.to-view="!loadingDeposits && seeingMore" class="seeMore">
           <div class="arrow">&uarr;</div>
           <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
         </div>

@@ -54,7 +54,9 @@ export interface IDaoTransaction {
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
   depositId: number,
-  amount: BigNumber;
+  amount: BigNumber,
+  withdrawnAt?: Date,
+  withdrawTxId?: Hash,
 }
 
 export interface IDaoClaimToken {
@@ -158,9 +160,19 @@ export class DealTokenSwap implements IDeal {
     this.dealDocument.isRejected = newValue;
   }
 
-  // public get isTargetReached(): boolean {
-  //   return;
-  // }
+  @computedFrom("daoTokenTransactions")
+  public get isTargetReached(): boolean {
+    if (!this.daoTokenTransactions) return false;
+    let isReached = true;
+    this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
+      if (!isReached) return; //immediately returns if it's already false from a previous loop
+      isReached = dao.tokens.some(daoToken => {
+        const totalDeposited : BigNumber = transactions.reduce((a, b) => a.add(b.amount), BigNumber.from(0));
+        return totalDeposited.lt(daoToken.amount);
+      });
+    });
+    return isReached;
+  }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
   get timeLeftToExecute(): number | undefined {

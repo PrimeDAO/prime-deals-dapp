@@ -12,7 +12,11 @@
         <div>
           <div class="progress-bar-content">
             <div>
-              ${token.deposited | ethwei:token.decimals}
+              <formatted-number
+                if.bind="token.deposited >= 0"
+                thousands-separated
+                value.to-view="token.deposited | ethwei:token.decimals"
+              ></formatted-number>
               <strong>${token.symbol}</strong> Deposited
             </div>
             <div>${token.percentCompleted}%</div>
@@ -26,7 +30,11 @@
         <div repeat.for="token of dao.tokens">
           <img src="${token.logoURI}" />
           <span
-            >${token.deposited | ethwei:token.decimals}
+            ><formatted-number
+              if.bind="token.deposited >= 0"
+              thousands-separated
+              value.to-view="token.deposited | ethwei:token.decimals"
+            ></formatted-number>
             <strong>${token.symbol}</strong> Received</span
           >
         </div>

@@ -50,7 +50,7 @@ export class PPopupModal {
 }
 
 export interface IPopupModalModel {
-  data?: Record<string, unknown>;
+  data?: Record<string, unknown>; //have to be able to pass data to this model in case the modal needs to use methods or data from the caller like for the etherscan wallet modal in swap
   className?: string;
   message: string;
   header?: string,

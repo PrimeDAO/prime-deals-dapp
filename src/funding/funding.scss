@@ -312,8 +312,8 @@ $hover-transition-speed-slow: 0.4s;
         }
       }
     }
-    &.transactions {
-      #transactions-grid {
+    &.deposits {
+      #deposits-grid {
         .row {
           .cell {
             &.body {
@@ -352,7 +352,7 @@ $hover-transition-speed-slow: 0.4s;
           }
         }
       }
-      .no-transactions {
+      .no-deposits {
         display: flex;
         flex-direction: column;
         place-items: center;
