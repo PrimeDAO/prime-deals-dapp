@@ -69,6 +69,11 @@ export function configure(aurelia: Aurelia): void {
         /**
          * Tests can directly access FirestoreDealsService.
          * We want that to, eg. get dealIds from the dealsArray
+         *
+         * Architecure note: Ideally, we want to decouple Test setup code.
+         *   Because this requires a bit more investigation on the Cypress<>Webpack side,
+         *   this is the quickest compromise for prioritizing test coverage.
+         *   Once we have a solid test coverage, it will be easier to explore more solid patters
          */
         const firestoreService = aurelia.container.get(FirestoreService);
         (window as any).Cypress.firestoreService = firestoreService;
