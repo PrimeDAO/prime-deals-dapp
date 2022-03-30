@@ -8,6 +8,10 @@ import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 
+/**
+ * TODO: Temporary local type, to reduce dependency on `EthereumService` (where it was originally imported from)
+ *   --> Should defined a new place for this type, and all other `Address` imports should take it from there
+ */
 type Address = string;
 
 // Initialize Firebase
