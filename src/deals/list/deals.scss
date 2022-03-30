@@ -83,6 +83,14 @@ pbutton button.secondary {
       }
 
       > .selector {
+        display: flex;
+        -webkit-text-fill-color: $Neutral02;
+        border-bottom: 2px solid $Border01;
+        width: 100%;
+        transition: background 1s ease-in-out;
+        margin-bottom: 53px;
+        font-family: Aeonik;
+
         :not(:first-child) {
           margin-left: 63px;
         }
@@ -95,12 +103,6 @@ pbutton button.secondary {
           }
         }
 
-        display: flex;
-        -webkit-text-fill-color: $Neutral02;
-        border-bottom: 2px solid $Border01;
-        width: 100%;
-        transition: background 1s ease-in-out;
-
         > .active {
           background: $Gradient02;
           -webkit-text-fill-color: transparent;
@@ -110,8 +112,6 @@ pbutton button.secondary {
           @include border-gradient($Gradient02);
           padding-bottom: 19px;
         }
-
-        margin-bottom: 53px;
       }
     }
 
