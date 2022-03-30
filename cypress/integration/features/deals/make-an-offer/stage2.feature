@@ -1,6 +1,7 @@
 Feature: "Lead details" stage (Stage 2)
 
   Background:
+    Given I'm the Proposal Lead of an Open Proposal
     Given I navigate to the "Make an offer" "Lead Details" stage
 
   @focus

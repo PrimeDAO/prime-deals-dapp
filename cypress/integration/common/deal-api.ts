@@ -40,7 +40,6 @@ export class E2eDealsApi {
       const { pathname } = window.location;
       if (!E2eNavigation.isHome(pathname)) {
         E2eNavigation.navigateToHomePage();
-        console.log("TCL ~ file: deal-api.ts ~ line 44 ~ E2eDealsApi ~ cy.window ~ address", address);
         E2eNavbar.connectToWallet(address);
       }
     });
@@ -57,14 +56,6 @@ export class E2eDealsApi {
         deals = await firestoreDealsService.getAllDealsForTheUser(address);
       }
 
-      console.log(
-        "TCL ~ file: deal-api.ts ~ line 30 ~ E2eDealsApi ~ returncy.then ~ address",
-        address,
-      );
-      console.log(
-        "TCL ~ file: deal-api.ts ~ line 30 ~ E2eDealsApi ~ returncy.then ~ deals",
-        deals,
-      );
       return deals.map((deal) => deal.data);
     });
   }

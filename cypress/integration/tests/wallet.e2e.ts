@@ -40,18 +40,13 @@ export class E2eNavbar {
 
     cy.get("[data-test='connectButton']").then(connectButton => {
       // 1. Check if already connected
-      const text = connectButton.text();
-      if (text.trim() !== "Connect to a Wallet") {
+      const text = connectButton.text().trim();
+      if (text !== "Connect to a Wallet") {
         return;
       }
 
       // 2. If not, connect
       cy.contains("button", "Connect to a Wallet").click();
-
-      cy.get("ux-dialog-container").within(() => {
-        cy.get(".dialogFooter .pToggle").click();
-        cy.contains("button", "Accept").click();
-      });
 
       cy.get(".navbar-container").within(() => {
         cy.get(".connectButton .address").should("be.visible");
@@ -68,19 +63,7 @@ Given("I'm a Connected Public user", () => {
 });
 
 Given("I connect to the wallet with address {string}", (address: string) => {
-  localStorage.setItem("PRIME_E2E_ADDRESS", address);
-  E2eWallet.currentWalletAddress = address;
-
-  cy.contains("button", "Connect to a Wallet").click();
-
-  cy.get("ux-dialog-container").within(() => {
-    cy.get(".dialogFooter .pToggle").click();
-    cy.contains("button", "Accept").click();
-  });
-
-  cy.get(".navbar-container").within(() => {
-    cy.get(".connectButton .address").should("be.visible");
-  });
+  E2eNavbar.connectToWallet(address);
 });
 
 Given("I'm a Public viewer", () => {
