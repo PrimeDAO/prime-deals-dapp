@@ -71,6 +71,10 @@ Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
+Given("I'm an Anonymous user", () => {
+  E2eWallet.currentWalletAddress = undefined;
+});
+
 Given("I'm a Public viewer", () => {
   E2eNavbar.getConnectWalletButton().should("be.visible");
   E2eNavbar.getUserAddress().should("not.exist");

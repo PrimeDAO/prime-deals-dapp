@@ -1,7 +1,7 @@
 Feature: Discussions - Wallet
   Background:
-    Given I navigate to the Deals home page
-    When I'm viewing a public Deal
+    Given I'm an Anonymous user
+    And I'm viewing an Open Proposal
 
   Scenario: Wallet - Disconnected - Deal Clauses
     Then I cannot begin a Discussion
@@ -13,7 +13,6 @@ Feature: Discussions - Wallet
     When I choose a single Topic without replies
     Then I cannot add a Comment
 
-  @focus
   Scenario: Wallet - Disconnected - Single Comments - Comment actions
     When I choose a single Topic with replies
     Then I cannot add a Comment

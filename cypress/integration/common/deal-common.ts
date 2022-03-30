@@ -13,7 +13,7 @@ export class E2EDashboard {
   }
 }
 
-Given("I'm viewing the Open Proposal", () => {
+Given("I'm viewing (the/an) Open Proposal", () => {
   E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
     const url = `deal/${dealId}`;
     cy.visit(url);
