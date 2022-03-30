@@ -5,7 +5,9 @@
   grid-area: icon;
   width: inherit;
   align-items: center;
-
+  .dao {
+    overflow: hidden;
+  }
   .icon {
     transition: 0.35s ease-in-out;
     display: grid;

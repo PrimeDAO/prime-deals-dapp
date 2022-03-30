@@ -6,11 +6,21 @@
     <div class="icon" if.to-view="partnerDao" style.to-view="iconStyle">
       <img src="${partnerDao.logoURI}" style.to-view="iconStyle" />
     </div>
-    <div class="Dao">
-      <div class="name ellipses" if.to-view="primaryDao">
+    <div class="dao">
+      <div
+        ref="primaryDaoElem"
+        class="name ellipses"
+        if.to-view="primaryDao"
+        ptooltip.to-view="primaryDaoElem.scrollWidth > primaryDaoElem.offsetWidth ? useTokenSymbol ? primaryDao.symbol : primaryDao.name : ''"
+      >
         ${useTokenSymbol ? primaryDao.symbol : primaryDao.name}
       </div>
-      <div class="name ellipses" if.to-view="partnerDao">
+      <div
+        ref="partnerDaoElem"
+        class="name ellipses"
+        if.to-view="partnerDao"
+        ptooltip.to-view="partnerDaoElem.scrollWidth > partnerDaoElem.offsetWidth ? useTokenSymbol ? partnerDao.symbol : partnerDao.name : ''"
+      >
         ${useTokenSymbol ? partnerDao.symbol : partnerDao.name}
       </div>
     </div>
