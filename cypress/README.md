@@ -7,6 +7,7 @@
   - [Cucumber](https://cucumber.io/docs/cucumber/?sbsearch=Cucumber) - Implementation of BDD in code
     - [cypress-cucumber-preprocessor](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor)
       - [the fork we are using](https://github.com/badeball/cypress-cucumber-preprocessor)
+- [Page Objects](https://applitools.com/blog/page-objects-app-actions-cypress/)
 
 ## Setup
 ```
@@ -68,9 +69,51 @@ cy.get("[data-test='open-proposal-button']").click()
 cy.url().should("include", "deals/open");
 ```
 
+### Page Objects
+While Page Objects are regarded as an [anti-pattern](https://docs.cypress.io/guides/references/best-practices#Organizing-Tests-Logging-In-Controlling-State), they are
+seen as a way to reduce code, and to to "control the page".
+In the long run, we would like to migrate to [App Actions](app_action) or the [Screenplay Pattern](https://www.infoq.com/articles/Beyond-Page-Objects-Test-Automation-Serenity-Screenplay/), but meanwhile we have Page Objects.
+
+(Alternative could be to use [Cypress Custom Commands](https://docs.cypress.io/api/cypress-api/custom-commands))
+
+The main idea is to use a Single State Object, that saves information a user would also have:
+- The current wallet address
+- The deal title, that was just created
+- More complex: 2 users - 1 Proposal Lead - 1 Representative
+
+#### Usage
+Our Single State Objects are static classes like:
+- E2eWallet
+- E2eDealsApi (more in this [section](#e2eDealsApi))
+- E2EDashboard
+
+A simple flow could look likes this
+```ts
+// 1. Setup
+E2eWallet.currentWalletAddress = <myAddress>;
+E2eDeals.currentDeal = <myDeal>;
+
+// 2. Use Api to get Deal for specific account
+E2eDealsApi.getFirstOpenProposalId({isLead: true})
+
+// 3. Interact with application (works, because we are connected and authenticated )
+E2EDashboard.editDeal();
+```
+
+#### Drawbacks
+Cypress shines through it's well thought out chaining API, so introducing yet another layer will void that strength.
+However, if we aim to use Page Objects, for just as a tool to reduce code duplication, we could have a nice balance.
+
+Note (!): Only because some code uses Page Objects, does not have to mean, everything has to.
+We should always write code in the best maintainable way!
+
+### E2eDealsApi
+Through internal code ([App Actions](app_action)), we can access, eg. Firebase and use its API, to fetch or create Deals.
+
 ### Tags
 - `@focus` - only run focused Scenario in .feature file
 - `@regression` - Indicate Scenario is to cover a regression in the code
+- `@user_journey` - Larger in scope than usual Scenarios. Captures the "user journey" to achieve more complex interactions
 
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
@@ -79,3 +122,4 @@ cy.url().should("include", "deals/open");
 https://docs.cypress.io/guides/references/configuration#cypress-json
 
 [gherkin]: (https://cucumber.io/docs/gherkin/)
+[app_action]: (https://www.cypress.io/blog/2019/01/03/stop-using-page-objects-and-start-using-app-actions/)

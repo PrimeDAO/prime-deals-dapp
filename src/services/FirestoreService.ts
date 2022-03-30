@@ -1,6 +1,5 @@
 import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
-import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
@@ -11,6 +10,12 @@ import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
+
+/**
+ * TODO: Temporary local type, to reduce dependency on `EthereumService` (where it was originally imported from)
+ *   --> Should defined a new place for this type, and all other `Address` imports should take it from there
+ */
+type Address = string;
 
 const VOTES_COLLECTIONS = {
   PRIMARY_DAO: "primary-dao-votes",
