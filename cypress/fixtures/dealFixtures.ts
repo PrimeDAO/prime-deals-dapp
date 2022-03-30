@@ -10,9 +10,6 @@ export const proposalLeadAddress1 = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
 export const CONNECTED_PUBLIC_USER_ADDESS = "0x0000000000000000000000000000000000000000";
 const tokenAddress1 = "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad";
 
-export const MINIMUM_OPEN_PROPOSAL_ID_2 = "wa8DKQ5ZJe1TxiVE3997QX";
-export const partneredDealId1 = "snrw1s6DzZCwfBJzjLJQNX";
-
 export const E2E_ADDRESSES = {
   ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
   PrimaryDAOToken: "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",

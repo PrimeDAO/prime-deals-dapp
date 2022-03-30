@@ -2,19 +2,9 @@ Feature: Landing page
     Background:
         Given I navigate to the Deals home page
 
-    Scenario: All Deals
-        Given I navigate to the All Deals page
-
     Scenario: Initiate a Deal
         Given I navigate to the Deals home page
         Given I choose Deal Type
-
-    Scenario: Open Proposals
-        Given I Open Proposals
-
-    Scenario: Running Deals
-        Given I want to see Running Deals
-
 
 # 1. **User** can navigate to All Deals Page by clicking All Deals.
 # 2. **User** can navigate to Choose Deal Type Page by clicking Initiate a deal.

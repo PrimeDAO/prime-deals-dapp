@@ -16,7 +16,9 @@ export type WizardField =
 export class DealWizard {
   private static sectionTitle = "";
   public static getSectionTitle() {
-    return this.sectionTitle;
+    return cy.then(() => {
+      return this.sectionTitle;
+    });
   }
 
   private static fieldTitle = "";
@@ -115,9 +117,11 @@ export class DealWizard {
 
   // ------- Errors
   public static checkErrorMessage(message: string) {
-    cy.get(`[data-test='proposal-${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-      cy.get(".errorMessage").should("be.visible");
-      cy.get(".errorMessage").should("contain.text", message);
+    cy.then(() => {
+      cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+        cy.get(".errorMessage").should("be.visible");
+        cy.get(".errorMessage").should("contain.text", message);
+      });
     });
   }
 }
