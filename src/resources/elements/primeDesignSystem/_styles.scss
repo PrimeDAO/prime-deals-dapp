@@ -5,7 +5,6 @@
   background: /* this is the card background: */ linear-gradient($backgroundColor, $backgroundColor) padding-box,
     /* this is the gradient on the left side: */ linear-gradient(to bottom, $grColor01, $grColor02) border-box;
   border-left: $border-radius-small solid transparent;
-  border-right: $border-radius-small solid $backgroundColor;
 }
 
 .pcard {

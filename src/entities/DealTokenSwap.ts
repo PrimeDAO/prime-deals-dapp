@@ -54,6 +54,7 @@ export interface IDaoTransaction {
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
   depositId: number,
+  amount: BigNumber;
 }
 
 @autoinject
@@ -103,6 +104,8 @@ export class DealTokenSwap implements IDeal {
    */
   public isExecuted = false;
   public executedAt: Date;
+
+  public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
 
   @computedFrom("dealDocument.registrationData")
   public get registrationData(): IDealRegistrationTokenSwap {
@@ -181,7 +184,7 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("registrationData.fundingPeriod")
   public get fundingPeriod(): number {
-    return this.registrationData.fundingPeriod * 86400;
+    return this.registrationData.fundingPeriod;
   }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
@@ -193,7 +196,7 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
-    return this.fundingPeriodHasExpired;
+    return this.fundingPeriodHasExpired && !this.isExecuted;
   }
 
   @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
@@ -211,8 +214,10 @@ export class DealTokenSwap implements IDeal {
     return this.isExecuted;
   }
 
+  // TODO need to code whether there is anything left to claim
+
   /**
-   * same as isClaiming, by bizdev definition
+   * same as isClaiming/isExecuted, by bizdev definition
    */
   @computedFrom("isClaiming")
   public get isCompleted(): boolean {
@@ -348,6 +353,8 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = this.dealDocument.clauseDiscussions ? new Map(Object.entries(this.dealDocument.clauseDiscussions)) : new Map();
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
+
+      await this.hydrateDaoTransactions();
     }
     catch (error) {
       this.corrupt = true;
@@ -355,6 +362,21 @@ export class DealTokenSwap implements IDeal {
     } finally {
       this.initializing = false;
     }
+  }
+
+  private async hydrateDaoTransactions(): Promise<void> {
+    if (!this.daoTokenTransactions) {
+      this.daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
+    }
+
+    const daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
+
+    daoTokenTransactions.set(this.primaryDao, await this.getDaoTransactions(this.primaryDao));
+    if (this.partnerDao) {
+      daoTokenTransactions.set(this.partnerDao, await this.getDaoTransactions(this.partnerDao));
+    }
+
+    this.daoTokenTransactions = daoTokenTransactions;
   }
 
   private async hydrateUser(): Promise<void> {
@@ -439,7 +461,7 @@ export class DealTokenSwap implements IDeal {
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
   }
 
-  public async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
+  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
     const transactions = new Array<IDaoTransaction>();
     const depositContract = this.daoDepositContracts.get(dao);
 
@@ -456,6 +478,7 @@ export class DealTokenSwap implements IDeal {
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             depositId: params.depositId,
+            amount: params.amount,
           });
         }
       });
@@ -473,6 +496,7 @@ export class DealTokenSwap implements IDeal {
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             depositId: params.depositId,
+            amount: params.amount,
           });
         }
       });

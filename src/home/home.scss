@@ -71,6 +71,14 @@
       }
 
       > .selector {
+        display: flex;
+        -webkit-text-fill-color: $Neutral02;
+        border-bottom: 2px solid $Border01;
+        width: 100%;
+        transition: background 1s ease-in-out;
+        font-family: Aeonik;
+        margin-bottom: 40px;
+
         :not(:first-child) {
           margin-left: 63px;
         }
@@ -83,12 +91,6 @@
           }
         }
 
-        display: flex;
-        -webkit-text-fill-color: $Neutral02;
-        border-bottom: 2px solid $Border01;
-        width: 100%;
-        transition: background 1s ease-in-out;
-
         > .active {
           background: $Gradient02;
           -webkit-text-fill-color: transparent;
@@ -98,8 +100,6 @@
           @include border-gradient($Gradient02);
           padding-bottom: 19px;
         }
-
-        margin-bottom: 40px;
       }
 
       > .dealsButton {

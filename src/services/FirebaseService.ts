@@ -1,4 +1,3 @@
-import { Address } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
@@ -8,6 +7,14 @@ import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "fir
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
+
+/**
+ * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
+ * Cause for change: Want to import app code into Cypress code (, because we want to use the acutal code we are testing).
+ * Reason: The other dependencies in `EthereumService` got pulled into Cypress webpack build as well.
+ *   And the current Cypress webpack does not support, eg. scss files bundling and processing
+ */
+type Address = string;
 
 // Initialize Firebase
 export const firebaseApp = initializeApp({

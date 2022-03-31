@@ -5,7 +5,8 @@ Feature: Deal Dashboard Discussions Section
   # going on yet.
 
   Background:
-    Given I navigate to a Deal Dashboard
+    Given I'm the Proposal Lead of an Open Proposal
+    And I'm viewing the Open Proposal
     And No thread is created for this deal
 
   Scenario: No thread is created for this deal
