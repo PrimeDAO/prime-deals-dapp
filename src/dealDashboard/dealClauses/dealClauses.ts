@@ -46,8 +46,8 @@ export class DealClauses {
           isPublic: true,
         },
       );
-      this.discussionsService.autoScrollAfter(0);
     }
+    this.discussionsService.autoScrollAfter(0);
   }
 
   authorizedChanged(): void {

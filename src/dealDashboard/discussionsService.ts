@@ -9,8 +9,6 @@ import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
-// import AES from "crypto-js/aes";
-// import Utf8 from "crypto-js/enc-utf8";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -19,7 +17,6 @@ interface IDiscussionListItem extends IDealDiscussion {
 @autoinject
 export class DiscussionsService {
 
-  public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
 
   public discussions: Record<string, IDiscussionListItem> = {};
@@ -189,7 +186,6 @@ export class DiscussionsService {
         args.discussionId,
         discussion,
       );
-      this.comments = [];
       this.discussions[discussion.discussionId] = discussion;
 
       return discussion.discussionId;
@@ -215,16 +211,14 @@ export class DiscussionsService {
    * @param timestamp Date
    * @returns void
    */
-  public async updateDiscussionListStatus(discussionId: string, timestamp?: Date): Promise<void> {
+  public async updateDiscussionListStatus(discussionId: string, timestamp: Date, replies: number): Promise<void> {
     if (
-      this.discussions[discussionId]?.replies === this.comments.length &&
+      this.discussions[discussionId]?.replies === replies &&
       new Date(this.discussions[discussionId].modifiedAt).getTime() <= timestamp?.getTime()
     ) return;
 
-    if (this.comments.length)
-      this.discussions[discussionId].replies = this.comments.length;
-    if (timestamp)
-      this.discussions[discussionId].modifiedAt = timestamp.toISOString();
+    this.discussions[discussionId].replies = replies;
+    this.discussions[discussionId].modifiedAt = timestamp.toISOString();
 
     const dealDiscussion = this.discussions[discussionId];
 
@@ -297,37 +291,41 @@ export class DiscussionsService {
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
-      this.comments = await this.convo.comments.query({
+      const comments: Array<IComment> = (await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      });
-      if (!this.comments || this.comments.length === undefined) return null;
-
-      this.comments = await this.comments.filter((comment: any) => {
-        return !(
-          (comment.metadata.isPrivate === "true") &&
+      })).filter((comment: IComment) => !(
+        (comment.metadata.isPrivate === "true") &&
           (!this.ethereumService.defaultAccountAddress ||
           ![
             comment.author,
             ...JSON.parse(comment.metadata.allowedMembers || "[]"),
           ].includes(this.ethereumService.defaultAccountAddress))
-        );
-      });
+      ));
+
+      if (!comments || comments.length === undefined) return null;
 
       const key = await this.importKey(discussionId);
-      this.comments.forEach((comment: any) => {
+
+      const promises = comments.map(async (comment: any) => {
         if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
 
-        if (comment.metadata?.encrypted) {
-          this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key).then(text => {
-            comment.text = text;
-          });
-        }
-        if (comment.authorENS) comment.authorName = comment.authorENS;
+        const text = (comment.metadata?.encrypted)
+          ? await this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key)
+          : comment.text;
+
+        return {
+          ...comment,
+          text: text,
+          createdOn: (comment._mod / 1000000).toString(),
+        };
       });
 
+      const commentsThread: IComment[] = await Promise.all(promises);
+
       latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
-      this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp));
-      return this.comments;
+
+      this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp), commentsThread.length);
+      return [...await commentsThread];
     } catch (error) {
       this.consoleLogService.logMessage("loadDiscussionComments: " + error.message);
     }
@@ -369,7 +367,7 @@ export class DiscussionsService {
 
     try {
       const encrypted = await this.encryptWithAES(comment, discussionId);
-      const data = await this.convo.comments.create(
+      const data: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         "This comment is encrypted",
@@ -386,15 +384,13 @@ export class DiscussionsService {
 
       // Return un-encrypted comment to the view
       data.text = comment;
-      this.comments.push(data);
-      this.updateDiscussionListStatus(discussionId, new Date(parseInt(data.createdOn)));
       return data;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
     }
   }
 
-  public async deleteComment(discussionId: string, commentId: string): Promise<IComment[]> {
+  public async deleteComment(discussionId: string, commentId: string): Promise<boolean> {
     const isValidAuth = await this.isValidAuth();
 
     if (!this.ethereumService.defaultAccountAddress) {
@@ -402,7 +398,7 @@ export class DiscussionsService {
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to add a comment"),
       );
-      return this.comments;
+      return false;
     }
     if (!isValidAuth) {
       await this.authenticateSession();
@@ -411,7 +407,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
-        return this.comments;
+        return false;
       }
     }
 
@@ -421,22 +417,21 @@ export class DiscussionsService {
         localStorage.getItem("discussionToken"),
         commentId,
       );
-      this.comments = this.comments.filter(comment => comment._id !== commentId);
+      return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
     }
-    this.updateDiscussionListStatus(discussionId, new Date());
-    return this.comments;
+    return false;
   }
 
-  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<IComment[]> {
+  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<boolean | IComment> {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to vote a comment"),
       );
-      return null;
+      return false;
     }
 
     if (!await this.isValidAuth()) {
@@ -446,7 +441,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
-        return this.comments;
+        return false;
       }
     }
     const token = localStorage.getItem("discussionToken");
@@ -475,13 +470,7 @@ export class DiscussionsService {
         message[endpoints[type]] = message[endpoints[type]].filter(address => address !== this.currentWalletAddress);
       }
 
-      if (success) {
-        const commentIndex = this.comments.findIndex(comment => comment._id === message._id);
-        this.comments[commentIndex].upvotes = message.upvotes;
-        this.comments[commentIndex].downvotes = message.downvotes;
-        this.updateDiscussionListStatus(discussionId, new Date());
-        return [...this.comments];
-      }
+      return success ? message : false;
 
     } catch (error) {
       throw error.message;
