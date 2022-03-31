@@ -33,8 +33,6 @@ export class DiscussionThread {
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
   private isLoading: Record<string, boolean> = {};
-  // private isAuthorized: boolean;
-  // private isMember = false;
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
@@ -98,22 +96,6 @@ export class DiscussionThread {
 
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
-
-    // Only member (representatives) can add a comments to a discussion
-    // this.isMember = (
-    //   [
-    //     this.deal.registrationData.proposalLead.address,
-    //     ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
-    //     ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
-    //   ].includes(this.ethereumService.defaultAccountAddress)
-    // );
-
-    // Only members should see the discussion if is private
-    // this.isAuthorized = this.deal.isUserRepresentativeOrLead;
-    // (
-    //   !this.deal.registrationData.isPrivate ||
-    //   (this.deal.registrationData.isPrivate && this.isMember)
-    // );
 
     if (this.deal.isUserRepresentativeOrLead) {
       // Loads the discussion details - necessary for thread header
