@@ -37,7 +37,7 @@ export class Funding {
   private seeingMore = false;
   private walletBalance: BigNumber;
   @observable
-  private selectedToken: number;
+  private selectedToken: number | string;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
   private vestedAmount = 0;
