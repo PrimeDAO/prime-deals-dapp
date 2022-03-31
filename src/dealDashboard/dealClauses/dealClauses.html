@@ -2,7 +2,6 @@
   <header>
     <h2 class="subtitle heading heading3">Deal Clauses</h2>
   </header>
-  ${JSON.stringify(discussionsService.discussions)}
   <ol>
     <li
       class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id).discussionId ? 'active' : ''}"
