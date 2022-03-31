@@ -4,7 +4,7 @@ import { FirestoreService } from "../../../src/services/FirestoreService";
 import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
 import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
-import { MINIMUM_PRIVATE_OPEN_PROPOSAL } from "../../fixtures/dealFixtures";
+import { MINIMUM_OPEN_PROPOSAL, MINIMUM_PRIVATE_OPEN_PROPOSAL, PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 
 interface IDealOptions {
   address?: string;
@@ -73,14 +73,13 @@ export class E2eDealsApi {
     return cy.then(() => {
       return this.getDeals(options).then((deals) => {
         const openProposals = deals.filter((deal) => {
-          return !deal.registrationData.partnerDAO;
+          const hasNoPartner = !deal.registrationData.partnerDAO;
+          const notPrivate = !deal.registrationData.isPrivate;
+          const isOpen = hasNoPartner && notPrivate;
+          return isOpen;
         });
 
-        if (openProposals.length === 0) {
-          throw new Error("[TEST] No Open Proposals found.");
-        }
-
-        return openProposals;
+        return this.getOrCreateDeal(openProposals, MINIMUM_OPEN_PROPOSAL);
       });
     });
   }
@@ -92,11 +91,7 @@ export class E2eDealsApi {
           return deal.registrationData.partnerDAO;
         });
 
-        if (partneredDeals.length === 0) {
-          throw new Error("[TEST] No Partnered Deals found.");
-        }
-
-        return partneredDeals;
+        return this.getOrCreateDeal(partneredDeals, PARTNERED_DEAL);
       });
     });
   }
@@ -108,14 +103,7 @@ export class E2eDealsApi {
           return deal.registrationData.isPrivate;
         });
 
-        const shouldCreate = privateDeals.length === 0;
-        if (shouldCreate) {
-          return this.createDeal(MINIMUM_PRIVATE_OPEN_PROPOSAL).then(createdDeal => {
-            return [createdDeal];
-          });
-        } else {
-          return privateDeals;
-        }
+        return this.getOrCreateDeal(privateDeals, MINIMUM_PRIVATE_OPEN_PROPOSAL);
       });
     });
   }
@@ -179,6 +167,18 @@ export class E2eDealsApi {
         const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
         return createdDeal;
       });
+    });
+  }
+
+  private static getOrCreateDeal(existingDeals: IDealTokenSwapDocument[], newDeal: IDealRegistrationTokenSwap) {
+    return cy.then(() => {
+      if (existingDeals.length === 0) {
+        return this.createDeal(newDeal).then(createdDeal => {
+          return [createdDeal];
+        });
+      } else {
+        return existingDeals;
+      }
     });
   }
 }
