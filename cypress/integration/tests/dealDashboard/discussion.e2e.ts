@@ -1,4 +1,4 @@
-import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eWallet } from "../wallet.e2e";
 
@@ -145,7 +145,7 @@ When("I view a single Comment", () => {
 });
 
 When("I view my own Comment", () => {
-  E2eDiscussion.getSingleComment({isAuthor: true}).find("pre").invoke("text").then(console.log);
+  E2eDiscussion.getSingleComment({isAuthor: true}).find("pre").invoke("text");
   E2eDiscussion.hoverSingleComment({isAuthor: true});
 });
 
@@ -209,5 +209,4 @@ Then("I cannot like my own Comment", () => {
   E2eDiscussion.getLikeAction({isAuthor: true}).should("not.exist");
 });
 
-And("I cannot reply to a Comment", () => {
-});
+// And("I cannot reply to a Comment", () => {});
