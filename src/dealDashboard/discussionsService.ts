@@ -291,9 +291,9 @@ export class DiscussionsService {
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
-      const comments = (await this.convo.comments.query({
+      const comments: Array<IComment> = (await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      })).filter((comment: any) => !(
+      })).filter((comment: IComment) => !(
         (comment.metadata.isPrivate === "true") &&
           (!this.ethereumService.defaultAccountAddress ||
           ![
