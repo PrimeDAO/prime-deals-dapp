@@ -1,6 +1,6 @@
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
-export type IVotesInfo = Record<string, boolean>;
+export type IVotesInfo = Record<string, boolean | null>;
 
 export interface IDealDAOVotingSummary {
   totalSubmittable: number;
