@@ -278,17 +278,7 @@ export class DiscussionThread {
       );
 
       if (newComment) {
-        this.threadComments.push({
-          _id: newComment._id,
-          text: newComment.text,
-          author: newComment.author,
-          authorENS: newComment.authorENS,
-          metadata: newComment.metadata,
-          replyTo: newComment.replyTo,
-          upvotes: newComment.upvotes,
-          downvotes: newComment.downvotes,
-          createdOn: newComment.createdOn,
-        });
+        this.threadComments.push({ ...newComment });
 
         this.discussionsService
           .updateDiscussionListStatus(
