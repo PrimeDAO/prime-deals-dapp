@@ -26,6 +26,7 @@
       <div class="section deals" if.to-view="!featuredDeals || featuredDeals.length">
         <div class="heading02Gradient selector">
           <span if.to-view="allDeals.open.length"
+            data-test="open-proposals-tab"
             class="selector-tab ${cardIndex==0?'active':''}"
             click.delegate="dealToggle(0, 'open')">
             Open Proposals

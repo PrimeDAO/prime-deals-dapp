@@ -1,5 +1,5 @@
 <template>
-  <section class="ppopup-dialog pPopupModal pcard gradient ${className || ''}">
+  <section data-test="${className}" class="ppopup-dialog pPopupModal pcard gradient ${className || ''}">
     <p class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}">${header}</p>
     <p class="dialogBody" ref="body">
       <slot></slot>

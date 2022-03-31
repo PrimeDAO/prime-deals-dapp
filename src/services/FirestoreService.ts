@@ -1,6 +1,5 @@
 import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
-import { Address } from "./EthereumService";
 import { autoinject } from "aurelia-framework";
 import {
   collection,
@@ -24,6 +23,14 @@ import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
+
+/**
+ * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
+ * Cause for change: Want to import app code into Cypress code (, because we want to use the acutal code we are testing).
+ * Reason: The other dependencies in `EthereumService` got pulled into Cypress webpack build as well.
+ *   And the current Cypress webpack does not support, eg. scss files bundling and processing
+ */
+type Address = string;
 
 const VOTES_COLLECTIONS = {
   PRIMARY_DAO: "primary-dao-votes",
