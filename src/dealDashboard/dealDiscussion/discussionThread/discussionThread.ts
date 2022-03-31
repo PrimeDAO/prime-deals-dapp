@@ -87,7 +87,7 @@ export class DiscussionThread {
   @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
   private get noCommentsText(): string {
     if (!this.isLoading.discussions && !this.threadComments?.length) {
-      return (!this.deal.isUserRepresentativeOrLead && this.deal.registrationData.isPrivate)
+      return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
         ? "This discussion is private."
         : "This discussion has no comments yet.";
     }
@@ -97,7 +97,10 @@ export class DiscussionThread {
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
 
-    if (this.deal.isUserRepresentativeOrLead) {
+    if (
+      !this.deal.isPrivate ||
+      this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
+    ) {
       // Loads the discussion details - necessary for thread header
       this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
 
@@ -106,7 +109,6 @@ export class DiscussionThread {
       if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
         this.discussionsService.autoScrollAfter(0);
       }
-
     } else {
       this.isLoading.discussions = false;
     }
@@ -251,12 +253,8 @@ export class DiscussionThread {
       const newComment:IComment = await this.discussionsService.addComment(
         this.discussionId,
         this.comment,
-        this.deal.registrationData.isPrivate,
-        [
-          this.deal.registrationData.proposalLead.address,
-          ...this.deal.registrationData.primaryDAO?.representatives.map((item => item.address)) || "",
-          ...this.deal.registrationData.partnerDAO?.representatives.map((item => item.address)) || "",
-        ],
+        this.deal.isPrivate,
+        [...this.deal.representativesAndLead],
         this.replyToComment?._id || "",
       );
 
