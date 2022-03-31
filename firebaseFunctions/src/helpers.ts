@@ -111,13 +111,13 @@ export const initializeVotingSummary = (
       totalSubmittable: primaryDaoRepresentativesAddresses.length,
       acceptedVotesCount: 0,
       rejectedVotesCount: 0,
-      votes: primaryDaoRepresentativesAddresses.map(address => ({address, vote: null})),
+      votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({[address]: null}))),
     },
     partnerDAO: {
       totalSubmittable: partnerDaoRepresentativesAddresses.length,
       acceptedVotesCount: 0,
       rejectedVotesCount: 0,
-      votes: partnerDaoRepresentativesAddresses.map(address => ({address, vote: null})),
+      votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({[address]: null}))),
     },
     totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
     totalSubmitted: 0,
@@ -156,7 +156,7 @@ const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>
     totalSubmittable: daoVotes.length,
     acceptedVotesCount: daoVotes.filter(vote => vote.data.vote).length,
     rejectedVotesCount: daoVotes.filter(vote => vote.data.vote === false).length,
-    votes: daoVotes.map(vote => ({address: vote.id, vote: vote.data.vote})),
+    votes: Object.assign({}, ...daoVotes.map(vote => ({[vote.id]: vote.data.vote}))),
   };
 };
 
