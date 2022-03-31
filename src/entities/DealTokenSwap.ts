@@ -277,6 +277,11 @@ export class DealTokenSwap implements IDeal {
     return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
   }
 
+  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address")
+  public get isUserProposalLead(): boolean {
+    return this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress;
+  }
+
   @computedFrom("ethereumService.defaultAccountAddress", "representatives")
   public get isRepresentativeUser(): boolean {
     return this.representatives.has(this.ethereumService.defaultAccountAddress);
