@@ -70,8 +70,15 @@ export class E2eNavbar {
 }
 
 Given("I'm a Connected Public user", () => {
-  E2eNavbar.disconnectWallet();
-  E2eNavbar.connectToWallet(CONNECTED_PUBLIC_USER_ADDESS);
+  cy.get("[data-test='connectButton']").then(connectButton => {
+    // 1. Check if already connected
+    const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+    if (isConnected) {
+      E2eNavbar.disconnectWallet();
+    } else {
+      E2eNavbar.connectToWallet(CONNECTED_PUBLIC_USER_ADDESS);
+    }
+  });
 });
 
 Given("I connect to the wallet with address {string}", (address: string) => {
