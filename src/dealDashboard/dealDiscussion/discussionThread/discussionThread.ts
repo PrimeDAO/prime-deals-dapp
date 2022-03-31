@@ -33,8 +33,8 @@ export class DiscussionThread {
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
   private isLoading: Record<string, boolean> = {};
-  private isAuthorized: boolean;
-  private isMember = false;
+  // private isAuthorized: boolean;
+  // private isMember = false;
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
@@ -86,10 +86,10 @@ export class DiscussionThread {
     return (discussionsIds.indexOf(this.dealDiscussion.discussionId) + 1).toString() || "-";
   }
 
-  @computedFrom("isLoading.discussions", "isMember", "threadComments")
+  @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
   private get noCommentsText(): string {
     if (!this.isLoading.discussions && !this.threadComments?.length) {
-      return (!this.isMember && this.deal.registrationData.isPrivate)
+      return (!this.deal.isUserRepresentativeOrLead && this.deal.registrationData.isPrivate)
         ? "This discussion is private."
         : "This discussion has no comments yet.";
     }
@@ -100,21 +100,22 @@ export class DiscussionThread {
     this.isLoading.discussions = true;
 
     // Only member (representatives) can add a comments to a discussion
-    this.isMember = (
-      [
-        this.deal.registrationData.proposalLead.address,
-        ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
-        ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
-      ].includes(this.ethereumService.defaultAccountAddress)
-    );
+    // this.isMember = (
+    //   [
+    //     this.deal.registrationData.proposalLead.address,
+    //     ...this.deal.registrationData.primaryDAO?.representatives.map(item => item.address) || "",
+    //     ...this.deal.registrationData.partnerDAO?.representatives.map(item => item.address) || "",
+    //   ].includes(this.ethereumService.defaultAccountAddress)
+    // );
 
     // Only members should see the discussion if is private
-    this.isAuthorized = (
-      !this.deal.registrationData.isPrivate ||
-      (this.deal.registrationData.isPrivate && this.isMember)
-    );
+    // this.isAuthorized = this.deal.isUserRepresentativeOrLead;
+    // (
+    //   !this.deal.registrationData.isPrivate ||
+    //   (this.deal.registrationData.isPrivate && this.isMember)
+    // );
 
-    if (this.isAuthorized) {
+    if (this.deal.isUserRepresentativeOrLead) {
       // Loads the discussion details - necessary for thread header
       this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
 
