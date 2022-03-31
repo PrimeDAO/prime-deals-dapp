@@ -7,7 +7,7 @@ import { Address, AllowedNetworks, EthereumService } from "services/EthereumServ
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 
-import { IComment, IConvoComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
+import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 
 import "./discussionThread.scss";
@@ -43,14 +43,14 @@ export class DiscussionThread {
     _id: "",
     text: "This message has been removed.",
     author: "",
-    authorName: "",
+    authorENS: "",
     metadata: {
       isDeleted: true,
     },
     replyTo: "",
     upvotes: [""],
     downvotes: [""],
-    timestamp: 0,
+    createdOn: "0",
   };
 
   constructor(
@@ -140,17 +140,7 @@ export class DiscussionThread {
     // If a new comment is added to the thread, it is added at the end of the comments array.
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
-    const newComment: IComment = {
-      _id: comment.name,
-      text: comment.data.text,
-      author: comment.data.author,
-      authorName: comment.data.authorENS,
-      metadata: comment.data.metadata,
-      replyTo: comment.data.replyTo,
-      upvotes: comment.data.upvotes,
-      downvotes: comment.data.downvotes,
-      timestamp: parseFloat(comment.data.createdOn),
-    };
+    const newComment: IComment = {...comment.data};
 
     if (!this.threadDictionary[newComment._id]) {
       const key = await this.discussionsService.importKey(this.discussionId);
@@ -224,9 +214,9 @@ export class DiscussionThread {
       this.threadComments.forEach((comment: IComment) => {
         if (!this.threadProfiles[comment.author]) {
           this.isLoading[comment.author] = true;
-          if (comment.authorName /* author has ENS name */) {
+          if (comment.authorENS /* author has ENS name */) {
             this.threadProfiles[comment.author] = {
-              name: comment.authorName,
+              name: comment.authorENS,
               address: comment.author,
               image: "",
             };
@@ -241,7 +231,11 @@ export class DiscussionThread {
       });
 
       // Update the discussion status
-      this.discussionsService.updateDiscussionListStatus(discussionId, new Date(this.threadComments[this.threadComments.length - 1].timestamp), this.threadComments.length);
+      this.discussionsService.updateDiscussionListStatus(
+        discussionId,
+        new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
+        this.threadComments.length,
+      );
     }
   }
 
@@ -271,7 +265,7 @@ export class DiscussionThread {
     if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
     try {
-      const newComment:IConvoComment = await this.discussionsService.addComment(
+      const newComment:IComment = await this.discussionsService.addComment(
         this.discussionId,
         this.comment,
         this.deal.registrationData.isPrivate,
@@ -288,12 +282,12 @@ export class DiscussionThread {
           _id: newComment._id,
           text: newComment.text,
           author: newComment.author,
-          authorName: newComment.authorENS,
+          authorENS: newComment.authorENS,
           metadata: newComment.metadata,
           replyTo: newComment.replyTo,
           upvotes: newComment.upvotes,
           downvotes: newComment.downvotes,
-          timestamp: parseFloat(newComment.createdOn),
+          createdOn: newComment.createdOn,
         });
 
         this.discussionsService

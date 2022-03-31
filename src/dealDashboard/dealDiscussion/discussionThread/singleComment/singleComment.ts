@@ -40,9 +40,9 @@ export class SingleComment {
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
-    this.comment.lastModified = this.dateService.formattedTime(this.comment.timestamp).diff();
+    this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
     this.commentTimeInterval = setInterval((): void => {
-      this.comment.lastModified = this.dateService.formattedTime(this.comment.timestamp).diff();
+      this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
     }, 30000);
   }
 

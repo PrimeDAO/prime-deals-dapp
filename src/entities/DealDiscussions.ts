@@ -1,17 +1,5 @@
 export interface IComment {
   // Following the comment structure of `theconvo.space` api:
-  _id: string,
-  text: string,
-  author: string,
-  authorName?: string,
-  metadata: any,
-  replyTo?: string,
-  upvotes: Array<string>,
-  downvotes: Array<string>,
-  timestamp: number,
-}
-
-export interface IConvoComment {
   _id: string;
   text: string;
   author: string;

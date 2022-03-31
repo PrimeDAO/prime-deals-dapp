@@ -61,8 +61,8 @@
         <div if.bind="replyToComment" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
-            <span if.bind="replyToComment && replyToComment.authorName">
-              Reply to ${replyToComment.authorName}
+            <span if.bind="replyToComment && replyToComment.authorENS">
+              Reply to ${replyToComment.authorENS}
             </span>
             <span else if.bind="replyToComment && replyToComment.author">
               Reply to ${replyToComment.author | smallHexString}

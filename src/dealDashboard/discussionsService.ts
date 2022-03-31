@@ -6,7 +6,7 @@ import { EthereumService, Networks, AllowedNetworks, Address } from "services/Et
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
-import { IDealDiscussion, IComment, IConvoComment, VoteType, IProfile } from "entities/DealDiscussions";
+import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 
@@ -313,18 +313,10 @@ export class DiscussionsService {
           ? await this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key)
           : comment.text;
 
-        if (comment.authorENS) comment.authorName = comment.authorENS;
-
         return {
-          _id: comment._id,
+          ...comment,
           text: text,
-          author: comment.author,
-          authorName: comment.authorName,
-          metadata: comment.metadata,
-          replyTo: comment.replyTo,
-          upvotes: comment.upvotes,
-          downvotes: comment.downvotes,
-          timestamp: comment._mod / 1000000,
+          createdOn: (comment._mod / 1000000).toString(),
         };
       });
 
@@ -354,7 +346,7 @@ export class DiscussionsService {
   * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
   * @returns void
   */
-  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IConvoComment> {
+  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -375,7 +367,7 @@ export class DiscussionsService {
 
     try {
       const encrypted = await this.encryptWithAES(comment, discussionId);
-      const data: IConvoComment = await this.convo.comments.create(
+      const data: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         "This comment is encrypted",
