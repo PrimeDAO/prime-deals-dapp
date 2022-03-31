@@ -3,6 +3,7 @@ Feature: Discussions - Wallet
     Given I'm an Anonymous user
     And I'm viewing an Open Proposal
 
+  @focus
   Scenario: Wallet - Disconnected - Deal Clauses
     Then I cannot begin a Discussion
 
