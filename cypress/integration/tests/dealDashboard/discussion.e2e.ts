@@ -1,4 +1,4 @@
-import { Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eWallet } from "../wallet.e2e";
 
@@ -209,4 +209,6 @@ Then("I cannot like my own Comment", () => {
   E2eDiscussion.getLikeAction({isAuthor: true}).should("not.exist");
 });
 
-// And("I cannot reply to a Comment", () => {});
+And("I cannot reply to a Comment", () => {
+  cy.log("todo");
+});
