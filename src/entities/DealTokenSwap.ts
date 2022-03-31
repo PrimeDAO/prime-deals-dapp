@@ -8,7 +8,7 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDAO, IDealRegistrationTokenSwap, IRepresentative, IToken } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
