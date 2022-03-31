@@ -1,7 +1,7 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealTokenSwapDocument, IVotesInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -240,8 +240,11 @@ export class DealTokenSwap implements IDeal {
 
   // TODO: observe the right things here to recompute when votes have changed
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
-  public get allVotes(): Array<IVoteInfo> {
-    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  public get allVotes(): IVotesInfo {
+    return {
+      ...this.dealDocument.votingSummary.primaryDAO.votes,
+      ...this.dealDocument.votingSummary.partnerDAO.votes,
+    };
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
@@ -555,9 +558,7 @@ export class DealTokenSwap implements IDeal {
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 
-    const daoVotes = this.votesArrayToMap(daoVotingSummary.votes);
-
-    if (upDown !== daoVotes.get(this.ethereumService.defaultAccountAddress)) {
+    if (upDown !== daoVotingSummary.votes[this.ethereumService.defaultAccountAddress]) {
       return this.dataSourceDeals.updateVote(
         this.id,
         this.ethereumService.defaultAccountAddress,
@@ -572,9 +573,6 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean> {
-    return new Map<Address, boolean>(votes.map((voteInfo) => [ voteInfo.address, voteInfo.vote]));
-  }
   /**
    * pulled from deal-contracts
    * @returns

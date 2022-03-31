@@ -1,16 +1,13 @@
 import { IDealDiscussion } from "./DealDiscussions";
 import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
-export interface IVoteInfo {
-  address: string;
-  vote: boolean;
-}
+export type IVotesInfo = Record<string, boolean | null>;
 
 export interface IDealDAOVotingSummary {
   totalSubmittable: number;
   acceptedVotesCount: number;
   rejectedVotesCount: number;
-  votes: IVoteInfo[];
+  votes: IVotesInfo;
 }
 
 export interface IDealVotingSummary {
