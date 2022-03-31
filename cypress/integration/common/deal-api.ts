@@ -4,6 +4,7 @@ import { FirestoreService } from "../../../src/services/FirestoreService";
 import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
 import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
+import { MINIMUM_PRIVATE_OPEN_PROPOSAL } from "../../fixtures/dealFixtures";
 
 interface IDealOptions {
   address?: string;
@@ -107,11 +108,14 @@ export class E2eDealsApi {
           return deal.registrationData.isPrivate;
         });
 
-        if (privateDeals.length === 0) {
-          throw new Error("[TEST] No Private Deals found.");
+        const shouldCreate = privateDeals.length === 0;
+        if (shouldCreate) {
+          return this.createDeal(MINIMUM_PRIVATE_OPEN_PROPOSAL).then(createdDeal => {
+            return [createdDeal];
+          });
+        } else {
+          return privateDeals;
         }
-
-        return privateDeals;
       });
     });
   }
@@ -144,35 +148,37 @@ export class E2eDealsApi {
     registrationData: IDealRegistrationTokenSwap,
     options: IDealOptions = defaultDealOptions,
   ) {
+    cy.log("createDeal");
+
     let { address } = options;
     if (address === undefined) {
       address = E2eWallet.currentWalletAddress;
     }
 
-    cy.log("[TEST] Navigate to home page, and wait for app boostrapping");
     /**
      * 1. Auth for Firestore
      * Need to have the app bootstrapped, in order to use firestore
      */
-    cy.window().then((window) => {
+    return cy.window().then((window) => {
       const { pathname } = window.location;
       if (!E2eNavigation.isHome(pathname)) {
+        cy.log("[TEST] Navigate to home page, and wait for app boostrapping");
         E2eNavigation.navigateToHomePage();
-
-        if (address !== undefined) {
-          E2eNavbar.connectToWallet(address);
-        }
       }
-    });
+      if (address !== undefined) {
+        E2eNavbar.connectToWallet(address);
+      }
 
-    /**
-     * 2. Interact with Firestore
-     */
-    cy.then(async () => {
-      const firestoreDealsService = E2eDealsApi.getDealService();
-      await firestoreDealsService.ensureAuthenticationIsSynced();
+      /**
+       * 2. Interact with Firestore
+       */
+      return cy.then(async () => {
+        const firestoreDealsService = E2eDealsApi.getDealService();
+        await firestoreDealsService.ensureAuthenticationIsSynced();
 
-      firestoreDealsService.createDealTokenSwap(registrationData);
+        const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
+        return createdDeal;
+      });
     });
   }
 }
