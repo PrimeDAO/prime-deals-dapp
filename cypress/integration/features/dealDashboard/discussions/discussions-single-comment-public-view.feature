@@ -1,7 +1,4 @@
-Feature: Discussions - Single Comment - Public View
-  Background:
-    Given I'm viewing a public Deal
-
+# Feature: Discussions - Single Comment - Public View
   # @todo uncomment once have e2e firebase seed
   # Scenario: Single comments - Actions - Don't show actions not connected to a wallet
   #   Given I'm not connected to a wallet
