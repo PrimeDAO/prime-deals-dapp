@@ -34,19 +34,22 @@ export class E2eDealsApi {
 
     cy.log("[Test] Navigate to home page, and wait for app boostrapping");
     /**
+     * 1. Auth for Firestore
      * Need to have the app bootstrapped, in order to use firestore
      */
     cy.window().then((window) => {
       const { pathname } = window.location;
       if (!E2eNavigation.isHome(pathname)) {
         E2eNavigation.navigateToHomePage();
-
-        if (address !== undefined) {
-          E2eNavbar.connectToWallet(address);
-        }
+      }
+      if (address !== undefined) {
+        E2eNavbar.connectToWallet(address);
       }
     });
 
+    /**
+     * 2. Interact with Firestore
+     */
     return cy.then(async () => {
       const firestoreDealsService = E2eDealsApi.getDealService();
       await firestoreDealsService.ensureAuthenticationIsSynced();
@@ -85,6 +88,16 @@ export class E2eDealsApi {
     });
   }
 
+  public static getPrivateDeals(options?: IDealOptions) {
+    return cy.then(() => {
+      return this.getDeals(options).then((deals) => {
+        return deals.filter((deal) => {
+          return deal.registrationData.isPrivate;
+        });
+      });
+    });
+  }
+
   public static getFirstOpenProposalId(options?: IDealOptions) {
     return cy.then(() => {
       return this.getOpenProposals(options).then((openProposals) => {
@@ -101,6 +114,19 @@ export class E2eDealsApi {
   public static getFirstPartneredDealId(options?: IDealOptions) {
     return cy.then(() => {
       return this.getPartneredDeals(options).then((partneredDeals) => {
+        const id = partneredDeals[0].id;
+        if (id === undefined) {
+          throw new Error("[TEST] No Open Proposal found");
+        }
+
+        return id;
+      });
+    });
+  }
+
+  public static getFirstPrivateDealId(options?: IDealOptions) {
+    return cy.then(() => {
+      return this.getPrivateDeals(options).then((partneredDeals) => {
         const id = partneredDeals[0].id;
         if (id === undefined) {
           throw new Error("[TEST] No Open Proposal found");

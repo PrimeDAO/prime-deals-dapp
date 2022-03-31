@@ -1,4 +1,5 @@
 import { When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { E2eDealsApi } from "./deal-api";
 import { E2E_DEALS, PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2eDealDashboard {
@@ -16,9 +17,11 @@ When("I'm viewing a public Deal", () => {
 });
 
 When("I'm viewing a private Deal", () => {
-  const dealId = "open_deals_stream_hash_1";
-  const url = `/deal/${dealId}`;
-  cy.visit(url);
+  E2eDealsApi.getFirstPrivateDealId().then(privateDealId => {
+    const dealId = privateDealId;
+    const url = `/deal/${dealId}`;
+    cy.visit(url);
 
-  E2eDealDashboard.getContainer().should("be.visible");
+    E2eDealDashboard.getContainer().should("be.visible");
+  });
 });
