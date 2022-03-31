@@ -218,7 +218,6 @@ export class DiscussionsService {
     ) return;
 
     this.discussions[discussionId].replies = replies;
-    console.log("timestamp", timestamp, timestamp.toISOString());
     this.discussions[discussionId].modifiedAt = timestamp.toISOString();
 
     const dealDiscussion = this.discussions[discussionId];

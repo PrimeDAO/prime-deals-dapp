@@ -163,24 +163,22 @@ export class DiscussionThread {
         ) :
         newComment.text;
 
-      this.threadComments = [
-        ...(this.threadComments || []),
-        newComment,
-      ];
-
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
-
-      this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(newComment.timestamp), this.threadComments.length);
+      this.threadComments = Object.values(this.threadDictionary);
 
       // scroll to bottom only if the user is at seeing the last message
-      if (this.refComments && this.isInView(this.refComments[this.refComments.length - 1])) {
+      if (
+        this.refComments
+        && this.refComments[this.refComments.length - 1]
+        && this.isInView(this.refComments[this.refComments.length - 1])) {
         this.refThreadEnd.scrollIntoView({
           behavior: "smooth",
         });
       }
       this.isLoading.commenting = false;
+      comment = null;
     }
   }
 
