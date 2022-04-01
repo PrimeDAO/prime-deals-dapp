@@ -25,8 +25,8 @@
         ${deal.registrationData.partnerDAO.name}
         <div class="daoSocialLinks">
           <a href.bind="socialMedia.url"
-            repeat.for="socialMedia of deal.registrationData.partnerDAO.social_medias"
-            target="_blank">
+             repeat.for="socialMedia of deal.registrationData.partnerDAO.social_medias"
+             target="_blank">
             <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
           </a>
         </div>
@@ -47,7 +47,7 @@
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
       <etherscanlink address.bind="deal.registrationData.proposalLead.address"
-        text="${deal.registrationData.proposalLead.address | smallHexString}">
+                     text="${deal.registrationData.proposalLead.address | smallHexString}">
       </etherscanlink>
     </div>
 
@@ -58,9 +58,8 @@
       <div>
         <div class="tokenDetails" repeat.for="tokenDetails of deal.primaryDao.tokens">
           <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
-          <formatted-number
-            mantissa="0" thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+          <formatted-number mantissa="0" thousands-separated
+                            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
           ${tokenDetails.symbol}
         </div>
         <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
@@ -74,9 +73,8 @@
       <div>
         <div class="tokenDetails" repeat.for="tokenDetails of deal.partnerDao.tokens">
           <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
-          <formatted-number
-            mantissa="0" thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+          <formatted-number mantissa="0" thousands-separated
+                            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
           ${tokenDetails.symbol}
         </div>
       </div>
