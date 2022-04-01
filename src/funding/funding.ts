@@ -71,15 +71,6 @@ export class Funding {
     });
   }
 
-  /**
-   * Returns if the connected wallet address is the deal's proposal lead
-   * @return boolean
-   */
-  @computedFrom("ethereumService.defaultAccountAddress")
-  public get isProposalLead(): boolean {
-    return this.ethereumService.defaultAccountAddress === this.deal.registrationData.proposalLead.address;
-  }
-
   public async activate(_, __, navigationInstruction): Promise<void> {
     this.dealId = navigationInstruction.params.address;
     await this.dealService.ensureInitialized();
