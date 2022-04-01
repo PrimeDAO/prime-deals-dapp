@@ -1,5 +1,14 @@
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
+function getRandomId (){
+  /**
+   * "0.g6ck5nyod4".substring(2, 9)
+   * -> g6ck5ny
+   */
+  return Math.random().toString(36).substring(2, 9);
+}
+const randomId = getRandomId();
+
 export const E2E_ADDRESSES = {
   ConnectedPublicUser: "0x0000000000000000000000000000000000000000",
   ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
@@ -12,9 +21,9 @@ export const E2E_ADDRESSES = {
 };
 
 const PROPOSAL_DATA = {
-  summary: "e2e_summary",
-  description: "e2e_description",
-  title: "e2e_Open_proposal",
+  summary: `${randomId}_summary`,
+  description: `${randomId}_description`,
+  title: `${randomId}_Open_proposal`,
 };
 
 const PROPOSAL_LEAD_DATA = {
@@ -45,7 +54,7 @@ const PRIMARY_DAO_DATA = {
   treasury_address: E2E_ADDRESSES.PrimaryTreasury,
   logoURI: "https://picsum.photos/seed/picsum/400/400",
   social_medias: [TWITTER_SOCIAL_MEDIA_DATA],
-  name: "e2e_PrimeDAO",
+  name: `${randomId}_PrimeDAO`,
   tokens: [TOKEN_DATA],
   representatives: [
     {
@@ -55,7 +64,7 @@ const PRIMARY_DAO_DATA = {
 };
 
 const PARTNER_DAO_DATA = {
-  name: "e2e_PartnerDAO",
+  name: `${randomId}_PartnerDAO`,
   tokens: [
     {
       address: E2E_ADDRESSES.PrimaryDAOToken,
@@ -84,8 +93,8 @@ const PARTNER_DAO_DATA = {
 const TERMS_DATA = {
   clauses: [
     {
-      id: "",
-      text: "e2e_clause",
+      id: randomId,
+      text: `${randomId}_clause`,
     },
   ],
 };
@@ -136,12 +145,12 @@ export const MINIMUM_OPEN_PROPOSAL = DealDataBuilder.create().deal;
 
 export const MINIMUM_PRIVATE_OPEN_PROPOSAL = DealDataBuilder
   .create()
-  .withProposalData({title: "e2e_Private_open_propsoal"})
+  .withProposalData({title: `${randomId}_Private_open_propsoal`})
   .deal;
 MINIMUM_PRIVATE_OPEN_PROPOSAL.isPrivate = true;
 
 export const PARTNERED_DEAL = DealDataBuilder
   .create()
-  .withProposalData({title: "e2e_Partnered_deal"})
+  .withProposalData({title: `${randomId}_Partnered_deal`})
   .withPartnerDaoData()
   .deal;
