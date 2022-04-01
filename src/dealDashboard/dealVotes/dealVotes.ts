@@ -57,6 +57,10 @@ export class DealVotes {
       return;
     }
 
+    this.goToFunding();
+  }
+
+  goToFunding() {
     this.router.navigate(`fund/${this.deal.id}`);
   }
 

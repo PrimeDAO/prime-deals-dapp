@@ -45,13 +45,22 @@
       <div class="orangeColor">${statusText.statusText}</div>
     </div>
 
-    <div class="funding" if.bind="deal.majorityHasVoted && (deal.registrationData.proposalLead.address === ethereumService.defaultAccountAddress || !ethereumService.defaultAccountAddress)">
-      <pbutton class="fundButton" click.delegate="fund()"
-        if.bind="ethereumService.defaultAccountAddress" type="primary">
+    <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead">
+      <pbutton class="fundButton" click.delegate="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>
-      <pbutton click.delegate="ethereumService.ensureConnected()" if.bind="!ethereumService.defaultAccountAddress"
+    </div>
+
+    <div class="funding" if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)">
+      <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
+        Go to funding
+        <i class="fas fa-arrow-right"></i>
+      </pbutton>
+    </div>
+
+    <div class="funding" if.bind="deal.majorityHasVoted && !ethereumService.defaultAccountAddress">
+      <pbutton click.delegate="ethereumService.ensureConnected()"
         type="primary">
         Connect Wallet
       </pbutton>
