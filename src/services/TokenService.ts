@@ -45,7 +45,7 @@ export class TokenService {
       .subscribe();
   }
 
-  async initialize(): Promise<TokenListMap> {
+  public async initialize(): Promise<TokenListMap> {
     this.geckoCoinInfo = new Map<string, string>();
     const uri = `https://pro-api.coingecko.com/api/v3/coins/list?x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
 
@@ -65,7 +65,7 @@ export class TokenService {
     return this.tokenLists = await this.tokenListService.fetchLists();
   }
 
-  geckoCoinInfo: Map<string, string>;
+  private geckoCoinInfo: Map<string, string>;
 
   private getTokenGeckoMapKey(name: string, symbol: string): string {
     // PRIMEDao Token HACK!!!

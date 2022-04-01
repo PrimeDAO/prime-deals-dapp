@@ -192,7 +192,7 @@ export class DiscussionsService {
     }
   }
 
-  convertArrayBufferToString(buffer: ArrayBuffer): string {
+  private convertArrayBufferToString(buffer: ArrayBuffer): string {
     return String.fromCharCode.apply(null, new Uint8Array(buffer));
   }
 

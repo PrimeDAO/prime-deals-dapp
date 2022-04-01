@@ -1,5 +1,5 @@
 <template>
-  <div class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
+  <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
     <header class="header">
       <figure class="avatar">
         <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${comment.author}.svg" alt="">
@@ -7,32 +7,32 @@
       </figure>
       <div class="identity ${loading[author] ? 'loading' : ''}">
         <div if.bind="loading[author]" class="placeholder"></div>
-        <div else>
+        <div else data-test="comment-author">
           <span if.bind="profile.name" class="name">
-            ${profile.name} 
+            ${profile.name}
             <span if.bind="comment.author === author">(Author)</span>
           </span>
           <div if.bind="comment.author" class="${!profile.name ? 'only': ''} address">
-            <etherscanlink 
-              text="${comment.author | smallHexString}" 
+            <etherscanlink
+              text="${comment.author | smallHexString}"
               address.bind="comment.author">
             </etherscanlink>
           </div>
         </div>
       </div>
       <div class="actions">
-        <div if.bind="comment.author !== connectedAddress && isAuthorized" class="vote action">
-          <pbutton type="tertiary" 
+        <div if.bind="comment.author !== connectedAddress && isAuthorized" data-test="single-comment-action" class="vote action">
+          <pbutton type="tertiary"
             is-loading.bind="loading['isVoting ' + comment._id] && pressed.up"
             disabled.bind="loading['isVoting ' + comment._id]"
             click.delegate="vote('toggleUpvote')">
-            <i class="fas fa-thumbs-up ${isThumbUp}"></i>
+            <i data-test="like-button" class="fas fa-thumbs-up ${isThumbUp}"></i>
           </pbutton>
           <pbutton type="tertiary"
             is-loading.bind="loading['isVoting ' + comment._id] && pressed.down"
             disabled.bind="loading['isVoting ' + comment._id]"
             click.delegate="vote('toggleDownvote')">
-            <i class="fas fa-thumbs-down ${isThumbDown}"></i> 
+            <i data-test="dislike-button" class="fas fa-thumbs-down ${isThumbDown}"></i>
           </pbutton>
           <pbutton
             type="tertiary"
@@ -51,7 +51,7 @@
         <div else class="vote count ${isAuthorized ? 'isAuthorized' : ''}">
           <div type="tertiary"><i class="fas fa-thumbs-up"></i> <i class="spinner fas fa-circle-notch fa-spin"></i></div>
         </div>
-        <div if.bind="comment.author === connectedAddress && isAuthorized" class="vote action">
+        <div if.bind="comment.author === connectedAddress && isAuthorized" data-test="single-comment-action" class="vote action">
           <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>
           <!-- Commenting out until `edit` is implemented in the convo.space -->
           <!-- <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton> -->
@@ -79,12 +79,12 @@
 
             <div class="identity">
               <span if.bind="repliesToProfile.name" class="name">
-                ${repliesToProfile.name} 
+                ${repliesToProfile.name}
                 <span if.bind="repliesToProfile.address === author">(Author)</span>
               </span>
               <div if.to-view="repliesToProfile.address" class="${!repliesToProfile.name ? 'only': ''} address">
-                <etherscanlink 
-                  text="${repliesToProfile.address | smallHexString}" 
+                <etherscanlink
+                  text="${repliesToProfile.address | smallHexString}"
                   address="${repliesToProfile.address}">
                 </etherscanlink>
               </div>

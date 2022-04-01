@@ -5,10 +5,10 @@
     </h1>
   </div>
 
-  <section class="section discussions-list">
+  <section data-test="discussions-list" class="section discussions-list">
     <!-- always when there are no discussions-->
     <section if.bind="!discussionsArray.length">
-      <p class="instructions">
+      <p data-test="discussions-list-instructions" class="instructions">
         <span>
           None of the clauses are currently being discussed.
         </span>
@@ -21,7 +21,7 @@
 
     <!-- always when not connected -->
     <section if.to-view="!ethereumService.defaultAccountAddress">
-      <p class="instructions">
+      <p data-test="discussions-list-instructions" class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
         <a class="connect-link" href="" click.delegate="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
       </p>
@@ -33,6 +33,7 @@
       </div>
       <div class="tbody">
         <div class="tr"
+          data-test="single-topic"
           id="${discussion.id}"
           click.delegate="navigateTo(`${discussion.id}`)"
           repeat.for="discussion of discussionsArray">
@@ -50,7 +51,7 @@
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
-          <div class="td h-centered v-centered">${discussion.replies || 0}</div>
+          <div data-test="number-of-replies" class="td h-centered v-centered">${discussion.replies || 0}</div>
           <div class="td h-centered v-centered">${discussion.lastModified}</div>
         </div>
       </div>
