@@ -135,7 +135,7 @@ describe("DateService", () => {
 });
 
 class DateTestHelper {
-  static toMs(input: TimeArray) {
+  public static toMs(input: TimeArray) {
     const [days, hours, minutes, seconds] = input;
     const daysMs = Math.floor(days * 86400000);
     const hoursMs = Math.floor(hours * 3600000);
