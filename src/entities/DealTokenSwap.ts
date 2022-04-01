@@ -166,9 +166,9 @@ export class DealTokenSwap implements IDeal {
     let isReached = true;
     this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
       if (!isReached) return; //immediately returns if it's already false from a previous loop
-      isReached = dao.tokens.some(daoToken => {
-        const totalDeposited : BigNumber = transactions.reduce((a, b) => a.add(b.amount), BigNumber.from(0));
-        return totalDeposited.lt(daoToken.amount);
+      isReached = dao.tokens.every(daoToken => {
+        const totalDeposited : BigNumber = transactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+        return totalDeposited.gte(daoToken.amount);
       });
     });
     return isReached;
@@ -245,9 +245,18 @@ export class DealTokenSwap implements IDeal {
       //the connected wallet is a representative of the partner DAO
       return relatedToWallet ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
     }
-    //the connceted wallet is either a representative of the primary DAO or the proposal lead
-    return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+    if (this.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
+      //the connceted wallet is either a representative of the primary DAO or the proposal lead
+      return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+    }
+    if (this.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress){
+      //if the conencted wallet isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
+      return this.registrationData.primaryDAO;
+    }
+    //the currently connected wallet isn't part of any DAO
+    return null;
   }
+
   @computedFrom("isSwapping")
   public get isClaiming(): boolean {
     return this.isSwapping;

@@ -62,7 +62,10 @@ export class Funding {
     private alertService: AlertService,
     private tokenService: TokenService,
   ) {
-    Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
+    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
+    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+      this.verifySecurity();
+    });
   }
 
   /**
@@ -84,10 +87,11 @@ export class Funding {
   }
 
   public async bind(): Promise<void> {
+    if (!this.deal.daoRelatedToWallet) this.verifySecurity();
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenFunding
-    this.otherDaoTokens = JSON.parse(JSON.stringify(this.otherDaoTokens));
-    this.otherDaoTokens.forEach(x => {this.setTokenContractInfo(x);});
+    this.otherDaoTokens = JSON.parse(JSON.stringify(this.deal.otherDao.tokens));
+    this.otherDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.deal.otherDao);});
 
     //TODO figure out what the vested amount is from the deal
     //this.vestedAmount = this.deal.vestedAmount;
@@ -95,7 +99,7 @@ export class Funding {
 
     //get contract token information from the DAO related to the wallet
     this.daoRelatedToWalletTokens = JSON.parse(JSON.stringify(this.deal.daoRelatedToWallet.tokens));
-    this.daoRelatedToWalletTokens.forEach(x => {this.setTokenContractInfo(x);});
+    this.daoRelatedToWalletTokens.forEach(x => {this.setTokenContractInfo(x, this.deal.daoRelatedToWallet);});
 
     if (this.daoRelatedToWalletTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
@@ -118,10 +122,6 @@ export class Funding {
 
   public async canActivate() : Promise<void> {
     await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
-    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
-    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
-      this.verifySecurity();
-    });
   }
 
   /**
@@ -342,14 +342,14 @@ export class Funding {
   /**
    * Sets the additional token info from the contract
    */
-  private setTokenContractInfo(token: ITokenFunding): void {
+  private setTokenContractInfo(token: ITokenFunding, dao: IDAO): void {
     //get the additional token information from the contract for this token
-    token.deposited = BigNumber.from("80"); //TODO get total amount of deposited tokens from the DepositContract
+    token.deposited = this.deal.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
     // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
     token.required = BigNumber.from(token.amount).sub(token.deposited);
     // calculate the percent completed based on deposited divided by target
     // We're using bignumberjs because BigNumber can't handle division
-    token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited).div(token.amount).toString(), token.decimals)) * 100;
+    token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
   }
 
   /**
