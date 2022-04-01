@@ -55,6 +55,14 @@ Given("I create a Private Open Proposal", () => {
   E2eDealsApi.createDeal(MINIMUM_PRIVATE_OPEN_PROPOSAL);
 });
 
+Given("I create an Open Proposal", () => {
+  E2eDealsApi.createDeal(MINIMUM_OPEN_PROPOSAL);
+});
+
+Given("I create a Partnered Deal", () => {
+  E2eDealsApi.createDeal(PARTNERED_DEAL);
+});
+
 Then("I can edit the Open Proposal", () => {
   E2EDashboard.editDeal();
 });
