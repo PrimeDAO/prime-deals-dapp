@@ -11,6 +11,9 @@ import { EventAggregator } from "aurelia-event-aggregator";
 export class DealVotes {
   @bindable deal: DealTokenSwap;
 
+  accepting = false;
+  declining = false;
+
   everyTextCopy = [
     {
       condition: () => this.deal.isFunding,
@@ -77,8 +80,23 @@ export class DealVotes {
     return this.everyTextCopy.find(textCopy => textCopy.condition());
   }
 
-  vote(value: boolean) {
-    this.eventAggregator.publish("showMessage", "Vote submitted");
-    return this.deal.vote(value);
+  async acceptDeal() {
+    this.accepting = true;
+    await this.vote(true).finally(() => this.accepting = false);
+  }
+
+  async declineDeal() {
+    this.declining = true;
+    await this.vote(true).finally(() => this.declining = false);
+  }
+
+  private async vote(value: boolean) {
+    try {
+      await this.deal.vote(value);
+      this.eventAggregator.publish("showMessage", "Your vote has been successfully submitted");
+    } catch (error) {
+      console.log("Voting error", error);
+      this.eventAggregator.publish("handleFailure", "Sorry, an error occurred submitting your vote");
+    }
   }
 }

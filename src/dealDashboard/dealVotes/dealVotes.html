@@ -12,18 +12,24 @@
           class="${deal.representativeVote() === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="vote(true)"
+          click.delegate="acceptDeal()"
         >
-          <i class="fas fa-check-circle"></i>
+          <span class="icon is-loading" if.bind="accepting">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-check-circle" if.bind="!accepting"></i>
           ${deal.representativeVote() === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
           class="${deal.representativeVote() === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="vote(false)"
+          click.delegate="declineDeal()"
         >
-          <i class="fas fa-times-circle"></i>
+          <span class="icon is-loading" if.bind="declining">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-times-circle" if.bind="!declining"></i>
           ${deal.representativeVote() === false ? 'Declined' : 'Decline' }
         </pbutton>
       </pbutton-group>
