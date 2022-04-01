@@ -351,12 +351,12 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
   public get isProposalLeadWaitingForOthersToVote() {
-    return !this.majorityHasVoted && this.hasRepresentativeVoted && this.isUserProposalLead;
+    return !this.majorityHasVoted && this.isUserProposalLead && (this.hasRepresentativeVoted || !this.isRepresentativeUser);
   }
 
   @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
   public get isRepresentativeWaitingForOthersToVote(): boolean {
-    return !this.majorityHasVoted && this.hasRepresentativeVoted && !this.isUserProposalLead;
+    return !this.majorityHasVoted && !this.isUserProposalLead && this.hasRepresentativeVoted;
   }
 
   @computedFrom("isApproved", "isUserProposalLead")

@@ -12,13 +12,18 @@ export class DealVotes {
 
   everyTextCopy = [
     {
-      condition: () => this.deal.isRepresentativeEligibleToVote,
-      voteText: "You’re eligible to vote. The deal will be approved once the majority accepts the deal",
-      statusText: "Voting in progress",
+      condition: () => this.deal.isFunding,
+      voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, token swap can be executed",
+      statusText: "Voting is completed. Funding in progress",
     },
     {
       condition: () => this.deal.isProposalLeadWaitingForOthersToVote,
       voteText: "Please wait for the representatives to cast their votes. The representatives are able to change their votes before the funding phase is initiated. If the deal is approved, you can initiate the funding phase",
+      statusText: "Voting in progress",
+    },
+    {
+      condition: () => this.deal.isRepresentativeEligibleToVote,
+      voteText: "You’re eligible to vote. The deal will be approved once the majority accepts the deal",
       statusText: "Voting in progress",
     },
     {
@@ -35,11 +40,6 @@ export class DealVotes {
       condition: () => this.deal.waitingForTheProposalLeadToStartFunding,
       voteText: "Deal is approved",
       statusText: "Voting is completed. Waiting for the proposal lead to initiate the funding phase",
-    },
-    {
-      condition: () => this.deal.isFunding,
-      voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, token swap can be executed",
-      statusText: "Voting is completed. Funding in progress",
     },
   ];
 
