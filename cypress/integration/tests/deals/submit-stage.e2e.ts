@@ -5,7 +5,11 @@ Then("all the wizard registration data should be presented", () => {
 });
 
 Then("I should be notified, that the registration was successful", () => {
-  cy.get("[data-test='congratulatePopup']").should("be.visible");
+  cy.get("[data-test='congratulatePopup']").within(() => {
+    cy.contains("pbutton button", "Go to deal").click();
+  });
+
+  cy.get("[data-test='congratulatePopup']").should("not.exist");
 });
 
 // Then("the I should get the correct label "Make Deal Private" for the Privacy part", () => {})

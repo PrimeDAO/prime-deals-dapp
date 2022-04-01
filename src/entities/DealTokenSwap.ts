@@ -1,14 +1,14 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealTokenSwapDocument, IVotesInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDAO, IDealRegistrationTokenSwap, IRepresentative, IToken } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
@@ -54,6 +54,7 @@ export interface IDaoTransaction {
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
   depositId: number,
+  amount: BigNumber;
 }
 
 @autoinject
@@ -103,6 +104,8 @@ export class DealTokenSwap implements IDeal {
    */
   public isExecuted = false;
   public executedAt: Date;
+
+  public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
 
   @computedFrom("dealDocument.registrationData")
   public get registrationData(): IDealRegistrationTokenSwap {
@@ -181,7 +184,7 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("registrationData.fundingPeriod")
   public get fundingPeriod(): number {
-    return this.registrationData.fundingPeriod * 86400;
+    return this.registrationData.fundingPeriod;
   }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
@@ -193,7 +196,7 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
-    return this.fundingPeriodHasExpired;
+    return this.fundingPeriodHasExpired && !this.isExecuted;
   }
 
   @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
@@ -211,8 +214,10 @@ export class DealTokenSwap implements IDeal {
     return this.isExecuted;
   }
 
+  // TODO need to code whether there is anything left to claim
+
   /**
-   * same as isClaiming, by bizdev definition
+   * same as isClaiming/isExecuted, by bizdev definition
    */
   @computedFrom("isClaiming")
   public get isCompleted(): boolean {
@@ -228,21 +233,6 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
-  @computedFrom("registrationData.primaryDAO.representatives")
-  public get primaryRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives;
-  }
-
-  @computedFrom("registrationData.partnerDAO.representatives")
-  public get partnerRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.partnerDAO.representatives;
-  }
-
-  @computedFrom("registrationData.primaryDAO.representatives", "registrationData.partnerDAO.representatives")
-  public get allRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO?.representatives ?? []);
-  }
-
   @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
   public get majorityHasVoted(): boolean {
     return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
@@ -250,8 +240,11 @@ export class DealTokenSwap implements IDeal {
 
   // TODO: observe the right things here to recompute when votes have changed
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
-  public get allVotes(): Array<IVoteInfo> {
-    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  public get allVotes(): IVotesInfo {
+    return {
+      ...this.dealDocument.votingSummary.primaryDAO.votes,
+      ...this.dealDocument.votingSummary.partnerDAO.votes,
+    };
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
@@ -280,6 +273,42 @@ export class DealTokenSwap implements IDeal {
   @computedFrom("registrationData.partnerDAO")
   public get isPartnered(): boolean {
     return !!this.registrationData.partnerDAO;
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead")
+  public get isUserRepresentativeOrLead(): boolean {
+    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address")
+  public get isUserProposalLead(): boolean {
+    return this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress;
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "representatives")
+  public get isRepresentativeUser(): boolean {
+    return this.representatives.has(this.ethereumService.defaultAccountAddress);
+  }
+
+  @computedFrom("primaryDaoRepresentatives", "partnerDaoRepresentatives")
+  public get representatives(): Set<Address> {
+    return Utils.unionSet(this.primaryDaoRepresentatives, this.partnerDaoRepresentatives);
+  }
+
+  @computedFrom("registrationData.proposalLead.address", "representatives")
+  public get representativesAndLead(): Set<Address> {
+    const reps = new Set(this.representatives);
+    return reps.add(this.registrationData.proposalLead?.address);
+  }
+
+  @computedFrom("registrationData.primaryDAO.representatives")
+  public get primaryDaoRepresentatives(): Set<Address> {
+    return new Set(this.registrationData.primaryDAO?.representatives.map(representative => representative.address) ?? []);
+  }
+
+  @computedFrom("registrationData.partnerDAO.representatives")
+  public get partnerDaoRepresentatives(): Set<Address> {
+    return new Set(this.registrationData.partnerDAO?.representatives.map(representative => representative.address) ?? []);
   }
 
   public create(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
@@ -348,6 +377,8 @@ export class DealTokenSwap implements IDeal {
       this.clauseDiscussions = this.dealDocument.clauseDiscussions ? new Map(Object.entries(this.dealDocument.clauseDiscussions)) : new Map();
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
+
+      await this.hydrateDaoTransactions();
     }
     catch (error) {
       this.corrupt = true;
@@ -355,6 +386,21 @@ export class DealTokenSwap implements IDeal {
     } finally {
       this.initializing = false;
     }
+  }
+
+  private async hydrateDaoTransactions(): Promise<void> {
+    if (!this.daoTokenTransactions) {
+      this.daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
+    }
+
+    const daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
+
+    daoTokenTransactions.set(this.primaryDao, await this.getDaoTransactions(this.primaryDao));
+    if (this.partnerDao) {
+      daoTokenTransactions.set(this.partnerDao, await this.getDaoTransactions(this.partnerDao));
+    }
+
+    this.daoTokenTransactions = daoTokenTransactions;
   }
 
   private async hydrateUser(): Promise<void> {
@@ -439,7 +485,7 @@ export class DealTokenSwap implements IDeal {
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
   }
 
-  public async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
+  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
     const transactions = new Array<IDaoTransaction>();
     const depositContract = this.daoDepositContracts.get(dao);
 
@@ -456,6 +502,7 @@ export class DealTokenSwap implements IDeal {
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             depositId: params.depositId,
+            amount: params.amount,
           });
         }
       });
@@ -473,6 +520,7 @@ export class DealTokenSwap implements IDeal {
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             depositId: params.depositId,
+            amount: params.amount,
           });
         }
       });
@@ -510,9 +558,7 @@ export class DealTokenSwap implements IDeal {
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 
-    const daoVotes = this.votesArrayToMap(daoVotingSummary.votes);
-
-    if (upDown !== daoVotes.get(this.ethereumService.defaultAccountAddress)) {
+    if (upDown !== daoVotingSummary.votes[this.ethereumService.defaultAccountAddress]) {
       return this.dataSourceDeals.updateVote(
         this.id,
         this.ethereumService.defaultAccountAddress,
@@ -527,9 +573,6 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean> {
-    return new Map<Address, boolean>(votes.map((voteInfo) => [ voteInfo.address, voteInfo.vote]));
-  }
   /**
    * pulled from deal-contracts
    * @returns

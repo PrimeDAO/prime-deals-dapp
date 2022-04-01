@@ -1,7 +1,7 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EthereumService } from "services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { DealService } from "../services/DealService";
+import { DealService } from "services/DealService";
 import "./dealDashboard.scss";
 
 @autoinject
@@ -31,7 +31,7 @@ export class DealDashboard {
         /* Open deal can not be private, and anyone can comment and begin a discussion */
         this.deal.isOpenProposal ||
         /* In a Partnered deal only members can comment and begin a discussion */
-        [...this.deal.representativesAndLead].includes(this.ethereumService.defaultAccountAddress)
+        this.deal.isUserRepresentativeOrLead
       )
     );
   }

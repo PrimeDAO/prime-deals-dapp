@@ -89,8 +89,17 @@
 
         <section class="stageSectionContent">
           <div class="submitContentLabel-sm">Funding Period</div>
+          <let funding-period-of-tooltip.bind="submitData.fundingPeriod | withCommas"></let>
           <div class="submitContent">
-            <p class="subtext" if.bind="submitData.fundingPeriod">${submitData.fundingPeriod | secondsDays} days</p>
+            <p class="subtext" if.bind="submitData.fundingPeriod">
+              <span ptooltip.bind="fundingPeriodOfTooltip + ' seconds'">
+                <formatted-number
+                  thousands-separated
+                  hide-tooltip
+                  value.to-view="submitData.fundingPeriod | secondsDays">
+                </formatted-number> days
+              </span>
+            </p>
             <p class="optionalContent" else>[optional period not supplied]</p>
           </div>
         </section>

@@ -6,14 +6,14 @@ When("I add social medias", () => {
 
 Then("I am presented with errors for DAO details fields", () => {
   cy.get("[data-test=\"dao-name-field\"] .errorMessage").should("contain.text", "DAO name is required");
-  cy.get("[data-test=\"dao-treasury-field\"] .errorMessage").should("contain.text", "Treasury address is required");
-  cy.get("[data-test=\"dao-avatar-url-field\"] .errorMessage").should("contain.text", "DAO avatar is required");
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] .errorMessage").should("contain.text", "Please enter a valid ethereum address");
+  cy.get("[data-test=\"dao-avatar-field\"] .errorMessage").should("contain.text", "DAO avatar is required");
 });
 
 Then("I can add link to DAO avatar", () => {
   cy.get("[data-test=\"dao-avatar-section\"]").within(() => {
     const avatarUrl = "https://assets.website-files.com/608bd350d67fe62ab7818c74/6138bc3d43a38d248fae12ce_Prime%20Network%20_%20Simplified.png";
-    cy.get("[data-test=\"dao-avatar-url-field\"]").within(() => {
+    cy.get("[data-test=\"dao-avatar-field\"]").within(() => {
       cy.get("input").type(avatarUrl);
     });
 
@@ -58,24 +58,24 @@ Then("I can remove all social media", () => {
 
 When("I fill in DAO details", () => {
   cy.get("[data-test=\"dao-name-field\"] input").type("Dao name");
-  cy.get("[data-test=\"dao-treasury-field\"] input").type("0xc0ffee254729296a45a3885639AC7E10F9d54979");
-  cy.get("[data-test=\"dao-avatar-url-field\"] input").type("https://picsum.photos/seed/picsum/400/400");
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] input").type("0xc0ffee254729296a45a3885639AC7E10F9d54979");
+  cy.get("[data-test=\"dao-avatar-field\"] input").type("https://picsum.photos/seed/picsum/400/400");
 });
 
 Then("No errors for DAO details fields are visible", () => {
   cy.get("[data-test=\"dao-name-field\"] .errorMessage").should("not.exist");
-  cy.get("[data-test=\"dao-treasury-field\"] .errorMessage").should("not.exist");
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] .errorMessage").should("not.exist");
   cy.wait(6000);
-  cy.get("[data-test=\"dao-avatar-url-field\"] .errorMessage").should("not.exist");
+  cy.get("[data-test=\"dao-avatar-field\"] .errorMessage").should("not.exist");
 });
 
 Then("I can add up to 5 DAO representatives", () => {
   cy.get("[data-test=\"dao-representatives-section\"]").within(() => {
-    cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($representatives) => {
       expect($representatives).to.have.length(1);
     });
     cy.get("[data-test=\"add-dao-representative\"]").click().click().click().click();
-    cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($representatives) => {
       expect($representatives).to.have.length(5);
     });
     cy.get("[data-test=\"add-dao-representative\"]").should("not.exist");
@@ -83,7 +83,7 @@ Then("I can add up to 5 DAO representatives", () => {
 });
 
 Then("I can remove all but one DAO representative", () => {
-  cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
+  cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($representatives) => {
     expect($representatives).to.have.length(5);
   });
   cy.get("[data-test=\"remove-dao-representative\"]").last().click();
@@ -94,20 +94,20 @@ Then("I can remove all but one DAO representative", () => {
 });
 
 Then("I am presented with error about missing representative address", () => {
-  cy.get("[data-test=\"dao-representative\"] pform-input").within(() => {
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] pform-input").within(() => {
     cy.get(".errorMessage").should("contain.text", "Please enter a valid ethereum address");
   });
 });
 
 When("I add 2 incorrect representative addresses", () => {
   cy.get("[data-test=\"add-dao-representative\"]").click();
-  cy.get("[data-test=\"dao-representative\"] pform-input input").each(($el) => {
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] pform-input input").each(($el) => {
     cy.wrap($el).type("incorrect address");
   });
 });
 
 Then("I am presented with errors about incorrect representative addresses", () => {
-  cy.get("[data-test=\"dao-representative\"] pform-input .errorMessage").each(($el) => {
+  cy.get("[data-test=\"dao-representatives-addresses-field\"] pform-input .errorMessage").each(($el) => {
     cy.wrap($el).should("contain.text", "Please enter a valid ethereum address");
   });
 });

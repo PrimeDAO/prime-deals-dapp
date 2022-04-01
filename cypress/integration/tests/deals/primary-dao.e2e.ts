@@ -45,7 +45,7 @@ Then("I can see Primary DAO Representatives section", () => {
     cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Primary DAO - Representatives Addresses (Max. 5)");
-    cy.get("[data-test=\"dao-representative\"]").should(($item) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($item) => {
       expect($item).to.have.length(1);
     });
     cy.get("[data-test=\"add-dao-representative\"]").should("contain.text", "+ Additional representative");

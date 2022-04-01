@@ -140,11 +140,13 @@ export class WizardService {
        */
       const visibleStages = wizardState.stages.filter(stage => !stage.hidden);
       const isLastStage = (visibleStages.length - 1) === currentIndexOfActive;
-      const allStagesAreValid = visibleStages.every(stage => stage.valid);
+      if (isLastStage) {
+        const allStagesAreValid = visibleStages.every(stage => stage.valid);
 
-      if (isLastStage && !allStagesAreValid) {
-        this.eventAggregator.publish("handleValidationError", "Unable to proceed, not all stages are valid");
-        return;
+        if (!allStagesAreValid) {
+          this.eventAggregator.publish("handleValidationError", "Unable to proceed, not all stages are valid");
+          return;
+        }
       }
     }
 
