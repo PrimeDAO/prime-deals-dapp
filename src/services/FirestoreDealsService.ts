@@ -18,7 +18,7 @@ export class FirestoreDealsService<
     private consoleLogService: ConsoleLogService,
   ) {}
 
-  initialize(): void {
+  public initialize(): void {
     throw new Error("Method not implemented.");
   }
 
