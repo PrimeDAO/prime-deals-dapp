@@ -1,20 +1,22 @@
-/* eslint-disable linebreak-style */
-import { autoinject } from "aurelia-framework";
-import { EventAggregator } from "aurelia-event-aggregator";
-import { EventConfigException } from "services/GeneralEvents";
-import { Router, RouterConfiguration, NavigationInstruction, Next } from "aurelia-router";
-import { PLATFORM } from "aurelia-pal";
 import "./styles/styles.scss";
 import "./app.scss";
-import tippy from "tippy.js";
-import { BindingSignaler } from "aurelia-templating-resources";
-import { EthereumService } from "services/EthereumService";
-import { ConsoleLogService } from "services/ConsoleLogService";
-import { BrowserStorageService } from "services/BrowserStorageService";
-import { AlertService } from "services/AlertService";
+
+import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
-import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
+
+import { AlertService } from "services/AlertService";
+import { BindingSignaler } from "aurelia-templating-resources";
+import { BrowserStorageService } from "services/BrowserStorageService";
+import { ConsoleLogService } from "services/ConsoleLogService";
+import { EthereumService } from "services/EthereumService";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { EventConfigException } from "services/GeneralEvents";
 import { FirebaseService } from "./services/FirebaseService";
+import { PLATFORM } from "aurelia-pal";
+import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
+/* eslint-disable linebreak-style */
+import { autoinject } from "aurelia-framework";
+import tippy from "tippy.js";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -255,11 +257,11 @@ export class App {
         title: "DEAL Dashboard",
       },
       {
-        moduleId: PLATFORM.moduleName("./fund/fund"),
+        moduleId: PLATFORM.moduleName("./funding/funding"),
         nav: false,
-        name: "fund",
-        route: "/fund/:address",
-        title: "Fund",
+        name: "funding",
+        route: "/funding/:address",
+        title: "Funding",
       },
       {
         moduleId: PLATFORM.moduleName("./comingSoon/comingSoon"),
