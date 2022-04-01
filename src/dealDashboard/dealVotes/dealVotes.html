@@ -7,12 +7,12 @@
       <p class="bodySmallText">
         ${statusText.voteText}
       </p>
-      <pbutton-group if.bind="ethereumService.defaultAccountAddress && deal.representativeDAO(ethereumService.defaultAccountAddress)">
+      <pbutton-group if.bind="deal.representatives.has(ethereumService.defaultAccountAddress)">
         <pbutton
-          class="${deal.representativeVote(ethereumService.defaultAccountAddress) ? 'acceptButtonActive' : ''}"
+          class="${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(true, deal.representativeDAO(ethereumService.defaultAccountAddress))"
+          click.delegate="deal.vote(true)"
         >
           <i class="fas fa-check-circle"></i>
           ${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'Accepted': 'Accept' }
@@ -21,7 +21,7 @@
           class="${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(false, deal.representativeDAO(ethereumService.defaultAccountAddress))"
+          click.delegate="deal.vote(false)"
         >
           <i class="fas fa-times-circle"></i>
           ${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'Declined': 'Decline' }
@@ -38,8 +38,8 @@
       <p class="bodySmallText votesSubtitle representativesVotesSubtitle">
         Votes (${deal.submittedVotes.length}/${deal.allRepresentatives.length})
       </p>
-      <deal-representatives-votes deal.bind="deal" dao.bind="deal.primaryDao" votes.bind="deal.primaryDAOVotes"></deal-representatives-votes>
-      <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao" votes.bind="deal.partnerDAOVotes"></deal-representatives-votes>
+      <deal-representatives-votes deal.bind="deal" dao.bind="deal.primaryDao"></deal-representatives-votes>
+      <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao"></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
       <div class="orangeColor">${statusText.statusText}</div>

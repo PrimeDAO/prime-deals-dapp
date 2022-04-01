@@ -1,7 +1,7 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVotesInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { Address, fromWei, Hash } from "./../services/EthereumService";
+import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVotesInfo } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -235,58 +235,97 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
   public get majorityHasVoted(): boolean {
+    return true;
     return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
   }
 
   // TODO: observe the right things here to recompute when votes have changed
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
   public get allVotes(): IVotesInfo {
-    return {
+    // return {
+    //   ...this.dealDocument.votingSummary.primaryDAO.votes,
+    //   ...this.dealDocument.votingSummary.partnerDAO.votes,
+    // };
+
+    // TODO this is temporary until allVotes is fixed in the Firebase Database
+    //  Issue: the votes are saved as an array in the database instead of an object.
+    const votes = [
+      // @ts-ignore
       ...this.dealDocument.votingSummary.primaryDAO.votes,
+      // @ts-ignore
       ...this.dealDocument.votingSummary.partnerDAO.votes,
-    };
+    ];
+    return votes.reduce((group, vote) => {
+      // @ts-ignore
+      group[vote.address] = vote.vote;
+      return group;
+    }, {});
   }
 
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes")
-  public get primaryDAOVotes(): Array<IVoteInfo> {
+  public get primaryDaoVotes(): IVotesInfo {
     return this.dealDocument.votingSummary.primaryDAO.votes;
   }
 
   @computedFrom("dealDocument.votingSummary.partnerDAO.votes")
-  public get partnerDAOVotes(): Array<IVoteInfo> {
-    return this.dealDocument.votingSummary.partnerDAO?.votes ?? [];
+  public get partnerDaoVotes(): IVotesInfo {
+    return this.dealDocument.votingSummary.partnerDAO?.votes ?? {};
   }
 
   @computedFrom("allVotes")
-  public get submittedVotes(): Array<IVoteInfo> {
-    return this.allVotes.filter(voteInfo => voteInfo.vote === true || voteInfo.vote === false);
+  public get submittedVotes(): (boolean | null)[] {
+    return Object.values(this.allVotes).filter(voteInfo => voteInfo === true || voteInfo === false);
   }
 
-  representativeVote(representativeAddress: string): boolean | null {
-    return this.votesArrayToMap(this.allVotes).get(representativeAddress);
+  public representativeVote(representativeAddress: Address): boolean | null {
+    return this.allVotes[representativeAddress];
   }
 
-  representativeVoted(representativeAddress: string): boolean {
-    const vote = this.representativeVote(representativeAddress);
+  public get hasRepresentativeVoted(): boolean {
+    const vote = this.representativeVote(this.ethereumService.defaultAccountAddress);
     return vote === true || vote === false;
   }
 
-  isTheProposalLead(address: string) {
-    return this.registrationData.proposalLead.address === address;
+  public getRepresentativeDao(relatedToWallet: boolean): IDAO | undefined {
+    if (this.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
+      //the connected wallet is a representative of the partner DAO
+      return relatedToWallet ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
+    }
+    if (this.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
+      //the connceted wallet is either a representative of the primary DAO or the proposal lead
+      return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+    }
+    if (this.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress){
+      //if the conencted wallet isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
+      return this.registrationData.primaryDAO;
+    }
+    //the currently connected wallet isn't part of any DAO
+    return null;
   }
 
-  representativeDAO(address: string): IDAO | undefined {
-    const primaryRepresentative = this.primaryRepresentatives.find(representative => representative.address = address);
-    if (primaryRepresentative) {
-      return this.primaryDao;
-    }
+  @computedFrom("majorityHasVoted", "hasUserVoted")
+  public get isRepresentativeEligibleToVote(): boolean {
+    return !this.majorityHasVoted && !this.hasRepresentativeVoted;
+  }
 
-    const partnerRepresentative = this.partnerRepresentatives.find(representative => representative.address = address);
-    if (partnerRepresentative) {
-      return this.partnerDao;
-    }
+  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
+  public get isProposalLeadWaitingForOthersToVote() {
+    return !this.majorityHasVoted && this.hasRepresentativeVoted && this.isUserProposalLead;
+  }
 
-    return undefined;
+  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
+  public get isRepresentativeWaitingForOthersToVote(): boolean {
+    return !this.majorityHasVoted && this.hasRepresentativeVoted && !this.isUserProposalLead;
+  }
+
+  @computedFrom("isApproved", "isUserProposalLead")
+  public get canStartFunding() {
+    return this.isApproved && this.isUserProposalLead;
+  }
+
+  @computedFrom("isApproved", "isUserProposalLead")
+  public get waitingForTheProposalLeadToStartFunding() {
+    return this.isApproved && !this.isUserProposalLead;
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
@@ -597,7 +636,8 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public vote(upDown: boolean, whichDao: IDAO): Promise<void> {
+  public vote(upDown: boolean): Promise<void> {
+    const whichDao = this.getRepresentativeDao(true);
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 

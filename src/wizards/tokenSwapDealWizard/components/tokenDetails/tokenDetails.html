@@ -57,7 +57,6 @@
         label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
         <pinput-numeric
           placeholder="500,000"
-          output-as-string
           value.bind="token.amount & validate"
           decimals.bind="token.decimals"
           view-model.ref="amountInput"></pinput-numeric>
@@ -70,11 +69,11 @@
           left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
           disabled.bind="!token.amount"
           right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
-          decimals.bind="token.decimals"
+          left.bind="token.instantTransferAmount | ethwei:token.decimals & validate"
           view-model.ref="rangeSlider"
-          left.bind="token.instantTransferAmount & validate"
-          max-value.bind="token.amount"
-          right.bind="token.vestedTransferAmount & validate"></prange-slider>
+          max-value.bind="token.amount | ethwei:token.decimals"
+          not-wei
+          right.bind="token.vestedTransferAmount | ethwei:token.decimals & validate"></prange-slider>
       </pform-input>
 
       <pform-input label="Vesting Set-up"

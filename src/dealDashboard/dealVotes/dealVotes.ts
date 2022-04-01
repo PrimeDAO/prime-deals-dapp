@@ -10,31 +10,29 @@ import { DialogService } from "../../services/DialogService";
 export class DealVotes {
   @bindable deal: DealTokenSwap;
 
-  fundingModal: HTMLElement;
-
   everyTextCopy = [
     {
-      condition: () => !this.deal.majorityHasVoted && !this.deal.representativeVoted(this.ethereumService.defaultAccountAddress),
+      condition: () => this.deal.isRepresentativeEligibleToVote,
       voteText: "You’re eligible to vote. The deal will be approved once the majority accepts the deal",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.representativeVoted(this.ethereumService.defaultAccountAddress) && this.deal.isTheProposalLead(this.ethereumService.defaultAccountAddress),
+      condition: () => this.deal.isProposalLeadWaitingForOthersToVote,
       voteText: "Please wait for the representatives to cast their votes. The representatives are able to change their votes before the funding phase is initiated. If the deal is approved, you can initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.representativeVoted(this.ethereumService.defaultAccountAddress) && !this.deal.isTheProposalLead(this.ethereumService.defaultAccountAddress),
+      condition: () => this.deal.isRepresentativeWaitingForOthersToVote,
       voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. If the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => this.deal.majorityHasVoted && this.deal.representativeVoted(this.ethereumService.defaultAccountAddress) && this.deal.isTheProposalLead(this.ethereumService.defaultAccountAddress),
+      condition: () => this.deal.canStartFunding,
       voteText: "Deal is approved. Please go to the funding page to deposit your tokens",
       statusText: "Voting is completed. Funding in progress",
     },
     {
-      condition: () => this.deal.majorityHasVoted && !this.deal.isTheProposalLead(this.ethereumService.defaultAccountAddress),
+      condition: () => this.deal.waitingForTheProposalLeadToStartFunding,
       voteText: "Deal is approved",
       statusText: "Voting is completed. Waiting for the proposal lead to initiate the funding phase",
     },

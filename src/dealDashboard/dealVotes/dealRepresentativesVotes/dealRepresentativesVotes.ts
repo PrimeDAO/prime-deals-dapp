@@ -1,14 +1,12 @@
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { IDAO } from "../../../entities/DealRegistrationTokenSwap";
 import "./dealRepresentativesVotes.scss";
-import { IVoteInfo } from "../../../entities/IDealTypes";
 import { DealTokenSwap } from "../../../entities/DealTokenSwap";
 
 @autoinject
 export class DealRepresentativesVotes {
   @bindable deal: DealTokenSwap;
   @bindable dao: IDAO;
-  @bindable votes: IVoteInfo[];
 
   showMore = false;
 
