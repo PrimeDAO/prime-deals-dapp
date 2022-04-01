@@ -61,7 +61,7 @@ export class DealVotes {
   }
 
   goToFunding() {
-    this.router.navigate(`fund/${this.deal.id}`);
+    this.router.navigate(`funding/${this.deal.id}`);
   }
 
   goToDiscussions() {

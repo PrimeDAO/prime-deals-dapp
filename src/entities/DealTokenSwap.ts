@@ -246,7 +246,7 @@ export class DealTokenSwap implements IDeal {
    * EX. If I want to get the DAO that is not related to the connected account I would call this.getDao(false)
    * EX. If I want to get the DAO that is related to the connected account I would call this.getDao(true)
    */
-  private getDao(relatedToAccount: boolean) : IDAO {
+  private getDao(relatedToAccount: boolean) : IDAO | null {
     if (this.partnerDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
       //the connected account is a representative of the partner DAO
       return relatedToAccount ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
@@ -342,23 +342,6 @@ export class DealTokenSwap implements IDeal {
   public get hasRepresentativeVoted(): boolean {
     const vote = this.representativeVote(this.ethereumService.defaultAccountAddress);
     return vote === true || vote === false;
-  }
-
-  public getRepresentativeDao(relatedToWallet: boolean): IDAO | undefined {
-    if (this.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
-      //the connected wallet is a representative of the partner DAO
-      return relatedToWallet ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
-    }
-    if (this.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
-      //the connceted wallet is either a representative of the primary DAO or the proposal lead
-      return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
-    }
-    if (this.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress){
-      //if the conencted wallet isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
-      return this.registrationData.primaryDAO;
-    }
-    //the currently connected wallet isn't part of any DAO
-    return null;
   }
 
   @computedFrom("majorityHasVoted", "hasUserVoted")
@@ -695,7 +678,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   public vote(upDown: boolean): Promise<void> {
-    const whichDao = this.getRepresentativeDao(true);
+    const whichDao = this.getDao(true);
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 
