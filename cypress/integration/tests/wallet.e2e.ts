@@ -31,7 +31,7 @@ export class E2eNavbar {
   }
 
   public static getUserAddress() {
-    return cy.get("[data-test='connect-button'] usersaddress");
+    return cy.get("[data-test='connect-button-container'] usersaddress");
   }
 
   public static connectToWallet(address: string = proposalLeadAddress1) {
@@ -61,23 +61,46 @@ export class E2eNavbar {
       // cy.get("[data-test='modelContent']").should("not.be.visible");
     });
   }
+
+  public static disconnectWallet() {
+    cy.get("[data-test='connectButton']").click();
+    cy.get("[data-test='diconnect-button']").click();
+    this.getConnectWalletButton().should("be.visible");
+  }
 }
 
 Given("I'm a Connected Public user", () => {
-  E2eNavbar.connectToWallet(CONNECTED_PUBLIC_USER_ADDESS);
+  cy.get("[data-test='connectButton']").then(connectButton => {
+    // 1. Check if already connected
+    const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+    if (isConnected) {
+      E2eNavbar.disconnectWallet();
+    } else {
+      E2eNavbar.connectToWallet(CONNECTED_PUBLIC_USER_ADDESS);
+    }
+  });
 });
 
 Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
-Given("I'm a Public viewer", () => {
-  E2eNavbar.getConnectWalletButton().should("be.visible");
-  E2eNavbar.getUserAddress().should("not.exist");
+Given("I'm an Anonymous user", () => {
+  E2eWallet.currentWalletAddress = undefined;
 });
 
 Given("I'm connected to my wallet", () => {
   E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
+});
+
+Given("I'm not connected to a wallet", () => {
+  E2eNavbar.getConnectWalletButton().should("be.visible");
+  E2eNavbar.getUserAddress().should("not.exist");
+});
+
+Given("I'm a Public viewer", () => {
+  E2eNavbar.getConnectWalletButton().should("be.visible");
+  E2eNavbar.getUserAddress().should("not.exist");
 });
 
 Given("I'm not connected to a wallet", () => {

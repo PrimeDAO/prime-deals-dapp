@@ -5,10 +5,10 @@
     </h1>
   </div>
 
-  <section class="section discussions-list">
+  <section data-test="discussions-list" class="section discussions-list">
     <!-- always when there are no discussions-->
     <section if.bind="!discussionsArray.length">
-      <p class="instructions">
+      <p data-test="discussions-list-instructions" class="instructions">
         <span>
           None of the clauses are currently being discussed.
         </span>
@@ -18,10 +18,10 @@
         </span>
       </p>
     </section>
-  
+
     <!-- always when not connected -->
     <section if.to-view="!ethereumService.defaultAccountAddress">
-      <p class="instructions">
+      <p data-test="discussions-list-instructions" class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
         <a class="connect-link" href="" click.delegate="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
       </p>
@@ -33,6 +33,7 @@
       </div>
       <div class="tbody">
         <div class="tr"
+          data-test="single-topic"
           id="${discussion.id}"
           click.delegate="navigateTo(`${discussion.id}`)"
           repeat.for="discussion of discussionsArray">
@@ -42,22 +43,22 @@
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdBy.name">
-                Created by ${discussion.createdBy.name} 
+                Created by ${discussion.createdBy.name}
               </span>
               <span else>
-                Created by ${discussion.createdBy.address | smallHexString} 
+                Created by ${discussion.createdBy.address | smallHexString}
               </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
-          <div class="td h-centered v-centered">${discussion.replies || 0}</div>
+          <div data-test="number-of-replies" class="td h-centered v-centered">${discussion.replies || 0}</div>
           <div class="td h-centered v-centered">${discussion.lastModified}</div>
         </div>
       </div>
     </div>
     <div if.bind="discussions.length >= paginationConfig.listLength" class="pagination container">
       <button class="pagination button left" type="tertiary"><</button>
-      <button 
+      <button
         repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
         class="page button ${page.isActive? 'active' : ''}"
         type="tertiary">
