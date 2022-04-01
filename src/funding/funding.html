@@ -51,21 +51,21 @@
                 All parties have deposited their funds. Anyone can now initiate the swap.
               </span>
             </p>
-            <div>
-              <!-- TokenSwapModule Contract -->
-              <a
-                href="${gotoetherscan(deal.daoDepositContracts.get(deal.daoRelatedToWallet).address)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                >DAODepositManager Contract <i class="fas fa-arrow-right"></i
-              ></a>
-              <!-- TokenSwapModule Contract -->
-              <a
-                href="${gotoetherscan(deal.moduleContract.address)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                >TokenSwapModule Contract <i class="fas fa-arrow-right"></i
-              ></a>
+            <div class="links">
+              <address-link
+                address.to-view="deal.daoDepositContracts.get(deal.daoRelatedToWallet).address"
+                link-text="DAODepositManager Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false"
+              >
+              </address-link>
+              <address-link
+                address.to-view="deal.moduleContract.address"
+                link-text="TokenSwapModule Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false"
+              >
+              </address-link>
             </div>
           </div>
           <div class="deposit">
@@ -139,12 +139,20 @@
               </span>
             </p>
             <div>
-              <a href="${tokenDepositContractUrl}" target="_blank" rel="noopener noreferrer"
-                >DepositContract Contract <i class="fas fa-arrow-right"></i
-              ></a>
-              <a href="${tokenSwapModuleContractUrl}" target="_blank" rel="noopener noreferrer"
-                >TokenSwapModule Contract <i class="fas fa-arrow-right"></i
-              ></a>
+              <address-link
+                address.to-view="deal.daoDepositContracts.get(deal.daoRelatedToWallet).address"
+                link-text="DAODepositManager Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false"
+              >
+              </address-link>
+              <address-link
+                address.to-view="deal.moduleContract.address"
+                link-text="TokenSwapModule Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false"
+              >
+              </address-link>
             </div>
             <pbutton type="primary">Claim Tokens</pbutton>
           </div>
@@ -159,7 +167,7 @@
       <pgrid
         id="deposits-grid"
         rows.bind="deposits"
-        columns.bind="transactionColumns"
+        columns.bind="depositColumns"
         condensed.bind="false"
         if.to-view="deposits.length > 0"
       ></pgrid>

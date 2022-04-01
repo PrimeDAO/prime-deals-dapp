@@ -1,11 +1,11 @@
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 
-export const transactionColumns: IGridColumn[] = [
+export const depositColumns: IGridColumn[] = [
   { field: "dao.name", width: ".5fr", sortable: true, headerText: "dao", template: "<dao-icon-name icon-size.bind='24' primary-dao.to-view='dao'></dao-icon-name>" },
   { field: "type", width: ".5fr", sortable: true, template: "<div class='type'><i class='fas fa-arrow-${getTypeIcon(type)}'></i> ${type}</div>" },
   { field: "amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount' ptooltip.to-view='amount'><img src='${token.logoURI}' /><span>${withCommas(amount)} ${token.symbol}</span></div>"},
   { field: "address", width: ".5fr", sortable: true, template: `
-      <address-link address.to-view="address" >
+      <address-link address.to-view="address" show-arrow-icon.bind="false" link-text.bind="address | smallHexString" >
         
         ` },
   { field: "createdAt", width: ".5fr", headerText: "age", sortable: true, template: "${getFormattedTime(createdAt)}" },
@@ -13,10 +13,12 @@ export const transactionColumns: IGridColumn[] = [
   { field: "address", width: ".25fr", sortable: false, headerText: "", template: `
         <div class="withdraw">
         <pbutton
-        if.to-view="ethereumService.defaultAccountAddress === address && type === 'deposit'"
+        if.to-view="ethereumService.defaultAccountAddress === address && deal.isFunding && !withdrawTxId"
         type="secondary"
         click.delegate="withdraw(row)"
-        >WITHDRAW</pbutton></div>  ` },
+        >WITHDRAW</pbutton>
+        <span if.to-view="withdrawTxId" ptooltip="testing">Withdrawn</span>
+        </div>  ` },
 ];
 
 export const tokenGridColumns: IGridColumn[] = [

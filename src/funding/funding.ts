@@ -22,11 +22,12 @@ import { observable } from "aurelia-typed-observable-plugin";
 import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
-import { tokenGridColumns, transactionColumns, claimTokenGridColumns } from "./funding-grid-columns";
+import { tokenGridColumns, depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { toBigNumberJs } from "services/BigNumberService";
+import { AureliaHelperService } from "services/AureliaHelperService";
 @autoinject
 export class Funding {
-  private transactionColumns: IGridColumn[] = transactionColumns;
+  private depositColumns: IGridColumn[] = depositColumns;
   private tokenGridColumns: IGridColumn[] = tokenGridColumns;
   private claimTokenGridColumns: IGridColumn[] = claimTokenGridColumns;
   private deal: DealTokenSwap;
@@ -43,6 +44,7 @@ export class Funding {
   private vestedAmount = 0;
   private otherDaoTokens: ITokenFunding[];
   private daoRelatedToWalletTokens: ITokenFunding[];
+  private deposits: IDaoTransaction[] = [];
   /**
    * Opens a new window to the transaction id or address on the blockchain
    * @param address
@@ -61,6 +63,7 @@ export class Funding {
     private numberService: NumberService,
     private alertService: AlertService,
     private tokenService: TokenService,
+    private aureliaHelperService: AureliaHelperService,
   ) {
     //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
@@ -107,6 +110,11 @@ export class Funding {
       //and get the wallet balance for that token
       await this.setWalletBalance();
     }
+
+    //get deposits from deal token swap entity
+    this.setDeposits();
+    //subscribe a watcher to look for changes on the daoTokenTransactions
+    this.aureliaHelperService.createCollectionWatch(this.deal.daoTokenTransactions, this.setDeposits);
   }
 
   private mapTransactionsToDeposits(transactions: IDaoTransaction[]): IDaoTransaction[]{
@@ -204,7 +212,7 @@ export class Funding {
    */
   public withdraw = async(transaction: IDaoTransaction): Promise<void> => {
     const withdrawModal: IAlertModel = {
-      header: `You are about to withdraw ${this.withCommas(transaction.token.amount)} ${transaction.token.symbol} from the deal`,
+      header: `You are about to withdraw ${this.withCommas(transaction.amount.toString())} ${transaction.token.symbol} from the deal`,
       message:
         "<p>Are you sure you want to withdraw your funds?</p>",
       buttonTextPrimary: "Withdraw",
@@ -339,7 +347,7 @@ export class Funding {
     token.required = BigNumber.from(token.amount).sub(token.deposited);
     // calculate the percent completed based on deposited divided by target
     // We're using bignumberjs because BigNumber can't handle division
-    token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
+    //token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
   }
 
   /**
@@ -356,9 +364,42 @@ export class Funding {
     }
   }
 
-  @computedFrom("deal.daoTokenTransactions")
-  public get deposits() : IDaoTransaction[] {
-    return [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.daoRelatedToWallet)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.otherDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
+  public setDeposits() : void {
+    const deposits: IDaoTransaction[] = [];
+    deposits.push({
+      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
+      createdAt: new Date(),
+      dao: this.deal.daoRelatedToWallet,
+      depositId: 1234,
+      token: this.deal.daoRelatedToWallet.tokens[0],
+      type: "deposit",
+      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+      amount: BigNumber.from(1),
+
+    });
+    deposits.push({
+      address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8",
+      createdAt: new Date(),
+      dao: this.deal.daoRelatedToWallet,
+      depositId: 1234,
+      token: this.deal.daoRelatedToWallet.tokens[0],
+      type: "deposit",
+      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+      amount: BigNumber.from(1),
+    });
+    deposits.push({
+      address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      createdAt: new Date(),
+      dao: this.deal.daoRelatedToWallet,
+      depositId: 1234,
+      token: this.deal.otherDao.tokens[0],
+      type: "deposit",
+      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+      amount: BigNumber.from(1),
+    });
+    this.deposits = deposits;
+    return;
+    this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.daoRelatedToWallet)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.otherDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
   }
 
   @computedFrom("deal.executedAt", "deal.fundingPeriod")

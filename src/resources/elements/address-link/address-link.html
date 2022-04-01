@@ -1,9 +1,20 @@
 <template>
   <div class="addressLink">
-    <span ptooltip.to-view="address">${address | smallHexString}</span>
+    <a if.to-view="textClickable" ptooltip.to-view="address" click.delegate="gotoEtherscan()">
+      ${linkText ? linkText : address }
+      <span if.to-view="showArrowInsideLink" class="arrowIcon" />
+    </a>
+    <span else ptooltip.to-view="address">${linkText ? linkText : address }</span>
     <div class="buttons">
-      <copy-to-clipboard-button text-to-copy.to-view="address"></copy-to-clipboard-button>
-      <etherscan-button address.to-view="address" is-transaction.bind="false"></etherscan-button>
+      <copy-to-clipboard-button
+        if.to-view="showCopyIcon"
+        text-to-copy.to-view="address"
+      ></copy-to-clipboard-button>
+      <etherscan-button
+        if.to-view="showArrowIcon && !showArrowInsideLink"
+        address.to-view="address"
+        is-transaction.bind="isTransaction"
+      ></etherscan-button>
     </div>
   </div>
 </template>

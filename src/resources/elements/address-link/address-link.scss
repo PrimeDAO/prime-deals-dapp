@@ -1,23 +1,36 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 @import "src/resources/elements/primeDesignSystem/colors";
 .addressLink {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 10px;
+  a {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: 10px;
-    .buttons {
-      display: flex;
-      column-gap: 4px;
-      align-items: center;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    .arrowIcon {
+      background-color: $Secondary05;
+      -webkit-mask: url(/static/externalLinkIcon.svg) no-repeat center;
+      mask: url(/static/externalLinkIcon.svg) no-repeat center;
+      height: 17px;
+      width: 17px;
+      margin-left: 10px;
+    }
+  }
+  .buttons {
+    display: flex;
+    column-gap: 4px;
+    align-items: center;
 
-      .etherscan-button {
-        outline: none;
-        path {
-          fill: $Secondary05;
-        }
-        cursor: pointer;
-        &:hover > path {
-          fill: $White;
-        }
+    .etherscan-button {
+      outline: none;
+      path {
+        fill: $Secondary05;
+      }
+      cursor: pointer;
+      &:hover > path {
+        fill: $White;
       }
     }
   }
+}
