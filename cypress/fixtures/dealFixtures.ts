@@ -14,7 +14,7 @@ export const E2E_ADDRESSES = {
 const PROPOSAL_DATA = {
   summary: "e2e_summary",
   description: "e2e_description",
-  title: "e2e_title_",
+  title: "e2e_Open_proposal",
 };
 
 const PROPOSAL_LEAD_DATA = {
@@ -136,12 +136,12 @@ export const MINIMUM_OPEN_PROPOSAL = DealDataBuilder.create().deal;
 
 export const MINIMUM_PRIVATE_OPEN_PROPOSAL = DealDataBuilder
   .create()
-  .withProposalData({title: "e2e_private_propsoal"})
+  .withProposalData({title: "e2e_Private_open_propsoal"})
   .deal;
 MINIMUM_PRIVATE_OPEN_PROPOSAL.isPrivate = true;
 
 export const PARTNERED_DEAL = DealDataBuilder
   .create()
-  .withProposalData({title: "e2e_partnered_deal"})
+  .withProposalData({title: "e2e_Partnered_deal"})
   .withPartnerDaoData()
   .deal;
