@@ -222,15 +222,15 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * Gets the DAO based on the connected wallet address
+   * Gets the DAO based on the connected account address
    */
   @computedFrom("ethereumService.defaultAccountAddress")
-  public get daoRelatedToWallet(): IDAO{
+  public get daoRelatedToAccount(): IDAO{
     return this.getDao(true);
   }
 
   /**
-     * Gets the non-related DAO based on the connected wallet address
+     * Gets the non-related DAO based on the connected account address
      */
   @computedFrom("ethereumService.defaultAccountAddress")
   public get otherDao(): IDAO {
@@ -238,22 +238,28 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-     * Gets the DAO based on the connected wallet address
-     */
-  private getDao(relatedToWallet: boolean) : IDAO {
-    if (this.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
-      //the connected wallet is a representative of the partner DAO
-      return relatedToWallet ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
+   * Gets the DAO based on the connected account
+   * @param relatedToAccount
+   * @returns IDAO
+   * This will return the DAO either related to the account or not related to the account depending on what the caller needs.
+   * This method will look at the connected account and compare it to all the representative addresses in each of the DAOs to return which DAO is/isn't related based on the bool passed to it
+   * EX. If I want to get the DAO that is not related to the connected account I would call this.getDao(false)
+   * EX. If I want to get the DAO that is related to the connected account I would call this.getDao(true)
+   */
+  private getDao(relatedToAccount: boolean) : IDAO {
+    if (this.partnerDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
+      //the connected account is a representative of the partner DAO
+      return relatedToAccount ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
     }
-    if (this.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress)){
-      //the connceted wallet is either a representative of the primary DAO or the proposal lead
-      return relatedToWallet ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+    if (this.primaryDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
+      //the connceted account is either a representative of the primary DAO or the proposal lead
+      return relatedToAccount ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
     }
     if (this.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress){
-      //if the conencted wallet isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
+      //if the conencted account isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
       return this.registrationData.primaryDAO;
     }
-    //the currently connected wallet isn't part of any DAO
+    //the currently connected account isn't part of any DAO
     return null;
   }
 

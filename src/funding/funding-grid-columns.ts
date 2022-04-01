@@ -2,8 +2,7 @@ import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 
 export const depositColumns: IGridColumn[] = [
   { field: "dao.name", width: ".5fr", sortable: true, headerText: "dao", template: "<dao-icon-name icon-size.bind='24' primary-dao.to-view='dao'></dao-icon-name>" },
-  { field: "type", width: ".5fr", sortable: true, template: "<div class='type'><i class='fas fa-arrow-${getTypeIcon(type)}'></i> ${type}</div>" },
-  { field: "amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount' ptooltip.to-view='amount'><img src='${token.logoURI}' /><span>${withCommas(amount)} ${token.symbol}</span></div>"},
+  { field: "amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount'><img src='${token.logoURI}' /><span><formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:token.decimals'></formatted-number>${token.symbol}</span></div>"},
   { field: "address", width: ".5fr", sortable: true, template: `
       <address-link address.to-view="address" show-arrow-icon.bind="false" link-text.bind="address | smallHexString" >
         
@@ -17,7 +16,7 @@ export const depositColumns: IGridColumn[] = [
         type="secondary"
         click.delegate="withdraw(row)"
         >WITHDRAW</pbutton>
-        <span if.to-view="withdrawTxId" ptooltip="testing">Withdrawn</span>
+        <pbutton type="formfield" if.to-view="withdrawTxId" ptooltip.bind="getFormattedTime(withdrawnAt, 'en-US')" click.delegate="gotoEtherscan(withdrawTxId, true)">Withdrawn</pbutton>
         </div>  ` },
 ];
 

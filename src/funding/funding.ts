@@ -36,14 +36,14 @@ export class Funding {
   private loadingDeposits = false;
   private refSelectToken: HTMLSelectElement;
   private seeingMore = false;
-  private walletBalance: BigNumber;
+  private accountBalance: BigNumber;
   @observable
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
   private vestedAmount = 0;
   private otherDaoTokens: ITokenFunding[];
-  private daoRelatedToWalletTokens: ITokenFunding[];
+  private daoRelatedToAccountTokens: ITokenFunding[];
   private deposits: IDaoTransaction[] = [];
   /**
    * Opens a new window to the transaction id or address on the blockchain
@@ -65,7 +65,7 @@ export class Funding {
     private tokenService: TokenService,
     private aureliaHelperService: AureliaHelperService,
   ) {
-    //This is for the page to redirect to the home page if the user changes their wallet address while on the funding page and their new wallet address isn't part of this deal
+    //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.verifySecurity();
     });
@@ -76,12 +76,12 @@ export class Funding {
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
     await this.deal.ensureInitialized();
-    //Make sure the connected wallet is part of this deal. Otherwise redirect to home page.
+    //Make sure the connected account is part of this deal. Otherwise redirect to home page.
     this.verifySecurity();
   }
 
   public async bind(): Promise<void> {
-    if (!this.deal.daoRelatedToWallet) this.verifySecurity();
+    if (!this.deal.daoRelatedToAccount) this.verifySecurity();
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenFunding
     this.otherDaoTokens = JSON.parse(JSON.stringify(this.deal.otherDao.tokens));
@@ -91,15 +91,15 @@ export class Funding {
     //this.vestedAmount = this.deal.vestedAmount;
     this.vestedAmount = 0;
 
-    //get contract token information from the DAO related to the wallet
-    this.daoRelatedToWalletTokens = JSON.parse(JSON.stringify(this.deal.daoRelatedToWallet.tokens));
-    this.daoRelatedToWalletTokens.forEach(x => {this.setTokenContractInfo(x, this.deal.daoRelatedToWallet);});
+    //get contract token information from the DAO related to the account
+    this.daoRelatedToAccountTokens = JSON.parse(JSON.stringify(this.deal.daoRelatedToAccount.tokens));
+    this.daoRelatedToAccountTokens.forEach(x => {this.setTokenContractInfo(x, this.deal.daoRelatedToAccount);});
 
-    if (this.daoRelatedToWalletTokens.length === 1) {
+    if (this.daoRelatedToAccountTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
       this.selectedToken = 0;
-      //and get the wallet balance for that token
-      await this.setWalletBalance();
+      //and get the account balance for that token
+      await this.setAccountBalance();
     }
 
     //get deposits from deal token swap entity
@@ -128,8 +128,8 @@ export class Funding {
    * @param dateTime
    * @returns string
    */
-  public getFormattedTime = (dateTime: Date): string => {
-    return this.dateService.formattedTime(dateTime).diff();
+  public getFormattedTime = (dateTime: Date, locale: string = "en-custom"): string => {
+    return this.dateService.formattedTime(dateTime).diff(locale, false);
   };
 
   /**
@@ -152,7 +152,7 @@ export class Funding {
       header: "Initiate token swap",
       message:
         `<p>You are about to initiate token swapping between the following two DAOs. Do you want to initiate these swaps?</p>
-        <div class='modal-content'>${this.getDaoHtmlForSwap(this.deal.daoRelatedToWallet)}${this.getDaoHtmlForSwap(this.deal.otherDao)}</div>`,
+        <div class='modal-content'>${this.getDaoHtmlForSwap(this.deal.daoRelatedToAccount)}${this.getDaoHtmlForSwap(this.deal.otherDao)}</div>`,
       buttonTextPrimary: "Initiate Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
       buttonTextSecondary: "Cancel",
       buttons: ShowButtonsEnum.Both,
@@ -198,7 +198,7 @@ export class Funding {
   };
 
   /**
-   * Withdraws the deposit made from the connected wallet
+   * Withdraws the deposit made from the connected account
    * @param transaction
    */
   public withdraw = async(transaction: IDaoTransaction): Promise<void> => {
@@ -219,15 +219,15 @@ export class Funding {
   };
 
   /**
-   * Checks the user's input to make sure they aren't trying to deposit more than their wallet balance
+   * Checks the user's input to make sure they aren't trying to deposit more than their account balance
    * or the remaining needed tokens for that contract
    */
   private checkMaxAmount(): void {
-    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken) {
-      const remainingNeeded = (this.daoRelatedToWalletTokens[this.selectedToken])?.required;
-      if (this.walletBalance.lt(this.depositAmount)) {
-        //set the deposit amount = wallet balance if the amount the user entered is higher than the wallet balance
-        this.depositAmount = this.walletBalance;
+    if (this.deal.daoRelatedToAccount?.tokens.length > 0 && this.selectedToken) {
+      const remainingNeeded = (this.daoRelatedToAccountTokens[this.selectedToken])?.required;
+      if (this.accountBalance.lt(this.depositAmount)) {
+        //set the deposit amount = account balance if the amount the user entered is higher than the account balance
+        this.depositAmount = this.accountBalance;
       } else if (this.depositAmount.gt(remainingNeeded)) {
         //set the deposit amount = remaining needed amount if the amount the user entered is higher than the remaining amount
         this.depositAmount = remainingNeeded;
@@ -236,24 +236,24 @@ export class Funding {
   }
 
   /**
-   * Deposits the tokens from the wallet to the contract
+   * Deposits the tokens from the account to the contract
    */
   private async depositTokens(): Promise<void> {
-    const tokenSymbol = this.daoRelatedToWalletTokens[this.selectedToken].symbol;
+    const tokenSymbol = this.daoRelatedToAccountTokens[this.selectedToken].symbol;
     //TODO re-check the contract to validate how many tokens are needed for the required deposit amount
     const recentRequiredTokens = BigNumber.from(10);
-    await this.setWalletBalance(); // get the most up to date wallet balance to make sure it has enough
+    await this.setAccountBalance(); // get the most up to date account balance to make sure it has enough
     //rebind token data if it's changed
     //TODO reset all the data after checking
-    // const token = this.daoRelatedToWalletTokens[this.selectedToken] as ITokenFunding;
+    // const token = this.daoRelatedToAccountTokens[this.selectedToken] as ITokenFunding;
     // token.required = recentRequiredTokens;
     // token.deposited = converter.fromView(120);
     // token.target = converter.fromView(120);
     // token.percentCompleted = 12;
 
-    if (this.depositAmount.gt(this.walletBalance)) {
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your wallet (${BigNumber.from(this.walletBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
-      this.depositAmount = this.walletBalance;
+    if (this.depositAmount.gt(this.accountBalance)) {
+      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.depositAmount = this.accountBalance;
       return;
     }
     if (this.depositAmount.gt(recentRequiredTokens)) {
@@ -262,8 +262,8 @@ export class Funding {
       return;
     }
     //TODO implement the deposit of tokens
-    this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${BigNumber.from(this.depositAmount)} ${tokenSymbol} on behalf of ${this.deal.daoRelatedToWallet.name}`, EventMessageType.Info, "Deposit Submitted"));
-    //TODO handle wallet provider transaction rejection
+    this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${BigNumber.from(this.depositAmount)} ${tokenSymbol} on behalf of ${this.deal.daoRelatedToAccount.name}`, EventMessageType.Info, "Deposit Submitted"));
+    //TODO handle account provider transaction rejection
     //TODO handle the popup notification on the event of the deposit actually being completed
   }
 
@@ -304,7 +304,7 @@ export class Funding {
     if (typeof newVal === "string") newVal = Number(newVal);
     if (typeof prevVal === "string") prevVal = Number(prevVal);
     if (newVal !== prevVal) {
-      await this.setWalletBalance(); //selected token has changed, so set the wallet balance of the newly selected token
+      await this.setAccountBalance(); //selected token has changed, so set the account balance of the newly selected token
     }
   }
 
@@ -312,15 +312,15 @@ export class Funding {
    * Calculate the max amount of tokens the user is able to deposit
    */
   private async setMax(): Promise<void> {
-    if (this.deal.daoRelatedToWallet?.tokens.length > 0 && this.selectedToken) {
-      const remainingNeeded = (this.daoRelatedToWalletTokens[this.selectedToken]).required;
-      if (Number(remainingNeeded) < Number(this.walletBalance)) {
-        //the wallet has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
+    if (this.deal.daoRelatedToAccount?.tokens.length > 0 && this.selectedToken) {
+      const remainingNeeded = (this.daoRelatedToAccountTokens[this.selectedToken]).required;
+      if (Number(remainingNeeded) < Number(this.accountBalance)) {
+        //the account has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
         this.eventAggregator.publish("handleInfo", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
       } else {
-        //the wallet has a lower balance than the remaining needed tokens so set the deposit amount to the full wallet amount
-        this.depositAmount = this.walletBalance;
+        //the account has a lower balance than the remaining needed tokens so set the deposit amount to the full account amount
+        this.depositAmount = this.accountBalance;
         this.eventAggregator.publish("handleInfo", new EventConfig("The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.", EventMessageType.Info));
       }
     } else {
@@ -342,7 +342,7 @@ export class Funding {
   }
 
   /**
-   * Verifies the current wallet has access to this page and if it doesn't, redirect them
+   * Verifies the current account has access to this page and if it doesn't, redirect them
    */
   private verifySecurity(): void {
     if (!this.deal || !this.deal.registrationData) return;
@@ -356,41 +356,43 @@ export class Funding {
   }
 
   public setDeposits() : void {
-    const deposits: IDaoTransaction[] = [];
-    deposits.push({
-      address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
-      createdAt: new Date(),
-      dao: this.deal.daoRelatedToWallet,
-      depositId: 1234,
-      token: this.deal.daoRelatedToWallet.tokens[0],
-      type: "deposit",
-      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-      amount: BigNumber.from(1),
+    // const deposits: IDaoTransaction[] = [];
+    // deposits.push({
+    //   address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
+    //   createdAt: new Date(),
+    //   dao: this.deal.daoRelatedToAccount,
+    //   depositId: 1234,
+    //   token: this.deal.daoRelatedToAccount.tokens[0],
+    //   type: "deposit",
+    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    //   amount: BigNumber.from(1),
 
-    });
-    deposits.push({
-      address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8",
-      createdAt: new Date(),
-      dao: this.deal.daoRelatedToWallet,
-      depositId: 1234,
-      token: this.deal.daoRelatedToWallet.tokens[0],
-      type: "deposit",
-      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-      amount: BigNumber.from(1),
-    });
-    deposits.push({
-      address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
-      createdAt: new Date(),
-      dao: this.deal.daoRelatedToWallet,
-      depositId: 1234,
-      token: this.deal.otherDao.tokens[0],
-      type: "deposit",
-      txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-      amount: BigNumber.from(1),
-    });
-    this.deposits = deposits;
-    return;
-    this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.daoRelatedToWallet)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.otherDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
+    // });
+    // deposits.push({
+    //   address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8",
+    //   createdAt: new Date(),
+    //   dao: this.deal.daoRelatedToAccount,
+    //   depositId: 1234,
+    //   token: this.deal.daoRelatedToAccount.tokens[0],
+    //   type: "deposit",
+    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    //   amount: BigNumber.from(14432423),
+    // });
+    // deposits.push({
+    //   address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    //   createdAt: new Date(),
+    //   dao: this.deal.daoRelatedToAccount,
+    //   depositId: 1234,
+    //   token: this.deal.otherDao.tokens[0],
+    //   type: "deposit",
+    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    //   amount: BigNumber.from("12234324234324324234312421412321"),
+    //   withdrawTxId: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
+    //   withdrawnAt: new Date("3/13/2022")
+    // });
+    // this.deposits = deposits;
+    // return;
+    this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.daoRelatedToAccount)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.deal.otherDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
   }
 
   @computedFrom("deal.executedAt", "deal.fundingPeriod")
@@ -405,26 +407,26 @@ export class Funding {
     return 0;
   }
 
-  @computedFrom("daoRelatedToWalletTokens")
+  @computedFrom("daoRelatedToAccountTokens")
   public get tokenSelectData() : IPSelectItemConfig[]{
-    return this.daoRelatedToWalletTokens.map((x, index) => ({
+    return this.daoRelatedToAccountTokens.map((x, index) => ({
       text: x.symbol,
       innerHTML: `<span><img src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
       value: index.toString(),
     }));
   }
 
-  @computedFrom("daoRelatedToWalletTokens")
+  @computedFrom("daoRelatedToAccountTokens")
   public get tokensToClaim() : IDaoClaimToken[]{
-    return this.daoRelatedToWalletTokens.map(x => ({
+    return this.daoRelatedToAccountTokens.map(x => ({
       token: x,
       claimable: 1,
       locked: 2,
     }));
   }
 
-  public async setWalletBalance() : Promise<void> {
-    const contract = this.tokenService.getTokenContract(this.daoRelatedToWalletTokens[this.selectedToken].address);
-    this.walletBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+  public async setAccountBalance() : Promise<void> {
+    const contract = this.tokenService.getTokenContract(this.daoRelatedToAccountTokens[this.selectedToken].address);
+    this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
   }
 }
