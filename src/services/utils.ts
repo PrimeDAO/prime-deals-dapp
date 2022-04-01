@@ -202,4 +202,21 @@ export class Utils {
     const ids = collection.map(item => item[key]);
     return collection.filter((item, index) => !ids.includes(item[key], index + 1));
   }
+
+  /**
+   * merge iterables into a single set (until ES6 comes along with this)
+   * @param iterables
+   * @returns
+   */
+  public static unionSet<T>(...iterables): Set<T> {
+    const set = new Set<T>();
+
+    for (const iterable of iterables) {
+      for (const item of iterable) {
+        set.add(item);
+      }
+    }
+
+    return set;
+  }
 }

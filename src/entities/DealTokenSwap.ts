@@ -1,14 +1,14 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVoteInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { DealStatus, IDeal, IDealTokenSwapDocument, IVotesInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
-import { IDAO, IDealRegistrationTokenSwap, IRepresentative, IToken } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
@@ -286,21 +286,6 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
-  @computedFrom("registrationData.primaryDAO.representatives")
-  public get primaryRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives;
-  }
-
-  @computedFrom("registrationData.partnerDAO.representatives")
-  public get partnerRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.partnerDAO.representatives;
-  }
-
-  @computedFrom("registrationData.primaryDAO.representatives", "registrationData.partnerDAO.representatives")
-  public get allRepresentatives(): Array<IRepresentative> {
-    return this.registrationData.primaryDAO.representatives.concat(this.registrationData.partnerDAO?.representatives ?? []);
-  }
-
   @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
   public get majorityHasVoted(): boolean {
     return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
@@ -308,8 +293,11 @@ export class DealTokenSwap implements IDeal {
 
   // TODO: observe the right things here to recompute when votes have changed
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
-  public get allVotes(): Array<IVoteInfo> {
-    return this.dealDocument.votingSummary.primaryDAO.votes.concat(this.dealDocument.votingSummary.partnerDAO?.votes ?? []);
+  public get allVotes(): IVotesInfo {
+    return {
+      ...this.dealDocument.votingSummary.primaryDAO.votes,
+      ...this.dealDocument.votingSummary.partnerDAO.votes,
+    };
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
@@ -338,6 +326,42 @@ export class DealTokenSwap implements IDeal {
   @computedFrom("registrationData.partnerDAO")
   public get isPartnered(): boolean {
     return !!this.registrationData.partnerDAO;
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead")
+  public get isUserRepresentativeOrLead(): boolean {
+    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address")
+  public get isUserProposalLead(): boolean {
+    return this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress;
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "representatives")
+  public get isRepresentativeUser(): boolean {
+    return this.representatives.has(this.ethereumService.defaultAccountAddress);
+  }
+
+  @computedFrom("primaryDaoRepresentatives", "partnerDaoRepresentatives")
+  public get representatives(): Set<Address> {
+    return Utils.unionSet(this.primaryDaoRepresentatives, this.partnerDaoRepresentatives);
+  }
+
+  @computedFrom("registrationData.proposalLead.address", "representatives")
+  public get representativesAndLead(): Set<Address> {
+    const reps = new Set(this.representatives);
+    return reps.add(this.registrationData.proposalLead?.address);
+  }
+
+  @computedFrom("registrationData.primaryDAO.representatives")
+  public get primaryDaoRepresentatives(): Set<Address> {
+    return new Set(this.registrationData.primaryDAO?.representatives.map(representative => representative.address) ?? []);
+  }
+
+  @computedFrom("registrationData.partnerDAO.representatives")
+  public get partnerDaoRepresentatives(): Set<Address> {
+    return new Set(this.registrationData.partnerDAO?.representatives.map(representative => representative.address) ?? []);
   }
 
   public create(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
@@ -587,9 +611,7 @@ export class DealTokenSwap implements IDeal {
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 
-    const daoVotes = this.votesArrayToMap(daoVotingSummary.votes);
-
-    if (upDown !== daoVotes.get(this.ethereumService.defaultAccountAddress)) {
+    if (upDown !== daoVotingSummary.votes[this.ethereumService.defaultAccountAddress]) {
       return this.dataSourceDeals.updateVote(
         this.id,
         this.ethereumService.defaultAccountAddress,
@@ -604,9 +626,6 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private votesArrayToMap(votes: Array<IVoteInfo>): Map<Address, boolean> {
-    return new Map<Address, boolean>(votes.map((voteInfo) => [ voteInfo.address, voteInfo.vote]));
-  }
   /**
    * pulled from deal-contracts
    * @returns

@@ -32,16 +32,16 @@
     <deal-description deal.bind="deal"></deal-description>
 
     <deal-clauses
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      if.to-view="authorized || !deal.isPrivate"></deal-clauses>
+      if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      show.bind="authorized || !deal.isPrivate"></deal-discussion>
+      show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-discussion>
   </main>
 </template>
