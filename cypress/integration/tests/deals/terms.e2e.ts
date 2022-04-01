@@ -124,8 +124,8 @@ Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
 });
 
 Then("I can see my existing Clauses", () => {
-  const CLAUSE_TEXT = "Threeeeeeee";
-  Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
+  // const CLAUSE_TEXT = "Threeeeeeee";
+  // Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
 });
 
 Then("the Clause's content should be cleared", () => {

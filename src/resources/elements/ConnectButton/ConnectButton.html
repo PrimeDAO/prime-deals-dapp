@@ -1,5 +1,5 @@
 <template>
-  <div class="connectButtonContainer ${accountAddress ? 'connected' : ''}">
+  <div data-test="connect-button-container" class="connectButtonContainer ${accountAddress ? 'connected' : ''}">
     <div class="connectedButtons" if.to-view="accountAddress">
       <template if.to-view="!hideBalances">
         <div class="ethBalanceContainer">
