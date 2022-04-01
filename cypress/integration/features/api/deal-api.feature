@@ -1,7 +1,7 @@
 # Internal file, to interact with firebase API
 
-Feature: Deal Api
-  Scenario: Create Deal
+# Feature: Deal Api
+  # Scenario: Create Deal
 
     ################
     # Open Proposal
@@ -15,7 +15,7 @@ Feature: Deal Api
     ##################
     # Partnered Deal
     ##################
-    Given I'm the Proposal Lead of a Partnered Deal
-    And I create a Partnered Deal
+    # Given I'm the Proposal Lead of a Partnered Deal
+    # And I create a Partnered Deal
 
 
