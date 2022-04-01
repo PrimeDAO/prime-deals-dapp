@@ -1,6 +1,6 @@
 <template>
   <style>
-    .ppopup-notification-demo>.row {
+    .ppopup-notification-demo > .row {
       margin-bottom: 18px;
     }
   </style>
@@ -12,7 +12,8 @@
         type="1"
         running
         closed.call="closed('1')"
-        message="This is a failure or an exception"></ppopup-notification>
+        message="This is a failure or an exception"
+      ></ppopup-notification>
     </div>
     <div class="row">
       <ppopup-notification
@@ -20,7 +21,8 @@
         type="2"
         running
         closed.call="closed('2')"
-        message="This is a warning"></ppopup-notification>
+        message="This is a warning"
+      ></ppopup-notification>
     </div>
     <div class="row">
       <ppopup-notification
@@ -28,7 +30,8 @@
         type="3"
         running
         closed.call="closed('3')"
-        message="This is helpful information"></ppopup-notification>
+        message="This is helpful information"
+      ></ppopup-notification>
     </div>
     <div class="row">
       <ppopup-notification
@@ -36,7 +39,8 @@
         type="5"
         running
         closed.call="closed('5')"
-        message="This is success"></ppopup-notification>
+        message="This is success"
+      ></ppopup-notification>
     </div>
     <div class="row">
       <ppopup-notification
@@ -45,9 +49,21 @@
         running
         closed.call="closed('6')"
         message="This is transaction confirmation"
-        submessage="${`<etherscanlink text='View on Etherscan' address='0x0000000000000000000000000000000000000000000000000000000000000000' hide-clipboard-button type='tx'></etherscanlink><div class='arrow'></div>`}">
+        submessage="${`<etherscanlink text='View on Etherscan' address='0x0000000000000000000000000000000000000000000000000000000000000000' hide-clipboard-button type='tx'></etherscanlink><div class='arrow'></div>`}"
+      >
+      </ppopup-notification>
+    </div>
+    <div class="row">
+      <ppopup-notification
+        id="6"
+        type="6"
+        running
+        closed.call="closed('6')"
+        message="This is transaction confirmation"
+        title="Custom Title"
+        submessage="${`<etherscanlink text='View on Etherscan' address='0x0000000000000000000000000000000000000000000000000000000000000000' hide-clipboard-button type='tx'></etherscanlink><div class='arrow'></div>`}"
+      >
       </ppopup-notification>
     </div>
   </div>
-
 </template>

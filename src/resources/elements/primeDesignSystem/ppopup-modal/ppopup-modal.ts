@@ -9,12 +9,13 @@ import { AureliaHelperService } from "services/AureliaHelperService";
 export enum ShowButtonsEnum {
   Primary = 0x1,
   Secondary = 0x2,
+  Both = 0x3,
 }
 
 @autoinject
 @customElement("ppopup-modal")
 export class PPopupModal {
-
+  @bindable data: Record<string, unknown>;
   @bindable className: string;
   @bindable buttons: ShowButtonsEnum;
   @bindable message: string;
@@ -49,6 +50,7 @@ export class PPopupModal {
 }
 
 export interface IPopupModalModel {
+  data?: Record<string, unknown>; //have to be able to pass data to this model in case the modal needs to use methods or data from the caller like for the etherscan wallet modal in swap
   className?: string;
   message: string;
   header?: string,
