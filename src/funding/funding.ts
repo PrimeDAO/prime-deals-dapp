@@ -1,5 +1,4 @@
 import { TokenService } from "services/TokenService";
-import { fromWei } from "./../services/EthereumService";
 import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
 import { NumberService } from "./../services/NumberService";
 import { IDaoClaimToken, IDaoTransaction } from "./../entities/DealTokenSwap";
@@ -23,7 +22,6 @@ import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { tokenGridColumns, depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
-import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "services/AureliaHelperService";
 @autoinject
 export class Funding {
@@ -128,7 +126,7 @@ export class Funding {
    * @param dateTime
    * @returns string
    */
-  public getFormattedTime = (dateTime: Date, locale: string = "en-custom"): string => {
+  public getFormattedTime = (dateTime: Date, locale = "en-custom"): string => {
     return this.dateService.formattedTime(dateTime).diff(locale, false);
   };
 
