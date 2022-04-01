@@ -42,7 +42,7 @@
     </div>
     <div class="infoSection">
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
-      ${deal.allRepresentatives.length}
+      ${deal.representatives.size}
     </div>
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
@@ -62,7 +62,7 @@
                             value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
           ${tokenDetails.symbol}
         </div>
-        <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">Not added</span>
+        <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
       </div>
     </div>
 
