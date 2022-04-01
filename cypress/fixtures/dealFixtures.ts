@@ -11,7 +11,7 @@ const randomId = getRandomId();
 
 export const E2E_ADDRESSES = {
   ConnectedPublicUser: "0x0000000000000000000000000000000000000000",
-  ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+  ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498", // The main testing account shared within Deals team;
   PrimaryDAOToken: "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
   PrimaryTreasury: "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
   PartnerTreasury: "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276",
