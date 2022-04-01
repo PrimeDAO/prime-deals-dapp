@@ -28,32 +28,23 @@ export enum VoteType {
 
 export interface IDealDiscussion {
   version: string;
-  discussionId: string;
   createdAt: string | null;
   modifiedAt: string | null;
   createdBy: {
     address: string,
     name?: string | null;
   } | null;
-  representatives: Array<{address: string}>;
-  admins: Array<{address: string}>;
   topic: string;
   replies: number;
   key: string;
-  dealId: string;
 }
 
 export class DealDiscussion implements IDealDiscussion {
-  public discussionId: string;
   public version: string;
-  public isPrivate: boolean;
   public createdAt: string | null;
   public modifiedAt: string | null;
   public createdBy: {address: string, name?: string | null} | null;
-  public representatives: Array<{address: string}>;
-  public admins: Array<{address: string}>;
   public topic: string;
   public replies: number;
   public key: string;
-  public dealId: string;
 }

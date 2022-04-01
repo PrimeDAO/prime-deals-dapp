@@ -37,13 +37,11 @@ export class DealClauses {
     } else {
       // If no discussion hash provided- create a new discussion
       this.discussionId = await this.discussionsService.createDiscussion(
-        this.deal.id,
+        this.deal,
         {
           topic,
           discussionId: clauseId,
-          admins: [this.ethereumService.defaultAccountAddress],
-          representatives: [{address: this.ethereumService.defaultAccountAddress}],
-          isPublic: true,
+          isPublic: !this.deal.isPrivate,
         },
       );
     }
