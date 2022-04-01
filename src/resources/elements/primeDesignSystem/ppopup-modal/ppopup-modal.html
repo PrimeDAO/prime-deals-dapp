@@ -1,7 +1,10 @@
 <template>
   <section data-test="${className}" class="ppopup-dialog pPopupModal pcard gradient ${className || ''}">
     <p class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}">${header}</p>
-    <p class="dialogBody" ref="body"></p>
+    <p class="dialogBody" ref="body">
+      <slot></slot>
+    </p>
+
     <p class="dialogFooter">
       <pbutton type="tertiary" show.bind="showCancelButton" click.trigger="secondaryClick()"
         >${buttonTextSecondary}</pbutton

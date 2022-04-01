@@ -27,6 +27,7 @@ deal-representatives-votes {
       display: flex;
       flex-direction: row;
       gap: 3px;
+      white-space: nowrap;
       align-items: center;
 
       .vote-status-circle {
@@ -35,11 +36,11 @@ deal-representatives-votes {
         background: $Neutral02;
         border-radius: 50%;
 
-        &.vote-success {
+        &.vote-accepted {
           background: $Green;
         }
 
-        &.vote-rejected {
+        &.vote-declined {
           background: $Red;
         }
       }
@@ -93,7 +94,7 @@ deal-representatives-votes {
         color: $Green;
       }
 
-      &.representative-vote-rejected {
+      &.representative-vote-declined {
         color: $Red;
       }
     }

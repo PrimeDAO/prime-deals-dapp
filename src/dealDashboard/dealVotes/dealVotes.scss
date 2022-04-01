@@ -78,51 +78,5 @@ deal-votes {
         }
       }
     }
-
-
   }
-
-
-}
-
-.fundInfo {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 36px;
-  margin-top: 40px;
-  margin-bottom: 60px;
-
-  .daoInfo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    gap: 16px;
-
-    .daoLogoAndName {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 18px;
-      color: $Neutral03;
-    }
-
-    .tokenDetails {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      color: $Neutral02;
-    }
-  }
-
-  .fa-exchange-alt {
-    font-size: 20px;
-    margin-top: 8px;
-  }
-}
-
-
-.orangeColor {
-  color: $Orange;
 }
