@@ -11,8 +11,8 @@ const marked = require("marked");
 @autoinject
 export class DisclaimerService {
 
-  disclaimed = false;
-  waiting = false;
+  // private disclaimed = false;
+  // private waiting = false;
 
   constructor(
     private dialogService: DialogService,
