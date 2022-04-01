@@ -239,12 +239,11 @@ export class Funding {
   /**
    * Deposits the tokens from the wallet to the contract
    */
-  private depositTokens(): void {
+  private async depositTokens(): Promise<void> {
     const tokenSymbol = this.daoRelatedToWalletTokens[this.selectedToken].symbol;
     //TODO re-check the contract to validate how many tokens are needed for the required deposit amount
     const recentRequiredTokens = BigNumber.from(10);
-    //TODO re-check the balance of the wallet to make sure the wallet has enough tokens
-    const recentWalletBalance = BigNumber.from(120);
+    await this.setWalletBalance(); // get the most up to date wallet balance to make sure it has enough
     //rebind token data if it's changed
     //TODO reset all the data after checking
     // const token = this.daoRelatedToWalletTokens[this.selectedToken] as ITokenFunding;
@@ -253,9 +252,9 @@ export class Funding {
     // token.target = converter.fromView(120);
     // token.percentCompleted = 12;
 
-    if (this.depositAmount.gt(recentWalletBalance)) {
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your wallet (${BigNumber.from(recentWalletBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
-      this.depositAmount = recentWalletBalance;
+    if (this.depositAmount.gt(this.walletBalance)) {
+      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your wallet (${BigNumber.from(this.walletBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.depositAmount = this.walletBalance;
       return;
     }
     if (this.depositAmount.gt(recentRequiredTokens)) {
@@ -303,19 +302,12 @@ export class Funding {
    * @param newVal
    * @param prevVal
    */
-  private selectedTokenChanged(newVal: number | string, prevVal: number | string): void {
+  private async selectedTokenChanged(newVal: number | string, prevVal: number | string): Promise<void> {
     this.depositAmount = null;
     if (typeof newVal === "string") newVal = Number(newVal);
     if (typeof prevVal === "string") prevVal = Number(prevVal);
-    //TODO When the selected token changes, change the wallet balance for the new token
     if (newVal !== prevVal) {
-      if (newVal === 0) {
-        //TODO get and set the wallet balance of the currently selected token
-        this.walletBalance = BigNumber.from(443.12323);
-      } else if (newVal === 1) {
-        //TODO get and set the wallet balance of the currently selected token
-        this.walletBalance = BigNumber.from(13.873);
-      }
+      await this.setWalletBalance(); //selected token has changed, so set the wallet balance of the newly selected token
     }
   }
 

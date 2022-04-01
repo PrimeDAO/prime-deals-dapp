@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import "./status-card.scss";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
