@@ -235,7 +235,6 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
   public get majorityHasVoted(): boolean {
-    return true;
     return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
   }
 
