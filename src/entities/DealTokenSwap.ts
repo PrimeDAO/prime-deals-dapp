@@ -335,7 +335,7 @@ export class DealTokenSwap implements IDeal {
     return Object.values(this.allVotes).filter(voteInfo => voteInfo === true || voteInfo === false);
   }
 
-  public representativeVote(representativeAddress: Address): boolean | null {
+  public representativeVote(representativeAddress: Address = this.ethereumService.defaultAccountAddress): boolean | null {
     return this.allVotes[representativeAddress];
   }
 

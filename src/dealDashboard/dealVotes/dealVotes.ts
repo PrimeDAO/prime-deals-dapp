@@ -5,6 +5,7 @@ import { Router } from "aurelia-router";
 import { EthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
+import { EventAggregator } from "aurelia-event-aggregator";
 
 @autoinject
 export class DealVotes {
@@ -45,6 +46,7 @@ export class DealVotes {
 
   constructor(
     private router: Router,
+    private eventAggregator: EventAggregator,
     public ethereumService: EthereumService,
     private dialogService: DialogService,
   ) {
@@ -73,5 +75,10 @@ export class DealVotes {
   @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress")
   get statusText() {
     return this.everyTextCopy.find(textCopy => textCopy.condition());
+  }
+
+  vote(value: boolean) {
+    this.eventAggregator.publish("showMessage", "Vote submitted");
+    return this.deal.vote(value);
   }
 }
