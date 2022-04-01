@@ -57,6 +57,8 @@ export class DealVotes {
       return;
     }
 
+    await this.deal.createSwap();
+
     this.goToFunding();
   }
 
