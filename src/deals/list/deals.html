@@ -30,7 +30,7 @@
         Create Your Own Deal
       </pbutton>
     </div>
-    <div class="section loading" if.to-view="!dealsLoadedOnce">
+    <div data-test="deals-loading" class="section loading" if.to-view="!dealsLoadedOnce">
       <i class="spinner fa fas fa-circle-notch fa-spin"></i>
     </div>
     <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
@@ -89,7 +89,7 @@
           </a>
         </template>
       </div>
-      <!-- Mobile grid 
+      <!-- Mobile grid
       <div if.to-view="!loading" class="grid dealGridMobile">
         <div class="row header">
           <div class="cell project header sortable" click.delegate="sort('project')">PROJECT</div>
