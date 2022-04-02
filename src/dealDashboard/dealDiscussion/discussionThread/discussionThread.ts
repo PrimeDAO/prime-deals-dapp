@@ -20,6 +20,7 @@ import { Types } from "ably";
 export class DiscussionThread {
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
+  @bindable authorized: boolean;
   private refThread: HTMLElement;
   private refThreadEnd: HTMLSpanElement;
   private refTitle: HTMLElement;
