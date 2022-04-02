@@ -22,7 +22,7 @@
         label.bind="name +' Treasury Address'"
         label-info="This address will receive tokens from the token swap">
         <pinput-text
-          value.bind="data.treasury_address & validate:form"
+          value.bind="data.treasury_address | checksumAddress & validate:form"
           placeholder="0x..."
           disabled.bind="disabled">
         </pinput-text>

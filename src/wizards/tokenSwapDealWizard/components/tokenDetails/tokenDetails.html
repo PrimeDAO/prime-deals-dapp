@@ -11,7 +11,7 @@
         <pinput-text
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
-          value.bind="token.address & validate"
+          value.bind="token.address | checksumAddress & validate"
           view-model.ref="addressInput"></pinput-text>
       </pform-input>
       <div data-test="tokenDetailsMetadata" class="detailsTable" if.bind="showTokenDetails">
@@ -129,7 +129,7 @@
           <p>Token address</p>
           <p if.bind="token.address">
             <etherscanlink
-              text="${token.address | smallHexString}"
+              text="${token.addresss | smallHexString}"
               address.bind="token.address">
             </etherscanlink>
           </p>
