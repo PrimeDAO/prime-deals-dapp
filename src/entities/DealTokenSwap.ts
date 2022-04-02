@@ -488,10 +488,10 @@ export class DealTokenSwap implements IDeal {
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
 
-      await Promise.all([
-        this.hydrateDaoTransactions(),
-        this.hydrateDaoClaims(),
-      ]);
+      // no need to await
+      this.hydrateDaoTransactions();
+      this.hydrateDaoClaims();
+      this.hydrateDealSize();
     }
     catch (error) {
       this.corrupt = true;
@@ -531,6 +531,29 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
+  public async hydrateDealSize(): Promise<void> {
+    // if the total price is already figured out we don't need to try again
+    if (this.totalPrice) {
+      return;
+    }
+
+    try {
+      const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
+      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+      await this.tokenService.getTokenPrices(tokensDetails);
+
+      this.totalPrice = dealTokens.reduce((sum, item) => {
+        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+      }, 0);
+    } catch (error){
+      throw new Error(`Computing deal price ${error}`);
+      this.totalPrice = 0;
+    }
+  }
+
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
@@ -552,29 +575,6 @@ export class DealTokenSwap implements IDeal {
     ).then(() => {
       this.clauseDiscussions.set(discussionId, discussion);
     });
-  }
-
-  public async loadDealSize(): Promise<void> {
-    // if the total price is already figured out we don't need to try again
-    if (this.totalPrice) {
-      return;
-    }
-
-    try {
-      const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
-      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
-      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
-
-      await this.tokenService.getTokenPrices(tokensDetails);
-
-      this.totalPrice = dealTokens.reduce((sum, item) => {
-        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
-      }, 0);
-    } catch (error){
-      throw new Error(`Computing deal price ${error}`);
-      this.totalPrice = 0;
-    }
   }
 
   /**

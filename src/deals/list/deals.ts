@@ -140,14 +140,10 @@ export class Deals {
     if (cardIndex === 0) {
       //open proposals
       return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
-    }
+    } else {
     //partnered deals
-    const deals = !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address) || x.registrationData.partnerDAO?.representatives.some(y => y.address === address));
-    deals.forEach(y => {
-      if (y.totalPrice) return;
-      y.loadDealSize();
-    });
-    return deals;
+      return !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address) || x.registrationData.partnerDAO?.representatives.some(y => y.address === address));
+    }
   }
 
   /**

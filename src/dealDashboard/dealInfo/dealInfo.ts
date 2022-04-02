@@ -19,7 +19,6 @@ export class DealInfo {
     this.timeLeftToExecuteInterval = window.setInterval(() => {
       this.timeLeftToExecute = this.deal.timeLeftToExecute;
     }, 1000);
-    this.deal.loadDealSize();
   }
 
   getSocialMediaDetails(socialMediaName: string) {
