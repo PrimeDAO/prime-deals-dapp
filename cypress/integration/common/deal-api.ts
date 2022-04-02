@@ -177,7 +177,9 @@ export class E2eDealsApi {
           return [createdDeal];
         });
       } else {
-        return existingDeals;
+        return cy.then(() => {
+          return existingDeals;
+        });
       }
     });
   }

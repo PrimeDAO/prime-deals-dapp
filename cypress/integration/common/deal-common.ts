@@ -14,11 +14,21 @@ export class E2EDashboard {
 }
 
 Given("I'm viewing (the/an) Open Proposal", () => {
-  E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
-    const url = `deal/${dealId}`;
-    cy.visit(url);
+  cy.then(() => {
+    if (E2eDeals.currentDealId) {
+      const url = `deal/${E2eDeals.currentDealId}`;
+      cy.visit(url);
 
-    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      return;
+    }
+
+    E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
+      const url = `deal/${dealId}`;
+      cy.visit(url);
+
+      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+    });
   });
 });
 
