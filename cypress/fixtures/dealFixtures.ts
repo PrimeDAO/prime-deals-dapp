@@ -16,7 +16,7 @@ export const E2E_ADDRESSES = {
   PrimaryTreasury: "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
   PartnerTreasury: "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276",
   PartnerTreasuryTwo: "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82",
-  RepresentativeOne: "0x21bF0f34752a35E989002c2e6A78D5Df6BC7aE6F",
+  RepresentativeOne: "0x45b211cd08724D584cD94e7B974584249cD87638",
   RepresentativeTwo: "0xf525a861391e64d5126414434bFf877285378246",
 };
 
@@ -143,14 +143,15 @@ class DealDataBuilder {
 
 export const MINIMUM_OPEN_PROPOSAL = DealDataBuilder.create().deal;
 
-export const MINIMUM_PRIVATE_OPEN_PROPOSAL = DealDataBuilder
-  .create()
-  .withProposalData({title: `${randomId}_Private_open_propsoal`})
-  .deal;
-MINIMUM_PRIVATE_OPEN_PROPOSAL.isPrivate = true;
-
 export const PARTNERED_DEAL = DealDataBuilder
   .create()
   .withProposalData({title: `${randomId}_Partnered_deal`})
   .withPartnerDaoData()
   .deal;
+
+export const PRIVATE_PARTNERED_DEAL = DealDataBuilder
+  .create()
+  .withProposalData({title: `${randomId}_Private_partnered_deal`})
+  .withPartnerDaoData()
+  .deal;
+PRIVATE_PARTNERED_DEAL.isPrivate = true;
