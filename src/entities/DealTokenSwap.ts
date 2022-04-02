@@ -235,18 +235,18 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * Gets the DAO based on the connected account address
+   * Gets the DAO in which the current account is a representative (if they are at all)
    */
-  @computedFrom("ethereumService.defaultAccountAddress")
-  public get daoRelatedToAccount(): IDAO{
+  @computedFrom("ethereumService.defaultAccountAddress", "partnerDaoRepresentatives", "primaryDaoRepresentatives", "registrationData.primaryDAO", "registrationData.partnerDAO")
+  public get daoRepresentedByCurrentAccount(): IDAO {
     return this.getDao(true);
   }
 
   /**
-     * Gets the non-related DAO based on the connected account address
+   * Gets the other DAO from the one in which the current account is a representative (if they are at all)
      */
-  @computedFrom("ethereumService.defaultAccountAddress")
-  public get otherDao(): IDAO {
+  @computedFrom("ethereumService.defaultAccountAddress", "partnerDaoRepresentatives", "primaryDaoRepresentatives", "registrationData.primaryDAO", "registrationData.partnerDAO")
+  public get daoOtherThanRepresentedByCurrentAccount(): IDAO {
     return this.getDao(false);
   }
 
@@ -268,11 +268,6 @@ export class DealTokenSwap implements IDeal {
       //the connceted account is either a representative of the primary DAO or the proposal lead
       return relatedToAccount ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
     }
-    if (this.registrationData.proposalLead.address === this.ethereumService.defaultAccountAddress){
-      //if the conencted account isn't a representative of either the primary or partner DAOs but is the proposal lead, return the primaryDAO
-      return this.registrationData.primaryDAO;
-    }
-    //the currently connected account isn't part of any DAO
     return null;
   }
 
@@ -672,7 +667,11 @@ export class DealTokenSwap implements IDeal {
   }
 
   public vote(upDown: boolean): Promise<void> {
-    const whichDao = this.getDao(true);
+    const whichDao = this.daoRepresentedByCurrentAccount;
+
+    if (!whichDao) {
+      throw new Error("Vote: Current account is not related to the ");
+    }
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 

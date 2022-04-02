@@ -5,23 +5,19 @@
       <h1 class="title heading heading1 gradient">
         Swap tokenized carbon credits for a better world
       </h1>
-      <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer"
-        >Return to deal page</pbutton
-      >
+      <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer">Return to deal page</pbutton>
     </section>
     <section
       class="section deposit"
-      if.to-view="daoRelatedToAccountTokens && daoRelatedToAccountTokens.length && !this.deal.isClaiming"
-    >
+      if.to-view="daoRepresentedByCurrentAccountTokens && daoRepresentedByCurrentAccountTokens.length && !this.deal.isClaiming">
       <div class="box-container">
         <div class="box-header">
           <div class="heading heading3 title gradient">
-            ${deal.daoRelatedToAccount.name} Deposit
+            ${deal.daoRepresentedByCurrentAccount.name} Deposit
           </div>
           <pchip
             color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
-            if.to-view="fundingDaysLeft >= 0"
-          >
+            if.to-view="fundingDaysLeft >= 0">
             <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
           </pchip>
           <pchip color="danger" if.to-view="deal.isFailed">Target not reached</pchip>
@@ -30,10 +26,9 @@
           <div class="tokens">
             <pgrid
               id="token-grid"
-              rows.bind="daoRelatedToAccountTokens"
+              rows.bind="daoRepresentedByCurrentAccountTokens"
               columns.bind="tokenGridColumns"
-              condensed.bind="true"
-            ></pgrid>
+              condensed.bind="true"></pgrid>
           </div>
         </div>
         <div class="container-footer">
@@ -46,7 +41,7 @@
                 can withdraw your funds at any time. Funds are safe.
               </span>
               <span if.to-view="!fundingFailed && !deal.isTargetReached">
-                You're depositing on behalf of ${deal.daoRelatedToAccount.name}. This deal needs to
+                You're depositing on behalf of ${deal.daoRepresentedByCurrentAccount.name}. This deal needs to
                 be funded and executed within ${fundingDaysLeft} days.
               </span>
               <span if.to-view="!fundingFailed && deal.isTargetReached">
@@ -55,60 +50,50 @@
             </p>
             <div class="links">
               <address-link
-                address.to-view="deal.daoDepositContracts.get(deal.daoRelatedToAccount).address"
+                address.to-view="deal.daoDepositContracts.get(deal.daoRepresentedByCurrentAccount).address"
                 link-text="DAODepositManager Contract"
                 show-arrow-inside-link.bind="true"
-                show-copy-icon.bind="false"
-              >
+                show-copy-icon.bind="false">
               </address-link>
               <address-link
                 address.to-view="deal.moduleContract.address"
                 link-text="TokenSwapModule Contract"
                 show-arrow-inside-link.bind="true"
-                show-copy-icon.bind="false"
-              >
+                show-copy-icon.bind="false">
               </address-link>
             </div>
           </div>
           <div class="deposit">
             <div
               class="form"
-              if.to-view="!deal.isUserProposalLead && !deal.isTargetReached && !fundingFailed"
-            >
+              if.to-view="!deal.isUserProposalLead && !deal.isTargetReached && !fundingFailed">
               <div>
                 <div class="inputs">
                   <pselect
-                    disabled.bind="daoRelatedToAccountTokens.length === 1"
+                    disabled.bind="daoRepresentedByCurrentAccountTokens.length === 1"
                     placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
-                    ref="refSelectToken"
-                  ></pselect>
+                    ref="refSelectToken"></pselect>
                   <numeric-input
                     css="pInput"
                     value.bind="depositAmount"
                     keyup.delegate="checkMaxAmount()"
-                    decimals.bind="daoRelatedToAccountTokens[selectedToken].decimals"
-                  >
+                    decimals.bind="daoRepresentedByCurrentAccountTokens[selectedToken].decimals">
                   </numeric-input>
-                  <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
-                    >Max</pbutton
-                  >
+                  <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken">Max</pbutton>
                   <span class="balance" if.to-view="accountBalance">
-                    Your ${daoRelatedToAccountTokens[selectedToken].symbol} Balance:
+                    Your ${daoRepresentedByCurrentAccountTokens[selectedToken].symbol} Balance:
                     <tokenbalance
                       formatted="0.00a"
-                      token-address.to-view="daoRelatedToAccountTokens[selectedToken].address"
-                    ></tokenbalance>
+                      token-address.to-view="daoRepresentedByCurrentAccountTokens[selectedToken].address"></tokenbalance>
                   </span>
                 </div>
               </div>
               <pbutton
                 type="primary"
                 click.delegate="depositTokens()"
-                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
-                >Deposit</pbutton
-              >
+                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0">Deposit</pbutton>
             </div>
           </div>
         </div>
@@ -128,8 +113,7 @@
               id="token-grid"
               rows.bind="tokensToClaim"
               columns.bind="claimTokenGridColumns"
-              condensed.bind="true"
-            >
+              condensed.bind="true">
             </pgrid>
           </div>
           <div class="contract">
@@ -142,18 +126,16 @@
             </p>
             <div>
               <address-link
-                address.to-view="deal.daoDepositContracts.get(deal.daoRelatedToAccount).address"
+                address.to-view="deal.daoDepositContracts.get(deal.daoRepresentedByCurrentAccount).address"
                 link-text="DAODepositManager Contract"
                 show-arrow-inside-link.bind="true"
-                show-copy-icon.bind="false"
-              >
+                show-copy-icon.bind="false">
               </address-link>
               <address-link
                 address.to-view="deal.moduleContract.address"
                 link-text="TokenSwapModule Contract"
                 show-arrow-inside-link.bind="true"
-                show-copy-icon.bind="false"
-              >
+                show-copy-icon.bind="false">
               </address-link>
             </div>
             <pbutton type="primary">Claim Tokens</pbutton>
@@ -171,8 +153,7 @@
         rows.bind="deposits"
         columns.bind="depositColumns"
         condensed.bind="false"
-        if.to-view="deposits.length > 0"
-      ></pgrid>
+        if.to-view="deposits.length > 0"></pgrid>
       <template if.to-view="deposits.length > 10">
         <div if.to-view="!loadingDeposits && !seeingMore" class="seeMore">
           <div class="arrow">&darr;</div>
