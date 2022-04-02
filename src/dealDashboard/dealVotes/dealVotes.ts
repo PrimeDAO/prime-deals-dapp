@@ -1,3 +1,4 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealVotes.scss";
@@ -47,6 +48,7 @@ export class DealVotes {
     private router: Router,
     public ethereumService: EthereumService,
     private dialogService: DialogService,
+    private eventAggregator: EventAggregator,
   ) {
   }
 
@@ -57,9 +59,13 @@ export class DealVotes {
       return;
     }
 
-    await this.deal.createSwap();
-
-    this.goToFunding();
+    try {
+      await this.deal.createSwap();
+      this.eventAggregator.publish("showMessage", "The funding phase is successfully started");
+      this.goToFunding();
+    } catch (ex) {
+      this.eventAggregator.publish("showMessage", "Sorry, there was a problem starting the funding phase");
+    }
   }
 
   goToFunding() {

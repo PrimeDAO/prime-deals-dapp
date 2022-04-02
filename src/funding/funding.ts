@@ -146,7 +146,7 @@ export class Funding {
   };
 
   /**
-   * Initiates the token swap. Called by the "Initiate Token Swap" button on the UI
+   * Initiates the token swap. Called by the "Execute Token Swap" button on the UI
    *  - pops up a modal to verify the user wants to initiate the swap
    *  - does nothing if they hit cancel
    *  - if they hit "Initiate" it will execute and show the congrats modal
