@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
-import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealSharedTypes";
+import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
 import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 
 /**
@@ -13,24 +13,34 @@ export const isRegistrationDataPrivacyOnlyUpdate = (oldDeal: IDealTokenSwapDocum
   updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
   delete oldDeal.registrationData.isPrivate;
   delete updatedDeal.registrationData.isPrivate;
-  delete oldDeal.registrationData.modifiedAt;
-  delete updatedDeal.registrationData.modifiedAt;
+  delete oldDeal.modifiedAt;
+  delete updatedDeal.modifiedAt;
 
   return isEqual(oldDeal, updatedDeal);
 };
 
 /**
- * Checks if registration data was updated (any part of it apart from modifiedAt field)
+ * Checks if registration data was updated
  *
  * Intended to be used inside a callback function triggered on deal document update
  */
 export const isRegistrationDataUpdated = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
   const oldDealRegistrationData = JSON.parse(JSON.stringify(oldDeal.registrationData));
   const updatedDealRegistrationData = JSON.parse(JSON.stringify(updatedDeal.registrationData));
-  delete oldDealRegistrationData.modifiedAt;
-  delete updatedDealRegistrationData.modifiedAt;
 
   return !isEqual(oldDealRegistrationData, updatedDealRegistrationData);
+};
+
+/**
+ * Checks if the only update to the deal document was the modifiedAt field
+ */
+export const isModifiedAtOnlyUpdate = (oldDeal: IDealTokenSwapDocument, updatedDeal: IDealTokenSwapDocument): boolean => {
+  oldDeal = JSON.parse(JSON.stringify(oldDeal));
+  updatedDeal = JSON.parse(JSON.stringify(updatedDeal));
+  delete oldDeal.modifiedAt;
+  delete updatedDeal.modifiedAt;
+
+  return isEqual(oldDeal, updatedDeal);
 };
 
 /**
@@ -98,19 +108,19 @@ export const initializeVotingSummary = (
 ): IDealVotingSummary => {
   return {
     primaryDAO: {
-      total: primaryDaoRepresentativesAddresses.length,
-      accepted: 0,
-      rejected: 0,
-      votes: primaryDaoRepresentativesAddresses.map(address => ({address, vote: null})),
+      totalSubmittable: primaryDaoRepresentativesAddresses.length,
+      acceptedVotesCount: 0,
+      rejectedVotesCount: 0,
+      votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({[address]: null}))),
     },
     partnerDAO: {
-      total: partnerDaoRepresentativesAddresses.length,
-      accepted: 0,
-      rejected: 0,
-      votes: partnerDaoRepresentativesAddresses.map(address => ({address, vote: null})),
+      totalSubmittable: partnerDaoRepresentativesAddresses.length,
+      acceptedVotesCount: 0,
+      rejectedVotesCount: 0,
+      votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({[address]: null}))),
     },
-    total: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-    votesGiven: 0,
+    totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
+    totalSubmitted: 0,
   };
 };
 
@@ -133,8 +143,8 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
   return {
     primaryDAO,
     partnerDAO,
-    total: primaryDAO.total + partnerDAO.total,
-    votesGiven: primaryDAO.accepted + primaryDAO.rejected + partnerDAO.accepted + partnerDAO.rejected,
+    totalSubmittable: primaryDAO.totalSubmittable + partnerDAO.totalSubmittable,
+    totalSubmitted: primaryDAO.acceptedVotesCount + primaryDAO.rejectedVotesCount + partnerDAO.acceptedVotesCount + partnerDAO.rejectedVotesCount,
   };
 };
 
@@ -143,10 +153,10 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
  */
 const getDaoVotingSummary = (daoVotes: Array<IFirebaseDocument<{vote: boolean}>>): IDealDAOVotingSummary => {
   return {
-    total: daoVotes.length,
-    accepted: daoVotes.filter(vote => vote.data.vote).length,
-    rejected: daoVotes.filter(vote => vote.data.vote === false).length,
-    votes: daoVotes.map(vote => ({address: vote.id, vote: vote.data.vote})),
+    totalSubmittable: daoVotes.length,
+    acceptedVotesCount: daoVotes.filter(vote => vote.data.vote).length,
+    rejectedVotesCount: daoVotes.filter(vote => vote.data.vote === false).length,
+    votes: Object.assign({}, ...daoVotes.map(vote => ({[vote.id]: vote.data.vote}))),
   };
 };
 

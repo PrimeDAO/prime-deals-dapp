@@ -57,12 +57,12 @@ export class TokenDetailsStage {
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.wizardState.registrationData.partnerDAO);
 
     const validationRules = ValidationRules
-      .ensure<IDealRegistrationTokenSwap, number>(data => data.executionPeriodInDays)
+      .ensure<IDealRegistrationTokenSwap, number>(data => data.fundingPeriod)
       .required()
       .when(() => !this.isOpenProposalWizard)
-      .withMessage("Execution period is required")
+      .withMessage("Funding Period is required")
       .min(0)
-      .withMessage("Execution period should be greater or equal to zero")
+      .withMessage("Funding Period should be greater or equal to zero")
       .rules;
 
     this.form = this.wizardService.registerValidationRules(

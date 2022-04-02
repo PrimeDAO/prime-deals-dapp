@@ -3,7 +3,7 @@
     <div if.bind="viewMode === 'edit'">
 
       <pform-input
-        data-test="proposal-token-address-field"
+        data-test="token-address-field"
         helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
         input-reference.bind="addressInput"
         label="Token Address"
@@ -26,10 +26,10 @@
           <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
           <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
         </div>
-        <div data-test="proposal-decimals-field" class="detailsCell">
+        <div data-test="decimals-field" class="detailsCell">
           <p>Decimals</p>
           <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
-          <pform-input data-test="proposal-token-decimals-field"
+          <pform-input data-test="token-decimals-field"
             input-reference.bind="decimalsInput">
             <pinput-numeric
               if.bind="tokenDetailsNotFound.decimals"
@@ -47,16 +47,16 @@
           </p>
           <pform-input input-reference.bind="logoImageInput">
             <pinput-text value.bind="token.logoURI & validate"
-                         view-model.ref="logoImageInput"></pinput-text>
+              view-model.ref="logoImageInput"></pinput-text>
           </pform-input>
         </div>
       </div>
-      <pform-input data-test="proposal-token-amount-field"
+      <pform-input data-test="token-amount-field"
         input-reference.bind="amountInput"
         label="Total Amount of Tokens to Swap"
-        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the on-chain execution phase of the deal.">
+        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
         <pinput-numeric
-          placeholder="500.00"
+          placeholder="500,000"
           value.bind="token.amount & validate"
           decimals.bind="token.decimals"
           view-model.ref="amountInput"></pinput-numeric>
@@ -81,7 +81,7 @@
         <div class="vesting">
           <div class="vesting-input">
             <p>Tokens vested for</p>
-            <pform-input data-test="proposal-vested-period-field" input-reference.bind="vestedForInput">
+            <pform-input data-test="vested-period-field" input-reference.bind="vestedForInput">
               <pinput-group
                 disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric
@@ -95,7 +95,7 @@
           </div>
           <div class="vesting-input">
             <p>with a cliff of</p>
-            <pform-input data-test="proposal-cliff-period-field" input-reference.bind="cliffOfInput">
+            <pform-input data-test="cliff-period-field" input-reference.bind="cliffOfInput">
               <pinput-group
                 disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
                 <pinput-numeric

@@ -1,3 +1,4 @@
+import { FirestoreDealsService } from "./services/FirestoreDealsService";
 import { PinataIpfsClient } from "./services/PinataIpfsClient";
 import { Aurelia } from "aurelia-framework";
 import * as environment from "../config/environment.json";
@@ -14,10 +15,12 @@ import DOMPurify from "dompurify";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { TimingService } from "services/TimingService";
 import { TokenService } from "services/TokenService";
-import { CeramicServiceMock } from "services/CeramicServiceMock";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
+import { FirebaseService } from "services/FirebaseService";
+import { EthereumServiceTesting } from "services/EthereumServiceTesting";
+import { FirestoreService } from "services/FirestoreService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -31,7 +34,7 @@ export function configure(aurelia: Aurelia): void {
       configuration.settings.keyboard = false;
     });
   aurelia.use.singleton(HTMLSanitizer, DOMPurify);
-  aurelia.use.singleton(IDataSourceDeals, CeramicServiceMock);
+  aurelia.use.singleton(IDataSourceDeals, FirestoreDealsService);
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
@@ -52,15 +55,36 @@ export function configure(aurelia: Aurelia): void {
 
       aurelia.container.registerTransient(DealTokenSwap);
 
+      /**
+       * must do before ethereum service, to capture network connections
+       */
+      const firebaseService = aurelia.container.get(FirebaseService);
+      firebaseService.initialize();
+
+      if ((window as any).Cypress) {
+        /**
+         * Mock wallet connection
+         */
+        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+        /**
+         * Tests can directly access FirestoreDealsService.
+         * We want that to, eg. get dealIds from the dealsArray
+         *
+         * Architecure note: Ideally, we want to decouple Test setup code.
+         *   Because this requires a bit more investigation on the Cypress<>Webpack side,
+         *   this is the quickest compromise for prioritizing test coverage.
+         *   Once we have a solid test coverage, it will be easier to explore more solid patters
+         */
+        const firestoreService = aurelia.container.get(FirestoreService);
+        (window as any).Cypress.firestoreService = firestoreService;
+      }
+
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
 
       ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
-
-      const ceramicService = aurelia.container.get(CeramicServiceMock);
-      ceramicService.initialize();
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));

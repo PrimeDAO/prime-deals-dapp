@@ -1,5 +1,5 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject } from "aurelia-framework";
+import { autoinject, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -20,7 +20,7 @@ interface IDiscussionListItem extends IDealDiscussion {
 @autoinject
 export class DiscussionsList{
   @bindable deal: DealTokenSwap;
-  @bindable discussionId: string = null;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable.booleanAttr authorized: boolean;
 
   paginationConfig = {
@@ -34,6 +34,11 @@ export class DiscussionsList{
   private times: any = {
     intervals: Array(typeof setInterval),
   };
+
+  private findClauseIndex(discussionId: string): string {
+    const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
+    return (discussionsIds.indexOf(discussionId) + 1).toString() || "-";
+  }
 
   constructor(
     private eventAggregator: EventAggregator,
@@ -60,20 +65,20 @@ export class DiscussionsList{
         {
           id: key,
           ...this.discussionsService.discussions[key],
-          lastModified: this.dateService.formattedTime(this.discussionsService.discussions[key].modifiedAt).diff(),
+          lastModified: this.dateService.formattedTime(new Date(this.discussionsService.discussions[key].modifiedAt)).diff(),
         }
       ));
 
     this.discussionsArray.forEach((listDiscussionItem: IDiscussionListItem) => {
-      if (!listDiscussionItem.createdByName) {
+      if (!listDiscussionItem.createdBy.name) {
         this.discussionsService.loadProfile(listDiscussionItem.createdBy.address)
           .then(profile => {
-            if (profile.name) listDiscussionItem.createdByName = profile.name;
+            if (profile.name) listDiscussionItem.createdBy.name = profile.name;
           });
       }
 
       this.times.intervals.push(setInterval((): void => {
-        listDiscussionItem.lastModified = this.dateService.formattedTime(listDiscussionItem.modifiedAt).diff();
+        listDiscussionItem.lastModified = this.dateService.formattedTime(new Date(listDiscussionItem.modifiedAt)).diff();
       }, 30000));
     });
 

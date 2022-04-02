@@ -100,6 +100,27 @@ export class Demos {
         title: "prange-slider",
       },
       {
+        route: ["pprogress-bar"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pprogressBarDemo.html"),
+        name: "pprogress-bar",
+        title: "pprogress-bar",
+      },
+      {
+        route: ["pchip"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pchipDemo.html"),
+        name: "pchip",
+        title: "pchip",
+      },
+      {
+        route: ["pgrid"],
+        nav: true,
+        moduleId: PLATFORM.moduleName("./pgridDemo"),
+        name: "pgrid",
+        title: "pgrid",
+      },
+      {
         route: ["pCountdown-closebuttonDemo"],
         nav: true,
         moduleId: PLATFORM.moduleName("./pCountdownClosebuttonDemo"),

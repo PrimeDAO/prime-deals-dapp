@@ -1,4 +1,4 @@
-module.exports = {
+{
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -8,9 +8,7 @@ module.exports = {
     "ecmaVersion": 2019,
     "sourceType": "module",
     "project": "./tsconfig.json",
-    "tsconfigRootDir": ".",
-    extraFileExtensions: ['.cjs']
-
+    "tsconfigRootDir": "."
   },
   "extends": [
     "eslint:recommended",
@@ -133,5 +131,27 @@ module.exports = {
       "error",
       "unix"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "*Service.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-member-accessibility": [
+          "error",
+          {
+            "accessibility": "explicit",
+            "overrides": {
+              "accessors": "explicit",
+              "constructors": "no-public",
+              "methods": "explicit",
+              "properties": "explicit",
+              "parameterProperties": "explicit"
+            }
+          }
+        ]
+      }
+    }
+  ]
 }

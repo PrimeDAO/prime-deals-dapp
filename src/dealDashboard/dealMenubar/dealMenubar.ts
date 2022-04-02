@@ -3,7 +3,6 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealMenubar.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AlertService } from "../../services/AlertService";
-import { DealStatus } from "../../entities/IDealTypes";
 
 @autoinject
 export class DealMenubar {
@@ -22,23 +21,29 @@ export class DealMenubar {
 
   @computedFrom("deal.status")
   get canEdit() {
-    return ![DealStatus.funding, DealStatus.swapping].includes(this.deal.status);
+    return !this.deal.isExecuted && !this.deal.isCancelled;
   }
 
-  async closeDeal() {
+  async cancelDeal() {
     const result = await this.alertService.showAlert({
-      header: "You will be closing the deal and will not be able to re-activate it.",
-      message: "Are you sure you want to close the deal?",
+      header: "You will be cancelling the deal and will not be able to re-activate it.",
+      message: "Are you sure you want to cancel your deal?",
       buttons: 3,
       buttonTextPrimary: "Continue",
-      buttonTextSecondary: "Cancel",
+      buttonTextSecondary: "Keep my deal",
     });
 
     if (result.wasCancelled) {
       return;
     }
 
-    this.deal.close();
+    this.eventAggregator.publish("deal.cancelling", true);
+    try {
+      await this.deal.close();
+      this.eventAggregator.publish("handleInfo", "Your deal was successfully cancelled");
+    } finally {
+      this.eventAggregator.publish("deal.cancelling", false);
+    }
   }
 
 }

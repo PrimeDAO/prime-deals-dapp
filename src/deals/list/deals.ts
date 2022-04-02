@@ -18,9 +18,10 @@ let dealsLoadedOnce = false;
 @autoinject
 export class Deals {
 
-  private cardIndex = 0;
+  private cardIndex;
   private seeingMore = false;
   private showMine = false;
+  private dealsLoadedOnce = dealsLoadedOnce;
   private sortColumn: string;
   private sortDirection = SortOrder.DESC;
   private sortEvaluator: (a: DealTokenSwap, b: DealTokenSwap) => number;
@@ -48,11 +49,14 @@ export class Deals {
   public async attached(): Promise<void> {
     if (!dealsLoadedOnce) {
       await this.dealService.ensureAllDealsInitialized();
-      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      if (this.cardIndex === undefined) {
+        this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      }
       this.sortDirection = SortOrder.DESC;
       this.sort("age");
       // eslint-disable-next-line require-atomic-updates
       dealsLoadedOnce = true;
+      this.dealsLoadedOnce = dealsLoadedOnce;
     }
   }
 
@@ -113,8 +117,8 @@ export class Deals {
       case "status":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateString(a.status, b.status, this.sortDirection);
         break;
-      case "age": // @TODO remove "as Date" type assertion
-        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.registrationData.createdAt as Date, b.registrationData.createdAt as Date, this.sortDirection);
+      case "age":
+        this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateDateTimeAsDate(a.createdAt, b.createdAt, this.sortDirection);
         break;
       case "dealSize":
         this.sortEvaluator = (a: DealTokenSwap, b: DealTokenSwap) => SortService.evaluateNumber(a.totalPrice, b.totalPrice, this.sortDirection);
@@ -129,6 +133,10 @@ export class Deals {
    * @returns
    */
   private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string) : DealTokenSwap[] {
+    if (this.cardIndex === undefined) {
+      return [];
+    }
+
     if (cardIndex === 0) {
       //open proposals
       return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
@@ -157,8 +165,16 @@ export class Deals {
    */
   private toggleMyDeals(): void {
     this.showMine = !this.showMine;
-    if (!this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress)) {
-      this.cardIndex = 1;
+    if (this.showMine){
+      //if showing only "my deals" check to see which tab to display by default if there are no deals in either tab
+      const openDeals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
+      const partneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
+      if (openDeals){
+        this.cardIndex = 0;
+      }
+      else if (partneredDeals){
+        this.cardIndex = 1;
+      }
     }
   }
 

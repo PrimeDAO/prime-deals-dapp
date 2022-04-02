@@ -1,18 +1,17 @@
 import { autoinject, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+import { EthereumService } from "services/EthereumService";
+import { DiscussionsService } from "dealDashboard/discussionsService";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 import "./dealClauses.scss";
-import { EthereumService } from "../../services/EthereumService";
-import { DiscussionsService } from "../discussionsService";
-import { IClause } from "../../entities/DealRegistrationTokenSwap";
 
 @autoinject
 export class DealClauses {
   @bindable deal: DealTokenSwap;
   @bindable.booleanAttr authorized = false;
-  @bindable.string({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
-  private dealId: string;
   private clauses: IClause[];
 
   constructor(
@@ -32,19 +31,28 @@ export class DealClauses {
    * @param topic the discussion topic
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
-  private async addOrReadDiscussion(topic: string, discussionHash: string, clauseHash: string | null, clauseIndex: number | null): Promise<void> {
-    this.discussionId = discussionHash || // If no discussion hash provided- create a new discussion
-      await this.discussionsService.createDiscussion(
-        this.dealId,
+  private async addOrReadDiscussion(topic: string, clauseId: string | null): Promise<void> {
+    if (this.deal.clauseDiscussions.get(clauseId)) {
+      this.discussionId = clauseId;
+    } else {
+      // If no discussion hash provided- create a new discussion
+      this.discussionId = await this.discussionsService.createDiscussion(
+        this.deal.id,
         {
           topic,
-          clauseHash,
-          clauseIndex,
+          discussionId: clauseId,
           admins: [this.ethereumService.defaultAccountAddress],
           representatives: [{address: this.ethereumService.defaultAccountAddress}],
           isPublic: true,
         },
       );
+    }
+    this.discussionsService.autoScrollAfter(0);
   }
 
+  authorizedChanged(): void {
+    if (this.ethereumService.defaultAccountAddress) {
+      this.discussionsService.setEnsName(this.ethereumService.defaultAccountAddress);
+    }
+  }
 }
