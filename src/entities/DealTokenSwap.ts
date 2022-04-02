@@ -626,7 +626,7 @@ export class DealTokenSwap implements IDeal {
 
     return this.transactionsService.send(
       () => this.moduleContract.createSwap(...dealParameters))
-      .then(async receipt => {
+      .then(receipt => {
         if (receipt) {
           this.hydrate();
           return receipt;
@@ -658,6 +658,17 @@ export class DealTokenSwap implements IDeal {
           this.isRejected = true;
         });
     }
+  }
+
+  public claim(dao: IDAO): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).claimDealVestings(this.moduleContract.address, this.contractDealId)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoClaims();
+            return receipt;
+          }
+        }));
   }
 
   public vote(upDown: boolean): Promise<void> {
