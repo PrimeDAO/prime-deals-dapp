@@ -138,7 +138,6 @@ export const PARTNERED_DEAL: IDealRegistrationTokenSwap = {
     description: "Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie. Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie. Lorem ipsum dolor sit amet, consectetur adi piscing elit. Ut pretium pretium tempor. Uteget imperdiet neque. In volutpat ante semper diam molestie.",
   },
   primaryDAO: {
-    id: "dao-hash-4",
     name: "MyDAO",
     tokens: [
       {
@@ -181,7 +180,6 @@ export const PARTNERED_DEAL: IDealRegistrationTokenSwap = {
     logoURI: "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/primedao.jpg",
   },
   partnerDAO: {
-    id: "dao-hash-5",
     name: "PrimeDAO",
     tokens: [{
       address: tokenAddress1,
