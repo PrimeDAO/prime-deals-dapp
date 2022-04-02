@@ -32,12 +32,11 @@ export interface IDealTokenSwapDocument {
 
 export enum DealStatus {
   active = "Active",
-  completed = "Completed",
   failed = "Failed",
   cancelled = "Cancelled",
   negotiating = "Negotiating",
   funding = "Funding",
-  swapping = "Swapping"
+  completed = "Completed",
 }
 
 export interface IDeal {

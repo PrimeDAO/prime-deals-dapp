@@ -48,7 +48,6 @@ export interface IDAO {
   logoURI: string;
   social_medias: Array<ISocialMedia>;
   representatives: Array<IRepresentative>;
-  id?: string;
   tokens?: Array<IToken>;
   platform?: Platforms;
 }
