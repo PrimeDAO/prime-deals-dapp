@@ -1,7 +1,7 @@
 import { TokenService } from "services/TokenService";
 import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
 import { NumberService } from "./../services/NumberService";
-import { IDaoClaimToken, IDaoTransaction } from "./../entities/DealTokenSwap";
+import { IDaoTransaction } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
 import { EventConfig } from "./../services/GeneralEvents";
@@ -14,7 +14,7 @@ import { EthereumService } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
-import { IDAO } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IToken } from "entities/DealRegistrationTokenSwap";
 import { ITokenFunding } from "entities/TokenFunding";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
@@ -23,6 +23,12 @@ import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { tokenGridColumns, depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
+
+export interface IDaoClaimToken {
+  token: IToken, //only need iconURI, symbol and decimals
+  claimable: number,
+  locked: number
+}
 @autoinject
 export class Funding {
   private depositColumns: IGridColumn[] = depositColumns;

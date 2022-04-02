@@ -44,6 +44,23 @@ interface IDepositEventArgs {
   amount: BigNumber;
 }
 
+interface IClaimedEventArgs {
+  dealModule: Address;
+  dealId: string;
+  dao: Address;
+  token: Address;
+  claimed: BigNumber;
+}
+
+interface IDaoClaim {
+  dealId: string;
+  dao: IDAO;
+  token: IToken;
+  claimedAmount: BigNumber;
+  createdAt: Date; //transaction date
+  txid: Hash; //transaction id,
+}
+
 export type DealTransactionType = "deposit" | "withdraw";
 
 export interface IDaoTransaction {
@@ -59,11 +76,6 @@ export interface IDaoTransaction {
   withdrawTxId?: Hash,
 }
 
-export interface IDaoClaimToken {
-  token: IToken, //only need iconURI, symbol and decimals
-  claimable: number,
-  locked: number
-}
 @autoinject
 export class DealTokenSwap implements IDeal {
 
@@ -113,6 +125,7 @@ export class DealTokenSwap implements IDeal {
   public executedAt: Date;
 
   public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
+  public daoTokenClaims: Map<IDAO, Array<IDaoClaim>>;
 
   @computedFrom("dealDocument.registrationData")
   public get registrationData(): IDealRegistrationTokenSwap {
@@ -500,7 +513,10 @@ export class DealTokenSwap implements IDeal {
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
 
-      await this.hydrateDaoTransactions();
+      await Promise.all([
+        this.hydrateDaoTransactions(),
+        this.hydrateDaoClaims(),
+      ]);
     }
     catch (error) {
       this.corrupt = true;
@@ -523,6 +539,21 @@ export class DealTokenSwap implements IDeal {
     }
 
     this.daoTokenTransactions = daoTokenTransactions;
+  }
+
+  private async hydrateDaoClaims(): Promise<void> {
+    if (!this.daoTokenClaims) {
+      this.daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
+    }
+
+    const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
+
+    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
+    if (this.partnerDao) {
+      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao));
+    }
+
+    this.daoTokenClaims = daoTokenClaims;
   }
 
   private async hydrateUser(): Promise<void> {
@@ -603,54 +634,6 @@ export class DealTokenSwap implements IDeal {
       });
   }
 
-  public getTokenInfoFromAddress(tokenAddress: Address, dao: IDAO): IToken {
-    tokenAddress = tokenAddress.toLowerCase();
-    return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
-  }
-
-  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
-    const transactions = new Array<IDaoTransaction>();
-    const depositContract = this.daoDepositContracts.get(dao);
-
-    const depositFilter = depositContract.filters.Deposited();
-    await depositContract.queryFilter(depositFilter)
-      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          transactions.push({
-            type: "deposit",
-            dao: dao,
-            token: this.getTokenInfoFromAddress(params.token, dao),
-            address: params.depositor,
-            createdAt: new Date((await event.getBlock()).timestamp * 1000),
-            txid: event.transactionHash,
-            depositId: params.depositId,
-            amount: params.amount,
-          });
-        }
-      });
-
-    const withdrawFilter = depositContract.filters.Withdrawn();
-    await depositContract.queryFilter(withdrawFilter)
-      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          transactions.push({
-            type: "withdraw",
-            dao: dao,
-            token: this.getTokenInfoFromAddress(params.token, dao),
-            address: params.depositor,
-            createdAt: new Date((await event.getBlock()).timestamp * 1000),
-            txid: event.transactionHash,
-            depositId: params.depositId,
-            amount: params.amount,
-          });
-        }
-      });
-
-    return transactions;
-  }
-
   public close(): Promise<void> {
     if (this.isOpenProposal) {
       return this.withdraw();
@@ -691,10 +674,85 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
+  private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {
+    tokenAddress = tokenAddress.toLowerCase();
+    return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
+  }
+
   private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
     return whichDao === this.primaryDao ?
       this.dealDocument.votingSummary.primaryDAO :
       this.dealDocument.votingSummary.partnerDAO;
+  }
+
+  private async getDaoClaims(dao: IDAO): Promise<Array<IDaoClaim>> {
+    const claims = new Array<IDaoClaim>();
+    const depositContract = this.daoDepositContracts.get(dao);
+
+    const depositFilter = depositContract.filters.VestingClaimed(
+      this.moduleContract.address,
+      this.contractDealId,
+      dao.treasury_address);
+
+    await depositContract.queryFilter(depositFilter)
+      .then(async (events: Array<IStandardEvent<IClaimedEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          claims.push({
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            dealId: params.dealId,
+            claimedAmount: params.claimed,
+          });
+        }
+      });
+
+    return claims;
+  }
+
+  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
+    const transactions = new Array<IDaoTransaction>();
+    const depositContract = this.daoDepositContracts.get(dao);
+
+    const depositFilter = depositContract.filters.Deposited();
+    await depositContract.queryFilter(depositFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "deposit",
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+            amount: params.amount,
+          });
+        }
+      });
+
+    const withdrawFilter = depositContract.filters.Withdrawn();
+    await depositContract.queryFilter(withdrawFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "withdraw",
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+            amount: params.amount,
+          });
+        }
+      });
+
+    return transactions;
   }
 
   /**
