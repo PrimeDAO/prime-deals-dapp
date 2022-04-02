@@ -9,9 +9,10 @@ import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
+import { IDeal } from "entities/IDealTypes";
 
 interface IDiscussionListItem extends IDealDiscussion {
-  lastModified: string
+  modifiedAt: string
 }
 
 @autoinject
@@ -114,10 +115,10 @@ export class DiscussionsService {
    */
   public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
-    for (const [, discussion] of clauseDiscussions.entries()) {
-      this.discussions[discussion.discussionId] = {
+    for (const [id, discussion] of clauseDiscussions.entries()) {
+      this.discussions[id] = {
         ...discussion,
-        lastModified: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
+        modifiedAt: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
     }
   }
@@ -134,13 +135,11 @@ export class DiscussionsService {
    * @returns Promise<string> discussionId
    */
   public async createDiscussion(
-    dealId: string,
+    deal: IDeal,
     args: {
       discussionId: string | null,
       topic: string,
       isPublic: boolean,
-      representatives?: Array<{address: string}>,
-      admins?: Array<string>,
     }): Promise<string> {
 
     const createdBy = {
@@ -167,28 +166,22 @@ export class DiscussionsService {
       );
 
       const discussion = {
-        dealId,
         version: "0.0.1",
-        discussionId: args.discussionId,
         topic: args.topic,
         createdBy,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
-        lastModified: "< 1 min",
         replies: 0,
-        representatives: [...new Set([...args.representatives])],
-        admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
         key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 
-      const dealData = this.dealService.deals.get(dealId);
-      await dealData.addClauseDiscussion(
+      await deal.addClauseDiscussion(
         args.discussionId,
         discussion,
       );
-      this.discussions[discussion.discussionId] = discussion;
+      this.discussions[args.discussionId] = discussion;
 
-      return discussion.discussionId;
+      return args.discussionId;
     }
   }
 
@@ -203,31 +196,6 @@ export class DiscussionsService {
       bufView[i] = text.charCodeAt(i);
     }
     return buf;
-  }
-
-  /**
-   * Update the reply count and the last activity date of a discussion
-   * @param discussionId string
-   * @param timestamp Date
-   * @returns void
-   */
-  public async updateDiscussionListStatus(discussionId: string, timestamp: Date, replies: number): Promise<void> {
-    if (
-      this.discussions[discussionId]?.replies === replies &&
-      new Date(this.discussions[discussionId].modifiedAt).getTime() <= timestamp?.getTime()
-    ) return;
-
-    this.discussions[discussionId].replies = replies;
-    this.discussions[discussionId].modifiedAt = timestamp.toISOString();
-
-    const dealDiscussion = this.discussions[discussionId];
-
-    delete dealDiscussion.lastModified;
-
-    this.dealService.deals.get(this.discussions[discussionId].dealId).addClauseDiscussion(
-      discussionId,
-      dealDiscussion,
-    );
   }
 
   public async importKey(discussionId: string): Promise<CryptoKey> {
@@ -324,7 +292,6 @@ export class DiscussionsService {
 
       latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
 
-      this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp), commentsThread.length);
       return [...await commentsThread];
     } catch (error) {
       this.consoleLogService.logMessage("loadDiscussionComments: " + error.message);
