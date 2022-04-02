@@ -13,7 +13,7 @@ export class E2EDashboard {
   }
 }
 
-Given("I'm viewing (the/an) Open Proposal", () => {
+Given("I'm viewing the/an Open Proposal", () => {
   cy.then(() => {
     if (E2eDeals.currentDealId) {
       const url = `deal/${E2eDeals.currentDealId}`;
