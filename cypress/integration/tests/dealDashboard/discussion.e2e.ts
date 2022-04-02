@@ -129,7 +129,7 @@ export class E2eDiscussion {
 }
 
 Given("the Open Proposal has Discussions", () => {
-  E2eDealsApi.getOpenProposals({isLead: true}).then(deals => {
+  E2eDealsApi.getOpenProposals({isLead: E2eWallet.isLead}).then(deals => {
     const dealWithDiscussions = deals.find(deal => Object.keys(deal.clauseDiscussions ?? {}).length > 0);
     if (dealWithDiscussions === undefined) {
       throw new Error("[TEST] Did not find any Open Proposals with discussions.");
