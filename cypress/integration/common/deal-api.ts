@@ -4,7 +4,7 @@ import { FirestoreService } from "../../../src/services/FirestoreService";
 import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
 import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
-import { MINIMUM_OPEN_PROPOSAL, MINIMUM_PRIVATE_OPEN_PROPOSAL, PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 
 interface IDealOptions {
   address?: string;
@@ -103,7 +103,7 @@ export class E2eDealsApi {
           return deal.registrationData.isPrivate;
         });
 
-        return this.getOrCreateDeal(privateDeals, MINIMUM_PRIVATE_OPEN_PROPOSAL);
+        return this.getOrCreateDeal(privateDeals, PRIVATE_PARTNERED_DEAL);
       });
     });
   }
@@ -177,7 +177,9 @@ export class E2eDealsApi {
           return [createdDeal];
         });
       } else {
-        return existingDeals;
+        return cy.then(() => {
+          return existingDeals;
+        });
       }
     });
   }

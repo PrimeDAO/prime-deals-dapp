@@ -1,5 +1,5 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { MINIMUM_OPEN_PROPOSAL, MINIMUM_PRIVATE_OPEN_PROPOSAL, PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
@@ -14,11 +14,21 @@ export class E2EDashboard {
 }
 
 Given("I'm viewing (the/an) Open Proposal", () => {
-  E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
-    const url = `deal/${dealId}`;
-    cy.visit(url);
+  cy.then(() => {
+    if (E2eDeals.currentDealId) {
+      const url = `deal/${E2eDeals.currentDealId}`;
+      cy.visit(url);
 
-    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      return;
+    }
+
+    E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
+      const url = `deal/${dealId}`;
+      cy.visit(url);
+
+      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+    });
   });
 });
 
@@ -51,8 +61,16 @@ Given("I edit the Open Proposal", () => {
   E2EDashboard.editDeal();
 });
 
-Given("I create a Private Open Proposal", () => {
-  E2eDealsApi.createDeal(MINIMUM_PRIVATE_OPEN_PROPOSAL);
+Given("I create a Private Partnered Deal", () => {
+  E2eDealsApi.createDeal(PRIVATE_PARTNERED_DEAL);
+});
+
+Given("I create an Open Proposal", () => {
+  E2eDealsApi.createDeal(MINIMUM_OPEN_PROPOSAL);
+});
+
+Given("I create a Partnered Deal", () => {
+  E2eDealsApi.createDeal(PARTNERED_DEAL);
 });
 
 Then("I can edit the Open Proposal", () => {
