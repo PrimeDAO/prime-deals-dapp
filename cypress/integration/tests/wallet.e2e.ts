@@ -2,6 +2,10 @@ import "reflect-metadata";
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { E2E_ADDRESSES } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
+import { E2eNavigation } from "../common/navigate";
+
+const UserTypes = ["Anonymous", "Connected Public"] as const;
+export type UserType = typeof UserTypes[number]
 
 export class E2eWallet {
   public static _currentWalletAddress = "";
@@ -19,6 +23,8 @@ export class E2eWallet {
   public static set currentWalletAddress(newAddress) {
     this._currentWalletAddress = newAddress;
   }
+
+  public static isLead = true;
 
   public static getSmallHexAddress() {
     return Utils.smallHexString(E2eWallet.currentWalletAddress);
@@ -69,24 +75,24 @@ export class E2eNavbar {
   }
 }
 
-Given("I'm a Connected Public user", () => {
-  cy.get("[data-test='connectButton']").then(connectButton => {
-    // 1. Check if already connected
-    const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
-    if (isConnected) {
-      E2eNavbar.disconnectWallet();
-    } else {
-      E2eNavbar.connectToWallet(E2E_ADDRESSES.ConnectedPublicUser);
-    }
-  });
-});
-
 Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
-Given("I'm an Anonymous user", () => {
-  E2eWallet.currentWalletAddress = undefined;
+Given(/^I'm an? "(.*)" user$/, (userType: UserType) => {
+  switch (userType) {
+    case "Anonymous": {
+      givenImAnAnonymousUser();
+      break;
+    }
+    case "Connected Public": {
+      givenImAConnectedPublicUser();
+      break;
+    }
+    default: {
+      throw new Error("[TEST] No such user type. Available: " + UserTypes.join(", "));
+    }
+  }
 });
 
 Given("I'm connected to my wallet", () => {
@@ -107,3 +113,34 @@ Given("I'm not connected to a wallet", () => {
   E2eNavbar.getConnectWalletButton().should("be.visible");
   E2eNavbar.getUserAddress().should("not.exist");
 });
+
+function givenImAnAnonymousUser() {
+  E2eNavigation.hasAppLoaded().then(hasLoaded => {
+    E2eWallet.currentWalletAddress = undefined;
+    E2eWallet.isLead = false;
+
+    if (hasLoaded) {
+      E2eNavbar.getConnectWalletButton().should("be.visible");
+      E2eNavbar.getUserAddress().should("not.exist");
+    }
+  });
+}
+
+function givenImAConnectedPublicUser() {
+  E2eNavigation.hasAppLoaded().then(hasLoaded => {
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ConnectedPublicUser;
+    E2eWallet.isLead = false;
+
+    if (hasLoaded) {
+      // If app loaded, then try to connect
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        } else {
+          E2eNavbar.connectToWallet(E2E_ADDRESSES.ConnectedPublicUser);
+        }
+      });
+    }
+  });
+}

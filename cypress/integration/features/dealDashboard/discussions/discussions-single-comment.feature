@@ -1,6 +1,7 @@
 Feature: Discussions - Single Comment
   Background:
     Given I'm the Proposal Lead of an Open Proposal
+    And the Open Proposal has Discussions
     And I'm viewing the Open Proposal
     And I choose a single Topic with replies
 
@@ -9,15 +10,13 @@ Feature: Discussions - Single Comment
   # Scenario: Single comments - Create (disabled)
   # Scenario: Single comments - Activity
 
-  # @todo uncomment once have e2e firebase seed
-  # Scenario: Single comments - Like
-  #   When I view a single Comment
-  #   Then I can like that Comment
+  Scenario: Single comments - Like
+    When I view a single Comment
+    Then I can like that Comment
 
-  # @todo uncomment once have e2e firebase seed
-  # Scenario: Single comments - Like - Cannot like own comment
-  #   When I view my own Comment
-  #   Then I cannot like my own Comment
+  Scenario: Single comments - Like - Cannot like own comment
+    When I view my own Comment
+    Then I cannot like my own Comment
 
   # Scenario: Single comments - Like - Disables other buttons
   # Scenario: Single comments - Dislike
@@ -27,12 +26,11 @@ Feature: Discussions - Single Comment
   # Scenario: Single comments - Delete - Replied to
   # Scenario: Single comments - Delete - Only mine
 
-  # @todo uncomment once have e2e firebase seed
-  # Scenario: Single comments - Reply
-  #   When I view a single Comment
-  #   Then I can reply to that Comment
-  #   And I can see who I am replying to
-  #   And I can cancel replying that Comment again
+  Scenario: Single comments - Reply
+    When I view a single Comment
+    Then I can reply to that Comment
+    And I can see who I am replying to
+    And I can cancel replying that Comment again
 
   # TODO: This scenario is covered by "Scenario: Single comments - Reply"
   #   But should have it's own test.

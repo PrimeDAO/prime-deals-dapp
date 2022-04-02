@@ -1,7 +1,7 @@
 Feature: Create Open Proposal
   Background:
     Given I navigate to the "Open proposal" "Proposal" stage
-    And I'm a Connected Public user
+    And I'm a "Connected Public" user
 
   @user_journey
   Scenario: Create Open Proposal

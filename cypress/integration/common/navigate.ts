@@ -16,6 +16,13 @@ export class E2eNavigation {
     const homePaths = ["/", "/home"];
     return homePaths.includes(pathName);
   }
+
+  public static hasAppLoaded() {
+    return cy.window().then((window) => {
+      const { pathname } = window.location;
+      return pathname !== "blank"; // Cypress returns "blank" if app not loaded yet
+    });
+  }
 }
 
 Given("I navigate to the Deals home page", () => {

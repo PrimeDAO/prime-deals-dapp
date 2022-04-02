@@ -1,5 +1,7 @@
-import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { E2eDealsApi } from "../../common/deal-api";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
+import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
 
 interface ICommentOptions {
@@ -125,6 +127,18 @@ export class E2eDiscussion {
       .find("[data-test='comment-input-button'] button");
   }
 }
+
+Given("the Open Proposal has Discussions", () => {
+  E2eDealsApi.getOpenProposals({isLead: E2eWallet.isLead}).then(deals => {
+    const dealWithDiscussions = deals.find(deal => Object.keys(deal.clauseDiscussions ?? {}).length > 0);
+    if (dealWithDiscussions === undefined) {
+      throw new Error("[TEST] Did not find any Open Proposals with discussions.");
+    }
+
+    E2eDeals.currentDeal = dealWithDiscussions.registrationData;
+    E2eDeals.currentDealId = dealWithDiscussions.id;
+  });
+});
 
 When("I choose a single Topic without replies", () => {
   E2eDiscussion
