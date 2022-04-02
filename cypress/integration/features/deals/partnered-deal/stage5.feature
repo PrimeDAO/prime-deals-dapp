@@ -1,5 +1,6 @@
 Feature: "Token Details" stage (Stage 5)
   Background:
+    Given I'm the Proposal Lead of a Partnered Deal
     Given I navigate to the "Partnered Deal" "Token Details" stage
 
   #####################################################

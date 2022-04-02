@@ -2,6 +2,9 @@ import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/
 
 Given("I go to the All Deals page", () => {
   cy.visit("/deals");
+
+  cy.get("[data-test='deals-loading']").should("be.visible");
+  cy.get("[data-test='deals-loading']", {timeout: 10000}).should("not.exist");
 });
 
 Then("I can see Initiate A Deal button", () => {

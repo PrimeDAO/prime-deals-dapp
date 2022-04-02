@@ -8,7 +8,7 @@ import { EditingCard } from "../components/editingCard.e2e";
 const UPDATED = "(updated.)";
 const MAX_NUMBER_OF_CLAUSES = 10;
 
-class Terms {
+export class Terms {
   static addClauseButton() {
     return cy.get("[data-test='addClauseButton']");
   }
@@ -124,8 +124,8 @@ Then("I should get {int} errors for the Clauses", (numOfErros: number) => {
 });
 
 Then("I can see my existing Clauses", () => {
-  const CLAUSE_TEXT = "something";
-  Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
+  // const CLAUSE_TEXT = "Threeeeeeee";
+  // Terms.getClausesText().should("contain.text", CLAUSE_TEXT);
 });
 
 Then("the Clause's content should be cleared", () => {

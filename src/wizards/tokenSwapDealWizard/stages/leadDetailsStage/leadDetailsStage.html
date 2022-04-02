@@ -17,7 +17,7 @@
           class="wizardFormInput"
           label="Proposal Lead Address"
           input-reference.bind="input"
-          data-test="proposal-proposal-lead-address-field">
+          data-test="proposal-lead-address-field">
           <pinput-text
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             placeholder="0x..."
@@ -35,7 +35,7 @@
           Make Me the Proposal Lead
         </pbutton>
 
-        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="proposal-contact-email-field"
+        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="contact-email-field"
           label="Contact E-mail (optional)">
           <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>

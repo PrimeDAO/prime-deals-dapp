@@ -7,6 +7,7 @@ import "./ppopup-notification.scss";
 @customElement("ppopup-notification")
 export class PPopupNotification {
   @bindable.number type: EventMessageType;
+  @bindable title: string;
   @bindable message: string;
   @bindable submessage: string;
   @bindable.booleanAttr paused = false;
@@ -102,8 +103,9 @@ export class PPopupNotification {
     }
   }
 
-  @computedFrom("type")
-  private get title(): string {
+  @computedFrom("type", "title")
+  private get titleText(): string {
+    if (this.title) return this.title;
     switch (this.type) {
       case EventMessageType.Failure:
       case EventMessageType.Exception:

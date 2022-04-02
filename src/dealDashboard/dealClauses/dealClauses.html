@@ -1,8 +1,7 @@
-<template>
+<template data-test="deal-clauses">
   <header>
     <h2 class="subtitle heading heading3">Deal Clauses</h2>
   </header>
-  ${JSON.stringify(discussionsService.discussions)}
   <ol>
     <li
       class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id).discussionId ? 'active' : ''}"
@@ -10,6 +9,7 @@
       <span class="marker">${$index + 1}</span>
       <pre class="body">${clause.text}</pre>
       <span
+        data-test="add-or-read-button"
         class="button"
         click.delegate="addOrReadDiscussion(clause.text, clause.id)"
         if.to-view="authorized">

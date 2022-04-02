@@ -20,6 +20,7 @@ export class PopupNotifications {
   private type: EventMessageType;
   private message: string;
   private submessage: string;
+  private title: string;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -65,6 +66,7 @@ export class PopupNotifications {
     this.resolveToClose = resolve;
     this.showing = true;
     this.countdownRunning = true;
+    this.title = config.title;
   }
 
   public dispose(): void {
@@ -133,7 +135,7 @@ export class PopupNotifications {
     this.queueEventConfig({
       message: `${message ? `${message}: ` : ""}${ex?.reason ?? ex?.message ?? ex}`,
       submessage: null,
-      type: EventMessageType.Exception });
+      type: EventMessageType.Exception});
   }
 
   private handleFailure(config: EventConfig | string): void {
@@ -141,12 +143,11 @@ export class PopupNotifications {
     if ((config as any).originatingUiElement) {
       return;
     }
-
     const bannerConfig = {
-      message: (typeof config === "string")
-        ? config as string : config.message,
+      message: (typeof config === "string") ? config as string : config.message,
       submessage: null,
       type: EventMessageType.Failure,
+      title: !(typeof config === "string") && config.title,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -157,12 +158,11 @@ export class PopupNotifications {
     if ((config as any).originatingUiElement) {
       return;
     }
-
     const bannerConfig = {
-      message: (typeof config === "string")
-        ? config as string : config.message,
+      message: (typeof config === "string") ? config as string : config.message,
       submessage: null,
       type: EventMessageType.Warning,
+      title: !(typeof config === "string") && config.title,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -173,12 +173,11 @@ export class PopupNotifications {
     if ((config as any).originatingUiElement) {
       return;
     }
-
     const bannerConfig = {
-      message: (typeof config === "string")
-        ? config as string : config.message,
+      message: (typeof config === "string") ? config as string : config.message,
       type: EventMessageType.Failure,
       submessage: null,
+      title: !(typeof config === "string") && config.title,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -191,10 +190,10 @@ export class PopupNotifications {
     }
 
     const bannerConfig = {
-      message: (typeof config === "string")
-        ? config as string : config.message,
+      message: (typeof config === "string") ? config as string : config.message,
       type: EventMessageType.Info,
       submessage: null,
+      title: !(typeof config === "string") && config.title,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -210,4 +209,5 @@ interface IBannerConfig {
   type: EventMessageType;
   message: string;
   submessage?: string;
+  title?: string;
 }
