@@ -146,16 +146,16 @@ export class Funding {
   };
 
   /**
-   * Initiates the token swap. Called by the "Execute Token Swap" button on the UI
-   *  - pops up a modal to verify the user wants to initiate the swap
+   * Executes the token swap. Called by the "Execute Token Swap" button on the UI
+   *  - pops up a modal to verify the user wants to execute the swap
    *  - does nothing if they hit cancel
-   *  - if they hit "Initiate" it will execute and show the congrats modal
+   *  - if they hit "execute" it will execute and show the congrats modal
    */
-  public async initiateSwap(): Promise<void> {
+  public async executeSwap(): Promise<void> {
     const swapModal: IAlertModel = {
-      header: "Initiate token swap",
+      header: "Execute token swap",
       message:
-        `<p>You are about to initiate token swapping between the following two DAOs. Do you want to initiate these swaps?</p>
+        `<p>You are about to execute the token swap between the following two DAOs. Do you want to execute the swap?</p>
         <div class='modal-content'>${this.getDaoHtmlForSwap(this.deal.daoRepresentedByCurrentAccount)}${this.getDaoHtmlForSwap(this.deal.daoOtherThanRepresentedByCurrentAccount)}</div>`,
       buttonTextPrimary: "Execute Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
       buttonTextSecondary: "Cancel",
@@ -164,18 +164,18 @@ export class Funding {
         gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
       },
     };
-    // show a modal confirming the user wants to initiate the swap
+    // show a modal confirming the user wants to execute the swap
     const dialogResult = await this.alertService.showAlert(swapModal);
     if (!dialogResult.wasCancelled) {
-      //the user said they wanted to initiate the swap so call the swap contract
+      //the user said they wanted to execute the swap so call the swap contract
       //TODO wire up the execute swap method to the contract
       this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
 
       //if the swap succeeded, show the 'congrats' modal
-      //TODO add the if statement if the token swap was successfully initiated then show the congrats popup
+      //TODO add the if statement if the token swap was successfully executed then show the congrats popup
       const congratulatePopupModel: IAlertModel = {
         header: "Congratulations!",
-        message: "<p class='excitement'>You have successfully initiated the token swaps!</p>",
+        message: "<p class='excitement'>You have successfully executed the token swap!</p>",
         confetti: true,
         buttonTextPrimary: "Close",
         className: "congratulatePopup",

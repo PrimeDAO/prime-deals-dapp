@@ -45,7 +45,7 @@
                 be funded and executed within ${fundingDaysLeft} days.
               </span>
               <span if.to-view="!fundingFailed && deal.isTargetReached">
-                All parties have deposited their funds. Anyone can now initiate the swap.
+                All parties have deposited their funds. Anyone can now execute the swap.
               </span>
             </p>
             <div class="links">
@@ -100,8 +100,8 @@
       </div>
     </section>
     <swap-status deal.bind="deal">
-      <div class="section initiate-swap" if.to-view="deal.isTargetReached">
-        <pbutton type="primary" click.delegate="initiateSwap()">
+      <div class="section execute-swap" if.to-view="deal.isTargetReached">
+        <pbutton type="primary" click.delegate="executeSwap()">
           Execute swap <i class="fas">&#xf021;</i>
         </pbutton>
       </div>
