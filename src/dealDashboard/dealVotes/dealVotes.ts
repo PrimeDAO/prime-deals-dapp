@@ -6,7 +6,6 @@ import { Router } from "aurelia-router";
 import { EthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
-import { EventAggregator } from "aurelia-event-aggregator";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
 
 @autoinject
@@ -51,7 +50,6 @@ export class DealVotes {
 
   constructor(
     private router: Router,
-    private eventAggregator: EventAggregator,
     public ethereumService: EthereumService,
     public consoleLogService: ConsoleLogService,
     private dialogService: DialogService,
@@ -95,7 +93,7 @@ export class DealVotes {
 
   async declineDeal() {
     this.declining = true;
-    await this.vote(true).finally(() => this.declining = false);
+    await this.vote(false).finally(() => this.declining = false);
   }
 
   private async vote(value: boolean) {
