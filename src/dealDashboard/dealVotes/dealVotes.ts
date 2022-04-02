@@ -51,9 +51,9 @@ export class DealVotes {
   constructor(
     private router: Router,
     public ethereumService: EthereumService,
-    public consoleLogService: ConsoleLogService,
     private dialogService: DialogService,
     private eventAggregator: EventAggregator,
+    private consoleLogService: ConsoleLogService,
   ) {
   }
 
