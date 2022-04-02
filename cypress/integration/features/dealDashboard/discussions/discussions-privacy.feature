@@ -1,4 +1,4 @@
-Feature: Discussions - Wallet
+Feature: Discussions - Privacy
   Background:
     Given I'm the Proposal Lead of an Open Proposal
     And I'm viewing a private Deal
