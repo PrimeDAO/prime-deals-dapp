@@ -51,6 +51,24 @@ html {
       }
     }
 
+    /**
+      * suppress browser style changes associated with autofill
+      */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: $White;
+      transition: background-color 100s ease-in-out 0s;
+      -webkit-box-shadow: 0 0 0px 3.7em $BG01 inset;
+      box-shadow: 0 0 0px 3.7em $BG01 inset;
+      caret-color: $White;
+    }
+    
+    // when hovering over dropdown items
+    input:-webkit-autofill::first-line {
+      font-size: 16px;
+    }
+  
     .clearInput {
       background-color: transparent;
       color: $BG01;
