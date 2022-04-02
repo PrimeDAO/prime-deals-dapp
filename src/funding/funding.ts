@@ -157,7 +157,7 @@ export class Funding {
       message:
         `<p>You are about to initiate token swapping between the following two DAOs. Do you want to initiate these swaps?</p>
         <div class='modal-content'>${this.getDaoHtmlForSwap(this.deal.daoRepresentedByCurrentAccount)}${this.getDaoHtmlForSwap(this.deal.daoOtherThanRepresentedByCurrentAccount)}</div>`,
-      buttonTextPrimary: "Initiate Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
+      buttonTextPrimary: "Execute Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
       buttonTextSecondary: "Cancel",
       buttons: ShowButtonsEnum.Both,
       data: {
@@ -168,7 +168,7 @@ export class Funding {
     const dialogResult = await this.alertService.showAlert(swapModal);
     if (!dialogResult.wasCancelled) {
       //the user said they wanted to initiate the swap so call the swap contract
-      //TODO wire up the initiate swap method to the contract
+      //TODO wire up the execute swap method to the contract
       this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
 
       //if the swap succeeded, show the 'congrats' modal
