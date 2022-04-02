@@ -5,6 +5,7 @@ import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
 import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
 import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { E2eDeals } from "../tests/deals/deals.e2e";
 
 interface IDealOptions {
   address?: string;
@@ -165,6 +166,9 @@ export class E2eDealsApi {
         await firestoreDealsService.ensureAuthenticationIsSynced();
 
         const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
+
+        E2eDeals.currentDeal = createdDeal.registrationData;
+
         return createdDeal;
       });
     });
