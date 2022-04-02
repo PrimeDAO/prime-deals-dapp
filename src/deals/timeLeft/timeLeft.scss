@@ -3,8 +3,6 @@
 
 $completedColor: $Teal;
 $completedBackground: $Teal-BG;
-$swappingColor: $Magenta;
-$swappingBackground: $Magenta-BG;
 $negotiatingColor: $Green;
 $negotiatingBackground: $Green-BG;
 $failedColor: $Grey;
@@ -48,10 +46,6 @@ $cancelledBackground: $Grey-BG;
       color: $activeColor;
     }
 
-    &.swapping {
-      color: $swappingColor;
-    }
-
     &.negotiating {
       color: $negotiatingColor;
     }
@@ -87,10 +81,6 @@ $cancelledBackground: $Grey-BG;
 
       &.active {
         background-color: $activeBackground;
-      }
-
-      &.swapping {
-        background-color: $swappingBackground;
       }
 
       &.negotiating {

@@ -271,18 +271,6 @@ export class DealTokenSwap implements IDeal {
     return null;
   }
 
-  @computedFrom("isSwapping")
-  public get isClaiming(): boolean {
-    return this.isSwapping;
-  }
-
-  @computedFrom("isExecuted")
-  public get isSwapping(): boolean {
-    return this.isExecuted;
-  }
-
-  // TODO need to code whether there is anything left to claim
-
   /**
    * same as isClaiming/isExecuted, by bizdev definition
    */
@@ -290,6 +278,13 @@ export class DealTokenSwap implements IDeal {
   public get isCompleted(): boolean {
     return this.isClaiming;
   }
+
+  @computedFrom("isExecuted")
+  public get isClaiming(): boolean {
+    return this.isExecuted;
+  }
+
+  // TODO need to code whether there is anything left to claim
 
   /**
    * withdrawn or rejected
@@ -377,15 +372,15 @@ export class DealTokenSwap implements IDeal {
     return this.isApproved && !this.isUserProposalLead;
   }
 
-  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isClaiming")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
-    else if (this.isCompleted) { return DealStatus.completed; }
     else if (this.fundingPeriodHasExpired) { return DealStatus.failed; }
     else if (this.isCancelled) { return DealStatus.cancelled; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
-    else if (this.isSwapping) { return DealStatus.swapping; }
+    else if (this.isCompleted) { return DealStatus.completed; }
+    // else if (this.isClaiming) { return DealStatus.claiming; }
     // else if (this.isTargetReached) { return DealStatus.targetReached; }
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }

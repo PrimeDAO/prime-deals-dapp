@@ -12,8 +12,7 @@
           class="${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(true)"
-        >
+          click.delegate="deal.vote(true)">
           <i class="fas fa-check-circle"></i>
           ${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'Accepted': 'Accept' }
         </pbutton>
@@ -21,8 +20,7 @@
           class="${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(false)"
-        >
+          click.delegate="deal.vote(false)">
           <i class="fas fa-times-circle"></i>
           ${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'Declined': 'Decline' }
         </pbutton>
