@@ -6,6 +6,7 @@ import { EthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { EventAggregator } from "aurelia-event-aggregator";
+import { ConsoleLogService } from "../../services/ConsoleLogService";
 
 @autoinject
 export class DealVotes {
@@ -51,6 +52,7 @@ export class DealVotes {
     private router: Router,
     private eventAggregator: EventAggregator,
     public ethereumService: EthereumService,
+    public consoleLogService: ConsoleLogService,
     private dialogService: DialogService,
   ) {
   }
@@ -95,7 +97,7 @@ export class DealVotes {
       await this.deal.vote(value);
       this.eventAggregator.publish("showMessage", "Your vote has been successfully submitted");
     } catch (error) {
-      console.log("Voting error", error);
+      this.consoleLogService.logMessage(`Voting error ${error}`, "error");
       this.eventAggregator.publish("handleFailure", "Sorry, an error occurred submitting your vote");
     }
   }

@@ -17,7 +17,7 @@
           <span class="icon is-loading" if.bind="accepting">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
-          <i class="fas fa-check-circle" if.bind="!accepting"></i>
+          <i class="fas fa-check-circle" else></i>
           ${deal.representativeVote() === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
@@ -29,7 +29,7 @@
           <span class="icon is-loading" if.bind="declining">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
-          <i class="fas fa-times-circle" if.bind="!declining"></i>
+          <i class="fas fa-times-circle" else></i>
           ${deal.representativeVote() === false ? 'Declined' : 'Decline' }
         </pbutton>
       </pbutton-group>
