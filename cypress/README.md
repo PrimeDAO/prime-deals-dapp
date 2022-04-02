@@ -1,4 +1,6 @@
-# *WIP*
+*Quick links: --- [Debugging](#debugging) --- [Standard dev flow](#standard-dev-flow)*
+
+---
 
 ## Concepts:
 - [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
@@ -29,9 +31,20 @@ Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E
 ## Development
 
 ### Commands
-`npm run e2e`
-- Open a Cypress GUI, where you can develop interactively
-  - Note the "Cypress Studio" feature to generate tests based on your interactions
+
+#### Standard dev flow
+1. Make sure to run the e2e seed
+   `npm run firebase-e2e`
+   - Start application with e2e Firebase seed
+
+2. Develop using the Cypress GUI
+   `npm run e2e`
+   - Open a Cypress GUI, where you can develop interactively
+     - Note the "Cypress Studio" feature to generate tests based on your interactions
+
+#### Others
+`npm run firebase-update-seed-data:e2e`
+- Extract Firebase seed of current application state
 
 `npm run e2e-run`
 - Run all cypress tests in headless mode
