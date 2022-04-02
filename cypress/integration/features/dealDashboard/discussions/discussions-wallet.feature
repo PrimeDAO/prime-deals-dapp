@@ -1,6 +1,6 @@
 Feature: Discussions - Wallet
   Background:
-    Given I'm an Anonymous user
+    Given I'm an "Anonymous" user
     And I'm viewing an Open Proposal
 
   @focus
