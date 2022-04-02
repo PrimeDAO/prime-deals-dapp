@@ -2,7 +2,7 @@
 
 ---
 
-## Concepts:
+# Concepts:
 - [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
 - [BDD](https://cucumber.io/docs/bdd/)
   - [Gherkin][gherkin]
@@ -11,7 +11,7 @@
       - [the fork we are using](https://github.com/badeball/cypress-cucumber-preprocessor)
 - [Page Objects](https://applitools.com/blog/page-objects-app-actions-cypress/)
 
-## Setup
+# Setup
 ```
 + --- cypress/
 |     + --- fixtures/
@@ -28,7 +28,8 @@ Check out few thoughts on BDD in [Notion](https://www.notion.so/primedao/Why-BDD
 ### (2) Cypress
 Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E-aed92af51bf74634b0d89027fe0d7817)
 
-## Development
+
+# Development
 
 ### Commands
 
@@ -48,6 +49,8 @@ Check out few thoughts on Cypress in [Notion](https://www.notion.so/primedao/E2E
 
 `npm run e2e-run`
 - Run all cypress tests in headless mode
+
+*[[Back to top] 🔝](#concepts)*
 
 ### Flow
 1. Single out a Specification, that you want to cover with automated tests
@@ -104,6 +107,8 @@ The main idea is to use a Single State Object, that saves information a user wou
 - The deal title, that was just created
 - More complex: 2 users - 1 Proposal Lead - 1 Representative
 
+*[[Back to top] 🔝](#concepts)*
+
 #### Usage
 Our Single State Objects are static classes like:
 - E2eWallet
@@ -147,3 +152,5 @@ https://docs.cypress.io/guides/references/configuration#cypress-json
 
 [gherkin]: (https://cucumber.io/docs/gherkin/)
 [app_action]: (https://www.cypress.io/blog/2019/01/03/stop-using-page-objects-and-start-using-app-actions/)
+
+*[[Back to top] 🔝](#concepts)*
