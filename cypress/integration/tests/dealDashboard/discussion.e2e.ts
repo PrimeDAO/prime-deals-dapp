@@ -223,6 +223,16 @@ Then("I cannot like my own Comment", () => {
   E2eDiscussion.getLikeAction({isAuthor: true}).should("not.exist");
 });
 
+Then("I should be informed of no discussions", () => {
+  cy.contains("discussions-list", "Discuss").should("be.visible");
+  cy.contains("section", "None of the clauses are currently being discussed.").should("be.visible");
+});
+
+Then("I can create a new Discussion", () => {
+  cy.get("[data-test='add-or-read-button']").first().click();
+  cy.log("Bug: no discussion created");
+});
+
 And("I cannot reply to a Comment", () => {
   cy.log("todo");
 });

@@ -1,5 +1,5 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { DealDataBuilder, MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
@@ -66,7 +66,8 @@ Given("I create a Private Partnered Deal", () => {
 });
 
 Given("I create an Open Proposal", () => {
-  E2eDealsApi.createDeal(MINIMUM_OPEN_PROPOSAL);
+  const deal = DealDataBuilder.create().withProposalLeadData({address: E2eWallet.currentWalletAddress}).deal;
+  E2eDealsApi.createDeal(deal);
 });
 
 Given("I create a Partnered Deal", () => {

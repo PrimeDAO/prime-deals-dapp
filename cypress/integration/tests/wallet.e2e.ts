@@ -8,7 +8,7 @@ const UserTypes = ["Anonymous", "Connected Public"] as const;
 export type UserType = typeof UserTypes[number]
 
 export class E2eWallet {
-  public static _currentWalletAddress = "";
+  private static _currentWalletAddress = "";
   public static get currentWalletAddress() {
     if (this._currentWalletAddress === "") {
       const errorMessage = "[Test] Wallet address expected. Please use a step, that specifies an address.\n\n" +
@@ -79,6 +79,10 @@ Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
+Given("I'm a Connected Public user", () => {
+  givenImAConnectedPublicUser();
+});
+
 Given(/^I'm an? "(.*)" user$/, (userType: UserType) => {
   switch (userType) {
     case "Anonymous": {
@@ -128,7 +132,7 @@ function givenImAnAnonymousUser() {
 
 function givenImAConnectedPublicUser() {
   E2eNavigation.hasAppLoaded().then(hasLoaded => {
-    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ConnectedPublicUser;
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
     E2eWallet.isLead = false;
 
     if (hasLoaded) {
