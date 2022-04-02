@@ -5,91 +5,71 @@
     <div class="content">
       <h1 class="title heading heading3 gradient">Vote</h1>
       <p class="bodySmallText">
-        You’re eligible to vote. If you choose not to vote, you will automatically reject the deal.
+        ${statusText.voteText}
       </p>
-      <pbutton-group>
-        <pbutton class="acceptButtonActive" full-width type="formfield">
-          <i class="fas fa-check-circle"></i>
-          Accept
+      <pbutton-group if.bind="deal.isRepresentativeUser">
+        <pbutton
+          class="${deal.representativeVote() === true ? 'acceptButtonActive' : ''}"
+          full-width
+          type="formfield"
+          click.delegate="acceptDeal()"
+        >
+          <span class="icon is-loading" if.bind="accepting">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-check-circle" else></i>
+          ${deal.representativeVote() === true ? 'Accepted' : 'Accept' }
         </pbutton>
-        <pbutton class="declineButtonActive" full-width type="formfield">
-          <i class="fas fa-times-circle"></i>
-          Decline
+        <pbutton
+          class="${deal.representativeVote() === false ? 'declineButtonActive' : ''}"
+          full-width
+          type="formfield"
+          click.delegate="declineDeal()"
+        >
+          <span class="icon is-loading" if.bind="declining">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-times-circle" else></i>
+          ${deal.representativeVote() === false ? 'Declined' : 'Decline' }
         </pbutton>
       </pbutton-group>
 
-      <div class="negotiate">
-        <pbutton type="tertiary">
+      <div class="negotiate" if.bind="ethereumService.defaultAccountAddress">
+        <pbutton type="tertiary" click.delegate="goToDiscussions()">
           <img src="/static/comment.svg" />
           Negotiate
         </pbutton>
       </div>
 
-      <p class="bodySmallText votesSubtitle representativesVotesSubtitle">Votes (5/10)</p>
-      <deal-representatives-votes dao.bind="deal.primaryDao"></deal-representatives-votes>
-      <deal-representatives-votes dao.bind="deal.partnerDao"></deal-representatives-votes>
+      <p class="bodySmallText votesSubtitle representativesVotesSubtitle">
+        Votes (${deal.submittedVotes.length}/${deal.allRepresentatives.length})
+      </p>
+      <deal-representatives-votes deal.bind="deal" dao.bind="deal.primaryDao"></deal-representatives-votes>
+      <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao"></deal-representatives-votes>
 
-      <p class="bodySmallText votesSubtitle">Deal status</p>
-      <div class="orangeColor">Voting in progress.</div>
+      <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
+      <div class="orangeColor">${statusText.statusText}</div>
     </div>
 
-    <div class="funding">
-      <pbutton class="fundButton" click.delegate="fund()"
-        if.bind="ethereumService.defaultAccountAddress" type="primary">
+    <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead">
+      <pbutton class="fundButton" click.delegate="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>
-      <pbutton click.delegate="ethereumService.ensureConnected()" if.bind="!ethereumService.defaultAccountAddress"
+    </div>
+
+    <div class="funding" if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)">
+      <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
+        Go to funding
+        <i class="fas fa-arrow-right"></i>
+      </pbutton>
+    </div>
+
+    <div class="funding" if.bind="deal.majorityHasVoted && !ethereumService.defaultAccountAddress">
+      <pbutton click.delegate="ethereumService.ensureConnected()"
         type="primary">
         Connect Wallet
       </pbutton>
     </div>
   </pcard>
-
-  <div ref="fundingModal" style="display: none;">
-    <p>The following deal will take place: </p>
-
-    <div class="fundInfo">
-
-      <div class="daoInfo">
-        <div class="daoLogoAndName">
-          <img class="daoLogo" src.bind="deal.registrationData.primaryDAO.logoURI">
-          ${deal.registrationData.primaryDAO.name}
-        </div>
-        <div class="tokenDetails">
-          <span repeat.for="tokenDetails of deal.registrationData.primaryDAO.tokens">
-            <formatted-number thousands-separated
-              value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
-            <b>${tokenDetails.symbol}</b>
-          </span>
-        </div>
-      </div>
-
-      <i class="fas fa-exchange-alt"></i>
-
-      <div class="daoInfo">
-        <div class="daoLogoAndName">
-          <img class="daoLogo" src.bind="deal.registrationData.partnerDAO.logoURI">
-          ${deal.registrationData.partnerDAO.name}
-        </div>
-        <div class="tokenDetails">
-          <span repeat.for="tokenDetails of deal.registrationData.partnerDAO.tokens">
-            <formatted-number thousands-separated
-              value.to-view="tokenDetails.amount | ethwei:tokeDetails.decimals"></formatted-number>
-            <b>${tokenDetails.symbol}</b>
-          </span>
-        </div>
-      </div>
-
-    </div>
-
-
-    <div class="orangeColor">
-      Note: After you start funding, the deal cannot be edited. You can edit the deal here. Editing the deal will reset
-      voting status. You are responsible for informing the deal participants of this change, and for getting them to cast
-      their votes again.
-    </div>
-    </temp>
-  </div>
-
 </template>

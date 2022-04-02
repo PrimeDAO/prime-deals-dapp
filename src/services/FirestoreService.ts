@@ -1,7 +1,20 @@
 import { AxiosService } from "services/axiosService";
 import { Utils } from "services/utils";
 import { autoinject } from "aurelia-framework";
-import { getDoc, collection, doc, query, where, getDocs, QuerySnapshot, DocumentData, Query, onSnapshot, Unsubscribe, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  Query,
+  QuerySnapshot,
+  setDoc,
+  Unsubscribe,
+  where,
+} from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
@@ -187,8 +200,8 @@ export class FirestoreService<
 
       // Flattens the returned data and removes duplicates
       return Utils.uniqById<IFirebaseDocument>(deals.flat());
-    } catch {
-      throw new Error("Error while getting deals");
+    } catch (error) {
+      throw new Error(`Error while getting deals ${error}`);
     }
   }
 
@@ -296,14 +309,14 @@ export class FirestoreService<
    * @param dealId string
    * @param discussion IDealDiscussion
    */
-  public async addClauseDiscussion(dealId: string, discussion: IDealDiscussion): Promise<void> {
+  public async addClauseDiscussion(dealId: string, discussionId: string, discussion: IDealDiscussion): Promise<void> {
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
 
       await setDoc(
         ref,
         {
-          clauseDiscussions: {[discussion.discussionId]: discussion},
+          clauseDiscussions: {[discussionId]: discussion},
         },
         {merge: true},
       );

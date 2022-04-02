@@ -30,6 +30,7 @@
   user-select: none;
   color: $Neutral04;
   white-space: nowrap;
+  gap: 12px;
 
   display: inline-flex;
   justify-content: center;
@@ -42,10 +43,8 @@
     overflow: hidden;
     transition: width 0.5s linear, opacity 0.75s linear, padding-left 0.5s linear;
     &.is-loading {
-      width: 16px;
+      width: 20px;
       opacity: 1;
-      padding-left: 14px;
-      padding-right: 18px;
     }
     .spinner {
       width: auto;

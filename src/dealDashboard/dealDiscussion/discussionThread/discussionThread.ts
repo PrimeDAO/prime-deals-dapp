@@ -81,7 +81,7 @@ export class DiscussionThread {
   @computedFrom("deal.clauseDiscussions", "dealDiscussion")
   private get clauseIndex(): string {
     const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
-    return (discussionsIds.indexOf(this.dealDiscussion.discussionId) + 1).toString() || "-";
+    return (discussionsIds.indexOf(this.discussionId) + 1).toString() || "-";
   }
 
   @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
@@ -96,17 +96,19 @@ export class DiscussionThread {
 
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
-
+    if (!this.discussionId) {
+      return;
+    }
+    if (!this.threadComments) this.threadComments = [];
     if (
       !this.deal.isPrivate ||
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
     ) {
       // Loads the discussion details - necessary for thread header
       this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
-
       // Ensures comment fetching and subscription
       await this.ensureDealDiscussion(this.discussionId);
-      if (this.discussionId && this.isInView(this.refThread) && !isIdChange) {
+      if (this.isInView(this.refThread) && !isIdChange) {
         this.discussionsService.autoScrollAfter(0);
       }
     } else {
@@ -177,6 +179,7 @@ export class DiscussionThread {
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+    this.updateDiscussionListStatus(new Date(), this.threadComments.length);
     this.isLoading.discussions = false;
 
     // Author profile for the discussion header
@@ -216,8 +219,7 @@ export class DiscussionThread {
       });
 
       // Update the discussion status
-      this.discussionsService.updateDiscussionListStatus(
-        discussionId,
+      this.updateDiscussionListStatus(
         new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
         this.threadComments.length,
       );
@@ -246,6 +248,27 @@ export class DiscussionThread {
     // TODO
   }
 
+  /**
+   * Update the reply count and the last activity date of a discussion
+   * @param discussionId string
+   * @param timestamp Date
+   * @returns void
+   */
+  private async updateDiscussionListStatus(timestamp: Date, replies: number): Promise<void> {
+    if (
+      this.dealDiscussion?.replies === replies &&
+      new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
+    ) return;
+
+    this.dealDiscussion.replies = replies;
+    this.dealDiscussion.modifiedAt = timestamp.toISOString();
+
+    this.deal.addClauseDiscussion(
+      this.discussionId,
+      this.dealDiscussion,
+    );
+  }
+
   async addComment(): Promise<void> {
     if (this.isLoading.commenting) return;
     this.isLoading.commenting = true;
@@ -261,12 +284,10 @@ export class DiscussionThread {
       if (newComment) {
         this.threadComments.push({ ...newComment });
 
-        this.discussionsService
-          .updateDiscussionListStatus(
-            this.discussionId,
-            new Date(parseFloat(newComment.createdOn)),
-            this.threadComments.length,
-          );
+        this.updateDiscussionListStatus(
+          new Date(parseFloat(newComment.createdOn)),
+          this.threadComments.length,
+        );
       }
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -300,7 +321,7 @@ export class DiscussionThread {
         const commentIndex = this.threadComments.findIndex(comment => comment._id === message._id);
         this.threadComments[commentIndex].upvotes = message.upvotes;
         this.threadComments[commentIndex].downvotes = message.downvotes;
-        this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(), this.threadComments.length);
+        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
       }
     }
     catch (err) {
@@ -320,7 +341,7 @@ export class DiscussionThread {
         /* on error, restore original comments */
         this.threadComments = [...swrComments];
       }
-      this.discussionsService.updateDiscussionListStatus(this.discussionId, new Date(), this.threadComments.length);
+      this.updateDiscussionListStatus(new Date(), this.threadComments.length);
     } catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
     } finally {

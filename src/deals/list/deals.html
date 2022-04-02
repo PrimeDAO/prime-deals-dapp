@@ -1,7 +1,6 @@
 <template>
   <require from="../dealSummary/dealSummary"></require>
   <require from="../timeLeft/timeLeft"></require>
-  <require from="../dao-icon-name/dao-icon-name"></require>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
       <pform-input if.to-view="ethereumService.defaultAccountAddress" click.delegate="toggleMyDeals()"
@@ -57,7 +56,8 @@
     </div>
 
     <div class="section all-deals" if.to-view="!gridDeals || gridDeals.length">
-      <div class="heading02Gradient">${cardIndex==0 ? "All open proposals" : "All partnered deals"}</div>
+      <div class="heading02Gradient">${showMine ? "My " : "All "}${cardIndex === 0 ? "open proposals" : "partnered deals"}</div>
+      <div if.to-view="!gridDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       <!-- Desktop grid -->
       <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
@@ -74,7 +74,7 @@
             if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
             click.delegate="navigate(`deal/${deal.id}`)">
             <div class="project cell body ellipses hot">
-              <dao-icon-name registration-data.to-view="deal.registrationData"></dao-icon-name>
+              <dao-icon-name primary-dao.to-view="deal.registrationData.primaryDAO" partner-dao.to-view="deal.registrationData.partnerDAO"></dao-icon-name>
             </div>
             <div class="title cell body hot">${deal.registrationData.proposal.title}</div>
             <div class="type cell body hot sortable">Token Swap</div>

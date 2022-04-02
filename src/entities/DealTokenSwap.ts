@@ -1,7 +1,7 @@
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address, Hash } from "./../services/EthereumService";
-import { DealStatus, IDeal, IDealTokenSwapDocument, IVotesInfo, IDealDAOVotingSummary } from "entities/IDealTypes";
+import { Address, fromWei, Hash } from "./../services/EthereumService";
+import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVotesInfo } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
@@ -44,6 +44,23 @@ interface IDepositEventArgs {
   amount: BigNumber;
 }
 
+interface IClaimedEventArgs {
+  dealModule: Address;
+  dealId: string;
+  dao: Address;
+  token: Address;
+  claimed: BigNumber;
+}
+
+interface IDaoClaim {
+  dealId: string;
+  dao: IDAO;
+  token: IToken;
+  claimedAmount: BigNumber;
+  createdAt: Date; //transaction date
+  txid: Hash; //transaction id,
+}
+
 export type DealTransactionType = "deposit" | "withdraw";
 
 export interface IDaoTransaction {
@@ -54,7 +71,9 @@ export interface IDaoTransaction {
   createdAt: Date, //transaction date
   txid: Hash, //transaction id,
   depositId: number,
-  amount: BigNumber;
+  amount: BigNumber,
+  withdrawnAt?: Date,
+  withdrawTxId?: Hash,
 }
 
 @autoinject
@@ -95,7 +114,7 @@ export class DealTokenSwap implements IDeal {
   public daoDepositContracts: Map<IDAO, any>;
   public dealManager: any;
 
-  public primaryDao: IDAO;
+  public primaryDao?: IDAO;
   public partnerDao: IDAO;
   public createdAt: Date;
   /**
@@ -106,6 +125,7 @@ export class DealTokenSwap implements IDeal {
   public executedAt: Date;
 
   public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
+  public daoTokenClaims: Map<IDAO, Array<IDaoClaim>>;
 
   @computedFrom("dealDocument.registrationData")
   public get registrationData(): IDealRegistrationTokenSwap {
@@ -153,9 +173,19 @@ export class DealTokenSwap implements IDeal {
     this.dealDocument.isRejected = newValue;
   }
 
-  // public get isTargetReached(): boolean {
-  //   return;
-  // }
+  @computedFrom("daoTokenTransactions")
+  public get isTargetReached(): boolean {
+    if (!this.daoTokenTransactions) return false;
+    let isReached = true;
+    this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
+      if (!isReached) return; //immediately returns if it's already false from a previous loop
+      isReached = dao.tokens.every(daoToken => {
+        const totalDeposited : BigNumber = transactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+        return totalDeposited.gte(daoToken.amount);
+      });
+    });
+    return isReached;
+  }
 
   @computedFrom("isExecuted", "executedAt", "fundingPeriod")
   get timeLeftToExecute(): number | undefined {
@@ -204,17 +234,42 @@ export class DealTokenSwap implements IDeal {
     return this.fundingWasInitiated && !this.isExecuted && !this.fundingPeriodHasExpired;
   }
 
-  @computedFrom("isSwapping")
-  public get isClaiming(): boolean {
-    return this.isSwapping;
+  /**
+   * Gets the DAO in which the current account is a representative (if they are at all)
+   */
+  @computedFrom("ethereumService.defaultAccountAddress", "partnerDaoRepresentatives", "primaryDaoRepresentatives", "registrationData.primaryDAO", "registrationData.partnerDAO")
+  public get daoRepresentedByCurrentAccount(): IDAO {
+    return this.getDao(true);
   }
 
-  @computedFrom("isExecuted")
-  public get isSwapping(): boolean {
-    return this.isExecuted;
+  /**
+   * Gets the other DAO from the one in which the current account is a representative (if they are at all)
+     */
+  @computedFrom("ethereumService.defaultAccountAddress", "partnerDaoRepresentatives", "primaryDaoRepresentatives", "registrationData.primaryDAO", "registrationData.partnerDAO")
+  public get daoOtherThanRepresentedByCurrentAccount(): IDAO {
+    return this.getDao(false);
   }
 
-  // TODO need to code whether there is anything left to claim
+  /**
+   * Gets the DAO based on the connected account
+   * @param relatedToAccount
+   * @returns IDAO
+   * This will return the DAO either related to the account or not related to the account depending on what the caller needs.
+   * This method will look at the connected account and compare it to all the representative addresses in each of the DAOs to return which DAO is/isn't related based on the bool passed to it
+   * EX. If I want to get the DAO that is not related to the connected account I would call this.getDao(false)
+   * EX. If I want to get the DAO that is related to the connected account I would call this.getDao(true)
+   */
+  private getDao(relatedToAccount: boolean) : IDAO | null {
+    if (this.partnerDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
+      //the connected account is a representative of the partner DAO
+      return relatedToAccount ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
+    }
+    if (this.primaryDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
+      //the connceted account is either a representative of the primary DAO or the proposal lead
+      return relatedToAccount ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+    }
+    return null;
+  }
 
   /**
    * same as isClaiming/isExecuted, by bizdev definition
@@ -223,6 +278,13 @@ export class DealTokenSwap implements IDeal {
   public get isCompleted(): boolean {
     return this.isClaiming;
   }
+
+  @computedFrom("isExecuted")
+  public get isClaiming(): boolean {
+    return this.isExecuted;
+  }
+
+  // TODO need to code whether there is anything left to claim
 
   /**
    * withdrawn or rejected
@@ -247,15 +309,63 @@ export class DealTokenSwap implements IDeal {
     };
   }
 
-  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isSwapping")
+  @computedFrom("dealDocument.votingSummary.primaryDAO.votes")
+  public get primaryDaoVotes(): IVotesInfo {
+    return this.dealDocument.votingSummary.primaryDAO.votes;
+  }
+
+  @computedFrom("dealDocument.votingSummary.partnerDAO.votes")
+  public get partnerDaoVotes(): IVotesInfo {
+    return this.dealDocument.votingSummary.partnerDAO?.votes ?? {};
+  }
+
+  @computedFrom("allVotes")
+  public get submittedVotes(): (boolean | null)[] {
+    return Object.values(this.allVotes).filter(vote => vote !== null);
+  }
+
+  public representativeVote(representativeAddress: Address = this.ethereumService.defaultAccountAddress): boolean | null {
+    return this.allVotes[representativeAddress];
+  }
+
+  public get hasRepresentativeVoted(): boolean {
+    return this.representativeVote() !== null;
+  }
+
+  @computedFrom("majorityHasVoted", "hasUserVoted")
+  public get isRepresentativeEligibleToVote(): boolean {
+    return !this.majorityHasVoted && !this.hasRepresentativeVoted;
+  }
+
+  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
+  public get isProposalLeadWaitingForOthersToVote() {
+    return !this.majorityHasVoted && this.isUserProposalLead && (this.hasRepresentativeVoted || !this.isRepresentativeUser);
+  }
+
+  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
+  public get isRepresentativeWaitingForOthersToVote(): boolean {
+    return !this.majorityHasVoted && !this.isUserProposalLead && this.hasRepresentativeVoted;
+  }
+
+  @computedFrom("isApproved", "isUserProposalLead")
+  public get canStartFunding() {
+    return this.isApproved && this.isUserProposalLead;
+  }
+
+  @computedFrom("isApproved", "isUserProposalLead")
+  public get waitingForTheProposalLeadToStartFunding() {
+    return this.isApproved && !this.isUserProposalLead;
+  }
+
+  @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isClaiming")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
-    else if (this.isCompleted) { return DealStatus.completed; }
     else if (this.fundingPeriodHasExpired) { return DealStatus.failed; }
     else if (this.isCancelled) { return DealStatus.cancelled; }
     else if (this.isNegotiating) { return DealStatus.negotiating; }
     else if (this.isFunding) { return DealStatus.funding; }
-    else if (this.isSwapping) { return DealStatus.swapping; }
+    else if (this.isCompleted) { return DealStatus.completed; }
+    // else if (this.isClaiming) { return DealStatus.claiming; }
     // else if (this.isTargetReached) { return DealStatus.targetReached; }
     // else if (!this.isTargetReached) { return DealStatus.targetNotReached; }
   }
@@ -378,7 +488,10 @@ export class DealTokenSwap implements IDeal {
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
 
-      await this.hydrateDaoTransactions();
+      // no need to await
+      this.hydrateDaoTransactions();
+      this.hydrateDaoClaims();
+      this.hydrateDealSize();
     }
     catch (error) {
       this.corrupt = true;
@@ -403,6 +516,44 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenTransactions = daoTokenTransactions;
   }
 
+  private async hydrateDaoClaims(): Promise<void> {
+    if (!this.daoTokenClaims) {
+      this.daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
+    }
+
+    const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
+
+    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
+    if (this.partnerDao) {
+      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao));
+    }
+
+    this.daoTokenClaims = daoTokenClaims;
+  }
+
+  public async hydrateDealSize(): Promise<void> {
+    // if the total price is already figured out we don't need to try again
+    if (this.totalPrice) {
+      return;
+    }
+
+    try {
+      const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
+      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+      await this.tokenService.getTokenPrices(tokensDetails);
+
+      this.totalPrice = dealTokens.reduce((sum, item) => {
+        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+        return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+      }, 0);
+    } catch (error){
+      throw new Error(`Computing deal price ${error}`);
+      this.totalPrice = 0;
+    }
+  }
+
   private async hydrateUser(): Promise<void> {
     const account = this.ethereumService.defaultAccountAddress;
 
@@ -424,28 +575,6 @@ export class DealTokenSwap implements IDeal {
     ).then(() => {
       this.clauseDiscussions.set(discussionId, discussion);
     });
-  }
-
-  public async loadDealSize(): Promise<void> {
-    // if the total price is already figured out we don't need to try again
-    if (this.totalPrice) {
-      return;
-    }
-
-    try {
-      const dealTokens = this.primaryDao.tokens.concat(this.partnerDao?.tokens ?? []);
-      const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
-      const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
-
-      await this.tokenService.getTokenPrices(tokensDetails);
-
-      this.totalPrice = dealTokens.reduce((sum, item) => {
-        const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-        return sum + (tokenDetails?.price ?? 0) * Number(item.amount);
-      }, 0);
-    } catch {
-      this.totalPrice = 0;
-    }
   }
 
   /**
@@ -472,60 +601,12 @@ export class DealTokenSwap implements IDeal {
 
     return this.transactionsService.send(
       () => this.moduleContract.createSwap(...dealParameters))
-      .then(async receipt => {
+      .then(receipt => {
         if (receipt) {
           this.hydrate();
           return receipt;
         }
       });
-  }
-
-  public getTokenInfoFromAddress(tokenAddress: Address, dao: IDAO): IToken {
-    tokenAddress = tokenAddress.toLowerCase();
-    return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
-  }
-
-  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
-    const transactions = new Array<IDaoTransaction>();
-    const depositContract = this.daoDepositContracts.get(dao);
-
-    const depositFilter = depositContract.filters.Deposited();
-    await depositContract.queryFilter(depositFilter)
-      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          transactions.push({
-            type: "deposit",
-            dao: dao,
-            token: this.getTokenInfoFromAddress(params.token, dao),
-            address: params.depositor,
-            createdAt: new Date((await event.getBlock()).timestamp * 1000),
-            txid: event.transactionHash,
-            depositId: params.depositId,
-            amount: params.amount,
-          });
-        }
-      });
-
-    const withdrawFilter = depositContract.filters.Withdrawn();
-    await depositContract.queryFilter(withdrawFilter)
-      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          transactions.push({
-            type: "withdraw",
-            dao: dao,
-            token: this.getTokenInfoFromAddress(params.token, dao),
-            address: params.depositor,
-            createdAt: new Date((await event.getBlock()).timestamp * 1000),
-            txid: event.transactionHash,
-            depositId: params.depositId,
-            amount: params.amount,
-          });
-        }
-      });
-
-    return transactions;
   }
 
   public close(): Promise<void> {
@@ -554,7 +635,23 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  public vote(upDown: boolean, whichDao: IDAO): Promise<void> {
+  public claim(dao: IDAO): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).claimDealVestings(this.moduleContract.address, this.contractDealId)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoClaims();
+            return receipt;
+          }
+        }));
+  }
+
+  public vote(upDown: boolean): Promise<void> {
+    const whichDao = this.daoRepresentedByCurrentAccount;
+
+    if (!whichDao) {
+      throw new Error("Vote: Current account is not related to the ");
+    }
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
 
@@ -566,11 +663,85 @@ export class DealTokenSwap implements IDeal {
         upDown);
     }
   }
+  private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {
+    tokenAddress = tokenAddress.toLowerCase();
+    return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
+  }
 
   private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
     return whichDao === this.primaryDao ?
       this.dealDocument.votingSummary.primaryDAO :
       this.dealDocument.votingSummary.partnerDAO;
+  }
+
+  private async getDaoClaims(dao: IDAO): Promise<Array<IDaoClaim>> {
+    const claims = new Array<IDaoClaim>();
+    const depositContract = this.daoDepositContracts.get(dao);
+
+    const depositFilter = depositContract.filters.VestingClaimed(
+      this.moduleContract.address,
+      this.contractDealId,
+      dao.treasury_address);
+
+    await depositContract.queryFilter(depositFilter)
+      .then(async (events: Array<IStandardEvent<IClaimedEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          claims.push({
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            dealId: params.dealId,
+            claimedAmount: params.claimed,
+          });
+        }
+      });
+
+    return claims;
+  }
+
+  private async getDaoTransactions(dao: IDAO): Promise<Array<IDaoTransaction>> {
+    const transactions = new Array<IDaoTransaction>();
+    const depositContract = this.daoDepositContracts.get(dao);
+
+    const depositFilter = depositContract.filters.Deposited();
+    await depositContract.queryFilter(depositFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "deposit",
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+            amount: params.amount,
+          });
+        }
+      });
+
+    const withdrawFilter = depositContract.filters.Withdrawn();
+    await depositContract.queryFilter(withdrawFilter)
+      .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          transactions.push({
+            type: "withdraw",
+            dao: dao,
+            token: this.getTokenInfoFromDao(params.token, dao),
+            address: params.depositor,
+            createdAt: new Date((await event.getBlock()).timestamp * 1000),
+            txid: event.transactionHash,
+            depositId: params.depositId,
+            amount: params.amount,
+          });
+        }
+      });
+
+    return transactions;
   }
 
   /**

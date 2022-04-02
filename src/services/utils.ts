@@ -8,6 +8,17 @@ export class Utils {
     return new Promise((resolve: (args: any[]) => void): any => setTimeout(resolve, milliseconds));
   }
 
+  /**
+   * Gets a property value from the string reprentation of it. If you pass "token.decimal" as a string, it will return the decimal prop
+   * @param object
+   * @param path
+   * @param defaultValue
+   * @returns any
+   */
+  public static getPropertyFromString = <T>(object:any, path:string, defaultValue?:T) => path
+    .split(".")
+    .reduce((o, p) => o ? o[p] : defaultValue, object);
+
   public static smallHexString(str: string): string {
     if (!str) {
       return "";

@@ -73,7 +73,7 @@ export class FirestoreDealsService<
       return;
     }
 
-    return this.firestoreService.addClauseDiscussion(dealId, discussion);
+    return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussion);
   }
 
   public updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {

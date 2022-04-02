@@ -4,7 +4,7 @@
   </header>
   <ol>
     <li
-      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id).discussionId ? 'active' : ''}"
+      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
       repeat.for="clause of clauses">
       <span class="marker">${$index + 1}</span>
       <pre class="body">${clause.text}</pre>

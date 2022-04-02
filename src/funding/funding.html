@@ -1,0 +1,169 @@
+<template>
+  <require from="./swap-status/swap-status"></require>
+  <main class="page animated-page au-animate fundContainer">
+    <section class="section top">
+      <h1 class="title heading heading1 gradient">
+        Swap tokenized carbon credits for a better world
+      </h1>
+      <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer">Return to deal page</pbutton>
+    </section>
+    <section
+      class="section deposit"
+      if.to-view="daoRepresentedByCurrentAccountTokens && daoRepresentedByCurrentAccountTokens.length && !this.deal.isClaiming">
+      <div class="box-container">
+        <div class="box-header">
+          <div class="heading heading3 title gradient">
+            ${deal.daoRepresentedByCurrentAccount.name} Deposit
+          </div>
+          <pchip
+            color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
+            if.to-view="fundingDaysLeft >= 0">
+            <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
+          </pchip>
+          <pchip color="danger" if.to-view="deal.isFailed">Target not reached</pchip>
+        </div>
+        <div class="box-content">
+          <div class="tokens">
+            <pgrid
+              id="token-grid"
+              rows.bind="daoRepresentedByCurrentAccountTokens"
+              columns.bind="tokenGridColumns"
+              condensed.bind="true"></pgrid>
+          </div>
+        </div>
+        <div class="container-footer">
+          <div class="contracts">
+            <p>
+              <i class="fas fa-info-circle"></i>
+              <span if.to-view="fundingFailed">
+                The deal has failed as one or more parties failed to deposit their funds within the
+                given period of time. Please go to the Deposits below and withdraw your funds. You
+                can withdraw your funds at any time. Funds are safe.
+              </span>
+              <span if.to-view="!fundingFailed && !deal.isTargetReached">
+                You're depositing on behalf of ${deal.daoRepresentedByCurrentAccount.name}. This deal needs to
+                be funded and executed within ${fundingDaysLeft} days.
+              </span>
+              <span if.to-view="!fundingFailed && deal.isTargetReached">
+                All parties have deposited their funds. Anyone can now initiate the swap.
+              </span>
+            </p>
+            <div class="links">
+              <address-link
+                address.to-view="deal.daoDepositContracts.get(deal.daoRepresentedByCurrentAccount).address"
+                link-text="DAODepositManager Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false">
+              </address-link>
+              <address-link
+                address.to-view="deal.moduleContract.address"
+                link-text="TokenSwapModule Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false">
+              </address-link>
+            </div>
+          </div>
+          <div class="deposit">
+            <div
+              class="form"
+              if.to-view="!deal.isUserProposalLead && !deal.isTargetReached && !fundingFailed">
+              <div>
+                <div class="inputs">
+                  <pselect
+                    disabled.bind="daoRepresentedByCurrentAccountTokens.length === 1"
+                    placeholder="Select a Token"
+                    data.bind="tokenSelectData"
+                    value.bind="selectedToken"
+                    ref="refSelectToken"></pselect>
+                  <numeric-input
+                    css="pInput"
+                    value.bind="depositAmount"
+                    keyup.delegate="checkMaxAmount()"
+                    decimals.bind="daoRepresentedByCurrentAccountTokens[selectedToken].decimals">
+                  </numeric-input>
+                  <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken">Max</pbutton>
+                  <span class="balance" if.to-view="accountBalance">
+                    Your ${daoRepresentedByCurrentAccountTokens[selectedToken].symbol} Balance:
+                    <tokenbalance
+                      formatted="0.00a"
+                      token-address.to-view="daoRepresentedByCurrentAccountTokens[selectedToken].address"></tokenbalance>
+                  </span>
+                </div>
+              </div>
+              <pbutton
+                type="primary"
+                click.delegate="depositTokens()"
+                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0">Deposit</pbutton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <swap-status deal.bind="deal">
+      <div class="section initiate-swap" if.to-view="deal.isTargetReached">
+        <pbutton type="primary" click.delegate="initiateSwap()">
+          Initiate swap <i class="fas">&#xf021;</i>
+        </pbutton>
+      </div>
+      <div class="claim-tokens" if.to-view="deal.isClaiming">
+        <div class="box-container">
+          <div class="token-grid">
+            <h4 class="title heading heading3 gradient">Claim Tokens</h4>
+            <pgrid
+              id="token-grid"
+              rows.bind="tokensToClaim"
+              columns.bind="claimTokenGridColumns"
+              condensed.bind="true">
+            </pgrid>
+          </div>
+          <div class="contract">
+            <p>
+              <i class="fas fa-info-circle"></i>
+              <span>
+                This will be text talking about claiming your tokens. There will probably be
+                different text here at some point.
+              </span>
+            </p>
+            <div>
+              <address-link
+                address.to-view="deal.daoDepositContracts.get(deal.daoRepresentedByCurrentAccount).address"
+                link-text="DAODepositManager Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false">
+              </address-link>
+              <address-link
+                address.to-view="deal.moduleContract.address"
+                link-text="TokenSwapModule Contract"
+                show-arrow-inside-link.bind="true"
+                show-copy-icon.bind="false">
+              </address-link>
+            </div>
+            <pbutton type="primary">Claim Tokens</pbutton>
+          </div>
+        </div>
+      </div>
+    </swap-status>
+    <section class="section deposits">
+      <h1 class="title heading heading1 gradient">Deposits</h1>
+      <div class="no-deposits heading02" if.to-view="!deposits || deposits.length === 0">
+        There are no deposits for this deal
+      </div>
+      <pgrid
+        id="deposits-grid"
+        rows.bind="deposits"
+        columns.bind="depositColumns"
+        condensed.bind="false"
+        if.to-view="deposits.length > 0"></pgrid>
+      <template if.to-view="deposits.length > 10">
+        <div if.to-view="!loadingDeposits && !seeingMore" class="seeMore">
+          <div class="arrow">&darr;</div>
+          <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
+        </div>
+        <div if.to-view="!loadingDeposits && seeingMore" class="seeMore">
+          <div class="arrow">&uarr;</div>
+          <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
+        </div>
+      </template>
+    </section>
+  </main>
+</template>
