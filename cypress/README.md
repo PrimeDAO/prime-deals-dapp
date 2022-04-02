@@ -69,6 +69,16 @@ cy.get("[data-test='open-proposal-button']").click()
 cy.url().should("include", "deals/open");
 ```
 
+### Debugging
+Weakness of Cypress tests (e2e tests in general), are there risks for flaky test runs ([Flaky Test Management](https://docs.cypress.io/guides/dashboard/flaky-test-management)).
+Some debugging approaches:
+
+1. Screenshots: Failed tests will create screenshots in `/cypress/screenshots`
+2. Videos: `cypress.json` -> `video: true` (currently disabled)
+3. Run single tests repeatedly (either in gui or in cli via `npx cypress run --spec <relative_path_from_root or glob>`)
+4. Follow Cypress [best practices](https://docs.cypress.io/guides/references/best-practices)
+5. Disable test and add a comment or a tag `@flaky`
+
 ### Page Objects
 While Page Objects are regarded as an [anti-pattern](https://docs.cypress.io/guides/references/best-practices#Organizing-Tests-Logging-In-Controlling-State), they are
 seen as a way to reduce code, and to to "control the page".
@@ -114,6 +124,7 @@ Through internal code ([App Actions](app_action)), we can access, eg. Firebase a
 - `@focus` - only run focused Scenario in .feature file
 - `@regression` - Indicate Scenario is to cover a regression in the code
 - `@user_journey` - Larger in scope than usual Scenarios. Captures the "user journey" to achieve more complex interactions
+- `@flaky` - indicate underlying test is flaky (eg. unstable - sometimes green, sometimes red)
 
 ### Tooling
 - [VSCode Cucumber Autocomplete Extension](https://github.com/alexkrechik/VSCucumberAutoComplete#settings-example)
