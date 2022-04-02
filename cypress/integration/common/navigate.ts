@@ -20,7 +20,7 @@ export class E2eNavigation {
   public static hasAppLoaded() {
     return cy.window().then((window) => {
       const { pathname } = window.location;
-      return E2eNavigation.isHome(pathname);
+      return pathname !== "blank"; // Cypress returns "blank" if app not loaded yet
     });
   }
 }
