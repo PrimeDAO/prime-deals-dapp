@@ -7,22 +7,30 @@
       <p class="bodySmallText">
         ${statusText.voteText}
       </p>
-      <pbutton-group if.bind="deal.representatives.has(ethereumService.defaultAccountAddress)">
+      <pbutton-group if.bind="deal.isRepresentativeUser">
         <pbutton
-          class="${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'acceptButtonActive' : ''}"
+          class="${deal.representativeVote() === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(true)">
-          <i class="fas fa-check-circle"></i>
-          ${deal.representativeVote(ethereumService.defaultAccountAddress) === true ? 'Accepted': 'Accept' }
+          click.delegate="acceptDeal()"
+        >
+          <span class="icon is-loading" if.bind="accepting">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-check-circle" else></i>
+          ${deal.representativeVote() === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
-          class="${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'declineButtonActive' : ''}"
+          class="${deal.representativeVote() === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="deal.vote(false)">
-          <i class="fas fa-times-circle"></i>
-          ${deal.representativeVote(ethereumService.defaultAccountAddress) === false ? 'Declined': 'Decline' }
+          click.delegate="declineDeal()"
+        >
+          <span class="icon is-loading" if.bind="declining">
+            <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
+          </span>
+          <i class="fas fa-times-circle" else></i>
+          ${deal.representativeVote() === false ? 'Declined' : 'Decline' }
         </pbutton>
       </pbutton-group>
 

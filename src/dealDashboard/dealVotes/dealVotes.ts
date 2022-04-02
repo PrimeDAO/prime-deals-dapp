@@ -6,10 +6,14 @@ import { Router } from "aurelia-router";
 import { EthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
+import { ConsoleLogService } from "../../services/ConsoleLogService";
 
 @autoinject
 export class DealVotes {
   @bindable deal: DealTokenSwap;
+
+  accepting = false;
+  declining = false;
 
   everyTextCopy = [
     {
@@ -49,6 +53,7 @@ export class DealVotes {
     public ethereumService: EthereumService,
     private dialogService: DialogService,
     private eventAggregator: EventAggregator,
+    private consoleLogService: ConsoleLogService,
   ) {
   }
 
@@ -79,5 +84,25 @@ export class DealVotes {
   @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress")
   get statusText() {
     return this.everyTextCopy.find(textCopy => textCopy.condition());
+  }
+
+  async acceptDeal() {
+    this.accepting = true;
+    await this.vote(true).finally(() => this.accepting = false);
+  }
+
+  async declineDeal() {
+    this.declining = true;
+    await this.vote(false).finally(() => this.declining = false);
+  }
+
+  private async vote(value: boolean) {
+    try {
+      await this.deal.vote(value);
+      this.eventAggregator.publish("showMessage", "Your vote has been successfully submitted");
+    } catch (error) {
+      this.consoleLogService.logMessage(`Voting error ${error}`, "error");
+      this.eventAggregator.publish("handleFailure", "Sorry, an error occurred submitting your vote");
+    }
   }
 }

@@ -303,24 +303,10 @@ export class DealTokenSwap implements IDeal {
   // TODO: observe the right things here to recompute when votes have changed
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
   public get allVotes(): IVotesInfo {
-    // return {
-    //   ...this.dealDocument.votingSummary.primaryDAO.votes,
-    //   ...this.dealDocument.votingSummary.partnerDAO.votes,
-    // };
-
-    // TODO this is temporary until allVotes is fixed in the Firebase Database
-    //  Issue: the votes are saved as an array in the database instead of an object.
-    const votes = [
-      // @ts-ignore
+    return {
       ...this.dealDocument.votingSummary.primaryDAO.votes,
-      // @ts-ignore
       ...this.dealDocument.votingSummary.partnerDAO.votes,
-    ];
-    return votes.reduce((group, vote) => {
-      // @ts-ignore
-      group[vote.address] = vote.vote;
-      return group;
-    }, {});
+    };
   }
 
   @computedFrom("dealDocument.votingSummary.primaryDAO.votes")
@@ -335,16 +321,15 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("allVotes")
   public get submittedVotes(): (boolean | null)[] {
-    return Object.values(this.allVotes).filter(voteInfo => voteInfo === true || voteInfo === false);
+    return Object.values(this.allVotes).filter(vote => vote !== null);
   }
 
-  public representativeVote(representativeAddress: Address): boolean | null {
+  public representativeVote(representativeAddress: Address = this.ethereumService.defaultAccountAddress): boolean | null {
     return this.allVotes[representativeAddress];
   }
 
   public get hasRepresentativeVoted(): boolean {
-    const vote = this.representativeVote(this.ethereumService.defaultAccountAddress);
-    return vote === true || vote === false;
+    return this.representativeVote() !== null;
   }
 
   @computedFrom("majorityHasVoted", "hasUserVoted")
@@ -678,7 +663,6 @@ export class DealTokenSwap implements IDeal {
         upDown);
     }
   }
-
   private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {
     tokenAddress = tokenAddress.toLowerCase();
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
