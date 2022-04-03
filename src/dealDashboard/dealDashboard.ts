@@ -16,10 +16,10 @@ export class DealDashboard {
   ) {
   }
 
-  async activate(_, __, navigationInstruction) {
-    this.dealId = navigationInstruction.params.address;
+  public async canActivate(params: { address: string }): Promise<boolean> {
     await this.dealService.ensureInitialized();
-    this.deal = this.dealService.deals.get(this.dealId);
+    this.deal = this.dealService.deals.get(params.address);
     await this.deal.ensureInitialized();
+    return !this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead;
   }
 }
