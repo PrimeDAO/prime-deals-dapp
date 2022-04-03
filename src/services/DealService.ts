@@ -209,6 +209,16 @@ export class DealService {
   ): DealTokenSwap {
     const deal = this.createDealFromDoc(dealDoc);
     /**
+     * this should automatically be true because firestorm automatically does this filtering,
+     * but we have to handle the case where this is a new deal being added by wizard submission.
+     */
+    if (!deal.isPrivate || deal.isRepresentativeUser || deal.isUserProposalLead) {
+      if (!dealsMap) {
+        dealsMap = this.deals;
+      }
+      dealsMap.set(deal.id, deal);
+    }
+    /**
      * remove the deal if it is corrupt
      */
     this.aureliaHelperService.createPropertyWatch(deal, "corrupt", (newValue: boolean) => {
@@ -217,14 +227,7 @@ export class DealService {
       }
     });
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
-    deal.initialize().then(() => {
-      if (!deal.isPrivate || deal.isRepresentativeUser || deal.isUserProposalLead) {
-        if (!dealsMap) {
-          dealsMap = this.deals;
-        }
-        dealsMap.set(deal.id, deal);
-      }
-    }); // asynchronous
+    deal.initialize(); // asynchronous
     return deal;
   }
 }
