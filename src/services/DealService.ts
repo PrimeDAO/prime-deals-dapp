@@ -208,12 +208,6 @@ export class DealService {
     dealsMap?: Map<Address, DealTokenSwap>,
   ): DealTokenSwap {
     const deal = this.createDealFromDoc(dealDoc);
-
-    if (!dealsMap) {
-      dealsMap = this.deals;
-    }
-
-    dealsMap.set(deal.id, deal);
     /**
      * remove the deal if it is corrupt
      */
@@ -223,7 +217,14 @@ export class DealService {
       }
     });
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
-    deal.initialize(); // asynchronous
+    deal.initialize().then(() => {
+      if (!deal.isPrivate || deal.isRepresentativeUser || deal.isUserProposalLead) {
+        if (!dealsMap) {
+          dealsMap = this.deals;
+        }
+        dealsMap.set(deal.id, deal);
+      }
+    }); // asynchronous
     return deal;
   }
 }
