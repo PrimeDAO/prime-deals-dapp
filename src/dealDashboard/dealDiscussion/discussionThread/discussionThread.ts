@@ -314,16 +314,41 @@ export class DiscussionThread {
   }
 
   async voteComment(_id: string, type: VoteType): Promise<void> {
+    const types = ["toggleUpvote", "toggleDownvote"];
+    const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
+    const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
+    const currentWalletAddress = this.ethereumService.defaultAccountAddress;
+
     if (this.isLoading[`isVoting ${_id}`]) return;
     this.isLoading[`isVoting ${_id}`] = true;
+
     try {
-      const message = await this.discussionsService.voteComment(this.discussionId, _id, type) as IComment;
-      if (message) {
-        const commentIndex = this.threadComments.findIndex(comment => comment._id === message._id);
-        this.threadComments[commentIndex].upvotes = message.upvotes;
-        this.threadComments[commentIndex].downvotes = message.downvotes;
-        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+      const message = this.threadDictionary[_id];
+      const swrVote = {...message};
+
+      /* Toggle vote locally */
+      if (!message[endpoints[type]].includes(currentWalletAddress)) {
+        message[endpoints[type]].push(currentWalletAddress);
+        message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== currentWalletAddress);
+      } else {
+        message[endpoints[type]] = message[endpoints[type]].filter(address => address !== currentWalletAddress);
       }
+
+      this.threadDictionary[_id] = {...message};
+      this.threadComments = Object.values(this.threadDictionary);
+
+      this.discussionsService.voteComment(this.discussionId, _id, type).then(
+        (success: boolean) => {
+          if (!success) {
+            /* On API failure- revert voting */
+            this.threadDictionary[_id] = {...swrVote};
+            this.threadComments = Object.values(this.threadDictionary);
+            this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+            throw new Error("Like action failed.");
+          }
+        },
+      );
+      this.updateDiscussionListStatus(new Date(), this.threadComments.length);
     }
     catch (err) {
       this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
