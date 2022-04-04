@@ -3,8 +3,6 @@
 
 $completedColor: $Teal;
 $completedBackground: $Teal-BG;
-$swappingColor: $Magenta;
-$swappingBackground: $Magenta-BG;
 $negotiatingColor: $Green;
 $negotiatingBackground: $Green-BG;
 $failedColor: $Grey;
@@ -13,8 +11,8 @@ $activeColor: $Green;
 $activeBackground: $Green-BG;
 $fundingColor: $Magenta;
 $fundingBackground: $Magenta-BG;
-$closedColor: $Grey;
-$closedBackground: $Grey-BG;
+$cancelledColor: $Grey;
+$cancelledBackground: $Grey-BG;
 
 .timeLeftContainer {
   font-size: $font-size1;
@@ -48,10 +46,6 @@ $closedBackground: $Grey-BG;
       color: $activeColor;
     }
 
-    &.swapping {
-      color: $swappingColor;
-    }
-
     &.negotiating {
       color: $negotiatingColor;
     }
@@ -64,8 +58,8 @@ $closedBackground: $Grey-BG;
       color: $fundingColor;
     }
 
-    &.closed {
-      color: $closedColor;
+    &.cancelled {
+      color: $cancelledColor;
     }
   }
 
@@ -89,10 +83,6 @@ $closedBackground: $Grey-BG;
         background-color: $activeBackground;
       }
 
-      &.swapping {
-        background-color: $swappingBackground;
-      }
-
       &.negotiating {
         background-color: $negotiatingBackground;
       }
@@ -105,8 +95,8 @@ $closedBackground: $Grey-BG;
         background-color: $fundingBackground;
       }
 
-      &.closed {
-        background-color: $closedBackground;
+      &.cancelled {
+        background-color: $cancelledBackground;
       }
     }
   }

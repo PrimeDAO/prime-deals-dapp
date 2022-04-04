@@ -1,5 +1,6 @@
 @import "styles/styles";
 @import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
 
 .discussions-list {
   .table {
@@ -33,6 +34,8 @@
         }
       }
       .td {
+        @include pre;
+        word-wrap: anywhere;
         padding: $spacing-normal $spacing-small;
         .creator {
           padding-top: $spacing-small;

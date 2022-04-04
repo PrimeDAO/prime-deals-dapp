@@ -1,0 +1,32 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+.progress-bar {
+  width: 100%;
+  overflow: hidden;
+  background-color: $Border01;
+  border-radius: 11px;
+  height: 100%;
+  > div {
+    background-color: $Green;
+    height: 100%;
+  }
+  .success {
+    background-color: $Green;
+  }
+  .warning {
+    background-color: $Orange;
+  }
+  .info {
+    background-color: $Teal;
+  }
+  .danger {
+    background-color: $Red;
+  }
+  .secondary {
+    background-color: $Magenta;
+  }
+  .dark {
+    background-color: $Grey;
+  }
+}

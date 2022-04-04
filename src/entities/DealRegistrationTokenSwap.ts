@@ -48,7 +48,6 @@ export interface IDAO {
   logoURI: string;
   social_medias: Array<ISocialMedia>;
   representatives: Array<IRepresentative>;
-  id?: string;
   tokens?: Array<IToken>;
   platform?: Platforms;
 }
@@ -68,27 +67,19 @@ export interface ITerms {
   clauses: Array<IClause>,
 }
 
-// We cannot import Timestamp from firebase, therefore we create our own
-// because importing external dependencies in this file breaks firebase functions which import interfaces from here
-export interface IFirestoreTimestamp {
-  toDate(): Date;
-}
-
 export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
-  partnerDAO: IDAO;
+  partnerDAO?: IDAO; // This is undefined for an Open Proposal
   proposalLead: IProposalLead; // this contains to address
   terms: ITerms;
   keepAdminRights: boolean;
   offersPrivate: boolean;
   isPrivate: boolean;
-  createdAt: IFirestoreTimestamp | Date | null; // @TODO remove "Date" as it's needed temporary for the mocked data
-  modifiedAt: IFirestoreTimestamp | null;
-  createdByAddress: string | null;
-  executionPeriodInDays: number;
-  dealType: "token-swap"/* | "co-liquidity"*/;
+  fundingPeriod: number;
+  dealType: "token-swap"/* | "co-liquidity"*/
+  ;
 }
 
 export function emptyDaoDetails(): IDAO {
@@ -112,10 +103,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public keepAdminRights: boolean;
   public offersPrivate: boolean;
   public isPrivate: boolean;
-  public createdAt: IFirestoreTimestamp | null;
-  public modifiedAt: IFirestoreTimestamp | null;
-  public createdByAddress: string | null;
-  public executionPeriodInDays: number;
+  public fundingPeriod: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
   constructor(isPartneredDeal = false) {
@@ -123,7 +111,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   }
 
   clearState(isPartneredDeal: boolean): void {
-    this.version = "0.0.1";
+    this.version = "0.0.2";
     this.proposal = {
       title: "",
       summary: "",
@@ -144,8 +132,5 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
-    this.createdAt = null;
-    this.modifiedAt = null;
-    this.createdByAddress = null;
   }
 }

@@ -9,22 +9,20 @@ import { ethers } from "ethers";
 import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
-// import AES from "crypto-js/aes";
-// import Utf8 from "crypto-js/enc-utf8";
+import { IDeal } from "entities/IDealTypes";
 
 interface IDiscussionListItem extends IDealDiscussion {
-  lastModified: string
+  modifiedAt: string
 }
 
 @autoinject
 export class DiscussionsService {
 
-  public comments: Array<IComment> = [];
   private convo = new Convo(process.env.CONVO_API_KEY);
-  private convoVote = new Convo("CONVO"); // Temporary - need to be fixed by Anodit.
 
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
+  private ensName: string;
 
   constructor(
     private ethereumService: EthereumService,
@@ -115,15 +113,18 @@ export class DiscussionsService {
    * @param clauseDiscussions A map of clause discussions
    * @returns void
    */
-  public loadDealDiscussions(clauseDiscussions: Map<string, string>): void {
+  public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
     this.discussions = {};
-    for (const [, value] of clauseDiscussions.entries()) {
-      const discussion = this.dataSourceDeals.get<IDealDiscussion>(value);
-      this.discussions[value] = {
+    for (const [id, discussion] of clauseDiscussions.entries()) {
+      this.discussions[id] = {
         ...discussion,
-        lastModified: this.dateService.formattedTime(discussion.modifiedAt).diff(),
+        modifiedAt: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
     }
+  }
+
+  public async setEnsName(address: string): Promise<void> {
+    this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
   }
 
   /**
@@ -134,19 +135,21 @@ export class DiscussionsService {
    * @returns Promise<string> discussionId
    */
   public async createDiscussion(
-    dealId: string,
+    deal: IDeal,
     args: {
-      clauseHash: string | null,
+      discussionId: string | null,
       topic: string,
-      clauseIndex: number | null,
       isPublic: boolean,
-      representatives?: Array<{address: string}>,
-      admins?: Array<string>,
     }): Promise<string> {
 
-    const discussions = this.discussions || {};
-    const createdBy = {address: this.ethereumService.defaultAccountAddress};
-    const discussionId = await this.hashString(`${dealId}-${args.clauseHash}-${args.clauseIndex}`);
+    const createdBy = {
+      address: this.ethereumService.defaultAccountAddress,
+      name: null,
+    };
+    if (!this.ensName) {
+      await this.setEnsName(createdBy.address);
+    }
+    createdBy.name = this.ensName;
 
     if (!createdBy) {
       this.eventAggregator.publish("handleFailure", "Please first connect your wallet in order to create a discussion");
@@ -162,35 +165,27 @@ export class DiscussionsService {
         ["encrypt", "decrypt"],
       );
 
-      discussions[discussionId] = {
+      const discussion = {
         version: "0.0.1",
-        discussionId,
         topic: args.topic,
-        clauseIndex: args.clauseIndex,
         createdBy,
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-        lastModified: "< 1 min",
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
         replies: 0,
-        representatives: [...new Set([...args.representatives])],
-        admins: [...new Set([...args.admins.map(admin => ({address: admin}))])],
         key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 
-      const dealData = await this.dealService.deals.get(dealId);
-      await dealData.addClauseDiscussion(
-        args.clauseHash,
-        discussionId,
+      await deal.addClauseDiscussion(
+        args.discussionId,
+        discussion,
       );
-      this.dealService.deals.set(dealId, dealData);
-      await this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
-      this.updateDiscussionListStatus(discussionId, new Date());
+      this.discussions[args.discussionId] = discussion;
 
-      return discussionId;
+      return args.discussionId;
     }
   }
 
-  convertArrayBufferToString(buffer: ArrayBuffer): string {
+  private convertArrayBufferToString(buffer: ArrayBuffer): string {
     return String.fromCharCode.apply(null, new Uint8Array(buffer));
   }
 
@@ -201,26 +196,6 @@ export class DiscussionsService {
       bufView[i] = text.charCodeAt(i);
     }
     return buf;
-  }
-
-  /**
-   * Update the reply count and the last activity date of a discussion
-   * @param discussionId string
-   * @param timestamp Date
-   * @returns void
-   */
-  public async updateDiscussionListStatus(discussionId: string, timestamp?: Date): Promise<void> {
-    if (
-      this.discussions[discussionId]?.replies === this.comments.length &&
-      new Date(this.discussions[discussionId].modifiedAt).getTime() <= timestamp?.getTime()
-    ) return;
-
-    if (this.comments.length)
-      this.discussions[discussionId].replies = this.comments.length;
-    if (timestamp)
-      this.discussions[discussionId].modifiedAt = timestamp;
-
-    this.dataSourceDeals.update(discussionId, JSON.stringify(this.discussions[discussionId]));
   }
 
   public async importKey(discussionId: string): Promise<CryptoKey> {
@@ -284,37 +259,40 @@ export class DiscussionsService {
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
-      this.comments = await this.convo.comments.query({
+      const comments: Array<IComment> = (await this.convo.comments.query({
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      });
-      if (!this.comments) return null;
-
-      this.comments = await this.comments.filter((comment: any) => {
-        return !(
-          (comment.metadata.isPrivate === "true") &&
+      })).filter((comment: IComment) => !(
+        (comment.metadata.isPrivate === "true") &&
           (!this.ethereumService.defaultAccountAddress ||
           ![
             comment.author,
             ...JSON.parse(comment.metadata.allowedMembers || "[]"),
           ].includes(this.ethereumService.defaultAccountAddress))
-        );
-      });
+      ));
+
+      if (!comments || comments.length === undefined) return null;
 
       const key = await this.importKey(discussionId);
-      this.comments.forEach((comment: any) => {
+
+      const promises = comments.map(async (comment: any) => {
         if (comment._mod > latestTimestamp) latestTimestamp = comment._mod;
 
-        if (comment.metadata?.encrypted) {
-          this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key).then(text => {
-            comment.text = text;
-          });
-        }
-        if (comment.authorENS) comment.authorName = comment.authorENS;
+        const text = (comment.metadata?.encrypted)
+          ? await this.decryptWithAES(comment.metadata.encrypted, comment.metadata.iv, key)
+          : comment.text;
+
+        return {
+          ...comment,
+          text: text,
+          createdOn: (comment._mod / 1000000).toString(),
+        };
       });
 
+      const commentsThread: IComment[] = await Promise.all(promises);
+
       latestTimestamp = latestTimestamp ? (latestTimestamp / 1000000) : new Date().getTime();
-      this.updateDiscussionListStatus(discussionId, new Date(latestTimestamp));
-      return this.comments;
+
+      return [...await commentsThread];
     } catch (error) {
       this.consoleLogService.logMessage("loadDiscussionComments: " + error.message);
     }
@@ -335,7 +313,7 @@ export class DiscussionsService {
   * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
   * @returns void
   */
-  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment[]> {
+  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -346,7 +324,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Please connect your wallet to add a comment"),
         );
-        return this.comments;
+        return null;
       }
     }
 
@@ -356,7 +334,7 @@ export class DiscussionsService {
 
     try {
       const encrypted = await this.encryptWithAES(comment, discussionId);
-      const data = await this.convo.comments.create(
+      const data: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         "This comment is encrypted",
@@ -373,15 +351,13 @@ export class DiscussionsService {
 
       // Return un-encrypted comment to the view
       data.text = comment;
-      this.comments.push(data);
-      this.updateDiscussionListStatus(discussionId, new Date(parseInt(data.createdOn)));
-      return this.comments;
+      return data;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
     }
   }
 
-  public async deleteComment(discussionId: string, commentId: string): Promise<IComment[]> {
+  public async deleteComment(discussionId: string, commentId: string): Promise<boolean> {
     const isValidAuth = await this.isValidAuth();
 
     if (!this.ethereumService.defaultAccountAddress) {
@@ -389,7 +365,7 @@ export class DiscussionsService {
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to add a comment"),
       );
-      return this.comments;
+      return false;
     }
     if (!isValidAuth) {
       await this.authenticateSession();
@@ -398,7 +374,7 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
-        return this.comments;
+        return false;
       }
     }
 
@@ -408,25 +384,21 @@ export class DiscussionsService {
         localStorage.getItem("discussionToken"),
         commentId,
       );
-      this.comments = this.comments.filter((comment: IComment) => comment._id !== commentId);
-      this.comments.forEach((comment: IComment) => {
-        if (comment.replyTo === commentId) comment.replyTo = "deleted";
-      });
+      return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
     }
-    this.updateDiscussionListStatus(discussionId, new Date());
-    return this.comments;
+    return false;
   }
 
-  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<IComment[]> {
+  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<boolean | IComment> {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
         "handleValidationError",
         new EventConfigFailure("Please connect your wallet to vote a comment"),
       );
-      return null;
+      return false;
     }
 
     if (!await this.isValidAuth()) {
@@ -436,13 +408,13 @@ export class DiscussionsService {
           "handleValidationError",
           new EventConfigFailure("Signature is needed to vote a comment"),
         );
-        return this.comments;
+        return false;
       }
     }
     const token = localStorage.getItem("discussionToken");
 
     try {
-      const message = await this.convoVote.comments.getComment(commentId);
+      const message = await this.convo.comments.getComment(commentId);
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -452,10 +424,10 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        await this.convoVote.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
       }
 
-      const success = (await this.convoVote.comments[type](this.currentWalletAddress, token, commentId)).success;
+      const success = (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
 
       // Toggle vote locally
       if (!message[endpoints[type]].includes(this.currentWalletAddress)) {
@@ -465,13 +437,7 @@ export class DiscussionsService {
         message[endpoints[type]] = message[endpoints[type]].filter(address => address !== this.currentWalletAddress);
       }
 
-      if (success) {
-        const commentIndex = this.comments.findIndex(comment => comment._id === message._id);
-        this.comments[commentIndex].upvotes = message.upvotes;
-        this.comments[commentIndex].downvotes = message.downvotes;
-        this.updateDiscussionListStatus(discussionId, new Date());
-        return [...this.comments];
-      }
+      return success ? message : false;
 
     } catch (error) {
       throw error.message;
@@ -484,7 +450,7 @@ export class DiscussionsService {
       address: authorWalletAddress,
       // image: "https://icon-library.com/images/vendetta-icon/vendetta-icon-14.jpg",
       image: "",
-      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || "",
+      name: await ethers.getDefaultProvider(EthereumService.ProviderEndpoints[process.env.NETWORK]).lookupAddress(authorWalletAddress) || null,
     };
   }
 

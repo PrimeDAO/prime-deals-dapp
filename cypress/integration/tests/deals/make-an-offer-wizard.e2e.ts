@@ -1,15 +1,19 @@
 import { Given, Then, And } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { E2eDealsApi } from "../../common/deal-api";
 
 // @TODO this should be changed to make an offer to a real proposal (probably via clicking "make an offer" to and open proposal)
-const proposalId = "open_deals_stream_hash_2";
-const avatarUrl = "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/primexyz.eth.png";
-
 Given("I navigate to make an offer wizard", () => {
-  cy.visit(`/make-an-offer/${proposalId}/proposal`);
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    cy.visit(`/make-an-offer/${openProposalId}/proposal`);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });
 
 Given("I navigate to make an offer Primary DAO stage", () => {
-  cy.visit(`/make-an-offer/${proposalId}/primary-dao`);
+  E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
+    cy.visit(`/make-an-offer/${openProposalId}/primary-dao`);
+    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  });
 });
 
 Then("I can see DAO details section with pre-filled disabled fields", () => {
@@ -29,8 +33,6 @@ Then("I can see DAO details section with pre-filled disabled fields", () => {
         cy.get("input").should("be.disabled").invoke("val").should("have.length.at.least", 1);
       });
 
-      cy.get("[data-test=\"dao-avatar\"]").should("have.css", "background-image", `url("${avatarUrl}")`);
-
       cy.get("[data-test=\"dao-avatar\"]")
         .should("have.css", "width", "64px")
         .and("have.css", "height", "64px");
@@ -46,10 +48,10 @@ And("I can see DAO representatives section with pre-filled disabled fields", () 
     cy.get("[data-test=\"section-title\"]").should("have.text", "Select Representatives");
     cy.get("[data-test=\"section-description\"]").should("be.visible");
     cy.contains("div", "Primary DAO - Representatives Addresses (Max. 5)");
-    cy.get("[data-test=\"dao-representative\"]").should(($representatives) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").should(($representatives) => {
       expect($representatives).to.have.length.greaterThan(0);
     });
-    cy.get("[data-test=\"dao-representative\"]").each(($representative) => {
+    cy.get("[data-test=\"dao-representatives-addresses-field\"]").each(($representative) => {
       cy.wrap($representative).within(() => {
         cy.get("input").should("be.disabled");
       });

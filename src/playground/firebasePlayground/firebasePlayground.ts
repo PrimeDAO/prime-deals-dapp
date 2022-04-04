@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
+import { IDealDiscussion } from "entities/DealDiscussions";
 import { EthereumService } from "./../../services/EthereumService";
 import { autoinject } from "aurelia-framework";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Subscription } from "rxjs";
 import { FirestoreService } from "./../../services/FirestoreService";
 import { openProposalDummyData1, partnerDealDummyData1 } from "./firebaseDummyData";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
 
 @autoinject
 export class FirebasePlayground {
@@ -11,7 +14,7 @@ export class FirebasePlayground {
   subscriptions: Array<Subscription> = [];
 
   constructor(
-    private firestoreService: FirestoreService,
+    private firestoreService: FirestoreService<IDealTokenSwapDocument, IDealRegistrationTokenSwap>,
     private ethereumService: EthereumService,
   ) {}
 
@@ -50,8 +53,19 @@ export class FirebasePlayground {
     this.firestoreService.updateTokenSwapRegistrationData(dealId, registrationData);
   }
 
-  addClauseDiscussion(dealId: string, clauseId: string, discussionHash: string) {
-    this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionHash);
+  addDealDiscussion(dealId: string, discussionId: string) {
+    const discussion: IDealDiscussion = {
+      version: "0.0.1",
+      topic: "Topic",
+      createdBy: {
+        address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+      },
+      createdAt: new Date().toISOString(),
+      modifiedAt: new Date().toISOString(),
+      replies: 0,
+      key: new Date().toISOString(),
+    };
+    this.firestoreService.addClauseDiscussion(dealId, discussionId, discussion);
   }
 
   async updateDealIsWithdrawn(dealId: string, value: boolean) {

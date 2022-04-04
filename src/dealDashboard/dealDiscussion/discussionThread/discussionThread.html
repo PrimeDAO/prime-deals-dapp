@@ -10,31 +10,30 @@
       </div>
     </section>
     <hgroup class="title" ref="refTitle">
-      <h2 class="heading topic ${atTop? 'at-top': ''}">${dealDiscussion.topic}</h2>
+      <pre><h2 class="heading topic">${dealDiscussion.topic}</h2></pre>
       <span if.bind="dealDiscussion && dealDiscussion.createdBy.address">
-        <h3 class="subtext">Clause #${dealDiscussion.clauseIndex + 1}</h3>
+        <h3 class="subtext">Clause #${clauseIndex}</h3>
         <h3 class="subtext">
-          <span if.bind="dealDiscussion.createdByName">
-            Created by ${dealDiscussion.createdByName}
+          <span if.bind="dealDiscussion.createdBy.name">
+            Created by ${dealDiscussion.createdBy.name}
           </span>
           <span else>
-            Created by ${dealDiscussion.createdByAddress | smallHexString}
+            Created by ${dealDiscussion.createdBy.address | smallHexString}
           </span>
           at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }</h3>
       </span>
     </hgroup>
     <div class="sticky-area">
       <section class="comments container">
-        <div if.bind="isLoading.discussions" class="comment isLoading">
+        <div if.bind="isLoading.discussions" data-test="comments-loading" class="comment isLoading">
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
-
-        <div else class="no comment">
+        <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
           ${noCommentsText}
         </div>
 
-        <div 
+        <div
           if.bind="!isLoading.discussions && threadComments.length"
           repeat.for="comment of threadComments"
           ref="refComments[$index]"
@@ -42,14 +41,15 @@
           class="comment">
           <single-comment
             comment-action.call="doAction(action, args)"
-            discussionId.bind="discussionId"
+            discussion-id.two-way="discussionId"
             author.bind="dealDiscussion.createdBy.address"
             profile.bind="threadProfiles[comment.author]"
             loading.bind="isLoading"
-            highlighted.bind="isReply && comment._id === replyToOriginalMessage._id"
+            highlighted.bind="comment._id === replyToComment._id"
             index="${$index}"
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
+            is-authorized.bind="deal.isUserRepresentativeOrLead"
             comment.bind="comment">
           </single-comment>
         </div>
@@ -57,21 +57,21 @@
       <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton> -->
 
       <!-- Comment Input -->
-      <section if.bind="isAuthorized && isMember" class="action container">
-        <div if.bind="isReply" class="replyState">
+      <section if.bind="deal.isUserRepresentativeOrLead" data-test="comment-input-section" class="action container">
+        <div if.bind="replyToComment" data-test="reply-to-container" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>
-            <span if.bind="replyToOriginalMessage && replyToOriginalMessage.authorName">
-              Reply to ${replyToOriginalMessage.authorName}
+            <span if.bind="replyToComment && replyToComment.authorENS" data-test="reply-to-address">
+              Reply to ${replyToComment.authorENS}
             </span>
-            <span else if.bind="replyToOriginalMessage && replyToOriginalMessage.author">
-              Reply to ${replyToOriginalMessage.author | smallHexString}
+            <span else if.bind="replyToComment && replyToComment.author" data-test="reply-to-address">
+              Reply to ${replyToComment.author | smallHexString}
             </span>
             <button click.delegate="closeReply()">
               <i class="fas fa-times"></i>
             </button>
           </p>
-          <p class="subtitle">${replyToOriginalMessage.text}</p>
+          <pre class="subtitle">${replyToComment.text}</pre>
         </div>
         <div else>
           <p class="action heading heading3">
@@ -80,7 +80,7 @@
         </div>
         <ptextarea
           ref="refCommentInput"
-          placeholder="${isReply? 'Type your reply here...' : 'Type your comment here...'}"
+          placeholder="${replyToComment? 'Type your reply here...' : 'Type your comment here...'}"
           value.two-way="comment"
           rows="2"
           validation-state="${isLoading.commenting ? 'validating' : ''}"
@@ -88,13 +88,14 @@
           class="comment-input">
         </ptextarea>
         <pbutton
+          data-test="comment-input-button"
           class="action do"
           type="primary"
           full-width
           disabled.bind="isLoading.commenting || !comment.length"
           loading.bind="isLoading.commenting"
           click.delegate="addComment()">
-          ${isReply ? "Reply" : "Comment"}
+          ${replyToComment ? "Reply" : "Comment"}
         </pbutton>
       </section>
       <span ref="refThreadEnd"></span>

@@ -1,29 +1,14 @@
-import { Hash } from "services/EthereumService";
-
-export interface IDiscussion {
-  createdBy: string,
-  createdOn: Date,
-  admins: Array<string>,
-  members: Array<string>,
-  isPublic: boolean,
-  clauseHash: string | null,
-  clauseIndex: number | null,
-  topic: string,
-  replies: number,
-  modifiedAt: Date,
-}
-
 export interface IComment {
   // Following the comment structure of `theconvo.space` api:
-  _id: string,
-  text: string,
-  author: string,
-  authorName?: string,
-  metadata: any,
-  replyTo?: string,
-  upvotes: Array<string>,
-  downvotes: Array<string>,
-  timestamp: number,
+  _id: string;
+  text: string;
+  author: string;
+  authorENS?: string;
+  metadata: any;
+  replyTo?: string;
+  upvotes: Array<string>;
+  downvotes: Array<string>;
+  createdOn: string;
 }
 
 export interface IProfile {
@@ -43,31 +28,23 @@ export enum VoteType {
 
 export interface IDealDiscussion {
   version: string;
-  discussionId: Hash;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
-  createdBy: {address: string} | null;
-  createdByName?: string | null;
-  representatives: Array<{address: string}>;
-  admins: Array<{address: string}>;
+  createdAt: string | null;
+  modifiedAt: string | null;
+  createdBy: {
+    address: string,
+    name?: string | null;
+  } | null;
   topic: string;
-  clauseIndex: number | null;
   replies: number;
   key: string;
 }
 
 export class DealDiscussion implements IDealDiscussion {
-  public discussionId: Hash;
   public version: string;
-  public isPrivate: boolean;
-  public createdAt: Date | null;
-  public modifiedAt: Date | null;
-  public createdBy: {address: string} | null;
-  public representatives: Array<{address: string}>;
-  public admins: Array<{address: string}>;
+  public createdAt: string | null;
+  public modifiedAt: string | null;
+  public createdBy: {address: string, name?: string | null} | null;
   public topic: string;
-  // public clauseHash: string | null;
-  public clauseIndex: number | null;
   public replies: number;
   public key: string;
 }

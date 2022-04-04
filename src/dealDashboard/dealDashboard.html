@@ -7,7 +7,7 @@
   <require from="./dealDescription/dealDescription"></require>
   <require from="../deals/timeLeft/timeLeft"></require>
 
-  <main class="page animated-page au-animate dealDashboardContainer">
+  <main data-test="deal-dashboard-container" class="page animated-page au-animate dealDashboardContainer">
     <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
@@ -15,7 +15,7 @@
         ${deal.registrationData.proposal.title}
       </h1>
 
-      <let deal-privacy-text="${deal.registrationData.isPrivate ? 'Private' : 'Public'}"></let>
+      <let deal-privacy-text="${deal.isPrivate ? 'Private' : 'Public'}"></let>
       <h2 data-test="dealStatus">
         <time-left deal.to-view="deal" hide-icons largest>
           <span slot="before">•</span>
@@ -32,18 +32,16 @@
     <deal-description deal.bind="deal"></deal-description>
 
     <deal-clauses
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
-      if.to-view="authorized || !deal.registrationData.isPrivate"
-    ></deal-clauses>
+      discussion-id.two-way="discussionId"
+      if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
-      show.bind="authorized || !deal.registrationData.isPrivate"
-    ></deal-discussion>
+      discussion-id.two-way="discussionId"
+      show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-discussion>
   </main>
 </template>

@@ -1,25 +1,46 @@
 import { autoinject } from "aurelia-framework";
 import { firebaseAuth } from "./FirebaseService";
 import { FirestoreService } from "./FirestoreService";
-import { IDataSourceDeals2 } from "./DataSourceDealsTypes";
+import { IDataSourceDeals } from "./DataSourceDealsTypes";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { Address } from "services/EthereumService";
+import { IFirebaseDocument } from "services/FirestoreTypes";
+import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
-export class FirestoreDealsService implements IDataSourceDeals2 {
-  constructor(private firestoreService: FirestoreService) {}
+export class FirestoreDealsService<
+  TDealDocument extends IDealTokenSwapDocument,
+  TRegistrationData extends IDealRegistrationTokenSwap> implements IDataSourceDeals {
 
-  initialize(): void {
+  constructor(
+    private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
+    private consoleLogService: ConsoleLogService,
+  ) {}
+
+  public initialize(): void {
     throw new Error("Method not implemented.");
   }
 
-  getDeals<TDealDocument>(accountAddress?: string): Promise<TDealDocument[]> {
+  public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
+    let deals: Array<IFirebaseDocument<TDealDocument>>;
+
+    await this.firestoreService.ensureAuthenticationIsSynced();
+
     if (accountAddress) {
-      return this.firestoreService.getAllPublicDeals() as any;
+      if (!this.isUserAuthenticated(accountAddress)) {
+        return;
+      }
+      this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
+      deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
     } else {
-      this.firestoreService.getAllDealsForTheUser(accountAddress);
+      this.consoleLogService.logMessage("getting all public deals");
+      deals = await this.firestoreService.getAllPublicDeals();
     }
+    return deals.map((deal) => deal.data);
   }
 
-  createDeal<TDealDocument, TRegistration>(accountAddress: string, registration: TRegistration): Promise<TDealDocument> {
+  public createDeal<TDealDocument, TRegistrationData>(accountAddress: string, registration: TRegistrationData): Promise<TDealDocument> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -27,7 +48,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
     return this.firestoreService.createDealTokenSwap(registration as any) as any;
   }
 
-  updateRegistration<TRegistration>(dealId: string, accountAddress: string, registration: TRegistration): Promise<void> {
+  public updateRegistration<TRegistrationData>(dealId: string, accountAddress: string, registration: TRegistrationData): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -35,7 +56,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
     return this.firestoreService.updateTokenSwapRegistrationData(dealId, registration as any);
   }
 
-  updateVote(dealId: string, accountAddress: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", yes: boolean): Promise<void> {
+  public updateVote(dealId: string, accountAddress: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", yes: boolean): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -43,20 +64,19 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
     return this.firestoreService.updateRepresentativeVote(dealId, accountAddress, dao, yes);
   }
 
-  deleteAllVotes(_dealId: string, _accountAddress: string): Promise<void> {
+  public deleteAllVotes(_dealId: string, _accountAddress: string): Promise<void> {
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addClauseDiscussion<TRegistration>(dealId: string, accountAddress: string, clauseId: string, discussionId: string): Promise<void> {
+  public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussion: any): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
 
-    return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussionId);
+    return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussion);
   }
 
-  updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {
+  public updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -64,7 +84,7 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
     return this.firestoreService.updateDealIsWithdrawn(dealId, value);
   }
 
-  updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
+  public updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
     }
@@ -78,6 +98,10 @@ export class FirestoreDealsService implements IDataSourceDeals2 {
    * @returns boolean
    */
   private isUserAuthenticated(accountAddress: string) {
+    if (!firebaseAuth.currentUser) {
+      return;
+    }
+
     return accountAddress.toLowerCase() === firebaseAuth.currentUser.uid.toLowerCase();
   }
 }

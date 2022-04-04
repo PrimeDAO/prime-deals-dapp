@@ -4,17 +4,14 @@ export const openProposalDummyData1 = {
     "description": "Description",
     "title": "Open Proposal Dummy Deal 1",
   },
-  "createdByAddress": null,
   "offersPrivate": false,
-  "modifiedAt": null,
-  "executionPeriodInDays": 86400,
+  "fundingPeriod": 86400,
   "isPrivate": false,
   "version": "0.0.1",
   "proposalLead": {
     "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     "email": "proposallead@example.com",
   },
-  "createdAt": null,
   "primaryDAO": {
     "treasury_address": "0x978f995b5768F9ed39E498B5921D0D2874Ad472e",
     "logoURI": "https://picsum.photos/seed/picsum/400/400",
@@ -59,10 +56,8 @@ export const partnerDealDummyData1 = {
     "description": "Description dummy partnered",
     "title": "Dummy Partnered Deal one",
   },
-  "createdByAddress": null,
   "offersPrivate": false,
-  "modifiedAt": null,
-  "executionPeriodInDays": 864000,
+  "fundingPeriod": 864000,
   "partnerDAO": {
     "treasury_address": "0x4Bf2Ae9373D0F893750a8d2159eFF2Bb76dF03dD",
     "logoURI": "https://picsum.photos/seed/picsum/200/200",
@@ -93,7 +88,6 @@ export const partnerDealDummyData1 = {
     "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     "email": "lead@example.com",
   },
-  "createdAt": null,
   "primaryDAO": {
     "treasury_address": "0x60657CeaDA4E93187a89CaD8ff2841383f2f595e",
     "logoURI": "https://picsum.photos/seed/picsum/400/400",

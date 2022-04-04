@@ -18,9 +18,9 @@ $MinContentBodyPaddingLeftRight: 160px;
 $MaxContentBodyWidth: 1120px;
 
 $ContentBodyWidth: clamp(
-$MinContentBodyWidth,
-calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
-$MaxContentBodyWidth
+  $MinContentBodyWidth,
+  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+  $MaxContentBodyWidth
 );
 
 $BodyPaddingLeftRight: calc((100% - #{$ContentBodyWidth}) / 2);
@@ -29,9 +29,9 @@ $ContentMinLeftRightPadding: 20px;
 $MaxContentBodyWidthMobile: calc(100% - (#{$ContentMinLeftRightPadding} * 2));
 
 $ContentBodyWidthMobile: minmax(
-    $MinContentBodyWidth,
-    calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
-    $MaxContentBodyWidthMobile
+  $MinContentBodyWidth,
+  calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
+  $MaxContentBodyWidthMobile
 );
 
 $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
@@ -51,6 +51,24 @@ html {
       }
     }
 
+    /**
+      * suppress browser style changes associated with autofill
+      */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: $White;
+      transition: background-color 100s ease-in-out 0s;
+      -webkit-box-shadow: 0 0 0px 3.7em $BG01 inset;
+      box-shadow: 0 0 0px 3.7em $BG01 inset;
+      caret-color: $White;
+    }
+    
+    // when hovering over dropdown items
+    input:-webkit-autofill::first-line {
+      font-size: 16px;
+    }
+  
     .clearInput {
       background-color: transparent;
       color: $BG01;
@@ -77,8 +95,8 @@ html {
       white-space: nowrap;
       cursor: pointer;
       &:hover {
-        color: $Neutral04;
-        text-underline: none;
+        color: $Neutral03;
+        text-decoration: none;
       }
     }
 
@@ -191,6 +209,12 @@ html {
   .daoLogo {
     width: 36px;
     height: 36px;
+    border-radius: 50%;
+  }
+
+  .daoSmallLogo {
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
   }
 }
