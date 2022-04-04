@@ -70,7 +70,7 @@
         }
       }
 
-      > .selector {
+      >.carousel-selector {
         display: flex;
         -webkit-text-fill-color: $Neutral02;
         border-bottom: 2px solid $Border01;
@@ -209,7 +209,7 @@
       }
 
       &.deals {
-        .selector {
+        .carousel-selector {
           margin-bottom: 20px;
 
           :not(:first-child) {
