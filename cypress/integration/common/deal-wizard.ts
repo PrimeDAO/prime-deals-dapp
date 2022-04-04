@@ -1,6 +1,8 @@
 import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { recurse } from "cypress-recurse";
 import { E2eDealsApi } from "./deal-api";
 import { E2eDealWizard, WizardField } from "./pageObjects/dealWizard";
+import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2eWizard {
   public static waitForWizardLoaded() {
@@ -186,7 +188,14 @@ Then("I can proceed to the next step", () => {
   cy.url().then(url => {
     const oldUrl = url;
     cy.get("[data-test='wizard-proceed-button']").click();
-    cy.url().should("not.equal", oldUrl);
+
+    recurse(
+      () => cy.url(),
+      (url) => {
+        expect(url).not.to.equal(oldUrl);
+      },
+      {log: false, timeout: PAGE_LOADING_TIMEOUT},
+    );
   });
 });
 
