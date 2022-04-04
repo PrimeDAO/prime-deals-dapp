@@ -132,7 +132,7 @@ function givenImAnAnonymousUser() {
 
 function givenImAConnectedPublicUser() {
   E2eNavigation.hasAppLoaded().then(hasLoaded => {
-    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.RepresentativeTwo;
     E2eWallet.isLead = false;
 
     if (hasLoaded) {
