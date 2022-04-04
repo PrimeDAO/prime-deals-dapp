@@ -333,31 +333,6 @@ export class DealTokenSwap implements IDeal {
     return this.representativeVote() !== null;
   }
 
-  @computedFrom("majorityHasVoted", "hasUserVoted")
-  public get isRepresentativeEligibleToVote(): boolean {
-    return !this.majorityHasVoted && !this.hasRepresentativeVoted;
-  }
-
-  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
-  public get isProposalLeadWaitingForOthersToVote() {
-    return !this.majorityHasVoted && this.isUserProposalLead && (this.hasRepresentativeVoted || !this.isRepresentativeUser);
-  }
-
-  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
-  public get isRepresentativeWaitingForOthersToVote(): boolean {
-    return !this.majorityHasVoted && !this.isUserProposalLead && this.hasRepresentativeVoted;
-  }
-
-  @computedFrom("isApproved", "isUserProposalLead")
-  public get canStartFunding() {
-    return this.isApproved && this.isUserProposalLead;
-  }
-
-  @computedFrom("isApproved", "isUserProposalLead")
-  public get waitingForTheProposalLeadToStartFunding() {
-    return this.isApproved && !this.isUserProposalLead;
-  }
-
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isClaiming")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
