@@ -1,0 +1,22 @@
+<template>
+  <div class="box-header">
+    <div class="heading heading3 title gradient">${dao.name} Deposit</div>
+    <pchip
+      color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
+      if.to-view="showChip && fundingDaysLeft >= 0"
+    >
+      <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
+    </pchip>
+    <pchip color="danger" if.to-view="showChip && deal.isFailed">Target not reached</pchip>
+  </div>
+  <div class="box-content">
+    <div class="tokens">
+      <pgrid
+        id="token-grid"
+        rows.bind="daoTokens"
+        columns.bind="tokenGridColumns"
+        condensed.bind="true"
+      ></pgrid>
+    </div>
+  </div>
+</template>

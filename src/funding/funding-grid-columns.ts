@@ -26,7 +26,7 @@ export const tokenGridColumns: IGridColumn[] = [
   {field: "deposited", sortable: true, width: ".5fr", template: "${deposited | ethwei:row.decimals}" },
   {field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${required | ethwei:row.decimals}</div>" },
   {field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></pprogress-bar>" },
-  {field: "percentCompleted", sortable: true, headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
+  {field: "percentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
 ];
 
 export const claimTokenGridColumns: IGridColumn[] = [
