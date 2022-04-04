@@ -4,6 +4,7 @@ import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
 import { E2eWizard } from "./deal-wizard";
+import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2EDashboard {
   public static editDeal() {
@@ -19,7 +20,7 @@ Given("I'm viewing the/an Open Proposal", () => {
       const url = `deal/${E2eDeals.currentDealId}`;
       cy.visit(url);
 
-      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
       return;
     }
 

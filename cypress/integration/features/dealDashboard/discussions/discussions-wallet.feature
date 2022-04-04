@@ -7,6 +7,7 @@ Feature: Discussions - Wallet
   Scenario: Wallet - Disconnected - Deal Clauses
     Then I cannot begin a Discussion
 
+  @focus
   Scenario: Wallet - Disconnected - Threads
     Then I'm informed about who can participate in Discussions
 

@@ -24,6 +24,11 @@ export class E2eDiscussion {
     return cy.get("[data-test='discussions-list']");
   }
 
+  public static getThreadHeader() {
+    return cy.get("[data-test='discussion-thread']")
+      .find("[data-test='thread-header']");
+  }
+
   public static getSingleTopic() {
     return cy.get("[data-test='single-topic']");
   }
@@ -228,8 +233,8 @@ Then("I should be informed of no discussions", () => {
 });
 
 Then("I can create a new Discussion", () => {
-  cy.get("[data-test='add-or-read-button']").first().click();
-  cy.log("Bug: no discussion created");
+  E2eDiscussion.getAddOrReadButton().click();
+  E2eDiscussion.getThreadHeader().should("be.visible");
 });
 
 And("I cannot reply to a Comment", () => {
