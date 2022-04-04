@@ -1,11 +1,12 @@
-import { Router } from "aurelia-router";
-import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { EthereumService } from "services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { DealService } from "services/DealService";
-import { DisposableCollection } from "services/DisposableCollection";
+import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { Router } from "aurelia-router";
+import { AureliaHelperService } from "../services/AureliaHelperService";
+import { DisposableCollection } from "../services/DisposableCollection";
 
 @autoinject
 export class DealDashboard {
@@ -17,9 +18,9 @@ export class DealDashboard {
   constructor(
     private ethereumService: EthereumService,
     private dealService: DealService,
-    private disposableCollection: DisposableCollection,
     private eventAggregator: EventAggregator,
     private router: Router,
+    private aureliaHelperService: AureliaHelperService,
   ) {
   }
 
@@ -31,11 +32,20 @@ export class DealDashboard {
   }
 
   public activate() {
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
       if (!this.userCanAccessDashboard) {
         this.router.navigate("home");
       }
     }));
+
+    this.subscriptions.push(
+      this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", async (value: boolean) => {
+        await this.deal.setPrivacy(value).catch(() => {
+          this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
+        });
+        this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
+      }),
+    );
   }
 
   public detached() {

@@ -94,6 +94,16 @@ export abstract class IDataSourceDeals {
   }
 
   /**
+   * Update isWithdrawn flag
+   */
+  updateDealIsPrivate(
+    dealId: IDealIdType,
+    value: boolean,
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Update isRejected flag
    * @param dealId
    * @param accountAddress

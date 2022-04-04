@@ -95,7 +95,10 @@ export class SingleComment {
   }
 
   private vote(vote: string) {
-    this.pressed[vote.toLowerCase().indexOf("up")>0 ? "up" : "down"] = true;
+    this.pressed = {
+      up: vote.toLowerCase().indexOf("up")>0,
+      down: vote.toLowerCase().indexOf("down")>0,
+    };
     this.commentAction({
       action: "vote",
       args: {

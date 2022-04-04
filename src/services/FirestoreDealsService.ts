@@ -84,6 +84,10 @@ export class FirestoreDealsService<
     return this.firestoreService.updateDealIsWithdrawn(dealId, value);
   }
 
+  public updateDealIsPrivate(dealId: string, value: boolean): Promise<void> {
+    return this.firestoreService.updateDealIsPrivate(dealId, value);
+  }
+
   public updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
     if (!this.isUserAuthenticated(accountAddress)) {
       return;
