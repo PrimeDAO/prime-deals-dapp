@@ -26,7 +26,7 @@
     "lint": "eslint --ext .ts ./src ./test ./cypress",
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js",
-    "firebase": "npm run firebase-emulators:start",
+    "firebase": "cd firebaseFunctions && npm run build && cd ../ && npm run firebase-emulators:start",
     "firebase-e2e": "firebase emulators:start --project=default --import=firebase_seed_e2e",
     "firebase:all": "npm run firebase-functions:watch & npm run firebase-emulators:start",
     "firebase-update-seed-data": "firebase emulators:export --force firebase_seed",
