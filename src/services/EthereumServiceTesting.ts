@@ -108,6 +108,12 @@ export class EthereumServiceTesting {
   }
 
   private async setProvider(): Promise<void> {
+    // Just mock required props
+    // @ts-ignore
+    this.walletProvider = {
+      lookupAddress: () => Promise.resolve(""),
+    };
+
     const address = localStorage.getItem("PRIME_E2E_ADDRESS");
     this.defaultAccountAddress = address;
     this.fireAccountsChangedHandler(address);
