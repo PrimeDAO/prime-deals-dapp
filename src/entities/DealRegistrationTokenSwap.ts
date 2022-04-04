@@ -71,7 +71,7 @@ export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
-  partnerDAO?: IDAO; // This is undefined for an Open Proposal
+  partnerDAO?: IDAO; // This doesn't exist for an Open Proposal
   proposalLead: IProposalLead; // this contains to address
   terms: ITerms;
   keepAdminRights: boolean;
@@ -118,7 +118,6 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       description: "",
     };
     this.primaryDAO = emptyDaoDetails();
-    this.partnerDAO = isPartneredDeal ? emptyDaoDetails() : undefined;
     this.proposalLead = {
       address: "",
       email: "",
@@ -132,5 +131,9 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
+    if (isPartneredDeal) {
+      this.partnerDAO = emptyDaoDetails();
+    }
+    this.dealType = "token-swap";
   }
 }

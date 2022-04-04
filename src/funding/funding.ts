@@ -163,6 +163,7 @@ export class Funding {
       data: {
         gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
       },
+      className: "executeSwap",
     };
     // show a modal confirming the user wants to execute the swap
     const dialogResult = await this.alertService.showAlert(swapModal);

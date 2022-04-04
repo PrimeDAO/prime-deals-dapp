@@ -118,7 +118,6 @@ export class DiscussionsService {
     for (const [id, discussion] of clauseDiscussions.entries()) {
       this.discussions[id] = {
         ...discussion,
-        modifiedAt: this.dateService.formattedTime(new Date(discussion.modifiedAt)).diff(),
       };
     }
   }

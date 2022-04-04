@@ -99,7 +99,7 @@ const TERMS_DATA = {
   ],
 };
 
-class DealDataBuilder {
+export class DealDataBuilder {
   public deal: IDealRegistrationTokenSwap = {
     version: "0.0.2",
     dealType: "token-swap",

@@ -511,7 +511,7 @@ export class EthereumService {
     this.readOnlyProvider.off("block", (blockNumber: number) => this.handleNewBlock(blockNumber));
   }
 
-  private async getBlock(blockNumber: number): Promise<IBlockInfo> {
+  public async getBlock(blockNumber: number): Promise<IBlockInfo> {
     const block = await this.readOnlyProvider.getBlock(blockNumber) as unknown as IBlockInfo;
     block.blockDate = new Date(block.timestamp * 1000);
     return block;

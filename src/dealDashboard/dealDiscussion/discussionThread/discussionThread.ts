@@ -353,18 +353,26 @@ export class DiscussionThread {
 
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
+
+    let isDeleted = false;
+    const swrComments = [...this.threadComments];
     this.isLoading[`isDeleting ${_id}`] = true;
     try {
-      const swrComments = [...this.threadComments];
       this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-      if (!(await this.discussionsService.deleteComment(this.discussionId, _id))) {
-        /* on error, restore original comments */
-        this.threadComments = [...swrComments];
-      }
-      this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+      isDeleted = await this.discussionsService.deleteComment(this.discussionId, _id);
     } catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
+      if (err.code === 4001) {
+        this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
+      } else {
+        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
+      }
     } finally {
+      if (!isDeleted) {
+        /* If deletion did not happened, restore original comments */
+        this.threadComments = [...swrComments];
+      } else {
+        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+      }
       this.isLoading[`isDeleting ${_id}`] = false;
     }
   }

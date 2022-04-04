@@ -1,7 +1,7 @@
 Feature: Discussions - Single Comment
   Background:
     Given I'm the Proposal Lead of an Open Proposal
-    And the Open Proposal has Discussions
+    And the Open Proposal has Discussions with replies
     And I'm viewing the Open Proposal
     And I choose a single Topic with replies
 
