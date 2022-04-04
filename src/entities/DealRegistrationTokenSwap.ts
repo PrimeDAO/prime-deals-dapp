@@ -131,9 +131,9 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
-
     if (isPartneredDeal) {
       this.partnerDAO = emptyDaoDetails();
     }
+    this.dealType = "token-swap";
   }
 }
