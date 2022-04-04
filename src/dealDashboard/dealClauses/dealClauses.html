@@ -1,22 +1,22 @@
-<template>
+<template data-test="deal-clauses">
   <header>
     <h2 class="subtitle heading heading3">Deal Clauses</h2>
   </header>
   <ol>
     <li
-      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === deal.clauseDiscussions.get(clause.id) ? 'active' : ''}"
+      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
       repeat.for="clause of clauses">
       <span class="marker">${$index + 1}</span>
-      <span class="body">${clause.text}</span>
+      <pre class="body">${clause.text}</pre>
       <span
+        data-test="add-or-read-button"
         class="button"
-        click.delegate="addOrReadDiscussion(clause.text, deal.clauseDiscussions.get(clause.id), clause.id, $index)"
-        if.to-view="authorized"
-      >
+        click.delegate="addOrReadDiscussion(clause.text, clause.id)"
+        if.to-view="authorized">
         <div
-          if.to-view="!discussionsService.discussions[deal.clauseDiscussions.get(clause.id)]">Begin A Discussion</div>
+          if.to-view="!discussionsService.discussions[clause.id]">Begin A Discussion</div>
         <div else>Discuss</div>
-        <img src="/static/comment.svg"/>
+        <img src="/static/comment.svg" />
       </span>
     </li>
   </ol>

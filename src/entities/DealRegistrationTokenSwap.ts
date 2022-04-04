@@ -1,3 +1,5 @@
+// Importing external dependencies in this file breaks firebase function which import interfaces from here
+
 export interface IProposal {
   title: string,
   summary: string,
@@ -46,7 +48,6 @@ export interface IDAO {
   logoURI: string;
   social_medias: Array<ISocialMedia>;
   representatives: Array<IRepresentative>;
-  id?: string;
   tokens?: Array<IToken>;
   platform?: Platforms;
 }
@@ -70,17 +71,15 @@ export interface IDealRegistrationTokenSwap {
   version: string;
   proposal: IProposal;
   primaryDAO: IDAO;
-  partnerDAO: IDAO;
+  partnerDAO?: IDAO; // This doesn't exist for an Open Proposal
   proposalLead: IProposalLead; // this contains to address
   terms: ITerms;
   keepAdminRights: boolean;
   offersPrivate: boolean;
   isPrivate: boolean;
-  createdAt: Date | null;
-  modifiedAt: Date | null;
-  createdByAddress: string | null;
-  executionPeriodInDays: number;
-  dealType: "token-swap"/* | "co-liquidity"*/;
+  fundingPeriod: number;
+  dealType: "token-swap"/* | "co-liquidity"*/
+  ;
 }
 
 export function emptyDaoDetails(): IDAO {
@@ -104,10 +103,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public keepAdminRights: boolean;
   public offersPrivate: boolean;
   public isPrivate: boolean;
-  public createdAt: Date | null;
-  public modifiedAt: Date | null;
-  public createdByAddress: string | null;
-  public executionPeriodInDays: number;
+  public fundingPeriod: number;
   public dealType: "token-swap"/* | "co-liquidity" */;
 
   constructor(isPartneredDeal = false) {
@@ -115,14 +111,13 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   }
 
   clearState(isPartneredDeal: boolean): void {
-    this.version = "0.0.1";
+    this.version = "0.0.2";
     this.proposal = {
       title: "",
       summary: "",
       description: "",
     };
     this.primaryDAO = emptyDaoDetails();
-    this.partnerDAO = isPartneredDeal ? emptyDaoDetails() : undefined;
     this.proposalLead = {
       address: "",
       email: "",
@@ -136,8 +131,9 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
-    this.createdAt = null;
-    this.modifiedAt = null;
-    this.createdByAddress = null;
+    if (isPartneredDeal) {
+      this.partnerDAO = emptyDaoDetails();
+    }
+    this.dealType = "token-swap";
   }
 }

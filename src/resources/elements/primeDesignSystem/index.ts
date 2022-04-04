@@ -16,10 +16,14 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./pinput-group/pinput-group"),
     PLATFORM.moduleName("./pcountdown-circular/pcountdown-circular"),
     PLATFORM.moduleName("./prange-slider/prange-slider"),
+    PLATFORM.moduleName("./pprogress-bar/pprogress-bar"),
+    PLATFORM.moduleName("./pchip/pchip"),
+    PLATFORM.moduleName("./pgrid/pgrid"),
     PLATFORM.moduleName("./pcountdown-closebutton/pcountdown-closebutton"),
     PLATFORM.moduleName("./ppopup-notification/ppopup-notification"),
     PLATFORM.moduleName("./ppopup-modal/ppopup-modal"),
     PLATFORM.moduleName("./ptooltip/ptooltip"),
+    PLATFORM.moduleName("./pbutton-group/pbutton-group"),
     PLATFORM.moduleName("./pquestion-mark/pquestion-mark"),
   ]);
 }

@@ -1,0 +1,474 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+
+$hover-transition-speed-fast: 175ms;
+$hover-transition-speed-medium: 0.3s;
+$hover-transition-speed-slow: 0.4s;
+.ppopup-dialog.executeSwap {
+  p.dialogBody {
+    width: 550px;
+  }
+  .modal-content {
+    border-radius: 10px;
+    background-color: $BG02;
+    width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+    display: grid;
+    grid-gap: 20px;
+    h6 {
+      text-transform: uppercase;
+      color: $Secondary02;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Aeonik;
+    }
+    .dao {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 400;
+      font-family: Aeonik;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-column-gap: 10px;
+      .buttons {
+        display: flex;
+        column-gap: 4px;
+        align-items: center;
+
+        .etherscan-button {
+          outline: none;
+          path {
+            fill: $Secondary05;
+          }
+          cursor: pointer;
+          &:hover > path {
+            fill: $White;
+          }
+        }
+      }
+    }
+  }
+}
+.success {
+  color: $Green;
+}
+.danger {
+  color: $Red;
+}
+.progress-bar {
+  height: 10px;
+  width: 100%;
+}
+.page.fundContainer {
+  section {
+    &.top {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 50px 115px;
+      pbutton {
+        justify-self: right;
+      }
+      margin-bottom: 80px;
+    }
+    &.deposit {
+      margin-bottom: 30px;
+      .box-container {
+        background-color: $BG02;
+        border-radius: 10px;
+        height: 100%;
+        margin-top: 50px;
+        > div {
+          padding: 0 24px;
+        }
+        .box-header {
+          padding-top: 20px;
+          margin-bottom: 32px;
+          display: grid;
+          grid-template-columns: 1fr auto;
+        }
+        .box-content {
+          .tokens {
+            .grid {
+              margin-bottom: 20px;
+              font-size: 16px;
+
+              .row {
+                cursor: default;
+                /**
+                 * so the grid will be composed of the contents of the row element,
+                 * not the row element itself.
+                 */
+                display: contents;
+
+                &:hover {
+                  text-decoration: none;
+                }
+
+                .cell.header {
+                  padding: 10px 0;
+                  text-transform: uppercase;
+                }
+
+                .cell {
+                  &.body {
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                  }
+                  /**
+                   * for when columns get scrunched together
+                   */
+                  &:not(:nth-of-type(n + 7)) {
+                    padding-right: 12px;
+                  }
+
+                  &.header {
+                    &.sortable {
+                      cursor: pointer;
+                    }
+                  }
+
+                  &.project {
+                    .ellipsesContainer {
+                      display: inline-block;
+                      overflow-x: hidden;
+                      text-overflow: ellipsis;
+                    }
+                  }
+
+                  &.percent {
+                    text-align: right;
+                    justify-content: right;
+                  }
+
+                  &.projectToken,
+                  &.fundingToken {
+                    white-space: nowrap;
+
+                    img {
+                      margin-right: 6px;
+                      @include tokenIcon;
+                    }
+                  }
+
+                  &.starts {
+                    .timeLeftContainer {
+                      .body {
+                        font-family: Aeonik; // so will center properly and look consistent
+                      }
+                    }
+                  }
+                  &.eslink {
+                    i {
+                      cursor: pointer;
+                      color: $Secondary02;
+                    }
+                  }
+                }
+              }
+            }
+
+            #token-grid {
+              .required {
+                color: $Orange;
+              }
+            }
+          }
+        }
+        .buttons {
+          display: flex;
+          flex-flow: row wrap;
+          align-items: center;
+          justify-content: space-between;
+          column-gap: 10px;
+          .buttonContainer {
+            text-align: center;
+            font-size: 8px;
+            border-radius: 32px;
+
+            a {
+              margin-left: 0;
+              width: 100px;
+              font-weight: 600;
+              text-decoration: none;
+              color: $White;
+              cursor: pointer;
+              &.disabled {
+                pointer-events: none;
+                background: $Neutral04;
+                color: $Shade04;
+              }
+            }
+          }
+
+          .moreInfoContainer {
+            a {
+              @include standardTextGradient;
+              &:hover {
+                border-bottom: 1px solid $Secondary02;
+                text-decoration: none;
+              }
+            }
+          }
+        }
+        .container-footer {
+          background-color: $Border01;
+          border-bottom-right-radius: 10px;
+          border-bottom-left-radius: 10px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          flex-direction: row;
+          padding: 20px 24px 20px 24px;
+          .contracts {
+            p {
+              font-size: 14px;
+              color: $Neutral02;
+              line-height: 17px;
+              margin-bottom: 20px;
+              padding: 0 100px 0 0;
+              display: grid;
+              grid-template-columns: 30px auto;
+              i {
+                font-size: 20px;
+                margin-top: 3px;
+              }
+            }
+            a {
+              font-size: 14px;
+              font-weight: 400;
+            }
+            .links {
+              display: grid;
+              grid-template-columns: auto 1fr;
+              grid-column-gap: 15px;
+            }
+          }
+          .deposit {
+            .form {
+              justify-items: right;
+              display: grid;
+              grid-template-columns: auto 1fr;
+              flex-direction: row;
+              grid-gap: 44px;
+              .inputs {
+                justify-items: right;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                flex-direction: row;
+                position: relative;
+                pselect {
+                  .ss-single-selected {
+                    border-bottom-right-radius: 0;
+                    border-top-right-radius: 0;
+                    &.ss-disabled {
+                      background-color: #151318;
+                      border: 1px solid #403453;
+                      color: inherit;
+                      cursor: inherit;
+                      .ss-arrow {
+                        display: none;
+                      }
+                    }
+                  }
+                }
+                .balance {
+                  display: block;
+                  margin: 4px 10px 0 0;
+                  color: $Neutral02;
+                  font-size: 13px;
+                  grid-column: span 2;
+                  &:hover {
+                    cursor: default;
+                  }
+                }
+                numeric-input {
+                  input {
+                    border-bottom-left-radius: 0;
+                    border-top-left-radius: 0;
+                    padding-right: 65px;
+                    text-align: right;
+                  }
+                }
+                pbutton {
+                  position: absolute;
+                  top: 11px;
+                  right: 10px;
+                  button {
+                    font-size: 9px;
+                    padding: 0px 9px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    &.deposits {
+      #deposits-grid {
+        .row {
+          .cell {
+            &.body {
+              &.cell {
+                .Dao .name {
+                  font-size: 16px;
+                  font-weight: 400;
+                  font-family: Aeonik;
+                }
+              }
+              div.withdraw {
+                text-align: right;
+                width: 100%;
+                pbutton {
+                  button {
+                    font-size: 9px;
+                    padding: 0px 9px;
+                  }
+                }
+              }
+              div.type {
+                text-transform: capitalize;
+                i {
+                  padding-right: 10px;
+                }
+              }
+              div.amount {
+                display: grid;
+                grid-template-columns: 24px auto;
+                grid-column-gap: 11px;
+                span {
+                  align-self: center;
+                }
+              }
+            }
+          }
+        }
+      }
+      .no-deposits {
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+        border-top: 1px solid $Secondary02;
+        padding-top: 30px;
+        pbutton {
+          margin-top: 30px;
+        }
+      }
+    }
+    &.swap-status {
+      .claim-tokens {
+        margin-top: 30px;
+        .box-container {
+          border-radius: 10px;
+          background-color: $BG02;
+          width: 100%;
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          .token-grid {
+            padding: 20px 24px;
+            .grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr 1fr;
+              margin-bottom: 20px;
+              font-size: 16px;
+              .row {
+                cursor: default;
+                /**
+                 * so the grid will be composed of the contents of the row element,
+                 * not the row element itself.
+                 */
+                display: contents;
+                &:hover {
+                  text-decoration: none;
+                }
+                .cell {
+                  &.header {
+                    padding: 10px 0;
+                    text-transform: uppercase;
+                    border-bottom: 1px solid $Secondary02;
+                    font-size: 14px;
+                    font-weight: 700;
+                    font-family: Aeonik;
+                    color: $Neutral04;
+                    &.claimable,
+                    &.locked,
+                    &.total {
+                      text-align: right;
+                    }
+                  }
+                  &.body {
+                    padding: 18px 0 0 0;
+                    display: flex;
+                    align-items: center;
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: $Neutral04;
+                    &.claimable,
+                    &.locked,
+                    &.total {
+                      justify-self: right;
+                    }
+                    .Dao .name {
+                      font-size: 16px;
+                      font-weight: 400;
+                      color: $Neutral04;
+                    }
+                  }
+                  /**
+                   * for when columns get scrunched together
+                   */
+                  &:not(:nth-of-type(n + 7)) {
+                    padding-right: 12px;
+                  }
+                }
+              }
+            }
+          }
+          .contract {
+            padding: 20px 24px 38px 24px;
+            background-color: $Border01;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            display: grid;
+            p {
+              font-size: 14px;
+              color: $Neutral02;
+              line-height: 17px;
+              margin-bottom: 20px;
+              padding-top: 7px;
+              display: grid;
+              grid-template-columns: 30px auto;
+              i {
+                font-size: 20px;
+                margin-top: 3px;
+              }
+            }
+            a {
+              font-size: 14px;
+              font-weight: 400;
+              margin: 0 20px 10px 0;
+              display: block;
+              color: $Neutral04;
+              i {
+                color: $Secondary05;
+                margin-left: 5px;
+                -webkit-transform: rotate(-45deg);
+                -moz-transform: rotate(-45deg);
+                -ms-transform: rotate(-45deg);
+                -o-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+              }
+            }
+            pbutton {
+              margin-top: 17px;
+              justify-self: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}

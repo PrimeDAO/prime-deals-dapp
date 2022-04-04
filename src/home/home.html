@@ -1,7 +1,7 @@
 <template>
   <require from="../deals/dealSummary/dealSummary"></require>
 
-  <div class="page animated-page au-animate home">
+  <div data-test="home-page" class="page animated-page au-animate home">
     <div class="section top">
       <div class="heading01Gradient">Prime Deals</div>
       <div class="heading04">The platform to negotiate and execute your next DAO to DAO deal. An agnostic, trustless, and flexible environment for DAOplomacy.</div>
@@ -26,6 +26,7 @@
       <div class="section deals" if.to-view="!featuredDeals || featuredDeals.length">
         <div class="heading02Gradient selector">
           <span if.to-view="allDeals.open.length"
+            data-test="open-proposals-tab"
             class="selector-tab ${cardIndex==0?'active':''}"
             click.delegate="dealToggle(0, 'open')">
             Open Proposals

@@ -1,0 +1,103 @@
+@import "src/resources/elements/primeDesignSystem/colors";
+
+deal-representatives-votes {
+  display: block;
+
+  .accordion-button {
+    cursor: pointer;
+    background-color: $Border01;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .accordion-title {
+      flex: 1;
+      color: $Neutral04;
+    }
+
+    .dao-logo {
+      width: 36px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      outline: 2px solid $BG02;
+    }
+
+    .votes-statuses-circles {
+      display: flex;
+      flex-direction: row;
+      gap: 3px;
+      white-space: nowrap;
+      align-items: center;
+
+      .vote-status-circle {
+        width: 10px;
+        height: 10px;
+        background: $Neutral02;
+        border-radius: 50%;
+
+        &.vote-accepted {
+          background: $Green;
+        }
+
+        &.vote-declined {
+          background: $Red;
+        }
+      }
+
+      .vote-status-circle-delimiter {
+        height: 16px;
+        border-left: 1px solid $Secondary05;
+      }
+    }
+
+
+    .arrow {
+      justify-self: end;
+      transition: all 0.2s ease-in-out;
+      margin-right: 15px;
+      font-size: 20px;
+    }
+
+    &.active {
+      .arrow {
+        transform: rotate(-180deg);
+      }
+    }
+  }
+
+
+  .panel {
+    padding: 6px 11px 6px 40px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+  }
+
+  .representative {
+    display: flex;
+    padding: 5px;
+    gap: 7.5px;
+
+    etherscanlink {
+      flex: 1;
+
+      a {
+        color: $Neutral02;
+      }
+    }
+
+    .representative-vote {
+      width: 15px;
+
+      &.representative-vote-accepted {
+        color: $Green;
+      }
+
+      &.representative-vote-declined {
+        color: $Red;
+      }
+    }
+  }
+
+}

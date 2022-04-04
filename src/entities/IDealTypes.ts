@@ -1,43 +1,52 @@
-import { IKey } from "services/DataSourceDealsTypes";
+import { IDealDiscussion } from "./DealDiscussions";
+import { IDealRegistrationTokenSwap } from "./DealRegistrationTokenSwap";
 
-export interface IDealsData {
-  votes: IKey;
-  /**
-   * CID for json that looks like:
-   *
-   * {
-   *   "clauseId1": "discussionsKey1",
-   *   "clauseId2": "discussionsKey2",
-   *   "clauseId3": "discussionsKey3",
-   * }
-   */
-  discussions: IKey;
-  /**
-   * CID for json that confirms to IDealRegistrationTokenSwap
-   */
-  registration: IKey;
-  status: DealStatus;
+export type IVotesInfo = Record<string, boolean | null>;
+
+export interface IDealDAOVotingSummary {
+  totalSubmittable: number;
+  acceptedVotesCount: number;
+  rejectedVotesCount: number;
+  votes: IVotesInfo;
+}
+
+export interface IDealVotingSummary {
+  primaryDAO: IDealDAOVotingSummary,
+  partnerDAO: IDealDAOVotingSummary,
+  totalSubmittable: number;
+  totalSubmitted: number;
+}
+
+export interface IDealTokenSwapDocument {
+  id: string;
+  registrationData: IDealRegistrationTokenSwap;
+  clauseDiscussions: Record<string, IDealDiscussion>;
+  representativesAddresses: Array<string>;
+  votingSummary: IDealVotingSummary;
+  createdAt: string,
+  modifiedAt: string,
+  createdByAddress: string;
+  isWithdrawn: boolean,
+  isRejected: boolean,
 }
 
 export enum DealStatus {
   active = "Active",
-  completed = "Completed",
   failed = "Failed",
-  closed = "Closed",
+  cancelled = "Cancelled",
   negotiating = "Negotiating",
-  funding = "Funding in progress",
-  swapping = "Swapping",
+  funding = "Funding",
+  completed = "Completed",
 }
 
 export interface IDeal {
-  id: IKey;
+  id: string;
   corrupt: boolean;
-  clauseDiscussions: Map<string, string>;
+  clauseDiscussions: Map<string, IDealDiscussion>;
   registrationData: any;
   initialize(): Promise<void>;
-  create(id: IKey): IDeal;
+  create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
   ensureInitialized(): Promise<void>;
-  updateRegistration(registration: Record<string, any>): Promise<void>;
-  addClauseDiscussion(clauseId: string, discussionKey: string): Promise<void>;
+  addClauseDiscussion(clauseId: string, discussion: any): Promise<void>;
   status: DealStatus;
 }

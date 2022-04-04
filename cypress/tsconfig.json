@@ -1,11 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
-    "baseUrl": "../node_modules",
+    // "strict": true,
     "types": [
       "cypress"
-    ]
+    ],
+    "paths": {
+      "services/*": ["../src/services/*"],
+      "entities/*": ["../src/entities/*"],
+    }
   },
   "include": [
     "**/*.ts"

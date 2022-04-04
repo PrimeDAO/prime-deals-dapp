@@ -1,14 +1,80 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
 deal-votes {
+  font-family: $sub-heading;
+
   pcard.pcard {
     display: block;
-    height: 500px; // temporary. remove after design is done
+    padding: 0;
+    overflow: hidden;
 
-    /**
-     * temporary to give us something while developing the funding page
-     */
-    .fundButton {
-      i {
-        margin-left: 6px;
+    .content {
+      padding: 20px;
+
+      pbutton-group {
+        margin: 20px 0 10px 0;
+
+        pbutton {
+          &.acceptButtonActive {
+            button {
+              background-color: $Green;
+              color: $BG02;
+            }
+          }
+
+          &.declineButtonActive {
+            button {
+              background-color: $Primary01;
+            }
+          }
+
+          button {
+            font-weight: 700;
+          }
+        }
+
+      }
+
+      .negotiate {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 35px;
+
+        pbutton button.tertiary {
+          gap: 12px;
+          color: $Neutral02;
+
+          img {
+            filter: saturate(0) brightness(1.2);
+          }
+        }
+      }
+
+      .votesSubtitle {
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-top: 20px;
+        font-family: $heading;
+      }
+
+      .representativesVotesSubtitle {
+        margin-bottom: 10px;
+      }
+
+    }
+
+    .funding {
+      background-color: $Border01;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      margin-top: 48px;
+
+      .fundButton {
+        button {
+          gap: 10px;
+        }
       }
     }
   }

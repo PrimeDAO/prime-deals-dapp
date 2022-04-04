@@ -6,9 +6,9 @@
 
     <div class="stageSection">
       <div class="stageSectionSidebar">
-        <h2 class="sidebarHeader heading heading3 title">Proposal Lead</h2>
+        <h2 data-test="section-title" class="sidebarHeader heading heading3 title">Proposal Lead</h2>
         <p class="sidebarText">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
-        <p class="sidebarText">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and they can execute the token swap.</p>
+        <p class="sidebarText">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and once completely funded, they can execute the token swap.</p>
         <p class="sidebarText">The Proposal Lead can be changed at any time until the deal is approved.</p>
         <p class="sidebarText">You don't need to be part of DAO to be a Proposal Lead.</p>
       </div>
@@ -17,11 +17,11 @@
           class="wizardFormInput"
           label="Proposal Lead Address"
           input-reference.bind="input"
-          data-test="proposal-wallet-address-field">
+          data-test="proposal-lead-address-field">
           <pinput-text
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             placeholder="0x..."
-            value.bind="wizardState.registrationData.proposalLead.address & validate:form"
+            value.bind="wizardState.registrationData.proposalLead.address | checksumAddress & validate:form"
             view-model.ref="input"></pinput-text>
         </pform-input>
         <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
@@ -35,10 +35,10 @@
           Make Me the Proposal Lead
         </pbutton>
 
-        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="proposal-email-field"
-                     label="Contact E-mail (optional)">
+        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="contact-email-field"
+          label="Contact E-mail (optional)">
           <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-                       value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
+            value.bind="wizardState.registrationData.proposalLead.email & validate:form"></pinput-text>
         </pform-input>
       </div>
     </div>

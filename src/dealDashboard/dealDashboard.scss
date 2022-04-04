@@ -3,7 +3,7 @@
 
 .page.dealDashboardContainer {
   display: grid;
-  grid-template-columns: auto minmax(360px, 1fr);
+  grid-template-columns: auto 360px;
   grid-template-areas:
     "navbar navbar"
     "top top-extended"
@@ -13,7 +13,7 @@
     "thread thread";
   gap: 50px 115px;
 
-  deal-navbar {
+  deal-menubar {
     grid-area: navbar;
   }
 

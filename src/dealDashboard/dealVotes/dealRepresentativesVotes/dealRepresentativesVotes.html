@@ -1,0 +1,35 @@
+<template>
+  <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
+    <img class="dao-logo" src.bind="dao.logoURI">
+    <div class="accordion-title bodySmallText">
+      ${dao.name}
+    </div>
+
+    <div class="votes-statuses-circles">
+      <template repeat.for="representative of representativesSortedByVotes()">
+        <div
+          class="vote-status-circle ${getVoteSlug(representative.address) ? 'vote-' + getVoteSlug(representative.address) : ''}"></div>
+        <div class="vote-status-circle-delimiter" if.bind="shouldShowDelimited(dao.representatives.length, $index)"></div>
+      </template>
+    </div>
+    <i class="fas fa-angle-up arrow"></i>
+  </div>
+
+  <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+    <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
+      <etherscanlink address.bind="representative.address"
+                     text="${representative.address | smallHexString}">
+      </etherscanlink>
+      ${getVoteSlug(representative.address) || 'hasn’t voted'}
+      <span class="representative-vote
+            ${getVoteSlug(representative.address) ? 'representative-vote-' + getVoteSlug(representative.address) : ''}
+      ">
+        <i class="fas fa-check-circle" if.bind="deal.representativeVote(representative.address) === true"></i>
+        <i class="fas fa-times-circle" if.bind="deal.representativeVote(representative.address) === false"></i>
+        <i class="fas fa-question-circle" if.bind="deal.representativeVote(representative.address) === null"></i>
+      </span>
+    </p>
+
+  </div>
+
+</template>

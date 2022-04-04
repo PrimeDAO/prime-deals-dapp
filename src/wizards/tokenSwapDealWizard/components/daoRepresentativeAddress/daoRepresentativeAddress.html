@@ -3,7 +3,7 @@
     <pinput-text
       placeholder="0x..."
       view-model.ref="input"
-      value.bind="representative.address & validate:form"
+      value.bind="representative.address | checksumAddress & validate:form"
       disabled.bind="disabled">
     </pinput-text>
   </pform-input>

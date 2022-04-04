@@ -7,7 +7,7 @@ import { ValidationState } from "../types";
 export interface IPSelectItemConfig {
   value: string,
   text: string,
-  innerHTML: string,
+  innerHTML?: string,
 }
 
 /**
