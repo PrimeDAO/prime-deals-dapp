@@ -322,39 +322,33 @@ export class DiscussionThread {
     if (this.isLoading[`isVoting ${_id}`]) return;
     this.isLoading[`isVoting ${_id}`] = true;
 
-    try {
-      const message = this.threadDictionary[_id];
-      const swrVote = {...message};
+    const swrVote = JSON.stringify(this.threadDictionary[_id]);
 
-      /* Toggle vote locally */
-      if (!message[endpoints[type]].includes(currentWalletAddress)) {
-        message[endpoints[type]].push(currentWalletAddress);
-        message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== currentWalletAddress);
+    // try {
+    this.discussionsService.voteComment(this.discussionId, _id, type).catch(error => {
+      /* On API failure- revert voting */
+      this.threadDictionary[_id] = {...JSON.parse(swrVote)};
+      if (error.code === 4001) {
+        this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
       } else {
-        message[endpoints[type]] = message[endpoints[type]].filter(address => address !== currentWalletAddress);
+        this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted. ");
       }
+    }).finally(() => {
+      this.threadComments = [...Object.values(this.threadDictionary)];
+    });
 
-      this.threadDictionary[_id] = {...message};
-      this.threadComments = Object.values(this.threadDictionary);
+    /* Toggle vote locally */
+    const message = {...this.threadDictionary[_id]};
+    if (!message[endpoints[type]].includes(currentWalletAddress)) {
+      message[endpoints[type]].push(currentWalletAddress);
+      message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== currentWalletAddress);
+    } else {
+      message[endpoints[type]] = message[endpoints[type]].filter(address => address !== currentWalletAddress);
+    }
 
-      this.discussionsService.voteComment(this.discussionId, _id, type).then(
-        (success: boolean) => {
-          if (!success) {
-            /* On API failure- revert voting */
-            this.threadDictionary[_id] = {...swrVote};
-            this.threadComments = Object.values(this.threadDictionary);
-            this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
-            throw new Error("Like action failed.");
-          }
-        },
-      );
-      this.updateDiscussionListStatus(new Date(), this.threadComments.length);
-    }
-    catch (err) {
-      this.eventAggregator.publish("handleFailure", "Your signature is needed in order to vote");
-    } finally {
-      this.isLoading[`isVoting ${_id}`] = false;
-    }
+    this.threadDictionary[_id] = {...message};
+    this.threadComments = [...Object.values(this.threadDictionary)];
+    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {
