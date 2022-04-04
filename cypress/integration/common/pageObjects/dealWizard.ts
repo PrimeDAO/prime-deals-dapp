@@ -124,4 +124,11 @@ export class E2eDealWizard {
       });
     });
   }
+
+  public static reset() {
+    this.sectionTitle = "";
+    this.fieldTitle = "";
+    this.wizardTitle = undefined;
+    this.stageTitle = undefined;
+  }
 }

@@ -1,9 +1,28 @@
 import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "../../../../src/entities/DealRegistrationTokenSwap";
 
 export class E2eDeals {
   public static currentDeal: IDealRegistrationTokenSwap | undefined = undefined;
+  /**
+   * Note: dealId is internal to Firestore, thus does not live along `currentDeal`.
+   */
   public static currentDealId: string;
+
+  /**
+   * Set deal data for testing:
+   * 1. The created deal (registration data)
+   * 2. The deal id (firestore id)
+   */
+  public static setDeal(createdDeal: IDealTokenSwapDocument): void {
+    this.currentDeal = createdDeal.registrationData;
+    this.currentDealId = createdDeal.id;
+  }
+
+  public static reset(): void {
+    this.currentDeal = undefined;
+    this.currentDealId = "";
+  }
 }
 
 Given("I navigate to the All Deals page", () => {

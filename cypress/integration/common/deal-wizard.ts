@@ -1,10 +1,12 @@
 import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { recurse } from "cypress-recurse";
 import { E2eDealsApi } from "./deal-api";
 import { E2eDealWizard, WizardField } from "./pageObjects/dealWizard";
+import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2eWizard {
   public static waitForWizardLoaded() {
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+    cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
 }
 
@@ -80,13 +82,13 @@ Given("I navigate to the {string} {string} stage", (wizardTitle: keyof typeof wi
     E2eDealsApi.getFirstOpenProposalId().then(dealId => {
       const url = `make-an-offer/${dealId}/${stageTitlesToURLs[stageTitle]}`;
       cy.visit(url);
-      cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+      cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
     });
     return;
   }
 
   cy.visit(`/initiate/token-swap/${wizardTitlesToURLs[wizardTitle]}/${stageTitlesToURLs[stageTitle]}`);
-  cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+  cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
 });
 
 Given("I navigate to the {string} Submit stage", (wizardTitle: keyof typeof wizardTitlesToURLs) => {
@@ -110,7 +112,7 @@ Given("I edit a \"Partnered Deal\"", () => {
   E2eDealsApi.getFirstPartneredDealId().then(partneredDealId => {
     const url = `partnered-deal/${partneredDealId}/edit/submit`;
     cy.visit(url);
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+    cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
 });
 
@@ -118,7 +120,7 @@ Given("I edit an \"Open Proposal\"", () => {
   E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
     const url = `open-proposal/${openProposalId}/edit/submit`;
     cy.visit(url);
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+    cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
 });
 
@@ -186,7 +188,14 @@ Then("I can proceed to the next step", () => {
   cy.url().then(url => {
     const oldUrl = url;
     cy.get("[data-test='wizard-proceed-button']").click();
-    cy.url().should("not.equal", oldUrl);
+
+    recurse(
+      () => cy.url(),
+      (url) => {
+        expect(url).not.to.equal(oldUrl);
+      },
+      {log: false, timeout: PAGE_LOADING_TIMEOUT},
+    );
   });
 });
 

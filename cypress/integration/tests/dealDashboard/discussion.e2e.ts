@@ -24,6 +24,11 @@ export class E2eDiscussion {
     return cy.get("[data-test='discussions-list']");
   }
 
+  public static getThreadHeader() {
+    return cy.get("[data-test='discussion-thread']")
+      .find("[data-test='thread-header']");
+  }
+
   public static getSingleTopic() {
     return cy.get("[data-test='single-topic']");
   }
@@ -45,8 +50,7 @@ export class E2eDiscussion {
   }
 
   public static getSingleComment(commentOptions?: ICommentOptions) {
-    cy.log("Wait for comment fully loaded");
-    E2eDiscussion.getSingleCommentAuthor().should("be.visible");
+    E2eDiscussion.waitForCommentsLoaded();
 
     if (commentOptions?.notAuthor) {
       return E2eDiscussion.getSingleCommentNotAuthor();
@@ -55,6 +59,11 @@ export class E2eDiscussion {
     } else {
       return cy.get("[data-test='single-comment']", {timeout: PAGE_LOADING_TIMEOUT}).last();
     }
+  }
+
+  public static waitForCommentsLoaded() {
+    cy.log("Wait for comment fully loaded");
+    E2eDiscussion.getSingleCommentAuthor().should("be.visible");
   }
 
   private static getSingleCommentNotAuthor() {
@@ -135,8 +144,29 @@ Given("the Open Proposal has Discussions", () => {
       throw new Error("[TEST] Did not find any Open Proposals with discussions.");
     }
 
-    E2eDeals.currentDeal = dealWithDiscussions.registrationData;
-    E2eDeals.currentDealId = dealWithDiscussions.id;
+    E2eDeals.setDeal(dealWithDiscussions);
+  });
+});
+
+Given("the Open Proposal has Discussions with replies", () => {
+  E2eDealsApi.getOpenProposals({isLead: E2eWallet.isLead}).then(deals => {
+    const discussionsWithReplies = deals.find((deal) => {
+      const hasDiscussions = Object.keys(deal.clauseDiscussions ?? {}).length > 0;
+      if (hasDiscussions === false) {
+        return false;
+      }
+
+      const discussionsWithReplies = Object.values(deal.clauseDiscussions).find(dicussion => {
+        return dicussion.replies > 0;
+      });
+      return discussionsWithReplies;
+    });
+
+    if (discussionsWithReplies === undefined) {
+      throw new Error("[TEST] Did not find any Open Proposals with discussions, that have replies.");
+    }
+
+    E2eDeals.setDeal(discussionsWithReplies);
   });
 });
 
@@ -151,7 +181,8 @@ When("I choose a single Topic with replies", () => {
   //  Can/should this be generalized?
   //  Eg. the first comment in the specific deal (of this test case), has what we need
   E2eDiscussion
-    .clickSingleTopic();
+    .clickSingleTopic()
+    .waitForCommentsLoaded();
 });
 
 When("I view a single Comment", () => {
@@ -223,6 +254,21 @@ Then("I cannot like my own Comment", () => {
   E2eDiscussion.getLikeAction({isAuthor: true}).should("not.exist");
 });
 
+Then("I should be informed of no discussions", () => {
+  cy.contains("discussions-list", "Discuss").should("be.visible");
+  cy.contains("section", "None of the clauses are currently being discussed.").should("be.visible");
+});
+
+Then("I can create a new Discussion", () => {
+  E2eDiscussion.getAddOrReadButton().click();
+  E2eDiscussion.getThreadHeader().should("be.visible");
+});
+
+Then("I am presented with the latest comment", () => {
+  E2eDiscussion.getSingleComment().should("have.value");
+});
+
 And("I cannot reply to a Comment", () => {
+
   cy.log("todo");
 });
