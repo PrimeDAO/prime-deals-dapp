@@ -8,11 +8,11 @@ import { Router } from "aurelia-router";
 export class DealMakeAnOffer {
   @bindable deal: DealTokenSwap;
 
-  makeAnOfferModal: HTMLElement
+  makeAnOfferModal: HTMLElement;
 
   constructor(
     private alertService: AlertService,
-    private router: Router
+    private router: Router,
   ) {
   }
 
@@ -23,12 +23,12 @@ export class DealMakeAnOffer {
       buttons: 3,
       buttonTextPrimary: "Continue",
       buttonTextSecondary: "Cancel",
-    })
+    });
 
     if (result.wasCancelled) {
       return;
     }
 
-    this.router.navigate(`/make-an-offer/${this.deal.id}/partner-dao`)
+    this.router.navigate(`/make-an-offer/${this.deal.id}/partner-dao`);
   }
 }
