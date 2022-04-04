@@ -285,6 +285,22 @@ export class FirestoreService<
   }
 
   /**
+   * Sets deal isPrivate flag
+   */
+  public async updateDealIsPrivate(dealId: string, value: boolean): Promise<void> {
+    const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+    await setDoc(
+      ref,
+      {
+        registrationData: {
+          isPrivate: value,
+        },
+      },
+      {merge: true},
+    );
+  }
+
+  /**
    * Sets deal isRejected flag
    * @param dealId string
    * @param value boolean

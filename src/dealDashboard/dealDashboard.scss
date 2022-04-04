@@ -45,7 +45,7 @@
     flex-wrap: wrap;
     gap: 20px;
 
-    deal-votes, deal-info {
+    deal-votes, deal-info, deal-make-an-offer {
       min-width: 335px; // min-width needs to be 335px because the mobile size is min 375px (20px padding side by side)
       flex: 1;
     }

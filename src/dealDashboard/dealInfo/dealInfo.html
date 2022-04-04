@@ -5,11 +5,11 @@
     <hr>
 
     <div class="infoSection">
-      <img class="daoLogo" src.bind="deal.registrationData.primaryDAO.logoURI">
-      <div class="daoDetails">
-        ${deal.registrationData.primaryDAO.name}
+      <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
+      <div class="daoDetails" ptooltip.bind="deal.primaryDao.name">
+        ${deal.primaryDao.name}
         <div class="daoSocialLinks">
-          <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.registrationData.primaryDAO.social_medias">
+          <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
             <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
           </a>
         </div>
@@ -17,15 +17,15 @@
       <span class="bodySmallTextBold">Primary DAO</span>
     </div>
 
-    <hr if.bind="deal.registrationData.partnerDAO">
+    <hr if.bind="partnerDao">
 
-    <div class="infoSection" if.bind="deal.registrationData.partnerDAO">
-      <img class="daoLogo" src.bind="deal.registrationData.partnerDAO.logoURI">
-      <div class="daoDetails">
-        ${deal.registrationData.partnerDAO.name}
+    <div class="infoSection" if.bind="deal.partnerDao" ref="partnerDao">
+      <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
+      <div class="daoDetails" ptooltip.bind="deal.partnerDao.name">
+        ${deal.partnerDao.name}
         <div class="daoSocialLinks">
           <a href.bind="socialMedia.url"
-            repeat.for="socialMedia of deal.registrationData.partnerDAO.social_medias"
+            repeat.for="socialMedia of deal.partnerDao.social_medias"
             target="_blank">
             <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
           </a>
@@ -46,14 +46,14 @@
     </div>
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
-      <etherscanlink address.bind="deal.registrationData.proposalLead.address"
-        text="${deal.registrationData.proposalLead.address | smallHexString}">
+      <etherscanlink address.bind="deal.proposalLead.address"
+        text="${deal.proposalLead.address | smallHexString}">
       </etherscanlink>
     </div>
 
-    <hr>
+    <hr if.bind="primaryFunds">
 
-    <div class="infoSection">
+    <div class="infoSection" if.bind="deal.primaryDao.tokens.length" ref="primaryFunds">
       <div class="bodySmallTextBold infoTitle">Primary DAO Funds</div>
       <div>
         <div class="tokenDetails" repeat.for="tokenDetails of deal.primaryDao.tokens">
@@ -66,9 +66,9 @@
       </div>
     </div>
 
-    <hr if.bind="deal.registrationData.partnerDAO">
+    <hr if.bind="partnerFunds">
 
-    <div class="infoSection" if.bind="deal.registrationData.partnerDAO">
+    <div class="infoSection" if.bind="deal.partnerDao" ref="partnerFunds">
       <div class="bodySmallTextBold infoTitle">Partner DAO Funds</div>
       <div>
         <div class="tokenDetails" repeat.for="tokenDetails of deal.partnerDao.tokens">
@@ -80,28 +80,31 @@
       </div>
     </div>
 
-    <hr>
+    <hr if.bind="totalFunds || timeLeft">
 
-    <div class="infoSection">
+    <div class="infoSection" if.bind="deal.primaryDao.tokens.length && deal.totalPrice" ref="totalFunds">
       <span class="bodySmallTextBold infoTitle">Total funds value</span>
       ${deal.totalPrice | currency}
     </div>
-    <div class="infoSection" if.bind="deal.executedAt">
+
+    <div class="infoSection" if.bind="deal.fundingPeriod" ref="timeLeft">
       <span class="bodySmallTextBold infoTitle">Time left to initiate</span>
       <span class="textRight">
-        ${ timeLeftToExecute | timespan:"largest2"}
+        ${ (timeLeftToExecute || deal.fundingPeriod * 1000) | timespan
+      :
+      "largest2"}
       </span>
     </div>
 
-    <hr>
+    <hr if.bind="privateDeal">
 
-    <div class="infoSection">
+    <div class="infoSection" if.bind="deal.isPartnered" ref="privateDeal">
       <div class="bodySmallTextBold infoTitle">Private Deal</div>
       <span>
         <ptoggle
-          disabled.bind="deal.registrationData.proposalLead.address !== ethereumService.defaultAccountAddress"
-          ptooltip.bind="deal.registrationData.proposalLead.address === ethereumService.defaultAccountAddress ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
-          value.to-view="!deal.isPrivate"></ptoggle>
+          disabled.bind="!deal.isUserProposalLead"
+          ptooltip.bind="deal.isUserProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
+          value.bind="deal.isPrivate"></ptoggle>
       </span>
     </div>
 
