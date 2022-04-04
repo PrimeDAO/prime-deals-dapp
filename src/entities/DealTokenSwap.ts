@@ -6,7 +6,6 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService } from "services/EthereumService";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
@@ -88,14 +87,17 @@ export class DealTokenSwap implements IDeal {
     private transactionsService: TransactionsService,
     eventAggregator: EventAggregator,
   ) {
-    this.subscriptions.push(eventAggregator.subscribe("Contracts.Changed", async () => {
+    eventAggregator.subscribe("Contracts.Changed", async () => {
       await this.loadContracts();
-    }));
+    });
+    eventAggregator.subscribe("secondPassed", (params: { _blockDate, now: Date }) => {
+      this.now = params.now;
+    });
   }
 
   private initializedPromise: Promise<void>;
-  private subscriptions = new DisposableCollection();
   private dealDocument: IDealTokenSwapDocument;
+  private now: Date;
 
   public id: IDealIdType;
   public dealInitialized: boolean;
@@ -187,12 +189,12 @@ export class DealTokenSwap implements IDeal {
     return isReached;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod")
+  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
     if (!this.isExecuted) {
       return;
     }
-    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - Date.now();
+    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
   }
 
   /**
@@ -217,11 +219,10 @@ export class DealTokenSwap implements IDeal {
     return this.registrationData.fundingPeriod;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod")
+  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
   public get fundingPeriodHasExpired(): boolean {
-    const now = Date.now();
     return this.isExecuted ?
-      (now > (this.executedAt.valueOf() + (this.fundingPeriod * 1000))) : false;
+      (this.now.getTime() > (this.executedAt.getTime() + (this.fundingPeriod * 1000))) : false;
   }
 
   @computedFrom("fundingPeriodHasExpired")
@@ -663,6 +664,21 @@ export class DealTokenSwap implements IDeal {
         upDown);
     }
   }
+
+  public execute(): Promise<TransactionReceipt> {
+    if (!this.isFailed) {
+      return this.transactionsService.send(
+        () => this.moduleContract.executeSwap(this.id))
+        .then(async (receipt) => {
+          if (receipt) {
+            this.isExecuted = true;
+            this.executedAt = new Date((await this.ethereumService.getBlock(receipt.blockNumber)).timestamp * 1000);
+            return receipt;
+          }
+        });
+    }
+  }
+
   private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {
     tokenAddress = tokenAddress.toLowerCase();
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
