@@ -132,5 +132,6 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     this.keepAdminRights = true;
     this.offersPrivate = false;
     this.isPrivate = false;
+    this.dealType = "token-swap";
   }
 }
