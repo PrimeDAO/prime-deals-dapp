@@ -423,11 +423,19 @@ export class Funding {
   }
 
   @computedFrom("firstDaoTokens")
-  public get tokensToClaim() : IDaoClaimToken[]{
+  public get firstDaoTokensToClaim() : IDaoClaimToken[]{
     return this.firstDaoTokens.map(x => ({
       token: x,
       claimable: 1,
       locked: 2,
+    }));
+  }
+  @computedFrom("secondDaoTokens")
+  public get secondDaoTokensToClaim() : IDaoClaimToken[]{
+    return this.secondDaoTokens.map(x => ({
+      token: x,
+      claimable: 21,
+      locked: 51,
     }));
   }
 

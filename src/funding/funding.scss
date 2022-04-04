@@ -133,7 +133,6 @@ $hover-transition-speed-slow: 0.4s;
               font-size: 14px;
               color: $Neutral02;
               line-height: 17px;
-              margin-bottom: 20px;
               padding: 0 100px 0 0;
               display: grid;
               grid-template-columns: 30px auto;
@@ -141,15 +140,23 @@ $hover-transition-speed-slow: 0.4s;
                 font-size: 20px;
                 margin-top: 3px;
               }
+              span {
+                margin-top: 3px;
+              }
             }
+          }
+          .links {
             a {
               font-size: 14px;
               font-weight: 400;
+              color: $Neutral04;
             }
-            .links {
-              display: grid;
-              grid-template-columns: auto 1fr;
-              grid-column-gap: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-column-gap: 15px;
+            &.right {
+              grid-template-columns: 1fr auto;
+              justify-items: right;
             }
           }
           .deposit {
@@ -338,7 +345,6 @@ $hover-transition-speed-slow: 0.4s;
             background-color: $Border01;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
-            display: grid;
             p {
               font-size: 14px;
               color: $Neutral02;
@@ -356,7 +362,6 @@ $hover-transition-speed-slow: 0.4s;
               font-size: 14px;
               font-weight: 400;
               margin: 0 20px 10px 0;
-              display: block;
               color: $Neutral04;
               i {
                 color: $Secondary05;

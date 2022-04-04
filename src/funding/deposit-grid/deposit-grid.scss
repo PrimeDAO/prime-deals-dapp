@@ -5,8 +5,8 @@
 .deposit {
   .box-container {
     .box-header {
+      padding-bottom: 10px;
       padding-top: 20px;
-      margin-bottom: 32px;
       display: grid;
       grid-template-columns: 1fr auto;
     }
