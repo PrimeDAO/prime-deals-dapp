@@ -22,6 +22,11 @@ export class DealVotes {
       statusText: "Deal is approved",
     },
     {
+      condition: () => !this.deal.majorityHasVoted && !this.deal.isRepresentativeUser && !this.deal.isUserProposalLead,
+      voteText: "Waiting for the representatives to vote",
+      statusText: "Voting is progress",
+    },
+    {
       condition: () => !this.deal.majorityHasVoted && this.deal.isRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isUserProposalLead,
       voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. Once the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",

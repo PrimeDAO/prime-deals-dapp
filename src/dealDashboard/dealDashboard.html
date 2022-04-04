@@ -4,6 +4,7 @@
   <require from="./dealInfo/dealInfo"></require>
   <require from="./dealClauses/dealClauses"></require>
   <require from="./dealDiscussion/dealDiscussion"></require>
+  <require from="./dealMakeAnOffer/dealMakeAnOffer"></require>
   <require from="./dealDescription/dealDescription"></require>
   <require from="../deals/timeLeft/timeLeft"></require>
 
@@ -27,6 +28,10 @@
     <aside class="aside">
       <deal-votes deal.bind="deal" if.bind="!deal.isOpenProposal"></deal-votes>
       <deal-info deal.bind="deal"></deal-info>
+      <deal-make-an-offer
+        deal.bind="deal"
+        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"
+      ></deal-make-an-offer>
     </aside>
 
     <deal-description deal.bind="deal"></deal-description>
