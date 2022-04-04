@@ -2,6 +2,7 @@ import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { MINIMUM_OPEN_PROPOSAL } from "../../../fixtures/dealFixtures";
 import { E2eDealWizard } from "../../common/pageObjects/dealWizard";
 import { EditingCard } from "../components/editingCard.e2e";
+import { E2eWallet } from "../wallet.e2e";
 import { Terms } from "./terms.e2e";
 
 Given("I fill out the Proposal Stage", () => {
@@ -12,8 +13,9 @@ Given("I fill out the Proposal Stage", () => {
 });
 
 Given("I fill out the Lead Details Stage", () => {
+  const address = E2eWallet.currentWalletAddress || MINIMUM_OPEN_PROPOSAL.proposalLead.address;
   E2eDealWizard.inWizardSection("Proposal")
-    .inField("Proposal Lead Address").fillIn(MINIMUM_OPEN_PROPOSAL.proposalLead.address);
+    .inField("Proposal Lead Address").fillIn(address);
 });
 
 Given("I fill out the Primary DAO Stage", () => {

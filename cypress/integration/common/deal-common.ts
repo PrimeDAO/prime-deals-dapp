@@ -1,9 +1,11 @@
-import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { After, Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { DealDataBuilder, MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
 import { E2eWizard } from "./deal-wizard";
+import { E2eDealWizard } from "./pageObjects/dealWizard";
+import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2EDashboard {
   public static editDeal() {
@@ -13,13 +15,21 @@ export class E2EDashboard {
   }
 }
 
-Given("I'm viewing (the/an) Open Proposal", () => {
+After(() => {
+  cy.then(() => {
+    E2eWallet.reset();
+    E2eDeals.reset();
+    E2eDealWizard.reset();
+  });
+});
+
+Given("I'm viewing the/an Open Proposal", () => {
   cy.then(() => {
     if (E2eDeals.currentDealId) {
       const url = `deal/${E2eDeals.currentDealId}`;
       cy.visit(url);
 
-      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
       return;
     }
 
@@ -27,7 +37,7 @@ Given("I'm viewing (the/an) Open Proposal", () => {
       const url = `deal/${dealId}`;
       cy.visit(url);
 
-      cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+      cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
     });
   });
 });
@@ -37,7 +47,7 @@ Given("I'm viewing the Partnered Deal", () => {
     const url = `deal/${dealId}`;
     cy.visit(url);
 
-    cy.get(".dealDashboardContainer", {timeout: 10000}).should("be.visible");
+    cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
 });
 
@@ -66,7 +76,8 @@ Given("I create a Private Partnered Deal", () => {
 });
 
 Given("I create an Open Proposal", () => {
-  E2eDealsApi.createDeal(MINIMUM_OPEN_PROPOSAL);
+  const deal = DealDataBuilder.create().withProposalLeadData({address: E2eWallet.currentWalletAddress}).deal;
+  E2eDealsApi.createDeal(deal);
 });
 
 Given("I create a Partnered Deal", () => {
