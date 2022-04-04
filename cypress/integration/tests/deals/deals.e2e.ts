@@ -18,6 +18,11 @@ export class E2eDeals {
     this.currentDeal = createdDeal.registrationData;
     this.currentDealId = createdDeal.id;
   }
+
+  public static reset(): void {
+    this.currentDeal = undefined;
+    this.currentDealId = "";
+  }
 }
 
 Given("I navigate to the All Deals page", () => {

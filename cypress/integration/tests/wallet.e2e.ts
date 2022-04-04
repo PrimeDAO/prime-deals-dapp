@@ -8,6 +8,8 @@ const UserTypes = ["Anonymous", "Connected Public"] as const;
 export type UserType = typeof UserTypes[number]
 
 export class E2eWallet {
+  public static isLead = true;
+
   private static _currentWalletAddress = "";
   public static get currentWalletAddress() {
     if (this._currentWalletAddress === "") {
@@ -24,10 +26,13 @@ export class E2eWallet {
     this._currentWalletAddress = newAddress;
   }
 
-  public static isLead = true;
-
   public static getSmallHexAddress() {
     return Utils.smallHexString(E2eWallet.currentWalletAddress);
+  }
+
+  public static reset() {
+    this.currentWalletAddress = "";
+    this.isLead = true;
   }
 }
 
