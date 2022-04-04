@@ -16,7 +16,7 @@ export class DealMenubar {
 
   copyURL() {
     navigator.clipboard.writeText(location.href);
-    this.eventAggregator.publish("showMessage", "Deal URL copied");
+    this.eventAggregator.publish("handleInfo", "Deal URL copied");
   }
 
   @computedFrom("deal.status")
