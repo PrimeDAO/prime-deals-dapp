@@ -142,7 +142,7 @@ function givenImAConnectedPublicUser() {
         if (isConnected) {
           E2eNavbar.disconnectWallet();
         } else {
-          E2eNavbar.connectToWallet(E2E_ADDRESSES.ConnectedPublicUser);
+          E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
         }
       });
     }
