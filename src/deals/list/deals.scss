@@ -66,54 +66,6 @@ pbutton button.secondary {
         }
       }
     }
-    &.deal-carousel {
-      margin-bottom: 100px;
-      .scrollerContainer {
-        margin-bottom: 28px;
-
-        .scroller {
-          deal-summary {
-            margin-right: $spacing-normal * 2;
-
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-        }
-      }
-
-      > .carousel-selector {
-        display: flex;
-        -webkit-text-fill-color: $Neutral02;
-        border-bottom: 2px solid $Border01;
-        width: 100%;
-        transition: background 1s ease-in-out;
-        margin-bottom: 53px;
-        font-family: Aeonik;
-
-        :not(:first-child) {
-          margin-left: 63px;
-        }
-
-        > .selector-tab {
-          cursor: pointer;
-
-          &:hover:not(.active) {
-            -webkit-text-fill-color: $Neutral04;
-          }
-        }
-
-        > .active {
-          background: $Gradient02;
-          -webkit-text-fill-color: transparent;
-          -webkit-background-clip: text;
-          background-clip: text;
-          border-bottom: 6px solid;
-          @include border-gradient($Gradient02);
-          padding-bottom: 19px;
-        }
-      }
-    }
 
     &.all-deals {
       .grid {
