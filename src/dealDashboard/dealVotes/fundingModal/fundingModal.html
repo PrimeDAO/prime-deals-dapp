@@ -13,13 +13,13 @@
 
       <div class="daoInfo">
         <div class="daoLogoAndName">
-          <img class="daoLogo" src.bind="deal.registrationData.primaryDAO.logoURI">
-          ${deal.registrationData.primaryDAO.name}
+          <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
+          ${deal.primaryDao.name}
         </div>
         <div class="tokenDetails">
-          <span repeat.for="tokenDetails of deal.registrationData.primaryDAO.tokens">
+          <span repeat.for="tokenDetails of deal.primaryDao.tokens">
             <formatted-number thousands-separated
-                              value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+              value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
             <b>${tokenDetails.symbol}</b>
           </span>
         </div>
@@ -29,13 +29,13 @@
 
       <div class="daoInfo">
         <div class="daoLogoAndName">
-          <img class="daoLogo" src.bind="deal.registrationData.partnerDAO.logoURI">
-          ${deal.registrationData.partnerDAO.name}
+          <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
+          ${deal.partnerDao.name}
         </div>
         <div class="tokenDetails">
-          <span repeat.for="tokenDetails of deal.registrationData.partnerDAO.tokens">
+          <span repeat.for="tokenDetails of deal.partnerDao.tokens">
             <formatted-number thousands-separated
-                              value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+              value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
             <b>${tokenDetails.symbol}</b>
           </span>
         </div>

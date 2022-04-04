@@ -11,6 +11,7 @@ import { ContractNames, ContractsService, IStandardEvent } from "services/Contra
 import { BigNumber } from "ethers";
 import { parseBytes32String } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import { EventConfigException } from "services/GeneralEvents";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -136,7 +137,7 @@ export class DealService {
               catch (error) {
                 this.deals = new Map();
                 // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-                this.eventAggregator.publish("handleException", error);
+                this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
                 reject();
               }
               finally {

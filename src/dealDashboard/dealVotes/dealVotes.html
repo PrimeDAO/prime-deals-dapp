@@ -36,13 +36,13 @@
 
       <div class="negotiate" if.bind="ethereumService.defaultAccountAddress">
         <pbutton type="tertiary" click.delegate="goToDiscussions()">
-          <img src="/static/comment.svg" />
+          <img src="/static/comment.svg"/>
           Negotiate
         </pbutton>
       </div>
 
       <p class="bodySmallText votesSubtitle representativesVotesSubtitle">
-        Votes (${deal.submittedVotes.length}/${deal.allRepresentatives.length})
+        Votes (${deal.submittedVotes.length}/${deal.representatives.size})
       </p>
       <deal-representatives-votes deal.bind="deal" dao.bind="deal.primaryDao"></deal-representatives-votes>
       <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao"></deal-representatives-votes>
@@ -51,7 +51,7 @@
       <div class="orangeColor">${statusText.statusText}</div>
     </div>
 
-    <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead">
+    <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.isFunding && !deal.isCancelled">
       <pbutton class="fundButton" click.delegate="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>

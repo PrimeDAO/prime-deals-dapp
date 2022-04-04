@@ -7,6 +7,7 @@ import { EthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
+import { EventConfigException } from "services/GeneralEvents";
 
 @autoinject
 export class DealVotes {
@@ -20,6 +21,11 @@ export class DealVotes {
       condition: () => this.deal.isFunding,
       voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, the token swap can be executed",
       statusText: "Deal is approved",
+    },
+    {
+      condition: () => !this.deal.majorityHasVoted && !this.deal.isRepresentativeUser && !this.deal.isUserProposalLead,
+      voteText: "Waiting for the representatives to vote",
+      statusText: "Voting is progress",
     },
     {
       condition: () => !this.deal.majorityHasVoted && this.deal.isRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isUserProposalLead,
@@ -76,10 +82,10 @@ export class DealVotes {
 
     try {
       await this.deal.createSwap();
-      this.eventAggregator.publish("showMessage", "The funding phase is successfully started");
+      this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     } catch (ex) {
-      this.eventAggregator.publish("showMessage", "Sorry, there was a problem starting the funding phase");
+      this.eventAggregator.publish("handleException", new EventConfigException("Sorry, there was a problem starting the funding phase", ex));
     }
   }
 
@@ -109,10 +115,10 @@ export class DealVotes {
   private async vote(value: boolean) {
     try {
       await this.deal.vote(value);
-      this.eventAggregator.publish("showMessage", "Your vote has been successfully submitted");
+      this.eventAggregator.publish("handleInfo", "Your vote has been successfully submitted");
     } catch (error) {
       this.consoleLogService.logMessage(`Voting error ${error}`, "error");
-      this.eventAggregator.publish("handleFailure", "Sorry, an error occurred submitting your vote");
+      this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred submitting your vote", error));
     }
   }
 }
