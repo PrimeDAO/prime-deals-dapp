@@ -4,7 +4,7 @@
 
 .page.home {
   .section {
-    &.deals {
+    &.deal-carousel {
       margin-bottom: 64px;
     }
     &.hero {
@@ -55,7 +55,7 @@
       }
     }
 
-    &.deals {
+    &.deal-carousel {
       .scrollerContainer {
         margin-bottom: 28px;
 
@@ -176,7 +176,7 @@
 }
 
 @media screen and (max-width: 900px) and (min-width: 550px) {
-  .deals {
+  .deal-carousel {
     padding: 0 45px;
   }
 }
@@ -208,7 +208,7 @@
         }
       }
 
-      &.deals {
+      &.deal-carousel {
         .carousel-selector {
           margin-bottom: 20px;
 
