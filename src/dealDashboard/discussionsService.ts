@@ -409,7 +409,7 @@ export class DiscussionsService {
         commentId,
       );
       this.comments = this.comments.filter((comment: IComment) => comment._id !== commentId);
-      this.comments.map((comment: IComment) => {
+      this.comments.forEach((comment: IComment) => {
         if (comment.replyTo === commentId) comment.replyTo = "deleted";
       });
     } catch (error) {
