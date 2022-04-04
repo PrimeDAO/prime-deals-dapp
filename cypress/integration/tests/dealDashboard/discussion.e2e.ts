@@ -135,8 +135,7 @@ Given("the Open Proposal has Discussions", () => {
       throw new Error("[TEST] Did not find any Open Proposals with discussions.");
     }
 
-    E2eDeals.currentDeal = dealWithDiscussions.registrationData;
-    E2eDeals.currentDealId = dealWithDiscussions.id;
+    E2eDeals.setDeal(dealWithDiscussions);
   });
 });
 

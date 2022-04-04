@@ -167,7 +167,7 @@ export class E2eDealsApi {
 
         const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
 
-        E2eDeals.currentDeal = createdDeal.registrationData;
+        E2eDeals.setDeal(createdDeal);
 
         return createdDeal;
       });
@@ -178,9 +178,19 @@ export class E2eDealsApi {
     return cy.then(() => {
       if (existingDeals.length === 0) {
         return this.createDeal(newDeal).then(createdDeal => {
+          cy.log(`Created deal with title: ${createdDeal.registrationData.proposal.title}`);
+          E2eDeals.setDeal(createdDeal);
+
           return [createdDeal];
         });
+      } else if (E2eDeals.currentDealId) {
+        const targetDeal = existingDeals.find(deal => deal.id === E2eDeals.currentDealId);
+        cy.log(`Getting existing deal with title: ${targetDeal.registrationData.proposal.title}`);
+        return cy.then(() => {
+          return [targetDeal];
+        });
       } else {
+        cy.log(`Getting existing deals. Amount: ${existingDeals.length}`);
         return cy.then(() => {
           return existingDeals;
         });
