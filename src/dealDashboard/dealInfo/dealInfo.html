@@ -90,9 +90,7 @@
     <div class="infoSection" if.bind="deal.fundingPeriod" ref="timeLeft">
       <span class="bodySmallTextBold infoTitle">Time left to initiate</span>
       <span class="textRight">
-        ${ (timeLeftToExecute || deal.fundingPeriod * 1000) | timespan
-      :
-      "largest2"}
+        ${ (timeLeftToExecute || deal.fundingPeriod * 1000) | timespan:"largest2"}
       </span>
     </div>
 
