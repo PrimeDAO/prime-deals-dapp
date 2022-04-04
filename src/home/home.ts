@@ -28,7 +28,9 @@ export class Home {
     this.allDeals.partnered = this.dealService.partneredDeals.slice(0, Home.MAX_DEALS_COUNT);
     this.featuredDeals = this.allDeals.open.length ? this.allDeals.open : this.allDeals.partnered;
 
-    this.cardIndex = this.allDeals.open.length ? 0 : 1;
+    if (this.cardIndex === undefined) {
+      this.cardIndex = this.allDeals.open.length ? 0 : 1;
+    }
   }
 
   dealToggle(index: number, type: "open" | "partnered"): void {
