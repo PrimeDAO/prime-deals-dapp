@@ -13,6 +13,7 @@ export interface IGridColumn {
   headerClass?: string;
   align?: string;
   template?: string;
+  sortFunc?: (a: unknown, b: unknown, sortDirection?: SortOrder) => number
 }
 
 @autoinject
@@ -23,8 +24,8 @@ export class PGrid {
   @bindable public rows: [] = [];
   @bindable public columns: IGridColumn[] = [];
   @bindable public selectable = false;
-  sortColumn: string;
-  sortDirection: SortOrder;
+  @bindable public sortColumn: string;
+  @bindable public sortDirection: SortOrder;
   sortEvaluator: (a: any, b: any) => number;
   parent: View;
 
@@ -45,7 +46,15 @@ export class PGrid {
       this.sortDirection = SortService.toggleSortOrder(this.sortDirection);
     } else {
       this.sortColumn = columnName;
+      this.sortDirection = SortOrder.ASC;
     }
+
+    const currentColumn = this.columns.find(y => y.field === columnName);
+    if (currentColumn?.sortFunc) {
+      this.sortEvaluator = (a, b) => currentColumn.sortFunc(a, b, this.sortDirection);
+      return;
+    }
+
     this.sortEvaluator = (a, b) =>
       !isNaN(Utils.getPropertyFromString(a, columnName)) ?
         SortService.evaluateNumber(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection) :
