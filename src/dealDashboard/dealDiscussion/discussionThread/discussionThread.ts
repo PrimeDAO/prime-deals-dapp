@@ -158,6 +158,7 @@ export class DiscussionThread {
       };
     }
     this.threadComments = Object.values(this.threadDictionary);
+    this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
 
     // scroll to bottom only if the user is at seeing the last message
     if (
