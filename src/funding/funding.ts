@@ -21,7 +21,7 @@ import { observable } from "aurelia-typed-observable-plugin";
 import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
-import { tokenGridColumns, depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
+import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
 export interface IDaoClaimToken {
