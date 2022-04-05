@@ -7,7 +7,7 @@ import { ITokenInfo, TokenService } from "services/TokenService";
 
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { EthereumService } from "services/EthereumService";
-import { IDAO, IDealRegistrationTokenSwap, IToken } from "entities/DealRegistrationTokenSwap";
+import { IDAO, IDealRegistrationTokenSwap, IProposalLead, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
@@ -138,6 +138,11 @@ export class DealTokenSwap implements IDeal {
   public get isPrivate(): boolean {
     return this.registrationData.isPrivate;
   }
+
+  public set isPrivate(value: boolean) {
+    this.registrationData.isPrivate = value;
+  }
+
   /**
    * Open Proposal that is open for offers, by bizdev definition
    * @returns
@@ -333,31 +338,6 @@ export class DealTokenSwap implements IDeal {
     return this.representativeVote() !== null;
   }
 
-  @computedFrom("majorityHasVoted", "hasUserVoted")
-  public get isRepresentativeEligibleToVote(): boolean {
-    return !this.majorityHasVoted && !this.hasRepresentativeVoted;
-  }
-
-  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
-  public get isProposalLeadWaitingForOthersToVote() {
-    return !this.majorityHasVoted && this.isUserProposalLead && (this.hasRepresentativeVoted || !this.isRepresentativeUser);
-  }
-
-  @computedFrom("majorityHasVoted", "hasUserVoted", "isUserProposalLead")
-  public get isRepresentativeWaitingForOthersToVote(): boolean {
-    return !this.majorityHasVoted && !this.isUserProposalLead && this.hasRepresentativeVoted;
-  }
-
-  @computedFrom("isApproved", "isUserProposalLead")
-  public get canStartFunding() {
-    return this.isApproved && this.isUserProposalLead;
-  }
-
-  @computedFrom("isApproved", "isUserProposalLead")
-  public get waitingForTheProposalLeadToStartFunding() {
-    return this.isApproved && !this.isUserProposalLead;
-  }
-
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isClaiming")
   public get status(): DealStatus {
     if (this.isActive) { return DealStatus.active; }
@@ -420,6 +400,11 @@ export class DealTokenSwap implements IDeal {
   @computedFrom("registrationData.partnerDAO.representatives")
   public get partnerDaoRepresentatives(): Set<Address> {
     return new Set(this.registrationData.partnerDAO?.representatives.map(representative => representative.address) ?? []);
+  }
+
+  @computedFrom("registrationData.proposalLead")
+  public get proposalLead(): IProposalLead {
+    return this.registrationData.proposalLead;
   }
 
   public create(dealDoc: IDealTokenSwapDocument): DealTokenSwap {
@@ -758,6 +743,13 @@ export class DealTokenSwap implements IDeal {
       });
 
     return transactions;
+  }
+
+  public setPrivacy(value: boolean): Promise<void> {
+    return this.dataSourceDeals.updateDealIsPrivate(this.id, value)
+      .then(() => {
+        this.isPrivate = value;
+      });
   }
 
   /**

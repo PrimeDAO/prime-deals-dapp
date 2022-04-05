@@ -390,7 +390,7 @@ export class DiscussionsService {
     return false;
   }
 
-  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<boolean | IComment> {
+  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<boolean> {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
@@ -423,21 +423,11 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        const success = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        if (!success) return false;
       }
 
-      const success = (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
-
-      // Toggle vote locally
-      if (!message[endpoints[type]].includes(this.currentWalletAddress)) {
-        message[endpoints[type]].push(this.currentWalletAddress);
-        message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== this.currentWalletAddress);
-      } else {
-        message[endpoints[type]] = message[endpoints[type]].filter(address => address !== this.currentWalletAddress);
-      }
-
-      return success ? message : false;
-
+      return (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
     } catch (error) {
       throw error.message;
     }

@@ -8,7 +8,9 @@ const UserTypes = ["Anonymous", "Connected Public"] as const;
 export type UserType = typeof UserTypes[number]
 
 export class E2eWallet {
-  public static _currentWalletAddress = "";
+  public static isLead = true;
+
+  private static _currentWalletAddress = "";
   public static get currentWalletAddress() {
     if (this._currentWalletAddress === "") {
       const errorMessage = "[Test] Wallet address expected. Please use a step, that specifies an address.\n\n" +
@@ -24,10 +26,13 @@ export class E2eWallet {
     this._currentWalletAddress = newAddress;
   }
 
-  public static isLead = true;
-
   public static getSmallHexAddress() {
     return Utils.smallHexString(E2eWallet.currentWalletAddress);
+  }
+
+  public static reset() {
+    this.currentWalletAddress = "";
+    this.isLead = true;
   }
 }
 
@@ -79,6 +84,10 @@ Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
+Given("I'm a Connected Public user", () => {
+  givenImAConnectedPublicUser();
+});
+
 Given(/^I'm an? "(.*)" user$/, (userType: UserType) => {
   switch (userType) {
     case "Anonymous": {
@@ -128,7 +137,7 @@ function givenImAnAnonymousUser() {
 
 function givenImAConnectedPublicUser() {
   E2eNavigation.hasAppLoaded().then(hasLoaded => {
-    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ConnectedPublicUser;
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.RepresentativeTwo;
     E2eWallet.isLead = false;
 
     if (hasLoaded) {
@@ -138,7 +147,7 @@ function givenImAConnectedPublicUser() {
         if (isConnected) {
           E2eNavbar.disconnectWallet();
         } else {
-          E2eNavbar.connectToWallet(E2E_ADDRESSES.ConnectedPublicUser);
+          E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
         }
       });
     }

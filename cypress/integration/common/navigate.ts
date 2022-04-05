@@ -1,4 +1,5 @@
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2eNavigation {
   public static navigateToHomePage() {
@@ -6,10 +7,10 @@ export class E2eNavigation {
     cy.get("[data-test='home-page']").should("be.visible");
   }
 
-  public static useNavbaroForHomePage() {
+  public static useNavbarForHomePage() {
     cy.contains(".navbar-container a", "Home").click();
 
-    cy.get("[data-test='home-page']").should("be.visible");
+    cy.get("[data-test='home-page']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
 
   public static isHome(pathName: string) {

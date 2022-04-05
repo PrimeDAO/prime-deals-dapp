@@ -5,6 +5,7 @@ import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eNavigation } from "./navigate";
 import { IFirebaseDocument } from "../../../src/services/FirestoreTypes";
 import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { E2eDeals } from "../tests/deals/deals.e2e";
 
 interface IDealOptions {
   address?: string;
@@ -165,6 +166,9 @@ export class E2eDealsApi {
         await firestoreDealsService.ensureAuthenticationIsSynced();
 
         const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
+
+        E2eDeals.setDeal(createdDeal);
+
         return createdDeal;
       });
     });
@@ -174,9 +178,19 @@ export class E2eDealsApi {
     return cy.then(() => {
       if (existingDeals.length === 0) {
         return this.createDeal(newDeal).then(createdDeal => {
+          cy.log(`Created deal with title: ${createdDeal.registrationData.proposal.title}`);
+          E2eDeals.setDeal(createdDeal);
+
           return [createdDeal];
         });
+      } else if (E2eDeals.currentDealId) {
+        const targetDeal = existingDeals.find(deal => deal.id === E2eDeals.currentDealId);
+        cy.log(`Getting existing deal with title: ${targetDeal.registrationData.proposal.title}`);
+        return cy.then(() => {
+          return [targetDeal];
+        });
       } else {
+        cy.log(`Getting existing deals. Amount: ${existingDeals.length}`);
         return cy.then(() => {
           return existingDeals;
         });

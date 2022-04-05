@@ -36,7 +36,7 @@ export class CopyToClipboardButton {
     document.execCommand("copy");
     document.removeEventListener("copy", handler);
 
-    this.eventAggregator.publish("showMessage", this.message);
+    this.eventAggregator.publish("handleInfo", this.message);
 
     e.stopPropagation();
 

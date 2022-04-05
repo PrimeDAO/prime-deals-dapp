@@ -4,7 +4,7 @@ import { NumberService } from "./../services/NumberService";
 import { IDaoTransaction } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
-import { EventConfig } from "./../services/GeneralEvents";
+import { EventConfig, EventConfigException } from "./../services/GeneralEvents";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import "./funding.scss";
@@ -21,7 +21,7 @@ import { observable } from "aurelia-typed-observable-plugin";
 import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
-import { tokenGridColumns, depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
+import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
 export interface IDaoClaimToken {
@@ -164,13 +164,14 @@ export class Funding {
       data: {
         gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
       },
+      className: "executeSwap",
     };
     // show a modal confirming the user wants to execute the swap
     const dialogResult = await this.alertService.showAlert(swapModal);
     if (!dialogResult.wasCancelled) {
       //the user said they wanted to execute the swap so call the swap contract
       //TODO wire up the execute swap method to the contract
-      this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+      this.eventAggregator.publish("handleException", new EventConfigException("This method is not implemented", EventMessageType.Exception));
 
       //if the swap succeeded, show the 'congrats' modal
       //TODO add the if statement if the token swap was successfully executed then show the congrats popup
@@ -219,7 +220,7 @@ export class Funding {
     const dialogResult = await this.alertService.showAlert(withdrawModal);
     if (!dialogResult.wasCancelled) {
       //TODO wire up the withdraw method
-      this.eventAggregator.publish("handleInfo", new EventConfig("This method is not implemented", EventMessageType.Exception));
+      this.eventAggregator.publish("handleException", new EventConfigException("This method is not implemented", EventMessageType.Exception));
     }
   };
 
@@ -257,12 +258,12 @@ export class Funding {
     // token.percentCompleted = 12;
 
     if (this.depositAmount.gt(this.accountBalance)) {
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
       this.depositAmount = this.accountBalance;
       return;
     }
     if (this.depositAmount.gt(recentRequiredTokens)) {
-      this.eventAggregator.publish("handleInfo", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the required funding needed (${BigNumber.from(recentRequiredTokens)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the required funding needed (${BigNumber.from(recentRequiredTokens)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
       this.depositAmount = recentRequiredTokens;
       return;
     }
@@ -322,14 +323,14 @@ export class Funding {
       if (Number(remainingNeeded) < Number(this.accountBalance)) {
         //the account has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
-        this.eventAggregator.publish("handleInfo", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
+        this.eventAggregator.publish("handleValidationError", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
       } else {
         //the account has a lower balance than the remaining needed tokens so set the deposit amount to the full account amount
         this.depositAmount = this.accountBalance;
-        this.eventAggregator.publish("handleInfo", new EventConfig("The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.", EventMessageType.Info));
+        this.eventAggregator.publish("handleValidationError", new EventConfig("The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.", EventMessageType.Info));
       }
     } else {
-      this.eventAggregator.publish("handleInfo", new EventConfig("Please select a token first", EventMessageType.Info, "No token selected"));
+      this.eventAggregator.publish("handleValidationError", new EventConfig("Please select a token first", EventMessageType.Info, "No token selected"));
     }
   }
 

@@ -1,18 +1,19 @@
 import { Given, Then, And } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { E2eDealsApi } from "../../common/deal-api";
+import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 
 // @TODO this should be changed to make an offer to a real proposal (probably via clicking "make an offer" to and open proposal)
 Given("I navigate to make an offer wizard", () => {
   E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
     cy.visit(`/make-an-offer/${openProposalId}/proposal`);
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+    cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
 });
 
 Given("I navigate to make an offer Primary DAO stage", () => {
   E2eDealsApi.getFirstOpenProposalId().then(openProposalId => {
     cy.visit(`/make-an-offer/${openProposalId}/primary-dao`);
-    cy.get("[data-test='stageHeaderTitle']", {timeout: 10000}).should("be.visible");
+    cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
 });
 
