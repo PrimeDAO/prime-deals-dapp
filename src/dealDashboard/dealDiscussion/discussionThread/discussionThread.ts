@@ -131,15 +131,18 @@ export class DiscussionThread {
     if (this.streamIDs.has(comment.id)) {
       return;
     } else {
+      if (this.streamIDs.size > 10) {
+        const firstEntered = this.streamIDs.values().next();
+        this.streamIDs.delete(firstEntered.value);
+
+      }
       this.streamIDs.add(comment.id);
     }
 
-    this.threadDictionary = this.arrayToDictionary(this.threadComments);
-    console.log({comment});
-
     const newComment: IComment = {...comment.data};
-
-    if (!this.threadDictionary[newComment._id]) {
+    if (!this.threadDictionary[newComment._id] && comment.name === "commentDelete") {
+      delete this.threadDictionary[newComment._id];
+    } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
       newComment.text = (newComment.metadata.encrypted) ?
@@ -153,20 +156,20 @@ export class DiscussionThread {
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
-      this.threadComments = Object.values(this.threadDictionary);
-
-      // scroll to bottom only if the user is at seeing the last message
-      if (
-        this.refComments
-        && this.refComments[this.refComments.length - 1]
-        && this.isInView(this.refComments[this.refComments.length - 1])) {
-        this.refThreadEnd.scrollIntoView({
-          behavior: "smooth",
-        });
-      }
-      this.isLoading.commenting = false;
-      comment = null;
     }
+    this.threadComments = Object.values(this.threadDictionary);
+
+    // scroll to bottom only if the user is at seeing the last message
+    if (
+      this.refComments
+      && this.refComments[this.refComments.length - 1]
+      && this.isInView(this.refComments[this.refComments.length - 1])) {
+      this.refThreadEnd.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+    this.isLoading.commenting = false;
+    comment = null;
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
