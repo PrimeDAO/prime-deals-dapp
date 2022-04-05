@@ -332,7 +332,6 @@ export class DiscussionThread {
 
     const swrVote = JSON.stringify(this.threadDictionary[_id]);
 
-    // try {
     this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
       if (res.error) {
         this.eventAggregator.publish("handleFailure", "An error occurred while voting. " + res.error);
@@ -372,29 +371,32 @@ export class DiscussionThread {
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
-    let isDeleted = false;
     const swrComment = JSON.stringify(this.threadDictionary[_id]);
     this.isLoading[`isDeleting ${_id}`] = true;
-    try {
-      delete this.threadDictionary[_id];
-      this.threadComments = Object.values(this.threadDictionary);
-      isDeleted = await this.discussionsService.deleteComment(this.discussionId, _id);
-    } catch (err) {
-      if (err.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
-      }
-    } finally {
+    delete this.threadDictionary[_id];
+    this.threadComments = Object.values(this.threadDictionary);
+
+    this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {
         /* If deletion did not happened, restore original comments */
         this.threadDictionary[_id] = {...JSON.parse(swrComment)};
         this.threadComments = Object.values(this.threadDictionary);
       } else {
         this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+        this.eventAggregator.publish("handleSuccess", "Comment deleted.");
       }
+    }).catch (err => {
+
+      this.threadDictionary[_id] = {...JSON.parse(swrComment)};
+      this.threadComments = Object.values(this.threadDictionary);
+      if (err.code === 4001) {
+        this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
+      } else {
+        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
+      }
+    }).finally(() => {
       this.isLoading[`isDeleting ${_id}`] = false;
-    }
+    });
   }
 
   async doAction(action: string, args: any): Promise<void> {
