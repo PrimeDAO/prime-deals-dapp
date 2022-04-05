@@ -57,6 +57,17 @@ export class E2eDealWizard {
     return this;
   }
 
+  static verifyFieldValue(value: string) {
+    cy.then(() => {
+      withinWizardSection().within(() => {
+        cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+          cy.get("input, textarea").should("have.value", value);
+        });
+      });
+    });
+    return this;
+  }
+
   static fillIn(value: string) {
     cy.then(() => {
       withinWizardSection().within(() => {
@@ -70,6 +81,14 @@ export class E2eDealWizard {
       });
     });
     return this;
+  }
+
+  public static getConnectToGetWallet() {
+    return cy.get("[data-test='connect-to-get-wallet']");
+  }
+
+  public static makeMyselfProposalLead() {
+    return cy.get("[data-test='make-myself-proposal-lead']").click();
   }
 
   static proceed() {

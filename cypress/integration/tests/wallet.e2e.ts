@@ -23,7 +23,10 @@ export class E2eWallet {
     return this._currentWalletAddress;
   }
   public static set currentWalletAddress(newAddress) {
-    this._currentWalletAddress = newAddress;
+    cy.then(() => {
+      localStorage.setItem("PRIME_E2E_ADDRESS", newAddress);
+      this._currentWalletAddress = newAddress;
+    });
   }
 
   public static getSmallHexAddress() {
@@ -59,17 +62,21 @@ export class E2eNavbar {
       // 2. If not, connect
       cy.contains("button", "Connect to a Wallet").click();
 
-      cy.get("ux-dialog-container").within(() => {
-        cy.get(".dialogFooter .pToggle").click();
-        cy.contains("button", "Accept").click();
-      });
-
-      cy.get(".navbar-container").within(() => {
-        cy.get(".connectButton .address").should("be.visible");
-      });
+      this.acceptDisclaimer();
 
       // cy.get("[data-test='modelContent']").should("be.visible");
       // cy.get("[data-test='modelContent']").should("not.be.visible");
+    });
+  }
+
+  public static acceptDisclaimer() {
+    cy.get("ux-dialog-container").within(() => {
+      cy.get(".dialogFooter .pToggle").click();
+      cy.contains("button", "Accept").click();
+    });
+
+    cy.get(".navbar-container").within(() => {
+      cy.get(".connectButton .address").should("be.visible");
     });
   }
 

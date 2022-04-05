@@ -4,7 +4,7 @@ import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 export class E2eNavigation {
   public static navigateToHomePage() {
     cy.visit("/");
-    cy.get("[data-test='home-page']").should("be.visible");
+    cy.get("[data-test='home-page']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
 
   public static useNavbarForHomePage() {
