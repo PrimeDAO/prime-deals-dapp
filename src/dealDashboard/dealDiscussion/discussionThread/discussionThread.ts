@@ -124,9 +124,18 @@ export class DiscussionThread {
     }, {});
   }
 
+  private streamIDs = new Set;
+
   private async updateCommentsThreadUponMessageArrival(comment: Types.Message): Promise<void> {
     // If a new comment is added to the thread, it is added at the end of the comments array.
+    if (this.streamIDs.has(comment.id)) {
+      return;
+    } else {
+      this.streamIDs.add(comment.id);
+    }
+
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    console.log({comment});
 
     const newComment: IComment = {...comment.data};
 
