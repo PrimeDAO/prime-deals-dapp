@@ -305,6 +305,14 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
+    const comment = await this.discussionsService.getSingleComment(_id);
+    if (!comment._id) {
+      this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
+      delete this.threadDictionary[_id];
+      this.threadComments = Object.values(this.threadDictionary);
+      return;
+    }
+
     if (!this.replyToComment) {
       this.replyToComment = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
@@ -325,7 +333,17 @@ export class DiscussionThread {
     const swrVote = JSON.stringify(this.threadDictionary[_id]);
 
     // try {
-    this.discussionsService.voteComment(this.discussionId, _id, type).catch(error => {
+    this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
+      if (res.error) {
+        this.eventAggregator.publish("handleFailure", "An error occurred while voting. " + res.error);
+        if (res.code === 404) {
+          delete this.threadDictionary[_id];
+          this.threadComments = [...Object.values(this.threadDictionary)];
+        }
+        this.isLoading[`isVoting ${_id}`] = false;
+        return;
+      }
+    }).catch(error => {
       /* On API failure- revert voting */
       this.threadDictionary[_id] = {...JSON.parse(swrVote)};
       if (error.code === 4001) {
@@ -355,10 +373,11 @@ export class DiscussionThread {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
     let isDeleted = false;
-    const swrComments = [...this.threadComments];
+    const swrComment = JSON.stringify(this.threadDictionary[_id]);
     this.isLoading[`isDeleting ${_id}`] = true;
     try {
-      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+      delete this.threadDictionary[_id];
+      this.threadComments = Object.values(this.threadDictionary);
       isDeleted = await this.discussionsService.deleteComment(this.discussionId, _id);
     } catch (err) {
       if (err.code === 4001) {
@@ -369,7 +388,8 @@ export class DiscussionThread {
     } finally {
       if (!isDeleted) {
         /* If deletion did not happened, restore original comments */
-        this.threadComments = [...swrComments];
+        this.threadDictionary[_id] = {...JSON.parse(swrComment)};
+        this.threadComments = Object.values(this.threadDictionary);
       } else {
         this.updateDiscussionListStatus(new Date(), this.threadComments.length);
       }
