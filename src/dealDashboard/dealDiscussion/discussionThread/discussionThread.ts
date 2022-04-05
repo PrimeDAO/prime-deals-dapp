@@ -140,8 +140,8 @@ export class DiscussionThread {
     }
 
     const newComment: IComment = {...comment.data};
-    if (!this.threadDictionary[newComment._id] && comment.name === "commentDelete") {
-      delete this.threadDictionary[newComment._id];
+    if (comment.name === "commentDelete") {
+      if (this.threadDictionary[newComment._id]) delete this.threadDictionary[newComment._id];
     } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
