@@ -4,8 +4,8 @@ Feature: Discussions - Single Comment - Public View
     And the Open Proposal has Discussions with replies
     And I'm viewing the Open Proposal
 
-    And I choose a single Topic with replies
-    Then I should not see the Comment actions
+    # And I choose a single Topic with replies
+    # Then I should not see the Comment actions
 
     Examples:
       | UserType         |

@@ -3,6 +3,7 @@ import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { E2E_ADDRESSES } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
 import { E2eNavigation } from "../common/navigate";
+import { PAGE_LOADING_TIMEOUT } from "../common/test-constants";
 
 const UserTypes = ["Anonymous", "Connected Public"] as const;
 export type UserType = typeof UserTypes[number]
@@ -47,6 +48,8 @@ export class E2eNavbar {
   }
 
   public static connectToWallet(address: string = E2E_ADDRESSES.ProposalLead) {
+    cy.log("connectToWallet");
+
     localStorage.setItem("PRIME_E2E_ADDRESS", address);
     E2eWallet.currentWalletAddress = address;
 
@@ -74,12 +77,13 @@ export class E2eNavbar {
     });
 
     cy.get(".navbar-container").within(() => {
-      cy.get(".connectButton .address").should("be.visible");
+      cy.get(".connectButton .address", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
     });
   }
 
   public static disconnectWallet() {
     cy.log("disconnectWallet");
+
     cy.get("[data-test='connectButton']").click();
     cy.get("[data-test='diconnect-button']").click();
     this.getConnectWalletButton().should("be.visible");
