@@ -7,6 +7,7 @@ import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "fir
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
+import { EventConfigException } from "services/GeneralEvents";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -70,7 +71,7 @@ export class FirebaseService {
       try {
         return this.signInToFirebase(address).then(() => this.authenticationIsSynced = true);
       } catch (error) {
-        this.eventAggregator.publish("handleexception", error);
+        this.eventAggregator.publish("handleException", new EventConfigException("An error occurred signing into the database", error));
       }
     } else {
       return signOut(firebaseAuth).then(() => this.authenticationIsSynced = true);
