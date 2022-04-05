@@ -28,7 +28,7 @@ export class DaoRepresentativeAddress {
       })
       .withMessage("Address duplicated")
       .satisfies(this.daoValidationRepresentativeRestriction.bind(this))
-      .withMessage("Representative cannot be part of more than one DAO")
+      .withMessage("The same account cannot represent more than one DAO")
       .on(this.representative);
   }
 

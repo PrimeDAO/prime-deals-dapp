@@ -25,6 +25,6 @@ Then("I should be alerted, that a Representative can only be part of one DAO", (
   // Click outside to trigger validation on blur
   cy.get(".navbar-container .logo").click();
 
-  const errorMessage = "Representative cannot be part of more than one DAO";
+  const errorMessage = "The same account cannot represent more than one DAO";
   cy.contains("[data-test='errorMessage']", errorMessage).should("be.visible");
 });
