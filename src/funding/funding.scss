@@ -81,102 +81,8 @@ $hover-transition-speed-slow: 0.4s;
         height: 100%;
         margin-top: 50px;
         > div {
-          padding: 0 24px;
-        }
-        .box-header {
-          padding-top: 20px;
-          margin-bottom: 32px;
-          display: grid;
-          grid-template-columns: 1fr auto;
-        }
-        .box-content {
-          .tokens {
-            .grid {
-              margin-bottom: 20px;
-              font-size: 16px;
-
-              .row {
-                cursor: default;
-                /**
-                 * so the grid will be composed of the contents of the row element,
-                 * not the row element itself.
-                 */
-                display: contents;
-
-                &:hover {
-                  text-decoration: none;
-                }
-
-                .cell.header {
-                  padding: 10px 0;
-                  text-transform: uppercase;
-                }
-
-                .cell {
-                  &.body {
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                  }
-                  /**
-                   * for when columns get scrunched together
-                   */
-                  &:not(:nth-of-type(n + 7)) {
-                    padding-right: 12px;
-                  }
-
-                  &.header {
-                    &.sortable {
-                      cursor: pointer;
-                    }
-                  }
-
-                  &.project {
-                    .ellipsesContainer {
-                      display: inline-block;
-                      overflow-x: hidden;
-                      text-overflow: ellipsis;
-                    }
-                  }
-
-                  &.percent {
-                    text-align: right;
-                    justify-content: right;
-                  }
-
-                  &.projectToken,
-                  &.fundingToken {
-                    white-space: nowrap;
-
-                    img {
-                      margin-right: 6px;
-                      @include tokenIcon;
-                    }
-                  }
-
-                  &.starts {
-                    .timeLeftContainer {
-                      .body {
-                        font-family: Aeonik; // so will center properly and look consistent
-                      }
-                    }
-                  }
-                  &.eslink {
-                    i {
-                      cursor: pointer;
-                      color: $Secondary02;
-                    }
-                  }
-                }
-              }
-            }
-
-            #token-grid {
-              .required {
-                color: $Orange;
-              }
-            }
-          }
+          padding-left: 24px;
+          padding-right: 24px;
         }
         .buttons {
           display: flex;
@@ -227,7 +133,6 @@ $hover-transition-speed-slow: 0.4s;
               font-size: 14px;
               color: $Neutral02;
               line-height: 17px;
-              margin-bottom: 20px;
               padding: 0 100px 0 0;
               display: grid;
               grid-template-columns: 30px auto;
@@ -235,15 +140,23 @@ $hover-transition-speed-slow: 0.4s;
                 font-size: 20px;
                 margin-top: 3px;
               }
+              span {
+                margin-top: 3px;
+              }
             }
+          }
+          .links {
             a {
               font-size: 14px;
               font-weight: 400;
+              color: $Neutral04;
             }
-            .links {
-              display: grid;
-              grid-template-columns: auto 1fr;
-              grid-column-gap: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-column-gap: 15px;
+            &.right {
+              grid-template-columns: 1fr auto;
+              justify-items: right;
             }
           }
           .deposit {
@@ -432,7 +345,6 @@ $hover-transition-speed-slow: 0.4s;
             background-color: $Border01;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
-            display: grid;
             p {
               font-size: 14px;
               color: $Neutral02;
@@ -450,7 +362,6 @@ $hover-transition-speed-slow: 0.4s;
               font-size: 14px;
               font-weight: 400;
               margin: 0 20px 10px 0;
-              display: block;
               color: $Neutral04;
               i {
                 color: $Secondary05;
