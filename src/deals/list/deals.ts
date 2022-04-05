@@ -5,10 +5,11 @@ import { autoinject, computedFrom, singleton } from "aurelia-framework";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
+import { DisposableCollection } from "services/DisposableCollection";
 
 let dealsLoadedOnce = false;
 /**
@@ -25,6 +26,7 @@ export class Deals {
   private sortColumn: string;
   private sortDirection = SortOrder.DESC;
   private sortEvaluator: (a: DealTokenSwap, b: DealTokenSwap) => number;
+  private subscriptions = new DisposableCollection();
 
   constructor(
     private readonly dealService: DealService,
@@ -41,6 +43,7 @@ export class Deals {
     return this.gridDeals.slice(0, 10);
   }
 
+  // TODO: make this more efficient with some kind of debouncer or fewer dependencies
   @computedFrom("cardIndex", "showMine", "ethereumService.defaultAccountAddress", "dealService.openProposals", "dealService.partneredDeals")
   public get gridDeals(): DealTokenSwap[] {
     return this.getDealsForCardIndex(this.cardIndex, this.showMine, this.ethereumService.defaultAccountAddress);
@@ -58,6 +61,15 @@ export class Deals {
       dealsLoadedOnce = true;
       this.dealsLoadedOnce = dealsLoadedOnce;
     }
+    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", (account: Address) => {
+      if (!account) {
+        this.showMine = false;
+      }
+    }));
+  }
+
+  public detached(): void {
+    this.subscriptions.dispose();
   }
 
   /**
