@@ -6,8 +6,11 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/popupNotifications/popupNotifications"),
     PLATFORM.moduleName("./elements/EtherscanLink/EtherscanLink"),
     PLATFORM.moduleName("./elements/EthBalance/EthBalance"),
-    PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
+    PLATFORM.moduleName("./elements/address-link/address-link"),
+    PLATFORM.moduleName("./elements/etherscan-button/etherscan-button"),
     PLATFORM.moduleName("./elements/UsersAddress/UsersAddress"),
+    PLATFORM.moduleName("./elements/TokenBalance/TokenBalance"),
+    PLATFORM.moduleName("./elements/dao-icon-name/dao-icon-name"),
     PLATFORM.moduleName("./elements/copyToClipboardButton/copyToClipboardButton"),
     PLATFORM.moduleName("./elements/numericInput/numericInput"),
     PLATFORM.moduleName("./elements/formattedNumber/formattedNumber"),
@@ -29,7 +32,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./value-converters/sort"),
     PLATFORM.moduleName("./value-converters/withCommas"),
     PLATFORM.moduleName("./value-converters/currency"),
-
+    PLATFORM.moduleName("./value-converters/checksumAddress"),
     PLATFORM.moduleName("./dialogs/disclaimer/disclaimer"),
     // PLATFORM.moduleName("./bindingBehaviors/asyncBinding"),
   ]);

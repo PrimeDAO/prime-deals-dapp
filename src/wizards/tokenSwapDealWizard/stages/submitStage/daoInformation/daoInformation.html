@@ -3,11 +3,10 @@
     <div
       class="daoAvatar"
       style.bind="`background-image: url(${daoData.logoURI})`"
-      data-test="dao-avatar"
-    >
+      data-test="dao-avatar">
       <i if.bind="!daoData.logoURI" class="fas fa-image"></i>
     </div>
-    <h3>Dao name</h3>
+    <h3>${daoData.name}</h3>
   </div>
 
   <div class="submitContentLabel-sm">Treasury address</div>
@@ -80,8 +79,7 @@
               <formatted-number
                 if.bind="token.amount >= 0"
                 thousands-separated
-                value.to-view="token.amount | ethwei"
-              ></formatted-number>
+                value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
               <template else> - </template>
             </p>
           </div>
@@ -92,8 +90,7 @@
               <formatted-number
                 if.bind="token.instantTransferAmount"
                 thousands-separated
-                value.to-view="token.instantTransferAmount | ethwei"
-              ></formatted-number>
+                value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
               <template else> - </template>
             </p>
           </div>
@@ -104,8 +101,7 @@
               <formatted-number
                 if.bind="token.vestedTransferAmount"
                 thousands-separated
-                value.to-view="token.vestedTransferAmount | ethwei"
-              ></formatted-number>
+                value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
               <template else> - </template>
             </p>
           </div>
@@ -114,9 +110,12 @@
           <div class="detailsCell" ptooltip.bind="tokenVestedForTooltip + ' seconds'">
             <p>Vested for</p>
             <p>
-              <template if.bind="token.vestedFor"
-                >${token.vestedFor | secondsDays} days</template
-              >
+              <formatted-number
+                if.bind="token.vestedFor"
+                thousands-separated
+                hide-tooltip
+                value.to-view="token.vestedFor | secondsDays">
+              </formatted-number>
               <template else>0 days</template>
             </p>
           </div>
@@ -125,9 +124,12 @@
           <div class="detailsCell" ptooltip.bind="tokenCliffOfTooltip + ' seconds'">
             <p>Cliff of</p>
             <p>
-              <template if.bind="token.cliffOf"
-                >${token.cliffOf | secondsDays} days</template
-              >
+              <formatted-number
+                if.bind="token.cliffOf"
+                thousands-separated
+                hide-tooltip
+                value.to-view="token.cliffOf | secondsDays">
+              </formatted-number>
               <template else>0 days</template>
             </p>
           </div>

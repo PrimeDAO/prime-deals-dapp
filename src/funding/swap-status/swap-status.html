@@ -1,0 +1,23 @@
+<template>
+  <require from="../status-card/status-card"></require>
+  <section class="section swap-status">
+    <div class="heading heading3 title gradient">Token Swap Status</div>
+    <div class="status-cards">
+      <status-card
+        dao.bind="deal.daoRepresentedByCurrentAccount"
+        swap-completed.bind="swapCompleted"
+        funding-failed.bind="fundingFailed"></status-card>
+      <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
+        <i class="fas fa-arrow-right"></i>
+        <i if.to-view="swapCompleted" class="fas fa-check-circle success center"></i>
+        <i if.to-view="fundingFailed" class="fas fa-times-circle danger center"></i>
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <status-card
+        dao.bind="deal.daoOtherThanRepresentedByCurrentAccount"
+        swap-completed.bind="swapCompleted"
+        funding-failed.bind="fundingFailed"></status-card>
+    </div>
+    <slot></slot>
+  </section>
+</template>

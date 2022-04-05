@@ -8,6 +8,17 @@ export class Utils {
     return new Promise((resolve: (args: any[]) => void): any => setTimeout(resolve, milliseconds));
   }
 
+  /**
+   * Gets a property value from the string reprentation of it. If you pass "token.decimal" as a string, it will return the decimal prop
+   * @param object
+   * @param path
+   * @param defaultValue
+   * @returns any
+   */
+  public static getPropertyFromString = <T>(object:any, path:string, defaultValue?:T) => path
+    .split(".")
+    .reduce((o, p) => o ? o[p] : defaultValue, object);
+
   public static smallHexString(str: string): string {
     if (!str) {
       return "";
@@ -142,6 +153,7 @@ export class Utils {
         "Backspace", "Delete", "Tab", "Escape", "Enter", "NumLock", "CapsLock", "Shift", "Control",
         "ArrowHome", "ArrowEnd", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
         "Cut", "Copy", "Clear", "Paste", "CrSel", "EraseEof", "Insert", "Redo", "Undo",
+        "Home", "End",
       ].indexOf(e.key) !== -1) ||
       ((["a", "x", "c", "v"].indexOf(e.key) !== -1) && (e.ctrlKey === true || e.metaKey === true))
     );
@@ -180,5 +192,31 @@ export class Utils {
     documentElement = document.documentElement): void {
 
     documentElement?.style.setProperty(varName, value);
+  }
+
+  public static uniqById<T extends { id: string }>(collection: Array<T>): Array<T> {
+    return Utils.uniqBy(collection, "id");
+  }
+
+  public static uniqBy<T>(collection: Array<T>, key: keyof T): Array<T> {
+    const ids = collection.map(item => item[key]);
+    return collection.filter((item, index) => !ids.includes(item[key], index + 1));
+  }
+
+  /**
+   * merge iterables into a single set (until ES6 comes along with this)
+   * @param iterables
+   * @returns
+   */
+  public static unionSet<T>(...iterables): Set<T> {
+    const set = new Set<T>();
+
+    for (const iterable of iterables) {
+      for (const item of iterable) {
+        set.add(item);
+      }
+    }
+
+    return set;
   }
 }

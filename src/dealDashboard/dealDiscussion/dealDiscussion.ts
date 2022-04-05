@@ -7,5 +7,5 @@ import "./dealDiscussion.scss";
 export class DealDiscussion {
   @bindable deal: DealTokenSwap;
   @bindable.booleanAttr authorized = false;
-  @bindable.string({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 }

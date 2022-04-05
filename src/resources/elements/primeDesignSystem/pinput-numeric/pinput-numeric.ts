@@ -19,7 +19,7 @@ export class PInputNumeric {
   @bindable.booleanAttr disabled = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) value: number | BigNumber | string;
   @bindable.booleanAttr notWei?: boolean = false;
-  @bindable.number decimals?: number = 18;
+  @bindable.number decimals?: number;
   @bindable.booleanAttr outputAsString?: boolean = false;
   @bindable.string placeholder = "";
 }

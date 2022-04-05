@@ -1,3 +1,35 @@
+@import "../../resources/elements/primeDesignSystem/variables";
+
 deal-description {
   margin-bottom: 100px;
+  overflow-wrap: anywhere;
+  font-family: Inter;
+  line-height: 24px;
+
+  .descriptionLabel {
+    color: $Secondary02;
+    font-weight: $font-bold;
+  }
+
+  @include pre;
+
+  .mobileButtonContainerDealDescription {
+    display: none;
+  }
+}
+
+@media screen and (max-width: $MobileWidth) {
+  deal-description {
+    max-width: 335px;
+    margin-bottom: 56px;
+
+    .dealDescriptionText {
+      margin-bottom: 28px;
+    }
+
+    .mobileButtonContainerDealDescription {
+      display: flex;
+      justify-content: center;
+    }
+  }
 }

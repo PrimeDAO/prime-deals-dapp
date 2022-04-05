@@ -4,38 +4,49 @@
   <require from="./dealInfo/dealInfo"></require>
   <require from="./dealClauses/dealClauses"></require>
   <require from="./dealDiscussion/dealDiscussion"></require>
+  <require from="./dealMakeAnOffer/dealMakeAnOffer"></require>
   <require from="./dealDescription/dealDescription"></require>
+  <require from="../deals/timeLeft/timeLeft"></require>
 
-  <main class="page animated-page au-animate dealDashboardContainer">
+  <main data-test="deal-dashboard-container" class="page animated-page au-animate dealDashboardContainer">
     <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
-      <h1 class="title heading heading1 gradient">
-        Swap tokenized carbon credits for a better world
+      <h1 data-test="dealTitle" class="title heading heading1 gradient">
+        ${deal.registrationData.proposal.title}
       </h1>
-      <h2>* Active, Recently updated (Private)</h2>
+
+      <let deal-privacy-text="${deal.isPrivate ? 'Private' : 'Public'}"></let>
+      <h2 data-test="dealStatus">
+        <time-left deal.to-view="deal" hide-icons largest>
+          <span slot="before">•</span>
+          <span>(${dealPrivacyText})</span>
+        </time-left>
+      </h2>
     </section>
 
     <aside class="aside">
-      <deal-votes deal.bind="deal"></deal-votes>
+      <deal-votes deal.bind="deal" if.bind="!deal.isOpenProposal"></deal-votes>
       <deal-info deal.bind="deal"></deal-info>
+      <deal-make-an-offer
+        deal.bind="deal"
+        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"
+      ></deal-make-an-offer>
     </aside>
 
     <deal-description deal.bind="deal"></deal-description>
 
     <deal-clauses
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
-      if.to-view="authorized || !deal.registrationData.isPrivate"
-    ></deal-clauses>
+      discussion-id.two-way="discussionId"
+      if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
-      authorized.bind="authorized"
+      authorized.bind="deal.isUserRepresentativeOrLead"
       deal.bind="deal"
-      discussion-id.bind="discussionId"
-      show.bind="authorized || !this.deal.registrationData.isPrivate"
-    ></deal-discussion>
+      discussion-id.two-way="discussionId"
+      show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-discussion>
   </main>
 </template>

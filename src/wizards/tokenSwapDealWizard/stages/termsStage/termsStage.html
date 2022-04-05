@@ -23,7 +23,7 @@
           clause.bind="clause"
           index.bind="$index"
           on-delete.call="onDelete($index)"
-          on-saved.call="checkedForUnsavedChanges()"
+          on-saved.call="hasUnsavedChanges && checkedForUnsavedChanges()"
           view-model.ref="termClauses[$index]"
           view-mode.bind="stageMetadata.termsViewModes[$index]"
           hide-delete-button.bind="wizardState.registrationData.terms.clauses.length === 1"
@@ -40,6 +40,7 @@
         </pbutton>
 
         <p
+          data-test="errorMessage"
           class="feedbackMessage errorMessage ${ hasUnsavedChanges ? 'feedbackMessageVisible' : ''}">
           Please save all your clauses
         </p>

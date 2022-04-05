@@ -1,19 +1,16 @@
 <template>
-  <div
-    data-test="pPopupNotification"
-    class="pPopupNotification"
-    ref="container"
-  >
+  <div data-test="pPopupNotification" class="pPopupNotification" ref="container">
     <div class="icon">
       <i class="${typeClass} ${iconClass}"></i>
     </div>
-    <div class="title ${typeClass}">${title}</div>
+    <div class="title ${typeClass}">${titleText}</div>
     <div class="countdown">
       <pcountdown-closebutton
         stopped.call="countDownStopped(cancelled)"
         paused.bind="paused"
         closed.call="countdownClosed()"
-        running.bind="running">
+        running.bind="running"
+      >
       </pcountdown-closebutton>
     </div>
     <div class="bodyContainer">

@@ -1,35 +1,18 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 @import "src/resources/elements/primeDesignSystem/colors";
 
-$soonColor: $Red;
-$soonBackground: $Red-BG;
-$comingUpColor: $Orange;
-$comingUpBackground: $Orange-BG;
-$farOffColor: $Grey;
-$farOffBackground: $Grey-BG;
-
 $completedColor: $Teal;
 $completedBackground: $Teal-BG;
-$swappingColor: $Magenta;
-$swappingBackground: $Magenta-BG;
 $negotiatingColor: $Green;
 $negotiatingBackground: $Green-BG;
 $failedColor: $Grey;
 $failedBackground: $Grey-BG;
-$openColor: $Green;
-$openBackground: $Green-BG;
-$liveColor: $Green;
-$liveBackground: $Green-BG;
-$targetReachedColor: $Green;
-$targetReachedBackground: $Green-BG;
-$swapCompleteColor: $Teal;
-$swapCompleteBackground: $Teal-BG;
-$targetNotReachedColor: $Red;
-$targetNotReachedBackground: $Red-BG;
-$fundingInProgressColor: $Magenta;
-$fundingInProgressBackground: $Magenta-BG;
-$closedColor: $Grey;
-$closedBackground: $Grey-BG;
+$activeColor: $Green;
+$activeBackground: $Green-BG;
+$fundingColor: $Magenta;
+$fundingBackground: $Magenta-BG;
+$cancelledColor: $Grey;
+$cancelledBackground: $Grey-BG;
 
 .timeLeftContainer {
   font-size: $font-size1;
@@ -55,29 +38,12 @@ $closedBackground: $Grey-BG;
   }
 
   > div.mainStatus > div {
-    &.timeLeft {
-      &.soon {
-        color: $soonColor;
-      }
-
-      &.comingUp {
-        color: $comingUpColor;
-      }
-
-      &.farOff {
-        color: $farOffColor;
-      }
-    }
-    
     &.completed {
       color: $completedColor;
     }
 
-    &.live {
-      color: $liveColor;
-    }
-    &.swapping {
-      color: $swappingColor;
+    &.active {
+      color: $activeColor;
     }
 
     &.negotiating {
@@ -88,28 +54,12 @@ $closedBackground: $Grey-BG;
       color: $failedColor;
     }
 
-    &.open {
-      color: $openColor;
+    &.funding {
+      color: $fundingColor;
     }
 
-    &.targetReached {
-      color: $targetReachedColor;
-    }
-
-    &.swapCompleted {
-      color: $swapCompleteColor;
-    }
-
-    &.targetNotReached {
-      color: $targetNotReachedColor;
-    }
-
-    &.fundingInProgress {
-      color: $fundingInProgressColor;
-    }
-
-    &.closed {
-      color: $closedColor;
+    &.cancelled {
+      color: $cancelledColor;
     }
   }
 
@@ -125,29 +75,12 @@ $closedBackground: $Grey-BG;
     }
 
     > div.mainStatus > div {
-      &.timeLeft {
-        &.soon {
-          background-color: $soonBackground;
-        }
-
-        &.comingUp {
-          background-color: $comingUpBackground;
-        }
-
-        &.farOff {
-          background-color: $farOffBackground;
-        }
-      }
-
       &.completed {
         background-color: $completedBackground;
       }
 
-      &.live {
-        background-color: $liveBackground;
-      }
-      &.swapping {
-        background-color: $swappingBackground;
+      &.active {
+        background-color: $activeBackground;
       }
 
       &.negotiating {
@@ -158,28 +91,12 @@ $closedBackground: $Grey-BG;
         background-color: $failedBackground;
       }
 
-      &.open {
-        background-color: $openBackground;
+      &.funding {
+        background-color: $fundingBackground;
       }
 
-      &.targetReached {
-        background-color: $targetReachedBackground;
-      }
-
-      &.swapCompleted {
-        background-color: $swapCompleteBackground;
-      }
-
-      &.targetNotReached {
-        background-color: $targetNotReachedBackground;
-      }
-
-      &.fundingInProgress {
-        background-color: $fundingInProgressBackground;
-      }
-
-      &.closed {
-        background-color: $closedBackground;
+      &.cancelled {
+        background-color: $cancelledBackground;
       }
     }
   }

@@ -1,5 +1,6 @@
 import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
 import { autoinject } from "aurelia-framework";
+import * as shortUuid from "short-uuid";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IClause, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import "./termsStage.scss";
@@ -29,6 +30,7 @@ export class TermsStage implements IBaseWizardStage {
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
+      this.addIdsToClauses();
       this.checkedForUnsavedChanges();
       const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
       return formsAreValid && !this.hasUnsavedChanges;
@@ -42,6 +44,7 @@ export class TermsStage implements IBaseWizardStage {
 
     this.termClauses.splice(index, 1);
     this.wizardState.registrationData.terms.clauses.splice(index, 1);
+    this.stageMetadata.termsViewModes.splice(index, 1);
   }
 
   addClause() {
@@ -54,6 +57,14 @@ export class TermsStage implements IBaseWizardStage {
 
   checkedForUnsavedChanges() {
     this.hasUnsavedChanges = this.termClauses.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+  }
+
+  addIdsToClauses() {
+    this.wizardState.registrationData.terms.clauses.forEach(clause => {
+      if (!clause.id) {
+        clause.id = shortUuid.generate();
+      }
+    });
   }
 
   private getDefaultTermsViewModes(wizardType: WizardType): ViewMode[] {

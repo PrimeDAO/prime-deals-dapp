@@ -18,13 +18,13 @@ export class AlertService {
   ) {
   }
 
-  configureHandleErrors(): void {
-    this.subscriptions.push(this.eventAggregator
-      .subscribe("handleException",
-        (config: EventConfigException | any) => this.handleException(config)));
-    this.subscriptions.push(this.eventAggregator
-      .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
-  }
+  // private configureHandleErrors(): void {
+  //   this.subscriptions.push(this.eventAggregator
+  //     .subscribe("handleException",
+  //       (config: EventConfigException | any) => this.handleException(config)));
+  //   this.subscriptions.push(this.eventAggregator
+  //     .subscribe("handleFailure", (config: EventConfig | string) => this.handleFailure(config)));
+  // }
 
   private handleException(config: EventConfigException | any) {
     let ex: any;

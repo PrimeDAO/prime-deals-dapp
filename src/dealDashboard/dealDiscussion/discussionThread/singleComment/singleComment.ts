@@ -6,7 +6,6 @@ import { DateService } from "services/DateService";
 import "./singleComment.scss";
 
 interface IThreadComment extends IComment {
-  createdOn: string;
   lastModified: string;
 }
 
@@ -21,11 +20,11 @@ export class SingleComment {
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;
-  @bindable commentAction;
+  @bindable private commentAction;
+  @bindable private isAuthorized = false;
 
   private connectedAddress: string;
   private dealClauseId: string;
-  private isConnected = false;
   private pressed = {
     up: false,
     down: false,
@@ -41,10 +40,9 @@ export class SingleComment {
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
-    this.isConnected = !!this.connectedAddress;
-    this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+    this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
     this.commentTimeInterval = setInterval((): void => {
-      this.comment.lastModified = this.dateService.formattedTime(parseInt(this.comment.createdOn)).diff();
+      this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
     }, 30000);
   }
 
@@ -97,7 +95,10 @@ export class SingleComment {
   }
 
   private vote(vote: string) {
-    this.pressed[vote.toLowerCase().indexOf("up")>0 ? "up" : "down"] = true;
+    this.pressed = {
+      up: vote.toLowerCase().indexOf("up")>0,
+      down: vote.toLowerCase().indexOf("down")>0,
+    };
     this.commentAction({
       action: "vote",
       args: {

@@ -1,0 +1,41 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+.pchip-container {
+  width: -moz-fit-content;
+  width: fit-content;
+  .chip {
+    border-radius: 87px;
+    padding: 5px 12px;
+    font-family: Inter;
+    font-size: 14px;
+    align-self: center;
+    white-space: nowrap;
+    > [slot="icon"] {
+      margin-right: 1px;
+    }
+  }
+  .success {
+    color: $Green;
+    background-color: $Green-BG;
+  }
+  .warning {
+    color: $Orange;
+    background-color: $Orange-BG;
+  }
+  .info {
+    color: $Teal;
+    background-color: $Teal-BG;
+  }
+  .danger {
+    color: $Red;
+    background-color: $Red-BG;
+  }
+  .secondary {
+    color: $Magenta;
+    background-color: $Magenta-BG;
+  }
+  .dark {
+    color: $Grey;
+    background-color: $Grey-BG;
+  }
+}

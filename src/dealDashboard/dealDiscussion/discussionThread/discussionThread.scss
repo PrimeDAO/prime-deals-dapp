@@ -1,7 +1,9 @@
 @import "styles/styles.scss";
-@import "../../../resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
 
 .discussionThread {
+  @include pre;
   grid-area: thread;
   .head.container {
     background-color: inherit;
@@ -26,14 +28,13 @@
       font-size: 24px;
       line-height: 33px;
       font-weight: 700;
+      word-wrap: anywhere;
 
-      &.at-top {
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 
@@ -101,6 +102,9 @@
         margin-bottom: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
       }
 
       .replyState {

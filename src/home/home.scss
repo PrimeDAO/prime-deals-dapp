@@ -4,11 +4,9 @@
 
 .page.home {
   .section {
-    &.hero,
-    &.deals {
-      margin-bottom: 64px;
+    &.hero {
+      margin-bottom: 16px;
     }
-
     &.top {
       .heading01Gradient {
         padding-bottom: 5px;
@@ -51,79 +49,6 @@
         justify-content: start;
         cursor: pointer;
         gap: 40px;
-      }
-    }
-
-    &.deals {
-      .scrollerContainer {
-        margin-bottom: 28px;
-
-        .scroller {
-          deal-summary {
-            margin-right: $spacing-normal * 2;
-
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-        }
-      }
-
-      > .selector {
-        :not(:first-child) {
-          margin-left: 63px;
-        }
-
-        > .selector-tab {
-          cursor: pointer;
-
-          &:hover:not(.active) {
-            -webkit-text-fill-color: $Neutral04;
-          }
-        }
-
-        display: flex;
-        -webkit-text-fill-color: $Neutral02;
-        border-bottom: 2px solid $Border01;
-        width: 100%;
-        transition: background 1s ease-in-out;
-
-        > .active {
-          background: $Gradient02;
-          -webkit-text-fill-color: transparent;
-          -webkit-background-clip: text;
-          background-clip: text;
-          border-bottom: 6px solid;
-          @include border-gradient($Gradient02);
-          padding-bottom: 19px;
-        }
-
-        margin-bottom: 40px;
-      }
-
-      > .dealsButton {
-        margin-top: 28px;
-        margin-bottom: 150px;
-
-        button.tertiary {
-          color: $Neutral03;
-          opacity: 0.3;
-          transition: 0.2s;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-      }
-
-      .loading {
-        text-align: center;
-        font-size: 32px;
-        padding-top: 24px;
-
-        i {
-          color: $Secondary07;
-        }
       }
     }
 
@@ -174,17 +99,9 @@
   }
 }
 
-@media screen and (max-width: 900px) and (min-width: 550px) {
-  .deals {
-    padding: 0 45px;
-  }
-}
-
 @media screen and (max-width: $PageBreakWidth) {
   .page.home {
     .section {
-
-
       &.top {
         width: 100%;
 
@@ -193,7 +110,8 @@
           margin-bottom: 28px;
         }
 
-        .heading01Gradient, .heading04 {
+        .heading01Gradient,
+        .heading04 {
           text-align: center;
           max-width: none;
         }
@@ -208,43 +126,10 @@
         }
       }
 
-      &.deals {
-        .selector {
-          margin-bottom: 20px;
-
-          :not(:first-child) {
-            margin-left: 20px;
-          }
-
-          .selector-tab {
-            font-size: $font-size3;
-          }
-        }
-
-        .scrollerContainer {
-          margin-bottom: 0;
-
-          .scroller deal-summary {
-            margin: 0;
-
-            &:not(:last-child) {
-              margin-bottom: 20px;
-            }
-
-            .dealSummary {
-              text-align: left;
-            }
-          }
-        }
-
-        .dealsButton {
-          margin-bottom: 80px;
-        }
-      }
-
       &.hero {
         grid-template-columns: auto;
         row-gap: 28px;
+        margin-bottom: 0;
 
         .heroColumn {
           justify-content: center;
