@@ -255,6 +255,10 @@ export class DiscussionsService {
     }
   }
 
+  public async getSingleComment(_id: string): Promise<IComment> {
+    return await this.convo.comments.getComment(_id);
+  }
+
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
@@ -390,7 +394,7 @@ export class DiscussionsService {
     return false;
   }
 
-  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<boolean> {
+  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<any> {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(
@@ -414,6 +418,7 @@ export class DiscussionsService {
 
     try {
       const message = await this.convo.comments.getComment(commentId);
+      if (!message._id) return {success: false, code: 404, error: "Comment not found"};
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
