@@ -27,33 +27,31 @@
           show-chip.bind="false"
         ></deposit-grid>
         <div class="container-footer">
+          <let
+            is-rep-and-deal-still-funding.bind="!deal.isUserProposalLead && !deal.isTargetReached && !deal.isFailed"
+          ></let>
           <div class="contracts">
             <p>
               <i class="fas fa-info-circle"></i>
-              <span if.to-view="fundingFailed">
+              <span if.to-view="deal.isFailed">
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. Please go to the Deposits below and withdraw your funds. You
                 can withdraw your funds at any time. Funds are safe.
               </span>
-              <span
-                if.to-view="!fundingFailed && !deal.isTargetReached && !deal.isUserProposalLead"
-              >
+              <span if.to-view="isRepAndDealStillFunding">
                 You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
                 and executed within ${fundingDaysLeft} days.
               </span>
-              <span if.to-view="!fundingFailed && !deal.isTargetReached && deal.isUserProposalLead">
+              <span if.to-view="!deal.isFailed && !deal.isTargetReached && deal.isUserProposalLead">
                 This deal needs to be funded and executed within ${fundingDaysLeft} days.
               </span>
-              <span if.to-view="!fundingFailed && deal.isTargetReached">
+              <span if.to-view="!deal.isFailed && deal.isTargetReached">
                 All parties have deposited their funds. Anyone can now execute the swap on the deal
                 dashboard.
               </span>
             </p>
           </div>
-          <div
-            class="deposit"
-            if.to-view="!deal.isUserProposalLead && !deal.isTargetReached && !fundingFailed"
-          >
+          <div class="deposit" if.to-view="isRepAndDealStillFunding">
             <div class="form">
               <div>
                 <div class="inputs">

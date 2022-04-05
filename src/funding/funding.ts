@@ -89,7 +89,7 @@ export class Funding {
   public async bind(): Promise<void> {
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenFunding
-    this.secondDaoTokens = JSON.parse(JSON.stringify(this.secondDao.tokens));
+    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens);
     this.secondDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.secondDao);});
 
     //TODO figure out what the vested amount is from the deal
@@ -97,7 +97,7 @@ export class Funding {
     this.vestedAmount = 0;
 
     //get contract token information from the DAO related to the account
-    this.firstDaoTokens = JSON.parse(JSON.stringify(this.firstDao.tokens));
+    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens);
     this.firstDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
