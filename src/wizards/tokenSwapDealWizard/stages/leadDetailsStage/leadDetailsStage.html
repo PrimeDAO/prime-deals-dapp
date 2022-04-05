@@ -24,7 +24,7 @@
             value.bind="wizardState.registrationData.proposalLead.address | checksumAddress & validate:form"
             view-model.ref="input"></pinput-text>
         </pform-input>
-        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress" type="formfield">
+        <pbutton class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights" type="formfield">
           Connect to get your wallet address
         </pbutton>
         <pbutton
