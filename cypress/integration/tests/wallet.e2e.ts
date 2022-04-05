@@ -23,10 +23,8 @@ export class E2eWallet {
     return this._currentWalletAddress;
   }
   public static set currentWalletAddress(newAddress) {
-    cy.then(() => {
-      localStorage.setItem("PRIME_E2E_ADDRESS", newAddress);
-      this._currentWalletAddress = newAddress;
-    });
+    localStorage.setItem("PRIME_E2E_ADDRESS", newAddress);
+    this._currentWalletAddress = newAddress;
   }
 
   public static getSmallHexAddress() {
@@ -34,7 +32,7 @@ export class E2eWallet {
   }
 
   public static reset() {
-    this.currentWalletAddress = "";
+    this.currentWalletAddress = undefined;
     this.isLead = true;
   }
 }
@@ -81,6 +79,7 @@ export class E2eNavbar {
   }
 
   public static disconnectWallet() {
+    cy.log("disconnectWallet");
     cy.get("[data-test='connectButton']").click();
     cy.get("[data-test='diconnect-button']").click();
     this.getConnectWalletButton().should("be.visible");
@@ -136,8 +135,15 @@ function givenImAnAnonymousUser() {
     E2eWallet.isLead = false;
 
     if (hasLoaded) {
-      E2eNavbar.getConnectWalletButton().should("be.visible");
-      E2eNavbar.getUserAddress().should("not.exist");
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        }
+
+        E2eNavbar.getConnectWalletButton().should("be.visible");
+        E2eNavbar.getUserAddress().should("not.exist");
+      });
     }
   });
 }
