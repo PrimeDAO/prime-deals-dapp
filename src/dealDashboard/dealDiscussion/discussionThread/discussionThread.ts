@@ -6,6 +6,7 @@ import { DiscussionsService } from "dealDashboard/discussionsService";
 import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
+import { Utils } from "services/utils";
 
 import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
@@ -124,13 +125,25 @@ export class DiscussionThread {
     }, {});
   }
 
-  private async updateCommentsThreadUponMessageArrival(comment: Types.Message): Promise<void> {
+  private streamIDs = new Set();
+
+  private async updateCommentsThreadUponMessageArrival(commentStreamMessage: Types.Message): Promise<void> {
     // If a new comment is added to the thread, it is added at the end of the comments array.
-    this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    if (this.streamIDs.has(commentStreamMessage.id)) {
+      return;
+    } else {
+      if (this.streamIDs.size > 10) {
+        const firstEntered = this.streamIDs.values().next();
+        this.streamIDs.delete(firstEntered.value);
 
-    const newComment: IComment = {...comment.data};
+      }
+      this.streamIDs.add(commentStreamMessage.id);
+    }
 
-    if (!this.threadDictionary[newComment._id]) {
+    const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
+    if (commentStreamMessage.name === "commentDelete") {
+      if (this.threadDictionary[newComment._id]) delete this.threadDictionary[newComment._id];
+    } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
       newComment.text = (newComment.metadata.encrypted) ?
@@ -144,20 +157,21 @@ export class DiscussionThread {
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
-      this.threadComments = Object.values(this.threadDictionary);
-
-      // scroll to bottom only if the user is at seeing the last message
-      if (
-        this.refComments
-        && this.refComments[this.refComments.length - 1]
-        && this.isInView(this.refComments[this.refComments.length - 1])) {
-        this.refThreadEnd.scrollIntoView({
-          behavior: "smooth",
-        });
-      }
-      this.isLoading.commenting = false;
-      comment = null;
     }
+    this.threadComments = Object.values(this.threadDictionary);
+    this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
+
+    // scroll to bottom only if the user is at seeing the last message
+    if (
+      this.refComments
+      && this.refComments[this.refComments.length - 1]
+      && this.isInView(this.refComments[this.refComments.length - 1])) {
+      this.refThreadEnd.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+    this.isLoading.commenting = false;
+    commentStreamMessage = null;
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
@@ -330,7 +344,7 @@ export class DiscussionThread {
     if (this.isLoading[`isVoting ${_id}`]) return;
     this.isLoading[`isVoting ${_id}`] = true;
 
-    const swrVote = JSON.stringify(this.threadDictionary[_id]);
+    const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
     this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
       if (res.error) {
@@ -344,7 +358,7 @@ export class DiscussionThread {
       }
     }).catch(error => {
       /* On API failure- revert voting */
-      this.threadDictionary[_id] = {...JSON.parse(swrVote)};
+      this.threadDictionary[_id] = swrVote;
       if (error.code === 4001) {
         this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
       } else {
@@ -355,7 +369,7 @@ export class DiscussionThread {
     });
 
     /* Toggle vote locally */
-    const message = {...this.threadDictionary[_id]};
+    const message = Utils.cloneDeep(this.threadDictionary[_id]);
     if (!message[endpoints[type]].includes(currentWalletAddress)) {
       message[endpoints[type]].push(currentWalletAddress);
       message[endpoints[typeInverse]] = message[endpoints[typeInverse]].filter(address => address !== currentWalletAddress);
@@ -363,7 +377,7 @@ export class DiscussionThread {
       message[endpoints[type]] = message[endpoints[type]].filter(address => address !== currentWalletAddress);
     }
 
-    this.threadDictionary[_id] = {...message};
+    this.threadDictionary[_id] = message;
     this.threadComments = [...Object.values(this.threadDictionary)];
     this.isLoading[`isVoting ${_id}`] = false;
   }
@@ -371,7 +385,7 @@ export class DiscussionThread {
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
-    const swrComment = JSON.stringify(this.threadDictionary[_id]);
+    const swrComment = Utils.cloneDeep(this.threadDictionary[_id]);
     this.isLoading[`isDeleting ${_id}`] = true;
     delete this.threadDictionary[_id];
     this.threadComments = Object.values(this.threadDictionary);
@@ -379,15 +393,14 @@ export class DiscussionThread {
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {
         /* If deletion did not happened, restore original comments */
-        this.threadDictionary[_id] = {...JSON.parse(swrComment)};
+        this.threadDictionary[_id] = swrComment;
         this.threadComments = Object.values(this.threadDictionary);
       } else {
         this.updateDiscussionListStatus(new Date(), this.threadComments.length);
         this.eventAggregator.publish("handleSuccess", "Comment deleted.");
       }
     }).catch (err => {
-
-      this.threadDictionary[_id] = {...JSON.parse(swrComment)};
+      this.threadDictionary[_id] = swrComment;
       this.threadComments = Object.values(this.threadDictionary);
       if (err.code === 4001) {
         this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
