@@ -33,10 +33,10 @@ export const depositColumns: IGridColumn[] = [
 
 export const tokenGridColumns: IGridColumn[] = [
   { field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
-  { field: "target", sortable: true, width: ".5fr", template: "${target | ethwei:row.decimals}" },
+  { field: "target", sortable: true, width: ".5fr", template: "${amount | ethwei:row.decimals}" },
   { field: "deposited", sortable: true, width: ".5fr", template: "${deposited | ethwei:row.decimals}" },
   { field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${required | ethwei:row.decimals}</div>" },
-  { field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></pprogress-bar>" },
+  { field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='deposited'></pprogress-bar>" },
   { field: "percentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
 ];
 

@@ -84,13 +84,15 @@ export class Funding {
     this.verifySecurity();
     //wait until the dao transactions from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
+    //wait until the dao token claims from the contract are there
+    await Utils.waitUntilTrue(() => this.deal.daoTokenClaims !== undefined);
   }
 
   public async bind(): Promise<void> {
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenFunding
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens);
-    this.secondDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.secondDao);});
+    this.secondDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.secondDao);});
 
     //TODO figure out what the vested amount is from the deal
     //this.vestedAmount = this.deal.vestedAmount;
@@ -98,7 +100,7 @@ export class Funding {
 
     //get contract token information from the DAO related to the account
     this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens);
-    this.firstDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.firstDao);});
+    this.firstDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
@@ -145,46 +147,6 @@ export class Funding {
   public getTypeIcon = (type: string): string => {
     return type.toLowerCase() === "deposit" ? "down success" : "up danger";
   };
-
-  /**
-   * Executes the token swap. Called by the "Execute Token Swap" button on the UI
-   *  - pops up a modal to verify the user wants to execute the swap
-   *  - does nothing if they hit cancel
-   *  - if they hit "execute" it will execute and show the congrats modal
-   */
-  public async executeSwap(): Promise<void> {
-    const swapModal: IAlertModel = {
-      header: "Execute token swap",
-      message:
-        `<p>You are about to execute the token swap between the following two DAOs. Do you want to execute the swap?</p>
-        <div class='modal-content'>${this.getDaoHtmlForSwap(this.firstDao)}${this.getDaoHtmlForSwap(this.secondDao)}</div>`,
-      buttonTextPrimary: "Execute Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
-      buttonTextSecondary: "Cancel",
-      buttons: ShowButtonsEnum.Both,
-      data: {
-        gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
-      },
-      className: "executeSwap",
-    };
-    // show a modal confirming the user wants to execute the swap
-    const dialogResult = await this.alertService.showAlert(swapModal);
-    if (!dialogResult.wasCancelled) {
-      //the user said they wanted to execute the swap so call the swap contract
-      //TODO wire up the execute swap method to the contract
-      this.eventAggregator.publish("handleException", new EventConfigException("This method is not implemented", EventMessageType.Exception));
-
-      //if the swap succeeded, show the 'congrats' modal
-      //TODO add the if statement if the token swap was successfully executed then show the congrats popup
-      const congratulatePopupModel: IAlertModel = {
-        header: "Congratulations!",
-        message: "<p class='excitement'>You have successfully executed the token swap!</p>",
-        confetti: true,
-        buttonTextPrimary: "Close",
-        className: "congratulatePopup",
-      };
-      await this.alertService.showAlert(congratulatePopupModel);
-    }
-  }
 
   /**
    * This allows for more deposits to be displayed on the funding page deposits grid
@@ -274,26 +236,6 @@ export class Funding {
   }
 
   /**
-   * Gets the HTML for the dao token swap modal popup
-   * @param dao
-   * @returns string
-   */
-  private getDaoHtmlForSwap(dao: IDAO): string {
-    return `
-      <div>
-        <h6>${dao.name} treasury address</h6>
-        <div class="dao">
-          ${dao.treasury_address} 
-          <div class="buttons">
-            <copy-to-clipboard-button text-to-copy="${dao.treasury_address}"></copy-to-clipboard-button>
-            <etherscan-button address="${dao.treasury_address}" is-transaction.bind="false"></etherscan-button>            
-          </div>
-        </div>
-      </div>
-      `;
-  }
-
-  /**
    * Navigates user to the deal page by id
    */
   private goToDealPage(): void {
@@ -332,20 +274,6 @@ export class Funding {
     } else {
       this.eventAggregator.publish("handleValidationError", new EventConfig("Please select a token first", EventMessageType.Info, "No token selected"));
     }
-  }
-
-  /**
-   * Sets the additional token info from the contract
-   */
-  private setTokenContractInfo(token: ITokenFunding, dao: IDAO): void {
-    //get the additional token information from the contract for this token
-    console.log("Dao token transactions", this.deal.daoTokenTransactions.get(dao));
-    token.deposited = this.deal.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
-    // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
-    token.required = BigNumber.from(token.amount).sub(token.deposited);
-    // calculate the percent completed based on deposited divided by target
-    // We're using bignumberjs because BigNumber can't handle division
-    //token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
   }
 
   /**

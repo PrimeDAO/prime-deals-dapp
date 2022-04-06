@@ -109,11 +109,6 @@
       </div>
     </section>
     <swap-status deal.bind="deal">
-      <div class="section execute-swap" if.to-view="deal.isTargetReached">
-        <pbutton type="primary" click.delegate="executeSwap()">
-          Execute swap <i class="fas">&#xf021;</i>
-        </pbutton>
-      </div>
       <div class="claim-tokens" if.to-view="deal.isClaiming">
         <div class="box-container">
           <div>

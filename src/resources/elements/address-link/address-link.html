@@ -1,6 +1,10 @@
 <template>
   <div class="addressLink">
-    <a if.to-view="textClickable" ptooltip.to-view="address" click.delegate="gotoEtherscan()">
+    <a
+      if.to-view="textClickable"
+      ptooltip.to-view="address && showTooltip ? address : null"
+      click.delegate="gotoEtherscan()"
+    >
       ${linkText ? linkText : address }
       <span if.to-view="showArrowInsideLink" class="arrowIcon" />
     </a>

@@ -7,31 +7,35 @@
       <pchip color="${chipColor}"> ${status} </pchip>
     </header>
     <div class="content">
-      <div class="token-progress" repeat.for="token of dao.tokens" if.to-view="!swapCompleted">
+      <div class="token-progress" repeat.for="token of tokens" if.to-view="!swapCompleted">
         <img src="${token.logoURI}" />
         <div>
           <div class="progress-bar-content">
             <div>
               <formatted-number
-                if.bind="token.deposited >= 0"
                 thousands-separated
                 value.to-view="token.deposited | ethwei:token.decimals"
               ></formatted-number>
               <strong>${token.symbol}</strong> Deposited
             </div>
-            <div>${token.percentCompleted}%</div>
+            <div>
+              <formatted-number
+                thousands-separated
+                value.to-view="token.percentCompleted"
+              ></formatted-number
+              >%
+            </div>
           </div>
           <div class="progress-bar">
-            <pprogress-bar max.bind="token.target" current.bind="token.deposited"></pprogress-bar>
+            <pprogress-bar max.bind="token.amount" current.bind="token.deposited"></pprogress-bar>
           </div>
         </div>
       </div>
       <div class="token-completed" if.to-view="swapCompleted">
-        <div repeat.for="token of dao.tokens">
+        <div repeat.for="token of tokens">
           <img src="${token.logoURI}" />
           <span
             ><formatted-number
-              if.bind="token.deposited >= 0"
               thousands-separated
               value.to-view="token.deposited | ethwei:token.decimals"
             ></formatted-number>

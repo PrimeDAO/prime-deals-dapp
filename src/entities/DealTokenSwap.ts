@@ -14,6 +14,9 @@ import { ContractNames, ContractsService, IStandardEvent } from "services/Contra
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
+import { ITokenFunding } from "./TokenFunding";
+import { NumberService } from "services/NumberService";
+import { toBigNumberJs } from "services/BigNumberService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -85,6 +88,7 @@ export class DealTokenSwap implements IDeal {
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
+    private numberService: NumberService,
     eventAggregator: EventAggregator,
   ) {
     eventAggregator.subscribe("Contracts.Changed", async () => {
@@ -750,6 +754,19 @@ export class DealTokenSwap implements IDeal {
       .then(() => {
         this.isPrivate = value;
       });
+  }
+
+  /**
+   * Sets the additional token info from the contract
+   */
+  public setTokenContractInfo(token: ITokenFunding, dao: IDAO): void {
+  //get the additional token information from the contract for this token
+    token.deposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+    // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
+    token.required = BigNumber.from(token.amount).sub(token.deposited);
+    // calculate the percent completed based on deposited divided by target
+    // We're using bignumberjs because BigNumber can't handle division
+    token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
   }
 
   /**

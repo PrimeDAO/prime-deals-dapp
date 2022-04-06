@@ -1,6 +1,51 @@
 @import "src/styles/styles.scss";
 @import "src/resources/elements/primeDesignSystem/styles";
+.ppopup-dialog.executeSwap {
+  p.dialogBody {
+    width: 550px;
+  }
+  .modal-content {
+    border-radius: 10px;
+    background-color: $BG02;
+    width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+    display: grid;
+    grid-gap: 20px;
+    h6 {
+      text-transform: uppercase;
+      color: $Secondary02;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Aeonik;
+    }
+    .dao {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 400;
+      font-family: Aeonik;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-column-gap: 10px;
+      .buttons {
+        display: flex;
+        column-gap: 4px;
+        align-items: center;
 
+        .etherscan-button {
+          outline: none;
+          path {
+            fill: $Secondary05;
+          }
+          cursor: pointer;
+          &:hover > path {
+            fill: $White;
+          }
+        }
+      }
+    }
+  }
+}
 .page.dealDashboardContainer {
   display: grid;
   grid-template-columns: auto 360px;
@@ -10,6 +55,7 @@
     "top top-extended"
     "description aside"
     "clauses aside"
+    "swapstatus swapstatus"
     "discussion discussion"
     "thread thread";
   gap: 0 115px;
@@ -27,7 +73,7 @@
     }
 
     time-left {
-      font-family: 'Inter';
+      font-family: "Inter";
       font-style: normal;
       font-weight: 700;
       font-size: 14px;
@@ -44,7 +90,10 @@
   deal-clauses {
     grid-area: clauses;
   }
-
+  .section.swap-status {
+    grid-area: swapstatus;
+    margin-top: 30px;
+  }
   deal-discussion {
     grid-area: discussion;
 
@@ -79,6 +128,7 @@
       "content"
       "clauses"
       "aside"
+      "swapstatus"
       "discussion";
     grid-row-gap: 50px;
     grid-column-gap: 0;
@@ -94,6 +144,7 @@
       "content"
       "clauses"
       "aside"
+      "swapstatus"
       "discussion";
   }
 }

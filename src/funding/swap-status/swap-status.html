@@ -7,6 +7,7 @@
         dao.bind="deal.primaryDao"
         swap-completed.bind="swapCompleted"
         funding-failed.bind="fundingFailed"
+        tokens.bind="firstDaoTokens"
       ></status-card>
       <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
         <i class="fas fa-arrow-right"></i>
@@ -18,6 +19,7 @@
         dao.bind="deal.partnerDao"
         swap-completed.bind="swapCompleted"
         funding-failed.bind="fundingFailed"
+        tokens.bind="secondDaoTokens"
       ></status-card>
     </div>
     <slot></slot>
