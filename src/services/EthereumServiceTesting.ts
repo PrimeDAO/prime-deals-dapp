@@ -77,7 +77,6 @@ export class EthereumServiceTesting {
      *   In E2e tests, the disclaimer modal popped up on first load, because localStorage is always cleared.
      */
     let account = localStorage.getItem("PRIME_E2E_ADDRESS");
-    console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 80 ~ EthereumServiceTesting ~ connect ~ account", account);
     if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
       this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
       account = null;
@@ -114,7 +113,15 @@ export class EthereumServiceTesting {
       lookupAddress: () => Promise.resolve(""),
     };
 
-    const address = localStorage.getItem("PRIME_E2E_ADDRESS");
+    let address = localStorage.getItem("PRIME_E2E_ADDRESS");
+    if (address === "null") {
+      address = null;
+    } else if (address === "undefined") {
+      address = undefined;
+    }
+
+    if (address === null || address === undefined) return;
+
     this.defaultAccountAddress = address;
     this.fireAccountsChangedHandler(address);
   }
