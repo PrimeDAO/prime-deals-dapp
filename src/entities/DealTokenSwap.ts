@@ -194,12 +194,12 @@ export class DealTokenSwap implements IDeal {
     return isReached;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
+  /**
+   * returns milliseconds
+   */
+  @computedFrom("isExecuted", "createdAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    if (!this.isExecuted) {
-      return;
-    }
-    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+    return (this.createdAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
   }
 
   /**
@@ -517,7 +517,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
-  public async hydrateDealSize(): Promise<void> {
+  private async hydrateDealSize(): Promise<void> {
     // if the total price is already figured out we don't need to try again
     if (this.totalPrice) {
       return;
@@ -662,6 +662,24 @@ export class DealTokenSwap implements IDeal {
           }
         });
     }
+  }
+
+  /**
+   * Returns Map of token address to amount claimable.  Every token in the dao should be represented.
+   * @param dao
+   * @returns
+   */
+  public async getTokenClaimableAmounts(dao: IDAO): Promise<Map<Address, BigNumber>> {
+    const results = new Map<Address, BigNumber>();
+
+    const vestingInfo: { tokens: Array<Address>; amounts: Array<BigNumber> }
+     = await this.daoDepositContracts.get(dao).callStatic.claimDealVestings(this.moduleContract.address, this.contractDealId);
+
+    vestingInfo.tokens.forEach(( tokenAddress: Address, index: number ) => {
+      results.set(tokenAddress, vestingInfo.amounts[index]);
+    });
+
+    return results;
   }
 
   private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {

@@ -1,6 +1,8 @@
-import { Given, Then, And } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Given, Then, And, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { E2eDealsApi } from "../../common/deal-api";
+import { E2eDealWizard } from "../../common/pageObjects/dealWizard";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
+import { E2eNavbar } from "../wallet.e2e";
 
 // @TODO this should be changed to make an offer to a real proposal (probably via clicking "make an offer" to and open proposal)
 Given("I navigate to make an offer wizard", () => {
@@ -15,6 +17,11 @@ Given("I navigate to make an offer Primary DAO stage", () => {
     cy.visit(`/make-an-offer/${openProposalId}/primary-dao`);
     cy.get("[data-test='stageHeaderTitle']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   });
+});
+
+When("I connect to get my wallet address", () => {
+  E2eDealWizard.getConnectToGetWallet().click();
+  E2eNavbar.acceptDisclaimer();
 });
 
 Then("I can see DAO details section with pre-filled disabled fields", () => {

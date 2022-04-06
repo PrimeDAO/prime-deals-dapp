@@ -44,7 +44,7 @@ export class E2eDealsApi {
       if (!E2eNavigation.isHome(pathname)) {
         E2eNavigation.navigateToHomePage();
       }
-      if (address !== undefined) {
+      if (address !== undefined && address !== null) {
         E2eNavbar.connectToWallet(address);
       }
     });
@@ -58,7 +58,7 @@ export class E2eDealsApi {
 
       let deals: IFirebaseDocument<IDealTokenSwapDocument>[];
 
-      if (address === undefined) {
+      if (address === undefined || address === null) {
         deals = await firestoreDealsService.getAllPublicDeals();
       } else if (isLead) {
         deals = await firestoreDealsService.getProposalLeadDeals(address);
