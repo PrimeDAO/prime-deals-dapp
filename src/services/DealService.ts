@@ -8,31 +8,34 @@ import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
-import { BigNumber } from "ethers";
-import { parseBytes32String } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
 import { Subscription } from "rxjs";
 
-interface ITokenSwapCreatedArgs {
+// interface ITokenSwapCreatedArgs {
+//   module: Address,
+//   dealId: number;
+//   // the participating DAOs
+//   daos: Array<Address>;
+//   // the tokens involved in the swap
+//   tokens: Array<Address>;
+//   // the token flow from the DAOs to the module
+//   pathFrom: Array<Array<BigNumber>>;
+//   // the token flow from the module to the DAO
+//   pathTo: Array<Array<BigNumber>>;
+//   // unix timestamp of the deadline
+//   deadline: BigNumber; // trying to get them to switch to uint type
+//   // unix timestamp of the execution
+//   // executionDate: BigNumber; // trying to get them to switch to uint type
+//   // hash of the deal information.
+//   metadata: string;
+//   // status of the deal
+//   status: number; // 3 ("DONE") means the deal has been executed
+// }
+
+interface ITokenSwapExecutedArgs {
   module: Address,
-  dealId: number; // trying to get them to switch to uint type
-  // the participating DAOs
-  daos: Array<Address>;
-  // the tokens involved in the swap
-  tokens: Array<Address>;
-  // the token flow from the DAOs to the module
-  pathFrom: Array<Array<BigNumber>>;
-  // the token flow from the module to the DAO
-  pathTo: Array<Array<BigNumber>>;
-  // unix timestamp of the deadline
-  deadline: BigNumber; // trying to get them to switch to uint type
-  // unix timestamp of the execution
-  // executionDate: BigNumber; // trying to get them to switch to uint type
-  // hash of the deal information.
-  metadata: string;
-  // status of the deal
-  status: number; // 3 ("DONE") means the deal has been executed
+  dealId: number;
 }
 
 interface IExecutedDeal {
@@ -165,7 +168,7 @@ export class DealService {
     return this.initializedPromise = new Promise(
       (resolve: (value: void | PromiseLike<void>) => void,
         reject: (reason?: any) => void): void => {
-        this.getExecutedDealInfo().then(() => {
+        this.getDealInfo().then(() => {
           this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
             if (force || !this.deals?.size) {
               try {
@@ -198,17 +201,17 @@ export class DealService {
       });
   }
 
-  private async getExecutedDealInfo(): Promise<Map<string, IExecutedDeal>> {
+  private async getDealInfo(): Promise<Map<string, IExecutedDeal>> {
     // commented-out until we have working contract code for retrieving the metadata
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapCreated();
     const dealIds = new Map<string, IExecutedDeal>();
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
-      .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+      .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
         for (const event of events) {
           const params = event.args;
-          const dealId = parseBytes32String(params.metadata);
+          const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
           dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
         }
       });

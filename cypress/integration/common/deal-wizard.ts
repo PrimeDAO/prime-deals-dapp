@@ -1,5 +1,6 @@
 import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { recurse } from "cypress-recurse";
+import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
 import { E2eDealWizard, WizardField } from "./pageObjects/dealWizard";
 import { PAGE_LOADING_TIMEOUT } from "./test-constants";
@@ -202,6 +203,20 @@ Then("I can proceed to the next step", () => {
 Then("I am notified, that I am unable to proceed due to validation errors", () => {
   cy.contains("[data-test='pPopupNotification']", "Unable to proceed, please check the page for validation errors")
     .should("be.visible");
+});
+
+Then("I cannot connect to get my wallet address", () => {
+  E2eDealWizard.getConnectToGetWallet().should("not.exist");
+});
+
+Then("I can make myself the Proposal Lead", () => {
+  E2eDealWizard.makeMyselfProposalLead();
+});
+
+Then("my address got added to the field", () => {
+  E2eDealWizard.inWizardSection("Proposal Lead")
+    .inField("Proposal Lead Address")
+    .verifyFieldValue(E2eWallet.currentWalletAddress);
 });
 
 function waitForTokenAddressLoaded() {
