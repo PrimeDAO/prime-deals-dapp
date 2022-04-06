@@ -91,9 +91,9 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
   output: {
     path: outDir,
     publicPath: baseUrl,
-    filename: production ? '[name].[chunkhash].bundle.js' : '[name].[fullhash].bundle.js',
+    filename: production ? '[name].[chunkhash].bundle.js' : '[name].bundle.js',
     sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : undefined,
-    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[fullhash].chunk.js'
+    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].chunk.js'
   },
   optimization: {
     runtimeChunk: true,  // separates the runtime chunk, required for long term cacheability
