@@ -38,7 +38,7 @@ export class TokenDetailsStage {
 
   @computedFrom("isOpenProposalWizard", "wizardState.registrationData.partnerDAO.tokens.length")
   get hasValidPartnerDAOTokensDetailsCount(): boolean {
-    return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.partnerDAO.tokens.length) : true;
+    return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.partnerDAO?.tokens.length) : true;
   }
 
   activate(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
@@ -130,7 +130,7 @@ export class TokenDetailsStage {
       if (this.wizardState.registrationData.primaryDAO.tokens.length === 0) {
         this.addToken(this.wizardState.registrationData.primaryDAO.tokens);
       }
-      if (this.wizardState.registrationData.partnerDAO.tokens.length === 0) {
+      if (this.wizardState.registrationData.partnerDAO?.tokens.length === 0) {
         this.addToken(this.wizardState.registrationData.partnerDAO.tokens);
       }
     }
