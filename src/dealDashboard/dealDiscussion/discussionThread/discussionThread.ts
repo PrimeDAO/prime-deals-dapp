@@ -126,7 +126,7 @@ export class DiscussionThread {
 
   private streamIDs = new Set();
 
-  private async updateCommentsThreadUponMessageArrival(comment: Types.Message): Promise<void> {
+  private async updateCommentsThreadUponMessageArrival(commentStreamMessage: Types.Message): Promise<void> {
     // If a new comment is added to the thread, it is added at the end of the comments array.
     if (this.streamIDs.has(comment.id)) {
       return;
