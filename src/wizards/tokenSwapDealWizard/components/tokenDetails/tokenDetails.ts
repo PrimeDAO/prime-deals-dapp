@@ -178,8 +178,6 @@ export class TokenDetails {
   }
 
   private addValidation() {
-    if (this.form.errors.length > 0) return;
-
     const rules = this.getValidationRules();
 
     this.form.addObject(this.token, rules);
