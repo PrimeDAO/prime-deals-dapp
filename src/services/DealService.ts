@@ -59,10 +59,12 @@ export class DealService {
   public initializing = true;
   private initializedPromise: Promise<void>;
 
+  @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
     return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal );
   }
 
+  @computedFrom("dealsArray.length")
   public get partneredDeals(): Array<any> {
     return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered );
   }

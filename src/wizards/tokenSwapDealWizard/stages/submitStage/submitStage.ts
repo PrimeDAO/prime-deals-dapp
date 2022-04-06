@@ -1,3 +1,4 @@
+import { Router } from "aurelia-router";
 import { autoinject } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
@@ -20,6 +21,7 @@ export class SubmitStage {
     private alertService: AlertService,
     private eventAggregator: EventAggregator,
     private dealService: DealService,
+    private router: Router,
   ) {}
 
   activate(stageMeta: IStageMeta): void {
@@ -36,18 +38,22 @@ export class SubmitStage {
       try {
         if (!this.wizardManager.dealId) {
         // const newDeal = use this for the button link below
-          await this.dealService.createDeal(this.submitData);
+          const newDeal = await this.dealService.createDeal(this.submitData);
+
+          const dealIsAvailable = !!this.dealService.deals.get(newDeal.id);
 
           const congratulatePopupModel: IAlertModel = {
             header: "Your deal has been submitted!",
             message:
-          "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
+              "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com/intent/tweet?text=Check%20out%20our%20new%20deal at %20https://deals.prime.xyz/' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
             confetti: true,
-            buttonTextPrimary: "Go to deal (todo)",
+            buttonTextPrimary: dealIsAvailable ? "Go to deal" : "close",
             className: "congratulatePopup",
           };
 
           await this.alertService.showAlert(congratulatePopupModel);
+
+          this.router.navigate(dealIsAvailable ? `deal/${newDeal.id}` : this.wizardState.previousRoute);
 
         } else {
           await this.dealService.updateRegistration(this.wizardManager.dealId, this.submitData);

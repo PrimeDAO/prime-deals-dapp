@@ -3,12 +3,14 @@ import { ValidationController } from "aurelia-validation";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import "./daoStageContent.scss";
 import { availableSocialMedias } from "../../dealWizardTypes";
+import { WizardStateKey } from "wizards/services/WizardService";
 
 export class DaoStageContent {
   @bindable name: string;
   @bindable disabled = false;
   @bindable data: IDAO;
   @bindable form: ValidationController;
+  @bindable wizardManager: WizardStateKey;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 

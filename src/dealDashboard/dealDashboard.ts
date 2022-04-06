@@ -1,4 +1,4 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { EthereumService } from "services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "../services/DealService";
@@ -22,6 +22,11 @@ export class DealDashboard {
     private router: Router,
     private aureliaHelperService: AureliaHelperService,
   ) {
+  }
+
+  @computedFrom("deal.isUserRepresentativeOrLead", "deal.isPrivate", "ethereumService.defaultAccount")
+  private get isAllowedToDiscuss(): boolean {
+    return (this.deal.isUserRepresentativeOrLead) || (!this.deal.isPartnered && !!this.ethereumService.defaultAccountAddress);
   }
 
   public async canActivate(params: { address: string }): Promise<boolean> {

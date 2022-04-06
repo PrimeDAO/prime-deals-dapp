@@ -9,6 +9,7 @@ prange-slider {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%; // otherwise shrinks
 
   --thumb-position: 0%;
   --thumb-position-correction: 0px;
@@ -16,13 +17,11 @@ prange-slider {
   @mixin track-style {
     height: 10px;
     border-radius: 5px;
-    background-image: linear-gradient(
-        90deg,
+    background-image: linear-gradient(90deg,
         $Secondary02 0%,
         $Shade01 var(--thumb-position),
         $Primary02 var(--thumb-position),
-        $Secondary02 100%
-    );
+        $Secondary02 100%);
   }
 
   @mixin thumb-style {

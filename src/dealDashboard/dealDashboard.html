@@ -30,21 +30,20 @@
       <deal-info deal.bind="deal"></deal-info>
       <deal-make-an-offer
         deal.bind="deal"
-        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"
-      ></deal-make-an-offer>
+        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"></deal-make-an-offer>
     </aside>
 
     <deal-description deal.bind="deal"></deal-description>
 
     <deal-clauses
-      authorized.bind="deal.isUserRepresentativeOrLead"
+      authorized.bind="isAllowedToDiscuss"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
       if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
 
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
-      authorized.bind="deal.isUserRepresentativeOrLead"
+      authorized.bind="isAllowedToDiscuss"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
       show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-discussion>
