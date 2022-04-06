@@ -12,6 +12,10 @@ export type WizardField =
  | "DAO Avatar"
  | "DAO Representatives Addresses"
  | "Funding Period"
+ | "Token Address"
+ | "Token Amount"
+ | "Vested Period"
+ | "Cliff Period"
 
 export class E2eDealWizard {
   private static sectionTitle = "";
