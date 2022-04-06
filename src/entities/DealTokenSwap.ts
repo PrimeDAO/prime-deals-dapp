@@ -198,12 +198,12 @@ export class DealTokenSwap implements IDeal {
     return isReached;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
+  /**
+   * returns milliseconds
+   */
+  @computedFrom("isExecuted", "createdAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    if (!this.isExecuted) {
-      return;
-    }
-    return (this.executedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+    return (this.createdAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
   }
 
   /**
