@@ -97,11 +97,11 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
     }
-    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       if (!this.initializing) {
         try {
           this.eventAggregator.publish("deals.loading", true);
-          await this.observeDeals();
+          this.observeDeals();
         } finally {
           this.eventAggregator.publish("deals.loading", false);
         }
@@ -110,18 +110,11 @@ export class DealService {
   }
 
   public async initialize(): Promise<void> {
-    /**
-     * deals will take care of themselves on account changes
-     */
-    if (!this.deals) {
-      await this.getDeals();
-    }
-
+    await this.getDeals();
     this.observeDeals();
   }
 
   private async observeDeals(): Promise<void> {
-    this.deals = new Map<Address, DealTokenSwap>();
 
     const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress);
 
@@ -133,24 +126,27 @@ export class DealService {
       updates => {
 
         try {
-          if (!updates) {
+          if (!updates || !this.deals) {
             throw new Error("Deals are not accessible");
           }
 
-          const dealsMap = new Map<Address, DealTokenSwap>();
+          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals);
 
           for (const dealDoc of updates.removed) {
-            this.deals.delete(dealDoc.id);
+            dealsMap.delete(dealDoc.id);
           }
 
+          /**
+           * note this change will propogage instantly
+           */
           for (const dealDoc of updates.modified) {
-            this._createDeal(dealDoc, dealsMap);
+            dealsMap.get(dealDoc.id).dealDocument = dealDoc;
           }
 
-          dealsMap.forEach(deal => {
-            this.deals.set(deal.id, deal);
-          });
-
+          /**
+           * now the deletes will propagate
+           */
+          this.deals = dealsMap;
         }
         catch (error) {
           this.deals = new Map();
@@ -176,7 +172,7 @@ export class DealService {
                 if (!dealDocs) {
                   throw new Error("Deals are not accessible");
                 }
-                const dealsMap = new Map<Address, DealTokenSwap>();
+                const dealsMap = new Map<IDealIdType, DealTokenSwap>();
 
                 // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
 

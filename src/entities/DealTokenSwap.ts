@@ -96,7 +96,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private initializedPromise: Promise<void>;
-  private dealDocument: IDealTokenSwapDocument;
   private now: Date;
 
   public id: IDealIdType;
@@ -104,6 +103,7 @@ export class DealTokenSwap implements IDeal {
   public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
+  public dealDocument: IDealTokenSwapDocument;
 
   /**
    * the id used by the TokenSwapModule contract to identify this this.  Is
