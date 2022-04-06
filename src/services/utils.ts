@@ -219,4 +219,13 @@ export class Utils {
 
     return set;
   }
+
+  /**
+   * deep clones an object and returns the same type
+   * @param obj
+   * @returns T
+   */
+  public static cloneDeep<T>(obj: T) : T{
+    return structuredClone ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+  }
 }

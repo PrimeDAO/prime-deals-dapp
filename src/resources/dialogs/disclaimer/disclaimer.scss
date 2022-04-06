@@ -26,6 +26,7 @@ body > ux-dialog-container.disclaimer {
         &.loading {
           text-align: center;
           padding-top: 32px;
+
           i {
             color: $Primary01;
             font-size: 28px;
@@ -36,17 +37,21 @@ body > ux-dialog-container.disclaimer {
       > .dialogFooter {
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
         justify-content: right;
         column-gap: 10px;
         padding-right: 72px;
         padding-top: 24px;
-        padding-bottom: 24px;
+        padding-bottom: 12px;
 
         .checkbox {
           display: inline-flex;
           align-items: flex-end;
           column-gap: 10px;
+
+          .formInputLabel {
+            margin-bottom: 0px;
+          }
         }
       }
     }

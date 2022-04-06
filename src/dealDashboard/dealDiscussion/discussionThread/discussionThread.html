@@ -49,7 +49,7 @@
             index="${$index}"
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
-            is-authorized.bind="deal.isUserRepresentativeOrLead"
+            is-authorized.bind="authorized"
             comment.bind="comment">
           </single-comment>
         </div>
@@ -57,7 +57,7 @@
       <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton> -->
 
       <!-- Comment Input -->
-      <section if.bind="deal.isUserRepresentativeOrLead" data-test="comment-input-section" class="action container">
+      <section if.bind="authorized" data-test="comment-input-section" class="action container">
         <div if.bind="replyToComment" data-test="reply-to-container" class="replyState">
           <p class="action heading heading3">
             <i class="fas fa-share"></i>

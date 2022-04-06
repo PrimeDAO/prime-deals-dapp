@@ -7,6 +7,8 @@
         click.delegate="column.sortable && sort(column.field)"
       >
         ${column.headerText === undefined ? column.field : column.headerText}
+        <i if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == 1" class="fas fa-arrow-down" aria-hidden="true"></i>
+        <i if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == -1" class="fas fa-arrow-up" aria-hidden="true"></i>
       </div>
     </div>
     <template repeat.for="row of rows | sort:sortEvaluator">
