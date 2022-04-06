@@ -83,6 +83,17 @@ export class E2eDealWizard {
     return this;
   }
 
+  static addToField(value: string) {
+    cy.then(() => {
+      withinWizardSection().within(() => {
+        cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).last().within(() => {
+          cy.get("input, textarea").type(value);
+        });
+      });
+    });
+    return this;
+  }
+
   public static getConnectToGetWallet() {
     return cy.get("[data-test='connect-to-get-wallet']");
   }
