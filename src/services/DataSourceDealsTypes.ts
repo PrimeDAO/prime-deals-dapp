@@ -1,8 +1,10 @@
+import { Observable } from "rxjs";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
 import { Address } from "./EthereumService";
+import { IDocumentUpdates } from "./FirestoreTypes";
 
 export type IDealIdType = string;
 
@@ -34,6 +36,11 @@ export abstract class IDataSourceDeals {
   getDeals<TDealDocument extends IDealTokenSwapDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
     throw new Error("Method not implemented.");
   }
+
+  getDealsObservables(accountAddress?: Address): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * add new vote or update existing
    * @param dealId

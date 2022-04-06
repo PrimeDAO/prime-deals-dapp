@@ -12,6 +12,7 @@ import { BigNumber } from "ethers";
 import { parseBytes32String } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
+import { Subscription } from "rxjs";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -58,6 +59,7 @@ export class DealService {
 
   public initializing = true;
   private initializedPromise: Promise<void>;
+  private dealsSubscription: Subscription;
 
   @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
@@ -96,7 +98,7 @@ export class DealService {
       if (!this.initializing) {
         try {
           this.eventAggregator.publish("deals.loading", true);
-          await this.getDeals(true);
+          await this.observeDeals();
         } finally {
           this.eventAggregator.publish("deals.loading", false);
         }
@@ -108,7 +110,52 @@ export class DealService {
     /**
      * deals will take care of themselves on account changes
      */
-    this.getDeals();
+    if (!this.deals) {
+      await this.getDeals();
+    }
+
+    this.observeDeals();
+  }
+
+  private async observeDeals(): Promise<void> {
+    this.deals = new Map<Address, DealTokenSwap>();
+
+    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress);
+
+    if (this.dealsSubscription) {
+      this.dealsSubscription.unsubscribe();
+    }
+
+    this.dealsSubscription = dealsObservable.subscribe(
+      updates => {
+
+        try {
+          if (!updates) {
+            throw new Error("Deals are not accessible");
+          }
+
+          const dealsMap = new Map<Address, DealTokenSwap>();
+
+          for (const dealDoc of updates.removed) {
+            this.deals.delete(dealDoc.id);
+          }
+
+          for (const dealDoc of updates.modified) {
+            this._createDeal(dealDoc, dealsMap);
+          }
+
+          dealsMap.forEach(deal => {
+            this.deals.set(deal.id, deal);
+          });
+
+        }
+        catch (error) {
+          this.deals = new Map();
+          this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
+        }
+
+      },
+    );
   }
 
   private async getDeals(force = false): Promise<void> {

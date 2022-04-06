@@ -5,8 +5,9 @@ import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address } from "services/EthereumService";
-import { IFirebaseDocument } from "services/FirestoreTypes";
+import { IDocumentUpdates, IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
+import { Observable } from "rxjs";
 
 @autoinject
 export class FirestoreDealsService<
@@ -20,6 +21,21 @@ export class FirestoreDealsService<
 
   public initialize(): void {
     throw new Error("Method not implemented.");
+  }
+
+  public async getDealsObservables(accountAddress?: Address): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
+    await this.firestoreService.ensureAuthenticationIsSynced();
+
+    if (accountAddress) {
+      if (!this.isUserAuthenticated(accountAddress)) {
+        return;
+      }
+      this.consoleLogService.logMessage(`getting all deals observable for user ${accountAddress}`);
+      return this.firestoreService.allDealsForAddressObservable(accountAddress);
+    } else {
+      this.consoleLogService.logMessage("getting all public deals observable");
+      return this.firestoreService.allPublicDealsUpdatesObservable();
+    }
   }
 
   public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
