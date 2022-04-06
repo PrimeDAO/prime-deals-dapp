@@ -87,10 +87,10 @@
       ${deal.totalPrice | currency}
     </div>
 
-    <div class="infoSection" if.bind="deal.fundingPeriod" ref="timeLeft">
+    <div class="infoSection" if.bind="deal.isFunding" ref="timeLeft">
       <span class="bodySmallTextBold infoTitle">Time left to execute</span>
       <span class="textRight">
-        ${ (timeLeftToExecute || deal.fundingPeriod * 1000) | timespan:"largest2"}
+        ${deal.timeLeftToExecute | timespan:"largest2"}
       </span>
     </div>
 
