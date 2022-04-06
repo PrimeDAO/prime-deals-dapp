@@ -157,7 +157,7 @@ export class DealService {
   private async getDealInfo(): Promise<Map<string, IExecutedDeal>> {
     // commented-out until we have working contract code for retrieving the metadata
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-    const filter = moduleContract.filters.TokenSwapCreated();
+    const filter = moduleContract.filters.TokenSwapExecuted();
     const dealIds = new Map<string, IExecutedDeal>();
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
