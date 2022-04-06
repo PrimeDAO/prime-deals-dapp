@@ -97,10 +97,11 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
     }
-    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       if (!this.initializing) {
         try {
           this.eventAggregator.publish("deals.loading", true);
+          await this.getDeals();
           this.observeDeals();
         } finally {
           this.eventAggregator.publish("deals.loading", false);
@@ -137,14 +138,14 @@ export class DealService {
           }
 
           /**
-           * note this change will propogage instantly
+           * note this change will instantly propogate across the app, any dependencies on dealDocument
            */
           for (const dealDoc of updates.modified) {
             dealsMap.get(dealDoc.id).dealDocument = dealDoc;
           }
 
           /**
-           * now the deletes will propagate
+           * now the deletions will propagate
            */
           this.deals = dealsMap;
         }
