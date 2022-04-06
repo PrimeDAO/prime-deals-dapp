@@ -4,7 +4,7 @@ import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL } from "../../fixtures/dealFixtur
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
-import { E2eDealWizard, WizardField } from "./pageObjects/dealWizard";
+import { E2eDealWizard, secondToDays, waitForTokenAddressLoaded, WizardField } from "./pageObjects/dealWizard";
 import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2eWizard {
@@ -31,7 +31,7 @@ export const stageTitlesToURLs = {
 
 export function withinWizardSection() {
   return cy.then(() => {
-    E2eDealWizard.getSectionTitle().then((sectionTitle) => {
+    return E2eDealWizard.getSectionTitle().then((sectionTitle) => {
       if (sectionTitle === "") {
         const sectionErrorMessage = "Please specify the section you are targeting in the Wizard.\n"
         + "Use the following step:\n\n"
@@ -57,6 +57,45 @@ Given(/^I want to fill in information for the "(.*)" section$/, (sectionTitle: s
 
 Given("I'm in the {string} stage", (stageTitle: string) => {
   cy.contains("[data-test='pstepper-step']", stageTitle).click();
+});
+
+Given("I fill out the Partner DAO Stage", () => {
+  if (!E2eDeals.currentDeal.partnerDAO) {
+    throw new Error("[TEST] No E2eDeals.currentDeal.partnerDAO");
+  }
+
+  E2eDealWizard.inWizardSection("Partner DAO")
+    .inField("DAO Name").fillIn(E2eDeals.currentDeal.partnerDAO.name)
+    .inField("DAO Treasury Address").fillIn(E2eDeals.currentDeal.partnerDAO.treasury_address)
+    .inField("DAO Avatar").fillIn(E2eDeals.currentDeal.partnerDAO.logoURI);
+
+  E2eDealWizard.inWizardSection("Select Representatives")
+    .inField("DAO Representatives Addresses").fillIn(E2eDeals.currentDeal.partnerDAO.representatives[0].address);
+
+  if (E2eDeals.currentDeal.partnerDAO.representatives.length > 1) {
+    E2eDeals.currentDeal.partnerDAO.representatives.forEach((representative, index) => {
+      /** Already addded first representative */
+      if (index === 0) return;
+
+      E2eDealWizard.addDaoRepresentative();
+      E2eDealWizard.inWizardSection("Select Representatives")
+        .inField("DAO Representatives Addresses").fillIn(representative.address);
+    });
+  }
+});
+
+Given("I fill out the Token Details Stage", () => {
+  const primaryToken = E2eDeals.currentDeal.primaryDAO.tokens[0];
+  E2eDealWizard.fillInWholeTokeDetailsSection("Primary DAO Tokens", primaryToken);
+
+  if (E2eDeals.currentDeal.partnerDAO) {
+    const partnerToken = E2eDeals.currentDeal.partnerDAO.tokens[0];
+    E2eDealWizard.fillInWholeTokeDetailsSection("Partner DAO Tokens", partnerToken);
+  }
+
+  const fundingPeriodDays = secondToDays(E2eDeals.currentDeal.fundingPeriod);
+  E2eDealWizard.inWizardSection("Funding Period")
+    .inField("Funding Period").fillIn(fundingPeriodDays);
 });
 
 Then("I am presented the option to choose a partner", () => {
@@ -244,9 +283,3 @@ Then("my address got added to the field", () => {
     .inField("Proposal Lead Address")
     .verifyFieldValue(E2eWallet.currentWalletAddress);
 });
-
-function waitForTokenAddressLoaded() {
-  cy.contains("[data-test='tokenDetails']", "Searching token address details").should("be.visible");
-  const timeoutForAddressRequest = 20000;
-  cy.contains("p", "Symbol", {timeout: timeoutForAddressRequest}).should("be.visible");
-}

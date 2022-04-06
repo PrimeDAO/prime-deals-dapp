@@ -42,13 +42,13 @@ const PROPOSAL_LEAD_DATA = {
 
 const TOKEN_DATA = {
   symbol: "D2D",
-  amount: "500000000000",
+  amount: "5000000000000000000",
   address: E2E_ADDRESSES.PrimaryDAOToken,
   vestedFor: 8640000,
   logoURI:
     "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
-  vestedTransferAmount: "400000000000",
-  instantTransferAmount: "100000000000",
+  vestedTransferAmount: "4000000000000000000",
+  instantTransferAmount: "1000000000000000000",
   decimals: 18,
   name: "Prime",
   cliffOf: 864000,
@@ -82,9 +82,9 @@ const PARTNER_DAO_DATA = {
       decimals: 18,
       logoURI:
         "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
-      amount: "200000",
-      instantTransferAmount: "150000",
-      vestedTransferAmount: "50000",
+      amount: "2000000000000000000",
+      instantTransferAmount: "1500000000000000000",
+      vestedTransferAmount: "5000000000000000000",
       vestedFor: 14 * 24 * 3600, // should be in seconds
       cliffOf: 3 * 24 * 3600, // should be in seconds
     },
