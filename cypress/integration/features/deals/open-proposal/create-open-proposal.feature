@@ -5,7 +5,8 @@ Feature: Create Open Proposal
 
   @user_journey
   Scenario: Create Open Proposal
-    Given I fill out the Proposal Stage
+    Given I want to create a basic Open Proposal
+    And I fill out the Proposal Stage
     And I can proceed to the next step
     And I fill out the Lead Details Stage
     And I can proceed to the next step
