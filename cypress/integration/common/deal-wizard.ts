@@ -1,5 +1,7 @@
 import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { recurse } from "cypress-recurse";
+import { MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
 import { E2eDealWizard, WizardField } from "./pageObjects/dealWizard";
@@ -40,6 +42,14 @@ export function withinWizardSection() {
     });
   });
 }
+
+Given("I want to create a basic Open Proposal", () => {
+  E2eDeals.currentDeal = MINIMUM_OPEN_PROPOSAL;
+});
+
+Given("I want to create a basic Partnered Deal", () => {
+  E2eDeals.currentDeal = PARTNERED_DEAL;
+});
 
 Given(/^I want to fill in information for the "(.*)" section$/, (sectionTitle: string) => {
   E2eDealWizard.inWizardSection(sectionTitle);
