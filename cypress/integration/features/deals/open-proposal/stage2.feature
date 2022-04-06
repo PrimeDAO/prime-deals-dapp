@@ -3,6 +3,12 @@ Feature: "Lead details" stage (Stage 2)
   Background:
     Given I navigate to the "Open proposal" "Lead Details" stage
 
+  Scenario: Connect to get your wallet address
+    Given I'm the Proposal Lead of an Open Proposal
+    And I connect to get my wallet address
+    Then I can make myself the Proposal Lead
+    And my address got added to the field
+
   Scenario: Validates required fields
     When I try to proceed to next step
     Then I am presented with the "Open proposal" "Lead Details" stage

@@ -3,6 +3,7 @@ import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { E2E_ADDRESSES } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
 import { E2eNavigation } from "../common/navigate";
+import { PAGE_LOADING_TIMEOUT } from "../common/test-constants";
 
 const UserTypes = ["Anonymous", "Connected Public"] as const;
 export type UserType = typeof UserTypes[number]
@@ -23,6 +24,7 @@ export class E2eWallet {
     return this._currentWalletAddress;
   }
   public static set currentWalletAddress(newAddress) {
+    localStorage.setItem("PRIME_E2E_ADDRESS", newAddress);
     this._currentWalletAddress = newAddress;
   }
 
@@ -31,7 +33,7 @@ export class E2eWallet {
   }
 
   public static reset() {
-    this.currentWalletAddress = "";
+    this.currentWalletAddress = undefined;
     this.isLead = true;
   }
 }
@@ -46,6 +48,8 @@ export class E2eNavbar {
   }
 
   public static connectToWallet(address: string = E2E_ADDRESSES.ProposalLead) {
+    cy.log("connectToWallet");
+
     localStorage.setItem("PRIME_E2E_ADDRESS", address);
     E2eWallet.currentWalletAddress = address;
 
@@ -59,21 +63,27 @@ export class E2eNavbar {
       // 2. If not, connect
       cy.contains("button", "Connect to a Wallet").click();
 
-      cy.get("ux-dialog-container").within(() => {
-        cy.get(".dialogFooter .pToggle").click();
-        cy.contains("button", "Accept").click();
-      });
-
-      cy.get(".navbar-container").within(() => {
-        cy.get(".connectButton .address").should("be.visible");
-      });
+      this.acceptDisclaimer();
 
       // cy.get("[data-test='modelContent']").should("be.visible");
       // cy.get("[data-test='modelContent']").should("not.be.visible");
     });
   }
 
+  public static acceptDisclaimer() {
+    cy.get("ux-dialog-container").within(() => {
+      cy.get(".dialogFooter .pToggle").click();
+      cy.contains("button", "Accept").click();
+    });
+
+    cy.get(".navbar-container").within(() => {
+      cy.get(".connectButton .address", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
+    });
+  }
+
   public static disconnectWallet() {
+    cy.log("disconnectWallet");
+
     cy.get("[data-test='connectButton']").click();
     cy.get("[data-test='diconnect-button']").click();
     this.getConnectWalletButton().should("be.visible");
@@ -129,8 +139,15 @@ function givenImAnAnonymousUser() {
     E2eWallet.isLead = false;
 
     if (hasLoaded) {
-      E2eNavbar.getConnectWalletButton().should("be.visible");
-      E2eNavbar.getUserAddress().should("not.exist");
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        }
+
+        E2eNavbar.getConnectWalletButton().should("be.visible");
+        E2eNavbar.getUserAddress().should("not.exist");
+      });
     }
   });
 }

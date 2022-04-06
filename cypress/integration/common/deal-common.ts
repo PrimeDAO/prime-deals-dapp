@@ -17,6 +17,7 @@ export class E2EDashboard {
 
 After(() => {
   cy.then(() => {
+    cy.log("Reset e2e data");
     E2eWallet.reset();
     E2eDeals.reset();
     E2eDealWizard.reset();
