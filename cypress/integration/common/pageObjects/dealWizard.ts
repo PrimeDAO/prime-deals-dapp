@@ -71,7 +71,7 @@ export class E2eDealWizard {
   static fillIn(value: string) {
     cy.then(() => {
       withinWizardSection().within(() => {
-        cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
+        cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).last().within(() => {
           cy.get("input, textarea").type(value);
         });
 
@@ -89,6 +89,10 @@ export class E2eDealWizard {
 
   public static makeMyselfProposalLead() {
     return cy.get("[data-test='make-myself-proposal-lead']").click();
+  }
+
+  public static addDaoRepresentative() {
+    cy.get("[data-test='add-dao-representative']").click();
   }
 
   static proceed() {
