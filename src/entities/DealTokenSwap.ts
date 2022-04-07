@@ -632,6 +632,35 @@ export class DealTokenSwap implements IDeal {
         }));
   }
 
+  public depositTokens(dao: IDAO, tokenAddress: Address, amount: BigNumber): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).deposit(
+        this.moduleContract.address,
+        this.contractDealId,
+        tokenAddress,
+        amount)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
+            return receipt;
+          }
+        }));
+  }
+
+  public withdrawTokens(dao: IDAO, depositId: number): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).withdraw(
+        this.moduleContract.address,
+        this.contractDealId,
+        depositId)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
+            return receipt;
+          }
+        }));
+  }
+
   public vote(upDown: boolean): Promise<void> {
     const whichDao = this.daoRepresentedByCurrentAccount;
 
