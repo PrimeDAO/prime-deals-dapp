@@ -112,11 +112,11 @@ export class DealService {
 
     this.initializing = true;
 
-    return this.initializedPromise = new Promise(
+    return this.initializedPromise = new Promise<void>(
       (resolve: (value: void | PromiseLike<void>) => void,
-        reject: (reason?: any) => void): void => {
-        this.getDealInfo().then(() => {
-          this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+        reject: (reason?: any) => void): Promise<void> => {
+        return this.getDealInfo().then(() => {
+          return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
             if (force || !this.deals?.size) {
               if (!dealDocs) {
                 throw new Error("Deals are not accessible");
@@ -129,7 +129,7 @@ export class DealService {
                 this._createDeal(dealDoc, dealsMap);
               }
               this.deals = dealsMap;
-              resolve();
+              return resolve();
             }
           });
         })
