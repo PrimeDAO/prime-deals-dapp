@@ -16,6 +16,7 @@ import { formatEther } from "ethers/lib/utils";
 import { NumberService } from "../../../../services/NumberService";
 import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 import { WizardType } from "../../dealWizardTypes";
+import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class TokenDetails {
@@ -41,6 +42,7 @@ export class TokenDetails {
 
   constructor(
     private aureliaHelperService: AureliaHelperService,
+    private consoleLogService: ConsoleLogService,
     private tokenService: TokenService,
     private numberService: NumberService,
     private validationControllerFactory: ValidationControllerFactory,
@@ -78,6 +80,14 @@ export class TokenDetails {
     this.tokenInfoLoading = true;
     this.validTokenLogoURI = true;
 
+    /**
+     * Default to resetting Token information upon change of address
+     */
+    this.token.name = undefined;
+    this.token.logoURI = undefined;
+    this.token.symbol = undefined;
+    this.token.decimals = TokenService.DefaultDecimals;
+
     if (!Utils.isAddress(address) || !await this.tokenService.isERC20Token(address)) {
       this.tokenInfoLoading = false;
       return;
@@ -102,10 +112,7 @@ export class TokenDetails {
       this.token.decimals = tokenInfo.decimals ?? TokenService.DefaultDecimals;
       this.token.logoURI = tokenInfo.logoURI;
     } catch (error) {
-      this.token.name = undefined;
-      this.token.logoURI = undefined;
-      this.token.symbol = undefined;
-      this.token.decimals = TokenService.DefaultDecimals;
+      this.consoleLogService.logMessage(error.message, "error");
     }
 
     this.tokenDetailsNotFound.name = !this.token.name;

@@ -86,7 +86,7 @@ export class Funding {
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenCalculated
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
-    this.secondDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.secondDao);});
+    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
 
     //TODO figure out what the vested amount is from the deal
     //this.vestedAmount = this.deal.vestedAmount;
@@ -94,7 +94,7 @@ export class Funding {
 
     //get contract token information from the DAO related to the account
     this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
-    this.firstDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.firstDao);});
+    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form

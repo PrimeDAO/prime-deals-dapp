@@ -58,7 +58,7 @@
     "swapstatus swapstatus"
     "discussion discussion"
     "thread thread";
-  gap: 0 115px;
+  gap: 60px 115px;
 
   deal-menubar {
     grid-area: navbar;
@@ -66,10 +66,10 @@
 
   .top {
     grid-area: top;
-    margin-bottom: 40px;
 
     .title {
       padding-bottom: 12px;
+      word-break: break-all;
     }
 
     time-left {
@@ -125,16 +125,15 @@
     grid-template-areas:
       "navbar"
       "top"
-      "content"
+      "description"
       "clauses"
       "aside"
       "swapstatus"
       "discussion";
-    grid-row-gap: 50px;
+    grid-row-gap: 28px;
     grid-column-gap: 0;
   }
 }
-
 @media screen and (max-width: $MaxContentBodyWidthMobile) {
   .page.dealDashboardContainer {
     grid-template-columns: 1fr;
@@ -146,6 +145,24 @@
       "aside"
       "swapstatus"
       "discussion";
+    .top {
+      margin-top: 28px;
+      margin-bottom: 0;
+      .title {
+        margin-bottom: 0;
+      }
+    }
+
+    deal-description {
+      margin-bottom: 28px;
+    }
+    deal-clauses {
+      margin-bottom: 28px;
+    }
+
+    .aside {
+      margin-bottom: 50px;
+    }
   }
 }
 

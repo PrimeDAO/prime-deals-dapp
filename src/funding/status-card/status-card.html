@@ -16,7 +16,7 @@
                 thousands-separated
                 value.to-view="token.deposited | ethwei:token.decimals"
               ></formatted-number>
-              <strong>${token.symbol}</strong> Deposited
+              <strong>${token.symbol}</strong> ${deal.isClaiming ? 'Claimed': 'Deposited'}
             </div>
             <div>
               <formatted-number
@@ -27,7 +27,10 @@
             </div>
           </div>
           <div class="progress-bar">
-            <pprogress-bar max.bind="token.amount" current.bind="token.deposited"></pprogress-bar>
+            <pprogress-bar
+              max.bind="token.amount"
+              current.bind="deal.isClaiming ? token.claimed : token.deposited"
+            ></pprogress-bar>
           </div>
         </div>
       </div>
@@ -39,7 +42,7 @@
               thousands-separated
               value.to-view="token.deposited | ethwei:token.decimals"
             ></formatted-number>
-            <strong>${token.symbol}</strong> Received</span
+            <strong>${token.symbol}</strong></span
           >
         </div>
       </div>

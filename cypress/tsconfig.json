@@ -3,7 +3,8 @@
   "compilerOptions": {
     // "strict": true,
     "types": [
-      "cypress"
+      "cypress",
+      "../src/definitions"
     ],
     "paths": {
       "services/*": ["../src/services/*"],

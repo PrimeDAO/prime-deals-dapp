@@ -140,8 +140,11 @@ Through internal code ([App Actions](app_action)), we can access, eg. Firebase a
 
 ### Tags
 - `@focus` - only run focused Scenario in .feature file
-- `@regression` - Indicate Scenario is to cover a regression in the code
-- `@user_journey` - Larger in scope than usual Scenarios. Captures the "user journey" to achieve more complex interactions
+- `@regression` - Indicate Scenario is to cover a regression in the
+  code ([regression in programming](https://en.wiktionary.org/wiki/regression): The reappearance of a bug in a piece of
+  software that had previously been fixed.)
+- `@user_journey` - Larger in scope than usual Scenarios. Captures the "user journey" to achieve more complex
+  interactions
 - `@flaky` - indicate underlying test is flaky (eg. unstable - sometimes green, sometimes red)
 
 ### Tooling

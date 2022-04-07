@@ -13,8 +13,8 @@ export class SwapStatus {
     this.firstDaoTokens = Utils.cloneDeep(this.deal.primaryDao.tokens as ITokenCalculated[]);
     this.secondDaoTokens = Utils.cloneDeep(this.deal.partnerDao.tokens as ITokenCalculated[]);
     //loop through each token in the primary DAO and set the contract data on those tokens
-    this.firstDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.deal.primaryDao);});
+    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.deal.primaryDao);});
     //loop through each token in the partner DAO and set the contract data on those tokens
-    this.secondDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.deal.partnerDao);});
+    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.deal.partnerDao);});
   }
 }

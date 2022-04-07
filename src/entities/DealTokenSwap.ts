@@ -546,7 +546,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
-  public async hydrateDealSize(): Promise<void> {
+  private async hydrateDealSize(): Promise<void> {
     // if the total price is already figured out we don't need to try again
     if (this.totalPrice) {
       return;
@@ -693,6 +693,24 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
+  /**
+   * Returns Map of token address to amount claimable.  Every token in the dao should be represented.
+   * @param dao
+   * @returns
+   */
+  public async getTokenClaimableAmounts(dao: IDAO): Promise<Map<Address, BigNumber>> {
+    const results = new Map<Address, BigNumber>();
+
+    const vestingInfo: { tokens: Array<Address>; amounts: Array<BigNumber> }
+     = await this.daoDepositContracts.get(dao).callStatic.claimDealVestings(this.moduleContract.address, this.contractDealId);
+
+    vestingInfo.tokens.forEach(( tokenAddress: Address, index: number ) => {
+      results.set(tokenAddress, vestingInfo.amounts[index]);
+    });
+
+    return results;
+  }
+
   private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {
     tokenAddress = tokenAddress.toLowerCase();
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
@@ -784,8 +802,8 @@ export class DealTokenSwap implements IDeal {
   /**
    * Sets the additional token info from the contract
    */
-  public setTokenContractInfo(token: ITokenCalculated, dao: IDAO): void {
-    if (!this.isExecuted){
+  public async setTokenContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+    if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
       token.deposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
       // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
@@ -795,10 +813,21 @@ export class DealTokenSwap implements IDeal {
       token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
     } else {
       //calculate only claiming properties
-      token.claimable = 0;
-      token.claimed = 0;
+      const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
+      token.claimable = tokenClaimableAmounts.get(token.address);
+      token.claimed = this.getClaimedAmount(dao, token.address);
       token.locked = BigNumber.from(token.amount).sub(token.claimable);
     }
+  }
+
+  /**
+   * Gets the amount of tokens claimed by token
+   */
+  private getClaimedAmount(dao: IDAO, tokenAddress: string) : BigNumber{
+    if (!this.daoTokenClaims) return BigNumber.from(0);
+    const tokenClaims = this.daoTokenClaims.get(dao).filter(x => x.token.address === tokenAddress);
+    if (!tokenClaims || !tokenClaims.length) return BigNumber.from(0);
+    return tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
   }
 
   /**

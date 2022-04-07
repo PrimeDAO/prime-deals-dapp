@@ -22,7 +22,24 @@ status-action-bar {
 
       i {
         font-size: 20px;
-        color: $Orange;
+        &.success {
+          color: $Green;
+        }
+        &.warning {
+          color: $Orange;
+        }
+        &.info {
+          color: $Teal;
+        }
+        &.danger {
+          color: $Red;
+        }
+        &.secondary {
+          color: $Magenta;
+        }
+        &.dark {
+          color: $Grey;
+        }
       }
       span {
         margin-top: -3px;

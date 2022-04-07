@@ -59,11 +59,23 @@
       </status-action-bar>
       <!-- Show this only when the swap has been executed and the user is either the proposal lead or a representative -->
       <status-action-bar
-        if.to-view="deal.isClaiming && deal.isUserRepresentativeOrLead"
-        content="IMPORTANT: Go to Claiming to claim vested tokens for your DAO."
+        if.to-view="deal.isClaiming && !deal.isFullyClaimed && deal.isUserRepresentativeOrLead"
+        content="${deal.isRepresentativeUser ? 'IMPORTANT: Go to Claiming to claim vested tokens for your DAO.' : null}"
       >
         <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
-          Go to Claiming <i class="fas fa-arrow-right"></i>
+          ${deal.isRepresentativeUser ? 'Go to Claiming' : 'Go to Status'}
+          <i class="fas fa-arrow-right"></i>
+        </pbutton>
+      </status-action-bar>
+      <status-action-bar
+        if.to-view="deal.isClaiming && deal.isFullyClaimed && deal.isUserRepresentativeOrLead"
+        content="All the swaps have been completed.  Go To Deal Status to see the final state of the deal."
+        icon-class="check-circle"
+        icon-color="success"
+      >
+        <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
+          Go To Deal Status
+          <i class="fas fa-arrow-right"></i>
         </pbutton>
       </status-action-bar>
     </swap-status>

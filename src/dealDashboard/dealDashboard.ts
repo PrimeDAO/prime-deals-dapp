@@ -41,7 +41,7 @@ export class DealDashboard {
     return this.userCanAccessDashboard;
   }
 
-  public activate() {
+  public async activate() {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
       if (!this.userCanAccessDashboard) {
         this.router.navigate("home");
@@ -56,6 +56,10 @@ export class DealDashboard {
         this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
       }),
     );
+    //wait until the dao transactions from the contract are there
+    await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
+    //wait until the dao token claims from the contract are there
+    await Utils.waitUntilTrue(() => this.deal.daoTokenClaims !== undefined);
   }
 
   public detached() {

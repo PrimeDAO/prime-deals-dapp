@@ -2,17 +2,14 @@ import { DealTokenSwap, ITokenCalculated } from "entities/DealTokenSwap";
 import "./status-card.scss";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
+import { BigNumber } from "ethers";
 @containerless
 export class StatusCard {
   @bindable deal: DealTokenSwap;
   @bindable dao: IDAO;
-  @bindable tokens: ITokenCalculated[] | I;
+  @bindable tokens: ITokenCalculated[];
 
-  public bind(){
-
-  }
-
-  @computedFrom("swapCompleted", "dao")
+  @computedFrom("swapCompleted", "dao", "deal.isFailed")
   get chipColor(): string{
     if (this.swapCompleted){
       return "success";
@@ -24,16 +21,17 @@ export class StatusCard {
     }
   }
 
-  @computedFrom("swapCompleted", "dao")
+  @computedFrom("swapCompleted", "dao", "deal.isFailed", "deal.isClaiming")
   get status(): string{
     if (this.swapCompleted){
       return "Swap completed";
     } else if (this.deal.isClaiming){
-      //TODO check this dao to see if any tokens aren't fully claimed and return the status text for it
-      return "Swapping in completed";
+      if (this.isDaoFullyClaimed){
+        return "Claiming Completed";
+      }
+      return "Claiming in progress";
     }
-    if (this.tokens.every((x: ITokenCalculated) => x.required?.lte(0))){
-      //TODO check this dao to see if any tokens aren't fully funded and return the status text for it
+    if (this.isDaoTargetReached){
       return "Target reached";
     } else {
       return this.deal.isFailed ? "Target not reached" : "Funding in progress"; //DealStatus.funding; //TODO why is there no status in DealStatus for "Funding in progress"?
@@ -43,5 +41,18 @@ export class StatusCard {
   @computedFrom("deal.isClaiming", "deal.isFullyClaimed")
   private get swapCompleted() : boolean {
     return this.deal.isClaiming && this.deal.isFullyClaimed;
+  }
+
+  @computedFrom("tokens")
+  private get isDaoFullyClaimed() : boolean {
+    //return true if all tokens for this dao have been claimed
+    if (!this.deal.isExecuted) return false;
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.claimed));
+  }
+
+  @computedFrom("tokens")
+  private get isDaoTargetReached() : boolean {
+    //return true if all tokens for this dao have reached their funding target
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.deposited));
   }
 }
