@@ -32,7 +32,7 @@
         <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
           <span if.bind="apiErrorText" class="fas fa-exclamation-triangle"></span>
           ${noCommentsText}
-          <span if.bind="apiErrorText">
+          <span if.bind="apiErrorText" data-test="discussions-api-error">
             5s
             <button
               data-test="add-dao-representative"

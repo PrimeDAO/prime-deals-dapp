@@ -4,6 +4,8 @@ import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
 
+export const GET_COMMENTS_ALIAS = "getComments";
+
 interface ICommentOptions {
   notAuthor?: boolean;
   isAuthor?: boolean;
@@ -266,6 +268,23 @@ Then("I can create a new Discussion", () => {
 
 Then("I am presented with the latest comment", () => {
   E2eDiscussion.getSingleComment().should("have.value");
+});
+
+When("the 3rd party Discussions service has an error", () => {
+  cy.log("intercept convo");
+  const discussionsServiceUrl = "**/comments**";
+  cy.intercept(
+    "GET",
+    discussionsServiceUrl,
+    {
+      statusCode: 503,
+      body: null,
+    },
+  ).as(GET_COMMENTS_ALIAS);
+});
+
+Then("I should be informed about the error and can retry", () => {
+  cy.get("[data-test='discussions-api-error']").should("be.visible");
 });
 
 And("I cannot reply to a Comment", () => {
