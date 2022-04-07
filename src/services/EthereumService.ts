@@ -272,7 +272,7 @@ export class EthereumService {
           const account = getAddress(accounts[0]);
           if (this.disclaimerService.getPrimeDisclaimed(account)) {
             this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-            this.setProvider(provider);
+            return this.setProvider(provider);
           }
         }
       }

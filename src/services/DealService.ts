@@ -95,21 +95,13 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
     }
-    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
-      if (!this.initializing) {
-        try {
-          this.eventAggregator.publish("deals.loading", true);
-          await this.getDeals(true);
-        } catch {
-          this.eventAggregator.publish("deals.loading", false);
-        } finally {
-          this.eventAggregator.publish("deals.loading", false);
-        }
-      }
-    });
   }
 
   public async initialize(): Promise<void> {
+    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+      this.eventAggregator.publish("deals.loading", true);
+      this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+    });
     /**
      * deals will take care of themselves on account changes
      */
@@ -126,36 +118,29 @@ export class DealService {
         this.getDealInfo().then(() => {
           this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
             if (force || !this.deals?.size) {
-              try {
-
-                if (!dealDocs) {
-                  throw new Error("Deals are not accessible");
-                }
-                const dealsMap = new Map<Address, DealTokenSwap>();
-
-                // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
-
-                for (const dealDoc of dealDocs) {
-                  this._createDeal(dealDoc, dealsMap);
-                }
-                this.deals = dealsMap;
-                resolve();
+              if (!dealDocs) {
+                throw new Error("Deals are not accessible");
               }
-              catch (error) {
-                this.deals = new Map();
-                // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-                this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
-                reject();
+              const dealsMap = new Map<Address, DealTokenSwap>();
+
+              // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
+
+              for (const dealDoc of dealDocs) {
+                this._createDeal(dealDoc, dealsMap);
               }
-              finally {
-                this.initializing = false;
-              }
+              this.deals = dealsMap;
+              resolve();
             }
-          }).catch(() => {
+          });
+        })
+          .catch((error) => {
+            this.deals = new Map();
+            // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
+            this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
             this.initializing = false;
             reject();
-          });
-        });
+          })
+          .finally(() => this.initializing = false);
       });
   }
 
