@@ -8,6 +8,16 @@ import { E2eDealWizard } from "./pageObjects/dealWizard";
 import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
 export class E2EDashboard {
+  static visitDeal(dealId?: string) {
+    if (!dealId) {
+      dealId = E2eDeals.currentDealId;
+    }
+
+    const url = `deal/${dealId}`;
+    cy.visit(url);
+
+    cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
+  }
   public static editDeal() {
     cy.contains("pbutton", "Edit deal").click();
 
@@ -27,18 +37,24 @@ After(() => {
 Given("I'm viewing the/an Open Proposal", () => {
   cy.then(() => {
     if (E2eDeals.currentDealId) {
-      const url = `deal/${E2eDeals.currentDealId}`;
-      cy.visit(url);
-
-      cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
+      E2EDashboard.visitDeal();
       return;
     }
 
     E2eDealsApi.getFirstOpenProposalId({isLead: true}).then(dealId => {
-      const url = `deal/${dealId}`;
-      cy.visit(url);
+      E2EDashboard.visitDeal(dealId);
+    });
+  });
+});
 
-      cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
+Given("I'm viewing a new public Open Proposal", () => {
+  cy.then(() => {
+    if (!E2eDeals.currentDeal) {
+      E2eDeals.currentDeal = MINIMUM_OPEN_PROPOSAL;
+    }
+
+    E2eDealsApi.createDeal(E2eDeals.currentDeal).then((createdDeal) => {
+      E2EDashboard.visitDeal(createdDeal.id);
     });
   });
 });

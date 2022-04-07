@@ -488,10 +488,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async hydrateDaoTransactions(): Promise<void> {
-    if (!this.daoTokenTransactions) {
-      this.daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
-    }
-
     const daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
 
     daoTokenTransactions.set(this.primaryDao, await this.getDaoTransactions(this.primaryDao));
@@ -503,10 +499,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async hydrateDaoClaims(): Promise<void> {
-    if (!this.daoTokenClaims) {
-      this.daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
-    }
-
     const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
 
     daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
@@ -627,6 +619,35 @@ export class DealTokenSwap implements IDeal {
         .then(receipt => {
           if (receipt) {
             this.hydrateDaoClaims();
+            return receipt;
+          }
+        }));
+  }
+
+  public depositTokens(dao: IDAO, tokenAddress: Address, amount: BigNumber): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).deposit(
+        this.moduleContract.address,
+        this.contractDealId,
+        tokenAddress,
+        amount)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
+            return receipt;
+          }
+        }));
+  }
+
+  public withdrawTokens(dao: IDAO, depositId: number): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).withdraw(
+        this.moduleContract.address,
+        this.contractDealId,
+        depositId)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
             return receipt;
           }
         }));

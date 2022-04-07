@@ -291,3 +291,7 @@ And("I cannot reply to a Comment", () => {
 
   cy.log("todo");
 });
+
+Then("I'm informed about, that the discussion has no comments yet", () => {
+  E2eDiscussion.waitForNoCommentsText();
+});
