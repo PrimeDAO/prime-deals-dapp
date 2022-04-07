@@ -52,6 +52,7 @@ export class DiscussionThread {
     downvotes: [""],
     createdOn: "0",
   };
+  private apiErrorText = "";
 
   constructor(
     private router: Router,
@@ -86,9 +87,12 @@ export class DiscussionThread {
     return (discussionsIds.indexOf(this.discussionId) + 1).toString() || "-";
   }
 
-  @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
+  @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments", "apiErrorText")
   private get noCommentsText(): string {
-    /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 91 ~ DiscussionThread ~ getnoCommentsText ~ noCommentsText");
+    if (this.apiErrorText) {
+      return this.apiErrorText;
+    }
+
     if (this.isLoading.discussions || this.threadComments?.length) {
       return "";
     }
@@ -200,9 +204,12 @@ export class DiscussionThread {
       /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 198 ~ DiscussionThread ~ ensureDealDiscussion ~ this.threadComments", this.threadComments);
 
       // Early return, if there are no comments/discussions.
-      // if (!this.threadComments) return;
+      if (!this.threadComments) return;
+
+      this.apiErrorText = "";
     } catch (error) {
       console.log("API error");
+      this.apiErrorText = "There was an issue loading the comments. Retrying in: ";
       if (!this.threadComments) this.threadComments = [];
     }
 
