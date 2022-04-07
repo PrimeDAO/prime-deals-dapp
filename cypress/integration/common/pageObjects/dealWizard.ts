@@ -72,7 +72,9 @@ export class E2eDealWizard {
     cy.then(() => {
       withinWizardSection().within(() => {
         cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).last().within(() => {
-          cy.get("input, textarea").type(value);
+          cy.get("input, textarea")
+            .invoke("val", value)
+            .trigger("change", { data: value });
         });
 
         if (this.fieldTitle === "Token address") {
