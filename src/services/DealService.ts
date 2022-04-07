@@ -100,6 +100,8 @@ export class DealService {
         try {
           this.eventAggregator.publish("deals.loading", true);
           await this.getDeals(true);
+        } catch {
+          this.eventAggregator.publish("deals.loading", false);
         } finally {
           this.eventAggregator.publish("deals.loading", false);
         }
@@ -149,6 +151,9 @@ export class DealService {
                 this.initializing = false;
               }
             }
+          }).catch(() => {
+            this.initializing = false;
+            reject();
           });
         });
       });
