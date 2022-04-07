@@ -272,19 +272,15 @@ Then("I am presented with the latest comment", () => {
 
 When("the 3rd party Discussions service has an error", () => {
   cy.log("intercept convo");
-  const discussionsServiceUrl = "**/comments**";
-  cy.intercept(
-    "GET",
-    discussionsServiceUrl,
-    {
-      statusCode: 503,
-      body: null,
-    },
-  ).as(GET_COMMENTS_ALIAS);
+  const errorResponse = { statusCode: 503, body: null };
+  const routeOptions = { method: "GET", times: 1 };
+
+  cy.intercept("**/comments**", routeOptions, errorResponse).as(GET_COMMENTS_ALIAS);
+  cy.intercept("**/getAblyAuth**", routeOptions, errorResponse);
 });
 
 Then("I should be informed about the error and can retry", () => {
-  cy.get("[data-test='discussions-api-error']").should("be.visible");
+  cy.get("[data-test='reload-discussions']").should("be.visible");
 });
 
 And("I cannot reply to a Comment", () => {
