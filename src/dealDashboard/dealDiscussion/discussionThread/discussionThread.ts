@@ -211,8 +211,6 @@ export class DiscussionThread {
       this.apiErrorText = "A problem occured while loading the discussion";
 
       this.consoleLogService.logMessage(error.message, "error");
-
-      if (!this.threadComments) this.threadComments = [];
     }
 
     if (!this.dealDiscussion) return;
@@ -228,41 +226,38 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    // eslint-disable-next-line no-constant-condition
-    if (true) {
-      this.subscribeToDiscussion(discussionId);
+    this.subscribeToDiscussion(discussionId);
 
-      if (!this.threadComments || !Object.keys(this.threadComments).length) return;
+    if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
-      // Dictionary is used for replies, to easily find the comment by its id
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    // Dictionary is used for replies, to easily find the comment by its id
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
-      /* Comments author profiles */
-      this.threadComments.forEach((comment: IComment) => {
-        if (!this.threadProfiles[comment.author]) {
-          this.isLoading[comment.author] = true;
-          if (comment.authorENS /* author has ENS name */) {
-            this.threadProfiles[comment.author] = {
-              name: comment.authorENS,
-              address: comment.author,
-              image: "",
-            };
-          } else {
-            /* required for replies */
-            this.discussionsService.loadProfile(comment.author).then(profile => {
-              this.threadProfiles[comment.author] = profile;
-              this.isLoading[comment.author] = false;
-            });
-          }
+    /* Comments author profiles */
+    this.threadComments.forEach((comment: IComment) => {
+      if (!this.threadProfiles[comment.author]) {
+        this.isLoading[comment.author] = true;
+        if (comment.authorENS /* author has ENS name */) {
+          this.threadProfiles[comment.author] = {
+            name: comment.authorENS,
+            address: comment.author,
+            image: "",
+          };
+        } else {
+          /* required for replies */
+          this.discussionsService.loadProfile(comment.author).then(profile => {
+            this.threadProfiles[comment.author] = profile;
+            this.isLoading[comment.author] = false;
+          });
         }
-      });
+      }
+    });
 
-      // Update the discussion status
-      this.updateDiscussionListStatus(
-        new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
-        this.threadComments.length,
-      );
-    }
+    // Update the discussion status
+    this.updateDiscussionListStatus(
+      new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
+      this.threadComments.length,
+    );
   }
 
   private isInView(element: HTMLElement): boolean {
