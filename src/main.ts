@@ -56,6 +56,7 @@ export function configure(aurelia: Aurelia): void {
 
       /**
        * must do before ethereum service, to capture network connections
+       * and in general to be the first to do so.
        */
       const firebaseService = aurelia.container.get(FirebaseService);
       firebaseService.initialize();
