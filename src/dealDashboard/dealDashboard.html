@@ -78,6 +78,15 @@
           <i class="fas fa-arrow-right"></i>
         </pbutton>
       </status-action-bar>
+      <status-action-bar
+        if.to-view="deal.isFailed && deal.isUserRepresentativeOrLead"
+        content="${deal.isRepresentativeUser ? 'IMPORTANT: You can withdraw your tokens at any time as this deal has failed.  Go To Withdraw to withdraw token deposits.' : null}"
+      >
+        <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
+          ${deal.isRepresentativeUser ? 'Go To Withdraw' : 'Go to Status'}
+          <i class="fas fa-arrow-right"></i>
+        </pbutton>
+      </status-action-bar>
     </swap-status>
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion

@@ -28,7 +28,7 @@
         ></deposit-grid>
         <div class="container-footer">
           <let
-            is-rep-and-deal-still-funding.bind="deal.isRepresentativeUser && !deal.isTargetReached && !deal.isFailed"
+            show-deposit-form.bind="deal.isRepresentativeUser && !deal.isTargetReached && !deal.isFailed"
           ></let>
           <div class="contracts">
             <p>
@@ -43,7 +43,7 @@
                 given period of time. The representatives can withdraw their funds at any time.
                 Their funds are secured.
               </span>
-              <span if.to-view="isRepAndDealStillFunding">
+              <span if.to-view="showDepositForm">
                 You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
                 and executed within ${fundingDaysLeft} days.
               </span>
@@ -58,7 +58,7 @@
               </span>
             </p>
           </div>
-          <div class="deposit" if.to-view="isRepAndDealStillFunding">
+          <div class="deposit" if.to-view="showDepositForm">
             <div class="form">
               <div>
                 <div class="inputs">
@@ -96,7 +96,7 @@
               >
             </div>
           </div>
-          <div class="links ${deal.isUserProposalLead ? 'right' : ''}">
+          <div class="links ${!deal.isRepresentativeUser ? 'right' : ''}">
             <address-link
               address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
               link-text="DAODepositManager Contract"
@@ -132,7 +132,7 @@
               >
               </pgrid>
             </div>
-            <div class="token-grid">
+            <div class="token-grid" if.to-view="deal.isUserProposalLead">
               <h4 class="title heading heading3 gradient">
                 Vested Token Status of ${secondDao.name}
               </h4>
@@ -149,7 +149,7 @@
             <p>
               <i class="fas fa-info-circle"></i>
               <span>
-                ${!deal.isRepresentativeUser ? 'Representatitves of each' : 'Your'} DAO will be able
+                ${deal.isRepresentativeUser ? 'Your' : 'Representatitves of each'} DAO will be able
                 to claim vested tokens once they are claimable.
               </span>
             </p>

@@ -38,7 +38,6 @@ export class Funding {
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
-  private vestedAmount = 0;
   private secondDaoTokens: ITokenCalculated[];
   private firstDaoTokens: ITokenCalculated[];
   private deposits: IDaoTransaction[] = [];
@@ -88,17 +87,13 @@ export class Funding {
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
     this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
 
-    //TODO figure out what the vested amount is from the deal
-    //this.vestedAmount = this.deal.vestedAmount;
-    this.vestedAmount = 0;
-
     //get contract token information from the DAO related to the account
     this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
     this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
-      this.selectedToken = 0;
+      this.selectedToken = "0";
       //and get the account balance for that token
       await this.setAccountBalance();
     }
@@ -275,10 +270,7 @@ export class Funding {
    */
   private verifySecurity(): void {
     if (!this.deal || !this.deal.registrationData) return;
-    if (!this.deal.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-      !this.deal.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-      !this.deal.isUserProposalLead
-    ) {
+    if (!this.deal.isUserRepresentativeOrLead){
       //redirect user to the home page if not the proposal lead or one of the deal's representatives
       this.router.navigate("home");
     }
@@ -352,11 +344,11 @@ export class Funding {
 
   //moving this getter locally for the proposal lead
   public get firstDao() : IDAO{
-    return this.deal.isUserProposalLead ? this.deal.primaryDao : this.deal.daoRepresentedByCurrentAccount;
+    return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
   }
 
   //moving this getter locally for the proposal lead
   public get secondDao() : IDAO {
-    return this.deal.isUserProposalLead ? this.deal.partnerDao : this.deal.daoOtherThanRepresentedByCurrentAccount;
+    return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }
 }

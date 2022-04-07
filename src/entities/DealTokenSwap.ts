@@ -81,9 +81,9 @@ export interface ITokenCalculated extends IToken {
   deposited?: BigNumber,
   required?: BigNumber,
   percentCompleted?: number,
-  claimable: BigNumber,
-  claimed: BigNumber,
-  locked: BigNumber,
+  claimable?: BigNumber,
+  claimed?: BigNumber,
+  locked?: BigNumber,
 }
 
 @autoinject
