@@ -193,7 +193,17 @@ export class DiscussionThread {
   }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
-    this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+    try {
+      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+
+      // Early return, if there are no comments/discussions.
+      if (!this.threadComments) return;
+    } catch (error) {
+      console.log("API error");
+    }
+
+    if (!this.dealDiscussion) return;
+
     this.updateDiscussionListStatus(new Date(), this.threadComments.length);
     this.isLoading.discussions = false;
 
@@ -205,7 +215,8 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    if (this.threadComments && this.dealDiscussion) {
+    // eslint-disable-next-line no-constant-condition
+    if (true) {
       this.subscribeToDiscussion(discussionId);
 
       if (!this.threadComments || !Object.keys(this.threadComments).length) return;
