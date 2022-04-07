@@ -142,6 +142,11 @@ When("I fill in the {string} field with {string}", (field: WizardField, value: s
   E2eDealWizard.fillIn(value);
 });
 
+When("I change the {string} field by adding {string}", (field: WizardField, value: string) => {
+  E2eDealWizard.inField(field);
+  E2eDealWizard.addToField(value);
+});
+
 And("I wait until the Token has loaded", () => {
   waitForTokenAddressLoaded();
 });
