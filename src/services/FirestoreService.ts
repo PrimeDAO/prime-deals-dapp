@@ -164,8 +164,8 @@ export class FirestoreService<
    *
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getAllPublicDeals<TDealDocument>(): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.allPublicDealsQuery());
+  public getAllPublicDeals<TDealDocument>(): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.allPublicDealsQuery());
   }
 
   /**
@@ -176,8 +176,8 @@ export class FirestoreService<
    * @param address string
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.representativeDealsQuery(address));
+  public getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.representativeDealsQuery(address));
   }
 
   /**
@@ -188,8 +188,8 @@ export class FirestoreService<
    * @param address string
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.proposalLeadDealsQuery(address));
+  public getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.proposalLeadDealsQuery(address));
   }
 
   /**
