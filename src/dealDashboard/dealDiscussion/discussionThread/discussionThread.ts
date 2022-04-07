@@ -88,12 +88,14 @@ export class DiscussionThread {
 
   @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
   private get noCommentsText(): string {
-    if (!this.isLoading.discussions && !this.threadComments?.length) {
-      return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
-        ? "This discussion is private."
-        : "This discussion has no comments yet.";
+    /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 91 ~ DiscussionThread ~ getnoCommentsText ~ noCommentsText");
+    if (this.isLoading.discussions || this.threadComments?.length) {
+      return "";
     }
-    return "";
+
+    return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
+      ? "This discussion is private."
+      : "This discussion has no comments yet.";
   }
 
   private async initialize(isIdChange = false): Promise<void> {
@@ -195,11 +197,13 @@ export class DiscussionThread {
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
       this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+      /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 198 ~ DiscussionThread ~ ensureDealDiscussion ~ this.threadComments", this.threadComments);
 
       // Early return, if there are no comments/discussions.
-      if (!this.threadComments) return;
+      // if (!this.threadComments) return;
     } catch (error) {
       console.log("API error");
+      if (!this.threadComments) this.threadComments = [];
     }
 
     if (!this.dealDiscussion) return;
@@ -259,8 +263,7 @@ export class DiscussionThread {
     const efp = (x, y) => document.elementFromPoint(x, y);
 
     if (rect.height < 0 || rect.bottom < 0 ||
-        rect.left > vWidth || rect.top > vHeight)
-      return false;
+        rect.left > vWidth || rect.top > vHeight) return false;
 
     return (
       this.refThread.contains(efp(rect.left, rect.top)) ||
