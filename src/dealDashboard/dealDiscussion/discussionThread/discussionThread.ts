@@ -95,13 +95,12 @@ export class DiscussionThread {
       return this.apiErrorText;
     }
 
-    if (this.isLoading.discussions || this.threadComments?.length) {
-      return "";
+    if (!this.isLoading.discussions && !this.threadComments?.length) {
+      return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
+        ? "This discussion is private."
+        : "This discussion has no comments yet.";
     }
-
-    return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
-      ? "This discussion is private."
-      : "This discussion has no comments yet.";
+    return "";
   }
 
   private async initialize(isIdChange = false): Promise<void> {
