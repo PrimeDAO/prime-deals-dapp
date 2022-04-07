@@ -10,6 +10,7 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
+import { Utils } from "services/utils";
 
 // interface ITokenSwapCreatedArgs {
 //   module: Address,
@@ -49,7 +50,7 @@ export class DealService {
   /**
    * key is a deal Id
    */
-  public deals: Map<IDealIdType, DealTokenSwap>;
+  public deals: Map<IDealIdType, DealTokenSwap> = new Map<IDealIdType, DealTokenSwap>();
   private executedDealIds: Map<string, IExecutedDeal>;
 
   @computedFrom("deals.size")
@@ -60,7 +61,6 @@ export class DealService {
   }
 
   public initializing = true;
-  private initializedPromise: Promise<void>;
 
   @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
@@ -112,36 +112,29 @@ export class DealService {
 
     this.initializing = true;
 
-    return this.initializedPromise = new Promise<void>(
-      (resolve: (value: void | PromiseLike<void>) => void,
-        reject: (reason?: any) => void): Promise<void> => {
-        return this.getDealInfo().then(() => {
-          return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
-            if (force || !this.deals?.size) {
-              if (!dealDocs) {
-                throw new Error("Deals are not accessible");
-              }
-              const dealsMap = new Map<Address, DealTokenSwap>();
+    return this.getDealInfo().then(() => {
+      return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+        if (force || !this.deals?.size) {
+          if (!dealDocs) {
+            throw new Error("Deals are not accessible");
+          }
+          const dealsMap = new Map<Address, DealTokenSwap>();
 
-              // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
+          // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
 
-              for (const dealDoc of dealDocs) {
-                this._createDeal(dealDoc, dealsMap);
-              }
-              this.deals = dealsMap;
-              return resolve();
-            }
-          });
-        })
-          .catch((error) => {
-            this.deals = new Map();
-            // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
-            this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
-            this.initializing = false;
-            reject();
-          })
-          .finally(() => this.initializing = false);
+          for (const dealDoc of dealDocs) {
+            this._createDeal(dealDoc, dealsMap);
+          }
+          this.deals = dealsMap;
+        }
       });
+    })
+      .catch((error) => {
+        this.deals = new Map();
+        // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
+        this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
+      })
+      .finally(() => this.initializing = false);
   }
 
   private async getDealInfo(): Promise<Map<string, IExecutedDeal>> {
@@ -177,7 +170,7 @@ export class DealService {
   }
 
   public ensureInitialized(): Promise<void> {
-    return this.initializedPromise;
+    return Utils.waitUntilTrue(() => !this.initializing, 999999);
   }
 
   public async ensureAllDealsInitialized(): Promise<void> {
