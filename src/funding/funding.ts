@@ -1,7 +1,7 @@
 import { TokenService } from "services/TokenService";
 import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
 import { NumberService } from "./../services/NumberService";
-import { IDaoTransaction } from "./../entities/DealTokenSwap";
+import { IDaoTransaction, ITokenCalculated } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
 import { EventConfig, EventConfigException } from "./../services/GeneralEvents";
@@ -14,8 +14,7 @@ import { EthereumService } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
-import { IDAO, IToken } from "entities/DealRegistrationTokenSwap";
-import { ITokenFunding } from "entities/TokenFunding";
+import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
 import moment from "moment-timezone";
@@ -24,11 +23,6 @@ import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
-export interface IDaoClaimToken {
-  token: IToken, //only need iconURI, symbol and decimals
-  claimable: number,
-  locked: number
-}
 @autoinject
 export class Funding {
   private depositColumns: IGridColumn[] = depositColumns;
@@ -45,8 +39,8 @@ export class Funding {
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
   private vestedAmount = 0;
-  private secondDaoTokens: ITokenFunding[];
-  private firstDaoTokens: ITokenFunding[];
+  private secondDaoTokens: ITokenCalculated[];
+  private firstDaoTokens: ITokenCalculated[];
   private deposits: IDaoTransaction[] = [];
   /**
    * Opens a new window to the transaction id or address on the blockchain
@@ -90,8 +84,8 @@ export class Funding {
 
   public async bind(): Promise<void> {
     //get contract token information from the other DAO
-    //Clone the tokens from registration data and add props from ITokenFunding
-    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens);
+    //Clone the tokens from registration data and add props from ITokenCalculated
+    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
     this.secondDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.secondDao);});
 
     //TODO figure out what the vested amount is from the deal
@@ -99,7 +93,7 @@ export class Funding {
     this.vestedAmount = 0;
 
     //get contract token information from the DAO related to the account
-    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens);
+    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
     this.firstDaoTokens.forEach(x => {this.deal.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
@@ -213,7 +207,7 @@ export class Funding {
     await this.setAccountBalance(); // get the most up to date account balance to make sure it has enough
     //rebind token data if it's changed
     //TODO reset all the data after checking
-    // const token = this.firstDaoTokens[this.selectedToken] as ITokenFunding;
+    // const token = this.firstDaoTokens[this.selectedToken] as ITokenCalculated;
     // token.required = recentRequiredTokens;
     // token.deposited = converter.fromView(120);
     // token.target = converter.fromView(120);
@@ -348,23 +342,6 @@ export class Funding {
       text: x.symbol,
       innerHTML: `<span><img src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
       value: index.toString(),
-    }));
-  }
-
-  @computedFrom("firstDaoTokens")
-  public get firstDaoTokensToClaim() : IDaoClaimToken[]{
-    return this.firstDaoTokens.map(x => ({
-      token: x,
-      claimable: 1,
-      locked: 2,
-    }));
-  }
-  @computedFrom("secondDaoTokens")
-  public get secondDaoTokensToClaim() : IDaoClaimToken[]{
-    return this.secondDaoTokens.map(x => ({
-      token: x,
-      claimable: 21,
-      locked: 51,
     }));
   }
 

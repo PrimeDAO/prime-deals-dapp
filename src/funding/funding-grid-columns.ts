@@ -41,8 +41,8 @@ export const tokenGridColumns: IGridColumn[] = [
 ];
 
 export const claimTokenGridColumns: IGridColumn[] = [
-  { field: "token", sortable: true, width: ".5fr", template: "<dao-icon-name primary-dao.to-view=\"row.token\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
-  { field: "claimable", sortable: true, width: ".5fr", align: "right", template: "${withCommas(claimable) | ethwei:row.decimals}" },
-  { field: "locked", sortable: true, width: ".5fr", align: "right", template: "${withCommas(locked) | ethwei:row.decimals}" },
-  { field: "total", sortable: true, width: ".5fr", align: "right", template: "${withCommas(claimable + locked) | ethwei:row.decimals}" },
+  { field: "token", headerText: "Token", sortable: true, width: ".5fr", template: "<dao-icon-name primary-dao.to-view=\"row.token\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
+  { field: "claimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "${withCommas(claimable) | ethwei:row.decimals}" },
+  { field: "locked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "${withCommas(locked) | ethwei:row.decimals}" },
+  { field: "amount", headerText: "Total", sortable: true, width: ".5fr", align: "right", template: "${withCommas(amount) | ethwei:row.decimals}" },
 ];

@@ -3,24 +3,18 @@
   <section class="section swap-status">
     <div class="heading heading3 title gradient">Token Swap Status</div>
     <div class="status-cards">
-      <status-card
-        dao.bind="deal.primaryDao"
-        swap-completed.bind="swapCompleted"
-        funding-failed.bind="fundingFailed"
-        tokens.bind="firstDaoTokens"
-      ></status-card>
-      <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
+      <status-card dao.bind="deal.primaryDao" tokens.bind="firstDaoTokens"></status-card>
+      <!-- only display these swap icons if the deal hasn't executed swap yet -->
+      <div
+        class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}"
+        if.to-view="!isExecuted"
+      >
         <i class="fas fa-arrow-right"></i>
         <i if.to-view="swapCompleted" class="fas fa-check-circle success center"></i>
         <i if.to-view="fundingFailed" class="fas fa-times-circle danger center"></i>
         <i class="fas fa-arrow-left"></i>
       </div>
-      <status-card
-        dao.bind="deal.partnerDao"
-        swap-completed.bind="swapCompleted"
-        funding-failed.bind="fundingFailed"
-        tokens.bind="secondDaoTokens"
-      ></status-card>
+      <status-card dao.bind="deal.partnerDao" tokens.bind="secondDaoTokens"></status-card>
     </div>
     <slot></slot>
   </section>
