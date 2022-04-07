@@ -55,6 +55,20 @@
           padding-top: $spacing-normal * 3;
           padding-bottom: $spacing-normal * 5;
         }
+
+        .fa-exclamation-triangle {
+          color: $Orange;
+          margin-right: 4px;
+        }
+
+        &.discussions-loading-error {
+          @include subHeading;
+          font-size: $font-size4;
+
+          .reload-discussions {
+            margin-top: 24px;
+          }
+        }
       }
     }
     .load-more {

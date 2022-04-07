@@ -209,7 +209,7 @@ export class DiscussionThread {
 
       this.apiErrorText = "";
     } catch (error) {
-      this.apiErrorText = "There was an issue loading the comments. Retrying in: ";
+      this.apiErrorText = "A problem occured while loading the discussion";
 
       this.consoleLogService.logMessage(error.message, "error");
 

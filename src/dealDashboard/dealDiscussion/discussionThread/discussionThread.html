@@ -29,19 +29,24 @@
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
-        <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
-          <span if.bind="apiErrorText" class="fas fa-exclamation-triangle"></span>
-          ${noCommentsText}
-          <span if.bind="apiErrorText" data-test="discussions-api-error">
-            5s
-            <button
-              data-test="add-dao-representative"
-              class="addButton"
-              style="color: #9398a8;"
-              click.delegate="addRepresentative()">
-              (Retry now)
-            </button>
-          </span>
+        <div
+          if.bind="!isLoading.discussions && !threadComments.length"
+          data-test="no-comments-text"
+          class="
+            no comment
+            ${apiErrorText ? 'discussions-loading-error' : ''}
+          "
+        >
+          <div>
+            <span if.bind="apiErrorText" class="fas fa-exclamation-triangle"></span>
+            ${noCommentsText}
+          </div>
+          <pbutton
+            if.bind="apiErrorText"
+            data-test="reload-discussions"
+            class="reload-discussions"
+            type="primary"
+          >Reload Discussion</pbutton>
         </div>
 
         <div
