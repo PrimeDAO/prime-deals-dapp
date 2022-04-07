@@ -16,6 +16,7 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { Realtime } from "ably/promises";
 import { Types } from "ably";
+import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DiscussionThread {
@@ -58,6 +59,7 @@ export class DiscussionThread {
     private router: Router,
     private dateService: DateService,
     private dealService: DealService,
+    private consoleLogService: ConsoleLogService,
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
@@ -201,15 +203,16 @@ export class DiscussionThread {
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
       this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
-      /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 198 ~ DiscussionThread ~ ensureDealDiscussion ~ this.threadComments", this.threadComments);
 
       // Early return, if there are no comments/discussions.
       if (!this.threadComments) return;
 
       this.apiErrorText = "";
     } catch (error) {
-      console.log("API error");
       this.apiErrorText = "There was an issue loading the comments. Retrying in: ";
+
+      this.consoleLogService.logMessage(error.message, "error");
+
       if (!this.threadComments) this.threadComments = [];
     }
 
