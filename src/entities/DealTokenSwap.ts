@@ -488,10 +488,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async hydrateDaoTransactions(): Promise<void> {
-    if (!this.daoTokenTransactions) {
-      this.daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
-    }
-
     const daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
 
     daoTokenTransactions.set(this.primaryDao, await this.getDaoTransactions(this.primaryDao));
@@ -503,10 +499,6 @@ export class DealTokenSwap implements IDeal {
   }
 
   private async hydrateDaoClaims(): Promise<void> {
-    if (!this.daoTokenClaims) {
-      this.daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
-    }
-
     const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
 
     daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
@@ -517,7 +509,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
-  public async hydrateDealSize(): Promise<void> {
+  private async hydrateDealSize(): Promise<void> {
     // if the total price is already figured out we don't need to try again
     if (this.totalPrice) {
       return;
@@ -632,6 +624,35 @@ export class DealTokenSwap implements IDeal {
         }));
   }
 
+  public depositTokens(dao: IDAO, tokenAddress: Address, amount: BigNumber): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).deposit(
+        this.moduleContract.address,
+        this.contractDealId,
+        tokenAddress,
+        amount)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
+            return receipt;
+          }
+        }));
+  }
+
+  public withdrawTokens(dao: IDAO, depositId: number): Promise<TransactionReceipt> {
+    return this.transactionsService.send(
+      () => this.daoDepositContracts.get(dao).withdraw(
+        this.moduleContract.address,
+        this.contractDealId,
+        depositId)
+        .then(receipt => {
+          if (receipt) {
+            this.hydrateDaoTransactions();
+            return receipt;
+          }
+        }));
+  }
+
   public vote(upDown: boolean): Promise<void> {
     const whichDao = this.daoRepresentedByCurrentAccount;
 
@@ -662,6 +683,24 @@ export class DealTokenSwap implements IDeal {
           }
         });
     }
+  }
+
+  /**
+   * Returns Map of token address to amount claimable.  Every token in the dao should be represented.
+   * @param dao
+   * @returns
+   */
+  public async getTokenClaimableAmounts(dao: IDAO): Promise<Map<Address, BigNumber>> {
+    const results = new Map<Address, BigNumber>();
+
+    const vestingInfo: { tokens: Array<Address>; amounts: Array<BigNumber> }
+     = await this.daoDepositContracts.get(dao).callStatic.claimDealVestings(this.moduleContract.address, this.contractDealId);
+
+    vestingInfo.tokens.forEach(( tokenAddress: Address, index: number ) => {
+      results.set(tokenAddress, vestingInfo.amounts[index]);
+    });
+
+    return results;
   }
 
   private getTokenInfoFromDao(tokenAddress: Address, dao: IDAO): IToken {

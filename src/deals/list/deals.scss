@@ -22,6 +22,10 @@ pbutton button.secondary {
       place-items: center;
       border-top: 1px solid $Secondary02;
       padding-top: 30px;
+      &.heading02 {
+        font-size: 20px;
+        color: $Neutral02;
+      }
       pbutton {
         margin-top: 30px;
       }

@@ -48,7 +48,11 @@ export class FirestoreDealsService<
         return;
       }
       this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
-      deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
+      try {
+        deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
+      } catch (error) {
+        throw new Error("Trying to load deals for a user that is not connected");
+      }
     } else {
       this.consoleLogService.logMessage("getting all public deals");
       deals = await this.firestoreService.getAllPublicDeals();

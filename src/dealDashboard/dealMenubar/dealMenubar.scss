@@ -1,11 +1,12 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 
 deal-menubar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: end;
+  grid-column-gap: 10px;
+  grid-row-gap: 20px;
 
   i.fas {
     font-size: 20px;
@@ -15,15 +16,18 @@ deal-menubar {
     margin-right: 80px;
   }
 
-  .center {
+  .shareButton {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    grid-column: 1/ span 2;
   }
 
 
-  @media screen and (max-width: $PageBreakWidth) {
-    flex-direction: column;
+  @media screen and (max-width: 700px) {
+    grid-template-columns: auto auto;
+    justify-content: center;
   }
 }

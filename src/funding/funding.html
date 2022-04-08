@@ -33,21 +33,26 @@
           <div class="contracts">
             <p>
               <i class="fas fa-info-circle"></i>
-              <span if.to-view="deal.isFailed">
+              <span if.to-view="deal.isFailed && !deal.isUserProposalLead">
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. Please go to the Deposits below and withdraw your funds. You
-                can withdraw your funds at any time. Funds are safe.
+                can withdraw your funds at any time. Your funds are secured.
+              </span>
+              <span if.to-view="deal.isFailed && deal.isUserProposalLead">
+                The deal has failed as one or more parties failed to deposit their funds within the
+                given period of time. The representatives can withdraw their funds at any time.
+                Their funds are secured.
               </span>
               <span if.to-view="isRepAndDealStillFunding">
                 You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
                 and executed within ${fundingDaysLeft} days.
               </span>
               <span if.to-view="!deal.isFailed && !deal.isTargetReached && deal.isUserProposalLead">
-                This deal needs to be funded and executed within ${fundingDaysLeft} days.
+                This deal needs to be funded and executed within ${fundingDaysLeft} days. Only
+                representatives can deposit the tokens.
               </span>
               <span if.to-view="!deal.isFailed && deal.isTargetReached">
-                All parties have deposited their funds. Anyone can now execute the swap on the deal
-                dashboard.
+                All parties have deposited their funds. You may now execute the deal.
               </span>
             </p>
           </div>
@@ -142,8 +147,8 @@
             <p>
               <i class="fas fa-info-circle"></i>
               <span>
-                This will be text talking about claiming your tokens. There will probably be
-                different text here at some point.
+                ${deal.isUserProposalLead ? 'Representatitves of each' : 'Your'} DAO will be able to
+                claim vested tokens once they are claimable.
               </span>
             </p>
             <div>

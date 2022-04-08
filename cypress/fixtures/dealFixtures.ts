@@ -1,4 +1,4 @@
-import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
+import { IDealRegistrationTokenSwap, IRepresentative } from "../../src/entities/DealRegistrationTokenSwap";
 
 function getRandomId (){
   /**
@@ -122,6 +122,11 @@ export class DealDataBuilder {
   public withPrimaryDaoData = this.withFactory("primaryDAO");
   public withPartnerDaoData = this.withFactory("partnerDAO", PARTNER_DAO_DATA);
   public withTermsData = this.withFactory("terms");
+
+  public withPrimaryDaoRepresentative(newRepresentatives: Array<IRepresentative>) {
+    this.deal.primaryDAO.representatives.push(...newRepresentatives);
+    return this;
+  }
 
   private withFactory<DealKey extends keyof IDealRegistrationTokenSwap>(
     key: DealKey,

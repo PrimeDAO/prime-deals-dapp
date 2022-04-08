@@ -1,11 +1,12 @@
 import "reflect-metadata";
 import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { E2E_ADDRESSES } from "../../fixtures/dealFixtures";
+import { DealDataBuilder, E2E_ADDRESSES } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
 import { E2eNavigation } from "../common/navigate";
 import { PAGE_LOADING_TIMEOUT } from "../common/test-constants";
+import { E2eDeals } from "./deals/deals.e2e";
 
-const UserTypes = ["Anonymous", "Connected Public"] as const;
+const UserTypes = ["Anonymous", "Connected Public", "Proposal Lead", "Representative"] as const;
 export type UserType = typeof UserTypes[number]
 
 export class E2eWallet {
@@ -108,6 +109,14 @@ Given(/^I'm an? "(.*)" user$/, (userType: UserType) => {
       givenImAConnectedPublicUser();
       break;
     }
+    case "Proposal Lead": {
+      givenImAConnectedProposalLeadUser();
+      break;
+    }
+    case "Representative": {
+      givenImAConnectedRepresentativeUser();
+      break;
+    }
     default: {
       throw new Error("[TEST] No such user type. Available: " + UserTypes.join(", "));
     }
@@ -156,6 +165,47 @@ function givenImAConnectedPublicUser() {
   E2eNavigation.hasAppLoaded().then(hasLoaded => {
     E2eWallet.currentWalletAddress = E2E_ADDRESSES.RepresentativeTwo;
     E2eWallet.isLead = false;
+
+    if (hasLoaded) {
+      // If app loaded, then try to connect
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        } else {
+          E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
+        }
+      });
+    }
+  });
+}
+
+function givenImAConnectedProposalLeadUser() {
+  E2eNavigation.hasAppLoaded().then(hasLoaded => {
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
+    E2eWallet.isLead = false;
+
+    if (hasLoaded) {
+      // If app loaded, then try to connect
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        } else {
+          E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
+        }
+      });
+    }
+  });
+}
+
+function givenImAConnectedRepresentativeUser() {
+  E2eNavigation.hasAppLoaded().then(hasLoaded => {
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.RepresentativeTwo;
+    E2eWallet.isLead = false;
+
+    const dealWithRep = DealDataBuilder.create().withPrimaryDaoRepresentative([{address: E2eWallet.currentWalletAddress}]).deal;
+    E2eDeals.currentDeal = dealWithRep;
 
     if (hasLoaded) {
       // If app loaded, then try to connect

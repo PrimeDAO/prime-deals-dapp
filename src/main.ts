@@ -8,7 +8,6 @@ import { EventConfigException } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { ContractsService } from "services/ContractsService";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { DealService } from "services/DealService";
 import { IpfsService } from "services/IpfsService";
 import { HTMLSanitizer } from "aurelia-templating-resources";
 import DOMPurify from "dompurify";
@@ -57,6 +56,7 @@ export function configure(aurelia: Aurelia): void {
 
       /**
        * must do before ethereum service, to capture network connections
+       * and in general to be the first to do so.
        */
       const firebaseService = aurelia.container.get(FirebaseService);
       firebaseService.initialize();
@@ -93,10 +93,6 @@ export function configure(aurelia: Aurelia): void {
       const tokenService = aurelia.container.get(TokenService);
       await tokenService.initialize();
       TimingService.end("TokenService Initialization");
-
-      const dealService = aurelia.container.get(DealService);
-      dealService.initialize();
-
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));

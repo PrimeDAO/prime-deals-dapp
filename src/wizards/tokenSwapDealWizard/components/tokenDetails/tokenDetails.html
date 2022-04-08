@@ -59,6 +59,7 @@
           placeholder="500,000"
           output-as-string
           value.bind="token.amount & validate"
+          disabled.bind="!token.decimals"
           decimals.bind="token.decimals"
           view-model.ref="amountInput"></pinput-numeric>
       </pform-input>
