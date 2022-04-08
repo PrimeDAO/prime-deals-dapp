@@ -374,10 +374,10 @@ export class EthereumService {
   //   }
   // }
 
-  private handleAccountsChanged = async (accounts: Array<Address>) => {
+  private handleAccountsChanged = async (accounts?: Array<Address>) => {
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
-    this.fireAccountsChangedHandler(accounts?.[0]);
+    this.fireAccountsChangedHandler(getAddress(accounts?.[0]));
   };
 
   private handleChainChanged = async (chainId: number) => {
