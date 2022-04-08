@@ -17,6 +17,10 @@ pcard {
         color: $Neutral04;
       }
     }
+    .progress-bar {
+      height: 10px;
+      width: 100%;
+    }
     .content {
       display: grid;
       grid-template-columns: 1fr;

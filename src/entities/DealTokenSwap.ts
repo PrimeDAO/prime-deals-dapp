@@ -14,6 +14,8 @@ import { ContractNames, ContractsService, IStandardEvent } from "services/Contra
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
+import { NumberService } from "services/NumberService";
+import { toBigNumberJs } from "services/BigNumberService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -75,6 +77,15 @@ export interface IDaoTransaction {
   withdrawTxId?: Hash,
 }
 
+export interface ITokenCalculated extends IToken {
+  deposited?: BigNumber,
+  required?: BigNumber,
+  percentCompleted?: number,
+  claimable?: BigNumber,
+  claimed?: BigNumber,
+  locked?: BigNumber,
+}
+
 @autoinject
 export class DealTokenSwap implements IDeal {
 
@@ -85,6 +96,7 @@ export class DealTokenSwap implements IDeal {
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
+    private numberService: NumberService,
     eventAggregator: EventAggregator,
   ) {
     eventAggregator.subscribe("Contracts.Changed", async () => {
@@ -187,11 +199,28 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
       if (!isReached) return; //immediately returns if it's already false from a previous loop
       isReached = dao.tokens.every(daoToken => {
-        const totalDeposited : BigNumber = transactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+        const tokenTransactions = transactions.filter(x => x.address === daoToken.address); //filter transactions by token
+        const totalDeposited : BigNumber = tokenTransactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
         return totalDeposited.gte(daoToken.amount);
       });
     });
     return isReached;
+  }
+
+  @computedFrom("daoTokenClaims")
+  public get isFullyClaimed(): boolean {
+    if (!this.daoTokenClaims) return false;
+    let isClaimed = true;
+    this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
+      if (!isClaimed) return; //immediately returns if it's already false from a previous loop
+      isClaimed = dao.tokens.every(daoToken => {
+        const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
+        if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
+        const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
+        return totalClaimed.gte(daoToken.amount);
+      });
+    });
+    return isClaimed;
   }
 
   /**
@@ -789,6 +818,37 @@ export class DealTokenSwap implements IDeal {
       .then(() => {
         this.isPrivate = value;
       });
+  }
+
+  /**
+   * Sets the additional token info from the contract
+   */
+  public async setTokenContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+    if (!this.isExecuted && this.daoTokenTransactions){
+      //calculate only funding properties
+      token.deposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+      // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
+      token.required = BigNumber.from(token.amount).sub(token.deposited);
+      // calculate the percent completed based on deposited divided by target
+      // We're using bignumberjs because BigNumber can't handle division
+      token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
+    } else {
+      //calculate only claiming properties
+      const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
+      token.claimable = tokenClaimableAmounts.get(token.address);
+      token.claimed = this.getClaimedAmount(dao, token.address);
+      token.locked = BigNumber.from(token.amount).sub(token.claimable);
+    }
+  }
+
+  /**
+   * Gets the amount of tokens claimed by token
+   */
+  private getClaimedAmount(dao: IDAO, tokenAddress: string) : BigNumber{
+    if (!this.daoTokenClaims) return BigNumber.from(0);
+    const tokenClaims = this.daoTokenClaims.get(dao).filter(x => x.token.address === tokenAddress);
+    if (!tokenClaims || !tokenClaims.length) return BigNumber.from(0);
+    return tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
   }
 
   /**

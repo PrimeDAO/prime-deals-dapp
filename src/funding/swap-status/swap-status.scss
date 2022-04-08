@@ -13,20 +13,28 @@
     .swap {
       place-self: center;
       display: grid;
-      .center {
-        margin: 15px 0;
-      }
+      grid-gap: 15px;
       &.complete {
         color: $Border01;
       }
+      .success {
+        color: $Green;
+      }
     }
   }
-  .execute-swap {
-    margin-top: 40px;
-    display: grid;
-    place-items: center;
-    i {
-      margin-left: 10px;
+  @media screen and (max-width: $MaxContentBodyWidth) {
+    .status-cards {
+      grid-template-columns: 1fr;
+      grid-gap: 15px;
+      .swap {
+        grid-template-columns: 1fr 1fr 1fr;
+        i:first-child {
+          transform: rotate(-90deg); /* Equal to rotateZ(45deg) */
+        }
+        i:last-child {
+          transform: rotate(-90deg); /* Equal to rotateZ(45deg) */
+        }
+      }
     }
   }
 }

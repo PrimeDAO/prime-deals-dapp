@@ -6,9 +6,13 @@
   <require from="./dealDiscussion/dealDiscussion"></require>
   <require from="./dealMakeAnOffer/dealMakeAnOffer"></require>
   <require from="./dealDescription/dealDescription"></require>
+  <require from="./deal-swap-status/deal-swap-status"></require>
   <require from="../deals/timeLeft/timeLeft"></require>
 
-  <main data-test="deal-dashboard-container" class="page animated-page au-animate dealDashboardContainer">
+  <main
+    data-test="deal-dashboard-container"
+    class="page animated-page au-animate dealDashboardContainer"
+  >
     <deal-menubar deal.bind="deal"></deal-menubar>
 
     <section class="section top">
@@ -30,7 +34,8 @@
       <deal-info deal.bind="deal"></deal-info>
       <deal-make-an-offer
         deal.bind="deal"
-        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"></deal-make-an-offer>
+        if.bind="deal.isOpenProposal && !deal.isUserProposalLead"
+      ></deal-make-an-offer>
     </aside>
 
     <deal-description deal.bind="deal"></deal-description>
@@ -39,13 +44,15 @@
       authorized.bind="isAllowedToDiscuss"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
-
+      if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"
+    ></deal-clauses>
+    <deal-swap-status deal.bind="deal"></deal-swap-status>
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
       authorized.bind="isAllowedToDiscuss"
       deal.bind="deal"
       discussion-id.two-way="discussionId"
-      show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-discussion>
+      show.bind="deal.isUserRepresentativeOrLead || !deal.isPrivate"
+    ></deal-discussion>
   </main>
 </template>
