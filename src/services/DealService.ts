@@ -1,7 +1,7 @@
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, Networks } from "./EthereumService";
-import { autoinject, computedFrom, Container } from "aurelia-framework";
+import { autoinject, computedFrom, Container, TaskQueue } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { AureliaHelperService } from "./AureliaHelperService";
@@ -83,6 +83,7 @@ export class DealService {
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
+    private taskQueue: TaskQueue,
   ) {
     switch (EthereumService.targetedNetwork) {
       case Networks.Mainnet:
@@ -99,8 +100,15 @@ export class DealService {
 
   public async initialize(): Promise<void> {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
-      this.eventAggregator.publish("deals.loading", true);
-      this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+      /**
+       * queue up to handle reentrancy in case of changing accounts in the middle
+       * of responding to the previous account change
+       */
+      this.taskQueue.queueTask(() =>
+      {
+        this.eventAggregator.publish("deals.loading", true);
+        this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+      });
     });
     /**
      * deals will take care of themselves on account changes
