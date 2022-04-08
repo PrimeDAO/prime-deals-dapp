@@ -98,22 +98,38 @@ export class DealService {
     }
   }
 
+  /**
+   * Best to invoke this after a wallet has been connected and before anyone else subscribes to
+   * Network.Changed.Account.  We want to be the first, so others can ideally have up-to-date
+   * deals when they handle a new account.
+   */
   public async initialize(): Promise<void> {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
-      /**
-       * queue up to handle reentrancy in case of changing accounts in the middle
-       * of responding to the previous account change
-       */
-      this.taskQueue.queueTask(() =>
-      {
-        this.eventAggregator.publish("deals.loading", true);
-        this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
-      });
+      if (this.initializing) {
+        /**
+         * queue up to handle reentrancy
+         */
+        this.taskQueue.queueTask(async () =>
+        {
+          /**
+           * wait until the previous load is done
+           */
+          await this.ensureInitialized();
+          return this.loadDeals();
+        });
+      } else {
+        /**
+         * get this started ASAP ideally before other subscribers to Network.Changed.Account
+         */
+        this.loadDeals();
+      }
     });
-    /**
-     * deals will take care of themselves on account changes
-     */
     this.getDeals();
+  }
+
+  private loadDeals(): Promise<void> {
+    this.eventAggregator.publish("deals.loading", true);
+    return this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
   }
 
   private async getDeals(force = false): Promise<void> {
