@@ -74,7 +74,7 @@ export const updateDealStructure = functions.firestore
     const batch = firestore.batch();
 
     const dealUpdates: Partial<IDealTokenSwapDocument> = {
-      modifiedAt: new Date().toISOString(),
+      // modifiedAt: new Date().toISOString(),
     };
 
     // If registration data was updated and the update was done to field/fields other than the privacy flag
@@ -128,7 +128,7 @@ export const onVoteUpdate = functions.firestore
       dealRef,
       {
         votingSummary,
-        modifiedAt: new Date().toISOString(),
+        // modifiedAt: new Date().toISOString(),
       },
       {merge: true}, // merges provided object with the existing data
     );

@@ -5,8 +5,10 @@ import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address } from "services/EthereumService";
-import { IFirebaseDocument } from "services/FirestoreTypes";
+import { IDocumentUpdates, IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
+import { Observable } from "rxjs";
+import { skip } from "rxjs/operators";
 
 @autoinject
 export class FirestoreDealsService<
@@ -22,6 +24,28 @@ export class FirestoreDealsService<
     throw new Error("Method not implemented.");
   }
 
+  /**
+   * Based on the provided accountAddress returns
+   * an observable of all public deals if user in not authenticated
+   * or returns an observable of all deals provided accountAddress can read.
+   *
+   * Note it actually returns a promise of an observable
+   */
+  public async getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
+    await this.firestoreService.ensureAuthenticationIsSynced();
+
+    if (accountAddress) {
+      if (!this.isUserAuthenticated(accountAddress)) {
+        return;
+      }
+      this.consoleLogService.logMessage(`getting all deals observable for user ${accountAddress}`);
+      return this.firestoreService.allDealsForAddressObservable(accountAddress, skipFirst);
+    } else {
+      this.consoleLogService.logMessage("getting all public deals observable");
+      return this.firestoreService.allPublicDealsUpdatesObservable().pipe(skip(skipFirst ? 1 : 0));
+    }
+  }
+
   public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
     let deals: Array<IFirebaseDocument<TDealDocument>>;
 
@@ -32,7 +56,11 @@ export class FirestoreDealsService<
         return;
       }
       this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
-      deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
+      try {
+        deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
+      } catch (error) {
+        throw new Error("Trying to load deals for a user that is not connected");
+      }
     } else {
       this.consoleLogService.logMessage("getting all public deals");
       deals = await this.firestoreService.getAllPublicDeals();
