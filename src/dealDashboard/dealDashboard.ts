@@ -36,7 +36,7 @@ export class DealDashboard {
     return this.userCanAccessDashboard;
   }
 
-  public activate() {
+  public async activate() {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
       if (!this.userCanAccessDashboard) {
         this.router.navigate("home");
@@ -60,4 +60,5 @@ export class DealDashboard {
   public get userCanAccessDashboard(): boolean {
     return !this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead;
   }
+
 }

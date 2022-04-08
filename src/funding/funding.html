@@ -18,7 +18,7 @@
         <deposit-grid
           dao.bind="firstDao"
           dao-tokens.bind="firstDaoTokens"
-          funding-days-left.bind="fundingDaysLeft"
+          funding-days-left="${(deal.timeLeftToExecute / (60*60*24*1000)).toFixed(0)}"
         ></deposit-grid>
         <deposit-grid
           if.to-view="deal.isUserProposalLead"
@@ -28,35 +28,37 @@
         ></deposit-grid>
         <div class="container-footer">
           <let
-            is-rep-and-deal-still-funding.bind="!deal.isUserProposalLead && !deal.isTargetReached && !deal.isFailed"
+            show-deposit-form.bind="deal.isRepresentativeUser && !deal.isTargetReached && !deal.isFailed"
           ></let>
           <div class="contracts">
             <p>
               <i class="fas fa-info-circle"></i>
-              <span if.to-view="deal.isFailed && !deal.isUserProposalLead">
+              <span if.to-view="deal.isFailed && deal.isRepresentativeUser">
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. Please go to the Deposits below and withdraw your funds. You
                 can withdraw your funds at any time. Your funds are secured.
               </span>
-              <span if.to-view="deal.isFailed && deal.isUserProposalLead">
+              <span if.to-view="deal.isFailed && !deal.isRepresentativeUser">
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. The representatives can withdraw their funds at any time.
                 Their funds are secured.
               </span>
-              <span if.to-view="isRepAndDealStillFunding">
+              <span if.to-view="showDepositForm">
                 You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
-                and executed within ${fundingDaysLeft} days.
+                and executed within ${deal.timeLeftToExecute | timespan:'largest2'} days.
               </span>
-              <span if.to-view="!deal.isFailed && !deal.isTargetReached && deal.isUserProposalLead">
-                This deal needs to be funded and executed within ${fundingDaysLeft} days. Only
-                representatives can deposit the tokens.
+              <span
+                if.to-view="!deal.isFailed && !deal.isTargetReached && !deal.isRepresentativeUser"
+              >
+                This deal needs to be funded and executed within ${deal.timeLeftToExecute |
+                timespan:'largest2'} days. Only representatives can deposit the tokens.
               </span>
               <span if.to-view="!deal.isFailed && deal.isTargetReached">
                 All parties have deposited their funds. You may now execute the deal.
               </span>
             </p>
           </div>
-          <div class="deposit" if.to-view="isRepAndDealStillFunding">
+          <div class="deposit" if.to-view="showDepositForm">
             <div class="form">
               <div>
                 <div class="inputs">
@@ -94,7 +96,7 @@
               >
             </div>
           </div>
-          <div class="links ${deal.isUserProposalLead ? 'right' : ''}">
+          <div class="links ${!deal.isRepresentativeUser ? 'right' : ''}">
             <address-link
               address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
               link-text="DAODepositManager Contract"
@@ -114,29 +116,29 @@
       </div>
     </section>
     <swap-status deal.bind="deal">
-      <div class="section execute-swap" if.to-view="deal.isTargetReached">
-        <pbutton type="primary" click.delegate="executeSwap()">
-          Execute swap <i class="fas">&#xf021;</i>
-        </pbutton>
-      </div>
       <div class="claim-tokens" if.to-view="deal.isClaiming">
         <div class="box-container">
           <div>
             <div class="token-grid">
-              <h4 class="title heading heading3 gradient">Claim Tokens for ${firstDao.name}</h4>
+              <h4 class="title heading heading3 gradient">
+                ${!deal.isRepresentativeUser ? 'Vested Token Status of' : 'Claim Tokens for'}
+                ${firstDao.name}
+              </h4>
               <pgrid
                 id="token-grid"
-                rows.bind="firstDaoTokensToClaim"
+                rows.bind="firstDaoTokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
               </pgrid>
             </div>
-            <div class="token-grid">
-              <h4 class="title heading heading3 gradient">Claim Tokens for ${secondDao.name}</h4>
+            <div class="token-grid" if.to-view="deal.isUserProposalLead">
+              <h4 class="title heading heading3 gradient">
+                Vested Token Status of ${secondDao.name}
+              </h4>
               <pgrid
                 id="token-grid"
-                rows.bind="secondDaoTokensToClaim"
+                rows.bind="secondDaoTokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
@@ -147,8 +149,8 @@
             <p>
               <i class="fas fa-info-circle"></i>
               <span>
-                ${deal.isUserProposalLead ? 'Representatitves of each' : 'Your'} DAO will be able to
-                claim vested tokens once they are claimable.
+                ${deal.isRepresentativeUser ? 'Your' : 'Representatitves of each'} DAO will be able
+                to claim vested tokens once they are claimable.
               </span>
             </p>
             <div>
@@ -167,7 +169,7 @@
               >
               </address-link>
             </div>
-            <pbutton type="primary" if.to-view="!deal.isUserProposalLead">Claim Tokens</pbutton>
+            <pbutton type="primary" if.to-view="deal.isRepresentativeUser">Claim Tokens</pbutton>
           </div>
         </div>
       </div>

@@ -1,7 +1,9 @@
 @import "styles/styles.scss";
+
 pbutton button.secondary {
   padding: 14px 28px;
 }
+
 .page.deals {
   .section {
     &.loading {
@@ -22,20 +24,24 @@ pbutton button.secondary {
       place-items: center;
       border-top: 1px solid $Secondary02;
       padding-top: 30px;
+
       &.heading02 {
         font-size: 20px;
         color: $Neutral02;
       }
+
       pbutton {
         margin-top: 30px;
       }
     }
+
     &.featured,
     &.deals {
       .loading {
         text-align: center;
         font-size: 32px;
         padding-top: 24px;
+
         i {
           color: $Secondary07;
         }
@@ -49,22 +55,27 @@ pbutton button.secondary {
         margin-bottom: 28px;
       }
     }
+
     &.deals-actions {
-      display: flex;
-      justify-content: right;
+      text-align: right;
       margin-bottom: 28px;
+
       pbutton {
         margin-left: 20px;
       }
+
       pform-input {
-        display: flex;
+        display: inline-flex;
         cursor: pointer;
+
         .formInputLabelTitle {
           text-transform: uppercase;
           color: $Neutral02;
           font-size: 14px;
           font-weight: 700;
+          margin-bottom: 0px;
         }
+
         .inputContainer {
           margin-left: 10px;
         }
@@ -106,6 +117,7 @@ pbutton button.secondary {
               display: flex;
               align-items: center;
             }
+
             /**
              * for when columns get scrunched together
              */
@@ -149,6 +161,7 @@ pbutton button.secondary {
                 }
               }
             }
+
             &.eslink {
               i {
                 cursor: pointer;
@@ -172,21 +185,26 @@ pbutton button.secondary {
               color: $Neutral04;
             }
           }
+
           &.body {
+
             .cell,
             .cell > div.icons > div.dao > div.name {
               font-size: 16px;
               font-weight: 400;
               font-family: Inter;
               color: $Neutral03;
+
               &.title {
                 white-space: normal;
                 padding-right: 35px;
               }
             }
+
             .cell {
               border-bottom: 1px solid $Border01;
             }
+
             &:hover {
               color: inherit;
             }
@@ -268,191 +286,17 @@ pbutton button.secondary {
         }
       }
 
-      .seeMore {
-        display: flex;
-        color: $Neutral02;
-        cursor: pointer;
+      .seeMoreSection {
         margin-bottom: 36px;
 
-        > .arrow {
-          margin-right: 6px;
-        }
-      }
-    }
+        .seeMore {
+          display: flex;
+          color: $Neutral02;
+          cursor: pointer;
 
-    &.deals {
-      .title {
-        -webkit-text-fill-color: $Secondary02;
-      }
-
-      .grid {
-        margin-bottom: 20px;
-        font-size: 16px;
-
-        .row {
-          display: contents;
-          cursor: default;
-
-          &:hover {
-            text-decoration: none;
+          > .arrow {
+            margin-right: 6px;
           }
-
-          .cell {
-            margin-bottom: 16px;
-          }
-
-          &.body .cell.hot {
-            cursor: pointer;
-          }
-
-          &.body.hot:hover .cell.body {
-            background-color: $BG02;
-          }
-
-          .cell {
-            padding: 10px 0;
-
-            /**
-             * for when columns get scrunched together
-             */
-            &:not(:nth-of-type(n + 8)) {
-              padding-right: 12px;
-            }
-
-            &.header {
-              color: $Neutral02;
-
-              &.sortable {
-                cursor: pointer;
-              }
-            }
-
-            &.project {
-              overflow-x: hidden;
-              text-overflow: ellipsis;
-            }
-
-            &.target,
-            &.cap {
-              text-align: right;
-            }
-
-            &.whitelist,
-            &.starts,
-            &.eslink {
-              text-align: center;
-            }
-
-            &.dealToken,
-            &.fundingToken {
-              white-space: nowrap;
-
-              img {
-                margin-right: 6px;
-                @include tokenIcon;
-                position: relative;
-                top: 4px;
-              }
-            }
-
-            &.eslink {
-              i {
-                cursor: pointer;
-                color: $Secondary05;
-              }
-            }
-          }
-        }
-      }
-
-      .dealGrid {
-        display: grid;
-        grid-template-columns: 0.5fr 0.5fr 2fr 0.75fr 0.75fr 0.75fr;
-        grid-template-rows: auto;
-        align-items: center;
-
-        .row {
-          &.header {
-            .cell {
-              border-bottom: 1px solid $Secondary02;
-
-              &.dealToken,
-              &.fundingToken {
-                white-space: nowrap;
-              }
-            }
-          }
-        }
-      }
-
-      .dealGridMobile {
-        display: none;
-        grid-template-columns: 0.5fr 1fr 1fr auto;
-        grid-template-rows: auto auto;
-        align-items: self-end; // makes header borders line up
-
-        .row {
-          &.header {
-            .cell:nth-of-type(n + 5) {
-              border-bottom: 1px solid $Secondary02;
-              color: $Neutral02;
-              opacity: 0.6;
-            }
-          }
-
-          .cell {
-            padding: 2px 0;
-            text-align: left !important;
-
-            &:not(:nth-of-type(n + 5)) {
-              padding-right: 8px;
-            }
-
-            &.whitelist,
-            &.eslink {
-              text-align: center !important;
-              padding-right: 0;
-            }
-
-            /**
-             * cells in first subrow of each row
-             */
-            &:nth-of-type(n):nth-of-type(-n + 4) {
-              padding-top: 12px;
-              margin-bottom: 0;
-            }
-
-            /**
-             * cells in second subrow of each row
-             */
-            &:nth-of-type(n + 5):nth-of-type(-n + 8) {
-              padding-bottom: 12px;
-              color: $Neutral02;
-
-              .etherscanlink .text,
-              .copy-to-clip-button {
-                color: $Neutral02;
-              }
-            }
-
-            &.body {
-              &.starts {
-                .timeLeftContainer {
-                  font-size: 14px;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .seeMore {
-        display: flex;
-        color: $Neutral02;
-        cursor: pointer;
-
-        > .arrow {
-          margin-right: 6px;
         }
       }
     }
@@ -472,18 +316,6 @@ pbutton button.secondary {
       &.featured {
         .scrollerContainer {
           margin-bottom: 0;
-        }
-      }
-
-      &.deals {
-        .grid {
-          font-size: 14px;
-        }
-        .dealGrid {
-          display: none;
-        }
-        .dealGridMobile {
-          display: grid;
         }
       }
     }

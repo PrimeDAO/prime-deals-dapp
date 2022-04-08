@@ -1,0 +1,32 @@
+<template>
+  <p>
+    You are about to execute token swapping between the following two DAOs. Do you want to execute
+    these swaps?
+  </p>
+  <div class="modal-content">
+    <div>
+      <h6>${deal.primaryDao.name} treasury address</h6>
+      <div class="dao">
+        <address-link
+          address="${deal.primaryDao.treasury_address}"
+          link-text="${deal.primaryDao.treasury_address}"
+          show-arrow-inside-link.bind="true"
+          show-tooltip.bind="false"
+        >
+        </address-link>
+      </div>
+    </div>
+    <div>
+      <h6>${deal.partnerDao.name} treasury address</h6>
+      <div class="dao">
+        <address-link
+          address="${deal.partnerDao.treasury_address}"
+          link-text="${deal.partnerDao.treasury_address}"
+          show-arrow-inside-link.bind="true"
+          show-tooltip.bind="false"
+        >
+        </address-link>
+      </div>
+    </div>
+  </div>
+</template>

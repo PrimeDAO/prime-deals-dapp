@@ -17,9 +17,9 @@ import {
 } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
-import { combineLatest, fromEventPattern, Observable, Subject } from "rxjs";
-import { map, mergeAll } from "rxjs/operators";
-import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
+import { combineLatest, fromEventPattern, merge, Observable, Subject } from "rxjs";
+import { map, mergeAll, skip } from "rxjs/operators";
+import { DEALS_TOKEN_SWAP_COLLECTION, IDocumentUpdates, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
@@ -164,8 +164,8 @@ export class FirestoreService<
    *
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getAllPublicDeals<TDealDocument>(): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.allPublicDealsQuery());
+  public getAllPublicDeals<TDealDocument>(): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.allPublicDealsQuery());
   }
 
   /**
@@ -176,8 +176,8 @@ export class FirestoreService<
    * @param address string
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.representativeDealsQuery(address));
+  public getRepresentativeDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.representativeDealsQuery(address));
   }
 
   /**
@@ -188,8 +188,8 @@ export class FirestoreService<
    * @param address string
    * @returns Promise<IFirebaseDocument<TDealDocument>[]>
    */
-  public async getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
-    return await this.getDealDocuments(this.proposalLeadDealsQuery(address));
+  public getProposalLeadDeals(address: Address): Promise<Array<IFirebaseDocument<TDealDocument>>> {
+    return this.getDealDocuments(this.proposalLeadDealsQuery(address));
   }
 
   /**
@@ -262,13 +262,31 @@ export class FirestoreService<
     return deals;
   }
 
+  public allDealsForAddressObservable(accountAddress: string, skipFirst = false): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
+    const allPublicDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery()).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
+    const representativeDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.representativeDealsQuery(accountAddress)).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
+    const proposalLeadDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.proposalLeadDealsQuery(accountAddress)).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
+
+    return merge(
+      allPublicDeals,
+      representativeDeals,
+      proposalLeadDeals,
+    );
+  }
+
   /**
    * Observes all public deals in Firestore
    *
    * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
-  public subscribeToAllPublicDeals(): Observable<Array<IFirebaseDocument>> {
-    return this.getObservableOfQuery<Array<IFirebaseDocument>>(this.allPublicDealsQuery());
+  public allPublicDealsUpdatesObservable(): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
+    return this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery());
   }
 
   /**
@@ -418,6 +436,32 @@ export class FirestoreService<
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
       where("registrationData.proposalLead.address", "==", address),
+    );
+  }
+
+  private getObservableOfQueryUpdates<T>(q: Query<DocumentData>): Observable<IDocumentUpdates<T>> {
+    return fromEventPattern(
+      (handler) => onSnapshot(
+        q,
+        (querySnapshot: QuerySnapshot<DocumentData>) => {
+          const updatedDocuments = {
+            modified: [],
+            removed: [],
+          };
+          querySnapshot.docChanges().forEach((change) => {
+            if (change.type === "added" || change.type === "modified") {
+              updatedDocuments.modified.push(change.doc.data());
+            }
+            if (change.type === "removed") {
+              updatedDocuments.removed.push(change.doc.data());
+            }
+          });
+          handler(updatedDocuments);
+        },
+      ),
+      (handler, unsubscribe: Unsubscribe) => {
+        unsubscribe();
+      },
     );
   }
 }

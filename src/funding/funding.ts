@@ -1,7 +1,7 @@
 import { TokenService } from "services/TokenService";
 import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
 import { NumberService } from "./../services/NumberService";
-import { IDaoTransaction } from "./../entities/DealTokenSwap";
+import { IDaoTransaction, ITokenCalculated } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
 import { EventConfig, EventConfigException } from "./../services/GeneralEvents";
@@ -14,21 +14,14 @@ import { EthereumService } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
-import { IDAO, IToken } from "entities/DealRegistrationTokenSwap";
-import { ITokenFunding } from "entities/TokenFunding";
+import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
 import { observable } from "aurelia-typed-observable-plugin";
-import moment from "moment-timezone";
 import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
-export interface IDaoClaimToken {
-  token: IToken, //only need iconURI, symbol and decimals
-  claimable: number,
-  locked: number
-}
 @autoinject
 export class Funding {
   private depositColumns: IGridColumn[] = depositColumns;
@@ -44,9 +37,8 @@ export class Funding {
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
-  private vestedAmount = 0;
-  private secondDaoTokens: ITokenFunding[];
-  private firstDaoTokens: ITokenFunding[];
+  private secondDaoTokens: ITokenCalculated[];
+  private firstDaoTokens: ITokenCalculated[];
   private deposits: IDaoTransaction[] = [];
   /**
    * Opens a new window to the transaction id or address on the blockchain
@@ -84,25 +76,23 @@ export class Funding {
     this.verifySecurity();
     //wait until the dao transactions from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
+    //wait until the dao token claims from the contract are there
+    await Utils.waitUntilTrue(() => this.deal.daoTokenClaims !== undefined);
   }
 
   public async bind(): Promise<void> {
     //get contract token information from the other DAO
-    //Clone the tokens from registration data and add props from ITokenFunding
-    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens);
-    this.secondDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.secondDao);});
-
-    //TODO figure out what the vested amount is from the deal
-    //this.vestedAmount = this.deal.vestedAmount;
-    this.vestedAmount = 0;
+    //Clone the tokens from registration data and add props from ITokenCalculated
+    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
+    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
 
     //get contract token information from the DAO related to the account
-    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens);
-    this.firstDaoTokens.forEach(x => {this.setTokenContractInfo(x, this.firstDao);});
+    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
+    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
-      this.selectedToken = 0;
+      this.selectedToken = "0";
       //and get the account balance for that token
       await this.setAccountBalance();
     }
@@ -129,15 +119,6 @@ export class Funding {
   }
 
   /**
-   * Returns a relative time with a custom replacer
-   * @param dateTime
-   * @returns string
-   */
-  public getFormattedTime = (dateTime: Date, locale = "en-custom"): string => {
-    return this.dateService.formattedTime(dateTime).diff(locale, false);
-  };
-
-  /**
    * Gets the icon name for the transaction type
    * @param type
    * @returns string
@@ -145,46 +126,6 @@ export class Funding {
   public getTypeIcon = (type: string): string => {
     return type.toLowerCase() === "deposit" ? "down success" : "up danger";
   };
-
-  /**
-   * Executes the token swap. Called by the "Execute Token Swap" button on the UI
-   *  - pops up a modal to verify the user wants to execute the swap
-   *  - does nothing if they hit cancel
-   *  - if they hit "execute" it will execute and show the congrats modal
-   */
-  public async executeSwap(): Promise<void> {
-    const swapModal: IAlertModel = {
-      header: "Execute token swap",
-      message:
-        `<p>You are about to execute the token swap between the following two DAOs. Do you want to execute the swap?</p>
-        <div class='modal-content'>${this.getDaoHtmlForSwap(this.firstDao)}${this.getDaoHtmlForSwap(this.secondDao)}</div>`,
-      buttonTextPrimary: "Execute Swap <i style='margin-left:5px;' class='fa'>&#xf021;</i>",
-      buttonTextSecondary: "Cancel",
-      buttons: ShowButtonsEnum.Both,
-      data: {
-        gotoEtherscan: this.gotoEtherscan, //have to pass the gotoEtherscan method to the modal from this class because the modal has the etherscan link in it
-      },
-      className: "executeSwap",
-    };
-    // show a modal confirming the user wants to execute the swap
-    const dialogResult = await this.alertService.showAlert(swapModal);
-    if (!dialogResult.wasCancelled) {
-      //the user said they wanted to execute the swap so call the swap contract
-      //TODO wire up the execute swap method to the contract
-      this.eventAggregator.publish("handleException", new EventConfigException("This method is not implemented", EventMessageType.Exception));
-
-      //if the swap succeeded, show the 'congrats' modal
-      //TODO add the if statement if the token swap was successfully executed then show the congrats popup
-      const congratulatePopupModel: IAlertModel = {
-        header: "Congratulations!",
-        message: "<p class='excitement'>You have successfully executed the token swap!</p>",
-        confetti: true,
-        buttonTextPrimary: "Close",
-        className: "congratulatePopup",
-      };
-      await this.alertService.showAlert(congratulatePopupModel);
-    }
-  }
 
   /**
    * This allows for more deposits to be displayed on the funding page deposits grid
@@ -251,7 +192,7 @@ export class Funding {
     await this.setAccountBalance(); // get the most up to date account balance to make sure it has enough
     //rebind token data if it's changed
     //TODO reset all the data after checking
-    // const token = this.firstDaoTokens[this.selectedToken] as ITokenFunding;
+    // const token = this.firstDaoTokens[this.selectedToken] as ITokenCalculated;
     // token.required = recentRequiredTokens;
     // token.deposited = converter.fromView(120);
     // token.target = converter.fromView(120);
@@ -271,26 +212,6 @@ export class Funding {
     this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${BigNumber.from(this.depositAmount)} ${tokenSymbol} on behalf of ${this.firstDao.name}`, EventMessageType.Info, "Deposit Submitted"));
     //TODO handle account provider transaction rejection
     //TODO handle the popup notification on the event of the deposit actually being completed
-  }
-
-  /**
-   * Gets the HTML for the dao token swap modal popup
-   * @param dao
-   * @returns string
-   */
-  private getDaoHtmlForSwap(dao: IDAO): string {
-    return `
-      <div>
-        <h6>${dao.name} treasury address</h6>
-        <div class="dao">
-          ${dao.treasury_address} 
-          <div class="buttons">
-            <copy-to-clipboard-button text-to-copy="${dao.treasury_address}"></copy-to-clipboard-button>
-            <etherscan-button address="${dao.treasury_address}" is-transaction.bind="false"></etherscan-button>            
-          </div>
-        </div>
-      </div>
-      `;
   }
 
   /**
@@ -335,28 +256,11 @@ export class Funding {
   }
 
   /**
-   * Sets the additional token info from the contract
-   */
-  private setTokenContractInfo(token: ITokenFunding, dao: IDAO): void {
-    //get the additional token information from the contract for this token
-    console.log("Dao token transactions", this.deal.daoTokenTransactions.get(dao));
-    token.deposited = this.deal.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
-    // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
-    token.required = BigNumber.from(token.amount).sub(token.deposited);
-    // calculate the percent completed based on deposited divided by target
-    // We're using bignumberjs because BigNumber can't handle division
-    //token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
-  }
-
-  /**
    * Verifies the current account has access to this page and if it doesn't, redirect them
    */
   private verifySecurity(): void {
     if (!this.deal || !this.deal.registrationData) return;
-    if (!this.deal.registrationData.primaryDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-      !this.deal.registrationData.partnerDAO.representatives.some(x => x.address === this.ethereumService.defaultAccountAddress) &&
-      !this.deal.isUserProposalLead
-    ) {
+    if (!this.deal.isUserRepresentativeOrLead){
       //redirect user to the home page if not the proposal lead or one of the deal's representatives
       this.router.navigate("home");
     }
@@ -402,41 +306,12 @@ export class Funding {
     this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
   }
 
-  @computedFrom("deal.executedAt", "deal.fundingPeriod")
-  public get fundingDaysLeft() : number {
-    if (this.deal.executedAt && this.deal.fundingPeriod) {
-      const executionTime = this.deal.executedAt;
-      executionTime.setSeconds(executionTime.getSeconds() + this.deal.fundingPeriod);
-      const finalDate = moment(executionTime);
-      const now = moment();
-      return finalDate.diff(now, "days");
-    }
-    return 0;
-  }
-
   @computedFrom("firstDaoTokens")
   public get tokenSelectData() : IPSelectItemConfig[]{
     return this.firstDaoTokens.map((x, index) => ({
       text: x.symbol,
       innerHTML: `<span><img src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
       value: index.toString(),
-    }));
-  }
-
-  @computedFrom("firstDaoTokens")
-  public get firstDaoTokensToClaim() : IDaoClaimToken[]{
-    return this.firstDaoTokens.map(x => ({
-      token: x,
-      claimable: 1,
-      locked: 2,
-    }));
-  }
-  @computedFrom("secondDaoTokens")
-  public get secondDaoTokensToClaim() : IDaoClaimToken[]{
-    return this.secondDaoTokens.map(x => ({
-      token: x,
-      claimable: 21,
-      locked: 51,
     }));
   }
 
@@ -447,11 +322,11 @@ export class Funding {
 
   //moving this getter locally for the proposal lead
   public get firstDao() : IDAO{
-    return this.deal.isUserProposalLead ? this.deal.primaryDao : this.deal.daoRepresentedByCurrentAccount;
+    return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
   }
 
   //moving this getter locally for the proposal lead
   public get secondDao() : IDAO {
-    return this.deal.isUserProposalLead ? this.deal.partnerDao : this.deal.daoOtherThanRepresentedByCurrentAccount;
+    return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }
 }
