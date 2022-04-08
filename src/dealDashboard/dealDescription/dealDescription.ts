@@ -10,42 +10,48 @@ const MOBILE_MAX_LENGTH = 250;
 export class DealDescription {
   @bindable deal: DealTokenSwap;
 
+  private resizeWatcher;
+  private isMobile: boolean;
+  private readingMore = false;
+
   /**
    * Description text is shortened to 250 words
    */
-  private descriptionText: string | undefined;
-  private originalDescriptionText = "";
+  @computedFrom("readingMore", "isMobile", "originalDescriptionText")
+  private get descriptionText(): string {
 
-  private resizeWatcher;
+    if (this.isMobile && !this.readingMore && (this.originalDescriptionText.length > MOBILE_MAX_LENGTH)) {
+      const shortened = this.originalDescriptionText.substring(0, MOBILE_MAX_LENGTH);
+      return `${shortened}...`;
+    } else if (this.readingMore) {
+      return `${this.originalDescriptionText}`;
+    } else {
+      return this.originalDescriptionText;
+    }
+  }
 
-  @computedFrom("descriptionText")
+  @computedFrom("isMobile", "readingMore")
   get showReadMoreButton() {
-    return this.descriptionText.length < this.originalDescriptionText.length;
+    return this.isMobile && !this.readingMore;
+  }
+
+  @computedFrom("deal.registrationData.proposal.description")
+  get originalDescriptionText(): string {
+    return this.deal.registrationData.proposal.description;
   }
 
   bind() {
-    this.originalDescriptionText = this.deal.registrationData.proposal.description;
-
     this.watchResize();
-    this.changeTextIfMobile();
-
-    if (this.descriptionText === undefined) {
-      this.descriptionText = this.originalDescriptionText;
-    }
+    this.setIsMobile();
   }
 
   watchResize() {
-    this.resizeWatcher = () => this.changeTextIfMobile();
+    this.resizeWatcher = () => this.setIsMobile();
     window.addEventListener("resize", this.resizeWatcher);
   }
 
-  changeTextIfMobile() {
-    if (MobileService.isMobile()) {
-      if (this.originalDescriptionText.length > MOBILE_MAX_LENGTH) {
-        const shortened = this.originalDescriptionText.substring(0, MOBILE_MAX_LENGTH);
-        this.descriptionText = `${shortened}...`;
-      }
-    }
+  setIsMobile() {
+    this.isMobile = MobileService.isMobile();
   }
 
   detached() {
@@ -53,6 +59,6 @@ export class DealDescription {
   }
 
   private readMore(): void {
-    this.descriptionText = `${this.originalDescriptionText}`;
+    this.readingMore = true;
   }
 }

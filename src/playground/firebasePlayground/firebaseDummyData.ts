@@ -20,7 +20,7 @@ export const openProposalDummyData1 = {
     "tokens": [
       {
         "symbol": "D2D",
-        "amount": null,
+        "amount": "30000000000000",
         "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
         "vestedFor": 864000,
         "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
@@ -41,7 +41,7 @@ export const openProposalDummyData1 = {
   "terms": {
     "clauses": [
       {
-        "id": "",
+        "id": "HFcE73RvJP5dG3cXVKZRJw",
         "text": "A clause asd",
       },
     ],
@@ -66,7 +66,7 @@ export const partnerDealDummyData1 = {
     "tokens": [
       {
         "symbol": "D2D",
-        "amount": null,
+        "amount": "20000000000000",
         "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
         "vestedFor": 864000,
         "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
@@ -96,7 +96,7 @@ export const partnerDealDummyData1 = {
     "tokens": [
       {
         "symbol": "D2D",
-        "amount": null,
+        "amount": "10000000000000",
         "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
         "vestedFor": 8640000,
         "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
@@ -116,7 +116,7 @@ export const partnerDealDummyData1 = {
   "terms": {
     "clauses": [
       {
-        "id": "",
+        "id": "0QSWgDPVF6971GTymndrqs",
         "text": "Clause one",
       },
     ],
