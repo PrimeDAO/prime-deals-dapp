@@ -8,6 +8,7 @@ import { Address } from "services/EthereumService";
 import { IDocumentUpdates, IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
+import { skip } from "rxjs/operators";
 
 @autoinject
 export class FirestoreDealsService<
@@ -23,7 +24,14 @@ export class FirestoreDealsService<
     throw new Error("Method not implemented.");
   }
 
-  public async getDealsObservables(accountAddress?: Address): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
+  /**
+   * Based on the provided accountAddress returns
+   * an observable of all public deals if user in not authenticated
+   * or returns an observable of all deals provided accountAddress can read.
+   *
+   * Note it actually returns a promise of an observable
+   */
+  public async getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
     await this.firestoreService.ensureAuthenticationIsSynced();
 
     if (accountAddress) {
@@ -31,10 +39,10 @@ export class FirestoreDealsService<
         return;
       }
       this.consoleLogService.logMessage(`getting all deals observable for user ${accountAddress}`);
-      return this.firestoreService.allDealsForAddressObservable(accountAddress);
+      return this.firestoreService.allDealsForAddressObservable(accountAddress, skipFirst);
     } else {
       this.consoleLogService.logMessage("getting all public deals observable");
-      return this.firestoreService.allPublicDealsUpdatesObservable();
+      return this.firestoreService.allPublicDealsUpdatesObservable().pipe(skip(skipFirst ? 1 : 0));
     }
   }
 

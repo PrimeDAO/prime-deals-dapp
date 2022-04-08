@@ -62,6 +62,10 @@ export class DealService {
   }
 
   public initializing = true;
+
+  /**
+   * used to store the subscription to the deals and unsubscribe on account change
+   */
   private dealsSubscription: Subscription;
 
   @computedFrom("dealsArray.length")
@@ -138,6 +142,9 @@ export class DealService {
   }
 
   private async getDeals(force = false): Promise<void> {
+    if (this.dealsSubscription) {
+      this.dealsSubscription.unsubscribe();
+    }
 
     this.initializing = true;
 
@@ -187,8 +194,7 @@ export class DealService {
   }
 
   private async observeDeals(): Promise<void> {
-
-    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress);
+    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress, true);
 
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
@@ -208,11 +214,18 @@ export class DealService {
             dealsMap.delete(dealDoc.id);
           }
 
-          /**
-           * note this change will instantly propogate across the app, any dependencies on dealDocument
-           */
           for (const dealDoc of updates.modified) {
-            dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+            if (dealsMap.has(dealDoc.id)) {
+              /**
+               * note this change will instantly propogate across the app, any dependencies on dealDocument
+               */
+              dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+            } else {
+              /**
+               * this will create new deal entity asynchronously, once created it will be part of this.deals Map
+               */
+              this._createDeal(dealDoc, dealsMap);
+            }
           }
 
           /**

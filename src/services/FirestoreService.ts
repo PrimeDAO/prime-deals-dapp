@@ -18,7 +18,7 @@ import {
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, merge, Observable, Subject } from "rxjs";
-import { map, mergeAll } from "rxjs/operators";
+import { map, mergeAll, skip } from "rxjs/operators";
 import { DEALS_TOKEN_SWAP_COLLECTION, IDocumentUpdates, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
@@ -262,10 +262,16 @@ export class FirestoreService<
     return deals;
   }
 
-  public allDealsForAddressObservable(accountAddress: string): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
-    const allPublicDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery());
-    const representativeDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.representativeDealsQuery(accountAddress));
-    const proposalLeadDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.proposalLeadDealsQuery(accountAddress));
+  public allDealsForAddressObservable(accountAddress: string, skipFirst = false): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
+    const allPublicDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery()).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
+    const representativeDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.representativeDealsQuery(accountAddress)).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
+    const proposalLeadDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.proposalLeadDealsQuery(accountAddress)).pipe(
+      skip(skipFirst ? 1 : 0),
+    );
 
     return merge(
       allPublicDeals,

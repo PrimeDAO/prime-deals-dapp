@@ -37,7 +37,7 @@ export abstract class IDataSourceDeals {
     throw new Error("Method not implemented.");
   }
 
-  getDealsObservables(accountAddress?: Address): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
+  getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
     throw new Error("Method not implemented.");
   }
 
