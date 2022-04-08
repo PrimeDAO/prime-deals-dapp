@@ -13,9 +13,9 @@
         <i class="fas fa-arrow-right" if.to-view="!deal.isClaiming"></i>
         <i
           if.to-view="!deal.isClaiming && deal.isTargetReached"
-          class="fas fa-check-circle success center"
+          class="fas fa-check-circle success"
         ></i>
-        <i if.to-view="deal.isFailed" class="fas fa-times-circle danger center"></i>
+        <i if.to-view="deal.isFailed" class="fas fa-times-circle danger"></i>
         <i class="fas fa-arrow-left" if.to-view="!deal.isClaiming"></i>
       </div>
       <status-card

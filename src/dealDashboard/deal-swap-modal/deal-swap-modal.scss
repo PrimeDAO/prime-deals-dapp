@@ -1,0 +1,50 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+.ppopup-dialog.executeSwap {
+  p.dialogBody {
+    width: 550px;
+  }
+  .modal-content {
+    border-radius: 10px;
+    background-color: $BG02;
+    width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+    display: grid;
+    grid-gap: 20px;
+    h6 {
+      text-transform: uppercase;
+      color: $Secondary02;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Aeonik;
+    }
+    .dao {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 400;
+      font-family: Aeonik;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-column-gap: 10px;
+      .buttons {
+        display: flex;
+        column-gap: 4px;
+        align-items: center;
+
+        .etherscan-button {
+          outline: none;
+          path {
+            fill: $Secondary05;
+          }
+          cursor: pointer;
+          &:hover > path {
+            fill: $White;
+          }
+        }
+      }
+    }
+  }
+}

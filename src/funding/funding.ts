@@ -120,15 +120,6 @@ export class Funding {
   }
 
   /**
-   * Returns a relative time with a custom replacer
-   * @param dateTime
-   * @returns string
-   */
-  public getFormattedTime = (dateTime: Date, locale = "en-custom"): string => {
-    return this.dateService.formattedTime(dateTime).diff(locale, false);
-  };
-
-  /**
    * Gets the icon name for the transaction type
    * @param type
    * @returns string
@@ -314,18 +305,6 @@ export class Funding {
     // this.deposits = deposits;
     // return;
     this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
-  }
-
-  @computedFrom("deal.executedAt", "deal.fundingPeriod")
-  public get fundingDaysLeft() : number {
-    if (this.deal.executedAt && this.deal.fundingPeriod) {
-      const executionTime = this.deal.executedAt;
-      executionTime.setSeconds(executionTime.getSeconds() + this.deal.fundingPeriod);
-      const finalDate = moment(executionTime);
-      const now = moment();
-      return finalDate.diff(now, "days");
-    }
-    return 0;
   }
 
   @computedFrom("firstDaoTokens")

@@ -18,7 +18,7 @@
         <deposit-grid
           dao.bind="firstDao"
           dao-tokens.bind="firstDaoTokens"
-          funding-days-left.bind="fundingDaysLeft"
+          funding-days-left="${(deal.timeLeftToExecute / (60*60*24*1000)).toFixed(0)}"
         ></deposit-grid>
         <deposit-grid
           if.to-view="deal.isUserProposalLead"
@@ -45,13 +45,13 @@
               </span>
               <span if.to-view="showDepositForm">
                 You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
-                and executed within ${fundingDaysLeft} days.
+                and executed within ${deal.timeLeftToExecute | timespan:'largest2'} days.
               </span>
               <span
                 if.to-view="!deal.isFailed && !deal.isTargetReached && !deal.isRepresentativeUser"
               >
-                This deal needs to be funded and executed within ${fundingDaysLeft} days. Only
-                representatives can deposit the tokens.
+                This deal needs to be funded and executed within ${deal.timeLeftToExecute |
+                timespan:'largest2'} days. Only representatives can deposit the tokens.
               </span>
               <span if.to-view="!deal.isFailed && deal.isTargetReached">
                 All parties have deposited their funds. You may now execute the deal.

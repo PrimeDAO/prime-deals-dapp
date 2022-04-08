@@ -1,5 +1,4 @@
 <template>
-  <require from="../funding/swap-status/swap-status"></require>
   <require from="./dealMenubar/dealMenubar"></require>
   <require from="./dealVotes/dealVotes"></require>
   <require from="./dealInfo/dealInfo"></require>
@@ -7,7 +6,7 @@
   <require from="./dealDiscussion/dealDiscussion"></require>
   <require from="./dealMakeAnOffer/dealMakeAnOffer"></require>
   <require from="./dealDescription/dealDescription"></require>
-  <require from="./status-action-bar/status-action-bar"></require>
+  <require from="./deal-swap-status/deal-swap-status"></require>
   <require from="../deals/timeLeft/timeLeft"></require>
 
   <main
@@ -47,47 +46,7 @@
       discussion-id.two-way="discussionId"
       if.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"
     ></deal-clauses>
-    <swap-status deal.bind="deal" if.to-view="deal.primaryDao.tokens && deal.partnerDao">
-      <!-- Show this only when the deal is fully funded but before the swap has been executed -->
-      <status-action-bar
-        if.to-view="deal.isTargetReached && deal.isFunding"
-        content="IMPORTANT: Funding is complete so you must initiate swapping before the funding period expires in XXXX days."
-      >
-        <pbutton type="primary" click.delegate="executeSwap()" disabled.bind="isExecutingSwap">
-          Execute Swap <i class="fas">&#xf021;</i>
-        </pbutton>
-      </status-action-bar>
-      <!-- Show this only when the swap has been executed and the user is either the proposal lead or a representative -->
-      <status-action-bar
-        if.to-view="deal.isClaiming && !deal.isFullyClaimed && deal.isUserRepresentativeOrLead"
-        content="${deal.isRepresentativeUser ? 'IMPORTANT: Go to Claiming to claim vested tokens for your DAO.' : null}"
-      >
-        <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
-          ${deal.isRepresentativeUser ? 'Go to Claiming' : 'Go to Status'}
-          <i class="fas fa-arrow-right"></i>
-        </pbutton>
-      </status-action-bar>
-      <status-action-bar
-        if.to-view="deal.isClaiming && deal.isFullyClaimed && deal.isUserRepresentativeOrLead"
-        content="All the swaps have been completed.  Go To Deal Status to see the final state of the deal."
-        icon-class="check-circle"
-        icon-color="success"
-      >
-        <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
-          Go To Deal Status
-          <i class="fas fa-arrow-right"></i>
-        </pbutton>
-      </status-action-bar>
-      <status-action-bar
-        if.to-view="deal.isFailed && deal.isUserRepresentativeOrLead"
-        content="${deal.isRepresentativeUser ? 'IMPORTANT: You can withdraw your tokens at any time as this deal has failed.  Go To Withdraw to withdraw token deposits.' : null}"
-      >
-        <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
-          ${deal.isRepresentativeUser ? 'Go To Withdraw' : 'Go to Status'}
-          <i class="fas fa-arrow-right"></i>
-        </pbutton>
-      </status-action-bar>
-    </swap-status>
+    <deal-swap-status deal.bind="deal"></deal-swap-status>
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
       authorized.bind="isAllowedToDiscuss"

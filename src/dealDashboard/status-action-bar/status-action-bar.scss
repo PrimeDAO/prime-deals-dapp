@@ -1,5 +1,7 @@
+@import "styles/styles.scss";
+@import "src/resources/elements/primeDesignSystem/styles";
 @import "src/resources/elements/primeDesignSystem/variables";
-
+@import "src/resources/elements/primeDesignSystem/colors";
 status-action-bar {
   margin-top: 40px;
   display: grid;
@@ -7,7 +9,7 @@ status-action-bar {
   div {
     display: grid;
     grid-template-columns: 350px auto;
-    grid-column-gap: 20px;
+    grid-gap: 20px;
     place-items: center;
     pbutton {
       i {
@@ -49,6 +51,16 @@ status-action-bar {
         line-height: 17px;
         font-size: 14px;
       }
+    }
+  }
+  @media screen and (max-width: $MaxContentBodyWidthMobile) {
+    div {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media screen and (max-width: $MaxContentBodyWidth) {
+    div {
+      grid-template-columns: 1fr;
     }
   }
 }
