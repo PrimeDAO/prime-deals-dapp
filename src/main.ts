@@ -77,6 +77,7 @@ export function configure(aurelia: Aurelia): void {
          */
         const firestoreService = aurelia.container.get(FirestoreService);
         (window as any).Cypress.firestoreService = firestoreService;
+        (window as any).Cypress.eventAggregator = aurelia.container.get(EventAggregator);
       }
 
       const ethereumService = aurelia.container.get(EthereumService);

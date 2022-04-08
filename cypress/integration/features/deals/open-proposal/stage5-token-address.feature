@@ -10,7 +10,9 @@ Feature: "Token Details" stage (Stage 5) - Token Address
     And I am presented with the "Please enter a valid IERC20 address" error message for the "Token address" field
     And I go to previous step
     And I use the stepper to go to the "Token Details" step
+    And I try to save the Token Details form
     Then I should not be presented with the Token Details metadata
+    And I am presented with the "Please enter a valid IERC20 address" error message for the "Token address" field
 
   @regression
   Scenario: Token Details - Change Address and navigation

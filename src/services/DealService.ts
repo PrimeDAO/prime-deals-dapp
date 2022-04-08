@@ -10,6 +10,7 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
+import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 
 // interface ITokenSwapCreatedArgs {
@@ -61,6 +62,11 @@ export class DealService {
   }
 
   public initializing = true;
+
+  /**
+   * used to store the subscription to the deals and unsubscribe on account change
+   */
+  private dealsSubscription: Subscription;
 
   @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
@@ -125,15 +131,20 @@ export class DealService {
         this.loadDeals();
       }
     });
-    this.getDeals();
+
+    return this.getDeals().then(() => this.observeDeals() );
   }
 
-  private loadDeals(): Promise<void> {
+  private async loadDeals(): Promise<void> {
     this.eventAggregator.publish("deals.loading", true);
-    return this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+    await this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+    return this.observeDeals();
   }
 
   private async getDeals(force = false): Promise<void> {
+    if (this.dealsSubscription) {
+      this.dealsSubscription.unsubscribe();
+    }
 
     this.initializing = true;
 
@@ -180,6 +191,55 @@ export class DealService {
     // TODO figure out how to gkeep this up-to-date
     this.executedDealIds = dealIds;
     return dealIds;
+  }
+
+  private async observeDeals(): Promise<void> {
+    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress, true);
+
+    if (this.dealsSubscription) {
+      this.dealsSubscription.unsubscribe();
+    }
+
+    this.dealsSubscription = dealsObservable.subscribe(
+      updates => {
+
+        try {
+          if (!updates || !this.deals) {
+            throw new Error("Deals are not accessible");
+          }
+
+          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals);
+
+          for (const dealDoc of updates.removed) {
+            dealsMap.delete(dealDoc.id);
+          }
+
+          for (const dealDoc of updates.modified) {
+            if (dealsMap.has(dealDoc.id)) {
+              /**
+               * note this change will instantly propogate across the app, any dependencies on dealDocument
+               */
+              dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+            } else {
+              /**
+               * this will create new deal entity asynchronously, once created it will be part of this.deals Map
+               */
+              this._createDeal(dealDoc, dealsMap);
+            }
+          }
+
+          /**
+           * now the deletions will propagate
+           */
+          this.deals = dealsMap;
+        }
+        catch (error) {
+          this.deals = new Map();
+          this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
+        }
+
+      },
+    );
   }
 
   private createDealFromDoc(dealDoc: IDealTokenSwapDocument): DealTokenSwap {

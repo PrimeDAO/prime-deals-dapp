@@ -132,7 +132,9 @@ Then("I am presented with the {string} {string} stage", (wizardTitle: keyof type
 When("I fill in the {string} field with an invalid address {string}", (field: string, invalidAddress: string) => {
   withinWizardSection().within(() => {
     cy.get(`[data-test='${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-      cy.get("input, textarea").type(invalidAddress);
+      cy.get("input, textarea")
+        .invoke("val", invalidAddress)
+        .trigger("change", { data: invalidAddress });
     });
   });
 });
@@ -154,7 +156,9 @@ And("I wait until the Token has loaded", () => {
 When("I fill in the {string} field with {string} in the {string} section", (field: string, value: string, section: string) => {
   cy.get(`[data-test='${section.toLowerCase().replaceAll(" ", "-")}']`).within(() => {
     cy.get(`[data-test='${field.toLowerCase().replaceAll(" ", "-")}-field']`).within(() => {
-      cy.get("input, textarea").type(value);
+      cy.get("input, textarea")
+        .invoke("val", value)
+        .trigger("change", { data: value });
     });
   });
 });
