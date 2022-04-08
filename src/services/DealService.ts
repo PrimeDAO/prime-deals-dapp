@@ -99,9 +99,10 @@ export class DealService {
   }
 
   /**
-   * Best to invoke this after a wallet has been connected and before anyone else subscribes to
-   * Network.Changed.Account.  We want to be the first, so others can ideally have up-to-date
-   * deals when they handle a new account.
+   * Best to invoke this after the very first wallet has been connected as the app is loading
+   * and before anyone else subscribes to Network.Changed.Account.
+   * We want to be the first, so others can ideally have up-to-date deals
+   * when they handle a new account.
    */
   public async initialize(): Promise<void> {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
