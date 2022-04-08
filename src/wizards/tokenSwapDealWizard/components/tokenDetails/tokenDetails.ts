@@ -12,10 +12,10 @@ import {
 } from "aurelia-validation";
 import { Validation } from "../../../../services/ValidationService";
 import { Utils } from "../../../../services/utils";
-import { formatEther } from "ethers/lib/utils";
 import { NumberService } from "../../../../services/NumberService";
 import { PrimeRenderer } from "../../../../resources/elements/primeDesignSystem/validation/primeRenderer";
 import { WizardType } from "../../dealWizardTypes";
+import { BigNumber } from "ethers";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
@@ -147,7 +147,7 @@ export class TokenDetails {
 
   private watchTokenProperties() {
     this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransferAmount", newValue => {
-      if (Number(newValue?.toString() ?? 0) === 0) {
+      if (BigNumber.from((newValue || 0).toString()).isZero()) {
         this.token.vestedFor = undefined;
         this.token.cliffOf = undefined;
       }
@@ -208,21 +208,25 @@ export class TokenDetails {
       .satisfiesRule(Validation.imageSize, 5000000)
       .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
       .ensure<string>(data => data.instantTransferAmount)
-      .satisfies((value, data) => data.amount && Number(formatEther(value)) <= Number(formatEther(data.amount)))
+      .satisfies((value, data) => {
+        return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
+      })
       .when(data => Boolean(data.amount))
       .withMessage("Instant transfer amount can't ge bigger than Token Amount")
       .ensure<string>(data => data.vestedTransferAmount)
-      .satisfies((value, data) => data.amount && Number(formatEther(value)) <= Number(formatEther(data.amount)))
+      .satisfies((value, data) => {
+        return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
+      })
       .when(data => Boolean(data.amount))
       .withMessage("Vested transfer amount can't ge bigger than Token Amount")
       .ensure<number>(data => data.vestedFor)
       .required()
-      .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
+      .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
       .withMessage("Please provide a vesting period")
       .min(0)
       .ensure<number>(data => data.cliffOf)
       .required()
-      .when(data => Number(data.vestedTransferAmount?.toString() ?? 0) !== 0)
+      .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
       .withMessage("Please provide a cliff period")
       .satisfies((value: number, data) => value <= data.vestedFor)
       .when(data => data.vestedFor >= 0)

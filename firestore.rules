@@ -23,20 +23,20 @@ service cloud.firestore {
 
     match /deals-token-swap/{deal} {
       allow read: if isPublicDeal() || userIsProposalLead() || userIsRepresentative();
-      allow update: if userIsProposalLead() || (userIsRepresentative() && updateOnlyToDiscussions());
+      allow update: if userIsProposalLead() || (userIsAuthenticated() && updateOnlyToDiscussions());
       allow create, delete: if false;
     }
-    
+
     match /deals-token-swap/{deal}/primary-dao-votes/{representative} {
-    	allow read, create, delete: if false;
-    	allow update: if request.auth.uid == resource.id;
+      allow read, create, delete: if false;
+      allow update: if request.auth.uid == resource.id;
     }
 
     match /deals-token-swap/{deal}/partner-dao-votes/{representative} {
-    	allow read, create, delete: if false;
-    	allow update: if request.auth.uid == resource.id;
+      allow read, create, delete: if false;
+      allow update: if request.auth.uid == resource.id;
     }
-    
+
     match /{document=**} {
       allow read, write: if false;
     }
