@@ -133,6 +133,13 @@ export class E2eDealsApi {
     });
   }
 
+  /**
+   * Either: (via FirestoreService)
+   * 1. Init app bootstrapping and create a Deal
+   * 2. Just create a Deal
+   *
+   * Then set it to E2eDeals (for further testing usage)
+   */
   public static createDeal(
     registrationData: IDealRegistrationTokenSwap,
     options: IDealOptions = defaultDealOptions,
@@ -162,10 +169,10 @@ export class E2eDealsApi {
        * 2. Interact with Firestore
        */
       return cy.then(async () => {
-        const firestoreDealsService = E2eDealsApi.getDealService();
-        await firestoreDealsService.ensureAuthenticationIsSynced();
+        const firestoreService = E2eDealsApi.getDealService();
+        await firestoreService.ensureAuthenticationIsSynced();
 
-        const createdDeal = await firestoreDealsService.createDealTokenSwap(registrationData);
+        const createdDeal = await firestoreService.createDealTokenSwap(registrationData);
 
         E2eDeals.setDeal(createdDeal);
 
