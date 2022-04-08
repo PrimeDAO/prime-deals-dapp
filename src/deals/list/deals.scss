@@ -1,7 +1,9 @@
 @import "styles/styles.scss";
+
 pbutton button.secondary {
   padding: 14px 28px;
 }
+
 .page.deals {
   .section {
     &.loading {
@@ -22,20 +24,24 @@ pbutton button.secondary {
       place-items: center;
       border-top: 1px solid $Secondary02;
       padding-top: 30px;
+
       &.heading02 {
         font-size: 20px;
         color: $Neutral02;
       }
+
       pbutton {
         margin-top: 30px;
       }
     }
+
     &.featured,
     &.deals {
       .loading {
         text-align: center;
         font-size: 32px;
         padding-top: 24px;
+
         i {
           color: $Secondary07;
         }
@@ -49,22 +55,27 @@ pbutton button.secondary {
         margin-bottom: 28px;
       }
     }
+
     &.deals-actions {
-      display: flex;
-      justify-content: right;
+      text-align: right;
       margin-bottom: 28px;
+
       pbutton {
         margin-left: 20px;
       }
+
       pform-input {
-        display: flex;
+        display: inline-flex;
         cursor: pointer;
+
         .formInputLabelTitle {
           text-transform: uppercase;
           color: $Neutral02;
           font-size: 14px;
           font-weight: 700;
+          margin-bottom: 0px;
         }
+
         .inputContainer {
           margin-left: 10px;
         }
@@ -106,6 +117,7 @@ pbutton button.secondary {
               display: flex;
               align-items: center;
             }
+
             /**
              * for when columns get scrunched together
              */
@@ -149,6 +161,7 @@ pbutton button.secondary {
                 }
               }
             }
+
             &.eslink {
               i {
                 cursor: pointer;
@@ -172,21 +185,26 @@ pbutton button.secondary {
               color: $Neutral04;
             }
           }
+
           &.body {
+
             .cell,
             .cell > div.icons > div.dao > div.name {
               font-size: 16px;
               font-weight: 400;
               font-family: Inter;
               color: $Neutral03;
+
               &.title {
                 white-space: normal;
                 padding-right: 35px;
               }
             }
+
             .cell {
               border-bottom: 1px solid $Border01;
             }
+
             &:hover {
               color: inherit;
             }
@@ -479,9 +497,11 @@ pbutton button.secondary {
         .grid {
           font-size: 14px;
         }
+
         .dealGrid {
           display: none;
         }
+
         .dealGridMobile {
           display: grid;
         }
