@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { DealDataBuilder, E2E_ADDRESSES } from "../../fixtures/dealFixtures";
 import { Utils } from "../../../src/services/utils";
 import { E2eNavigation } from "../common/navigate";
@@ -95,6 +95,11 @@ Given("I connect to the wallet with address {string}", (address: string) => {
   E2eNavbar.connectToWallet(address);
 });
 
+Given("I change the address to {string}", (address: string) => {
+  // @ts-ignore - Hack to access firestore inside Cypress
+  Cypress.eventAggregator.publish("Network.Changed.Account", address);
+});
+
 Given("I'm a Connected Public user", () => {
   givenImAConnectedPublicUser();
 });
@@ -137,9 +142,8 @@ Given("I'm a Public viewer", () => {
   E2eNavbar.getUserAddress().should("not.exist");
 });
 
-Given("I'm not connected to a wallet", () => {
-  E2eNavbar.getConnectWalletButton().should("be.visible");
-  E2eNavbar.getUserAddress().should("not.exist");
+Then("I'm connected to my wallet with address {string}", (address: string) => {
+  E2eNavbar.getUserAddress().should("be.visible").contains(address);
 });
 
 function givenImAnAnonymousUser() {
