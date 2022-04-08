@@ -1,3 +1,4 @@
+import { DealService } from "services/DealService";
 import "./styles/styles.scss";
 import "./app.scss";
 
@@ -11,7 +12,6 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { EthereumService } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
-import { FirebaseService } from "./services/FirebaseService";
 import { PLATFORM } from "aurelia-pal";
 import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
 /* eslint-disable linebreak-style */
@@ -29,7 +29,7 @@ export class App {
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
     private storageService: BrowserStorageService,
-    private firebaseService: FirebaseService) { }
+    private dealService: DealService) { }
 
   router: Router;
   onOff = false;
@@ -45,7 +45,7 @@ export class App {
     return false;
   };
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     // so all elements with data-tippy-content will automatically have a tooltip
     tippy("[data-tippy-content]");
 
@@ -120,7 +120,12 @@ export class App {
      */
     document.querySelector("body").classList.remove("loading");
 
-    this.ethereumService.connectToConnectedProvider();
+    await this.ethereumService.connectToConnectedProvider();
+
+    /**
+     * do this after we've gotten an account, if there is one
+     */
+    this.dealService.initialize();
   }
 
   private handleOnOff(onOff: boolean): void {
