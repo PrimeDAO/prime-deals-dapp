@@ -29,13 +29,7 @@
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
-        <div
-          if.bind="!isLoading.discussions && !threadComments.length"
-          data-test="no-comments-text"
-          class="
-            no comment
-          "
-        >
+        <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
           <template if.bind="!hasApiError">
             ${noCommentsText}
           </template>
