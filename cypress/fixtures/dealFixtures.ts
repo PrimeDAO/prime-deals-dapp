@@ -1,6 +1,6 @@
 import { IDealRegistrationTokenSwap, IRepresentative } from "../../src/entities/DealRegistrationTokenSwap";
 
-function getRandomId (){
+export function getRandomId (){
   /**
    * "0.g6ck5nyod4".substring(2, 9)
    * -> g6ck5ny
