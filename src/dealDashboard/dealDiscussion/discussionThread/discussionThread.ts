@@ -89,7 +89,7 @@ export class DiscussionThread {
     return (discussionsIds.indexOf(this.discussionId) + 1).toString() || "-";
   }
 
-  @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments", "apiErrorText")
+  @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments")
   private get noCommentsText(): string {
     if (!this.isLoading.discussions && !this.threadComments?.length) {
       return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
