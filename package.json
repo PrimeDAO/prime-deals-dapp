@@ -27,7 +27,7 @@
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js",
     "firebase": "npm run firebase-functions:build && npm run firebase-emulators:start",
-    "firebase-e2e": "npm run firebase-functions:build && firebase emulators:start --project=default --import=firebase_seed_e2e",
+    "firebase-e2e": "firebase emulators:start --project=default --import=firebase_seed_e2e",
     "firebase:all": "npm run firebase-functions:watch & npm run firebase-emulators:start",
     "firebase-update-seed-data": "firebase emulators:export --force firebase_seed",
     "firebase-update-seed-data:e2e": "firebase emulators:export --project=default --force firebase_seed_e2e",
