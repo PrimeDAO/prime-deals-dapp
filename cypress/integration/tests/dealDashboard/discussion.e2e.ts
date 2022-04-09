@@ -3,6 +3,8 @@ import { E2eDealsApi } from "../../common/deal-api";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
+import { IComment } from "../../../../src/entities/DealDiscussions";
+import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
 
 export const GET_COMMENTS_ALIAS = "getComments";
 
@@ -11,8 +13,21 @@ interface ICommentOptions {
   isAuthor?: boolean;
 }
 
+export class E2eDiscussionsProvider {
+  public static mockThread(comments?: IComment[]) {
+    cy.log("intercept convo");
+    const response = { statusCode: 200, body: comments ?? null };
+    const routeOptions = { method: "GET" };
+
+    cy.intercept("**/comments**", routeOptions, response).as(GET_COMMENTS_ALIAS);
+    cy.intercept("**/getAblyAuth**", routeOptions, response);
+  }
+}
+
 export class E2eDiscussion {
   public static replyToAddress = "";
+
+  public static provider = E2eDiscussionsProvider;
 
   public static getDealClauses() {
     return cy.get("[data-test='deal-clauses']");
@@ -179,6 +194,11 @@ When("I choose a single Topic without replies", () => {
 });
 
 When("I choose a single Topic with replies", () => {
+  const firstComment = CommentBuilder.create().comment;
+  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).comment;
+  const comments = [firstComment, replyToFirstComment];
+  E2eDiscussion.provider.mockThread(comments);
+
   // TODO: We assume a specific comment setup
   //  Can/should this be generalized?
   //  Eg. the first comment in the specific deal (of this test case), has what we need
