@@ -64,8 +64,8 @@
           view-model.ref="amountInput"></pinput-numeric>
       </pform-input>
       <pform-input
-        label="Instant Transfer Set-up"
-        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO’s treasury address, whereas the Vested amount will define the amount of tokens that will be released progressively throughout the total Vesting period defined in the Vesting Set-up below.">
+        label="Instant Transfer Setup"
+        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO's treasury address, whereas the Vested amount will define the amount of tokens that will be released progressively throughout the total Vesting period defined in the Vesting setup below.">
         <prange-slider
           hide-Percentage
           left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
@@ -78,7 +78,7 @@
           right.bind="token.vestedTransferAmount & validate"></prange-slider>
       </pform-input>
 
-      <pform-input label="Vesting Set-up"
+      <pform-input label="Vesting Setup"
         label-description="If you have defined a Vested amount, once the deal is executed on-chain, that amount will start to be released linearly throughout the Vesting period. If you define a Cliff period, tokens will not be claimable before the Cliff period ends. If you don't define a Cliff period, tokens will be progressively available to be claimed on a daily basis after the Vesting period starts.">
         <div class="vesting">
           <div class="vesting-input">
