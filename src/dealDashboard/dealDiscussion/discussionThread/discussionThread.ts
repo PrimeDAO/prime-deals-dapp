@@ -277,6 +277,7 @@ export class DiscussionThread {
 
     this.dealDiscussion.replies = replies;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.deal.addClauseDiscussion(
       this.discussionId,
