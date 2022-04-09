@@ -34,20 +34,23 @@
           data-test="no-comments-text"
           class="
             no comment
-            ${apiErrorText ? 'discussions-loading-error' : ''}
           "
         >
-          <div>
-            <span if.bind="apiErrorText" class="fas fa-exclamation-triangle"></span>
+          <template if.bind="!hasApiError">
             ${noCommentsText}
+          </template>
+          <div else class="discussions-loading-error">
+            <div>
+              <span class="fas fa-exclamation-triangle"></span>
+              A problem occured while loading the discussion
+            </div>
+            <pbutton
+              data-test="reload-discussions"
+              class="reload-discussions"
+              type="primary"
+              click.delegate="initialize()"
+            >Reload Discussion</pbutton>
           </div>
-          <pbutton
-            if.bind="apiErrorText"
-            data-test="reload-discussions"
-            class="reload-discussions"
-            type="primary"
-            click.delegate="initialize()"
-          >Reload Discussion</pbutton>
         </div>
 
         <div

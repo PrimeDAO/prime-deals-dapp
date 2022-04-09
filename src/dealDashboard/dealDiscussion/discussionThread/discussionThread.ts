@@ -53,7 +53,7 @@ export class DiscussionThread {
     downvotes: [""],
     createdOn: "0",
   };
-  private apiErrorText = "";
+  private hasApiError = false;
 
   constructor(
     private router: Router,
@@ -91,10 +91,6 @@ export class DiscussionThread {
 
   @computedFrom("isLoading.discussions", "deal.isUserRepresentativeOrLead", "threadComments", "apiErrorText")
   private get noCommentsText(): string {
-    if (this.apiErrorText) {
-      return this.apiErrorText;
-    }
-
     if (!this.isLoading.discussions && !this.threadComments?.length) {
       return (!this.deal.isUserRepresentativeOrLead && this.deal.isPrivate)
         ? "This discussion is private."
@@ -203,12 +199,12 @@ export class DiscussionThread {
     try {
       this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
 
+      this.hasApiError = false;
+
       // Early return, if there are no comments/discussions.
       if (!this.threadComments) return;
-
-      this.apiErrorText = "";
     } catch (error) {
-      this.apiErrorText = "A problem occured while loading the discussion";
+      this.hasApiError = true;
 
       this.consoleLogService.logMessage(error.message, "error");
     }

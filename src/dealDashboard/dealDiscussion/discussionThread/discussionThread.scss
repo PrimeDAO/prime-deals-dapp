@@ -61,7 +61,7 @@
           margin-right: 4px;
         }
 
-        &.discussions-loading-error {
+        .discussions-loading-error {
           @include subHeading;
           font-size: $font-size4;
 
