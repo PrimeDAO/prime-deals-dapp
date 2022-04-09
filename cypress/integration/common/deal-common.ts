@@ -93,7 +93,7 @@ Given("I create a Private Partnered Deal", () => {
 });
 
 Given("I create an Open Proposal", () => {
-  const deal = DealDataBuilder.create().withProposalLeadData({address: E2eWallet.currentWalletAddress}).deal;
+  const deal = E2eDeals.currentDeal ? E2eDeals.currentDeal : DealDataBuilder.create().withProposalLeadData({address: E2eWallet.currentWalletAddress}).deal;
   E2eDealsApi.createDeal(deal);
 });
 

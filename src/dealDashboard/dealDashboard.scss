@@ -10,6 +10,7 @@
     "top top-extended"
     "description aside"
     "clauses aside"
+    "swapstatus swapstatus"
     "discussion discussion"
     "thread thread";
   gap: 60px 115px;
@@ -27,7 +28,7 @@
     }
 
     time-left {
-      font-family: 'Inter';
+      font-family: "Inter";
       font-style: normal;
       font-weight: 700;
       font-size: 14px;
@@ -44,7 +45,10 @@
   deal-clauses {
     grid-area: clauses;
   }
-
+  deal-swap-status {
+    grid-area: swapstatus;
+    margin-top: 30px;
+  }
   deal-discussion {
     grid-area: discussion;
 
@@ -79,26 +83,39 @@
       "description"
       "clauses"
       "aside"
+      "swapstatus"
       "discussion";
     grid-row-gap: 28px;
     grid-column-gap: 0;
-
-    .top{
+  }
+}
+@media screen and (max-width: $MaxContentBodyWidthMobile) {
+  .page.dealDashboardContainer {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "navbar"
+      "top"
+      "content"
+      "clauses"
+      "aside"
+      "swapstatus"
+      "discussion";
+    .top {
       margin-top: 28px;
       margin-bottom: 0;
-      .title{
+      .title {
         margin-bottom: 0;
       }
     }
 
-    deal-description{
+    deal-description {
       margin-bottom: 28px;
     }
-    deal-clauses{
+    deal-clauses {
       margin-bottom: 28px;
     }
 
-    .aside{
+    .aside {
       margin-bottom: 50px;
     }
   }

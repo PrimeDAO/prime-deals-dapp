@@ -1,37 +1,58 @@
+import { DealTokenSwap, ITokenCalculated } from "entities/DealTokenSwap";
 import "./status-card.scss";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
-import { ITokenFunding } from "entities/TokenFunding";
-import { DealStatus } from "entities/IDealTypes";
-
+import { BigNumber } from "ethers";
 @containerless
 export class StatusCard {
+  @bindable deal: DealTokenSwap;
   @bindable dao: IDAO;
-  @bindable swapCompleted: boolean;
-  @bindable fundingFailed: boolean;
-  private dealStatuses = DealStatus; //have to assign this to a view model field for the HTML to be able to compare enums
+  @bindable tokens: ITokenCalculated[];
 
-  @computedFrom("swapCompleted", "dao")
+  @computedFrom("swapCompleted", "dao", "deal.isFailed")
   get chipColor(): string{
     if (this.swapCompleted){
       return "success";
     }
-    if (this.dao.tokens.every((x: ITokenFunding) => x.required?.lte(0))){
+    if (this.tokens.every((x: ITokenCalculated) => x.required?.lte(0))){
       return "success";
     } else {
-      return this.fundingFailed ? "danger" : "warning";
+      return this.deal.isFailed ? "danger" : "warning";
     }
   }
 
-  @computedFrom("swapCompleted", "dao")
-  get status(): DealStatus | string{
+  @computedFrom("swapCompleted", "dao", "deal.isFailed", "deal.isClaiming")
+  get status(): string{
     if (this.swapCompleted){
-      return "Swap completed"; //TODO why is there no status in DealStatus for "Swap Completed"?
+      return "Swap completed";
+    } else if (this.deal.isClaiming){
+      if (this.isDaoFullyClaimed){
+        return "Claiming Completed";
+      }
+      return "Claiming in progress";
     }
-    if (this.dao.tokens.every((x: ITokenFunding) => x.required?.lte(0))){
-      return "Target reached"; //DealStatus.completed; //TODO why is there no status in DealStatus for "Target Reached"?
+    if (this.isDaoTargetReached){
+      return "Target reached";
     } else {
-      return this.fundingFailed ? "Target not reached" : "Funding in progress"; //DealStatus.funding; //TODO why is there no status in DealStatus for "Funding in progress"?
+      return this.deal.isFailed ? "Target not reached" : "Funding in progress"; //DealStatus.funding; //TODO why is there no status in DealStatus for "Funding in progress"?
     }
+  }
+
+  @computedFrom("deal.isClaiming", "deal.isFullyClaimed")
+  private get swapCompleted() : boolean {
+    return this.deal.isClaiming && this.deal.isFullyClaimed;
+  }
+
+  @computedFrom("tokens")
+  private get isDaoFullyClaimed() : boolean {
+    //return true if all tokens for this dao have been claimed
+    if (!this.deal.isExecuted) return false;
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.claimed));
+  }
+
+  @computedFrom("tokens")
+  private get isDaoTargetReached() : boolean {
+    //return true if all tokens for this dao have reached their funding target
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.deposited));
   }
 }

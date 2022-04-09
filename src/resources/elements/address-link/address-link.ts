@@ -12,6 +12,7 @@ export class AddressLink {
   @bindable linkText: string;
   @bindable textClickable = true;
   @bindable showArrowInsideLink = false;
+  @bindable showTooltip = true;
   constructor(private readonly ethereumService:EthereumService ) {
     // you can inject the element or any DI in the constructor
   }

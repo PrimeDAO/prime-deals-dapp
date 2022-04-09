@@ -1,5 +1,5 @@
 <template>
-  <div class="box-header">
+  <div class="box-header deposit-grid">
     <div class="heading heading3 title gradient">${dao.name} Deposit</div>
     <pchip
       color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
@@ -9,7 +9,7 @@
     </pchip>
     <pchip color="danger" if.to-view="showChip && deal.isFailed">Target not reached</pchip>
   </div>
-  <div class="box-content">
+  <div class="box-content deposit-grid">
     <div class="tokens">
       <pgrid
         id="token-grid"
