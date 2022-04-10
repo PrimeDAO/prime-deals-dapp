@@ -22,7 +22,7 @@
           label="Proposal Title"
           label-info="Give a clear title to your proposal"
           show-counter
-          max-length="50"
+          max-length="60"
           data-test="proposal-title-field">
           <pinput-text value.bind="wizardState.registrationData.proposal.title & validate:form"></pinput-text>
         </pform-input>
@@ -32,7 +32,7 @@
           label="Proposal Summary"
           label-info="Give a brief outline of the Token swap deal"
           show-counter
-          max-length="250"
+          max-length="350"
           data-test="proposal-summary-field">
           <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.summary & validate:form"></ptextarea>
         </pform-input>
@@ -42,7 +42,7 @@
           label="Proposal Description"
           label-info="Describe the details, background and features of your Token Swap proposal. Explain why it's valuable or unique"
           show-counter
-          max-length="1000"
+          max-length="3000"
           data-test="proposal-description-field">
           <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.description & validate:form"></ptextarea>
         </pform-input>
