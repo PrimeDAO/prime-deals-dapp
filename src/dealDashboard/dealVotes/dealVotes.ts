@@ -80,11 +80,11 @@ export class DealVotes {
       return;
     }
 
-    try {
-      await this.deal.createSwap();
+    if (await this.deal.createSwap()) {
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
-    } catch (ex) {
+    }
+    else {
       this.eventAggregator.publish("handleException", new EventConfigException("Sorry, there was a problem starting the funding phase", ex));
     }
   }
