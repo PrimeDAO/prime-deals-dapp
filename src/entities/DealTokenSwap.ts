@@ -516,7 +516,7 @@ export class DealTokenSwap implements IDeal {
     }
   }
 
-  private async hydrateDaoTransactions(): Promise<void> {
+  public async hydrateDaoTransactions(): Promise<void> {
     const daoTokenTransactions = new Map<IDAO, Array<IDaoTransaction>>();
 
     daoTokenTransactions.set(this.primaryDao, await this.getDaoTransactions(this.primaryDao));

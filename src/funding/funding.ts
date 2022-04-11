@@ -84,11 +84,9 @@ export class Funding {
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenCalculated
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
-    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
-
     //get contract token information from the DAO related to the account
     this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
-    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
+    this.setTokenContractData();
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
@@ -149,6 +147,12 @@ export class Funding {
    * @param transaction
    */
   public withdraw = async(transaction: IDaoTransaction): Promise<void> => {
+    //Check if the connected wallet is the same as the deposit to make sure they can initiate the withdraw
+    //the UI already checks this but wanted to validate again to make sure
+    if (this.ethereumService.defaultAccountAddress !== transaction.address){
+      this.eventAggregator.publish("handleException", new EventConfigException("An error has occurred", EventMessageType.Exception));
+      return;
+    }
     const withdrawModal: IAlertModel = {
       header: `You are about to withdraw ${this.withCommas(transaction.amount.toString())} ${transaction.token.symbol} from the deal`,
       message:
@@ -160,9 +164,18 @@ export class Funding {
     // show a modal confirming the user wants to withdraw their funds
     const dialogResult = await this.alertService.showAlert(withdrawModal);
     if (!dialogResult.wasCancelled) {
-      //TODO wire up the withdraw method
-      this.eventAggregator.publish("handleException", new EventConfigException("This method is not implemented", EventMessageType.Exception));
+      //withdraw the tokens
+      const withdrawTransaction = await this.deal.withdrawTokens(transaction.dao, transaction.depositId);
+      if (withdrawTransaction){
+        //tokens were withdrawn successfully
+        this.eventAggregator.publish("handleInfo", new EventConfig("Your deposit has been withdrawn", EventMessageType.Info, "Withdrawn"));
+      } else {
+        //an error occurred while trying to withdraw tokens
+        this.eventAggregator.publish("handleException", new EventConfigException("An error occurred while trying to withdraw. Please try again.", EventMessageType.Exception));
+      }
     }
+    //refresh token contract data for the grid
+    this.setTokenContractData();
   };
 
   /**
@@ -186,32 +199,37 @@ export class Funding {
    * Deposits the tokens from the account to the contract
    */
   private async depositTokens(): Promise<void> {
-    const tokenSymbol = this.firstDaoTokens[this.selectedToken].symbol;
-    //TODO re-check the contract to validate how many tokens are needed for the required deposit amount
-    const recentRequiredTokens = BigNumber.from(10);
-    await this.setAccountBalance(); // get the most up to date account balance to make sure it has enough
-    //rebind token data if it's changed
-    //TODO reset all the data after checking
-    // const token = this.firstDaoTokens[this.selectedToken] as ITokenCalculated;
-    // token.required = recentRequiredTokens;
-    // token.deposited = converter.fromView(120);
-    // token.target = converter.fromView(120);
-    // token.percentCompleted = 12;
-
+    //hydrate the latest contract transaction data
+    await this.deal.hydrateDaoTransactions();
+    //now that the daoTransactions are hydrated, update the tokens with the contract data
+    this.setTokenContractData();
+    //set the token that the user is depositing
+    const depositToken: ITokenCalculated = this.firstDaoTokens[this.selectedToken];
+    // get the most up to date account balance to make sure it has enough
+    await this.setAccountBalance();
+    //validate the deposit amount is not more than the account balance
     if (this.depositAmount.gt(this.accountBalance)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${depositToken.symbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
       this.depositAmount = this.accountBalance;
       return;
     }
-    if (this.depositAmount.gt(recentRequiredTokens)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${tokenSymbol}) exceeds the required funding needed (${BigNumber.from(recentRequiredTokens)} ${tokenSymbol}). Please submit again.`, EventMessageType.Warning));
-      this.depositAmount = recentRequiredTokens;
+    //validate the deposit amount is not more than the required tokens to fund the deal
+    if (this.depositAmount.gt(depositToken.required)) {
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${depositToken.symbol}) exceeds the required funding needed (${BigNumber.from(depositToken.required)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
+      this.depositAmount = depositToken.required;
       return;
     }
-    //TODO implement the deposit of tokens
-    this.eventAggregator.publish("handleInfo", new EventConfig(`Depositing ${BigNumber.from(this.depositAmount)} ${tokenSymbol} on behalf of ${this.firstDao.name}`, EventMessageType.Info, "Deposit Submitted"));
-    //TODO handle account provider transaction rejection
-    //TODO handle the popup notification on the event of the deposit actually being completed
+    //all validation passed so submit the deposit
+    const depositTransaction = await this.deal.depositTokens(this.firstDao, depositToken.address, this.depositAmount);
+    if (depositTransaction){
+      //deposit was successful
+      this.eventAggregator.publish("handleInfo", new EventConfig(`${BigNumber.from(this.depositAmount)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
+    } else {
+      //something happened to make the deposit not happen
+      this.eventAggregator.publish("handleException", new EventConfigException("An error occurred while trying to deposit tokens. Please try again.", EventMessageType.Exception));
+    }
+    //refresh the token contract data
+    this.setTokenContractData();
   }
 
   /**
@@ -328,5 +346,10 @@ export class Funding {
   //moving this getter locally for the proposal lead
   public get secondDao() : IDAO {
     return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
+  }
+
+  private setTokenContractData(){
+    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
+    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
   }
 }
