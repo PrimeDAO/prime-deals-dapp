@@ -145,18 +145,21 @@ export class DiscussionThread {
 
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
     if (commentStreamMessage.name === "commentDelete") {
-      if (this.threadDictionary[newComment._id]) delete this.threadDictionary[newComment._id];
+      if (this.threadDictionary[newComment._id]) {
+        this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+      }
     } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
-      newComment.text = (newComment.metadata.encrypted) ?
-        await this.discussionsService.decryptWithAES(
-          newComment.metadata.encrypted,
-          newComment.metadata.iv,
-          key,
-        ) :
-        newComment.text;
-
+      const decrypted = await this.discussionsService.decryptWithAES(
+        newComment.metadata.encrypted,
+        newComment.metadata.iv,
+        key,
+      );
+      if (newComment.metadata.encrypted) {
+        newComment.text = decrypted;
+      }
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
@@ -337,8 +340,8 @@ export class DiscussionThread {
     const comment = await this.discussionsService.getSingleComment(_id);
     if (!comment._id) {
       this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
-      delete this.threadDictionary[_id];
-      this.threadComments = Object.values(this.threadDictionary);
+      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
       return;
     }
 
@@ -402,8 +405,8 @@ export class DiscussionThread {
 
     const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
-    delete this.threadDictionary[_id];
-    this.threadComments = Object.values(this.threadDictionary);
+    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {
