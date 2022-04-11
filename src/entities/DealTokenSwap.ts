@@ -363,16 +363,27 @@ export class DealTokenSwap implements IDeal {
     return this.allVotes[representativeAddress];
   }
 
+  @computedFrom("allVotes", "ethereumService.defaultAccountAddress")
+  public get userVote(): boolean | null {
+    return this.allVotes[this.ethereumService.defaultAccountAddress];
+  }
+
+  @computedFrom("allVotes")
   public get hasRepresentativeVoted(): boolean {
     return this.representativeVote() !== null;
   }
 
   @computedFrom("isActive", "isCompleted", "fundingPeriodHasExpired", "isCancelled", "isNegotiating", "isFunding", "isClaiming")
   public get status(): DealStatus {
-    if (this.isActive) { return DealStatus.active; }
-    else if (this.fundingPeriodHasExpired) { return DealStatus.failed; }
-    else if (this.isCancelled) { return DealStatus.cancelled; }
-    else if (this.isNegotiating) { return DealStatus.negotiating; }
+    if (this.isActive) {
+      return DealStatus.active;
+    } else if (this.fundingPeriodHasExpired) {
+      return DealStatus.failed;
+    } else if (this.isCancelled) {
+      return DealStatus.cancelled;
+    } else if (this.isNegotiating) {
+      return DealStatus.negotiating;
+    }
     else if (this.isFunding) { return DealStatus.funding; }
     else if (this.isCompleted) { return DealStatus.completed; }
     // else if (this.isClaiming) { return DealStatus.claiming; }
@@ -690,13 +701,17 @@ export class DealTokenSwap implements IDeal {
     }
 
     const daoVotingSummary = this.daoVotingSummary(whichDao);
+    const userAddress = this.ethereumService.defaultAccountAddress;
 
-    if (upDown !== daoVotingSummary.votes[this.ethereumService.defaultAccountAddress]) {
-      return this.dataSourceDeals.updateVote(
-        this.id,
-        this.ethereumService.defaultAccountAddress,
-        whichDao === this.primaryDao ? "PRIMARY_DAO" : "PARTNER_DAO",
-        upDown);
+    if (upDown !== daoVotingSummary.votes[userAddress]) {
+      const daoKey = whichDao.name === this.primaryDao.name ? "PRIMARY_DAO" : "PARTNER_DAO";
+      return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown)
+        .then(() => {
+          daoVotingSummary.votes = {
+            ...daoVotingSummary.votes,
+            [userAddress]: upDown,
+          };
+        });
     }
   }
 
@@ -738,7 +753,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
-    return whichDao === this.primaryDao ?
+    return whichDao.name === this.primaryDao.name ?
       this.dealDocument.votingSummary.primaryDAO :
       this.dealDocument.votingSummary.partnerDAO;
   }
