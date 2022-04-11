@@ -19,12 +19,12 @@ export class DealMenubar {
     this.eventAggregator.publish("handleInfo", "Deal URL copied");
   }
 
-  @computedFrom("deal.status", "deal.isCancelled")
+  @computedFrom("deal.status", "deal.isCancelled", "deal.isUserProposalLead")
   get canEdit() {
     return this.deal.isUserProposalLead && !this.deal.isCancelled && !this.deal.isExecuted;
   }
 
-  @computedFrom("deal.status", "deal.isCancelled")
+  @computedFrom("deal.status", "deal.isCancelled", "deal.isUserProposalLead")
   get canCancel() {
     return this.deal.isUserProposalLead && !this.deal.isCancelled;
   }
