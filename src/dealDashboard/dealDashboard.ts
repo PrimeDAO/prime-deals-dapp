@@ -5,7 +5,6 @@ import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
-import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
 
 @autoinject
@@ -14,14 +13,12 @@ export class DealDashboard {
   private discussionId: string = null;
   private dealId: string;
   private subscriptions = new DisposableCollection();
-  private settingPrivacy = false;
 
   constructor(
     private ethereumService: EthereumService,
     private dealService: DealService,
     private eventAggregator: EventAggregator,
     private router: Router,
-    private aureliaHelperService: AureliaHelperService,
   ) {
   }
 
@@ -43,20 +40,6 @@ export class DealDashboard {
         this.router.navigate("home");
       }
     }));
-
-    this.subscriptions.push(
-      this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", async (value: boolean) => {
-        if (this.settingPrivacy) {
-          return;
-        }
-
-        this.settingPrivacy = true;
-        await this.deal.setPrivacy(value).catch(() => {
-          this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
-        }).finally(() => this.settingPrivacy = false);
-        this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
-      }),
-    );
   }
 
   public detached() {
