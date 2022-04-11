@@ -137,6 +137,11 @@ export class DealTokenSwap implements IDeal {
    */
   public isExecuted = false;
   public executedAt: Date;
+  /**
+   * fundingStartedAt is detected by the presence of an TokenSwapModule.TokenSwapCreated event
+   * for this deal. It is initialized by DealService when this entity is created.
+   */
+  public fundingStartedAt: Date;
 
   public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
   public daoTokenClaims: Map<IDAO, Array<IDaoClaim>>;
@@ -174,6 +179,9 @@ export class DealTokenSwap implements IDeal {
     return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
   }
 
+  /**
+   * An Open Proposal can be withdrawn by the proposal lead
+   */
   @computedFrom("dealDocument.isWithdrawn")
   public get isWithdrawn(): boolean {
     return this.dealDocument.isWithdrawn;
@@ -183,6 +191,10 @@ export class DealTokenSwap implements IDeal {
     this.dealDocument.isWithdrawn = newValue;
   }
 
+  /**
+   * At any time until a partnered deal has been approved,
+   * the proposal lead can deliberately choose to reject a partnered deal
+   */
   @computedFrom("dealDocument.isRejected")
   public get isRejected(): boolean {
     return this.dealDocument.isRejected;
@@ -253,10 +265,10 @@ export class DealTokenSwap implements IDeal {
     return this.registrationData.fundingPeriod;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
+  @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   public get fundingPeriodHasExpired(): boolean {
-    return this.isExecuted ?
-      (this.now.getTime() > (this.executedAt.getTime() + (this.fundingPeriod * 1000))) : false;
+    return this.fundingWasInitiated ?
+      (this.now.getTime() > (this.fundingStartedAt.getTime() + (this.fundingPeriod * 1000))) : false;
   }
 
   @computedFrom("fundingPeriodHasExpired")
@@ -595,7 +607,7 @@ export class DealTokenSwap implements IDeal {
     ];
     const { tokens, pathTo, pathFrom } = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
-    const deadline = this.fundingPeriod;
+    const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
 
     const dealParameters = [
       daoAddresses,
