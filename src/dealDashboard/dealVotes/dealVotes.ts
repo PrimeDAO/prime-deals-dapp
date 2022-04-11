@@ -85,7 +85,7 @@ export class DealVotes {
       this.goToFunding();
     }
     else {
-      this.eventAggregator.publish("handleException", new EventConfigException("Sorry, there was a problem starting the funding phase", ex));
+      this.eventAggregator.publish("handleFailure", "Sorry, there was a problem starting the funding phase");
     }
   }
 
