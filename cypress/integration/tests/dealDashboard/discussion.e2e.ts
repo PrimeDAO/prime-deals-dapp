@@ -7,6 +7,7 @@ import { IComment } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
 
 export const GET_COMMENTS_ALIAS = "getComments";
+export const DELETE_COMMENTS_ALIAS = "deleteComments";
 
 interface ICommentOptions {
   notAuthor?: boolean;
@@ -16,11 +17,26 @@ interface ICommentOptions {
 export class E2eDiscussionsProvider {
   public static mockThread(comments?: IComment[]) {
     cy.log("intercept convo");
+
+    const authRouteOptions = { method: "POST" };
+    const successfulAuth = {
+      message: "[E2e] Auth successfull",
+      success: true,
+    };
+    const authResponse = { statusCode: 200, body: successfulAuth };
+    cy.intercept("**/auth**", authRouteOptions, authResponse);
+
     const response = { statusCode: 200, body: comments ?? null };
     const routeOptions = { method: "GET" };
-
     cy.intercept("**/comments**", routeOptions, response).as(GET_COMMENTS_ALIAS);
     cy.intercept("**/getAblyAuth**", routeOptions, response);
+
+    // Delete
+    const deleteResponseBody = { success: true };
+    const deleteResponse = { statusCode: 500, body: deleteResponseBody };
+    const delteRouteOptions = { method: "DELETE" };
+    cy.intercept("**/comments**", delteRouteOptions, deleteResponse).as(DELETE_COMMENTS_ALIAS);
+    cy.intercept("**/getAblyAuth**", delteRouteOptions, deleteResponse);
   }
 }
 
@@ -134,6 +150,12 @@ export class E2eDiscussion {
       .contains("button", "Cancel");
   }
 
+  public static getDeleteActionButton(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
+      .find("[data-test='single-comment-action']")
+      .contains("button", "Delete");
+  }
+
   public static waitForNoCommentsText() {
     cy.get("[data-test='comments-loading']").should("be.visible");
     cy.get("[data-test='no-comments-text']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
@@ -194,8 +216,8 @@ When("I choose a single Topic without replies", () => {
 });
 
 When("I choose a single Topic with replies", () => {
-  const firstComment = CommentBuilder.create().comment;
-  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).comment;
+  const firstComment = CommentBuilder.create().withText("First comment").comment;
+  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
   const comments = [firstComment, replyToFirstComment];
   E2eDiscussion.provider.mockThread(comments);
 
@@ -219,7 +241,8 @@ When("I view my own Comment", () => {
 When("the 3rd party Discussions service has an error", () => {
   cy.log("intercept convo");
   const errorResponse = { statusCode: 503, body: null };
-  const routeOptions = { method: "GET", times: 1 };
+  const routeOptions = { method: "GET" };
+  // const routeOptions = { method: "GET", times: 1 };
 
   cy.intercept("**/comments**", routeOptions, errorResponse).as(GET_COMMENTS_ALIAS);
   cy.intercept("**/getAblyAuth**", routeOptions, errorResponse);
@@ -227,6 +250,13 @@ When("the 3rd party Discussions service has an error", () => {
 
 When("I reload the discussions", () => {
   cy.get("[data-test='reload-discussions']").click();
+});
+
+When("I delete my Comment, that has a reply", () => {
+  E2eDiscussion.hoverSingleComment({isAuthor: true});
+  E2eDiscussion.getDeleteActionButton({isAuthor: true}).click();
+
+  cy.wait(`@${DELETE_COMMENTS_ALIAS}`);
 });
 
 Then("I should not be able to see Discussions", () => {
@@ -309,6 +339,13 @@ Then("I should be informed about the error", () => {
 
 Then("I should be informed, that the discussion has no comments yet", () => {
   E2eDiscussion.waitForNoCommentsText();
+});
+
+Then("the reply Comment should show, that the original message was deleted", () => {
+  const repliesToCommentDeletedText = "This message has been removed.";
+  E2eDiscussion.getSingleComment()
+    .find("[data-test='replies-to-comment']")
+    .should("have.text", repliesToCommentDeletedText);
 });
 
 And("I cannot reply to a Comment", () => {
