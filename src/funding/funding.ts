@@ -72,6 +72,8 @@ export class Funding {
     this.deal = this.dealService.deals.get(this.dealId);
     //wait until the deal data is there
     await this.deal.ensureInitialized();
+    //make sure the deal has initiated funding. If not, send them back to the deal dashboard
+    if (!this.deal.fundingWasInitiated) this.goToDealPage();
     //Make sure the connected account is part of this deal. Otherwise redirect to home page.
     this.verifySecurity();
     //wait until the dao transactions from the contract are there
