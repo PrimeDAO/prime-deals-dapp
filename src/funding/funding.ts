@@ -4,7 +4,7 @@ import { NumberService } from "./../services/NumberService";
 import { IDaoTransaction, ITokenCalculated } from "./../entities/DealTokenSwap";
 import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
-import { EventConfig, EventConfigException } from "./../services/GeneralEvents";
+import { EventConfig } from "./../services/GeneralEvents";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { BigNumber } from "ethers";
 import "./funding.scss";
