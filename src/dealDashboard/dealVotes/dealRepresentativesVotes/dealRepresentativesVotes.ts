@@ -1,7 +1,8 @@
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
-import { IDAO } from "../../../entities/DealRegistrationTokenSwap";
+import { IDAO, IRepresentative } from "../../../entities/DealRegistrationTokenSwap";
 import "./dealRepresentativesVotes.scss";
 import { DealTokenSwap } from "../../../entities/DealTokenSwap";
+import { IVotesInfo } from "../../../entities/IDealTypes";
 
 @autoinject
 export class DealRepresentativesVotes {
@@ -17,10 +18,10 @@ export class DealRepresentativesVotes {
     return this.showMore ? this.panel.scrollHeight + "px" : "";
   }
 
-  getVoteSlug(representativeAddress: string) {
-    return this.deal.representativeVote(representativeAddress) === true
+  getVoteSlug(allVotes: IVotesInfo, representativeAddress: string) {
+    return allVotes[representativeAddress] === true
       ? "accepted"
-      : this.deal.representativeVote(representativeAddress) === false
+      : allVotes[representativeAddress] === false
         ? "declined"
         : "";
   }
@@ -29,9 +30,9 @@ export class DealRepresentativesVotes {
     return this.dao.representatives.length > 2 && !Math.round(index - count / 2);
   }
 
-  representativesSortedByVotes() {
+  representativesSortedByVotes(representatives: IRepresentative[], allVotes: IVotesInfo) {
     return this.dao.representatives.sort((a, b) => {
-      return this.deal.representativeVote(a.address) > this.deal.representativeVote(b.address) ? -1 : 1;
+      return allVotes[a.address] > allVotes[b.address] ? -1 : 1;
     });
   }
 }
