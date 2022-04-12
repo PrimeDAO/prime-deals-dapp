@@ -21,14 +21,14 @@ export class DealInfo {
     return availableSocialMedias.find(socialMedia => socialMedia.name === socialMediaName);
   }
 
-  async changePrivacy() {
+  async changePrivacy(checked: boolean) {
     if (this.settingPrivacy) {
       return;
     }
 
     this.settingPrivacy = true;
 
-    await this.deal.setPrivacy(this.deal.isPrivate).catch(() => {
+    await this.deal.setPrivacy(checked).catch(() => {
       this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
     }).finally(() => this.settingPrivacy = false);
 

@@ -102,8 +102,8 @@
         <ptoggle
           disabled.bind="!deal.isUserProposalLead"
           ptooltip.bind="deal.isUserProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
-          change.trigger="changePrivacy()"
           value.bind="deal.isPrivate"
+          changed.bind="changePrivacy"
         ></ptoggle>
       </span>
     </div>

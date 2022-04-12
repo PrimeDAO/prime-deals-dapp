@@ -6,7 +6,7 @@
       value.bind="value"
       class="pToggleInput ${ validationState ? 'pInput-' + validationState : '' }"
       disabled.bind="disabled"
-      change.delegate="changed()"
+      change.delegate="changed(value)"
       type="checkbox"
     />
     <span class="pToggleSlider">

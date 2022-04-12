@@ -8,19 +8,12 @@ export class PToggle {
   @bindable validationState?: ValidationState;
   @bindable.booleanAttr disabled = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) value = false;
+  @bindable changed: (checked: boolean) => void;
 
   private element: Element;
 
   constructor(element: Element) {
     this.element = element;
-  }
-
-  changed() {
-    const changeEvent = new CustomEvent("change", {
-      detail: this.value,
-      bubbles: true,
-    });
-    this.element.dispatchEvent(changeEvent);
   }
 
 }
