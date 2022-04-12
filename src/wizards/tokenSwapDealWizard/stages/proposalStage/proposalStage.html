@@ -13,7 +13,7 @@
           You are about to create a <strong>Token Swap Deal</strong>, which allows you to easily define the on-chain conditions of your deal, negotiate and safely exchange tokens with other DAOs.
         </p>
         <p class="sidebarText">
-          This wizard will guide you through the process. You can always come back to edit your input before you <strong>submit</strong> the deal.
+          This wizard will guide you through the process. You can always come back to edit your input before you click the <strong>SUBMIT</strong> button at the end of the wizard.
         </p>
       </div>
       <div class="stageSectionContent">
@@ -22,7 +22,7 @@
           label="Proposal Title"
           label-info="Give a clear title to your proposal"
           show-counter
-          max-length="50"
+          max-length="60"
           data-test="proposal-title-field">
           <pinput-text value.bind="wizardState.registrationData.proposal.title & validate:form"></pinput-text>
         </pform-input>
@@ -30,9 +30,9 @@
         <pform-input
           class="wizardFormInput wizardFormInputNarrow"
           label="Proposal Summary"
-          label-info="Give a brief outline of the Token swap deal"
+          label-info="Give a brief outline of the Token Swap deal"
           show-counter
-          max-length="250"
+          max-length="350"
           data-test="proposal-summary-field">
           <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.summary & validate:form"></ptextarea>
         </pform-input>
@@ -42,7 +42,7 @@
           label="Proposal Description"
           label-info="Describe the details, background and features of your Token Swap proposal. Explain why it's valuable or unique"
           show-counter
-          max-length="1000"
+          max-length="3000"
           data-test="proposal-description-field">
           <ptextarea rows="7" value.bind="wizardState.registrationData.proposal.description & validate:form"></ptextarea>
         </pform-input>

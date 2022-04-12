@@ -56,7 +56,7 @@ export class DealSwapStatus {
         };
         await this.alertService.showAlert(congratulatePopupModel);
       } else {
-        this.eventAggregator.publish("handleError", new EventConfig("There was an error while attempting to execute the token swap. Please try again later", EventMessageType.Info, "Execute Swap Error"));
+        this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to execute the token swap. Please try again later", EventMessageType.Info, "Execute Swap Error"));
       }
       this.isExecutingSwap = false;
     }

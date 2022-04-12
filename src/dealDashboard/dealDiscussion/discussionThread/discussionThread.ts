@@ -291,6 +291,7 @@ export class DiscussionThread {
 
     this.dealDiscussion.replies = replies;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.deal.addClauseDiscussion(
       this.discussionId,
@@ -399,7 +400,7 @@ export class DiscussionThread {
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
-    const swrComment = Utils.cloneDeep(this.threadDictionary[_id]);
+    const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
     delete this.threadDictionary[_id];
     this.threadComments = Object.values(this.threadDictionary);
@@ -407,15 +408,13 @@ export class DiscussionThread {
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {
         /* If deletion did not happened, restore original comments */
-        this.threadDictionary[_id] = swrComment;
-        this.threadComments = Object.values(this.threadDictionary);
+        this.threadComments = swrThreadComments;
       } else {
         this.updateDiscussionListStatus(new Date(), this.threadComments.length);
         this.eventAggregator.publish("handleSuccess", "Comment deleted.");
       }
     }).catch (err => {
-      this.threadDictionary[_id] = swrComment;
-      this.threadComments = Object.values(this.threadDictionary);
+      this.threadComments = swrThreadComments;
       if (err.code === 4001) {
         this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
       } else {

@@ -258,14 +258,14 @@ export class App {
         moduleId: PLATFORM.moduleName("./dealDashboard/dealDashboard"),
         nav: false,
         name: "dealDashboard",
-        route: "/deal/:address",
+        route: "/deal/:id",
         title: "DEAL Dashboard",
       },
       {
         moduleId: PLATFORM.moduleName("./funding/funding"),
         nav: false,
         name: "funding",
-        route: "/funding/:address",
+        route: "/funding/:id",
         title: "Funding",
       },
       {

@@ -66,8 +66,8 @@ export class Funding {
     });
   }
 
-  public async activate(_, __, navigationInstruction): Promise<void> {
-    this.dealId = navigationInstruction.params.address;
+  public async activate(params: { id: string }): Promise<void> {
+    this.dealId = params.id;
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
     //wait until the deal data is there

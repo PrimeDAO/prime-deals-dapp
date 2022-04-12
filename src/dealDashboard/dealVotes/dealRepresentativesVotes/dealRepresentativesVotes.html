@@ -6,10 +6,11 @@
     </div>
 
     <div class="votes-statuses-circles">
-      <template repeat.for="representative of representativesSortedByVotes()">
+      <template repeat.for="representative of representativesSortedByVotes(deal.representatives, deal.allVotes)">
         <div
-          class="vote-status-circle ${getVoteSlug(representative.address) ? 'vote-' + getVoteSlug(representative.address) : ''}"></div>
-        <div class="vote-status-circle-delimiter" if.bind="shouldShowDelimited(dao.representatives.length, $index)"></div>
+          class="vote-status-circle ${getVoteSlug(deal.allVotes, representative.address) ? 'vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"></div>
+        <div class="vote-status-circle-delimiter"
+          if.bind="shouldShowDelimited(dao.representatives.length, $index)"></div>
       </template>
     </div>
     <i class="fas fa-angle-up arrow"></i>
@@ -20,13 +21,13 @@
       <etherscanlink address.bind="representative.address"
                      text="${representative.address | smallHexString}">
       </etherscanlink>
-      ${getVoteSlug(representative.address) || 'hasn’t voted'}
+      ${getVoteSlug(deal.allVotes, representative.address) || 'hasn’t voted'}
       <span class="representative-vote
-            ${getVoteSlug(representative.address) ? 'representative-vote-' + getVoteSlug(representative.address) : ''}
+            ${getVoteSlug(deal.allVotes, representative.address) ? 'representative-vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}
       ">
-        <i class="fas fa-check-circle" if.bind="deal.representativeVote(representative.address) === true"></i>
-        <i class="fas fa-times-circle" if.bind="deal.representativeVote(representative.address) === false"></i>
-        <i class="fas fa-question-circle" if.bind="deal.representativeVote(representative.address) === null"></i>
+        <i class="fas fa-check-circle" if.bind="deal.allVotes[representative.address] === true"></i>
+        <i class="fas fa-times-circle" if.bind="deal.allVotes[representative.address] === false"></i>
+        <i class="fas fa-question-circle" if.bind="deal.allVotes[representative.address] === null"></i>
       </span>
     </p>
 

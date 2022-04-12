@@ -27,27 +27,41 @@ export class DealDashboard {
     return (this.deal.isUserRepresentativeOrLead) || (!this.deal.isPartnered && !!this.ethereumService.defaultAccountAddress);
   }
 
-  public async canActivate(params: { address: string }): Promise<boolean> {
+  public async canActivate(params: { id: string }): Promise<boolean> {
     await this.dealService.ensureInitialized();
-    this.deal = this.dealService.deals.get(params.address);
+    this.deal = this.dealService.deals.get(params.id);
     await this.deal.ensureInitialized();
     return this.userCanAccessDashboard;
   }
 
   public async activate() {
-    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
+
+    // this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
+    //   if (!this.userCanAccessDashboard) {
+    //     this.router.navigate("home");
+    //   }
+    // }));
+
+    this.subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.dealService, "deals", () => {
+      if (!this.userCanAccessDashboard) {
+        this.router.navigate("home");
+      }
+    }));
+
+    this.subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", () => {
       if (!this.userCanAccessDashboard) {
         this.router.navigate("home");
       }
     }));
   }
 
-  public detached() {
+  public deactivate() {
     this.subscriptions.dispose();
   }
 
   public get userCanAccessDashboard(): boolean {
-    return !this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead;
+    // a deal entity going from public to private will disappear from the deals map
+    return this.dealService.deals.has(this.deal.id) && (!this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead);
   }
 
 }
