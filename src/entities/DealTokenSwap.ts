@@ -137,6 +137,11 @@ export class DealTokenSwap implements IDeal {
    */
   public isExecuted = false;
   public executedAt: Date;
+  /**
+   * fundingStartedAt is detected by the presence of an TokenSwapModule.TokenSwapCreated event
+   * for this deal. It is initialized by DealService when this entity is created.
+   */
+  public fundingStartedAt: Date;
 
   public daoTokenTransactions: Map<IDAO, Array<IDaoTransaction>>;
   public daoTokenClaims: Map<IDAO, Array<IDaoClaim>>;
@@ -174,6 +179,9 @@ export class DealTokenSwap implements IDeal {
     return this.isPartnered && !this.fundingWasInitiated && !this.isRejected;
   }
 
+  /**
+   * An Open Proposal can be withdrawn by the proposal lead
+   */
   @computedFrom("dealDocument.isWithdrawn")
   public get isWithdrawn(): boolean {
     return this.dealDocument.isWithdrawn;
@@ -183,6 +191,10 @@ export class DealTokenSwap implements IDeal {
     this.dealDocument.isWithdrawn = newValue;
   }
 
+  /**
+   * At any time until a partnered deal has been approved,
+   * the proposal lead can deliberately choose to reject a partnered deal
+   */
   @computedFrom("dealDocument.isRejected")
   public get isRejected(): boolean {
     return this.dealDocument.isRejected;
@@ -224,11 +236,14 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * returns milliseconds
+   * returns milliseconds in the amount of fundingPeriod not yet used up between
+   * fundingStartedAt and now, bottoming out at 0.
+   * Returns -1 if funding has not been initiated.
    */
-  @computedFrom("isExecuted", "createdAt", "fundingPeriod", "now")
+  @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    return (this.createdAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+    return this.fundingWasInitiated ?
+      Math.min((this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime(), 0) : -1;
   }
 
   /**
@@ -253,15 +268,23 @@ export class DealTokenSwap implements IDeal {
     return this.registrationData.fundingPeriod;
   }
 
-  @computedFrom("isExecuted", "executedAt", "fundingPeriod", "now")
+  /**
+   * returns true if funding was started, execution never happened and
+   * the funding period has passed.
+   *
+   * Can't be expired if funding was not initiated, which means it
+   * can't be expired if cancelled or withdrawn.
+   *
+   * Can't be expired is executed.
+   */
+  @computedFrom("fundingWasInitiated", "isExecuted", "timeLeftToExecute")
   public get fundingPeriodHasExpired(): boolean {
-    return this.isExecuted ?
-      (this.now.getTime() > (this.executedAt.getTime() + (this.fundingPeriod * 1000))) : false;
+    return this.fundingWasInitiated && !this.isExecuted && (this.timeLeftToExecute === 0);
   }
 
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
-    return this.fundingPeriodHasExpired && !this.isExecuted;
+    return this.fundingPeriodHasExpired;
   }
 
   @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
@@ -606,7 +629,7 @@ export class DealTokenSwap implements IDeal {
     ];
     const { tokens, pathTo, pathFrom } = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
-    const deadline = this.fundingPeriod;
+    const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
 
     const dealParameters = [
       daoAddresses,
