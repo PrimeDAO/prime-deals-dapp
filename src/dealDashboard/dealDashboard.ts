@@ -5,7 +5,6 @@ import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
-import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
 
 @autoinject
@@ -20,7 +19,6 @@ export class DealDashboard {
     private dealService: DealService,
     private eventAggregator: EventAggregator,
     private router: Router,
-    private aureliaHelperService: AureliaHelperService,
   ) {
   }
 
@@ -50,21 +48,11 @@ export class DealDashboard {
       }
     }));
 
-    this.subscriptions.push(
-      this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", async (value: boolean) => {
-        await this.deal.setPrivacy(value).catch(() => {
-          this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
-        });
-        this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
-      }),
-    );
-
     this.subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", () => {
       if (!this.userCanAccessDashboard) {
         this.router.navigate("home");
       }
     }));
-
   }
 
   public deactivate() {
