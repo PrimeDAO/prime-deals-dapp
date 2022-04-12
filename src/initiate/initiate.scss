@@ -1,0 +1,19 @@
+@import "resources/elements/primeDesignSystem/variables";
+
+.initiate-deal .selectDealTypePage .dealTypeBoxes .dealTypeBox .fee-info {
+  margin: 56px 0;
+  font-family: Inter;
+
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .description {
+    color: $Neutral02;
+    font-size: 14px;
+    text-align: center;
+  }
+}

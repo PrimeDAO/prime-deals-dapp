@@ -7,6 +7,7 @@ export interface IDealTypeBox {
   slug: string,
   isDisabled: boolean,
   description: string,
+  specialContent?: string,
 }
 
 @autoinject

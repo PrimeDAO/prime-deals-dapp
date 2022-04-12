@@ -16,6 +16,7 @@
           <div class="subtext">
             ${box.description}
           </div>
+          <div if.bind="box.specialContent" innerhtml.to-view="box.specialContent | sanitizeHTML"></div>
           <pbutton
             data-test="button-${box.slug}"
             type="primary"
