@@ -35,9 +35,16 @@ export class DiscussionsList{
     intervals: Array(typeof setInterval),
   };
 
-  @computedFrom("deal.clauseDiscussionsV2")
-  private get discussions() {
-    return new Map(Object.entries(this.deal.clauseDiscussionsV2));
+  @computedFrom("deal.clauseDiscussionsV2", "deal.registrationData.terms.clauses")
+  private get discussions(): Map<string, IDealDiscussion> {
+    const discussionsMap = new Map();
+
+    Object.entries(this.deal.clauseDiscussionsV2).forEach(([id, discussion], index) => {
+      discussion.topic = this.deal.registrationData.terms.clauses[index].text;
+      discussionsMap.set(id, discussion);
+    });
+
+    return discussionsMap;
   }
 
   private findClauseIndex(discussionId: string): string {
