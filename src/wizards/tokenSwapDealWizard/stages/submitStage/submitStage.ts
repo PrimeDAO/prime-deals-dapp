@@ -15,6 +15,7 @@ export class SubmitStage {
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
   private submitData: IDealRegistrationTokenSwap;
   private isOpenProposalLike = false;
+  private isMakeAnOfferWizard = false;
 
   constructor(
     private wizardService: WizardService,
@@ -29,6 +30,7 @@ export class SubmitStage {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
+    this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
     this.submitData = this.wizardState.registrationData;
   }
 
@@ -36,7 +38,7 @@ export class SubmitStage {
     try {
       this.eventAggregator.publish("deal.saving", true);
       try {
-        if (!this.wizardManager.dealId) {
+        if (!this.wizardManager.dealId || this.isMakeAnOfferWizard) {
         // const newDeal = use this for the button link below
           const newDeal = await this.dealService.createDeal(this.submitData);
 
