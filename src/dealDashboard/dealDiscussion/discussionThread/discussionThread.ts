@@ -16,6 +16,7 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { Realtime } from "ably/promises";
 import { Types } from "ably";
+import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DiscussionThread {
@@ -52,11 +53,13 @@ export class DiscussionThread {
     downvotes: [""],
     createdOn: "0",
   };
+  private hasApiError = false;
 
   constructor(
     private router: Router,
     private dateService: DateService,
     private dealService: DealService,
+    private consoleLogService: ConsoleLogService,
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
@@ -193,7 +196,21 @@ export class DiscussionThread {
   }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
-    this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+    try {
+      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+
+      this.hasApiError = false;
+
+      // Early return, if there are no comments/discussions.
+      if (!this.threadComments) return;
+    } catch (error) {
+      this.hasApiError = true;
+
+      this.consoleLogService.logMessage(error.message, "error");
+    }
+
+    if (!this.dealDiscussion) return;
+
     this.updateDiscussionListStatus(new Date(), this.threadComments.length);
     this.isLoading.discussions = false;
 
@@ -205,40 +222,38 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    if (this.threadComments && this.dealDiscussion) {
-      this.subscribeToDiscussion(discussionId);
+    this.subscribeToDiscussion(discussionId);
 
-      if (!this.threadComments || !Object.keys(this.threadComments).length) return;
+    if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
-      // Dictionary is used for replies, to easily find the comment by its id
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    // Dictionary is used for replies, to easily find the comment by its id
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
-      /* Comments author profiles */
-      this.threadComments.forEach((comment: IComment) => {
-        if (!this.threadProfiles[comment.author]) {
-          this.isLoading[comment.author] = true;
-          if (comment.authorENS /* author has ENS name */) {
-            this.threadProfiles[comment.author] = {
-              name: comment.authorENS,
-              address: comment.author,
-              image: "",
-            };
-          } else {
-            /* required for replies */
-            this.discussionsService.loadProfile(comment.author).then(profile => {
-              this.threadProfiles[comment.author] = profile;
-              this.isLoading[comment.author] = false;
-            });
-          }
+    /* Comments author profiles */
+    this.threadComments.forEach((comment: IComment) => {
+      if (!this.threadProfiles[comment.author]) {
+        this.isLoading[comment.author] = true;
+        if (comment.authorENS /* author has ENS name */) {
+          this.threadProfiles[comment.author] = {
+            name: comment.authorENS,
+            address: comment.author,
+            image: "",
+          };
+        } else {
+          /* required for replies */
+          this.discussionsService.loadProfile(comment.author).then(profile => {
+            this.threadProfiles[comment.author] = profile;
+            this.isLoading[comment.author] = false;
+          });
         }
-      });
+      }
+    });
 
-      // Update the discussion status
-      this.updateDiscussionListStatus(
-        new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
-        this.threadComments.length,
-      );
-    }
+    // Update the discussion status
+    this.updateDiscussionListStatus(
+      new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
+      this.threadComments.length,
+    );
   }
 
   private isInView(element: HTMLElement): boolean {
@@ -248,8 +263,7 @@ export class DiscussionThread {
     const efp = (x, y) => document.elementFromPoint(x, y);
 
     if (rect.height < 0 || rect.bottom < 0 ||
-        rect.left > vWidth || rect.top > vHeight)
-      return false;
+        rect.left > vWidth || rect.top > vHeight) return false;
 
     return (
       this.refThread.contains(efp(rect.left, rect.top)) ||
@@ -277,6 +291,7 @@ export class DiscussionThread {
 
     this.dealDiscussion.replies = replies;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.deal.addClauseDiscussion(
       this.discussionId,
@@ -385,7 +400,7 @@ export class DiscussionThread {
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
-    const swrComment = Utils.cloneDeep(this.threadDictionary[_id]);
+    const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
     delete this.threadDictionary[_id];
     this.threadComments = Object.values(this.threadDictionary);
@@ -393,15 +408,13 @@ export class DiscussionThread {
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {
         /* If deletion did not happened, restore original comments */
-        this.threadDictionary[_id] = swrComment;
-        this.threadComments = Object.values(this.threadDictionary);
+        this.threadComments = swrThreadComments;
       } else {
         this.updateDiscussionListStatus(new Date(), this.threadComments.length);
         this.eventAggregator.publish("handleSuccess", "Comment deleted.");
       }
     }).catch (err => {
-      this.threadDictionary[_id] = swrComment;
-      this.threadComments = Object.values(this.threadDictionary);
+      this.threadComments = swrThreadComments;
       if (err.code === 4001) {
         this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
       } else {

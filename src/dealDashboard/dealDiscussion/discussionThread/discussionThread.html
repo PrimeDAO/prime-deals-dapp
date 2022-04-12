@@ -30,7 +30,21 @@
           Loading comments...
         </div>
         <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
-          ${noCommentsText}
+          <template if.bind="!hasApiError">
+            ${noCommentsText}
+          </template>
+          <div else class="discussions-loading-error">
+            <div>
+              <span class="fas fa-exclamation-triangle"></span>
+              A problem occured while loading the discussion
+            </div>
+            <pbutton
+              data-test="reload-discussions"
+              class="reload-discussions"
+              type="primary"
+              click.delegate="initialize()"
+            >Reload Discussion</pbutton>
+          </div>
         </div>
 
         <div

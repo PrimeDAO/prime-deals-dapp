@@ -297,7 +297,8 @@ export class DiscussionsService {
 
       return [...await commentsThread];
     } catch (error) {
-      this.consoleLogService.logMessage("loadDiscussionComments: " + error.message);
+      this.consoleLogService.logMessage("loadDiscussionComments: " + error.message, "error");
+      throw error;
     }
   }
 

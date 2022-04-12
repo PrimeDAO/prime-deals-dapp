@@ -1,9 +1,9 @@
-import {autoinject} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {bindable} from "aurelia-typed-observable-plugin";
-import {Address} from "services/EthereumService";
-import { IDeal } from "entities/IDealTypes";
+import { autoinject } from "aurelia-framework";
+import { Router } from "aurelia-router";
+import { bindable } from "aurelia-typed-observable-plugin";
+import { Address } from "services/EthereumService";
 import "./dealSummary.scss";
+import { DealTokenSwap } from "../../entities/DealTokenSwap";
 
 /**
  * Is used as the <deal-summary /> component in the deals page
@@ -13,7 +13,7 @@ import "./dealSummary.scss";
 export class DealSummary {
 
   @bindable public address: Address;
-  @bindable public deal: IDeal;
+  @bindable public deal: DealTokenSwap;
   @bindable public logo: string;
   @bindable public name: string;
   public loading = true;
@@ -32,6 +32,14 @@ export class DealSummary {
    */
   public navigate(): void {
     this.router.navigate("deal/" + this.deal.id);
+  }
+
+  get dealSummary() {
+    let visibleSummary = this.deal.registrationData.proposal.summary.substring(0, 160);
+    if (visibleSummary.length < this.deal.registrationData.proposal.summary.length) {
+      visibleSummary += "...";
+    }
+    return visibleSummary;
   }
 
 }

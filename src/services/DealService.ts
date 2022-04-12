@@ -12,27 +12,29 @@ import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
 import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
+import { parseBytes32String } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 
-// interface ITokenSwapCreatedArgs {
-//   module: Address,
-//   dealId: number;
-//   // the participating DAOs
-//   daos: Array<Address>;
-//   // the tokens involved in the swap
-//   tokens: Array<Address>;
-//   // the token flow from the DAOs to the module
-//   pathFrom: Array<Array<BigNumber>>;
-//   // the token flow from the module to the DAO
-//   pathTo: Array<Array<BigNumber>>;
-//   // unix timestamp of the deadline
-//   deadline: BigNumber; // trying to get them to switch to uint type
-//   // unix timestamp of the execution
-//   // executionDate: BigNumber; // trying to get them to switch to uint type
-//   // hash of the deal information.
-//   metadata: string;
-//   // status of the deal
-//   status: number; // 3 ("DONE") means the deal has been executed
-// }
+interface ITokenSwapCreatedArgs {
+  module: Address,
+  dealId: number;
+  // the participating DAOs
+  daos: Array<Address>;
+  // the tokens involved in the swap
+  tokens: Array<Address>;
+  // the token flow from the DAOs to the module
+  pathFrom: Array<Array<BigNumber>>;
+  // the token flow from the module to the DAO
+  pathTo: Array<Array<BigNumber>>;
+  // unix timestamp of the deadline
+  deadline: BigNumber; // trying to get them to switch to uint type
+  // unix timestamp of the execution
+  // executionDate: BigNumber; // trying to get them to switch to uint type
+  // hash of the deal information.
+  metadata: string;
+  // status of the deal
+  status: number; // 3 ("DONE") means the deal has been executed
+}
 
 interface ITokenSwapExecutedArgs {
   module: Address,
@@ -41,6 +43,10 @@ interface ITokenSwapExecutedArgs {
 
 interface IExecutedDeal {
   executedAt: Date;
+}
+
+interface IFundedDeal {
+  fundedAt: Date;
 }
 
 export let StartingBlockNumber: number;
@@ -53,6 +59,7 @@ export class DealService {
    */
   public deals: Map<IDealIdType, DealTokenSwap> = new Map<IDealIdType, DealTokenSwap>();
   private executedDealIds: Map<string, IExecutedDeal>;
+  private fundedDealIds: Map<string, IFundedDeal>;
 
   @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
@@ -149,20 +156,22 @@ export class DealService {
     this.initializing = true;
 
     return this.getDealInfo().then(() => {
-      return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
-        if (force || !this.deals?.size) {
-          if (!dealDocs) {
-            throw new Error("Deals are not accessible");
-          }
-          const dealsMap = new Map<Address, DealTokenSwap>();
+      return this.getDealFundedInfo().then(() => {
+        return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
+          if (force || !this.deals?.size) {
+            if (!dealDocs) {
+              throw new Error("Deals are not accessible");
+            }
+            const dealsMap = new Map<Address, DealTokenSwap>();
 
-          // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
+            // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
 
-          for (const dealDoc of dealDocs) {
-            this._createDeal(dealDoc, dealsMap);
+            for (const dealDoc of dealDocs) {
+              this._createDeal(dealDoc, dealsMap);
+            }
+            this.deals = dealsMap;
           }
-          this.deals = dealsMap;
-        }
+        });
       });
     })
       .catch((error) => {
@@ -183,13 +192,34 @@ export class DealService {
       .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
         for (const event of events) {
           const params = event.args;
+          // hack until the event has it
           const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
+          //const dealId = parseBytes32String(params.metadata);
           dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
         }
       });
 
     // TODO figure out how to gkeep this up-to-date
     this.executedDealIds = dealIds;
+    return dealIds;
+  }
+
+  private async getDealFundedInfo(): Promise<Map<string, IFundedDeal>> {
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapCreated();
+    const dealIds = new Map<string, IFundedDeal>();
+
+    await moduleContract.queryFilter(filter, StartingBlockNumber)
+      .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          const dealId = parseBytes32String(params.metadata);
+          dealIds.set(dealId, { fundedAt: new Date((await event.getBlock()).timestamp * 1000) });
+        }
+      });
+
+    // TODO figure out how to gkeep this up-to-date
+    this.fundedDealIds = dealIds;
     return dealIds;
   }
 
@@ -249,6 +279,11 @@ export class DealService {
     if (executedDeal) { // should only happen for test data
       deal.isExecuted = true;
       deal.executedAt = executedDeal.executedAt;
+    }
+
+    const fundedDeal = this.fundedDealIds.get(dealDoc.id);
+    if (fundedDeal) { // should only happen for test data
+      deal.fundingStartedAt = fundedDeal.fundedAt;
     }
 
     return deal.create(dealDoc);

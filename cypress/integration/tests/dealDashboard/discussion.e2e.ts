@@ -4,6 +4,8 @@ import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
 
+export const GET_COMMENTS_ALIAS = "getComments";
+
 interface ICommentOptions {
   notAuthor?: boolean;
   isAuthor?: boolean;
@@ -17,7 +19,7 @@ export class E2eDiscussion {
   }
 
   public static getAddOrReadButton() {
-    return cy.get("[data-test='add-or-read-button']");
+    return cy.get("[data-test='add-or-read-button']", {timeout: PAGE_LOADING_TIMEOUT});
   }
 
   public static getDiscussionsList() {
@@ -194,6 +196,19 @@ When("I view my own Comment", () => {
   E2eDiscussion.hoverSingleComment({isAuthor: true});
 });
 
+When("the 3rd party Discussions service has an error", () => {
+  cy.log("intercept convo");
+  const errorResponse = { statusCode: 503, body: null };
+  const routeOptions = { method: "GET", times: 1 };
+
+  cy.intercept("**/comments**", routeOptions, errorResponse).as(GET_COMMENTS_ALIAS);
+  cy.intercept("**/getAblyAuth**", routeOptions, errorResponse);
+});
+
+When("I reload the discussions", () => {
+  cy.get("[data-test='reload-discussions']").click();
+});
+
 Then("I should not be able to see Discussions", () => {
   E2eDiscussion.getDealClauses().should("not.exist");
 });
@@ -268,11 +283,15 @@ Then("I am presented with the latest comment", () => {
   E2eDiscussion.getSingleComment().should("have.value");
 });
 
+Then("I should be informed about the error", () => {
+  cy.get("[data-test='reload-discussions']").should("be.visible");
+});
+
+Then("I should be informed, that the discussion has no comments yet", () => {
+  E2eDiscussion.waitForNoCommentsText();
+});
+
 And("I cannot reply to a Comment", () => {
 
   cy.log("todo");
-});
-
-Then("I'm informed about, that the discussion has no comments yet", () => {
-  E2eDiscussion.waitForNoCommentsText();
 });
