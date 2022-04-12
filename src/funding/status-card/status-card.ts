@@ -34,7 +34,7 @@ export class StatusCard {
     if (this.isDaoTargetReached){
       return "Target reached";
     } else {
-      return this.deal.isFailed ? "Target not reached" : "Funding in progress"; //DealStatus.funding; //TODO why is there no status in DealStatus for "Funding in progress"?
+      return this.deal.isFailed ? "Target not reached" : "Funding in progress";
     }
   }
 

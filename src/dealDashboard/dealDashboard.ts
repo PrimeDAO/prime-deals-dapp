@@ -4,6 +4,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
 import { Router } from "aurelia-router";
+import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
