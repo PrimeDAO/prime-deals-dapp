@@ -1,4 +1,6 @@
 <template>
+ <require from='../../../resources/value-converters/dateDiff'></require>
+
   <div class="header">
     <h1 class="subtitle heading heading1 gradient" id="discussionsSection">
       Discuss
@@ -52,7 +54,7 @@
             </p>
           </div>
           <div data-test="number-of-replies" class="td h-centered v-centered">${discussion.replies || 0}</div>
-          <div class="td h-centered v-centered">${discussion.lastModified}</div>
+          <div class="td h-centered v-centered">${discussion.modifiedAt | dateDiff}</div>
         </div>
       </div>
     </div>
