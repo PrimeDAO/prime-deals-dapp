@@ -236,11 +236,14 @@ export class DealTokenSwap implements IDeal {
   }
 
   /**
-   * returns milliseconds
+   * returns milliseconds in the amount of fundingPeriod not yet used up between
+   * fundingStartedAt and now, bottoming out at 0.
+   * Returns -1 if funding has not been initiated.
    */
-  @computedFrom("isExecuted", "createdAt", "fundingPeriod", "now")
+  @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    return (this.createdAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+    return this.fundingWasInitiated ?
+      Math.min((this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime(), 0) : -1;
   }
 
   /**
@@ -265,15 +268,23 @@ export class DealTokenSwap implements IDeal {
     return this.registrationData.fundingPeriod;
   }
 
-  @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
+  /**
+   * returns true if funding was started, execution never happened and
+   * the funding period has passed.
+   *
+   * Can't be expired if funding was not initiated, which means it
+   * can't be expired if cancelled or withdrawn.
+   *
+   * Can't be expired is executed.
+   */
+  @computedFrom("fundingWasInitiated", "isExecuted", "timeLeftToExecute")
   public get fundingPeriodHasExpired(): boolean {
-    return this.fundingWasInitiated ?
-      (this.now.getTime() > (this.fundingStartedAt.getTime() + (this.fundingPeriod * 1000))) : false;
+    return this.fundingWasInitiated && !this.isExecuted && (this.timeLeftToExecute === 0);
   }
 
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
-    return this.fundingPeriodHasExpired && !this.isExecuted;
+    return this.fundingPeriodHasExpired;
   }
 
   @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
