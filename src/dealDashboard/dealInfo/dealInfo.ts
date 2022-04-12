@@ -4,7 +4,6 @@ import { availableSocialMedias } from "wizards/tokenSwapDealWizard/dealWizardTyp
 import "./dealInfo.scss";
 import { DisposableCollection } from "../../services/DisposableCollection";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { AureliaHelperService } from "../../services/AureliaHelperService";
 
 @autoinject
 export class DealInfo {
@@ -15,7 +14,6 @@ export class DealInfo {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private aureliaHelperService: AureliaHelperService,
   ) {
   }
 
@@ -23,22 +21,18 @@ export class DealInfo {
     return availableSocialMedias.find(socialMedia => socialMedia.name === socialMediaName);
   }
 
-  public async attached() {
-    this.subscriptions.push(
-      this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", async (value: boolean) => {
-        if (this.settingPrivacy) {
-          return;
-        }
+  async changePrivacy() {
+    if (this.settingPrivacy) {
+      return;
+    }
 
-        this.settingPrivacy = true;
+    this.settingPrivacy = true;
 
-        await this.deal.setPrivacy(value).catch(() => {
-          this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
-        }).finally(() => this.settingPrivacy = false);
+    await this.deal.setPrivacy(this.deal.isPrivate).catch(() => {
+      this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
+    }).finally(() => this.settingPrivacy = false);
 
-        this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
-      }),
-    );
+    this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
   }
 
   public detached() {
