@@ -5,6 +5,7 @@ import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
+import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
 
 @autoinject
@@ -19,6 +20,7 @@ export class DealDashboard {
     private dealService: DealService,
     private eventAggregator: EventAggregator,
     private router: Router,
+    private aureliaHelperService: AureliaHelperService,
   ) {
   }
 
