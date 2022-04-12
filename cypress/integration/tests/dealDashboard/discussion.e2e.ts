@@ -5,6 +5,7 @@ import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
 import { IComment } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
+import { getRandomId } from "../../../fixtures/dealFixtures";
 
 export const GET_COMMENTS_ALIAS = "getComments";
 export const DELETE_COMMENTS_ALIAS = "deleteComments";
@@ -14,10 +15,42 @@ interface ICommentOptions {
   isAuthor?: boolean;
 }
 
-export class E2eDiscussionsProvider {
-  public static mockThread(comments?: IComment[]) {
-    cy.log("intercept convo");
+interface ICommentMetaData {
+  isPrivate: string; // "false";
+  allowedMembers: string; // "[\"0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498\"]";
+  encrypted: string; // "";
+  iv: string; // "";
+}
 
+interface IDiscussionsResponse {
+  _id: string; // <unique-id-of-comment>
+  createdOn: string; // <timestamp>,
+  author: string; // <same-as-signerAddress>,
+  text: string; // <same-as-comment>,
+  url: string; // <same-as-url>,
+  tid: string; // <same-as-threadId>,
+  metaData: Record<string, unknown>;
+  upvotes: Array<string>;
+  downvotes: Array<string>;
+  replyTo: string;
+}
+
+interface ICreateRequest {
+  token: string; // "[E2e] Auth successfull";
+  signerAddress: string; // "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
+  comment: string; // "This comment is encrypted";
+  threadId: string; // "e2e:4";
+  url: string; // "https://deals.prime.xyz";
+  metadata: ICommentMetaData;
+  replyTo: string; // "";
+}
+
+interface IGetRequest {
+  _id: string;
+}
+
+export class E2eDiscussionsProvider {
+  static mockAuth() {
     const authRouteOptions = { method: "POST" };
     const successfulAuth = {
       message: "[E2e] Auth successfull",
@@ -26,14 +59,83 @@ export class E2eDiscussionsProvider {
     const authResponse = { statusCode: 200, body: successfulAuth };
     cy.intercept("**/auth**", authRouteOptions, authResponse);
 
+    cy.intercept("**/validateAuth**", authRouteOptions, authResponse);
+  }
+
+  public static mockGetThread(comments?: IComment[]) {
     const response = { statusCode: 200, body: comments ?? null };
     const routeOptions = { method: "GET" };
-    cy.intercept("**/comments**", routeOptions, response).as(GET_COMMENTS_ALIAS);
+    cy.intercept("**/comments?threadId**", routeOptions, response).as(GET_COMMENTS_ALIAS);
     cy.intercept("**/getAblyAuth**", routeOptions, response);
+  }
 
-    // Delete
+  public static mockGetComment() {
+    const getRouteOptions = { method: "GET" };
+    cy.intercept("**/comment?commentId**", getRouteOptions, (req) => {
+      const reqBody = req.body as IGetRequest;
+
+      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 56 ~ E2eDiscussionsProvider ~ cy.intercept ~ req", req);
+      const response: IDiscussionsResponse = {
+        _id: getRandomId(),
+        createdOn: Date.now().toString(),
+        author: reqBody._id,
+        text: "How to change this",
+        url: undefined,
+        tid: undefined,
+        metaData: {},
+        upvotes: [],
+        downvotes: [],
+        replyTo: undefined,
+      };
+      req.reply(response);
+    }); //.as(GET_COMMENTS_ALIAS);
+
+    const getResponseBody = { success: true };
+    const getResponse = { statusCode: 200, body: getResponseBody };
+    cy.intercept("**/getAblyAuth**", getRouteOptions, getResponse);
+  }
+
+  public static mockCreateComment() {
+    cy.intercept("OPTIONS", "**/comments**");
+
+    // const createRouteOptions = { method: "POST", statusCode: 600 };
+    const createRouteOptions = { method: "POST" };
+    cy.intercept("**/comments**", createRouteOptions, (req) => {
+      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 104 ~ E2eDiscussionsProvider ~ cy.intercept ~ req", req);
+      try {
+        let reqBody = req.body;
+        if (typeof req.body === "string") {
+          reqBody = JSON.parse(req.body) as ICreateRequest;
+        }
+        /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 102 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
+
+        const response: IDiscussionsResponse = {
+          _id: getRandomId(),
+          createdOn: Date.now().toString(),
+          author: reqBody.signerAddress,
+          text: "How to change this",
+          url: reqBody.url,
+          tid: reqBody.threadId,
+          metaData: {},
+          upvotes: [],
+          downvotes: [],
+          replyTo: reqBody.replyTo,
+        };
+        /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 117 ~ E2eDiscussionsProvider ~ cy.intercept ~ response", response);
+        req.reply(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }); //.as(CREATE_COMMENTS_ALIAS);
+
+    const createResponseBody = { success: true };
+    const createResponse = { statusCode: 200, body: createResponseBody };
+    cy.intercept("**/getAblyAuth**", createRouteOptions, createResponse);
+  }
+
+  public static mockDeleteComment() {
     const deleteResponseBody = { success: true };
-    const deleteResponse = { statusCode: 500, body: deleteResponseBody };
+    const deleteResponse = { statusCode: 200, body: deleteResponseBody };
     const delteRouteOptions = { method: "DELETE" };
     cy.intercept("**/comments**", delteRouteOptions, deleteResponse).as(DELETE_COMMENTS_ALIAS);
     cy.intercept("**/getAblyAuth**", delteRouteOptions, deleteResponse);
@@ -80,6 +182,11 @@ export class E2eDiscussion {
     });
 
     return this;
+  }
+
+  public static getSingleComments() {
+    E2eDiscussion.waitForCommentsLoaded();
+    return cy.get("[data-test='single-comment']");
   }
 
   public static getSingleComment(commentOptions?: ICommentOptions) {
@@ -176,6 +283,21 @@ export class E2eDiscussion {
   }
 }
 
+Given("I mock the Discussions Provider", () => {
+  cy.log("intercept convo");
+  E2eDiscussionsProvider.mockAuth();
+
+  const firstComment = CommentBuilder.create().withText("e2e First comment").comment;
+  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
+  const comments = [firstComment, replyToFirstComment];
+  E2eDiscussionsProvider.mockGetThread(comments);
+
+  E2eDiscussionsProvider.mockGetComment();
+  E2eDiscussionsProvider.mockCreateComment();
+  E2eDiscussionsProvider.mockDeleteComment();
+
+});
+
 Given("the Open Proposal has Discussions", () => {
   E2eDealsApi.getOpenProposals({isLead: E2eWallet.isLead}).then(deals => {
     const dealWithDiscussions = deals.find(deal => Object.keys(deal.clauseDiscussions ?? {}).length > 0);
@@ -216,11 +338,6 @@ When("I choose a single Topic without replies", () => {
 });
 
 When("I choose a single Topic with replies", () => {
-  const firstComment = CommentBuilder.create().withText("First comment").comment;
-  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
-  const comments = [firstComment, replyToFirstComment];
-  E2eDiscussion.provider.mockThread(comments);
-
   // TODO: We assume a specific comment setup
   //  Can/should this be generalized?
   //  Eg. the first comment in the specific deal (of this test case), has what we need
@@ -239,17 +356,18 @@ When("I view my own Comment", () => {
 });
 
 When("the 3rd party Discussions service has an error", () => {
-  cy.log("intercept convo");
-  const errorResponse = { statusCode: 503, body: null };
-  const routeOptions = { method: "GET" };
-  // const routeOptions = { method: "GET", times: 1 };
-
-  cy.intercept("**/comments**", routeOptions, errorResponse).as(GET_COMMENTS_ALIAS);
-  cy.intercept("**/getAblyAuth**", routeOptions, errorResponse);
+  E2eDiscussionsProvider.mockGetThread();
 });
 
 When("I reload the discussions", () => {
   cy.get("[data-test='reload-discussions']").click();
+});
+
+When("I delete my Comment", () => {
+  E2eDiscussion.hoverSingleComment({isAuthor: true});
+  E2eDiscussion.getDeleteActionButton({isAuthor: true}).click();
+
+  cy.wait(`@${DELETE_COMMENTS_ALIAS}`);
 });
 
 When("I delete my Comment, that has a reply", () => {
@@ -257,6 +375,15 @@ When("I delete my Comment, that has a reply", () => {
   E2eDiscussion.getDeleteActionButton({isAuthor: true}).click();
 
   cy.wait(`@${DELETE_COMMENTS_ALIAS}`);
+});
+
+When("I add a new Comment", () => {
+  const comment = "e2e comment";
+  E2eDiscussion.getCommentInputSection().find("textarea")
+    .invoke("val", comment)
+    .trigger("change", { data: comment });
+
+  // E2eDiscussion.getCommentInputButton().click();
 });
 
 Then("I should not be able to see Discussions", () => {
@@ -346,6 +473,10 @@ Then("the reply Comment should show, that the original message was deleted", () 
   E2eDiscussion.getSingleComment()
     .find("[data-test='replies-to-comment']")
     .should("have.text", repliesToCommentDeletedText);
+});
+
+Then("{int} comment(s) should be in the Thread", (numberOfComments: number) => {
+  E2eDiscussion.getSingleComments().should("have.length", numberOfComments);
 });
 
 And("I cannot reply to a Comment", () => {
