@@ -1,5 +1,5 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject, bindingMode } from "aurelia-framework";
+import { autoinject, bindingMode, computedFrom } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -34,6 +34,11 @@ export class DiscussionsList{
   private times: any = {
     intervals: Array(typeof setInterval),
   };
+
+  @computedFrom("deal.clauseDiscussionsV2")
+  private get discussions() {
+    return new Map(Object.entries(this.deal.clauseDiscussionsV2));
+  }
 
   private findClauseIndex(discussionId: string): string {
     const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);

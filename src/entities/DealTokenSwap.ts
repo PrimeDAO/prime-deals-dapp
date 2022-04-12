@@ -420,6 +420,11 @@ export class DealTokenSwap implements IDeal {
    */
   public clauseDiscussions: Map<string, IDealDiscussion>;
 
+  @computedFrom("dealDocument.clauseDiscussions")
+  public get clauseDiscussionsV2(): IDealTokenSwapDocument["clauseDiscussions"] {
+    return (this.dealDocument.clauseDiscussions);
+  }
+
   @computedFrom("registrationData.partnerDAO")
   public get isOpenProposal(): boolean {
     return !this.registrationData.partnerDAO;

@@ -34,10 +34,10 @@
       <div class="tbody">
         <div class="tr"
           data-test="single-topic"
-          id="${discussion.id}"
-          click.delegate="navigateTo(`${discussion.id}`)"
-          repeat.for="discussion of discussionsArray">
-          <div class="td">${findClauseIndex(discussion.id) }</div>
+          id="${discussionId}"
+          click.delegate="navigateTo(`${discussionId}`)"
+          repeat.for="[discussionId, discussion] of discussions">
+          <div class="td">${findClauseIndex(discussionId) }</div>
           <div class="td">
             <pre>${discussion.topic}</pre>
             <p class="creator">
