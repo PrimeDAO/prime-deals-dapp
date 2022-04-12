@@ -242,8 +242,9 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    return this.fundingWasInitiated ?
-      Math.min((this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime(), 0) : -1;
+    if (!this.fundingWasInitiated) return -1;
+    const timeLeft = (this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+    return timeLeft > 0 ? timeLeft : 0;
   }
 
   /**
