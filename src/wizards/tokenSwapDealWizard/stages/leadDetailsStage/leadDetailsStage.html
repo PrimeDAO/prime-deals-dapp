@@ -31,7 +31,7 @@
           data-test="make-myself-proposal-lead"
           class="walletButton"
           click.delegate="wizardState.registrationData.proposalLead.address = ethAddress"
-          if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress"
+          if.bind="ethAddress && wizardState.registrationData.proposalLead.address !== ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights"
           type="formfield">
           Make Me the Proposal Lead
         </pbutton>
