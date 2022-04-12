@@ -146,11 +146,11 @@ export class Funding {
    * Withdraws the deposit made from the connected account
    * @param transaction
    */
-  public withdraw = async(transaction: IDaoTransaction): Promise<void> => {
+  public async withdraw(transaction: IDaoTransaction): Promise<void> {
     //Check if the connected wallet is the same as the deposit to make sure they can initiate the withdraw
     //the UI already checks this but wanted to validate again to make sure
     if (this.ethereumService.defaultAccountAddress !== transaction.address){
-      this.eventAggregator.publish("handleException", new EventConfigException("An error has occurred", EventMessageType.Exception));
+      this.eventAggregator.publish("handleFailure", "An error has occurred");
       return;
     }
     const withdrawModal: IAlertModel = {
@@ -171,12 +171,12 @@ export class Funding {
         this.eventAggregator.publish("handleInfo", new EventConfig("Your deposit has been withdrawn", EventMessageType.Info, "Withdrawn"));
       } else {
         //an error occurred while trying to withdraw tokens
-        this.eventAggregator.publish("handleException", new EventConfigException("An error occurred while trying to withdraw. Please try again.", EventMessageType.Exception));
+        this.eventAggregator.publish("handleFailure", "An error occurred while trying to withdraw. Please try again.");
       }
     }
     //refresh token contract data for the grid
     this.setTokenContractData();
-  };
+  }
 
   /**
    * Checks the user's input to make sure they aren't trying to deposit more than their account balance
@@ -226,7 +226,7 @@ export class Funding {
       this.eventAggregator.publish("handleInfo", new EventConfig(`${BigNumber.from(this.depositAmount)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
     } else {
       //something happened to make the deposit not happen
-      this.eventAggregator.publish("handleException", new EventConfigException("An error occurred while trying to deposit tokens. Please try again.", EventMessageType.Exception));
+      this.eventAggregator.publish("handleFailure", "An error occurred while trying to deposit tokens. Please try again.");
     }
     //refresh the token contract data
     this.setTokenContractData();
