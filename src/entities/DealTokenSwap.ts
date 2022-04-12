@@ -271,6 +271,11 @@ export class DealTokenSwap implements IDeal {
   /**
    * returns true if funding was started, execution never happened and
    * the funding period has passed.
+   *
+   * Can't be expired if funding was not initiated, which means it
+   * can't be expired if cancelled or withdrawn.
+   *
+   * Can't be expired is executed.
    */
   @computedFrom("fundingWasInitiated", "isExecuted", "timeLeftToExecute")
   public get fundingPeriodHasExpired(): boolean {
@@ -279,7 +284,7 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("fundingPeriodHasExpired")
   public get isFailed() {
-    return !this.isCancelled && this.fundingPeriodHasExpired;
+    return this.fundingPeriodHasExpired;
   }
 
   @computedFrom("fundingWasInitiated", "isExecuted", "fundingPeriodHasExpired")
