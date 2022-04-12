@@ -8,7 +8,7 @@ export class PToggle {
   @bindable validationState?: ValidationState;
   @bindable.booleanAttr disabled = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) value = false;
-  @bindable changed: (checked: boolean) => void;
+  @bindable changed: ({checked: boolean}) => void;
 
   private element: Element;
 
