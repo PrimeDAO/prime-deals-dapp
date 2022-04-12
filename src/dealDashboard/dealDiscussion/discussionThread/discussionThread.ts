@@ -121,8 +121,13 @@ export class DiscussionThread {
     }
   }
 
-  private arrayToDictionary(comments): Record<string, IComment> {
+  private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
     return comments.reduce((r, e): Record<string, IComment> => {
+      console.log("just e: ", e);
+      if (e === undefined) {
+        return r;
+      }
+
       r[e._id] = e;
       return r;
     }, {});
