@@ -24,7 +24,7 @@ export class DealMenubar {
     return this.deal.isUserProposalLead && !this.deal.isCancelled && !this.deal.isExecuted;
   }
 
-  @computedFrom("deal.isUserProposalLead", "deal.isCancelled", "deal.isExecuted")
+  @computedFrom("deal.isUserProposalLead", "deal.isCancelled")
   get canCancel() {
     return this.deal.isUserProposalLead && !this.deal.isCancelled;
   }
