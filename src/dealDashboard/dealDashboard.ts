@@ -3,10 +3,10 @@ import { EthereumService } from "services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "../services/DealService";
 import "./dealDashboard.scss";
-import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
+import { AureliaHelperService } from "services/AureliaHelperService";
 
 @autoinject
 export class DealDashboard {
@@ -18,7 +18,6 @@ export class DealDashboard {
   constructor(
     private ethereumService: EthereumService,
     private dealService: DealService,
-    private eventAggregator: EventAggregator,
     private router: Router,
     private aureliaHelperService: AureliaHelperService,
   ) {
@@ -29,51 +28,33 @@ export class DealDashboard {
     return (this.deal.isUserRepresentativeOrLead) || (!this.deal.isPartnered && !!this.ethereumService.defaultAccountAddress);
   }
 
-  public async canActivate(params: { id: string }): Promise<boolean> {
+  public async canActivate(params: { id: string }): Promise<void> {
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(params.id);
     await this.deal.ensureInitialized();
-    return this.userCanAccessDashboard;
+    this.checkUserCanAccessDashboard();
   }
 
   public async activate() {
 
-    // this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", () => {
-    //   if (!this.userCanAccessDashboard) {
-    //     this.router.navigate("home");
-    //   }
-    // }));
-
     this.subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.dealService, "deals", () => {
-      if (!this.userCanAccessDashboard) {
-        this.router.navigate("home");
-      }
+      this.checkUserCanAccessDashboard();
     }));
-
-    this.subscriptions.push(
-      this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", async (value: boolean) => {
-        await this.deal.setPrivacy(value).catch(() => {
-          this.eventAggregator.publish("handleFailure", "Sorry, an error occurred");
-        });
-        this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
-      }),
-    );
 
     this.subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.deal, "isPrivate", () => {
-      if (!this.userCanAccessDashboard) {
-        this.router.navigate("home");
-      }
+      this.checkUserCanAccessDashboard();
     }));
-
   }
 
   public deactivate() {
     this.subscriptions.dispose();
   }
 
-  public get userCanAccessDashboard(): boolean {
+  public checkUserCanAccessDashboard(): void {
     // a deal entity going from public to private will disappear from the deals map
-    return this.dealService.deals.has(this.deal.id) && (!this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead);
+    if (!this.dealService.deals.has(this.deal.id) && (!this.deal.isPrivate || this.deal.isRepresentativeUser || this.deal.isUserProposalLead)) {
+      this.router.navigate("home");
+    }
   }
 
 }
