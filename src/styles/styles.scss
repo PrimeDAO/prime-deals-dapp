@@ -66,6 +66,7 @@ html {
       text-decoration: none;
       white-space: nowrap;
       cursor: pointer;
+
       &:hover {
         color: $Neutral03;
         text-decoration: none;
@@ -78,24 +79,29 @@ html {
       font-weight: bold;
       width: fit-content; // so gradients look right
       white-space: break-word;
+
       &.gradient {
         @include standardTextGradient;
       }
+
       &.heading0 {
         font-size: 64px;
         line-height: 70px;
         margin-bottom: 24px;
       }
+
       &.heading1 {
         font-size: 48px;
         line-height: 46px;
         padding-bottom: 24px;
       }
+
       &.heading2 {
         font-size: 36px;
         line-height: 65px;
         margin-bottom: 8px;
       }
+
       &.heading3 {
         @include subHeading;
         font-size: 26px;
@@ -103,6 +109,7 @@ html {
         margin-bottom: 6px;
         color: $Secondary02;
       }
+
       &.heading4 {
         font-size: 14px;
         color: $Secondary02;
@@ -131,6 +138,7 @@ html {
       font-family: "Inter";
       font-weight: 400;
       line-height: 24px;
+
       &.gradient {
         @include standardTextGradient;
       }
@@ -157,15 +165,6 @@ html {
     width: 4rem;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .copy-to-clip-button,
-  .copy-to-clip-button:focus {
-    color: $White;
-  }
-
-  .copy-to-clip-button:hover {
-    color: $Neutral02;
   }
 
   #WEB3_CONNECT_MODAL_ID {
@@ -200,6 +199,7 @@ html {
           line-height: 44px;
           margin-bottom: 18px;
         }
+
         &.heading1 {
           font-size: 44px;
           line-height: 40px;

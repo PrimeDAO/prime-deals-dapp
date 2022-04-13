@@ -45,9 +45,10 @@ export class SubmitStage {
           const dealIsAvailable = !!this.dealService.deals.get(newDeal.id);
 
           const congratulatePopupModel: IAlertModel = {
-            header: "Your deal has been submitted!",
+            header: "Submitted!",
             message:
-              "<p class='excitement'>Share your new deal proposal with your community!</p><p class='tweetlink'><a href='https://twitter.com/intent/tweet?text=Check%20out%20our%20new%20deal at %20https://deals.prime.xyz/' target='_blank' rel='noopener noreferrer'>TWEET <i class='fab fa-twitter'></i></a></p>",
+              `<p class='excitement'>Share your new deal proposal with your community!</p><p class='copyLink'>
+                <copy-to-clipboard-button text-to-copy='https://deals.prime.xyz/deal/${newDeal.id}'>Copy Deal Link to the Clipboard</copy-to-clipboard-button></p>`,
             confetti: true,
             buttonTextPrimary: dealIsAvailable ? "Go to deal" : "close",
             className: "congratulatePopup",
