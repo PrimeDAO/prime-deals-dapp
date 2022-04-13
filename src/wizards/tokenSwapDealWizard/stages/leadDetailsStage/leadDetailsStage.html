@@ -7,7 +7,7 @@
     <div class="stageSection">
       <div class="stageSectionSidebar">
         <h2 data-test="section-title" class="sidebarHeader heading heading3 title">Proposal Lead</h2>
-        <p class="sidebarText">Provide the Ethereum address for the Proposal Lead who will gain admin rights of the deal.</p>
+        <p class="sidebarText">Provide the Ethereum address for the Proposal Lead who will gain administrative rights of the deal.</p>
         <p class="sidebarText">Proposal Leads can edit the deal during the negotiation to integrate new points emerging from the conversation. They can initiate the funding phase once a deal is approved and once completely funded, they can execute the token swap.</p>
         <p class="sidebarText">The Proposal Lead can be changed at any time until the deal is approved.</p>
         <p class="sidebarText">You don't need to be part of DAO to be a Proposal Lead.</p>
@@ -46,15 +46,15 @@
 
     <div class="stageSection" if.bind="isOpenProposalWizard">
       <div class="stageSectionSidebar">
-        <h2 class="sidebarHeader heading heading3 title">Keep Admin Rights?</h2>
-        <p class="sidebarText">Toggle this option on if you would like to retain the Proposal Lead role to yourself. This will allow you to remain admin and manage all the offers incoming to your Open Proposal.</p>
-        <p class="sidebarText">If instead you toggle this option off, you will transfer your admin rights to the prospect Partner DAO. In this case the Partner DAO will have to register a new Proposal Lead address to which the admin rights will be transfered to.</p>
-        <p class="sidebarText">We suggest transferring your admin rights only if you anticipate many incoming offers for this proposal and won't have time to manage them.</p>
+        <h2 class="sidebarHeader heading heading3 title">Keep Administrative Rights?</h2>
+        <p class="sidebarText">Toggle this option on if you would like to retain the Proposal Lead role to yourself. This will allow you to remain administrative and manage all the offers incoming to your Open Proposal.</p>
+        <p class="sidebarText">If instead you toggle this option off, you will transfer your administrative rights to the prospect Partner DAO. In this case the Partner DAO will have to register a new Proposal Lead address to which the administrative rights will be transfered to.</p>
+        <p class="sidebarText">We suggest transferring your administrative rights only if you anticipate many incoming offers for this proposal and won't have time to manage them.</p>
       </div>
       <div class="stageSectionContent">
         <pform-input
           class="wizardFormInput"
-          label="Keep Admin Rights With All Incoming Offers">
+          label="Keep Administrative Rights With All Incoming Offers">
           <ptoggle value.bind="wizardState.registrationData.keepAdminRights"></ptoggle>
         </pform-input>
       </div>
