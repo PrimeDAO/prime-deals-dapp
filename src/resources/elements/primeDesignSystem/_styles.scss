@@ -1,6 +1,11 @@
 @import "./carousel";
 @import "./pinput";
 @import "./typography";
+@import "./variables";
+
+:root {
+  --mobile-width: #{$MobileWidth};
+}
 
 .pcard {
   padding: $spacing-normal; // only if there is no padding on the parent

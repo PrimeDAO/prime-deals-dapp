@@ -1,5 +1,4 @@
 import { DealService } from "services/DealService";
-import "./styles/styles.scss";
 import "./app.scss";
 
 import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";

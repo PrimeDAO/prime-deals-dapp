@@ -121,8 +121,6 @@ pbutton {
         mask-composite: exclude;
       }
 
-      padding: 12px 26px;
-
       &:hover:not(.disabled):not(:disabled) {
         background-color: $Secondary05;
         border-color: $Primary01;
