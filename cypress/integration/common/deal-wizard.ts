@@ -69,6 +69,13 @@ When("I use the stepper to go to the {string} step", (stepName: string) => {
   });
 });
 
+Then("The {string} step is marked as invalid", (stepName: string) => {
+  cy.contains("[data-test='pstepper-step-name']", stepName)
+    .parent()
+    .find("pcircled-number")
+    .should("not.have.class", "isValid");
+});
+
 When("I try to submit the registration data", () => {
   E2eDealWizard.submit();
 });

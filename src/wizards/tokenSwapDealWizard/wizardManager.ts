@@ -209,7 +209,7 @@ export class WizardManager {
     switch (wizardType) {
       case WizardType.makeAnOffer:
         stages.map((stage) => {
-          stage.valid = (stage !== this.partnerDaoStage) ? true : undefined;
+          stage.valid = (stage !== this.partnerDaoStage && stage !== this.tokenDetailsStage) ? true : undefined;
         });
         break;
       case WizardType.editPartneredDeal:
