@@ -23,6 +23,7 @@
   "include": [
     "src",
     "test",
+    "firebaseFunctions/src"
   ],
   "exclude": [
     "test/coverage-jest"
