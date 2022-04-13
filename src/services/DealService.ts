@@ -342,16 +342,23 @@ export class DealService {
    * Updates only parts of dealDocument that were updated
    */
   private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
-    // ignore updates to modifiedAt property
-    delete dealDocument.modifiedAt;
-    delete updatedDocument.modifiedAt;
-
-    // delete partnerDAO if undefined
-    if (!dealDocument.registrationData.partnerDAO) {
-      delete dealDocument.registrationData.partnerDAO;
-    }
-
     this.taskQueue.queueMicroTask(() => {
+      // ignore updates to modifiedAt property
+      updatedDocument.modifiedAt = dealDocument.modifiedAt;
+
+      /**
+       * if partnerDAO is undefined set it to undefined on the updated document
+       * because it doesn't exist on the updated document and that would trigger an update
+       */
+      if (dealDocument.registrationData.partnerDAO === undefined) {
+        updatedDocument.registrationData.partnerDAO = undefined;
+      }
+
+      /**
+       * applies any structural differences from the updatedDocument to the dealDocument
+       * and doesn't modified properties that didn't change
+       * it is granular and works with updating changes to nested objects (including objects inside arrays)
+       */
       applyDiff(dealDocument, updatedDocument);
     });
   }
