@@ -1,11 +1,11 @@
-@import "styles/styles.scss";
-@import "src/resources/elements/primeDesignSystem/styles";
 @import "src/resources/elements/primeDesignSystem/variables";
-@import "src/resources/elements/primeDesignSystem/colors";
+@import "src/styles/variables";
+
 status-action-bar {
   margin-top: 40px;
   display: grid;
   place-items: center;
+
   div {
     display: grid;
     grid-template-columns: 350px auto;
