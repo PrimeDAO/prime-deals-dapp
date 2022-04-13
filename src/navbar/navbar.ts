@@ -9,7 +9,7 @@ export class Navbar {
 
   @bindable private showWalletMenu?: () => void;
 
-  environment = process.env.NODE_ENV;
+  environment = process.env.FIREBASE_ENVIRONMENT;
 
   menuOpen = false;
 
@@ -25,7 +25,7 @@ export class Navbar {
   }
 
   private async resetDeals(){
-    if (process.env.NODE_ENV !== "production"){
+    if (process.env.FIREBASE_ENVIRONMENT !== "production"){
       await (await import("../server-browser-scripts/seed-data")).resetDeals();
     }
   }
