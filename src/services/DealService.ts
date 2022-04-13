@@ -239,7 +239,7 @@ export class DealService {
             throw new Error("Deals are not accessible");
           }
 
-          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals);
+          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals.entries());
 
           for (const dealDoc of updates) {
             if (dealsMap.has(dealDoc.id)) {
@@ -249,7 +249,8 @@ export class DealService {
               this.updateDealDocument(dealsMap.get(dealDoc.id).dealDocument, dealDoc);
             } else {
               /**
-               * this will create new deal entity asynchronously, once created it will be part of this.deals Map
+               * This should only happen when a deal is created in another browser instance.
+               * It will create new deal entity asynchronously, once created it will be part of dealsMap
                */
               this._createDeal(dealDoc, dealsMap);
             }
