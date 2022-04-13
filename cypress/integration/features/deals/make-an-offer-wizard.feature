@@ -17,5 +17,8 @@ Feature: Make an offer
     Then the "Proposal Lead Address" field should be disabled
     And I cannot connect to get my wallet address
 
-
-
+  Scenario: Partner DAO and Token details stages are marked as not valid
+    Given I'm an "Anonymous" user
+    And I navigate to make an offer wizard
+    Then The "Partner DAO" step is marked as invalid
+    And The "Token Details" step is marked as invalid
