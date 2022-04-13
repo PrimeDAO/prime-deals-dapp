@@ -14,6 +14,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import { applyDiff } from "deep-diff";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -240,16 +241,12 @@ export class DealService {
 
           const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals);
 
-          for (const dealDoc of updates.removed) {
-            dealsMap.delete(dealDoc.id);
-          }
-
-          for (const dealDoc of updates.modified) {
+          for (const dealDoc of updates) {
             if (dealsMap.has(dealDoc.id)) {
               /**
                * note this change will instantly propogate across the app, any dependencies on dealDocument
                */
-              dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+              this.updateDealDocument(dealsMap.get(dealDoc.id).dealDocument, dealDoc);
             } else {
               /**
                * this will create new deal entity asynchronously, once created it will be part of this.deals Map
@@ -338,5 +335,23 @@ export class DealService {
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
     deal.initialize(); // asynchronous
     return deal;
+  }
+
+  /**
+   * Updates only parts of dealDocument that were updated
+   */
+  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
+    // ignore updates to modifiedAt property
+    delete dealDocument.modifiedAt;
+    delete updatedDocument.modifiedAt;
+
+    // delete partnerDAO if undefined
+    if (!dealDocument.registrationData.partnerDAO) {
+      delete dealDocument.registrationData.partnerDAO;
+    }
+
+    this.taskQueue.queueMicroTask(() => {
+      applyDiff(dealDocument, updatedDocument);
+    });
   }
 }
