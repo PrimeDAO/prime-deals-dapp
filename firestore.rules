@@ -24,7 +24,7 @@ service cloud.firestore {
     match /deals-token-swap/{deal} {
       allow read: if isPublicDeal() || userIsProposalLead() || userIsRepresentative();
       allow update: if userIsProposalLead() || (userIsAuthenticated() && updateOnlyToDiscussions());
-      allow create, delete: if false;
+      allow create, delete: if true;
     }
 
     match /deals-token-swap/{deal}/primary-dao-votes/{representative} {
@@ -38,7 +38,7 @@ service cloud.firestore {
     }
 
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
   }
 }

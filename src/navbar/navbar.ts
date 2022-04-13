@@ -9,6 +9,8 @@ export class Navbar {
 
   @bindable private showWalletMenu?: () => void;
 
+  environment = process.env.NODE_ENV;
+
   menuOpen = false;
 
   constructor(private router: Router) {}
@@ -20,6 +22,12 @@ export class Navbar {
   private goto(url: string, newTab = true): void {
     this.menuOpen = false;
     Utils.goto(url, newTab);
+  }
+
+  private async resetDeals(){
+    if (process.env.NODE_ENV !== "production"){
+      await (await import("../server-browser-scripts/seed-data")).resetDeals();
+    }
   }
 
   private navigate(href: string): void {

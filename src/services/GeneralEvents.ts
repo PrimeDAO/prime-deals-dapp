@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/providers";
-import { EventMessageType } from "resources/elements/primeDesignSystem/types";
+import { EventMessageType } from "../resources/elements/primeDesignSystem/types";
 
 export class EventConfig {
   /**
@@ -73,4 +73,4 @@ export class EventConfigTransaction extends EventConfig {
   }
 }
 
-export { EventMessageType } from "resources/elements/primeDesignSystem/types";
+export { EventMessageType } from "../resources/elements/primeDesignSystem/types";

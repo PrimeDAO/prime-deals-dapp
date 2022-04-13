@@ -26,6 +26,13 @@ $menu-open-duration: 0.1s;
     display: none;
   }
 
+  #reset-deal-button{
+    > button{
+      height:10px;
+      padding: 10px;
+    }
+  }
+
   .logo {
     grid-area: logo;
     padding-left: 20px;

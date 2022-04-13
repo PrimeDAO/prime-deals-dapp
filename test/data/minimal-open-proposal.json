@@ -1,0 +1,44 @@
+{
+  "version": "0.0.2",
+  "dealType": "token-swap",
+  "offersPrivate": false,
+  "isPrivate": false,
+  "dealId":"tRBGJ1KrS4zwbkXqZUnH",
+  "keepAdminRights": true,
+  "fundingPeriod": 864000,
+  "proposal": {
+    "summary": "elxvusv_summary",
+    "description": "elxvusv_description",
+    "title": "elxvusv_Open_proposal"
+  },
+  "proposalLead": {
+    "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    "email": ""
+  },
+  "primaryDAO": {
+    "treasury_address": "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
+    "logoURI": "https://picsum.photos/seed/picsum/400/400",
+    "social_medias": [
+      { "url": "https://twitter.com/PrimeDAO_", "name": "Twitter" }
+    ],
+    "name": "elxvusv_PrimeDAO",
+    "tokens": [
+      {
+        "symbol": "D2D",
+        "amount": "500000000000",
+        "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
+        "vestedFor": 8640000,
+        "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
+        "vestedTransferAmount": "400000000000",
+        "instantTransferAmount": "100000000000",
+        "decimals": 18,
+        "name": "Prime",
+        "cliffOf": 864000
+      }
+    ],
+    "representatives": [
+      { "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498" }
+    ]
+  },
+  "terms": { "clauses": [{ "id": "elxvusv", "text": "elxvusv_clause" }] }
+}
