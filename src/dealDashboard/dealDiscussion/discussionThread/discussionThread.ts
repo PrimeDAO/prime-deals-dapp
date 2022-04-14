@@ -392,7 +392,7 @@ export class DiscussionThread {
             this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
           }
         }
-        if (error.code === 4001) {
+        else if (error.code === 4001) {
           this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
         } else {
           this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
