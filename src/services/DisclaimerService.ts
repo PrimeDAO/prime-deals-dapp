@@ -38,7 +38,7 @@ export class DisclaimerService {
       disclaimed = true;
     } else {
       const response = await this.showDisclaimer(
-        "https://github.com/PrimeDAO/deals-docs/blob/main/published-md-files/TermsOfService.md",
+        "https://raw.githubusercontent.com/PrimeDAO/deals-docs/main/published-md-files/TermsOfService.md",
         "Prime Deals Disclaimer",
       );
 
