@@ -10,7 +10,7 @@ import { BigNumber } from "ethers";
 import "./funding.scss";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
+import { EthereumService, fromWei } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
@@ -33,6 +33,7 @@ export class Funding {
   private refSelectToken: HTMLSelectElement;
   private seeingMore = false;
   private accountBalance: BigNumber;
+  private userFundingTokenAllowance: BigNumber;
   @observable
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
@@ -88,7 +89,7 @@ export class Funding {
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
     //get contract token information from the DAO related to the account
     this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
-    this.setTokenContractData();
+    await this.setTokenContractData();
 
     if (this.firstDaoTokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
@@ -177,7 +178,7 @@ export class Funding {
       }
     }
     //refresh token contract data for the grid
-    this.setTokenContractData();
+    await this.setTokenContractData();
   }
 
   /**
@@ -187,14 +188,31 @@ export class Funding {
   private checkMaxAmount(): void {
     if (this.firstDaoTokens.length > 0 && this.selectedToken) {
       const remainingNeeded = (this.firstDaoTokens[this.selectedToken])?.required;
-      if (this.accountBalance.lt(this.depositAmount)) {
-        //set the deposit amount = account balance if the amount the user entered is higher than the account balance
-        this.depositAmount = this.accountBalance;
-      } else if (this.depositAmount.gt(remainingNeeded)) {
-        //set the deposit amount = remaining needed amount if the amount the user entered is higher than the remaining amount
-        this.depositAmount = remainingNeeded;
+      if (this.depositAmount){
+        if (this.accountBalance.lt(this.depositAmount)) {
+          //set the deposit amount = account balance if the amount the user entered is higher than the account balance
+          this.depositAmount = this.accountBalance;
+        } else if (this.depositAmount.gt(remainingNeeded)) {
+          //set the deposit amount = remaining needed amount if the amount the user entered is higher than the remaining amount
+          this.depositAmount = remainingNeeded;
+        }
       }
     }
+  }
+
+  /**
+   * Unlocks the desired amount of tokens that the user wants to deposit on the contract
+   */
+  private async unlockTokens(): Promise<void>{
+    // unlock the tokens on the contract
+    const transactionReceipt = await this.deal.unlockTokens(this.firstDao, this.firstDaoTokens[this.selectedToken].address, this.depositAmount);
+    if (transactionReceipt){
+      //the tokens have been approved on the contract so re-hydrate the funding allowance
+      await this.setFundingTokenAllowance();
+      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, this.firstDaoTokens[this.selectedToken].decimals)} ${this.firstDaoTokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed"));
+      return;
+    }
+    this.eventAggregator.publish("handleFailure", "An error occurred while trying to unlock tokens. Please try again.");
   }
 
   /**
@@ -204,20 +222,22 @@ export class Funding {
     //hydrate the latest contract transaction data
     await this.deal.hydrateDaoTransactions();
     //now that the daoTransactions are hydrated, update the tokens with the contract data
-    this.setTokenContractData();
+    await this.setTokenContractData();
     //set the token that the user is depositing
     const depositToken: ITokenCalculated = this.firstDaoTokens[this.selectedToken];
     // get the most up to date account balance to make sure it has enough
     await this.setAccountBalance();
+    // get the most up to date token allowance for the user
+    await this.setFundingTokenAllowance();
     //validate the deposit amount is not more than the account balance
     if (this.depositAmount.gt(this.accountBalance)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${depositToken.symbol}) exceeds the current balance in your account (${BigNumber.from(this.accountBalance)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the current balance in your account (${this.displayBigNumber(this.accountBalance, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
       this.depositAmount = this.accountBalance;
       return;
     }
     //validate the deposit amount is not more than the required tokens to fund the deal
     if (this.depositAmount.gt(depositToken.required)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${BigNumber.from(this.depositAmount)} ${depositToken.symbol}) exceeds the required funding needed (${BigNumber.from(depositToken.required)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the required funding needed (${this.displayBigNumber(depositToken.required, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
       this.depositAmount = depositToken.required;
       return;
     }
@@ -225,13 +245,15 @@ export class Funding {
     const depositTransaction = await this.deal.depositTokens(this.firstDao, depositToken.address, this.depositAmount);
     if (depositTransaction){
       //deposit was successful
-      this.eventAggregator.publish("handleInfo", new EventConfig(`${BigNumber.from(this.depositAmount)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
     } else {
       //something happened to make the deposit not happen
       this.eventAggregator.publish("handleFailure", "An error occurred while trying to deposit tokens. Please try again.");
     }
+    //hydrate the latest contract transaction data after the deposit succeeds
+    await this.deal.hydrateDaoTransactions();
     //refresh the token contract data
-    this.setTokenContractData();
+    await this.setTokenContractData();
   }
 
   /**
@@ -252,6 +274,7 @@ export class Funding {
     if (typeof prevVal === "string") prevVal = Number(prevVal);
     if (newVal !== prevVal) {
       await this.setAccountBalance(); //selected token has changed, so set the account balance of the newly selected token
+      await this.setFundingTokenAllowance();
     }
   }
 
@@ -287,42 +310,6 @@ export class Funding {
   }
 
   public setDeposits() : void {
-    // const deposits: IDaoTransaction[] = [];
-    // deposits.push({
-    //   address: "0xB0dE228f409e6d52DD66079391Dc2bA0B397D7cA",
-    //   createdAt: new Date(),
-    //   dao: this.firstDao,
-    //   depositId: 1234,
-    //   token: this.firstDaoTokens[0],
-    //   type: "deposit",
-    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-    //   amount: BigNumber.from(1),
-
-    // });
-    // deposits.push({
-    //   address: "0xdb6A67C15a0f10E1656517c463152c22468B78b8",
-    //   createdAt: new Date(),
-    //   dao: this.firstDao,
-    //   depositId: 1234,
-    //   token: this.firstDaoTokens[0],
-    //   type: "deposit",
-    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-    //   amount: BigNumber.from(14432423),
-    // });
-    // deposits.push({
-    //   address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
-    //   createdAt: new Date(),
-    //   dao: this.firstDao,
-    //   depositId: 1234,
-    //   token: this.secondDaoTokens[0],
-    //   type: "deposit",
-    //   txid: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-    //   amount: BigNumber.from("12234324234324324234312421412321"),
-    //   withdrawTxId: "0xc6539832b952d3e37fcee30984806798bb7bbc737e2b567a40788b942acd6367",
-    //   withdrawnAt: new Date("3/13/2022")
-    // });
-    // this.deposits = deposits;
-    // return;
     this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
   }
 
@@ -340,6 +327,11 @@ export class Funding {
     this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
   }
 
+  public async setFundingTokenAllowance(): Promise<void> {
+    const contract = this.tokenService.getTokenContract(this.firstDaoTokens[this.selectedToken].address);
+    this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
+  }
+
   //moving this getter locally for the proposal lead
   public get firstDao() : IDAO{
     return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
@@ -350,8 +342,22 @@ export class Funding {
     return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }
 
-  private setTokenContractData(){
-    this.firstDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.firstDao);});
-    this.secondDaoTokens.forEach(async x => {await this.deal.setTokenContractInfo(x, this.secondDao);});
+  public get lockRequired(): boolean {
+    if (this.depositAmount?.gt(BigNumber.from(0))){
+      return this.userFundingTokenAllowance?.lt(this.depositAmount);
+    }
+    return false;
+  }
+
+  private displayBigNumber(number: BigNumber, decimals = 18) : string{
+    return this.numberService.toString(Number(fromWei(number, decimals)));
+  }
+
+  private async setTokenContractData(){
+    await Promise.all(
+      [
+        ...this.firstDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.firstDao)),
+        ...this.secondDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.secondDao)),
+      ]);
   }
 }

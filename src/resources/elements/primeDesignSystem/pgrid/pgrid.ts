@@ -26,8 +26,11 @@ export class PGrid {
   @bindable public selectable = false;
   @bindable public sortColumn: string;
   @bindable public sortDirection: SortOrder;
+  @bindable public numberToShow = 10;
+  @bindable public hideMore = true;
   sortEvaluator: (a: any, b: any) => number;
   parent: View;
+  private seeingMore = false;
 
   constructor() {
     // you can inject the element or any DI in the constructor
@@ -38,7 +41,14 @@ export class PGrid {
   }
 
   getBuffedVm(row: any) {
-    return { ...this.parent.bindingContext, ...row, row: row };
+    const copy = {};
+    if (this.parent.bindingContext instanceof Object) {
+      for (const attr in this.parent.bindingContext) {
+        console.log(attr, this.parent.bindingContext[attr]);
+        if (this.parent.bindingContext.hasOwnProperty(attr)) copy[attr] = this.parent.bindingContext[attr];
+      }
+    }
+    return { ...copy, ...row, row: row };
   }
 
   sort(columnName: string) {
@@ -70,6 +80,14 @@ export class PGrid {
   @computedFrom("columns")
   get gridTemplateColumnText() {
     return this.columns?.map(y => y.width).join(" ");
+  }
+
+  /**
+   * This allows for more rows to be displayed on the grid
+   * @param yesNo
+   */
+  public seeMore(yesNo: boolean): void {
+    this.seeingMore = yesNo;
   }
 
 }
