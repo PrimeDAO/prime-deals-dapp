@@ -242,10 +242,19 @@ export class DealService {
           for (const dealDoc of updates.removed) {
             if (this.deals.has(dealDoc.id)) {
               /**
-               * When deal was removed from a query, we don't get the updates
-               * The dealDoc in this case is the old dealDoc before the updates
-               * So if the isPrivate property was turned from false to true, dealDoc here will still have isPrivate false
-               * Therefore it's safer to use the deal from deals Map to have the latest values
+               * When deal was removed from a query, we don't get the updated document.
+               * That happens, because the query can no longer read the document so it is returning the last value it was able to read
+               * The dealDoc in this case is the old document before the updates
+               * So if the isPrivate property was turned from false to true, dealDoc here will still have isPrivate as false
+               *
+               * Such a deal might appear later as a "modified" deal therefore we don't delete it
+               * if the currently authenticated user is a Proposal Lead or a representative
+               *
+               * Also considering that we cannot predict in which order the queries emit
+               * if the same deal was first emitted as "modified" from one query and then as "removed" from another
+               * we have to make sure the we check against the latest document if the currently authenticated user is a PL/representative
+               *
+               * Therefore for that check we use the deal from deals Map instead of the deal document from updates.removed collection
                */
               const deal = this.deals.get(dealDoc.id);
               if (!deal.representativesAndLead.has(this.ethereumService.defaultAccountAddress)) {
