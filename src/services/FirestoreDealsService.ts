@@ -5,7 +5,7 @@ import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address } from "services/EthereumService";
-import { IFirebaseDocument } from "services/FirestoreTypes";
+import { IDocumentUpdates, IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
 import { skip } from "rxjs/operators";
@@ -31,7 +31,7 @@ export class FirestoreDealsService<
    *
    * Note it actually returns a promise of an observable
    */
-  public async getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<Array<IDealTokenSwapDocument>>> {
+  public async getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
     await this.firestoreService.ensureAuthenticationIsSynced();
 
     if (accountAddress) {

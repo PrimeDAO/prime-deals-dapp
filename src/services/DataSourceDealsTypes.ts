@@ -4,6 +4,7 @@ import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
 import { Address } from "./EthereumService";
+import { IDocumentUpdates } from "./FirestoreTypes";
 
 export type IDealIdType = string;
 
@@ -36,7 +37,7 @@ export abstract class IDataSourceDeals {
     throw new Error("Method not implemented.");
   }
 
-  getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<Array<IDealTokenSwapDocument>>> {
+  getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<IDocumentUpdates<IDealTokenSwapDocument>>> {
     throw new Error("Method not implemented.");
   }
 

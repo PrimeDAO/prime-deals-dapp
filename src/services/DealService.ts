@@ -235,11 +235,26 @@ export class DealService {
       updates => {
 
         try {
-          if (!updates?.length || !this.deals) {
+          if (!(updates?.modified?.length || updates?.removed?.length) || !this.deals) {
             throw new Error("Deals are not accessible");
           }
 
-          for (const dealDoc of updates) {
+          for (const dealDoc of updates.removed) {
+            if (this.deals.has(dealDoc.id)) {
+              /**
+               * When deal was removed from a query, we don't get the updates
+               * The dealDoc in this case is the old dealDoc before the updates
+               * So if the isPrivate property was turned from false to true, dealDoc here will still have isPrivate false
+               * Therefore it's safer to use the deal from deals Map to have the latest values
+               */
+              const deal = this.deals.get(dealDoc.id);
+              if (!deal.representativesAndLead.has(this.ethereumService.defaultAccountAddress)) {
+                this.deals.delete(dealDoc.id);
+              }
+            }
+          }
+
+          for (const dealDoc of updates.modified) {
             if (this.deals.has(dealDoc.id)) {
               this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
             } else {
