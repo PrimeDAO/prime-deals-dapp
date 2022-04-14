@@ -1,7 +1,4 @@
-@import "../styles";
 @import "../variables";
-
-$pformInputLineHeight: 33px;
 
 pform-input {
   display: block;
@@ -17,7 +14,7 @@ pform-input {
       @include subHeading;
       font-size: $font-size3;
       font-weight: 700;
-      line-height: $pformInputLineHeight;
+      line-height: 33px;
     }
 
     .formInputLabelExtra {

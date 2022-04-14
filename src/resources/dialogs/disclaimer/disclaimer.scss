@@ -1,4 +1,5 @@
 @import "../dialogs.scss";
+@import "../../elements/primeDesignSystem/pform-input/pform-input.scss";
 
 body > ux-dialog-container.disclaimer {
   top: 10vh;
@@ -46,11 +47,15 @@ body > ux-dialog-container.disclaimer {
 
         .checkbox {
           display: inline-flex;
-          align-items: flex-end;
-          column-gap: 10px;
+          align-items: center;
+          column-gap: 14px;
 
           .formInputLabel {
             margin-bottom: 0px;
+
+            .formInputLabelTitle {
+              line-height: 22px;
+            }
           }
         }
       }

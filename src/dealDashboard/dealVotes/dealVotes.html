@@ -9,7 +9,7 @@
       </p>
       <pbutton-group if.bind="deal.isRepresentativeUser">
         <pbutton
-          class="${deal.representativeVote() === true ? 'acceptButtonActive' : ''}"
+          class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
           click.delegate="acceptDeal()"
@@ -18,10 +18,10 @@
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
           <i class="fas fa-check-circle" else></i>
-          ${deal.representativeVote() === true ? 'Accepted' : 'Accept' }
+          ${deal.userVote === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
-          class="${deal.representativeVote() === false ? 'declineButtonActive' : ''}"
+          class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
           click.delegate="declineDeal()"
@@ -30,7 +30,7 @@
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
           <i class="fas fa-times-circle" else></i>
-          ${deal.representativeVote() === false ? 'Declined' : 'Decline' }
+          ${deal.userVote === false ? 'Declined' : 'Decline' }
         </pbutton>
       </pbutton-group>
 

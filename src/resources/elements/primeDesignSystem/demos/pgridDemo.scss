@@ -1,64 +1,80 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 @import "src/resources/elements/primeDesignSystem/colors";
-h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-weight: 700;
-}
-.required {
-  color: $Orange;
-}
-.success {
-  color: $Green;
-}
-.warning {
-  color: $Orange;
-}
-.info {
-  color: $Teal;
-}
-.danger {
-  color: $Red;
-}
-.secondary {
-  color: $Magenta;
-}
-.dark {
-  color: $Grey;
-}
-.row {
-  .cell {
-    &.body {
-      &.cell {
-        .Dao .name {
-          font-size: 16px;
-          font-weight: 400;
-          font-family: Aeonik;
-        }
-      }
-      div.withdraw {
-        pbutton {
-          button {
-            font-size: 9px;
-            padding: 0px 9px;
+.demoSection {
+  h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-weight: 700;
+  }
+
+  .required {
+    color: $Orange;
+  }
+
+  .success {
+    color: $Green;
+  }
+
+  .warning {
+    color: $Orange;
+  }
+
+  .info {
+    color: $Teal;
+  }
+
+  .danger {
+    color: $Red;
+  }
+
+  .secondary {
+    color: $Magenta;
+  }
+
+  .dark {
+    color: $Grey;
+  }
+
+  .row {
+    .cell {
+      &.body {
+        &.cell {
+          .Dao .name {
+            font-size: 16px;
+            font-weight: 400;
+            font-family: Aeonik;
           }
         }
-      }
-      div.type {
-        text-transform: capitalize;
-        i {
-          padding-right: 10px;
+
+        div.withdraw {
+          pbutton {
+            button {
+              font-size: 9px;
+              padding: 0px 9px;
+            }
+          }
         }
-      }
-      div.amount {
-        display: grid;
-        grid-template-columns: 24px auto;
-        grid-column-gap: 11px;
-        span {
-          align-self: center;
+
+        div.type {
+          text-transform: capitalize;
+
+          i {
+            padding-right: 10px;
+          }
+        }
+
+        div.amount {
+          display: grid;
+          grid-template-columns: 24px auto;
+          grid-column-gap: 11px;
+
+          span {
+            align-self: center;
+          }
         }
       }
     }
   }
+
 }

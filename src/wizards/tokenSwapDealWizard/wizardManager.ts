@@ -11,9 +11,9 @@ import {
 } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
-import { EthereumService } from "services/EthereumService";
-import { Utils } from "services/utils";
+import { Address, EthereumService } from "services/EthereumService";
 import "../wizards.scss";
+import { DisposableCollection } from "services/DisposableCollection";
 
 @autoinject
 export class WizardManager {
@@ -35,6 +35,8 @@ export class WizardManager {
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;
+  private subscriptions = new DisposableCollection();
+
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
@@ -105,7 +107,7 @@ export class WizardManager {
   ) {
   }
 
-  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<void> {
+  public async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<void> {
     if (!params[STAGE_ROUTE_PARAMETER]) return;
 
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
@@ -125,7 +127,11 @@ export class WizardManager {
         this.registrationData.partnerDAO = emptyDaoDetails();
       }
 
-      await this.ensureAccess(wizardType);
+      /**
+       * app.ts is assumed to make sure that if there is going to be a connection on startup,
+       * it will already have been made.
+       */
+      this.ensureAccess(wizardType, this.ethereumService.defaultAccountAddress);
 
       this.stages = this.configureStages(wizardType);
 
@@ -141,6 +147,10 @@ export class WizardManager {
         cancelRoute: "home",
         previousRoute: this.getPreviousRoute(wizardType),
       });
+
+      this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
+        this.ensureAccess(wizardType, account);
+      }));
     }
 
     // Getting the index of currently active stage route.
@@ -150,6 +160,10 @@ export class WizardManager {
     this.setupStageComponent(indexOfActiveStage, wizardType);
 
     this.wizardService.setActiveStage(this, indexOfActiveStage);
+  }
+
+  public deactivate() {
+    this.subscriptions.dispose();
   }
 
   private getPreviousRoute(wizardType: WizardType) {
@@ -209,7 +223,7 @@ export class WizardManager {
     switch (wizardType) {
       case WizardType.makeAnOffer:
         stages.map((stage) => {
-          stage.valid = (stage !== this.partnerDaoStage) ? true : undefined;
+          stage.valid = (stage !== this.partnerDaoStage && stage !== this.tokenDetailsStage) ? true : undefined;
         });
         break;
       case WizardType.editPartneredDeal:
@@ -236,20 +250,14 @@ export class WizardManager {
     return JSON.parse(JSON.stringify(deal.registrationData));
   }
 
-  private async ensureAccess(wizardType: any): Promise<void> {
+  private ensureAccess(wizardType: any, account: Address): void {
     if (wizardType !== WizardType.editOpenProposal && wizardType !== WizardType.editPartneredDeal) {
       return;
     }
 
-    try {
-      await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
-
-      if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
-        throw new Error("Current account is not authorized");
-      }
-    } catch (error) {
+    if (this.registrationData.proposalLead.address !== account) {
+      this.eventAggregator.publish("handleFailure", "Sorry, you are not authorized to modify this deal");
       this.router.navigate(this.getPreviousRoute(wizardType));
-      throw new Error("Error authorizing the current account");
     }
   }
 
