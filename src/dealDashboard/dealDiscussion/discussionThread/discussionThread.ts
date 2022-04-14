@@ -152,7 +152,6 @@ export class DiscussionThread {
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
 
     if (commentStreamMessage.name === "commentDelete") {
-      /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 153 ~ DiscussionThread ~ updateCommentsThreadUponMessageArrival ~ commentDelete");
       if (this.threadDictionary[newComment._id]) {
         this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
         this.threadDictionary = this.arrayToDictionary(this.threadComments);
@@ -385,27 +384,26 @@ export class DiscussionThread {
 
     const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
-    this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
-      if (res.error) {
-        this.eventAggregator.publish("handleFailure", "An error occurred while voting. " + res.error);
-        if (res.code === 404) {
-          delete this.threadDictionary[_id];
-          this.threadComments = [...Object.values(this.threadDictionary)];
+    this.discussionsService.voteComment(this.discussionId, _id, type)
+      .catch(error => {
+        /* On API failure- revert voting */
+        if (error.code === 404) {
+          if (error.error) {
+            this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
+          }
         }
+        if (error.code === 4001) {
+          this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
+        } else {
+          this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+        }
+
+        this.threadDictionary[_id] = swrVote;
+        this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+
         this.isLoading[`isVoting ${_id}`] = false;
-        return;
-      }
-    }).catch(error => {
-      /* On API failure- revert voting */
-      this.threadDictionary[_id] = swrVote;
-      if (error.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted. ");
-      }
-    }).finally(() => {
-      this.threadComments = [...Object.values(this.threadDictionary)];
-    });
+      });
 
     /* Toggle vote locally */
     const message = Utils.cloneDeep(this.threadDictionary[_id]);

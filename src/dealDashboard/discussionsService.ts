@@ -419,7 +419,8 @@ export class DiscussionsService {
     try {
       const message = await this.convo.comments.getComment(commentId);
       if (!message._id) {
-        return {success: false, code: 404, error: deletedByAuthorErrorMessage};
+        const error = {success: false, code: 404, error: deletedByAuthorErrorMessage};
+        return Promise.reject(error);
       }
 
       const types = ["toggleUpvote", "toggleDownvote"];
