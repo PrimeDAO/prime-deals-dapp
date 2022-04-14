@@ -14,6 +14,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import { applyDiff } from "deep-diff";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -234,35 +235,21 @@ export class DealService {
       updates => {
 
         try {
-          if (!updates || !this.deals) {
+          if (!updates?.length || !this.deals) {
             throw new Error("Deals are not accessible");
           }
 
-          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals.entries());
-
-          for (const dealDoc of updates.removed) {
-            dealsMap.delete(dealDoc.id);
-          }
-
-          for (const dealDoc of updates.modified) {
-            if (dealsMap.has(dealDoc.id)) {
-              /**
-               * note this change will instantly propogate across the app, any dependencies on dealDocument
-               */
-              dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+          for (const dealDoc of updates) {
+            if (this.deals.has(dealDoc.id)) {
+              this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
             } else {
               /**
                * This should only happen when a deal is created in another browser instance.
                * It will create new deal entity asynchronously, once created it will be part of dealsMap
                */
-              this._createDeal(dealDoc, dealsMap);
+              this._createDeal(dealDoc);
             }
           }
-
-          /**
-           * now the deletions will propagate
-           */
-          this.deals = dealsMap;
         }
         catch (error) {
           this.deals = new Map();
@@ -339,5 +326,35 @@ export class DealService {
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
     deal.initialize(); // asynchronous
     return deal;
+  }
+
+  /**
+   * Updates only parts of dealDocument that were updated
+   */
+  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
+    /**
+     * will execute synchronously before this javascript event loop exits.
+     * This is to attempt to jump the deal updates ahead of Aurelia's
+     * handling of them, hoping this will be the cleanest presentation of the changes.
+     */
+    this.taskQueue.queueMicroTask(() => {
+      // ignore updates to modifiedAt property
+      updatedDocument.modifiedAt = dealDocument.modifiedAt;
+
+      /**
+       * if partnerDAO is undefined set it to undefined on the updated document
+       * because it doesn't exist on the updated document and that would trigger an update
+       */
+      if (dealDocument.registrationData.partnerDAO === undefined) {
+        updatedDocument.registrationData.partnerDAO = undefined;
+      }
+
+      /**
+       * applies any structural differences from the updatedDocument to the dealDocument
+       * and doesn't modified properties that didn't change
+       * it is granular and works with updating changes to nested objects (including objects inside arrays)
+       */
+      applyDiff(dealDocument, updatedDocument);
+    });
   }
 }

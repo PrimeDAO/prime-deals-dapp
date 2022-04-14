@@ -6,10 +6,6 @@
 $PageBreakWidth: 900px;
 $MobileWidth: 375px;
 
-:root {
-  --mobile-width: #{$MobileWidth};
-}
-
 $border-radius-small: 6px;
 $border-radius-normal: 10px;
 
@@ -87,5 +83,12 @@ $heading: Aeonik;
   @include spin;
 }
 
+@mixin pcardBgAndGradient($backgroundColor: $BG02, $grColor01: $Primary01, $grColor02: $Secondary02) {
+  background: /* this is the card background: */
+    linear-gradient($backgroundColor, $backgroundColor) padding-box,
+      /* this is the gradient on the left side: */
+    linear-gradient(to bottom, $grColor01, $grColor02) border-box;
+  border-left: $border-radius-small solid transparent;
+}
+
 $pPopupNotificationWidth: 336px;
-$pCardBackgroundColor: $BG02 !global;

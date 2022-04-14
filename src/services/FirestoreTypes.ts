@@ -4,8 +4,3 @@ export interface IFirebaseDocument<T = any> {
   id: string;
   data: T;
 }
-
-export interface IDocumentUpdates<T> {
-  modified: Array<T>,
-  removed: Array<T>,
-}

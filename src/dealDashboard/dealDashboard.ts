@@ -6,7 +6,6 @@ import "./dealDashboard.scss";
 import { Router } from "aurelia-router";
 import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DisposableCollection } from "../services/DisposableCollection";
-import { AureliaHelperService } from "services/AureliaHelperService";
 
 @autoinject
 export class DealDashboard {

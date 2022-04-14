@@ -1,4 +1,4 @@
-@import "styles/styles.scss";
+@import "src/styles/colors";
 
 @mixin logo($url) {
   -webkit-mask: url("../../static/" + $url) no-repeat center;
