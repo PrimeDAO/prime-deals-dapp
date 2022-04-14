@@ -62,6 +62,23 @@ export class E2eDiscussionsProvider {
     cy.intercept("**/validateAuth**", authRouteOptions, authResponse);
   }
 
+  public static mockAblyAuth() {
+    const ablyResponse = {
+      keyName: "j_DvcQ.tsXhJg",
+      clientId: "convo",
+      timestamp: 1649873577931,
+      nonce: "1093577840631321",
+      mac: "UUtg9t58hQ4k+z9N99nxj/SyxYhKWJi2wF94nAV2yRM=",
+    };
+    const response = { statusCode: 200, body: ablyResponse };
+    const routeOptions = { method: "GET" };
+    cy.intercept("**/getAblyAuth**", routeOptions, response);
+
+    // POST
+    cy.intercept("**/requestToken**", {method: "POST"}, {statusCode: 200, body: {success: true}});
+    cy.intercept("**/connect?access_token**", {method: "GET"}, {statusCode: 200, body: {success: true}});
+  }
+
   public static mockGetThread(comments?: IComment[]) {
     const response = { statusCode: 200, body: comments ?? null };
     const routeOptions = { method: "GET" };
