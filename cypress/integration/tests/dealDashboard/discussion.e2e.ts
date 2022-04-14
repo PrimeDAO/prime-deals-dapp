@@ -83,7 +83,6 @@ export class E2eDiscussionsProvider {
     const response = { statusCode: 200, body: comments ?? null };
     const routeOptions = { method: "GET" };
     cy.intercept("**/comments?threadId**", routeOptions, response).as(GET_COMMENTS_ALIAS);
-    cy.intercept("**/getAblyAuth**", routeOptions, response);
   }
 
   public static mockGetComment() {
@@ -106,25 +105,19 @@ export class E2eDiscussionsProvider {
       };
       req.reply(response);
     }); //.as(GET_COMMENTS_ALIAS);
-
-    const getResponseBody = { success: true };
-    const getResponse = { statusCode: 200, body: getResponseBody };
-    cy.intercept("**/getAblyAuth**", getRouteOptions, getResponse);
   }
 
   public static mockCreateComment() {
-    cy.intercept("OPTIONS", "**/comments**");
+    cy.intercept("**/comments**", {method: "OPTIONS"}, "ok");
 
     // const createRouteOptions = { method: "POST", statusCode: 600 };
     const createRouteOptions = { method: "POST" };
-    cy.intercept("**/comments**", createRouteOptions, (req) => {
-      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 104 ~ E2eDiscussionsProvider ~ cy.intercept ~ req", req);
+    cy.intercept("**/comments**", createRouteOptions, async (req) => {
+      let reqBody = req.body;
       try {
-        let reqBody = req.body;
         if (typeof req.body === "string") {
           reqBody = JSON.parse(req.body) as ICreateRequest;
         }
-        /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 102 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
 
         const response: IDiscussionsResponse = {
           _id: getRandomId(),
@@ -138,16 +131,11 @@ export class E2eDiscussionsProvider {
           downvotes: [],
           replyTo: reqBody.replyTo,
         };
-        /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 117 ~ E2eDiscussionsProvider ~ cy.intercept ~ response", response);
         req.reply(response);
       } catch (error) {
         console.error(error);
       }
     }); //.as(CREATE_COMMENTS_ALIAS);
-
-    const createResponseBody = { success: true };
-    const createResponse = { statusCode: 200, body: createResponseBody };
-    cy.intercept("**/getAblyAuth**", createRouteOptions, createResponse);
   }
 
   public static mockDeleteComment() {
@@ -155,7 +143,6 @@ export class E2eDiscussionsProvider {
     const deleteResponse = { statusCode: 200, body: deleteResponseBody };
     const delteRouteOptions = { method: "DELETE" };
     cy.intercept("**/comments**", delteRouteOptions, deleteResponse).as(DELETE_COMMENTS_ALIAS);
-    cy.intercept("**/getAblyAuth**", delteRouteOptions, deleteResponse);
   }
 }
 
@@ -303,6 +290,7 @@ export class E2eDiscussion {
 Given("I mock the Discussions Provider", () => {
   cy.log("intercept convo");
   E2eDiscussionsProvider.mockAuth();
+  E2eDiscussionsProvider.mockAblyAuth();
 
   const firstComment = CommentBuilder.create().withText("e2e First comment").comment;
   const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
