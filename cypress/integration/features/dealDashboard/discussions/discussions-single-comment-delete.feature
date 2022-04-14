@@ -32,6 +32,5 @@ Feature: Discussions - Single Comment - Delete
     And I'm viewing the Open Proposal
     And I choose a single Topic with replies
     When a comment was deleted meanwhile
-    # And I delete my Comment
-    # And I delete my Comment
-    # Then 2 comment should be in the Thread
+    And I like that Comment
+    Then an error should occur reading "This comment has been deleted by the author"

@@ -5,7 +5,7 @@ import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
 import { IComment, ICommentMetaData } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
-import { getRandomId } from "../../../fixtures/dealFixtures";
+import { E2E_ADDRESSES, getRandomId } from "../../../fixtures/dealFixtures";
 import { COMMENTS_STREAM_UPDATED, Types } from "../../../../src/dealDashboard/discussionsStreamService";
 
 export const GET_COMMENTS_ALIAS = "getComments";
@@ -45,7 +45,10 @@ interface IGetRequest {
   _id: string;
 }
 
-const firstComment = CommentBuilder.create().withText("e2e First comment").comment;
+const firstComment = CommentBuilder.create()
+  .withText("e2e First comment")
+  .withAuthor(E2E_ADDRESSES.RepresentativeOne)
+  .comment;
 const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
 const comments = [firstComment, replyToFirstComment];
 
@@ -439,6 +442,11 @@ When("I add a new Comment", () => {
 When("a comment was deleted meanwhile", () => {
   // E2eDiscussionsProvider.lastDeletedComment = firstComment
   E2eDiscussionsProvider.streamDeletedComment(firstComment);
+});
+
+When("I like that Comment", () => {
+  E2eDiscussion.hoverSingleComment({notAuthor: true});
+  E2eDiscussion.getLikeAction({notAuthor: true}).click();
 });
 
 Then("I should not be able to see Discussions", () => {
