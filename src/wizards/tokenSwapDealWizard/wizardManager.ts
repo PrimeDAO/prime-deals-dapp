@@ -12,7 +12,6 @@ import {
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { Address, EthereumService } from "services/EthereumService";
-import { Utils } from "services/utils";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
 
