@@ -3,23 +3,19 @@ import { E2eDealsApi } from "../../common/deal-api";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eDeals } from "../deals/deals.e2e";
 import { E2eWallet } from "../wallet.e2e";
-import { IComment } from "../../../../src/entities/DealDiscussions";
+import { IComment, ICommentMetaData } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
 import { getRandomId } from "../../../fixtures/dealFixtures";
+import { COMMENTS_STREAM_UPDATED, Types } from "../../../../src/dealDashboard/discussionsStreamService";
 
 export const GET_COMMENTS_ALIAS = "getComments";
 export const DELETE_COMMENTS_ALIAS = "deleteComments";
 
+export const COMMENT_STREAM_TIMEOUT = 2000;
+
 interface ICommentOptions {
   notAuthor?: boolean;
   isAuthor?: boolean;
-}
-
-interface ICommentMetaData {
-  isPrivate: string; // "false";
-  allowedMembers: string; // "[\"0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498\"]";
-  encrypted: string; // "";
-  iv: string; // "";
 }
 
 interface IDiscussionsResponse {
@@ -29,7 +25,7 @@ interface IDiscussionsResponse {
   text: string; // <same-as-comment>,
   url: string; // <same-as-url>,
   tid: string; // <same-as-threadId>,
-  metaData: Record<string, unknown>;
+  metadata: ICommentMetaData
   upvotes: Array<string>;
   downvotes: Array<string>;
   replyTo: string;
@@ -49,7 +45,13 @@ interface IGetRequest {
   _id: string;
 }
 
+const firstComment = CommentBuilder.create().withText("e2e First comment").comment;
+const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
+const comments = [firstComment, replyToFirstComment];
+
 export class E2eDiscussionsProvider {
+  public static lastDeletedComment;
+
   static mockAuth() {
     const authRouteOptions = { method: "POST" };
     const successfulAuth = {
@@ -88,9 +90,17 @@ export class E2eDiscussionsProvider {
   public static mockGetComment() {
     const getRouteOptions = { method: "GET" };
     cy.intercept("**/comment?commentId**", getRouteOptions, (req) => {
-      const reqBody = req.body as IGetRequest;
+      // 1. Check if comment exists
+      const commentId = req.query.commentId;
+      const isPresent = E2eDiscussion.currentDiscussion.find(discussionComment => discussionComment._id === commentId);
+      if (!isPresent) {
+        req.reply({success: false});
+      }
 
       /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 56 ~ E2eDiscussionsProvider ~ cy.intercept ~ req", req);
+      const reqBody = req.body as IGetRequest;
+      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 94 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
+
       const response: IDiscussionsResponse = {
         _id: getRandomId(),
         createdOn: Date.now().toString(),
@@ -98,7 +108,13 @@ export class E2eDiscussionsProvider {
         text: "How to change this",
         url: undefined,
         tid: undefined,
-        metaData: {},
+        metadata: {
+          isPrivate: undefined,
+          allowedMembers: undefined,
+          encrypted: undefined,
+          iv: undefined,
+          isDeleted: false,
+        },
         upvotes: [],
         downvotes: [],
         replyTo: undefined,
@@ -113,10 +129,11 @@ export class E2eDiscussionsProvider {
     // const createRouteOptions = { method: "POST", statusCode: 600 };
     const createRouteOptions = { method: "POST" };
     cy.intercept("**/comments**", createRouteOptions, async (req) => {
-      let reqBody = req.body;
+      let reqBody: ICreateRequest = req.body;
+      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 111 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
       try {
         if (typeof req.body === "string") {
-          reqBody = JSON.parse(req.body) as ICreateRequest;
+          reqBody = JSON.parse(req.body);
         }
 
         const response: IDiscussionsResponse = {
@@ -126,7 +143,7 @@ export class E2eDiscussionsProvider {
           text: "How to change this",
           url: reqBody.url,
           tid: reqBody.threadId,
-          metaData: {},
+          metadata: reqBody.metadata,
           upvotes: [],
           downvotes: [],
           replyTo: reqBody.replyTo,
@@ -144,10 +161,33 @@ export class E2eDiscussionsProvider {
     const delteRouteOptions = { method: "DELETE" };
     cy.intercept("**/comments**", delteRouteOptions, deleteResponse).as(DELETE_COMMENTS_ALIAS);
   }
+
+  // public static publishToCommentsStream(response: IDiscussionsResponse) {
+  public static publishToCommentsStream(name: string, threadId: string, comment: IComment) {
+    const message: Partial<Types.Message> = {
+      id: threadId,
+      name,
+      data: comment,
+    };
+    // @ts-ignore
+    Cypress.eventAggregator.publish(COMMENTS_STREAM_UPDATED, message);
+  }
+
+  public static streamDeletedComment(comment: IComment) {
+    E2eDiscussion._removeCommentFromDiscussion(comment);
+
+    // const discussionId = E2eDiscussion.currentDiscussionId;
+
+    // setTimeout(() => {
+    //   this.publishToCommentsStream("commentDelete", discussionId, comment);
+    // }, COMMENT_STREAM_TIMEOUT);
+  }
 }
 
 export class E2eDiscussion {
   public static replyToAddress = "";
+  public static currentDiscussion: IComment[] = [];
+  public static currentDiscussionId = "";
 
   public static provider = E2eDiscussionsProvider;
 
@@ -169,7 +209,11 @@ export class E2eDiscussion {
   }
 
   public static getSingleTopic() {
-    return cy.get("[data-test='single-topic']");
+    return cy.get("[data-test='single-topic']").then(singleTopic => {
+      E2eDiscussion.currentDiscussionId = singleTopic.data("commentId");
+
+      return cy.wrap(singleTopic);
+    });
   }
 
   public static clickSingleTopic({numberOfReplies}: {numberOfReplies?: number} = {}) {
@@ -285,6 +329,10 @@ export class E2eDiscussion {
       .getCommentInputSection()
       .find("[data-test='comment-input-button'] button");
   }
+
+  public static _removeCommentFromDiscussion(comment: IComment) {
+    this.currentDiscussion = this.currentDiscussion.filter(discussionComment => discussionComment._id !== comment._id);
+  }
 }
 
 Given("I mock the Discussions Provider", () => {
@@ -292,9 +340,7 @@ Given("I mock the Discussions Provider", () => {
   E2eDiscussionsProvider.mockAuth();
   E2eDiscussionsProvider.mockAblyAuth();
 
-  const firstComment = CommentBuilder.create().withText("e2e First comment").comment;
-  const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
-  const comments = [firstComment, replyToFirstComment];
+  E2eDiscussion.currentDiscussion = comments;
   E2eDiscussionsProvider.mockGetThread(comments);
 
   E2eDiscussionsProvider.mockGetComment();
@@ -389,6 +435,11 @@ When("I add a new Comment", () => {
     .trigger("change", { data: comment });
 
   // E2eDiscussion.getCommentInputButton().click();
+});
+
+When("a comment was deleted meanwhile", () => {
+  // E2eDiscussionsProvider.lastDeletedComment = firstComment
+  E2eDiscussionsProvider.streamDeletedComment(firstComment);
 });
 
 Then("I should not be able to see Discussions", () => {

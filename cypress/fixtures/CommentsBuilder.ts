@@ -15,11 +15,11 @@ export class CommentBuilder {
     // editHistory: [],
     metadata: {
       isPrivate: "false",
-      allowedMembers: [
+      allowedMembers: `[
         "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
         "0xC6228945005F07254b816F82fDA37f6Cd401831d",
         "0xc8f056AAd3e320809047Af389D658E21412325Aa",
-      ],
+      ]`,
       encrypted: "",
       iv: "",
     },
