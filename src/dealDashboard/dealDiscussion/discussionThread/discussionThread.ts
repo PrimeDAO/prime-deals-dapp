@@ -2,7 +2,7 @@ import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framewo
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
-import { DiscussionsService } from "dealDashboard/discussionsService";
+import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/discussionsService";
 import { COMMENTS_STREAM_UPDATED, Types } from "dealDashboard/discussionsStreamService";
 import { Address, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
@@ -360,7 +360,7 @@ export class DiscussionThread {
   async replyComment(_id: string): Promise<void> {
     const comment = await this.discussionsService.getSingleComment(_id);
     if (!comment._id) {
-      this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
+      this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
       this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       return;
