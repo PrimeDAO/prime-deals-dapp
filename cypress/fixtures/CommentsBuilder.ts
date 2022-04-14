@@ -1,7 +1,7 @@
 import { IComment } from "../../src/entities/DealDiscussions";
 import { E2E_ADDRESSES, getRandomId } from "./dealFixtures";
 
-type Address = "string";
+type Address = string;
 
 export class CommentBuilder {
   public comment: IComment = {
