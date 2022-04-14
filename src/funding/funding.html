@@ -44,8 +44,8 @@
                 Their funds are secured.
               </span>
               <span if.to-view="showDepositForm">
-                You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
-                and executed within ${deal.timeLeftToExecute | timespan:'largest2'} days.
+                You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
+                executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
               <span
                 if.to-view="!deal.isFailed && !deal.isTargetReached && !deal.isRepresentativeUser"

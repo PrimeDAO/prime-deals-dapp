@@ -645,6 +645,8 @@ export class DealTokenSwap implements IDeal {
       () => this.moduleContract.createSwap(...dealParameters))
       .then(receipt => {
         if (receipt) {
+          //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
+          this.fundingStartedAt = new Date();
           this.hydrate();
           return receipt;
         }
@@ -915,8 +917,8 @@ export class DealTokenSwap implements IDeal {
           ...fourZeros,
           this.primaryDao.tokens[i].instantTransferAmount,
           this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf,
-          this.primaryDao.tokens[i].vestedFor,
+          this.primaryDao.tokens[i].cliffOf ?? 0,
+          this.primaryDao.tokens[i].vestedFor ?? 0,
         ]);
       }
     }
@@ -927,8 +929,8 @@ export class DealTokenSwap implements IDeal {
         pathTo.push([
           this.primaryDao.tokens[i].instantTransferAmount,
           this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf,
-          this.primaryDao.tokens[i].vestedFor,
+          this.primaryDao.tokens[i].cliffOf ?? 0,
+          this.primaryDao.tokens[i].vestedFor ?? 0,
           ...fourZeros,
         ]);
       }
