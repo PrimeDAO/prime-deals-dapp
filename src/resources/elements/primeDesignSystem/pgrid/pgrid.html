@@ -30,8 +30,8 @@
         >
           <compose
             if.bind="column.template"
-            view.bind="viewStrategy(column.template, rows)"
-            view-model.bind="getBuffedVm(row)"
+            view.bind="viewStrategy(column.template)"
+            view-model.bind="getBuffedVm(row, rows)"
             containerless
           ></compose>
           <template else>${row[column.field]}</template>
@@ -48,8 +48,8 @@
         >
           <compose
             if.bind="column.template"
-            view.bind="viewStrategy(column.template, rows)"
-            view-model.bind="getBuffedVm(row)"
+            view.bind="viewStrategy(column.template )"
+            view-model.bind="getBuffedVm(row, rows)"
             containerless
           ></compose>
           <template else>${row[column.field]}</template>

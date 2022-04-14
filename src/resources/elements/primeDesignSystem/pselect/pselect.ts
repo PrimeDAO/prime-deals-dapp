@@ -73,11 +73,11 @@ export class PSelect {
     });
   }
   detached(): void {
-    this.select?.destroy();
+    // this.select?.destroy();
   }
   dataChanged(): void {
     if (this.select) {
-      this.select.setData([{text: this.placeholder, placeholder: true}, ...this.data]);
+      this.select.setData([{text: this.placeholder, placeholder: true, value: null}, ...this.data ?? []]);
     }
   }
 }

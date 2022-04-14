@@ -30,7 +30,6 @@ export class Funding {
   private dealId: string;
   private depositAmount: BigNumber;
   private loadingDeposits = false;
-  private refSelectToken: HTMLSelectElement;
   private seeingMore = false;
   private accountBalance: BigNumber;
   private userFundingTokenAllowance: BigNumber;
@@ -135,16 +134,6 @@ export class Funding {
   public seeMore(yesNo: boolean): void {
     this.seeingMore = yesNo;
   }
-
-  /**
-   * Formats a number with commas and two decimals
-   * @param number
-   * @returns string
-   */
-  public withCommas = (number: string | number): string => {
-    return this.numberService.toString(Number(number), { thousandSeparated: true, mantissa: 2 });
-  };
-
   /**
    * Withdraws the deposit made from the connected account
    * @param transaction
@@ -157,7 +146,7 @@ export class Funding {
       return;
     }
     const withdrawModal: IAlertModel = {
-      header: `You are about to withdraw ${this.withCommas(transaction.amount.toString())} ${transaction.token.symbol} from the deal`,
+      header: `You are about to withdraw ${this.displayBigNumber(transaction.amount, transaction.token.decimals)} ${transaction.token.symbol} from the deal`,
       message:
         "<p>Are you sure you want to withdraw your funds?</p>",
       buttonTextPrimary: "Withdraw",
@@ -177,8 +166,11 @@ export class Funding {
         this.eventAggregator.publish("handleFailure", "An error occurred while trying to withdraw. Please try again.");
       }
     }
-    //refresh token contract data for the grid
+    //hydrate the latest contract transaction data after the deposit succeeds
+    await this.deal.hydrateDaoTransactions();
+    //refresh the token contract data
     await this.setTokenContractData();
+    this.setDeposits();
   }
 
   /**
@@ -254,6 +246,7 @@ export class Funding {
     await this.deal.hydrateDaoTransactions();
     //refresh the token contract data
     await this.setTokenContractData();
+    this.setDeposits();
   }
 
   /**
@@ -359,5 +352,8 @@ export class Funding {
         ...this.firstDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.firstDao)),
         ...this.secondDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.secondDao)),
       ]);
+
+    this.firstDaoTokens = [...this.firstDaoTokens];
+    this.secondDaoTokens = [...this.secondDaoTokens];
   }
 }

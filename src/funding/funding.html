@@ -65,9 +65,8 @@
                   <pselect
                     disabled.bind="firstDaoTokens.length === 1"
                     placeholder="Select a Token"
-                    data.bind="tokenSelectData"
+                    data.one-time="tokenSelectData"
                     value.bind="selectedToken"
-                    ref="refSelectToken"
                   ></pselect>
                   <numeric-input
                     css="pInput"
@@ -106,7 +105,7 @@
           </div>
           <div class="links ${!deal.isRepresentativeUser ? 'right' : ''}">
             <address-link
-              address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
+              address.to-view="deal.daoDepositContracts.get(firstDao).address"
               link-text="DAODepositManager Contract"
               show-arrow-inside-link.bind="true"
               show-copy-icon.bind="false"
@@ -163,7 +162,7 @@
             </p>
             <div>
               <address-link
-                address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
+                address.to-view="deal.daoDepositContracts.get(firstDao).address"
                 link-text="DAODepositManager Contract"
                 show-arrow-inside-link.bind="true"
                 show-copy-icon.bind="false"
