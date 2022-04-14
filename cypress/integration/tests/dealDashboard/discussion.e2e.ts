@@ -95,11 +95,10 @@ export class E2eDiscussionsProvider {
       const isPresent = E2eDiscussion.currentDiscussion.find(discussionComment => discussionComment._id === commentId);
       if (!isPresent) {
         req.reply({success: false});
+        return;
       }
 
-      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 56 ~ E2eDiscussionsProvider ~ cy.intercept ~ req", req);
       const reqBody = req.body as IGetRequest;
-      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 94 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
 
       const response: IDiscussionsResponse = {
         _id: getRandomId(),
@@ -130,7 +129,6 @@ export class E2eDiscussionsProvider {
     const createRouteOptions = { method: "POST" };
     cy.intercept("**/comments**", createRouteOptions, async (req) => {
       let reqBody: ICreateRequest = req.body;
-      /* prettier-ignore */ console.log("TCL ~ file: discussion.e2e.ts ~ line 111 ~ E2eDiscussionsProvider ~ cy.intercept ~ reqBody", reqBody);
       try {
         if (typeof req.body === "string") {
           reqBody = JSON.parse(req.body);
@@ -150,6 +148,7 @@ export class E2eDiscussionsProvider {
         };
         req.reply(response);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
     }); //.as(CREATE_COMMENTS_ALIAS);
