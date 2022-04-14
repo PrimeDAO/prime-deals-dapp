@@ -25,12 +25,18 @@ Feature: Discussions - Single Comment - Delete
 
   @regression
   @focus
-  Scenario: Single comments - Reply to comment, that was meanwhile deleted
+  Scenario Outline: Single comments - Comment action on comment, which was meanwhile deleted
     Given I mock the Discussions Provider
     Given I'm the Proposal Lead of an Open Proposal
-    # And the Open Proposal has Discussions with replies
+    And the Open Proposal has Discussions with replies
     And I'm viewing the Open Proposal
     And I choose a single Topic with replies
     When a comment was deleted meanwhile
-    And I like that Comment
+    And I <CommentAction> that Comment
     Then an error should occur reading "This comment has been deleted by the author"
+
+    Examples:
+      | CommentAction |
+      | like          |
+      | dislike       |
+      | reply to      |

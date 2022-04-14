@@ -295,8 +295,14 @@ export class E2eDiscussion {
       .find("[data-test='like-button']");
   }
 
-  public static getReplyActionButton() {
-    return E2eDiscussion.getSingleComment()
+  public static getDislikeAction(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
+      .find("[data-test='single-comment-action']")
+      .find("[data-test='dislike-button']");
+  }
+
+  public static getReplyActionButton(commentOptions?: ICommentOptions) {
+    return E2eDiscussion.getSingleComment(commentOptions)
       .find("[data-test='single-comment-action']")
       .contains("button", "Reply");
   }
@@ -447,6 +453,16 @@ When("a comment was deleted meanwhile", () => {
 When("I like that Comment", () => {
   E2eDiscussion.hoverSingleComment({notAuthor: true});
   E2eDiscussion.getLikeAction({notAuthor: true}).click();
+});
+
+When("I dislike that Comment", () => {
+  E2eDiscussion.hoverSingleComment({notAuthor: true});
+  E2eDiscussion.getLikeAction({notAuthor: true}).click();
+});
+
+When("I reply to that Comment", () => {
+  E2eDiscussion.hoverSingleComment({notAuthor: true});
+  E2eDiscussion.getReplyActionButton({notAuthor: true}).click();
 });
 
 Then("I should not be able to see Discussions", () => {
