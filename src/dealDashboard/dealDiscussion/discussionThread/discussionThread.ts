@@ -3,7 +3,8 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
 import { DiscussionsService } from "dealDashboard/discussionsService";
-import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
+import { COMMENTS_STREAM_UPDATED, Types } from "dealDashboard/discussionsStreamService";
+import { Address, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { Utils } from "services/utils";
@@ -14,8 +15,6 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./discussionThread.scss";
 
 // import { Convo } from "@theconvospace/sdk";
-import { Realtime } from "ably/promises";
-import { Types } from "ably";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
@@ -39,13 +38,16 @@ export class DiscussionThread {
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
   private deletedComment: IComment = {
     _id: "",
     text: "This message has been removed.",
     author: "",
     authorENS: "",
     metadata: {
+      isPrivate: undefined,
+      allowedMembers: undefined,
+      encrypted: undefined,
+      iv: undefined,
       isDeleted: true,
     },
     replyTo: "",
@@ -73,7 +75,7 @@ export class DiscussionThread {
   }
 
   detached(): void {
-    this.unsubscribeFromDiscussion();
+    this.discussionsService.unsubscribeFromDiscussion();
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
@@ -148,7 +150,9 @@ export class DiscussionThread {
     }
 
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
+
     if (commentStreamMessage.name === "commentDelete") {
+      /* prettier-ignore */ console.log("TCL ~ file: discussionThread.ts ~ line 153 ~ DiscussionThread ~ updateCommentsThreadUponMessageArrival ~ commentDelete");
       if (this.threadDictionary[newComment._id]) {
         this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
         this.threadDictionary = this.arrayToDictionary(this.threadComments);
@@ -197,23 +201,23 @@ export class DiscussionThread {
       .filter(comment => comment !== undefined);
   }
 
-  private async subscribeToDiscussion(discussionId: string): Promise<void> {
-    const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
+  // private async subscribeToDiscussion(discussionId: string): Promise<void> {
+  //   const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
 
-    // const convo = new Convo(process.env.CONVO_API_KEY);
-    // const res = convo.threads.subscribe(channelName, this.updateThread);
-    // console.log({res});
+  //   // const convo = new Convo(process.env.CONVO_API_KEY);
+  //   // const res = convo.threads.subscribe(channelName, this.updateThread);
+  //   // console.log({res});
 
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-    this.discussionCommentsStream = await ably.channels.get(channelName);
-    this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
-  }
+  //   const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
+  //   this.discussionCommentsStream = await ably.channels.get(channelName);
+  //   this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
+  // }
 
-  private unsubscribeFromDiscussion(): void {
-    if (this.discussionCommentsStream) {
-      this.discussionCommentsStream.unsubscribe();
-    }
-  }
+  // private unsubscribeFromDiscussion(): void {
+  //   if (this.discussionCommentsStream) {
+  //     this.discussionCommentsStream.unsubscribe();
+  //   }
+  // }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
@@ -242,7 +246,7 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    this.subscribeToDiscussion(discussionId);
+    this.eventAggregator.subscribe(COMMENTS_STREAM_UPDATED, this.updateCommentsThreadUponMessageArrival.bind(this));
 
     if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 

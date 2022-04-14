@@ -10,6 +10,7 @@ import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDisc
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { IDeal } from "entities/IDealTypes";
+import { DiscussionsStreamService, Types } from "./discussionsStreamService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   modifiedAt: string
@@ -23,6 +24,7 @@ export class DiscussionsService {
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
   private ensName: string;
+  private discussionCommentsStream: Types.RealtimeChannelPromise;
 
   constructor(
     private ethereumService: EthereumService,
@@ -31,6 +33,7 @@ export class DiscussionsService {
     private dealService: DealService,
     private dataSourceDeals: IDataSourceDeals,
     private dateService: DateService,
+    private discussionsStreamService: DiscussionsStreamService,
   ) { }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -453,4 +456,12 @@ export class DiscussionsService {
     }, pauseInMs); // Bypass page transaction repositioning
   }
   // edit comment by id?
+
+  public async subscribeToDiscussion(discussionId: string): Promise<void> {
+    this.discussionsStreamService.subscribeToDiscussion(discussionId);
+  }
+
+  public unsubscribeFromDiscussion(): void {
+    this.discussionsStreamService.unsubscribeFromDiscussion();
+  }
 }
