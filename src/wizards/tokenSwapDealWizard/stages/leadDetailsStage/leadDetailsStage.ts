@@ -56,7 +56,7 @@ export class LeadDetailsStage {
       .ensure<IProposalLead, string>(proposalLead => proposalLead.address)
       .required()
       .withMessage("Wallet address is required")
-      .satisfiesRule(Validation.isAddressOrEns)
+      .satisfiesRule(Validation.isETHAddress)
       .ensure<string>(data => data.email)
       .satisfiesRule(Validation.email)
       .rules;
