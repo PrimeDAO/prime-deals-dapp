@@ -336,18 +336,18 @@ export class Funding {
     this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount", "deal.primaryDao")
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount")
   public get firstDao() : IDAO{
     return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount", "deal.primaryDao")
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount")
   public get secondDao() : IDAO {
     return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }
 
   public get lockRequired(): boolean {
-    if (this.depositAmount?.gt(BigNumber.from(0))){
+    if (this.depositAmount?.gt(0)){
       return this.userFundingTokenAllowance?.lt(this.depositAmount);
     }
     return false;

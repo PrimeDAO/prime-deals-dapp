@@ -73,7 +73,7 @@ export class PSelect {
     });
   }
   detached(): void {
-    // this.select?.destroy();
+    this.select?.destroy();
   }
   dataChanged(): void {
     if (this.select) {
