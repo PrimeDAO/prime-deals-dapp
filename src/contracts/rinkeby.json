@@ -3,7 +3,7 @@
   "chainId": "4",
   "contracts": {
     "DaoDepositManager": {
-      "address": "0x0a15E581ae04BAD36c58538bCe1faA0a9627f5fd",
+      "address": "0xbA834D780c4c736df23e345DFddEfC146f162697",
       "abi": [
         {
           "anonymous": false,
@@ -28,9 +28,9 @@
             },
             {
               "indexed": false,
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "depositId",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
               "indexed": false,
@@ -176,6 +176,10 @@
           ],
           "name": "Withdrawn",
           "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
         },
         {
           "inputs": [
@@ -445,9 +449,9 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -480,7 +484,7 @@
           "outputs": [
             {
               "internalType": "address[]",
-              "name": "senders",
+              "name": "depositors",
               "type": "address[]"
             },
             {
@@ -523,9 +527,9 @@
           "name": "getTotalDepositCount",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -564,7 +568,7 @@
             },
             {
               "internalType": "address",
-              "name": "_user",
+              "name": "_depositor",
               "type": "address"
             },
             {
@@ -573,7 +577,7 @@
               "type": "address"
             }
           ],
-          "name": "getWithdrawableAmountOfUser",
+          "name": "getWithdrawableAmountOfDepositor",
           "outputs": [
             {
               "internalType": "uint256",
@@ -690,13 +694,7 @@
             }
           ],
           "name": "sendToModule",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -743,7 +741,7 @@
           ],
           "name": "startVesting",
           "outputs": [],
-          "stateMutability": "nonpayable",
+          "stateMutability": "payable",
           "type": "function"
         },
         {
@@ -951,12 +949,32 @@
           ],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },
     "DealManager": {
-      "address": "0x0b500dB17E4D9e8167253956546A9A2b3412a432",
+      "address": "0xDe91db9E5e654591D671B4117C00d8b2a78909D4",
       "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_daoDepositManager",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_weth",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
         {
           "anonymous": false,
           "inputs": [
@@ -994,6 +1012,19 @@
           ],
           "name": "OwnershipTransferred",
           "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_moduleAddress",
+              "type": "address"
+            }
+          ],
+          "name": "activateModule",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
         },
         {
           "inputs": [
@@ -1143,19 +1174,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_moduleAddress",
-              "type": "address"
-            }
-          ],
-          "name": "registerModule",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -1171,19 +1189,6 @@
             }
           ],
           "name": "setDaoDepositManagerImplementation",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_newWETH",
-              "type": "address"
-            }
-          ],
-          "name": "setWETHAddress",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -1217,7 +1222,7 @@
       ]
     },
     "TokenSwapModule": {
-      "address": "0xB9d6709EA15f0e52F959636756dE443F865c6410",
+      "address": "0xd0C9221DD15843735c6c2B4f0D09c17Cd562a767",
       "abi": [
         {
           "inputs": [
@@ -1337,10 +1342,46 @@
               "internalType": "uint32",
               "name": "dealId",
               "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "metadata",
+              "type": "bytes32"
             }
           ],
           "name": "TokenSwapExecuted",
           "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "BPS",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "MAX_FEE",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [
@@ -1505,9 +1546,9 @@
                   "type": "bytes32"
                 },
                 {
-                  "internalType": "enum ModuleBase.Status",
-                  "name": "status",
-                  "type": "uint8"
+                  "internalType": "bool",
+                  "name": "isExecuted",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct TokenSwapModule.TokenSwap",
@@ -1608,13 +1649,17 @@
               "type": "bytes32"
             },
             {
-              "internalType": "enum ModuleBase.Status",
-              "name": "status",
-              "type": "uint8"
+              "internalType": "bool",
+              "name": "isExecuted",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },

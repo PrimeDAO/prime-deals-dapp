@@ -40,6 +40,7 @@ interface ITokenSwapCreatedArgs {
 interface ITokenSwapExecutedArgs {
   module: Address,
   dealId: number;
+  metadata: string;
 }
 
 interface IExecutedDeal {
@@ -194,8 +195,8 @@ export class DealService {
         for (const event of events) {
           const params = event.args;
           // hack until the event has it
-          const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
-          //const dealId = parseBytes32String(params.metadata);
+          // const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
+          const dealId = parseBytes32String(params.metadata);
           dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
         }
       });
