@@ -149,10 +149,10 @@ export class FirestoreService<
       if (docSnapshot.exists()) {
         return docSnapshot.data() as TDealDocument;
       } else {
-        throw new Error("Deal does not exist");
+        return null;
       }
-    } catch (error) {
-      throw new Error(error);
+    } catch (_error) {
+      return null; // exception is thrown when the deal is not found or inaccessible
     }
   }
 
