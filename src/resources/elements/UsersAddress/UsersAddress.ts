@@ -1,6 +1,7 @@
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
+import { EnsService } from "services/EnsService";
 import { EthereumService } from "../../../services/EthereumService";
 
 @autoinject
@@ -15,7 +16,9 @@ export class UsersAddress {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService) {
+    private ethereumService: EthereumService,
+    private ensService: EnsService,
+  ) {
     this.eventAggregator.subscribe("Network.Changed.Account", () => { this.initialize(); });
   }
 
@@ -25,8 +28,8 @@ export class UsersAddress {
 
   private async initialize() {
     this.usersAddress = this.ethereumService.defaultAccountAddress;
-    if (this.usersAddress && this.showEns && this.ethereumService.walletProvider) {
-      this.ens = await this.ethereumService.walletProvider.lookupAddress(this.usersAddress);
+    if (this.usersAddress && this.showEns) {
+      this.ens = await this.ensService.getEnsForAddress(this.usersAddress);
     }
   }
 }
