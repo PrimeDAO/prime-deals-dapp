@@ -60,9 +60,11 @@ export class Funding {
     private tokenService: TokenService,
     private aureliaHelperService: AureliaHelperService,
   ) {
-    //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
-    this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
+    this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
+      //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
       this.verifySecurity();
+      //Reload all tokens when account changes
+      if (this.deal) await this.initializeData();
     });
   }
 
@@ -83,6 +85,14 @@ export class Funding {
   }
 
   public async bind(): Promise<void> {
+    await this.initializeData();
+    //subscribe a watcher to look for changes on the daoTokenTransactions
+    this.aureliaHelperService.createCollectionWatch(this.deal.daoTokenTransactions, this.setDeposits);
+  }
+
+  private async initializeData() : Promise<void> {
+    await this.deal.ensureInitialized();
+    await this.deal.hydrateDaoTransactions();
     //get contract token information from the other DAO
     //Clone the tokens from registration data and add props from ITokenCalculated
     this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
@@ -95,12 +105,12 @@ export class Funding {
       this.selectedToken = "0";
       //and get the account balance for that token
       await this.setAccountBalance();
+      await this.setFundingTokenAllowance();
+    } else {
+      this.selectedToken = null;
     }
-
     //get deposits from deal token swap entity
     this.setDeposits();
-    //subscribe a watcher to look for changes on the daoTokenTransactions
-    this.aureliaHelperService.createCollectionWatch(this.deal.daoTokenTransactions, this.setDeposits);
   }
 
   private mapTransactionsToDeposits(transactions: IDaoTransaction[]): IDaoTransaction[]{
@@ -246,6 +256,7 @@ export class Funding {
     await this.deal.hydrateDaoTransactions();
     //refresh the token contract data
     await this.setTokenContractData();
+    await this.setAccountBalance();
     this.setDeposits();
   }
 
@@ -325,12 +336,12 @@ export class Funding {
     this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
   }
 
-  //moving this getter locally for the proposal lead
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount", "deal.primaryDao")
   public get firstDao() : IDAO{
     return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
   }
 
-  //moving this getter locally for the proposal lead
+  @computedFrom("ethereumService.defaultAccountAddress", "deal.daoRepresentedByCurrentAccount", "deal.primaryDao")
   public get secondDao() : IDAO {
     return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }

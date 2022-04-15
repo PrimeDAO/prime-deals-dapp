@@ -211,7 +211,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
       if (!isReached) return; //immediately returns if it's already false from a previous loop
       isReached = dao.tokens.every(daoToken => {
-        const tokenTransactions = transactions.filter(x => x.address === daoToken.address); //filter transactions by token
+        const tokenTransactions = transactions.filter(x => x.token.address === daoToken.address); //filter transactions by token
         const totalDeposited : BigNumber = tokenTransactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
         return totalDeposited.gte(daoToken.amount);
       });
@@ -749,7 +749,7 @@ export class DealTokenSwap implements IDeal {
   public execute(): Promise<TransactionReceipt> {
     if (!this.isFailed) {
       return this.transactionsService.send(
-        () => this.moduleContract.executeSwap(this.id))
+        () => this.moduleContract.executeSwap(this.contractDealId))
         .then(async (receipt) => {
           if (receipt) {
             this.isExecuted = true;

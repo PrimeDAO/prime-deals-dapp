@@ -9,7 +9,7 @@ export class StatusCard {
   @bindable dao: IDAO;
   @bindable tokens: ITokenCalculated[];
 
-  @computedFrom("swapCompleted", "dao", "deal.isFailed")
+  @computedFrom("swapCompleted", "dao", "deal.isFailed", "tokens")
   get chipColor(): string{
     if (this.swapCompleted){
       return "success";
@@ -21,7 +21,7 @@ export class StatusCard {
     }
   }
 
-  @computedFrom("swapCompleted", "dao", "deal.isFailed", "deal.isClaiming")
+  @computedFrom("swapCompleted", "dao", "deal.isFailed", "deal.isClaiming", "tokens")
   get status(): string{
     if (this.swapCompleted){
       return "Swap completed";

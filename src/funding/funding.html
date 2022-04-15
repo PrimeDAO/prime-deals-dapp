@@ -65,7 +65,7 @@
                   <pselect
                     disabled.bind="firstDaoTokens.length === 1"
                     placeholder="Select a Token"
-                    data.one-time="tokenSelectData"
+                    data.bind="tokenSelectData"
                     value.bind="selectedToken"
                   ></pselect>
                   <numeric-input
@@ -82,7 +82,7 @@
                     Your ${firstDaoTokens[selectedToken].symbol} Balance:
                     <tokenbalance
                       formatted="0.00a"
-                      token-address.to-view="firstDaoTokens[selectedToken].address"
+                      token-address.bind="firstDaoTokens[selectedToken].address"
                     ></tokenbalance>
                   </span>
                 </div>
