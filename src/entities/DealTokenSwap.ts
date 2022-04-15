@@ -813,7 +813,7 @@ export class DealTokenSwap implements IDeal {
     const transactions = new Array<IDaoTransaction>();
     const depositContract = this.daoDepositContracts.get(dao);
 
-    const depositFilter = depositContract.filters.Deposited();
+    const depositFilter = depositContract.filters.Deposited(this.moduleContract.address, this.contractDealId);
     await depositContract.queryFilter(depositFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {
@@ -831,7 +831,7 @@ export class DealTokenSwap implements IDeal {
         }
       });
 
-    const withdrawFilter = depositContract.filters.Withdrawn();
+    const withdrawFilter = depositContract.filters.Withdrawn(this.moduleContract.address, this.contractDealId);
     await depositContract.queryFilter(withdrawFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {
