@@ -187,7 +187,7 @@ export class TokenDetails {
     return ValidationRules
       .ensure<IToken, string>(data => data.address)
       .required()
-      .satisfiesRule(Validation.isETHAddress)
+      .satisfiesRule(Validation.isEthAddress)
       .satisfiesRule("isValidIERC20Address")
       .ensure<string>(data => data.amount)
       .required()

@@ -17,6 +17,7 @@
           class="wizardFormInput"
           label="Proposal Lead Address"
           input-reference.bind="input"
+          helper-message="${wizardState.registrationData.proposalLead.address & ensToAddress:true }"
           data-test="proposal-lead-address-field">
           <pinput-text
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
