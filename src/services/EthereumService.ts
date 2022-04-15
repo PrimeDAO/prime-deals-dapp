@@ -527,6 +527,23 @@ export class EthereumService {
 
     return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
   }
+
+  public getEnsForAddress(address: Address): Promise<string> {
+    return this.walletProvider?.lookupAddress(address);
+  }
+
+  public getAddressForEns(ens: string): Promise<Address> {
+
+    try {
+      if (getAddress(ens)) {
+        // already is an address, return null.  resolveName would return the address
+        return null;
+      }
+    // eslint-disable-next-line no-empty
+    } catch { }
+
+    return this.walletProvider?.resolveName(ens);
+  }
 }
 
 /**
