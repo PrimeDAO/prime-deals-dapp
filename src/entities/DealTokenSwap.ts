@@ -832,7 +832,7 @@ export class DealTokenSwap implements IDeal {
             address: params.depositor,
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
-            depositId: (params.depositId as unknown as BigNumber).toNumber(),
+            depositId: typeof params.depositId === typeof BigNumber ? (params.depositId as unknown as BigNumber).toNumber() : params.depositId,
             amount: params.amount,
           });
         }
