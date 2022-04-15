@@ -301,9 +301,9 @@ export class Funding {
    * Verifies the current account has access to this page and if it doesn't, redirect them
    */
   private verifySecurity(): void {
-    if (!this.deal || !this.deal.registrationData) return;
     if (!this.deal.isUserRepresentativeOrLead){
       //redirect user to the home page if not the proposal lead or one of the deal's representatives
+      this.eventAggregator.publish("handleInfo", "Sorry, you are no longer authorized to view this page");
       this.router.navigate("home");
     }
   }
