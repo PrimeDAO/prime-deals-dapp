@@ -332,12 +332,12 @@ export class Funding {
     this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "deal.isRepresentativeUser")
+  @computedFrom("deal.isRepresentativeUser", "deal.daoRepresentedByCurrentAccount", "deal.primaryDao")
   public get firstDao() : IDAO{
     return this.deal.isRepresentativeUser ? this.deal.daoRepresentedByCurrentAccount : this.deal.primaryDao;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "deal.isRepresentativeUser")
+  @computedFrom("deal.isRepresentativeUser", "deal.daoRepresentedByCurrentAccount", "deal.partnerDao")
   public get secondDao() : IDAO {
     return this.deal.isRepresentativeUser ? this.deal.daoOtherThanRepresentedByCurrentAccount : this.deal.partnerDao;
   }

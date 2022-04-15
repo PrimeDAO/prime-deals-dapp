@@ -127,10 +127,7 @@
         <div class="box-container">
           <div>
             <div class="token-grid">
-              <h4 class="title heading heading3 gradient">
-                ${!deal.isRepresentativeUser ? 'Vested Token Status of' : 'Claim Tokens for'}
-                ${firstDao.name}
-              </h4>
+              <h4 class="title heading heading3 gradient">${firstDao.name}</h4>
               <pgrid
                 id="token-grid"
                 rows.bind="firstDaoTokens"
@@ -140,9 +137,7 @@
               </pgrid>
             </div>
             <div class="token-grid" if.to-view="deal.isUserProposalLead">
-              <h4 class="title heading heading3 gradient">
-                Vested Token Status of ${secondDao.name}
-              </h4>
+              <h4 class="title heading heading3 gradient">${secondDao.name}</h4>
               <pgrid
                 id="token-grid"
                 rows.bind="secondDaoTokens"
@@ -176,6 +171,12 @@
               >
               </address-link>
             </div>
+            <h4
+              class="claim-tokens-header title heading gradient"
+              if.to-view="deal.isRepresentativeUser && deal.isUserProposalLead"
+            >
+              Claim Tokens for ${firstDao.name}
+            </h4>
             <pbutton
               type="primary"
               if.to-view="deal.isRepresentativeUser"

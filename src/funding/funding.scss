@@ -292,6 +292,13 @@ $hover-transition-speed-slow: 0.4s;
             background-color: $Border01;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
+            .claim-tokens-header {
+              border-top: 1px solid $Border03;
+              padding-top: 14px;
+              margin-top: 10px;
+              font-size: 18px;
+              width: 100%;
+            }
             p {
               font-size: 14px;
               color: $Neutral02;
