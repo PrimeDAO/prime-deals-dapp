@@ -47,12 +47,12 @@ export class StatusCard {
   private get isDaoFullyClaimed() : boolean {
     //return true if all tokens for this dao have been claimed
     if (!this.deal.isExecuted) return false;
-    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.claimed));
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.claimed ?? 0));
   }
 
   @computedFrom("tokens")
   private get isDaoTargetReached() : boolean {
     //return true if all tokens for this dao have reached their funding target
-    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.deposited));
+    return this.tokens.every(x => BigNumber.from(x.amount).eq(x.deposited ?? 0));
   }
 }

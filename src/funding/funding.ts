@@ -176,11 +176,8 @@ export class Funding {
         this.eventAggregator.publish("handleFailure", "An error occurred while trying to withdraw. Please try again.");
       }
     }
-    //hydrate the latest contract transaction data after the deposit succeeds
-    await this.deal.hydrateDaoTransactions();
-    //refresh the token contract data
-    await this.setTokenContractData();
-    this.setDeposits();
+    //reload all data after deposit
+    await this.initializeData();
   }
 
   /**
@@ -248,16 +245,14 @@ export class Funding {
     if (depositTransaction){
       //deposit was successful
       this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
+      //clear out the deposit input
+      this.depositAmount = null;
     } else {
       //something happened to make the deposit not happen
       this.eventAggregator.publish("handleFailure", "An error occurred while trying to deposit tokens. Please try again.");
     }
-    //hydrate the latest contract transaction data after the deposit succeeds
-    await this.deal.hydrateDaoTransactions();
-    //refresh the token contract data
-    await this.setTokenContractData();
-    await this.setAccountBalance();
-    this.setDeposits();
+    //reload all data after deposit
+    await this.initializeData();
   }
 
   /**
@@ -315,6 +310,7 @@ export class Funding {
 
   public setDeposits() : void {
     this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
+    this.deposits = Utils.cloneDeep(this.deposits);
   }
 
   @computedFrom("firstDaoTokens")
@@ -366,5 +362,20 @@ export class Funding {
 
     this.firstDaoTokens = [...this.firstDaoTokens];
     this.secondDaoTokens = [...this.secondDaoTokens];
+  }
+  private async claimTokens(){
+    const transaction = await this.deal.claim(this.firstDao);
+    if (transaction){
+      const congratulatePopupModel: IAlertModel = {
+        header: "Congratulations!",
+        message: "<p class='excitement'>You have successfully claimed your tokens!</p>",
+        confetti: true,
+        buttonTextPrimary: "Close",
+        className: "congratulatePopup",
+      };
+      await this.alertService.showAlert(congratulatePopupModel);
+    } else {
+      this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to claim your tokens. Please try again later", EventMessageType.Info, "Claim Token Error"));
+    }
   }
 }

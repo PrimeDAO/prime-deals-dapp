@@ -176,7 +176,12 @@
               >
               </address-link>
             </div>
-            <pbutton type="primary" if.to-view="deal.isRepresentativeUser">Claim Tokens</pbutton>
+            <pbutton
+              type="primary"
+              if.to-view="deal.isRepresentativeUser"
+              click.delegate="claimTokens()"
+              >Claim Tokens</pbutton
+            >
           </div>
         </div>
       </div>

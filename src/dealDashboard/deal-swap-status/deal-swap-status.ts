@@ -1,3 +1,4 @@
+import { Router } from "aurelia-router";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./deal-swap-status.scss";
 import { bindable, autoinject} from "aurelia-framework";
@@ -13,9 +14,10 @@ export class DealSwapStatus {
   constructor(
     private eventAggregator: EventAggregator,
     private alertService: AlertService,
+    private readonly router: Router,
   ) {
   }
-  public async activate() {
+  public async attached() {
     //wait until the dao transactions from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
     //wait until the dao token claims from the contract are there

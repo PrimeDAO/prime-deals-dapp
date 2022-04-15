@@ -881,9 +881,17 @@ export class DealTokenSwap implements IDeal {
     } else {
       //calculate only claiming properties
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
-      token.claimable = tokenClaimableAmounts.get(token.address);
-      token.claimed = this.getClaimedAmount(dao, token.address);
-      token.locked = BigNumber.from(token.amount).sub(token.claimable);
+      if (tokenClaimableAmounts.size > 0){
+        token.claimable = tokenClaimableAmounts.get(token.address);
+        token.claimed = this.getClaimedAmount(dao, token.address);
+        token.locked = BigNumber.from(token.amount).sub(token.claimable);
+        token.percentCompleted = toBigNumberJs(token.claimed).dividedBy(token.amount).toNumber() * 100;
+      } else {
+        token.claimable = BigNumber.from(0);
+        token.claimed = BigNumber.from(0);
+        token.locked = BigNumber.from(0);
+        token.percentCompleted = 0;
+      }
     }
   }
 
