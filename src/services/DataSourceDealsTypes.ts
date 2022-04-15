@@ -41,6 +41,21 @@ export abstract class IDataSourceDeals {
   }
 
   /**
+   * Returns Observable of all deals, and emits when any of them update
+   * Doesn't return the actual deal document, only the time when it was modified
+   */
+  allDealsUpdatesObservable(): Observable<Array<{dealId: string, modifiedAt: string}>> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * Get deal document by Id
+   */
+  getDealById<TDealDocument extends IDealTokenSwapDocument>(dealId: string): Promise<TDealDocument> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * add new vote or update existing
    * @param dealId
    * @param accountAddress
