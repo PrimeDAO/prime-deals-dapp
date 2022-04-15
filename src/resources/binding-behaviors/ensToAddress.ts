@@ -8,10 +8,10 @@ export class EnsToAddressBindingBehavior {
   ) {
   }
 
-  public bind(binding, _source) {
+  public bind(binding, _source, ensOnly = false) {
     binding.originalUpdateTarget = binding.updateTarget;
     binding.updateTarget = (ens: string) => {
-      this.ensService.getAddressForEns(ens)
+      this.ensService.getAddressForEns(ens, ensOnly)
         .then(address => binding.originalUpdateTarget(address));
     };
   }
