@@ -1,4 +1,5 @@
 import { autoinject } from "aurelia-framework";
+import { getAddress } from "ethers/lib/utils";
 import { Address, EthereumService } from "services/EthereumService";
 
 @autoinject
@@ -33,9 +34,24 @@ export class EnsService {
     return ens;
   }
 
-  public async getAddressForEns(ens: string): Promise<Address> {
+  /**
+   * Returns address that is represented by the ENS.
+   * Returns null if it can't resolve the ENS to an address
+   * Returns address if it already is an address, else null if ensOnly
+   */
+  public async getAddressForEns(ens: string, ensOnly = false): Promise<Address> {
     let address: Address;
     let isCached = false;
+
+    if (ensOnly) {
+      try {
+        if (getAddress(ens)) {
+          // already is an address, return null
+          return null;
+        }
+        // eslint-disable-next-line no-empty
+      } catch { }
+    }
 
     if (this.addressCache.has(ens)) {
       isCached = true;
