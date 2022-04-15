@@ -1,5 +1,4 @@
 import { autoinject } from "aurelia-framework";
-import { firebaseAuth } from "./FirebaseService";
 import { FirestoreService } from "./FirestoreService";
 import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
@@ -9,6 +8,7 @@ import { IDocumentUpdates, IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
 import { skip } from "rxjs/operators";
+import { firebaseAuth } from "./firebase-helpers";
 
 @autoinject
 export class FirestoreDealsService<

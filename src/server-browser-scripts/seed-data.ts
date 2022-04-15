@@ -1,3 +1,4 @@
+import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
 import { jsonDocs } from "../../test/data/index";
 import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
 import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
@@ -42,8 +43,11 @@ export const addDocument = (
     setDoc(doc(firebaseDatabase, collectionKey, String(dealId)), correctedData) :
     addDoc(collection(firebaseDatabase, collectionKey), correctedData);
 };
-
-signInToFirebase("0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498");
+try {
+  signInToFirebase(DefaultTestAddressForSignIn);
+} catch {
+  //swallow
+}
 
 export async function resetDeals() {
   await clearCollection("deals-token-swap");
@@ -54,7 +58,9 @@ export async function resetDeals() {
 }
 
 export default resetDeals;
-module.exports.resetDeals = resetDeals;
+if (module.exports) {
+  module.exports.resetDeals = resetDeals;
+}
 // addCollectionAndDocuments("deals-token-swap", [PRIVATE_PARTNERED_DEAL]);
 // deleteDocument("deals-token-swap", "3HWCTLjBvjmcc4K78B36em");
 
