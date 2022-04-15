@@ -56,8 +56,8 @@ export class NumberService {
       return null;
     }
 
-    const thousandSeparated = !options.average && options.thousandSeparated;
-    const mantissa = (options.mantissa !== undefined) ? this.fromString(options.mantissa) : 2;
+    const thousandSeparated = !options?.average && options?.thousandSeparated;
+    const mantissa = (options?.mantissa !== undefined) ? this.fromString(options?.mantissa) : 2;
 
     let formatString: string;
 
@@ -72,7 +72,7 @@ export class NumberService {
 
     if (thousandSeparated) {
       formatString = "0," + formatString;
-    } else if (options.average) {
+    } else if (options?.average) {
       formatString = formatString + "a";
     }
     /**

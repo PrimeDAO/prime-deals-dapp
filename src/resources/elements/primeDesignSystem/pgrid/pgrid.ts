@@ -1,5 +1,4 @@
-import { bindable, computedFrom, autoinject, View } from "aurelia-framework";
-import { customElement } from "aurelia-framework";
+import { customElement, bindable, computedFrom, autoinject, View } from "aurelia-framework";
 import { InlineViewStrategy } from "aurelia-templating";
 import "./pgrid.scss";
 import { SortOrder, SortService } from "services/SortService";
@@ -13,7 +12,7 @@ export interface IGridColumn {
   headerClass?: string;
   align?: string;
   template?: string;
-  sortFunc?: (a: unknown, b: unknown, sortDirection?: SortOrder) => number
+  sortFunc?: (a: unknown, b: unknown, sortDirection?: SortOrder) => number;
 }
 
 @autoinject
@@ -26,50 +25,88 @@ export class PGrid {
   @bindable public selectable = false;
   @bindable public sortColumn: string;
   @bindable public sortDirection: SortOrder;
+  @bindable public numberToShow = 10;
+  @bindable public hideMore = true;
   sortEvaluator: (a: any, b: any) => number;
   parent: View;
-
-  constructor() {
-    // you can inject the element or any DI in the constructor
-  }
+  private seeingMore = false;
 
   created(owningView: View) {
     this.parent = owningView;
   }
 
   getBuffedVm(row: any) {
-    return { ...this.parent.bindingContext, ...row, row: row };
+    const context = this.parent.bindingContext;
+    const vm = { ...context, ...row, row: row };
+    Object.keys(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(context)))
+      .filter(
+        (y) => y !== "constructor" && y !== "bind" && y !== "__metadata__" && y !== "activate",
+      )
+      .forEach((y) => {
+        vm[y] = context[y];
+      });
+    return vm;
   }
 
-  sort(columnName: string) {
-    if (this.sortColumn === columnName) {
-      this.sortDirection = SortService.toggleSortOrder(this.sortDirection);
-    } else {
-      this.sortColumn = columnName;
-      this.sortDirection = SortOrder.ASC;
+  bind() {
+    if (this.sortColumn) {
+      this.sort(this.sortColumn, false);
+    }
+  }
+
+  sort(columnName: string, changeSortDirection = true) {
+    if (changeSortDirection) {
+      if (this.sortColumn === columnName) {
+        this.sortDirection = SortService.toggleSortOrder(this.sortDirection);
+      } else {
+        this.sortColumn = columnName;
+        this.sortDirection = SortOrder.ASC;
+      }
     }
 
-    const currentColumn = this.columns.find(y => y.field === columnName);
+    const currentColumn = this.columns.find((y) => y.field === columnName);
     if (currentColumn?.sortFunc) {
       this.sortEvaluator = (a, b) => currentColumn.sortFunc(a, b, this.sortDirection);
       return;
     }
 
     this.sortEvaluator = (a, b) =>
-      !isNaN(Utils.getPropertyFromString(a, columnName)) ?
-        SortService.evaluateNumber(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection) :
-        Utils.getPropertyFromString(a, columnName) instanceof Date ?
-          SortService.evaluateDateTimeAsDate(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection) :
-          SortService.evaluateString(Utils.getPropertyFromString(a, columnName), Utils.getPropertyFromString(b, columnName), this.sortDirection);
+      !isNaN(Utils.getPropertyFromString(a, columnName))
+        ? SortService.evaluateNumber(
+          Utils.getPropertyFromString(a, columnName),
+          Utils.getPropertyFromString(b, columnName),
+          this.sortDirection,
+        )
+        : Utils.getPropertyFromString(a, columnName) instanceof Date
+          ? SortService.evaluateDateTimeAsDate(
+            Utils.getPropertyFromString(a, columnName),
+            Utils.getPropertyFromString(b, columnName),
+            this.sortDirection,
+          )
+          : SortService.evaluateString(
+            Utils.getPropertyFromString(a, columnName),
+            Utils.getPropertyFromString(b, columnName),
+            this.sortDirection,
+          );
   }
 
   viewStrategy(html: string) {
-    return new InlineViewStrategy(!html.startsWith("<template>") ? `<template>${html}</template>` : html);
+    return new InlineViewStrategy(
+      !html.startsWith("<template>") ? `<template>${html}</template>` : html,
+    );
   }
 
   @computedFrom("columns")
   get gridTemplateColumnText() {
-    return this.columns?.map(y => y.width).join(" ");
+    return this.columns?.map((y) => y.width).join(" ");
+  }
+
+  /**
+   * This allows for more rows to be displayed on the grid
+   * @param yesNo
+   */
+  public seeMore(yesNo: boolean): void {
+    this.seeingMore = yesNo;
   }
 
 }
