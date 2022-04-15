@@ -1,3 +1,4 @@
+import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, Networks } from "./EthereumService";
@@ -225,21 +226,14 @@ export class DealService {
   }
 
   private async observeDeals(): Promise<void> {
-    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress, true);
-
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
 
-    this.dealsSubscription = dealsObservable.subscribe(
+    this.dealsSubscription = this.dataSourceDeals.allDealsUpdatesObservable().pipe(skip(1)).subscribe(
       updates => {
-
-        try {
-          if (!updates?.length || !this.deals) {
-            throw new Error("Deals are not accessible");
-          }
-
-          for (const dealDoc of updates) {
+        updates.forEach(update => {
+          this.dataSourceDeals.getDealById(update.dealId).then(dealDoc => {
             if (this.deals.has(dealDoc.id)) {
               this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
             } else {
@@ -249,13 +243,10 @@ export class DealService {
                */
               this._createDeal(dealDoc);
             }
-          }
-        }
-        catch (error) {
-          this.deals = new Map();
-          this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
-        }
-
+          }).catch(() => {
+            this.deals.delete(update.dealId);
+          });
+        });
       },
     );
   }

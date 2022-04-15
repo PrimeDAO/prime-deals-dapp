@@ -1,7 +1,7 @@
 import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
-import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION } from "../../src/services/FirestoreTypes";
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
@@ -146,6 +146,17 @@ export const generateVotingSummary = async (dealId: string): Promise<IDealVoting
     totalSubmittable: primaryDAO.totalSubmittable + partnerDAO.totalSubmittable,
     totalSubmitted: primaryDAO.acceptedVotesCount + primaryDAO.rejectedVotesCount + partnerDAO.acceptedVotesCount + partnerDAO.rejectedVotesCount,
   };
+};
+
+/**
+ * Updates deal updates collection
+ */
+export const updateDealUpdatesCollection = (dealId: string): void => {
+  const modifiedAt = new Date().toISOString();
+  firestore.collection(DEALS_TOKEN_SWAP_UPDATES_COLLECTION).doc(dealId).set({
+    dealId,
+    modifiedAt,
+  });
 };
 
 /**
