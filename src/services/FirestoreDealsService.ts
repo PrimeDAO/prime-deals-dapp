@@ -124,6 +124,14 @@ export class FirestoreDealsService<
     return this.firestoreService.updateDealIsRejected(dealId, value);
   }
 
+  public getDealById<TDealDocument>(dealId: string): Promise<TDealDocument> {
+    return this.firestoreService.getDealById<TDealDocument>(dealId);
+  }
+
+  public allDealsUpdatesObservable(): Observable<{ dealId: string; modifiedAt: string; }[]> {
+    return this.firestoreService.allDealsUpdatesObservable();
+  }
+
   /**
    * check if provided accountAddress is currently authenticated user
    * @param accountAddress string
