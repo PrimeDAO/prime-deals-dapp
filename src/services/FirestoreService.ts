@@ -19,7 +19,7 @@ import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, merge, Observable, Subject } from "rxjs";
 import { map, mergeAll, skip } from "rxjs/operators";
-import { DEALS_TOKEN_SWAP_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
+import { DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
@@ -137,9 +137,9 @@ export class FirestoreService<
    * Reads deal by ID from Firestore
    *
    * @param dealId string
-   * @returns Promise<IFirebaseDocument<TDealDocument>>
+   * @returns Promise<TDealDocument>
    */
-  public async getDealById(dealId: string): Promise<IFirebaseDocument<TDealDocument>> {
+  public async getDealById<TDealDocument>(dealId: string): Promise<TDealDocument> {
     try {
       const docRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       const docSnapshot = await getDoc(docRef);
@@ -147,10 +147,7 @@ export class FirestoreService<
       // Checks is the document exists
       // (docSnapshot could be returned with no data if the document has nested collections and no data)
       if (docSnapshot.exists()) {
-        return {
-          data: docSnapshot.data() as TDealDocument,
-          id: docSnapshot.id,
-        };
+        return docSnapshot.data() as TDealDocument;
       } else {
         throw new Error("Deal does not exist");
       }
@@ -289,6 +286,10 @@ export class FirestoreService<
     return this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery());
   }
 
+  public allDealsUpdatesObservable(): Observable<Array<{dealId: string, modifiedAt: string}>> {
+    return this.getObservableOfQueryUpdates(this.allDealsUpdatesQuery());
+  }
+
   /**
    * Sets deal isWithdrawn flag
    * @param dealId string
@@ -416,6 +417,12 @@ export class FirestoreService<
     const querySnapshot = await getDocs(q);
 
     return this.getDealDocumentsFromQuerySnapshot<T>(querySnapshot);
+  }
+
+  private allDealsUpdatesQuery(): Query<DocumentData> {
+    return query(
+      collection(firebaseDatabase, DEALS_TOKEN_SWAP_UPDATES_COLLECTION),
+    );
   }
 
   private allPublicDealsQuery(): Query<DocumentData> {
