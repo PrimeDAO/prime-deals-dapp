@@ -35,4 +35,8 @@ export class DealRepresentativesVotes {
       return allVotes[a.address] > allVotes[b.address] ? -1 : 1;
     });
   }
+
+  shouldShowTooltip(elementRef: HTMLElement) {
+    return elementRef.offsetWidth < elementRef.scrollWidth;
+  }
 }

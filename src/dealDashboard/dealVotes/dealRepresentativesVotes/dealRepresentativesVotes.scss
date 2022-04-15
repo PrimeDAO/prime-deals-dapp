@@ -14,6 +14,8 @@ deal-representatives-votes {
     .accordion-title {
       flex: 1;
       color: $Neutral04;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .dao-logo {

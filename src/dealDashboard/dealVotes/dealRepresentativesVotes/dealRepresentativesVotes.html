@@ -1,7 +1,7 @@
 <template>
   <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
     <img class="dao-logo" src.bind="dao.logoURI">
-    <div class="accordion-title bodySmallText">
+    <div class="accordion-title bodySmallText" ptooltip.bind="shouldShowTooltip(daoName) ? dao.name : ''" ref="daoName">
       ${dao.name}
     </div>
 

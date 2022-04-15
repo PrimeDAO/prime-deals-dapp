@@ -6,7 +6,8 @@
 
     <div class="infoSection">
       <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
-      <div class="daoDetails" ptooltip.bind="deal.primaryDao.name">
+      <div class="daoDetails" ptooltip.bind="shouldShowTooltip(primaryDaoName) ? deal.primaryDao.name : ''"
+        ref="primaryDaoName">
         ${deal.primaryDao.name}
         <div class="daoSocialLinks">
           <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
@@ -21,7 +22,8 @@
 
     <div class="infoSection" if.bind="deal.partnerDao" ref="partnerDao">
       <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
-      <div class="daoDetails" ptooltip.bind="deal.partnerDao.name">
+      <div class="daoDetails" ptooltip.bind="shouldShowTooltip(partnerDaoName) ? deal.partnerDao.name : ''"
+        ref="partnerDaoName">
         ${deal.partnerDao.name}
         <div class="daoSocialLinks">
           <a href.bind="socialMedia.url"

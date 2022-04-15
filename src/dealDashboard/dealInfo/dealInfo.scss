@@ -16,15 +16,13 @@ deal-info {
     }
 
     .daoDetails {
-      display: flex;
-      flex-direction: column;
       flex: 1;
-      gap: 6px;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
 
       .daoSocialLinks {
+        margin-top: 6px;
         display: flex;
         flex-direction: row;
         gap: 8px;

@@ -35,6 +35,10 @@ export class DealInfo {
     this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
   }
 
+  shouldShowTooltip(elementRef: HTMLElement) {
+    return elementRef.offsetWidth < elementRef.scrollWidth;
+  }
+
   public detached() {
     this.subscriptions.dispose();
   }
