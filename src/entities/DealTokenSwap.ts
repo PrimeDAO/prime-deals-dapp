@@ -115,6 +115,10 @@ export class DealTokenSwap implements IDeal {
   public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
+  /**
+   * Attention: Even though, this is public, we try to minimizedirect usage.
+   * If possible try to create wrapper properties.
+   */
   public dealDocument: IDealTokenSwapDocument;
 
   /**
