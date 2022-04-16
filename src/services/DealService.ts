@@ -232,20 +232,41 @@ export class DealService {
     }
 
     this.dealsSubscription = this.dataSourceDeals.allDealsUpdatesObservable().pipe(skip(1)).subscribe(
+      /**
+       * Pawel => confirm whether the `updates` array will ever contain more than one item,
+       * and if so, when.
+       *
+       * Use of microtasks is an attempt to aggregate changes prior to Aurelia's
+       * handling of them, hoping this will be the cleanest and most correct
+       * presentation of the changes to the app that is observing Deal data.
+       *
+       * Consider this case:  Suppose we have Deal A and B, in a single callback having
+       * two updates, A is removed from the deals map, B is added to the deals map.
+       * Elsewhere some code C is observing deals.size, will this appear as two changes or none?
+       * The net effect on deal.size is 0.  Will code C pick up any change?
+       *
+       * Reggardless, anyone can easily observe changes to the collection set using
+       * `aureliaHelperService.createCollectionWatch(this.dealService.deals, ...)`
+       *
+       */
       updates => {
         updates.forEach(update => {
           this.dataSourceDeals.getDealById(update.dealId).then(dealDoc => {
-            if (this.deals.has(dealDoc.id)) {
-              this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
+            if (dealDoc) {
+              if (this.deals.has(dealDoc.id)) {
+                this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
+              } else {
+                /**
+                 * This should only happen when a deal is created in another browser instance.
+                 * It will create new deal entity asynchronously, once created it will be part of dealsMap
+                 */
+                this._createDeal(dealDoc);
+              }
             } else {
-              /**
-               * This should only happen when a deal is created in another browser instance.
-               * It will create new deal entity asynchronously, once created it will be part of dealsMap
-               */
-              this._createDeal(dealDoc);
+              this.taskQueue.queueMicroTask(() => {
+                this.deals.delete(update.dealId);
+              });
             }
-          }).catch(() => {
-            this.deals.delete(update.dealId);
           });
         });
       },
@@ -324,11 +345,7 @@ export class DealService {
    * Updates only parts of dealDocument that were updated
    */
   private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
-    /**
-     * will execute synchronously before this javascript event loop exits.
-     * This is to attempt to jump the deal updates ahead of Aurelia's
-     * handling of them, hoping this will be the cleanest presentation of the changes.
-     */
+
     this.taskQueue.queueMicroTask(() => {
       // ignore updates to modifiedAt property
       updatedDocument.modifiedAt = dealDocument.modifiedAt;
