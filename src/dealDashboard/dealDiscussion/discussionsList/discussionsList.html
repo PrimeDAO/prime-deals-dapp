@@ -9,7 +9,7 @@
 
   <section data-test="discussions-list" class="section discussions-list">
     <!-- always when there are no discussions-->
-    <section if.bind="!discussionsArray.length">
+    <section if.bind="!discussions.size">
       <p data-test="discussions-list-instructions" class="instructions">
         <span>
           None of the clauses are currently being discussed.
@@ -29,7 +29,7 @@
       </p>
     </section>
 
-    <div class="table" if.bind="discussionsArray.length" >
+    <div class="table" if.bind="discussions.size" >
       <div class="thead">
         <span>#</span><span>Topic</span><span class="h-centered">Replies</span><span class="h-centered">Activity</span>
       </div>

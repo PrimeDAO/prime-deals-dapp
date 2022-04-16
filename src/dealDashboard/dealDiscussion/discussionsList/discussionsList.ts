@@ -35,11 +35,19 @@ export class DiscussionsList{
     intervals: Array(typeof setInterval),
   };
 
-  @computedFrom("deal.clauseDiscussionsV2", "deal.registrationData.terms.clauses")
+  @computedFrom("deal.clauseDiscussions", "deal.registrationData.terms.clauses")
   private get discussions(): Map<string, IDealDiscussion> {
     const discussionsMap = new Map();
 
-    Object.entries(this.deal.clauseDiscussionsV2).forEach(([id, discussion]) => {
+    Object.entries(this.deal.clauseDiscussions).forEach(async ([id, discussion]) => {
+      if (!discussion) return;
+
+      if (!discussion?.createdBy?.name) {
+        this.discussionsService.loadProfile(discussion.createdBy.address)
+          .then(profile => {
+            if (profile.name) discussion.createdBy.name = profile.name;
+          });
+      }
       discussionsMap.set(id, discussion);
     });
 
@@ -70,30 +78,7 @@ export class DiscussionsList{
   private initialize() {
     this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
 
-    this.discussionsArray = Object
-      .keys(this.discussionsService.discussions)
-      .map(key => (
-        {
-          id: key,
-          ...this.discussionsService.discussions[key],
-          lastModified: this.dateService.formattedTime(new Date(this.discussionsService.discussions[key].modifiedAt)).diff(),
-        }
-      ));
-
-    this.discussionsArray.forEach((listDiscussionItem: IDiscussionListItem) => {
-      if (!listDiscussionItem.createdBy.name) {
-        this.discussionsService.loadProfile(listDiscussionItem.createdBy.address)
-          .then(profile => {
-            if (profile.name) listDiscussionItem.createdBy.name = profile.name;
-          });
-      }
-
-      this.times.intervals.push(setInterval((): void => {
-        listDiscussionItem.lastModified = this.dateService.formattedTime(new Date(listDiscussionItem.modifiedAt)).diff();
-      }, 30000));
-    });
-
-    this.hasDiscussions = !!this.discussionsArray.length;
+    this.hasDiscussions = !!this.discussions.size;
   }
 
   detached() {
