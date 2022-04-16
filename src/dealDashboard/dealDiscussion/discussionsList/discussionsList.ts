@@ -39,8 +39,7 @@ export class DiscussionsList{
   private get discussions(): Map<string, IDealDiscussion> {
     const discussionsMap = new Map();
 
-    Object.entries(this.deal.clauseDiscussionsV2).forEach(([id, discussion], index) => {
-      discussion.topic = this.deal.registrationData.terms.clauses[index].text;
+    Object.entries(this.deal.clauseDiscussionsV2).forEach(([id, discussion]) => {
       discussionsMap.set(id, discussion);
     });
 

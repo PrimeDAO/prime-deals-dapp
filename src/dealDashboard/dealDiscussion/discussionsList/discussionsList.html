@@ -41,7 +41,7 @@
           repeat.for="[discussionId, discussion] of discussions">
           <div class="td">${findClauseIndex(discussionId) }</div>
           <div class="td">
-            <pre>${discussion.topic}</pre>
+            <pre>${deal.registrationData.terms.clauses[$index].text}</pre>
             <p class="creator">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdBy.name">
