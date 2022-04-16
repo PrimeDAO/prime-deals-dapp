@@ -13,8 +13,8 @@ export const COMMENTS_STREAM_UPDATED = "commentsStreamUpdated";
  * Reason: The other dependencies in `EthereumService` got pulled into Cypress webpack build as well.
  *   And the current Cypress webpack does not support, eg. scss files bundling and processing
  */
-export type AllowedNetworks = "mainnet" | "kovan" | "rinkeby";
-export enum Networks {
+type AllowedNetworks = "mainnet" | "kovan" | "rinkeby";
+enum Networks {
   Mainnet = "mainnet",
   Rinkeby = "rinkeby",
   Kovan = "kovan",
@@ -34,16 +34,16 @@ export class DiscussionsStreamService {
     if (network === Networks.Kovan) return 42;
   }
 
-  public async subscribeToDiscussion(discussionId: string): Promise<void> {
+  /**
+   * Convert ably streams into Aurelia's Event Aggregators.
+   * This allows us to listen to changes throughout the app,
+   * as stream publishing is now plain old event publishing.
+   */
+  public async initStreamPublishing(discussionId: string): Promise<void> {
     const channelName = `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-
-    // const convo = new Convo(process.env.CONVO_API_KEY);
-    // const res = convo.threads.subscribe(channelName, this.updateThread);
-    // console.log({res});
 
     const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
     this.discussionCommentsStream = await ably.channels.get(channelName);
-    // this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
     this.discussionCommentsStream.subscribe((commentStreamMessage: Types.Message) => {
       this.eventAggregator.publish(COMMENTS_STREAM_UPDATED, commentStreamMessage);
     });

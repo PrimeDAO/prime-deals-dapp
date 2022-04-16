@@ -10,7 +10,7 @@ import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDisc
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { IDeal } from "entities/IDealTypes";
-import { DiscussionsStreamService, Types } from "./discussionsStreamService";
+import { COMMENTS_STREAM_UPDATED, DiscussionsStreamService, Types } from "./discussionsStreamService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   modifiedAt: string
@@ -463,8 +463,9 @@ export class DiscussionsService {
   }
   // edit comment by id?
 
-  public async subscribeToDiscussion(discussionId: string): Promise<void> {
-    this.discussionsStreamService.subscribeToDiscussion(discussionId);
+  public async subscribeToDiscussion(discussionId: string, discussionMessageCallback: (commentStreamMessage: Types.Message) => void): Promise<void> {
+    this.discussionsStreamService.initStreamPublishing(discussionId);
+    this.eventAggregator.subscribe(COMMENTS_STREAM_UPDATED, discussionMessageCallback);
   }
 
   public unsubscribeFromDiscussion(): void {

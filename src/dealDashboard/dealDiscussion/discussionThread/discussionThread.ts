@@ -3,7 +3,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
 import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/discussionsService";
-import { COMMENTS_STREAM_UPDATED, Types } from "dealDashboard/discussionsStreamService";
+import { Types } from "dealDashboard/discussionsStreamService";
 import { Address, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
@@ -200,24 +200,6 @@ export class DiscussionThread {
       .filter(comment => comment !== undefined);
   }
 
-  // private async subscribeToDiscussion(discussionId: string): Promise<void> {
-  //   const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-
-  //   // const convo = new Convo(process.env.CONVO_API_KEY);
-  //   // const res = convo.threads.subscribe(channelName, this.updateThread);
-  //   // console.log({res});
-
-  //   const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-  //   this.discussionCommentsStream = await ably.channels.get(channelName);
-  //   this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
-  // }
-
-  // private unsubscribeFromDiscussion(): void {
-  //   if (this.discussionCommentsStream) {
-  //     this.discussionCommentsStream.unsubscribe();
-  //   }
-  // }
-
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
       this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
@@ -245,7 +227,7 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    this.eventAggregator.subscribe(COMMENTS_STREAM_UPDATED, this.updateCommentsThreadUponMessageArrival.bind(this));
+    this.discussionsService.subscribeToDiscussion(this.discussionId, this.updateCommentsThreadUponMessageArrival.bind(this));
 
     if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
