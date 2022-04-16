@@ -123,7 +123,6 @@ export class DiscussionThread {
 
   private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
     return comments.reduce((r, e): Record<string, IComment> => {
-      console.log("just e: ", e);
       if (e === undefined) {
         return r;
       }
@@ -169,7 +168,7 @@ export class DiscussionThread {
         ...newComment,
       };
     }
-    this.threadComments = Object.values(this.threadDictionary);
+    this.updateThreadsFromDictionary();
     this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
 
     // scroll to bottom only if the user is at seeing the last message
@@ -183,6 +182,19 @@ export class DiscussionThread {
     }
     this.isLoading.commenting = false;
     commentStreamMessage = null;
+  }
+
+  private updateThreadsFromDictionary() {
+    this.threadComments = Object
+      .values(this.threadDictionary)
+      /**
+       * Handle bug, where values from `this.threadDictionary` are undefined.
+       * Eg. {
+       *   "id1": xyz,
+       *   "id2": undefined
+       * }
+       */
+      .filter(comment => comment !== undefined);
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
@@ -401,7 +413,7 @@ export class DiscussionThread {
     }
 
     this.threadDictionary[_id] = message;
-    this.threadComments = [...Object.values(this.threadDictionary)];
+    this.updateThreadsFromDictionary();
     this.isLoading[`isVoting ${_id}`] = false;
   }
 
