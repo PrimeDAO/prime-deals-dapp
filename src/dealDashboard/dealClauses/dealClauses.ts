@@ -32,7 +32,7 @@ export class DealClauses {
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
   private async addOrReadDiscussion(topic: string, clauseId: string | null): Promise<void> {
-    if (this.deal.clauseDiscussions[clauseId]) {
+    if (this.discussionsService.discussions[clauseId]) {
       this.discussionId = clauseId;
     } else {
       // If no discussion hash provided- create a new discussion

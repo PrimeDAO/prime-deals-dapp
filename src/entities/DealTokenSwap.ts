@@ -424,7 +424,7 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("dealDocument.clauseDiscussions.size")
   public get clauseDiscussions(): Record<string, IDealDiscussion> {
-    return this.dealDocument.clauseDiscussions;
+    return this.dealDocument.clauseDiscussions ?? {};
   }
 
   @computedFrom("registrationData.partnerDAO")
