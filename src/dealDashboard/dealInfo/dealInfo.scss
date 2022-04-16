@@ -17,23 +17,28 @@ deal-info {
 
     .daoDetails {
       display: flex;
-      flex-direction: column;
-      flex: 1;
+      flex-direction: row;
       gap: 6px;
+      align-items: center;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
 
-      .daoSocialLinks {
+      .daoTitle {
         display: flex;
-        flex-direction: row;
-        gap: 8px;
+        flex-direction: column;
 
-        i {
-          font-size: 16px;
-          color: $Secondary05;
+        .daoSocialLinks {
+          display: flex;
+          flex-direction: row;
+
+          i {
+            font-size: 16px;
+            color: $Secondary05;
+          }
         }
       }
+
     }
 
     .tokenDetails {
@@ -54,7 +59,6 @@ deal-info {
 
     .infoTitle {
       font-size: $font-size2;
-      min-width: 120px;
     }
   }
 }

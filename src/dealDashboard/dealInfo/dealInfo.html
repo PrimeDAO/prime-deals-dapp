@@ -5,33 +5,37 @@
     <hr>
 
     <div class="infoSection">
-      <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
+      <span class="bodySmallTextBold infoTitle">Primary<br>DAO</span>
       <div class="daoDetails" ptooltip.bind="deal.primaryDao.name">
-        ${deal.primaryDao.name}
-        <div class="daoSocialLinks">
-          <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
-            <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
-          </a>
+        <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
+        <div class="daoTitle">
+          ${deal.primaryDao.name}
+          <div class="daoSocialLinks">
+            <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
+              <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <span class="bodySmallTextBold">Primary DAO</span>
     </div>
 
     <hr if.bind="partnerDao">
 
     <div class="infoSection" if.bind="deal.partnerDao" ref="partnerDao">
-      <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
+      <span class="bodySmallTextBold infoTitle">Partner <br> DAO</span>
       <div class="daoDetails" ptooltip.bind="deal.partnerDao.name">
-        ${deal.partnerDao.name}
-        <div class="daoSocialLinks">
-          <a href.bind="socialMedia.url"
-            repeat.for="socialMedia of deal.partnerDao.social_medias"
-            target="_blank">
-            <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
-          </a>
+        <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
+        <div class="daoTitle">
+          ${deal.partnerDao.name}
+          <div class="daoSocialLinks">
+            <a href.bind="socialMedia.url"
+              repeat.for="socialMedia of deal.partnerDao.social_medias"
+              target="_blank">
+              <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <span class="bodySmallTextBold">Partner DAO</span>
     </div>
 
     <hr>
