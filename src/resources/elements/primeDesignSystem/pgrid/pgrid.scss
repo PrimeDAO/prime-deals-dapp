@@ -141,4 +141,17 @@
       }
     }
   }
+  .seeMoreSection {
+    margin-bottom: 36px;
+
+    .seeMore {
+      display: flex;
+      color: $Neutral02;
+      cursor: pointer;
+
+      > .arrow {
+        margin-right: 6px;
+      }
+    }
+  }
 }

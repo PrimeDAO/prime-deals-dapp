@@ -51,11 +51,9 @@ export class AureliaHelperService {
    */
   public createCollectionWatch(
     collection: Array<any> | Set<any> | Map<any, any>,
-    func: (splices: Array<ICollectionObserverSplice<string>>) => void): IDisposable {
+    func: (splices: Array<ICollectionObserverSplice<any>>) => void): IDisposable {
 
-    return this.bindingEngine
-      .collectionObserver(collection as any) // `as any` because I think the collectionObserver declares is wrong, should accept `Set<any`
-      .subscribe(func);
+    return this.bindingEngine.collectionObserver(collection).subscribe(func);
   }
 
   /**

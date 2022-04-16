@@ -71,4 +71,7 @@ export class TokenBalance {
       }
     }
   }
+  tokenAddressChanged(){
+    this.initialize();
+  }
 }
