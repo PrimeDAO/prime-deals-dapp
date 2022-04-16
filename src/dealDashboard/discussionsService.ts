@@ -113,13 +113,8 @@ export class DiscussionsService {
    * @param clauseDiscussions A map of clause discussions
    * @returns void
    */
-  public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
-    this.discussions = {};
-    for (const [id, discussion] of clauseDiscussions.entries()) {
-      this.discussions[id] = {
-        ...discussion,
-      };
-    }
+  public loadDealDiscussions(clauseDiscussions: Record<string, IDealDiscussion>): void {
+    this.discussions = clauseDiscussions;
   }
 
   public async setEnsName(address: string): Promise<void> {

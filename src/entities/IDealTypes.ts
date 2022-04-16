@@ -42,7 +42,7 @@ export enum DealStatus {
 export interface IDeal {
   id: string;
   corrupt: boolean;
-  clauseDiscussions: Map<string, IDealDiscussion>;
+  clauseDiscussions: Record<string, IDealDiscussion>;
   registrationData: any;
   initialize(): Promise<void>;
   create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
