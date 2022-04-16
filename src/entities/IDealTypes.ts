@@ -47,6 +47,6 @@ export interface IDeal {
   initialize(): Promise<void>;
   create<TDealDocumentType extends IDealTokenSwapDocument>(doc: TDealDocumentType): IDeal;
   ensureInitialized(): Promise<void>;
-  addClauseDiscussion(clauseId: string, discussion: any): Promise<void>;
+  addClauseDiscussion(clauseId: string, discussion: IDealDiscussion): Promise<void>;
   status: DealStatus;
 }

@@ -159,9 +159,8 @@ export class DiscussionsService {
         ["encrypt", "decrypt"],
       );
 
-      const discussion = {
+      const discussion: IDealDiscussion = {
         version: "0.0.1",
-        topic: args.topic,
         createdBy,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
