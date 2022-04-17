@@ -529,20 +529,22 @@ export class EthereumService {
   }
 
   public getEnsForAddress(address: Address): Promise<string> {
-    return this.walletProvider?.lookupAddress(address);
+    return this.walletProvider?.lookupAddress(address)
+      .catch(() => null);
   }
 
+  /**
+   * Returns address that is represented by the ENS.
+   * Returns null if it can't resolve the ENS to an address
+   * Returns address if it already is an address
+   */
   public getAddressForEns(ens: string): Promise<Address> {
 
-    try {
-      if (getAddress(ens)) {
-        // already is an address, return null.  resolveName would return the address
-        return null;
-      }
-    // eslint-disable-next-line no-empty
-    } catch { }
-
-    return this.walletProvider?.resolveName(ens);
+    /**
+     * returns the address if ens already is an address
+     */
+    return this.walletProvider?.resolveName(ens)
+      .catch(() => null); // is neither address nor ENS
   }
 }
 

@@ -7,12 +7,23 @@
         click.delegate="column.sortable && sort(column.field)"
       >
         ${column.headerText === undefined ? column.field : column.headerText}
-        <i if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == 1" class="fas fa-arrow-down" aria-hidden="true"></i>
-        <i if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == -1" class="fas fa-arrow-up" aria-hidden="true"></i>
+        <i
+          if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == 1"
+          class="fas fa-arrow-down"
+          aria-hidden="true"
+        ></i>
+        <i
+          if.bind="column.sortable && $parent.sortColumn === column.field && $parent.sortDirection == -1"
+          class="fas fa-arrow-up"
+          aria-hidden="true"
+        ></i>
       </div>
     </div>
     <template repeat.for="row of rows | sort:sortEvaluator">
-      <div if.bind="!selectable" class="row">
+      <div
+        if.to-view="!selectable && (!hideMore || (($index < numberToShow) || seeingMore))"
+        class="row"
+      >
         <div
           repeat.for="column of columns"
           class="cell body hot ${condensed ? 'condensed' : ''} ${column.align}"
@@ -20,26 +31,40 @@
           <compose
             if.bind="column.template"
             view.bind="viewStrategy(column.template)"
-            view-model.bind="getBuffedVm(row)"
+            view-model.bind="getBuffedVm(row, rows)"
             containerless
           ></compose>
           <template else>${row[column.field]}</template>
         </div>
       </div>
-      <a else class="row body hot" select.delegate="select(row)">
+      <a
+        if.to-view="selectable && (!hideMore || (($index < numberToShow) || seeingMore))"
+        class="row body hot"
+        select.delegate="select(row)"
+      >
         <div
           repeat.for="column of columns"
           class="cell body hot ${condensed ? 'condensed' : ''} ${column.align}"
         >
           <compose
             if.bind="column.template"
-            view.bind="viewStrategy(column.template)"
-            view-model.bind="getBuffedVm(row)"
+            view.bind="viewStrategy(column.template )"
+            view-model.bind="getBuffedVm(row, rows)"
             containerless
           ></compose>
           <template else>${row[column.field]}</template>
         </div>
       </a>
     </template>
+    <div class="seeMoreSection" if.to-view="rows.length > numberToShow && hideMore">
+      <div if.to-view="!seeingMore" class="seeMore">
+        <div class="arrow">&darr;</div>
+        <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
+      </div>
+      <div if.to-view="seeingMore" class="seeMore">
+        <div class="arrow">&uarr;</div>
+        <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
+      </div>
+    </div>
   </div>
 </template>

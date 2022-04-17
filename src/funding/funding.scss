@@ -173,7 +173,7 @@ $hover-transition-speed-slow: 0.4s;
           .cell {
             &.body {
               &.cell {
-                .Dao .name {
+                .dao .name {
                   font-size: 16px;
                   font-weight: 400;
                   font-family: Aeonik;
@@ -271,7 +271,7 @@ $hover-transition-speed-slow: 0.4s;
                     &.total {
                       justify-self: right;
                     }
-                    .Dao .name {
+                    .dao .name {
                       font-size: 16px;
                       font-weight: 400;
                       color: $Neutral04;
@@ -292,6 +292,13 @@ $hover-transition-speed-slow: 0.4s;
             background-color: $Border01;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
+            .claim-tokens-header {
+              border-top: 1px solid $Border03;
+              padding-top: 14px;
+              margin-top: 10px;
+              font-size: 18px;
+              width: 100%;
+            }
             p {
               font-size: 14px;
               color: $Neutral02;

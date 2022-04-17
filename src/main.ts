@@ -20,6 +20,7 @@ import "./services/ValidationService";
 import { FirebaseService } from "services/FirebaseService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
+import { ValidationService } from "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
   aurelia.use
@@ -86,6 +87,8 @@ export function configure(aurelia: Aurelia): void {
       ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
       aurelia.container.get(ContractsService);
+
+      aurelia.container.get(ValidationService);
 
       const ipfsService = aurelia.container.get(IpfsService);
       ipfsService.initialize(aurelia.container.get(PinataIpfsClient));
