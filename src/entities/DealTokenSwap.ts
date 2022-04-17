@@ -422,7 +422,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * key is the clauseId, value is the discussion key
    */
-  @computedFrom("dealDocument.clauseDiscussions.size")
+  @computedFrom("dealDocument.clauseDiscussions")
   public get clauseDiscussions(): Record<string, IDealDiscussion> {
     return this.dealDocument.clauseDiscussions ?? {};
   }
