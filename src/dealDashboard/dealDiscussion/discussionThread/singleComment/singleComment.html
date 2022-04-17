@@ -61,7 +61,7 @@
           </pbutton>
         </div>
       </div>
-      <time class="lastActivity ${isAuthorized ? 'isAuthorized' : ''}">${comment.lastModified}</time>
+      <time class="lastActivity ${isAuthorized ? 'isAuthorized' : ''}">${comment.createdOn | dateDiff:'float' & signal:commentCreatedOnSignal}</time>
     </header>
 
     <section class="commentBody">
