@@ -1,3 +1,13 @@
 <template>
   <router-view></router-view>
+
+  <div>
+    <strong>Clauses</strong>
+    <hr>
+    <div repeat.for="clause of deal.terms.clauses">
+      ${clause.text}
+    </div>
+  </div>
+
+  <pbutton type="primary" click.delegate="addNewClause()">Add new Clause</pbutton>
 </template>
