@@ -211,7 +211,7 @@ export class E2eDiscussion {
   }
 
   public static getSingleTopic() {
-    return cy.get("[data-test='single-topic']").then(singleTopic => {
+    return cy.get("[data-test='single-topic']", {timeout: PAGE_LOADING_TIMEOUT}).then(singleTopic => {
       E2eDiscussion.currentDiscussionId = singleTopic.data("commentId");
 
       return cy.wrap(singleTopic);
