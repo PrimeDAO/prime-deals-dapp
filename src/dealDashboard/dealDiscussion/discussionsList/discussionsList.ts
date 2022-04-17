@@ -12,6 +12,7 @@ import { IDealDiscussion } from "entities/DealDiscussions";
 
 import "./discussionsList.scss";
 import { bindable } from "aurelia-typed-observable-plugin";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -34,6 +35,11 @@ export class DiscussionsList{
   private times: any = {
     intervals: Array(typeof setInterval),
   };
+
+  @computedFrom("deal.registrationData.terms.clauses.length")
+  private get clauses(): Map<string, IClause> {
+    return new Map<string, IClause>(this.deal.registrationData.terms.clauses.map(clause => [clause.id, clause]));
+  }
 
   @computedFrom("deal.clauseDiscussions", "deal.registrationData.terms.clauses")
   private get discussions(): Map<string, IDealDiscussion> {
