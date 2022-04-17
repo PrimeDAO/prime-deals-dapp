@@ -1,8 +1,8 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 
-deal-menubar {
+.dealDashboardNavbar {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto auto;
   align-items: center;
   justify-content: end;
   grid-column-gap: 10px;
