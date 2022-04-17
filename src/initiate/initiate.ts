@@ -9,10 +9,10 @@ export class Initiate {
       description: "Safely exchange tokens between multiple parties with customized vesting schedules.",
     },
     {
-      name: "Co-liquidity",
-      slug: "co-liquidity",
+      name: "Joint venture",
+      slug: "joint-venture", // renamed from co-liquidity
       isDisabled: true,
-      description: "Seed or join into a liquidity pool together with multiple parties.",
+      description: "Create a Joint Venture between two or multiple DAOs with initial distribution and agreements.",
     },
   ];
 }

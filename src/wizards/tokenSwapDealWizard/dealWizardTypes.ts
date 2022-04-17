@@ -43,6 +43,26 @@ export const availableSocialMedias = [
     name: "Facebook",
     icon: "fab fa-facebook",
   },
+  {
+    name: "Whitepaper",
+    icon: "fas fa-file-alt",
+  },
+  {
+    name: "Forum",
+    icon: "fas fa-comments",
+  },
+  {
+    name: "Github",
+    icon: "fab fa-github",
+  },
+  {
+    name: "YouTube",
+    icon: "fab fa-youtube",
+  },
+  {
+    name: "Newsletter",
+    icon: "fas fa-newspaper",
+  },
 ];
 
 export const STAGE_ROUTE_PARAMETER = "stageRoute";
