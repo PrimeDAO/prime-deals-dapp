@@ -3,7 +3,7 @@
     <div class="heading heading3 title gradient">${dao.name} Deposit</div>
     <pchip
       color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
-      if.to-view="showChip && fundingDaysLeft >= 0"
+      if.to-view="showChip && fundingDaysLeft > 0"
     >
       <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
     </pchip>
