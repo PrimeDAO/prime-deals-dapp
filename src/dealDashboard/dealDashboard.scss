@@ -14,8 +14,9 @@
     "thread thread";
   gap: 60px 115px;
 
-  deal-menubar {
+  .dealDashboardNavbar {
     grid-area: navbar;
+    text-align: right;
   }
 
   .top {
