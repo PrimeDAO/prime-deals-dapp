@@ -62,7 +62,13 @@ export class DiscussionsList{
 
   private findClauseIndex(discussionId: string): string {
     const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
-    return (discussionsIds.indexOf(discussionId) + 1).toString() || "-";
+    const notFoundText = "-";
+
+    if (discussionsIds.indexOf(discussionId) > -1) {
+      return (discussionsIds.indexOf(discussionId) + 1).toString() || notFoundText;
+    }
+
+    return notFoundText;
   }
 
   constructor(
