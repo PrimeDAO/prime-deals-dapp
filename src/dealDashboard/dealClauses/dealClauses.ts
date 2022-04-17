@@ -1,4 +1,4 @@
-import { autoinject, bindingMode, computedFrom } from "aurelia-framework";
+import { computedFrom, autoinject, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EthereumService } from "services/EthereumService";
@@ -12,10 +12,9 @@ export class DealClauses {
   @bindable.booleanAttr authorized = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
-  @computedFrom("deal.registrationData.terms.clauses")
+  @computedFrom("deal.registrationData.terms.clauses.length")
   private get clauses(): IClause[] {
     return this.deal.registrationData.terms.clauses;
-
   }
 
   constructor(
