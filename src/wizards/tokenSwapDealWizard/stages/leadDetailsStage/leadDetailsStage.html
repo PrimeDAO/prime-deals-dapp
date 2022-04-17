@@ -13,14 +13,15 @@
         <p class="sidebarText">You don't need to be part of DAO to be a Proposal Lead.</p>
       </div>
       <div class="stageSectionContent">
+        -- ${wizardState.registrationData.proposalLead.address | checksumAddress } --
         <pform-input
           class="wizardFormInput"
           input-reference.bind="proposalLeadAddressInput"
+          label="Proposal Lead Address"
           data-test="proposal-lead-address-field"
           helper-message.bind="proposalLeadAddressInput.ens">
           <form-address-input
             view-model.ref="proposalLeadAddressInput"
-            label="Proposal Lead Address"
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
             value.bind="wizardState.registrationData.proposalLead.address | checksumAddress & validate:form">
           </form-address-input>

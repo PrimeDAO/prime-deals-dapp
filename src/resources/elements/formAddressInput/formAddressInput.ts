@@ -4,7 +4,7 @@ import { bindable } from "aurelia-typed-observable-plugin";
 import { ValidationState } from "resources/elements/primeDesignSystem/types";
 import { EnsService } from "services/EnsService";
 import { Utils } from "services/utils";
-
+import "./formAddressInput.scss";
 /**
  * an input that allows entry of either ENS or address.  If an ENS is entered,
  * then it converts to the address and displays that in the input and
@@ -17,7 +17,6 @@ import { Utils } from "services/utils";
 export class FormAddressInput {
   @bindable.booleanAttr disabled = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) value: string;
-  // @bindable.string placeholder = "";
   @bindable.string label;
   @bindable.string labelInfo;
   @bindable.string labelDescription;
