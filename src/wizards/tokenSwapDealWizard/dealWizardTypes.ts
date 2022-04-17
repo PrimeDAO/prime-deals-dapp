@@ -56,7 +56,7 @@ export const availableSocialMedias = [
     icon: "fab fa-github",
   },
   {
-    name: "Youtube",
+    name: "YouTube",
     icon: "fab fa-youtube",
   },
   {
