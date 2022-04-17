@@ -31,7 +31,7 @@ deal-info {
         .daoSocialLinks {
           display: flex;
           flex-direction: row;
-          gap: 8px;
+          gap: 7px;
 
           i {
             font-size: 16px;
@@ -46,6 +46,15 @@ deal-info {
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .makeLabelSmaller {
+      flex: 0;
+    }
+
+    .moreSpaceForLinks {
+      flex: 1;
+      justify-content: flex-end;
     }
 
   }
