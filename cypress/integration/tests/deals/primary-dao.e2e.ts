@@ -27,8 +27,8 @@ Then("I can see Primary DAO section with inputs for collecting its details", () 
     });
 
     cy.get("[data-test=\"dao-social-media\"]").within(() => {
-      cy.contains("div", "Social media (optional)");
-      cy.get("[data-test=\"add-social-media\"]").should("contain.text", "+ Add social media");
+      cy.contains("div", "External Links (optional)");
+      cy.get("[data-test=\"add-social-media\"]").should("contain.text", "+ Add An External Link");
       // cy.get("pselect").within(() => {
       //   cy.contains(".ss-option", "Twitter");
       //   cy.contains(".ss-option", "Discord");

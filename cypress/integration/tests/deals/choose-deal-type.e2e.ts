@@ -1,4 +1,4 @@
-import { Given, Then, When, And } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
 
 Given("I navigate to the initiate a deal page", () => {
   cy.get("[data-test='initiate-deal-button']").click();
@@ -9,8 +9,8 @@ Then("I can see Token Swap deal type", () => {
   cy.contains("div.title", "Token Swap").should("be.visible");
 });
 
-And("I can see Co-liquidity deal type", () => {
-  cy.contains("[data-test='initiate-deal-type-title']", "Co-liquidity").should("be.visible");
+And("I can see Joint venture deal type", () => {
+  cy.contains("[data-test='initiate-deal-type-title']", "Joint venture").should("be.visible");
 });
 
 When("I select Token Swap", () => {

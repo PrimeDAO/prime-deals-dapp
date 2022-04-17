@@ -50,7 +50,7 @@
 
       <div data-test="dao-social-media" if.bind="disabled && data.social_medias.length > 0 || !disabled">
         <div class="multiFieldTitle">
-          Social media (optional)
+          External Links (optional)
         </div>
 
         <div
@@ -77,7 +77,7 @@
           class="addButton"
           if.bind="data.social_medias.length < 5 && !disabled"
           click.delegate="addSocialMedia()">
-          + Add social media
+          + Add An External Link
         </button>
       </div>
 
