@@ -534,7 +534,7 @@ export class EthereumService {
    * @returns null if there is no ENS
    */
   public getEnsForAddress(address: Address): Promise<string> {
-    return this.walletProvider?.lookupAddress(address)
+    return this.readOnlyProvider?.lookupAddress(address)
       .catch(() => null);
   }
 
@@ -548,7 +548,7 @@ export class EthereumService {
     /**
      * returns the address if ens already is an address
      */
-    return this.walletProvider?.resolveName(ens)
+    return this.readOnlyProvider?.resolveName(ens)
       .catch(() => null); // is neither address nor ENS
   }
 }

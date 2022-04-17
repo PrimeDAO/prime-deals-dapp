@@ -110,7 +110,6 @@ export class EthereumServiceTesting {
     // Just mock required props
     // @ts-ignore
     this.walletProvider = {
-      lookupAddress: () => Promise.resolve(""),
     };
 
     let address = localStorage.getItem("PRIME_E2E_ADDRESS");
@@ -153,6 +152,10 @@ export class EthereumServiceTesting {
 
   public getMetamaskHasToken(_tokenAddress: Address): boolean {
     return false;
+  }
+
+  public getEnsForAddress(_address: Address): Promise<string> {
+    return Promise.resolve("anens.eth");
   }
 
   public lastBlock: IBlockInfo;

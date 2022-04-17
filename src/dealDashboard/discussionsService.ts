@@ -123,7 +123,7 @@ export class DiscussionsService {
   }
 
   public async setEnsName(address: string): Promise<void> {
-    this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
+    this.ensName = await this.ethereumService.getEnsForAddress(address);
   }
 
   /**
