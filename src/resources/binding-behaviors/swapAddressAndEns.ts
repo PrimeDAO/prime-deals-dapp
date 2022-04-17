@@ -4,28 +4,36 @@ import { Address } from "services/EthereumService";
 import { Utils } from "services/utils";
 
 @autoinject
-export class AddressToEnsBindingBehavior {
+export class SwapAddressAndEnsBindingBehavior {
   constructor(
     private ensService: EnsService,
   ) {
   }
 
   /**
-   * Tries to convert input address to ens.  If can't convert then does nothing.
-   * If the input is not an address, does nothing.
+   * If address, convert to ens.  If not address, convert to address.
+   * Otherwise, nothing.
    * @param binding
    * @param _source
    */
   public bind(binding, _source) {
     binding.originalUpdateTarget = binding.updateTarget;
-    binding.updateTarget = (address: Address) => {
-      if (!Utils.isAddress(address)) {
-        binding.originalUpdateTarget("");
-      } else {
-        this.ensService.getEnsForAddress(address)
+    binding.updateTarget = (input: Address) => {
+      if (Utils.isAddress(input)) {
+        this.ensService.getEnsForAddress(input)
           .then(ens => {
             if (ens?.length) {
               binding.originalUpdateTarget(ens);
+            }
+            else {
+              binding.originalUpdateTarget("");
+            }
+          });
+      } else {
+        this.ensService.getAddressForEns(input)
+          .then(address => {
+            if (address?.length) {
+              binding.originalUpdateTarget(address);
             }
             else {
               binding.originalUpdateTarget("");

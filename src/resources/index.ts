@@ -22,6 +22,7 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/horizontal-scroller/horizontal-scroller"),
     PLATFORM.moduleName("./elements/tokenPair/tokenPair"),
     PLATFORM.moduleName("./elements/markdown/markdown"),
+    PLATFORM.moduleName("./elements/formAddressInput/formAddressInput"),
     PLATFORM.moduleName("../dealDashboard/deal-swap-modal/deal-swap-modal"), //needed globally because it's being passed as a message to the ppopup-modal component
     PLATFORM.moduleName("./value-converters/number"),
     PLATFORM.moduleName("./value-converters/ethwei"),
@@ -37,5 +38,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./dialogs/disclaimer/disclaimer"),
     PLATFORM.moduleName("./binding-behaviors/ensToAddress"),
     PLATFORM.moduleName("./binding-behaviors/addressToEns"),
+    PLATFORM.moduleName("./binding-behaviors/swapAddressAndEns"),
   ]);
 }

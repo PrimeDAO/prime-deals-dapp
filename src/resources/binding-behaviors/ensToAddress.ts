@@ -8,11 +8,24 @@ export class EnsToAddressBindingBehavior {
   ) {
   }
 
-  public bind(binding, _source, ensOnly = false) {
+  /**
+   * Tries to convert input ens to an address.  If can't convert or is already
+   * an address, then does nothing.
+   * @param binding
+   * @param _source
+   */
+  public bind(binding, _source) {
     binding.originalUpdateTarget = binding.updateTarget;
     binding.updateTarget = (ens: string) => {
-      this.ensService.getAddressForEns(ens, ensOnly)
-        .then(address => binding.originalUpdateTarget(address));
+      this.ensService.getAddressForEns(ens)
+        .then(address => {
+          if (address?.length) {
+            binding.originalUpdateTarget(address);
+          }
+          else {
+            binding.originalUpdateTarget("");
+          }
+        });
     };
   }
 

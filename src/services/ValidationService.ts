@@ -31,7 +31,10 @@ export class ValidationService {
 
     ValidationRules.customRule(
       Validation.isEthAddressOrEns,
-      async (value) => ensService.getAddressForEns(value).then((address) => !!address),
+      async (value) => ensService.getAddressForEns(value).then((address) =>
+      {
+        return !!address;
+      }),
       "Please enter a valid ethereum address or ENS",
     );
 

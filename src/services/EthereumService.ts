@@ -528,6 +528,11 @@ export class EthereumService {
     return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
   }
 
+  /**
+   * returns ENS if the address maps to one
+   * @param address
+   * @returns null if there is no ENS
+   */
   public getEnsForAddress(address: Address): Promise<string> {
     return this.walletProvider?.lookupAddress(address)
       .catch(() => null);
