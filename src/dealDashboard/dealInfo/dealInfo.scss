@@ -25,12 +25,13 @@ deal-info {
       overflow: hidden;
 
       .daoTitle {
-        display: flex;
-        flex-direction: column;
+        text-overflow: ellipsis;
+        overflow: hidden;
 
         .daoSocialLinks {
           display: flex;
           flex-direction: row;
+          gap: 8px;
 
           i {
             font-size: 16px;
