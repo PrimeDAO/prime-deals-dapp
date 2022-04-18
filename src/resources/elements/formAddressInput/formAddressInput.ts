@@ -26,6 +26,8 @@ export class FormAddressInput {
   @bindable validationState?: ValidationState;
   @bindable.string({ defaultbindingMode: bindingMode.twoWay }) ens = "";
 
+  ignoreNewValue = false;
+
   constructor(
     private ensService: EnsService,
     private taskQueue: TaskQueue,
@@ -33,22 +35,28 @@ export class FormAddressInput {
   }
 
   valueChanged(newValue: string): void {
-    this.taskQueue.queueMicroTask(async () => {
+    if (!this.ignoreNewValue) {
       if (newValue?.trim().length) {
-        if (Utils.isAddress(newValue)) {
-          this.ens = await this.ensService.getEnsForAddress(newValue);
-        } else {
-          const address = await this.ensService.getAddressForEns(newValue);
-          if (address) {
-            this.ens = newValue;
-            this.value = address;
+        this.ens = "Searching for ENS...";
+        this.taskQueue.queueMicroTask(async () => {
+          if (Utils.isAddress(newValue)) {
+            this.ens = await this.ensService.getEnsForAddress(newValue);
           } else {
-            this.ens = "";
+            const address = await this.ensService.getAddressForEns(newValue);
+            if (address) {
+              this.ens = newValue;
+              this.value = address;
+            } else {
+              this.ens = "";
+            }
+            this.ignoreNewValue = true;
           }
-        }
+        });
       } else {
         this.ens = "";
       }
-    });
+    } else {
+      this.ignoreNewValue = false;
+    }
   }
 }
