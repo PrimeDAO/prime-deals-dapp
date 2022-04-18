@@ -1,3 +1,8 @@
+/**
+ * this code is cloned from https://github.com/flitbit/diff.
+ * Copyright (c) 2011-2018 Phillip Clark
+ */
+
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/prefer-for-of */
 /* eslint-disable no-bitwise */
@@ -333,8 +338,7 @@
           break;
         case "E":
         case "N":
-          it.splice( change.path[i], 0, change.rhs );
-          // it[change.path[i]] = change.rhs;
+          it[change.path[i]] = change.rhs;
           break;
       }
     } else {
@@ -346,7 +350,16 @@
           arr = arrayRemove(arr, index);
           break;
         case "E":
+          /**
+           * hack to make this work with Aurelia observables
+           */
+          arr.splice(index, 1, change.rhs);
+          // arr[index] = change.rhs;
+          break;
         case "N":
+          /**
+           * hack to make this work with Aurelia observables
+           */
           arr.splice( index, 0, change.rhs );
           // arr[index] = change.rhs;
           break;
@@ -419,7 +432,11 @@
           arr[index] = change.lhs;
           break;
         case "E":
-          arr[index] = change.lhs;
+          /**
+           * hack to make this work with Aurelia observables
+           */
+          arr.splice(index, 1, change.lhs);
+          // arr[index] = change.lhs;
           break;
         case "N":
           arr = arrayRemove(arr, index);
