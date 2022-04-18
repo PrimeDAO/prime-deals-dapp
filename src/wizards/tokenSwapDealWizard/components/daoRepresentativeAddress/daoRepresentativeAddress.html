@@ -1,10 +1,11 @@
 <template>
-  <pform-input input-reference.bind="input">
-    <pinput-text
-      placeholder="0x..."
-      view-model.ref="input"
+  <pform-input
+    input-reference.bind="representativeAddressInput"
+    helper-message.bind="representativeAddressInput.ens">
+    <form-address-input
+      view-model.ref="representativeAddressInput"
       value.bind="representative.address | checksumAddress & validate:form"
       disabled.bind="disabled">
-    </pinput-text>
+    </form-address-input>
   </pform-input>
 </template>

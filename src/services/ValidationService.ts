@@ -5,8 +5,8 @@ import { ImageService } from "./ImageService";
 import { EnsService } from "services/EnsService";
 
 export enum Validation {
-  isETHAddress = "isETHAddress",
-  isAddressOrEns = "isAddressOrEns",
+  isEthAddress = "isEthAddress",
+  isEthAddressOrEns = "isEthAddressOrEns",
   email = "email",
   url = "url",
   imageUrl = "imageUrl",
@@ -24,14 +24,17 @@ export class ValidationService {
   ) {
 
     ValidationRules.customRule(
-      Validation.isETHAddress,
+      Validation.isEthAddress,
       (value) => Utils.isAddress(value),
       "Please enter a valid ethereum address",
     );
 
     ValidationRules.customRule(
-      Validation.isAddressOrEns,
-      async (value) => ensService.getAddressForEns(value).then((address) => !!address),
+      Validation.isEthAddressOrEns,
+      async (value) => ensService.getAddressForEns(value).then((address) =>
+      {
+        return !!address;
+      }),
       "Please enter a valid ethereum address or ENS",
     );
 
