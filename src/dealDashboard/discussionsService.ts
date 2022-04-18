@@ -375,7 +375,7 @@ export class DiscussionsService {
       if (!localStorage.getItem("discussionToken")) {
         this.eventAggregator.publish(
           "handleValidationError",
-          new EventConfigFailure("Signature is needed to vote a comment"),
+          new EventConfigFailure("Signature is needed to delete a comment"),
         );
         return false;
       }
@@ -432,13 +432,24 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        const success = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
-        if (!success) return false;
+        const inverseVoteResponse = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        if (inverseVoteResponse.error) throw inverseVoteResponse.error;
+
+        if (inverseVoteResponse.success) return true;
+        return false;
       }
 
-      return (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
+      const actualVoteResponse = (await this.convo.comments[type](this.currentWalletAddress, token, commentId));
+      if (actualVoteResponse.error) {
+        throw actualVoteResponse.error;
+      }
+
+      return actualVoteResponse.success;
     } catch (error) {
-      throw error.message;
+      if (error.message) {
+        throw error.message;
+      }
+      throw error;
     }
   }
 

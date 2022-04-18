@@ -372,6 +372,8 @@ export class DiscussionThread {
         if (error.code === 404) {
           if (error.error) {
             this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
+            this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+            this.threadDictionary = this.arrayToDictionary(this.threadComments);
           }
         }
         else if (error.code === 4001) {
@@ -381,8 +383,7 @@ export class DiscussionThread {
         }
 
         this.threadDictionary[_id] = swrVote;
-        this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+        this.updateThreadsFromDictionary();
 
         this.isLoading[`isVoting ${_id}`] = false;
       });
