@@ -923,10 +923,10 @@ export class DealTokenSwap implements IDeal {
         pathFrom.push([this.primaryDao.tokens[i].amount, zero]);
         pathTo.push([
           ...fourZeros,
-          this.primaryDao.tokens[i].instantTransferAmount,
-          this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf ?? 0,
-          this.primaryDao.tokens[i].vestedFor ?? 0,
+          this.partnerDao.tokens[i].instantTransferAmount,
+          this.partnerDao.tokens[i].vestedTransferAmount,
+          this.partnerDao.tokens[i].cliffOf ?? 0,
+          this.partnerDao.tokens[i].vestedFor ?? 0,
         ]);
       }
     }
