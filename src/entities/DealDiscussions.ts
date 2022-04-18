@@ -1,8 +1,8 @@
 export interface ICommentMetaData {
-  isPrivate: string; // "false";
-  allowedMembers: string; // "[\"0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498\"]";
-  encrypted: string; // "";
-  iv: string; // "";
+  isPrivate: string;
+  allowedMembers: string;
+  encrypted: string;
+  iv: string;
   isDeleted?: boolean;
 }
 

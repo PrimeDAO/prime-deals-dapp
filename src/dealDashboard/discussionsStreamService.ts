@@ -8,7 +8,7 @@ export { Types };
 export const COMMENTS_STREAM_UPDATED = "commentsStreamUpdated";
 
 /**
- * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
+ * TODO: Should define a new place for this type, and all other `AllowedNetworks` imports should take it from there
  * Cause for change: Want to import app code into Cypress code (, because we want to use the acutal code we are testing).
  * Reason: The other dependencies in `EthereumService` got pulled into Cypress webpack build as well.
  *   And the current Cypress webpack does not support, eg. scss files bundling and processing
