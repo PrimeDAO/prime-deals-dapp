@@ -34,8 +34,8 @@ export const depositColumns: IGridColumn[] = [
 export const tokenGridColumns: IGridColumn[] = [
   { field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
   { field: "target", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
-  { field: "fundingDeposited", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='fundingDeposited | ethwei:decimals'></formatted-number>" },
-  { field: "fundingRequired", sortable: true, width: ".5fr", template: "<div class='fundingRequired'><formatted-number thousands-separated value.to-view='fundingRequired | ethwei:decimals'></formatted-number></div>" },
+  { field: "fundingDeposited", headerText: "Deposited", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='fundingDeposited | ethwei:decimals'></formatted-number>" },
+  { field: "fundingRequired", headerText: "Required", sortable: true, width: ".5fr", template: "<div class='fundingRequired'><formatted-number thousands-separated value.to-view='fundingRequired | ethwei:decimals'></formatted-number></div>" },
   { field: "fundingPercentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='fundingDeposited'></pprogress-bar>" },
   { field: "fundingPercentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "<formatted-number thousands-separated value.to-view='fundingPercentCompleted'></formatted-number>%" },
 ];

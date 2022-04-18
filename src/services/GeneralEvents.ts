@@ -10,6 +10,7 @@ export class EventConfig {
     public message: string,
     public type: EventMessageType = EventMessageType.Info,
     public title?: string,
+    public data?: Record<string, unknown>,
   ) {
   }
 }
