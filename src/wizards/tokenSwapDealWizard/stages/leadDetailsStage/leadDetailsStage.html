@@ -15,16 +15,18 @@
       <div class="stageSectionContent">
         <pform-input
           class="wizardFormInput"
+          input-reference.bind="proposalLeadAddressInput"
           label="Proposal Lead Address"
-          input-reference.bind="input"
-          data-test="proposal-lead-address-field">
-          <pinput-text
+          data-test="proposal-lead-address-field"
+          helper-message.bind="proposalLeadAddressInput.ens">
+          <form-address-input
+            view-model.ref="proposalLeadAddressInput"
             disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            placeholder="0x..."
-            value.bind="wizardState.registrationData.proposalLead.address | checksumAddress & validate:form"
-            view-model.ref="input"></pinput-text>
+            value.bind="wizardState.registrationData.proposalLead.address | checksumAddress & validate:form">
+          </form-address-input>
         </pform-input>
-        <pbutton data-test="connect-to-get-wallet" class="walletButton" click.delegate="connectToWallet()" if.bind="!ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights" type="formfield">
+        <pbutton data-test="connect-to-get-wallet" class="walletButton" click.delegate="connectToWallet()"
+          if.bind="!ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights" type="formfield">
           Connect to get your wallet address
         </pbutton>
         <pbutton
