@@ -145,12 +145,13 @@ export class Funding {
       return;
     }
     const withdrawModal: IAlertModel = {
-      header: `You are about to withdraw ${this.displayBigNumber(transaction.amount, transaction.token.decimals)} ${transaction.token.symbol} from the deal`,
+      header: `<span class="white-space-initial">You are about to withdraw <formatted-number mantissa='2' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${transaction.token.symbol} from the deal</span>`,
       message:
         "<p>Are you sure you want to withdraw your funds?</p>",
       buttonTextPrimary: "Withdraw",
       buttonTextSecondary: "Cancel",
       buttons: ShowButtonsEnum.Both,
+      data: {amount: transaction.amount, decimals: transaction.token.decimals},
     };
     // show a modal confirming the user wants to withdraw their funds
     const dialogResult = await this.alertService.showAlert(withdrawModal);
@@ -197,7 +198,7 @@ export class Funding {
     if (transactionReceipt){
       //the tokens have been approved on the contract so re-hydrate the funding allowance
       await this.setFundingTokenAllowance();
-      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, this.firstDao.tokens[this.selectedToken].decimals)} ${this.firstDao.tokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed"));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${this.firstDao.tokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed", {amount: this.depositAmount, decimals: this.firstDao.tokens[this.selectedToken].decimals}));
       return;
     }
     this.eventAggregator.publish("handleFailure", "An error occurred while trying to unlock tokens. Please try again.");
@@ -219,13 +220,13 @@ export class Funding {
     await this.setFundingTokenAllowance();
     //validate the deposit amount is not more than the account balance
     if (this.depositAmount.gt(this.accountBalance)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the current balance in your account (${this.displayBigNumber(this.accountBalance, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "Insufficient Balance"));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${depositToken.symbol}) exceeds the current balance in your account (<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.accountBalance | ethwei:data.decimals'></formatted-number> ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "Insufficient balance", {amount: this.depositAmount, decimals: depositToken.decimals, accountBalance: this.accountBalance}));
       this.depositAmount = this.accountBalance;
       return;
     }
     //validate the deposit amount is not more than the required tokens to fund the deal
     if (this.depositAmount.gt(depositToken.fundingRequired)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the required funding needed (${this.displayBigNumber(depositToken.fundingRequired, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${depositToken.symbol}) exceeds the required funding needed (<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.fundingRequired | ethwei:data.decimals'></formatted-number> ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning, "More than required", {amount: this.depositAmount, decimals: depositToken.decimals, fundingRequired: depositToken.fundingRequired}));
       this.depositAmount = depositToken.fundingRequired;
       return;
     }
@@ -233,7 +234,7 @@ export class Funding {
     const depositTransaction = await this.deal.depositTokens(this.firstDao, depositToken.address, this.depositAmount);
     if (depositTransaction){
       //deposit was successful
-      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed"));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${depositToken.symbol} has been deposited`, EventMessageType.Info, "Deposit completed", {amount: this.depositAmount, decimals: depositToken.decimals}));
       //clear out the deposit input
       this.depositAmount = null;
     } else {
@@ -337,10 +338,6 @@ export class Funding {
       return this.userFundingTokenAllowance?.lt(this.depositAmount);
     }
     return false;
-  }
-
-  private displayBigNumber(number: BigNumber, decimals = 18) : string{
-    return this.numberService.toString(Number(fromWei(number, decimals)));
   }
 
   private async setTokenContractData(){

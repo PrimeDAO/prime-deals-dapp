@@ -6,6 +6,7 @@ import "./ppopup-notification.scss";
 
 @customElement("ppopup-notification")
 export class PPopupNotification {
+  @bindable data: Record<string, unknown>;
   @bindable.number type: EventMessageType;
   @bindable title: string;
   @bindable message: string;
