@@ -337,7 +337,7 @@ export class DiscussionsService {
 
     try {
       const encrypted = await this.encryptWithAES(comment, discussionId);
-      const data: IComment = await this.convo.comments.create(
+      const createResponse: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         "This comment is encrypted",
@@ -352,11 +352,14 @@ export class DiscussionsService {
         replyTo,
       );
 
+      if ((createResponse as any).error) throw (createResponse as any).error;
+
       // Return un-encrypted comment to the view
-      data.text = comment;
-      return data;
+      createResponse.text = comment;
+      return createResponse;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
+      throw error;
     }
   }
 
