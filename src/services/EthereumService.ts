@@ -544,7 +544,6 @@ export class EthereumService {
    * Returns address if it already is an address
    */
   public getAddressForEns(ens: string): Promise<Address> {
-
     /**
      * returns the address if ens already is an address
      */
