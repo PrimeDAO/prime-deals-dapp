@@ -20,6 +20,7 @@ export class PTooltip {
     this.tooltip = tippy(this.element, {
       theme: "prime-design-system",
       maxWidth,
+      zIndex: 10002, //this is needed so tooltips will be above ppopup-notifications
     });
   }
 

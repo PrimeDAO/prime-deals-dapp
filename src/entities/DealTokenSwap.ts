@@ -115,6 +115,10 @@ export class DealTokenSwap implements IDeal {
   public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
+  /**
+   * Attention: Even though, this is public, we try to minimizedirect usage.
+   * If possible try to create wrapper properties.
+   */
   public dealDocument: IDealTokenSwapDocument;
 
   /**
@@ -418,7 +422,10 @@ export class DealTokenSwap implements IDeal {
   /**
    * key is the clauseId, value is the discussion key
    */
-  public clauseDiscussions: Map<string, IDealDiscussion>;
+  @computedFrom("dealDocument.clauseDiscussions")
+  public get clauseDiscussions(): Record<string, IDealDiscussion> {
+    return this.dealDocument.clauseDiscussions ?? {};
+  }
 
   @computedFrom("registrationData.partnerDAO")
   public get isOpenProposal(): boolean {
@@ -534,7 +541,6 @@ export class DealTokenSwap implements IDeal {
       this.createdAt = new Date(this.dealDocument.createdAt);
 
       await this.loadDepositContracts(); // now that we have registrationData
-      this.clauseDiscussions = this.dealDocument.clauseDiscussions ? new Map(Object.entries(this.dealDocument.clauseDiscussions)) : new Map();
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
 
@@ -615,7 +621,7 @@ export class DealTokenSwap implements IDeal {
       discussionId,
       discussion,
     ).then(() => {
-      this.clauseDiscussions.set(discussionId, discussion);
+      this.clauseDiscussions[discussionId] = discussion;
     });
   }
 
@@ -923,10 +929,10 @@ export class DealTokenSwap implements IDeal {
         pathFrom.push([this.primaryDao.tokens[i].amount, zero]);
         pathTo.push([
           ...fourZeros,
-          this.primaryDao.tokens[i].instantTransferAmount,
-          this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf ?? 0,
-          this.primaryDao.tokens[i].vestedFor ?? 0,
+          this.partnerDao.tokens[i].instantTransferAmount,
+          this.partnerDao.tokens[i].vestedTransferAmount,
+          this.partnerDao.tokens[i].cliffOf ?? 0,
+          this.partnerDao.tokens[i].vestedFor ?? 0,
         ]);
       }
     }
