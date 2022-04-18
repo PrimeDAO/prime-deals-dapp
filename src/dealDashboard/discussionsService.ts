@@ -382,16 +382,19 @@ export class DiscussionsService {
     }
 
     try {
-      await this.convo.comments.delete(
+      const deleteResponse = await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         commentId,
       );
+
+      if (deleteResponse.error) throw deleteResponse.error;
+
       return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
+      throw error;
     }
-    return false;
   }
 
   public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<any> {
