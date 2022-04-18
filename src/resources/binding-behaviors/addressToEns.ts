@@ -11,9 +11,10 @@ export class AddressToEnsBindingBehavior {
   }
 
   /**
-   * Tries to convert input address to ens.  If can't convert then returns the address
-   * @param binding
-   * @param _source
+   * Tries to convert input address to ens.  If can't convert then returns the address.
+   * Use like a value converter except with '&' instead of '|'.
+   * We're using a binding behavior here because it allows us to use an async
+   * function to compute the new value.
    */
   public bind(binding, _source) {
     binding.originalUpdateTarget = binding.updateTarget;
