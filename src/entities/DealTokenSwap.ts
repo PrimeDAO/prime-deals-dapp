@@ -84,6 +84,7 @@ export interface ITokenCalculated extends IToken {
   claimingClaimable?: BigNumber,
   claimingClaimed?: BigNumber,
   claimingLocked?: BigNumber,
+  claimingPercentCompleted?: number,
 }
 
 @autoinject
@@ -571,9 +572,9 @@ export class DealTokenSwap implements IDeal {
   private async hydrateDaoClaims(): Promise<void> {
     const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
 
-    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
+    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao, this.partnerDao));
     if (this.partnerDao) {
-      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao));
+      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao, this.primaryDao));
     }
 
     this.daoTokenClaims = daoTokenClaims;
@@ -795,7 +796,7 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private async getDaoClaims(dao: IDAO): Promise<Array<IDaoClaim>> {
+  private async getDaoClaims(dao: IDAO, otherDao: IDAO): Promise<Array<IDaoClaim>> {
     const claims = new Array<IDaoClaim>();
     const depositContract = this.daoDepositContracts.get(dao);
 
@@ -810,7 +811,7 @@ export class DealTokenSwap implements IDeal {
           const params = event.args;
           claims.push({
             dao: dao,
-            token: this.getTokenInfoFromDao(params.token, dao),
+            token: this.getTokenInfoFromDao(params.token, otherDao),
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             dealId: params.dealId,
@@ -875,7 +876,7 @@ export class DealTokenSwap implements IDeal {
   /**
    * Sets the additional token info from the contract
    */
-  public async setTokenContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+  public setFundingContractInfo(token: ITokenCalculated, dao: IDAO): void {
     if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
       token.fundingDeposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
@@ -884,20 +885,24 @@ export class DealTokenSwap implements IDeal {
       // calculate the percent completed based on deposited divided by target
       // We're using bignumberjs because BigNumber can't handle division
       token.fundingPercentCompleted = toBigNumberJs(token.fundingDeposited).dividedBy(token.amount).toNumber() * 100;
-    } else {
-      //calculate only claiming properties
+    }
+  }
+
+  public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+    //calculate claiming properties
+    if (this.isExecuted){
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
       if (tokenClaimableAmounts.size > 0){
-        token.claimingClaimable = tokenClaimableAmounts.get(token.address);
+        const totalClaimable = tokenClaimableAmounts.get(token.address);
         token.claimingClaimed = this.getClaimedAmount(dao, token.address);
+        token.claimingClaimable = totalClaimable?.sub(token.claimingClaimed);
         token.claimingLocked = BigNumber.from(token.amount).sub(token.claimingClaimable);
-        token.fundingPercentCompleted = toBigNumberJs(token.claimingClaimed).dividedBy(token.amount).toNumber() * 100;
       } else {
         token.claimingClaimable = BigNumber.from(0);
         token.claimingClaimed = BigNumber.from(0);
         token.claimingLocked = BigNumber.from(0);
-        token.fundingPercentCompleted = 0;
       }
+      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(BigNumber.from(token.instantTransferAmount))).dividedBy(token.amount).toNumber() * 100;
     }
   }
 

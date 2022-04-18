@@ -2,26 +2,32 @@
   <pcard class="status-card">
     <header>
       <div class="daoName">
-        <dao-icon-name primary-dao.to-view="dao"></dao-icon-name>
+        <dao-icon-name primary-dao.to-view="firstDao"></dao-icon-name>
       </div>
       <pchip color="${chipColor}"> ${status} </pchip>
     </header>
     <div class="content">
-      <div class="token-progress" repeat.for="token of tokens" if.to-view="!swapCompleted">
+      <div class="token-progress" repeat.for="token of tokenDao.tokens" if.to-view="!swapCompleted">
         <img src="${token.logoURI}" />
         <div>
           <div class="progress-bar-content">
             <div>
               <formatted-number
+                if.to-view="deal.isFunding"
                 thousands-separated
                 value.to-view="token.fundingDeposited | ethwei:token.decimals"
+              ></formatted-number>
+              <formatted-number
+                if.to-view="deal.isClaiming"
+                thousands-separated
+                value.to-view="getTotalClaimed(token.claimingClaimed, token.instantTransferAmount) | ethwei:token.decimals"
               ></formatted-number>
               <strong>${token.symbol}</strong> ${deal.isClaiming ? 'Claimed': 'Deposited'}
             </div>
             <div>
               <formatted-number
                 thousands-separated
-                value.to-view="token.fundingPercentCompleted"
+                value.to-view="deal.isExecuted ? token.claimingPercentCompleted : token.fundingPercentCompleted"
               ></formatted-number
               >%
             </div>
@@ -29,13 +35,13 @@
           <div class="progress-bar">
             <pprogress-bar
               max.bind="token.amount"
-              current.bind="deal.isClaiming ? token.claimingClaimed : token.fundingDeposited"
+              current.bind="deal.isClaiming ? getTotalClaimed(token.claimingClaimed, token.instantTransferAmount) : token.fundingDeposited"
             ></pprogress-bar>
           </div>
         </div>
       </div>
       <div class="token-completed" if.to-view="swapCompleted">
-        <div repeat.for="token of tokens">
+        <div repeat.for="token of tokenDao.tokens">
           <img src="${token.logoURI}" />
           <span
             ><formatted-number
