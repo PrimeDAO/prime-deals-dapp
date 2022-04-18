@@ -52,16 +52,6 @@ export class EnsService {
     let address: Address;
     let isCached = false;
 
-    // if (dontWantAddress) {
-    //   try {
-    //     if (getAddress(ens)) {
-    //       // already is an address, return null
-    //       return null;
-    //     }
-    //     // eslint-disable-next-line no-empty
-    //   } catch { }
-    // }
-
     if (!ens?.trim().length) {
       return ens;
     }

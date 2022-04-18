@@ -11,8 +11,7 @@ export class AddressToEnsBindingBehavior {
   }
 
   /**
-   * Tries to convert input address to ens.  If can't convert then does nothing.
-   * If the input is not an address, does nothing.
+   * Tries to convert input address to ens.  If can't convert then returns the address
    * @param binding
    * @param _source
    */
@@ -20,7 +19,7 @@ export class AddressToEnsBindingBehavior {
     binding.originalUpdateTarget = binding.updateTarget;
     binding.updateTarget = (address: Address) => {
       if (!Utils.isAddress(address)) {
-        binding.originalUpdateTarget("");
+        binding.originalUpdateTarget(address);
       } else {
         this.ensService.getEnsForAddress(address)
           .then(ens => {
@@ -28,7 +27,7 @@ export class AddressToEnsBindingBehavior {
               binding.originalUpdateTarget(ens);
             }
             else {
-              binding.originalUpdateTarget("");
+              binding.originalUpdateTarget(address);
             }
           });
       }
