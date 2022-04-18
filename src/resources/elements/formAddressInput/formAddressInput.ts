@@ -40,16 +40,16 @@ export class FormAddressInput {
         this.ens = "Searching for ENS...";
         this.taskQueue.queueMicroTask(async () => {
           if (Utils.isAddress(newValue)) {
-            this.ens = await this.ensService.getEnsForAddress(newValue);
+            this.ens = (await this.ensService.getEnsForAddress(newValue)) ?? "";
           } else {
             const address = await this.ensService.getAddressForEns(newValue);
             if (address) {
               this.ens = newValue;
+              this.ignoreNewValue = true;
               this.value = address;
             } else {
               this.ens = "";
             }
-            this.ignoreNewValue = true;
           }
         });
       } else {
