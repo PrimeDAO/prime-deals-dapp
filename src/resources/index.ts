@@ -36,8 +36,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./value-converters/currency"),
     PLATFORM.moduleName("./value-converters/checksumAddress"),
     PLATFORM.moduleName("./dialogs/disclaimer/disclaimer"),
-    PLATFORM.moduleName("./binding-behaviors/ensToAddress"),
     PLATFORM.moduleName("./binding-behaviors/addressToEns"),
-    PLATFORM.moduleName("./binding-behaviors/swapAddressAndEns"),
   ]);
 }
