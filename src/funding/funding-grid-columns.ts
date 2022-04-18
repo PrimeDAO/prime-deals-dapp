@@ -34,15 +34,15 @@ export const depositColumns: IGridColumn[] = [
 export const tokenGridColumns: IGridColumn[] = [
   { field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
   { field: "target", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
-  { field: "deposited", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='deposited | ethwei:decimals'></formatted-number>" },
-  { field: "required", sortable: true, width: ".5fr", template: "<div class='required'><formatted-number thousands-separated value.to-view='required | ethwei:decimals'></formatted-number></div>" },
-  { field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='deposited'></pprogress-bar>" },
-  { field: "percentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "<formatted-number thousands-separated value.to-view='percentCompleted'></formatted-number>%" },
+  { field: "fundingDeposited", headerText: "Deposited", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='fundingDeposited | ethwei:decimals'></formatted-number>" },
+  { field: "fundingRequired", headerText: "Required", sortable: true, width: ".5fr", template: "<div class='fundingRequired'><formatted-number thousands-separated value.to-view='fundingRequired | ethwei:decimals'></formatted-number></div>" },
+  { field: "fundingPercentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='fundingDeposited'></pprogress-bar>" },
+  { field: "fundingPercentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "<formatted-number thousands-separated value.to-view='fundingPercentCompleted'></formatted-number>%" },
 ];
 
 export const claimTokenGridColumns: IGridColumn[] = [
   { field: "token", headerText: "Token", sortable: true, width: ".5fr", template: "<dao-icon-name primary-dao.to-view='row' icon-size='24' use-token-symbol.to-view='true'></dao-icon-name>" },
-  { field: "claimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimable | ethwei:decimals'></formatted-number>" },
-  { field: "locked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='locked | ethwei:decimals'></formatted-number>" },
+  { field: "claimingClaimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingClaimable | ethwei:decimals'></formatted-number>" },
+  { field: "claimingLocked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingLocked | ethwei:decimals'></formatted-number>" },
   { field: "amount", headerText: "Total", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
 ];

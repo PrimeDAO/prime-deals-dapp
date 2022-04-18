@@ -1,5 +1,6 @@
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
+import { BindingSignaler } from "aurelia-templating-resources";
 import { Router } from "aurelia-router";
 import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
@@ -29,20 +30,21 @@ export class SingleComment {
     up: false,
     down: false,
   };
+  private updateTimeSignal = "update-time";
   private commentTimeInterval: ReturnType<typeof setInterval>;
 
   constructor(
     private dateService: DateService,
     private ethereumService: EthereumService,
     private router: Router,
+    private bindingSignaler: BindingSignaler,
   ) {}
 
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
-    this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
     this.commentTimeInterval = setInterval((): void => {
-      this.comment.lastModified = this.dateService.formattedTime(parseFloat(this.comment.createdOn)).diff();
+      this.bindingSignaler.signal(this.updateTimeSignal);
     }, 30000);
   }
 
