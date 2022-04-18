@@ -10,7 +10,7 @@ import { BigNumber } from "ethers";
 import "./funding.scss";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService, fromWei } from "services/EthereumService";
+import { EthereumService } from "services/EthereumService";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
 import { autoinject, computedFrom } from "aurelia-framework";
