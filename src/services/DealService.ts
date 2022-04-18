@@ -15,7 +15,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
-import { applyDiff } from "deep-diff";
+import * as applyDiff from "services/ApplyDiffService";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
