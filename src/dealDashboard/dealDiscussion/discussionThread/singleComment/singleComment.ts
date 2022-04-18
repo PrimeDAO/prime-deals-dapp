@@ -30,7 +30,7 @@ export class SingleComment {
     up: false,
     down: false,
   };
-  private commentCreatedOnSignal = "update-time";
+  private updateTimeSignal = "update-time";
   private commentTimeInterval: ReturnType<typeof setInterval>;
 
   constructor(
@@ -44,7 +44,7 @@ export class SingleComment {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
     this.dealClauseId = this.router.currentInstruction.params.discussionId;
     this.commentTimeInterval = setInterval((): void => {
-      this.bindingSignaler.signal(this.commentCreatedOnSignal);
+      this.bindingSignaler.signal(this.updateTimeSignal);
     }, 30000);
   }
 

@@ -1,5 +1,6 @@
 import { EthereumService } from "services/EthereumService";
 import { autoinject, bindingMode, computedFrom } from "aurelia-framework";
+import { BindingSignaler } from "aurelia-templating-resources";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -32,9 +33,8 @@ export class DiscussionsList{
   private discussionsArray: Array<IDiscussionListItem> = [];
   private discussionsHashes: string[];
   private hasDiscussions: boolean;
-  private times: any = {
-    intervals: Array(typeof setInterval),
-  };
+  private commentTimeInterval: ReturnType<typeof setInterval>;
+  private updateTimeSignal: "update-time";
 
   @computedFrom("deal.registrationData.terms.clauses.length")
   private get clauses(): Map<string, IClause> {
@@ -78,6 +78,7 @@ export class DiscussionsList{
     private dealService: DealService,
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
+    private bindingSignaler: BindingSignaler,
   ) {}
 
   attached(): void {
@@ -85,6 +86,10 @@ export class DiscussionsList{
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.initialize();
     });
+
+    this.commentTimeInterval = setInterval((): void => {
+      this.bindingSignaler.signal(this.updateTimeSignal);
+    }, 30000);
   }
 
   private initialize() {
@@ -94,7 +99,7 @@ export class DiscussionsList{
   }
 
   detached() {
-    this.times.intervals.forEach((interval: ReturnType<typeof setTimeout>) => clearInterval(interval));
+    clearInterval(this.commentTimeInterval);
   }
 
   private navigateTo(discussionId: string): void {

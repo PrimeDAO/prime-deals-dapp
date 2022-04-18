@@ -52,7 +52,7 @@
             </p>
           </div>
           <div data-test="number-of-replies" class="td h-centered v-centered">${discussion.replies || 0}</div>
-          <div class="td h-centered v-centered">${discussion.modifiedAt | dateDiff}</div>
+          <div class="td h-centered v-centered">${discussion.modifiedAt | dateDiff & signal:updateTimeSignal}</div>
         </div>
       </div>
     </div>
