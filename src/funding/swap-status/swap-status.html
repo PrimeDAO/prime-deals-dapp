@@ -3,7 +3,11 @@
   <section class="section swap-status">
     <div class="heading heading3 title gradient">Token Swap Status</div>
     <div class="status-cards">
-      <status-card deal.bind="deal" is-primary.bind="true"></status-card>
+      <status-card
+        deal.bind="deal"
+        is-primary.bind="true"
+        is-data-loaded.bind="contractDataLoaded"
+      ></status-card>
       <!-- only display these swap icons if the deal hasn't executed swap yet -->
       <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
         <i class="fas fa-arrow-right" if.to-view="!deal.isClaiming"></i>
@@ -14,7 +18,11 @@
         <i if.to-view="deal.isFailed" class="fas fa-times-circle danger"></i>
         <i class="fas fa-arrow-left" if.to-view="!deal.isClaiming"></i>
       </div>
-      <status-card deal.bind="deal" is-primary.bind="false"></status-card>
+      <status-card
+        deal.bind="deal"
+        is-primary.bind="false"
+        is-data-loaded.bind="contractDataLoaded"
+      ></status-card>
     </div>
     <slot></slot>
   </section>
