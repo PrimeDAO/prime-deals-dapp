@@ -1,17 +1,19 @@
 <template>
-  <div class="wizardManager">
-    <pstepper
-      steps.bind="wizardState.stages"
-      index-of-active.bind="wizardState.indexOfActive"
-      on-click.call="onStepperClick(index)"
-      data-test="wizard-manager-stepper">
-    </pstepper>
-    <div>
-      <compose
-        if.bind="view && viewModel"
-        view.bind="view"
-        view-model.bind="viewModel"
-        model.bind="stageMeta"></compose>
+  <div class="page animated-page au-animate">
+    <div class="wizardManager">
+      <pstepper
+        steps.bind="wizardState.stages"
+        index-of-active.bind="wizardState.indexOfActive"
+        on-click.call="onStepperClick(index)"
+        data-test="wizard-manager-stepper">
+      </pstepper>
+      <div>
+        <compose
+          if.bind="view && viewModel"
+          view.bind="view"
+          view-model.bind="viewModel"
+          model.bind="stageMeta"></compose>
+      </div>
     </div>
   </div>
 </template>
