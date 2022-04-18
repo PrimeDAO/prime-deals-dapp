@@ -110,7 +110,7 @@ export class DiscussionThread {
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
     ) {
       // Loads the discussion details - necessary for thread header
-      this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
+      this.dealDiscussion = this.deal.clauseDiscussions[this.discussionId];
       // Ensures comment fetching and subscription
       await this.ensureDealDiscussion(this.discussionId);
       if (this.isInView(this.refThread) && !isIdChange) {

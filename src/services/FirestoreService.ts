@@ -352,13 +352,26 @@ export class FirestoreService<
    * @param discussion IDealDiscussion
    */
   public async addClauseDiscussion(dealId: string, discussionId: string, discussion: IDealDiscussion): Promise<void> {
+    /**
+     * Temporary solution: Schema for discussions is outdated (eg. has obsolete keys like `topic` or `id`).
+     * This way, we ensure only the correct props are taken.
+     */
+    const finalDiscussions: IDealDiscussion = {
+      version: discussion.version,
+      createdAt: discussion.createdAt,
+      modifiedAt: discussion.modifiedAt,
+      createdBy: discussion.createdBy,
+      replies: discussion.replies,
+      key: discussion.key,
+    };
+
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
 
       await setDoc(
         ref,
         {
-          clauseDiscussions: {[discussionId]: discussion},
+          clauseDiscussions: {[discussionId]: finalDiscussions},
         },
         {merge: true},
       );
