@@ -926,25 +926,26 @@ export class DealTokenSwap implements IDeal {
     for (let i = 0; i < this.primaryDao.tokens.length; i++) {
       if (!tokens.includes(this.primaryDao.tokens[i].address)) {
         tokens.push(this.primaryDao.tokens[i].address);
-        pathFrom.push([this.primaryDao.tokens[i].amount, zero]);
+        pathFrom.push([BigNumber.from(this.primaryDao.tokens[i].amount), zero]);
         pathTo.push([
           ...fourZeros,
-          this.partnerDao.tokens[i].instantTransferAmount,
-          this.partnerDao.tokens[i].vestedTransferAmount,
-          this.partnerDao.tokens[i].cliffOf ?? 0,
-          this.partnerDao.tokens[i].vestedFor ?? 0,
+          BigNumber.from(this.primaryDao.tokens[i].instantTransferAmount),
+          BigNumber.from(this.primaryDao.tokens[i].vestedTransferAmount),
+          this.primaryDao.tokens[i].cliffOf ?? 0,
+          this.primaryDao.tokens[i].vestedFor ?? 0,
         ]);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < this.partnerDao.tokens.length; i++) {
       if (!tokens.includes(this.partnerDao.tokens[i].address)) {
         tokens.push(this.partnerDao.tokens[i].address);
-        pathFrom.push([zero, this.partnerDao.tokens[i].amount]);
+        pathFrom.push([zero, BigNumber.from(this.partnerDao.tokens[i].amount)]);
         pathTo.push([
-          this.primaryDao.tokens[i].instantTransferAmount,
-          this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf ?? 0,
-          this.primaryDao.tokens[i].vestedFor ?? 0,
+          BigNumber.from(this.partnerDao.tokens[i].instantTransferAmount),
+          BigNumber.from(this.partnerDao.tokens[i].vestedTransferAmount),
+          this.partnerDao.tokens[i].cliffOf ?? 0,
+          this.partnerDao.tokens[i].vestedFor ?? 0,
           ...fourZeros,
         ]);
       }
