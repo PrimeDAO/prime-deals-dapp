@@ -18,6 +18,9 @@
       .success {
         color: $Green;
       }
+      .danger {
+        color: $Red;
+      }
     }
   }
   @media screen and (max-width: $MaxContentBodyWidth) {

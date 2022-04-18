@@ -12,18 +12,21 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="firstDaoTokens && firstDaoTokens.length && !deal.isClaiming"
+      if.to-view="firstDao.tokens && firstDao.tokens.length && !deal.isClaiming"
     >
       <div class="box-container">
         <deposit-grid
+          deal.bind="deal"
           dao.bind="firstDao"
-          dao-tokens.bind="firstDaoTokens"
+          dao-tokens.bind="firstDao.tokens"
+          show-chip.bind="true"
           funding-days-left="${(deal.timeLeftToExecute / (60*60*24*1000)).toFixed(0)}"
         ></deposit-grid>
         <deposit-grid
+          deal.bind="deal"
           if.to-view="deal.isUserProposalLead"
           dao.bind="secondDao"
-          dao-tokens.bind="secondDaoTokens"
+          dao-tokens.bind="secondDao.tokens"
           show-chip.bind="false"
         ></deposit-grid>
         <div class="container-footer">
@@ -63,7 +66,7 @@
               <div>
                 <div class="inputs">
                   <pselect
-                    disabled.bind="firstDaoTokens.length === 1"
+                    disabled.bind="firstDao.tokens.length === 1"
                     placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
@@ -72,17 +75,17 @@
                     css="pInput"
                     value.bind="depositAmount"
                     keyup.delegate="checkMaxAmount()"
-                    decimals.bind="firstDaoTokens[selectedToken].decimals"
+                    decimals.bind="firstDao.tokens[selectedToken].decimals"
                   >
                   </numeric-input>
                   <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
                     >Max</pbutton
                   >
                   <span class="balance" if.to-view="accountBalance">
-                    Your ${firstDaoTokens[selectedToken].symbol} Balance:
+                    Your ${firstDao.tokens[selectedToken].symbol} Balance:
                     <tokenbalance
                       formatted="0.00a"
-                      token-address.bind="firstDaoTokens[selectedToken].address"
+                      token-address.bind="firstDao.tokens[selectedToken].address"
                     ></tokenbalance>
                   </span>
                 </div>
@@ -130,7 +133,7 @@
               <h4 class="title heading heading3 gradient">${firstDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="firstDaoTokens"
+                rows.bind="firstDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
@@ -140,7 +143,7 @@
               <h4 class="title heading heading3 gradient">${secondDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="secondDaoTokens"
+                rows.bind="secondDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >

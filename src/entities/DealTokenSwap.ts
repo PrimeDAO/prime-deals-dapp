@@ -78,12 +78,12 @@ export interface IDaoTransaction {
 }
 
 export interface ITokenCalculated extends IToken {
-  deposited?: BigNumber,
-  required?: BigNumber,
-  percentCompleted?: number,
-  claimable?: BigNumber,
-  claimed?: BigNumber,
-  locked?: BigNumber,
+  fundingDeposited?: BigNumber,
+  fundingRequired?: BigNumber,
+  fundingPercentCompleted?: number,
+  claimingClaimable?: BigNumber,
+  claimingClaimed?: BigNumber,
+  claimingLocked?: BigNumber,
 }
 
 @autoinject
@@ -872,25 +872,25 @@ export class DealTokenSwap implements IDeal {
   public async setTokenContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
     if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
-      token.deposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+      token.fundingDeposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
       // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
-      token.required = BigNumber.from(token.amount).sub(token.deposited);
+      token.fundingRequired = BigNumber.from(token.amount).sub(token.fundingDeposited);
       // calculate the percent completed based on deposited divided by target
       // We're using bignumberjs because BigNumber can't handle division
-      token.percentCompleted = toBigNumberJs(token.deposited).dividedBy(token.amount).toNumber() * 100;
+      token.fundingPercentCompleted = toBigNumberJs(token.fundingDeposited).dividedBy(token.amount).toNumber() * 100;
     } else {
       //calculate only claiming properties
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
       if (tokenClaimableAmounts.size > 0){
-        token.claimable = tokenClaimableAmounts.get(token.address);
-        token.claimed = this.getClaimedAmount(dao, token.address);
-        token.locked = BigNumber.from(token.amount).sub(token.claimable);
-        token.percentCompleted = toBigNumberJs(token.claimed).dividedBy(token.amount).toNumber() * 100;
+        token.claimingClaimable = tokenClaimableAmounts.get(token.address);
+        token.claimingClaimed = this.getClaimedAmount(dao, token.address);
+        token.claimingLocked = BigNumber.from(token.amount).sub(token.claimingClaimable);
+        token.fundingPercentCompleted = toBigNumberJs(token.claimingClaimed).dividedBy(token.amount).toNumber() * 100;
       } else {
-        token.claimable = BigNumber.from(0);
-        token.claimed = BigNumber.from(0);
-        token.locked = BigNumber.from(0);
-        token.percentCompleted = 0;
+        token.claimingClaimable = BigNumber.from(0);
+        token.claimingClaimed = BigNumber.from(0);
+        token.claimingLocked = BigNumber.from(0);
+        token.fundingPercentCompleted = 0;
       }
     }
   }

@@ -37,9 +37,6 @@ export class Funding {
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
   private tokenSwapModuleContractUrl = "";
-  private secondDaoTokens: ITokenCalculated[];
-  private firstDaoTokens: ITokenCalculated[];
-  private deposits: IDaoTransaction[] = [];
   /**
    * Opens a new window to the transaction id or address on the blockchain
    * @param address
@@ -86,21 +83,15 @@ export class Funding {
 
   public async bind(): Promise<void> {
     await this.initializeData();
-    //subscribe a watcher to look for changes on the daoTokenTransactions
-    this.aureliaHelperService.createCollectionWatch(this.deal.daoTokenTransactions, this.setDeposits);
   }
 
   private async initializeData() : Promise<void> {
     await this.deal.ensureInitialized();
     await this.deal.hydrateDaoTransactions();
     //get contract token information from the other DAO
-    //Clone the tokens from registration data and add props from ITokenCalculated
-    this.secondDaoTokens = Utils.cloneDeep(this.secondDao.tokens as ITokenCalculated[]);
-    //get contract token information from the DAO related to the account
-    this.firstDaoTokens = Utils.cloneDeep(this.firstDao.tokens as ITokenCalculated[]);
     await this.setTokenContractData();
 
-    if (this.firstDaoTokens.length === 1) {
+    if (this.firstDao.tokens.length === 1) {
       //if there is only one token, auto select it in the deposit form
       this.selectedToken = "0";
       //and get the account balance for that token
@@ -109,8 +100,6 @@ export class Funding {
     } else {
       this.selectedToken = null;
     }
-    //get deposits from deal token swap entity
-    this.setDeposits();
   }
 
   private mapTransactionsToDeposits(transactions: IDaoTransaction[]): IDaoTransaction[]{
@@ -185,8 +174,8 @@ export class Funding {
    * or the remaining needed tokens for that contract
    */
   private checkMaxAmount(): void {
-    if (this.firstDaoTokens.length > 0 && this.selectedToken) {
-      const remainingNeeded = (this.firstDaoTokens[this.selectedToken])?.required;
+    if (this.firstDao.tokens.length > 0 && this.selectedToken) {
+      const remainingNeeded = (this.firstDao.tokens[this.selectedToken])?.fundingRequired;
       if (this.depositAmount){
         if (this.accountBalance.lt(this.depositAmount)) {
           //set the deposit amount = account balance if the amount the user entered is higher than the account balance
@@ -204,11 +193,11 @@ export class Funding {
    */
   private async unlockTokens(): Promise<void>{
     // unlock the tokens on the contract
-    const transactionReceipt = await this.deal.unlockTokens(this.firstDao, this.firstDaoTokens[this.selectedToken].address, this.depositAmount);
+    const transactionReceipt = await this.deal.unlockTokens(this.firstDao, this.firstDao.tokens[this.selectedToken].address, this.depositAmount);
     if (transactionReceipt){
       //the tokens have been approved on the contract so re-hydrate the funding allowance
       await this.setFundingTokenAllowance();
-      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, this.firstDaoTokens[this.selectedToken].decimals)} ${this.firstDaoTokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed"));
+      this.eventAggregator.publish("handleInfo", new EventConfig(`${this.displayBigNumber(this.depositAmount, this.firstDao.tokens[this.selectedToken].decimals)} ${this.firstDao.tokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed"));
       return;
     }
     this.eventAggregator.publish("handleFailure", "An error occurred while trying to unlock tokens. Please try again.");
@@ -223,7 +212,7 @@ export class Funding {
     //now that the daoTransactions are hydrated, update the tokens with the contract data
     await this.setTokenContractData();
     //set the token that the user is depositing
-    const depositToken: ITokenCalculated = this.firstDaoTokens[this.selectedToken];
+    const depositToken: ITokenCalculated = this.firstDao.tokens[this.selectedToken];
     // get the most up to date account balance to make sure it has enough
     await this.setAccountBalance();
     // get the most up to date token allowance for the user
@@ -235,9 +224,9 @@ export class Funding {
       return;
     }
     //validate the deposit amount is not more than the required tokens to fund the deal
-    if (this.depositAmount.gt(depositToken.required)) {
-      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the required funding needed (${this.displayBigNumber(depositToken.required, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
-      this.depositAmount = depositToken.required;
+    if (this.depositAmount.gt(depositToken.fundingRequired)) {
+      this.eventAggregator.publish("handleValidationError", new EventConfig(`The amount you wish to deposit (${this.displayBigNumber(this.depositAmount, depositToken.decimals)} ${depositToken.symbol}) exceeds the required funding needed (${this.displayBigNumber(depositToken.fundingRequired, depositToken.decimals)} ${depositToken.symbol}). Please submit again.`, EventMessageType.Warning));
+      this.depositAmount = depositToken.fundingRequired;
       return;
     }
     //all validation passed so submit the deposit
@@ -280,9 +269,9 @@ export class Funding {
   /**
    * Calculate the max amount of tokens the user is able to deposit
    */
-  private async setMax(): Promise<void> {
-    if (this.firstDaoTokens.length > 0 && this.selectedToken) {
-      const remainingNeeded = (this.firstDaoTokens[this.selectedToken]).required;
+  private setMax(): void {
+    if (this.firstDao.tokens.length > 0 && this.selectedToken) {
+      const remainingNeeded = (this.firstDao.tokens[this.selectedToken]).fundingRequired;
       if (Number(remainingNeeded) < Number(this.accountBalance)) {
         //the account has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
@@ -308,27 +297,28 @@ export class Funding {
     }
   }
 
-  public setDeposits() : void {
-    this.deposits = [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
-    this.deposits = Utils.cloneDeep(this.deposits);
+  @computedFrom("deal.daoTokenTransactions", "firstDao", "secondDao")
+  public get deposits() : IDaoTransaction[] {
+    if (!this.deal?.daoTokenTransactions?.size) return [];
+    return [...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.firstDao)), ...this.mapTransactionsToDeposits(this.deal.daoTokenTransactions.get(this.secondDao))].sort((a, b) => b.createdAt < a.createdAt ? 1 : -1);
   }
 
-  @computedFrom("firstDaoTokens")
+  @computedFrom("firstDao.tokens")
   public get tokenSelectData() : IPSelectItemConfig[]{
-    return this.firstDaoTokens.map((x, index) => ({
+    return this.firstDao.tokens?.map((x, index) => ({
       text: x.symbol,
       innerHTML: `<span><img src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
       value: index.toString(),
-    }));
+    })) ?? [];
   }
 
   public async setAccountBalance() : Promise<void> {
-    const contract = this.tokenService.getTokenContract(this.firstDaoTokens[this.selectedToken].address);
+    const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
     this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
   }
 
   public async setFundingTokenAllowance(): Promise<void> {
-    const contract = this.tokenService.getTokenContract(this.firstDaoTokens[this.selectedToken].address);
+    const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
     this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
   }
 
@@ -356,12 +346,9 @@ export class Funding {
   private async setTokenContractData(){
     await Promise.all(
       [
-        ...this.firstDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.firstDao)),
-        ...this.secondDaoTokens.map(x => this.deal.setTokenContractInfo(x, this.secondDao)),
+        ...this.firstDao.tokens.map(x => this.deal.setTokenContractInfo(x, this.firstDao)),
+        ...this.secondDao.tokens.map(x => this.deal.setTokenContractInfo(x, this.secondDao)),
       ]);
-
-    this.firstDaoTokens = [...this.firstDaoTokens];
-    this.secondDaoTokens = [...this.secondDaoTokens];
   }
   private async claimTokens(){
     const transaction = await this.deal.claim(this.firstDao);

@@ -81,4 +81,7 @@ export class PSelect {
       this.taskQueue.queueTask(() => this.select?.set(this.value));
     }
   }
+  valueChanged():void{
+    this.select?.set(this.value);
+  }
 }

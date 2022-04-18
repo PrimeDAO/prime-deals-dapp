@@ -4,10 +4,10 @@ export class PGridDemo {
   condensedColumns= [
     {field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
     {field: "target", sortable: true, width: ".5fr", template: "${target}" },
-    {field: "deposited", sortable: true, width: ".5fr", template: "${deposited}" },
-    {field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${target - deposited}</div>" },
-    {field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></pprogress-bar>" },
-    {field: "percentCompleted", sortable: true, headerText: "%", width: ".2fr", template: "${(deposited/target)* 100}%" },
+    {field: "fundingDeposited", sortable: true, width: ".5fr", template: "${fundingDeposited}" },
+    {field: "fundingRequired", sortable: true, width: ".5fr", template: "<div class='fundingRequired'>${target - fundingDeposited}</div>" },
+    {field: "fundingPercentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='target'  current.bind='deposited'></pprogress-bar>" },
+    {field: "fundingPercentCompleted", sortable: true, headerText: "%", width: ".2fr", template: "${(fundingDeposited/target)* 100}%" },
   ];
   condensedData = [
     {
@@ -16,7 +16,7 @@ export class PGridDemo {
       decimals: 18,
       logoURI: "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
       target: 100,
-      deposited: 80,
+      fundingDeposited: 80,
     },
     {
       name: "Prime",
@@ -24,7 +24,7 @@ export class PGridDemo {
       decimals: 18,
       logoURI: "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
       target: 200,
-      deposited: 50,
+      fundingDeposited: 50,
     },
   ];
 
