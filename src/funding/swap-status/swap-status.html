@@ -5,8 +5,8 @@
     <div class="status-cards">
       <status-card
         deal.bind="deal"
-        dao.bind="deal.primaryDao"
-        tokens.bind="firstDaoTokens"
+        is-primary.bind="true"
+        is-data-loaded.bind="contractDataLoaded"
       ></status-card>
       <!-- only display these swap icons if the deal hasn't executed swap yet -->
       <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
@@ -20,8 +20,8 @@
       </div>
       <status-card
         deal.bind="deal"
-        dao.bind="deal.partnerDao"
-        tokens.bind="secondDaoTokens"
+        is-primary.bind="false"
+        is-data-loaded.bind="contractDataLoaded"
       ></status-card>
     </div>
     <slot></slot>

@@ -61,6 +61,7 @@ export class DealSwapStatus {
         this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to execute the token swap. Please try again later", EventMessageType.Info, "Execute Swap Error"));
       }
       this.isExecutingSwap = false;
+      this.eventAggregator.publish("deal.executed", true);
     }
   }
 }

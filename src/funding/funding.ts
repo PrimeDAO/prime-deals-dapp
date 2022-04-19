@@ -59,7 +59,7 @@ export class Funding {
   ) {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
-      this.verifySecurity();
+      if (this.deal) this.verifySecurity();
       //Reload all tokens when account changes
       if (this.deal) await this.initializeData();
     });
@@ -89,16 +89,19 @@ export class Funding {
     await this.deal.ensureInitialized();
     await this.deal.hydrateDaoTransactions();
     //get contract token information from the other DAO
-    await this.setTokenContractData();
-
-    if (this.firstDao.tokens.length === 1) {
-      //if there is only one token, auto select it in the deposit form
-      this.selectedToken = "0";
-      //and get the account balance for that token
-      await this.setAccountBalance();
-      await this.setFundingTokenAllowance();
-    } else {
-      this.selectedToken = null;
+    if (this.deal.isFunding){
+      await this.setTokenFundingData();
+      if (this.firstDao.tokens.length === 1) {
+        //if there is only one token, auto select it in the deposit form
+        this.selectedToken = "0";
+        //and get the account balance for that token
+        await this.setAccountBalance();
+        await this.setFundingTokenAllowance();
+      } else {
+        this.selectedToken = null;
+      }
+    } else if (this.deal.isClaiming){
+      await this.setTokenClaimingData();
     }
   }
 
@@ -211,7 +214,7 @@ export class Funding {
     //hydrate the latest contract transaction data
     await this.deal.hydrateDaoTransactions();
     //now that the daoTransactions are hydrated, update the tokens with the contract data
-    await this.setTokenContractData();
+    await this.setTokenFundingData();
     //set the token that the user is depositing
     const depositToken: ITokenCalculated = this.firstDao.tokens[this.selectedToken];
     // get the most up to date account balance to make sure it has enough
@@ -340,13 +343,26 @@ export class Funding {
     return false;
   }
 
-  private async setTokenContractData(){
+  private async setTokenFundingData(){
     await Promise.all(
       [
-        ...this.firstDao.tokens.map(x => this.deal.setTokenContractInfo(x, this.firstDao)),
-        ...this.secondDao.tokens.map(x => this.deal.setTokenContractInfo(x, this.secondDao)),
+        ...this.firstDao.tokens.map(x => this.deal.setFundingContractInfo(x, this.firstDao)),
+        ...this.secondDao.tokens.map(x => this.deal.setFundingContractInfo(x, this.secondDao)),
       ]);
   }
+
+  private async setTokenClaimingData(){
+    await Promise.all(
+      [
+        ...this.firstDao.tokens.map(x => this.deal.setClaimingContractInfo(x, this.secondDao)),
+        ...this.secondDao.tokens.map(x => this.deal.setClaimingContractInfo(x, this.firstDao)),
+      ]);
+  }
+
+  private get hasTokensToClaim(): boolean{
+    return (this.secondDao.tokens as ITokenCalculated[]).some(x => x.claimingClaimable?.gt(0));
+  }
+
   private async claimTokens(){
     const transaction = await this.deal.claim(this.firstDao);
     if (transaction){
@@ -361,5 +377,7 @@ export class Funding {
     } else {
       this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to claim your tokens. Please try again later", EventMessageType.Info, "Claim Token Error"));
     }
+    //reload all data after claim
+    await this.initializeData();
   }
 }
