@@ -893,10 +893,9 @@ export class DealTokenSwap implements IDeal {
     if (this.isExecuted){
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
       if (tokenClaimableAmounts.size > 0){
-        const totalClaimable = tokenClaimableAmounts.get(token.address);
+        token.claimingClaimable = tokenClaimableAmounts.get(token.address);
         token.claimingClaimed = this.getClaimedAmount(dao, token.address);
-        token.claimingClaimable = totalClaimable?.sub(token.claimingClaimed);
-        token.claimingLocked = BigNumber.from(token.amount).sub(token.claimingClaimable);
+        token.claimingLocked = BigNumber.from(token.amount).sub(BigNumber.from(token.instantTransferAmount).add(token.claimingClaimable).add(token.claimingClaimed));
       } else {
         token.claimingClaimable = BigNumber.from(0);
         token.claimingClaimed = BigNumber.from(0);

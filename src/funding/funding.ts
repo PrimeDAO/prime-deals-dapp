@@ -59,7 +59,7 @@ export class Funding {
   ) {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
-      this.verifySecurity();
+      if (this.deal) this.verifySecurity();
       //Reload all tokens when account changes
       if (this.deal) await this.initializeData();
     });
@@ -378,5 +378,7 @@ export class Funding {
     } else {
       this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to claim your tokens. Please try again later", EventMessageType.Info, "Claim Token Error"));
     }
+    //reload all data after claim
+    await this.initializeData();
   }
 }
