@@ -9,12 +9,12 @@ export class StatusCard {
   @bindable isPrimary: boolean;
   @bindable isDataLoaded: boolean;
 
-  @computedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
+  @computedFrom("isDataLoaded", "deal.isFunding", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
   get chipColor(): string{
     if ((this.deal.isClaiming && this.deal.isFullyClaimed) || this.isDaoFullyClaimed()){
       return "success";
     }
-    if (this.tokenDao.tokens.every((x: ITokenCalculated) => x.fundingRequired?.lte(0))){
+    if (this.deal.isFunding && this.tokenDao.tokens.every((x: ITokenCalculated) => x.fundingRequired?.lte(0))){
       return "success";
     } else {
       return this.deal.isFailed ? "danger" : "warning";

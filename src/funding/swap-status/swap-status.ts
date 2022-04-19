@@ -1,3 +1,4 @@
+import { EventAggregator } from "aurelia-event-aggregator";
 import "./swap-status.scss";
 import { containerless, bindable} from "aurelia-framework";
 import { DealTokenSwap } from "../../entities/DealTokenSwap";
@@ -5,7 +6,16 @@ import { DealTokenSwap } from "../../entities/DealTokenSwap";
 export class SwapStatus {
   @bindable deal: DealTokenSwap;
   private contractDataLoaded = false;
+  constructor(
+    private eventAggregator: EventAggregator,
+  ){}
   public async bind(): Promise<void> {
+    await this.initializeData();
+    this.eventAggregator.subscribe("deal.executed", (): void => {
+      this.initializeData();
+    });
+  }
+  private async initializeData() : Promise<void>{
     await this.deal.ensureInitialized();
     await this.deal.hydrateDaoTransactions();
     if (this.deal.isFunding){
