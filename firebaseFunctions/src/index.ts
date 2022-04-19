@@ -21,41 +21,6 @@ const cors = corsLib({
 });
 
 /**
- * creates a token that is used to sign in to firebase from the frontend
- */
-export const createCustomToken = functions.https.onRequest(
-  (request, response) =>
-    // Allow cross-origin requests for this function
-    cors(request, response, async () => {
-      if (request.method !== "POST") {
-        return response.sendStatus(403);
-      }
-
-      if (!request.body.address) {
-        return response.sendStatus(400);
-      }
-
-      const address = request.body.address;
-
-      // Fail if provided address is not an ethereum address
-      try {
-        getAddress(address);
-      } catch {
-        return response.sendStatus(500);
-      }
-
-      try {
-        const firebaseToken = await admin.auth().createCustomToken(address);
-
-        return response.status(200).json({ token: firebaseToken });
-      } catch (error){
-        functions.logger.error("createCustomToken error:", error);
-        return response.sendStatus(500);
-      }
-    }),
-);
-
-/**
  * Run every time a document (a deal) in deals-token-swap collection is created
  */
 export const onDealCreate = functions.firestore
