@@ -1,3 +1,4 @@
+import { BrowserStorageService } from "services/BrowserStorageService";
 import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, computedFrom } from "aurelia-framework";
@@ -35,6 +36,7 @@ export class DiscussionsService {
     private dataSourceDeals: IDataSourceDeals,
     private dateService: DateService,
     private discussionsStreamService: DiscussionsStreamService,
+    private browserStorageService: BrowserStorageService,
   ) { }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -43,14 +45,14 @@ export class DiscussionsService {
   }
 
   private async isValidAuth(): Promise<boolean> {
-    if (!localStorage.getItem("discussionToken")) {
+    if (!this.browserStorageService.lsGet("discussionToken")) {
       return false;
     } else {
 
       try {
         const validation = await this.convo.auth.validate(
           this.ethereumService.defaultAccountAddress,
-          localStorage.getItem("discussionToken"),
+          this.browserStorageService.lsGet("discussionToken"),
         );
         return validation.success;
       } catch (error) {
@@ -62,7 +64,7 @@ export class DiscussionsService {
 
   private authenticateSession = async (): Promise<boolean> => {
     const timestamp = Date.now();
-    localStorage.removeItem("discussionToken");
+    this.browserStorageService.lsRemove("discussionToken");
 
     if (!this.ethereumService.walletProvider) return false;
 
@@ -87,7 +89,7 @@ export class DiscussionsService {
     );
 
     if (success) {
-      localStorage.setItem("discussionToken", message);
+      this.browserStorageService.lsSet("discussionToken", message);
       return true;
     }
 
@@ -337,7 +339,7 @@ export class DiscussionsService {
       const encrypted = await this.encryptWithAES(comment, discussionId);
       const createResponse: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
-        localStorage.getItem("discussionToken"),
+        this.browserStorageService.lsGet("discussionToken"),
         "This comment is encrypted",
         `${discussionId}:${EthereumService.targetedChainId}`,
         "https://deals.prime.xyz",
@@ -374,7 +376,7 @@ export class DiscussionsService {
     }
     if (!isValidAuth) {
       await this.authenticateSession();
-      if (!localStorage.getItem("discussionToken")) {
+      if (!this.browserStorageService.lsGet("discussionToken")) {
         this.eventAggregator.publish(
           "handleValidationError",
           new EventConfigFailure("Signature is needed to delete a comment"),
@@ -386,7 +388,7 @@ export class DiscussionsService {
     try {
       const deleteResponse = await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
-        localStorage.getItem("discussionToken"),
+        this.browserStorageService.lsGet("discussionToken"),
         commentId,
       );
 
@@ -419,7 +421,7 @@ export class DiscussionsService {
         return false;
       }
     }
-    const token = localStorage.getItem("discussionToken");
+    const token = this.browserStorageService.lsGet("discussionToken");
 
     try {
       const message = await this.convo.comments.getComment(commentId);
