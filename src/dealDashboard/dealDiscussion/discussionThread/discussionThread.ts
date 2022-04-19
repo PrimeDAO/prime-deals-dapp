@@ -395,16 +395,20 @@ export class DiscussionThread {
             this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
             this.threadDictionary = this.arrayToDictionary(this.threadComments);
           }
-        }
-        else if (error.code === 4001) {
-          this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
         } else {
-          this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+          if (error.code === 4001) {
+            this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
+          } else {
+            this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+          }
+
+          /**
+           * In this case, no API error, so just revert the vote.
+           */
+          this.threadDictionary[_id] = swrVote;
+          this.updateThreadsFromDictionary();
         }
-
-        this.threadDictionary[_id] = swrVote;
-        this.updateThreadsFromDictionary();
-
+      }).finally(() => {
         this.isLoading[`isVoting ${_id}`] = false;
       });
 
@@ -419,7 +423,6 @@ export class DiscussionThread {
 
     this.threadDictionary[_id] = message;
     this.updateThreadsFromDictionary();
-    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {
