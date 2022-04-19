@@ -1,13 +1,15 @@
+import { EthereumService } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential } from "firebase/auth";
+import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
+import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -51,6 +53,7 @@ export class FirebaseService {
 
   constructor(
     private eventAggregator: EventAggregator,
+    private ethereumService: EthereumService,
   ) {
   }
 
@@ -94,10 +97,23 @@ export class FirebaseService {
   }
 
   /**
-   * Calls Firebase function which creates a token used to sign in to Firebase from the frontend
+   * Calls Firebase function which creates a Timestamp that is going to be a part of the signed message
+   * Later used to verify if user owns account address
    */
-  private async createCustomToken(address: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/createCustomToken`, {address});
+  private async getDateToSign(address: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/getDateToSign`, {address});
+
+    return response.data.authenticationRequestDate;
+  }
+
+  private async getMessageToSign(address: string): Promise<string> {
+    const date = await this.getDateToSign(address);
+
+    return `${FIREBASE_MESSAGE_TO_SIGN} ${date}`;
+  }
+
+  private async verifySignedMessageAndCreateCustomToken(address: string, signature: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, signature});
 
     return response.data.token;
   }
@@ -114,16 +130,30 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    if (firebaseAuth.currentUser && firebaseAuth.currentUser.uid === address) {
+      return;
+    }
+
     // Signs out from Firebase in case another user was authenticated
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    // Requests a custom Firebase Token used for signing in to Firebase, from our Firebase Function
-    const token = await this.createCustomToken(address);
+    const messageToSign = await this.getMessageToSign(address);
+
+    let signature: string;
+    try {
+      signature = await this.ethereumService.getDefaultSigner().signMessage(messageToSign);
+    } catch (error) {
+      this.ethereumService.disconnect({ code: 0, message: "User requested" });
+      this.eventAggregator.publish("handleFailure", "Signature was rejected. You are not authenticated");
+      return;
+    }
+
+    const token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
 
     // Firebase Authentication will be persisted in memory only
     // that is on browser refresh the Firebase access token will be lost
-    await setPersistence(firebaseAuth, inMemoryPersistence);
+    await setPersistence(firebaseAuth, browserLocalPersistence);
 
     // Signs in to Firebase with a given custom token
     return this.signInWithCustomToken(token);
