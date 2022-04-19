@@ -1,4 +1,5 @@
 import { And, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { Types } from "ably/promises";
 import { E2eDealsApi } from "../../common/deal-api";
 import { PAGE_LOADING_TIMEOUT } from "../../common/test-constants";
 import { E2eDeals } from "../deals/deals.e2e";
@@ -6,7 +7,8 @@ import { E2eWallet } from "../wallet.e2e";
 import { IComment, ICommentMetaData } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
 import { E2E_ADDRESSES, getRandomId } from "../../../fixtures/dealFixtures";
-import { COMMENTS_STREAM_UPDATED, Types } from "../../../../src/dealDashboard/discussionsStreamService";
+
+const COMMENTS_STREAM_UPDATED = "commentsStreamUpdated";
 
 export const GET_COMMENTS_ALIAS = "getComments";
 export const DELETE_COMMENTS_ALIAS = "deleteComments";
