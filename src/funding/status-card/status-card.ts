@@ -1,6 +1,5 @@
 import { DealTokenSwap, ITokenCalculated } from "entities/DealTokenSwap";
 import "./status-card.scss";
-import { deepComputedFrom } from "aurelia-deep-computed";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { BigNumber } from "ethers";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
@@ -10,7 +9,7 @@ export class StatusCard {
   @bindable isPrimary: boolean;
   @bindable isDataLoaded: boolean;
 
-  @deepComputedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
+  @computedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
   get chipColor(): string{
     if ((this.deal.isClaiming && this.deal.isFullyClaimed) || this.isDaoFullyClaimed()){
       return "success";
@@ -22,7 +21,7 @@ export class StatusCard {
     }
   }
 
-  @deepComputedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
+  @computedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
   get status(): string{
     if (this.deal.isClaiming && this.deal.isFullyClaimed){
       return "Swap completed";

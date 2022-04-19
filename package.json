@@ -49,7 +49,6 @@
     "ably": "^1.2.17",
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.3",
-    "aurelia-deep-computed": "^0.1.7",
     "aurelia-dialog": "^2.0.0",
     "aurelia-event-aggregator": "^1.0.3",
     "aurelia-typed-observable-plugin": "^0.4.2",
