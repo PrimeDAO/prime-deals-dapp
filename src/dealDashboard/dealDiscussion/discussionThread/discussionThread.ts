@@ -421,7 +421,6 @@ export class DiscussionThread {
 
     this.threadDictionary[_id] = message;
     this.updateThreadsFromDictionary();
-    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {
