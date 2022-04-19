@@ -11,6 +11,7 @@ import { Utils } from "services/utils";
 
 import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 
 import "./discussionThread.scss";
 
@@ -19,6 +20,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DiscussionThread {
+  @bindable clauses: Map<string, IClause>;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
   @bindable authorized: boolean;

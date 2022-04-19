@@ -4,12 +4,14 @@
   <discussion-thread
     deal.bind="deal"
     authorized.bind="authorized"
+    clauses.bind="clauses"
     discussion-id.two-way="discussionId"
     if.to-view="discussionId">
   </discussion-thread>
   <discussions-list
     if.to-view="!discussionId"
     authorized.bind="authorized"
+    clauses.bind="clauses"
     deal.bind="deal"
     discussion-id.two-way="discussionId">
   </discussions-list>

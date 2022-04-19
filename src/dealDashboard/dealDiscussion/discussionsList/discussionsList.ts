@@ -21,6 +21,7 @@ interface IDiscussionListItem extends IDealDiscussion {
 
 @autoinject
 export class DiscussionsList{
+  @bindable clauses: Map<string, IClause>;
   @bindable deal: DealTokenSwap;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable.booleanAttr authorized: boolean;
@@ -35,11 +36,6 @@ export class DiscussionsList{
   private hasDiscussions: boolean;
   private commentTimeInterval: ReturnType<typeof setInterval>;
   private updateTimeSignal: "update-time";
-
-  @computedFrom("deal.registrationData.terms.clauses.length")
-  private get clauses(): Map<string, IClause> {
-    return new Map<string, IClause>(this.deal.registrationData.terms.clauses.map(clause => [clause.id, clause]));
-  }
 
   @computedFrom("deal.clauseDiscussions", "deal.registrationData.terms.clauses")
   private get discussions(): Map<string, IDealDiscussion> {
