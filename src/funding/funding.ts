@@ -91,18 +91,17 @@ export class Funding {
     //get contract token information from the other DAO
     if (this.deal.isFunding){
       await this.setTokenFundingData();
+      if (this.firstDao.tokens.length === 1) {
+        //if there is only one token, auto select it in the deposit form
+        this.selectedToken = "0";
+        //and get the account balance for that token
+        await this.setAccountBalance();
+        await this.setFundingTokenAllowance();
+      } else {
+        this.selectedToken = null;
+      }
     } else if (this.deal.isClaiming){
       await this.setTokenClaimingData();
-    }
-
-    if (this.firstDao.tokens.length === 1) {
-      //if there is only one token, auto select it in the deposit form
-      this.selectedToken = "0";
-      //and get the account balance for that token
-      await this.setAccountBalance();
-      await this.setFundingTokenAllowance();
-    } else {
-      this.selectedToken = null;
     }
   }
 
