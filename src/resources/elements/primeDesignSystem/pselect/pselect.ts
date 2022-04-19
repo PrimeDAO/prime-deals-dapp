@@ -77,7 +77,11 @@ export class PSelect {
   }
   dataChanged(): void {
     if (this.select) {
-      this.select.setData([{text: this.placeholder, placeholder: true}, ...this.data]);
+      this.select.setData([{text: this.placeholder, placeholder: true, value: null}, ...this.data ?? []]);
+      this.taskQueue.queueTask(() => this.select?.set(this.value));
     }
+  }
+  valueChanged():void{
+    this.select?.set(this.value);
   }
 }

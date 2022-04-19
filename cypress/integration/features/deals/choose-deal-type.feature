@@ -5,7 +5,7 @@ Feature: Choose Deal type
 
   Scenario: View deal types
     Then I can see Token Swap deal type
-    And I can see Co-liquidity deal type
+    And I can see Joint venture deal type
 
   Scenario: Access Token Swap
     When I select Token Swap

@@ -19,7 +19,7 @@ import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
 import { combineLatest, fromEventPattern, merge, Observable, Subject } from "rxjs";
 import { map, mergeAll, skip } from "rxjs/operators";
-import { DEALS_TOKEN_SWAP_COLLECTION, IDocumentUpdates, IFirebaseDocument } from "./FirestoreTypes";
+import { DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
@@ -137,9 +137,9 @@ export class FirestoreService<
    * Reads deal by ID from Firestore
    *
    * @param dealId string
-   * @returns Promise<IFirebaseDocument<TDealDocument>>
+   * @returns Promise<TDealDocument>
    */
-  public async getDealById(dealId: string): Promise<IFirebaseDocument<TDealDocument>> {
+  public async getDealById<TDealDocument>(dealId: string): Promise<TDealDocument> {
     try {
       const docRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       const docSnapshot = await getDoc(docRef);
@@ -147,15 +147,12 @@ export class FirestoreService<
       // Checks is the document exists
       // (docSnapshot could be returned with no data if the document has nested collections and no data)
       if (docSnapshot.exists()) {
-        return {
-          data: docSnapshot.data() as TDealDocument,
-          id: docSnapshot.id,
-        };
+        return docSnapshot.data() as TDealDocument;
       } else {
-        throw new Error("Deal does not exist");
+        return null;
       }
-    } catch (error) {
-      throw new Error(error);
+    } catch (_error) {
+      return null; // exception is thrown when the deal is not found or inaccessible
     }
   }
 
@@ -262,7 +259,7 @@ export class FirestoreService<
     return deals;
   }
 
-  public allDealsForAddressObservable(accountAddress: string, skipFirst = false): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
+  public allDealsForAddressObservable(accountAddress: string, skipFirst = false): Observable<Array<IDealTokenSwapDocument>> {
     const allPublicDeals = this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery()).pipe(
       skip(skipFirst ? 1 : 0),
     );
@@ -285,8 +282,12 @@ export class FirestoreService<
    *
    * @returns Observable<IFirebaseDocument<TDealDocument>[]>
    */
-  public allPublicDealsUpdatesObservable(): Observable<IDocumentUpdates<IDealTokenSwapDocument>> {
+  public allPublicDealsUpdatesObservable(): Observable<Array<IDealTokenSwapDocument>> {
     return this.getObservableOfQueryUpdates<IDealTokenSwapDocument>(this.allPublicDealsQuery());
+  }
+
+  public allDealsUpdatesObservable(): Observable<Array<{dealId: string, modifiedAt: string}>> {
+    return this.getObservableOfQueryUpdates(this.allDealsUpdatesQuery());
   }
 
   /**
@@ -351,13 +352,26 @@ export class FirestoreService<
    * @param discussion IDealDiscussion
    */
   public async addClauseDiscussion(dealId: string, discussionId: string, discussion: IDealDiscussion): Promise<void> {
+    /**
+     * Temporary solution: Schema for discussions is outdated (eg. has obsolete keys like `topic` or `id`).
+     * This way, we ensure only the correct props are taken.
+     */
+    const finalDiscussions: IDealDiscussion = {
+      version: discussion.version,
+      createdAt: discussion.createdAt,
+      modifiedAt: discussion.modifiedAt,
+      createdBy: discussion.createdBy,
+      replies: discussion.replies,
+      key: discussion.key,
+    };
+
     try {
       const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
 
       await setDoc(
         ref,
         {
-          clauseDiscussions: {[discussionId]: discussion},
+          clauseDiscussions: {[discussionId]: finalDiscussions},
         },
         {merge: true},
       );
@@ -418,6 +432,12 @@ export class FirestoreService<
     return this.getDealDocumentsFromQuerySnapshot<T>(querySnapshot);
   }
 
+  private allDealsUpdatesQuery(): Query<DocumentData> {
+    return query(
+      collection(firebaseDatabase, DEALS_TOKEN_SWAP_UPDATES_COLLECTION),
+    );
+  }
+
   private allPublicDealsQuery(): Query<DocumentData> {
     return query(
       collection(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION),
@@ -439,21 +459,15 @@ export class FirestoreService<
     );
   }
 
-  private getObservableOfQueryUpdates<T>(q: Query<DocumentData>): Observable<IDocumentUpdates<T>> {
+  private getObservableOfQueryUpdates<T>(q: Query<DocumentData>): Observable<Array<T>> {
     return fromEventPattern(
       (handler) => onSnapshot(
         q,
         (querySnapshot: QuerySnapshot<DocumentData>) => {
-          const updatedDocuments = {
-            modified: [],
-            removed: [],
-          };
+          const updatedDocuments = [];
           querySnapshot.docChanges().forEach((change) => {
             if (change.type === "added" || change.type === "modified") {
-              updatedDocuments.modified.push(change.doc.data());
-            }
-            if (change.type === "removed") {
-              updatedDocuments.removed.push(change.doc.data());
+              updatedDocuments.push(change.doc.data());
             }
           });
           handler(updatedDocuments);

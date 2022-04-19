@@ -1,5 +1,6 @@
 import { EthereumService } from "services/EthereumService";
-import { autoinject, bindingMode } from "aurelia-framework";
+import { autoinject, bindingMode, computedFrom } from "aurelia-framework";
+import { BindingSignaler } from "aurelia-templating-resources";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
@@ -12,6 +13,7 @@ import { IDealDiscussion } from "entities/DealDiscussions";
 
 import "./discussionsList.scss";
 import { bindable } from "aurelia-typed-observable-plugin";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -31,13 +33,42 @@ export class DiscussionsList{
   private discussionsArray: Array<IDiscussionListItem> = [];
   private discussionsHashes: string[];
   private hasDiscussions: boolean;
-  private times: any = {
-    intervals: Array(typeof setInterval),
-  };
+  private commentTimeInterval: ReturnType<typeof setInterval>;
+  private updateTimeSignal: "update-time";
+
+  @computedFrom("deal.registrationData.terms.clauses.length")
+  private get clauses(): Map<string, IClause> {
+    return new Map<string, IClause>(this.deal.registrationData.terms.clauses.map(clause => [clause.id, clause]));
+  }
+
+  @computedFrom("deal.clauseDiscussions", "deal.registrationData.terms.clauses")
+  private get discussions(): Map<string, IDealDiscussion> {
+    const discussionsMap = new Map();
+
+    Object.entries(this.deal.clauseDiscussions).forEach(async ([id, discussion]) => {
+      if (!discussion) return;
+
+      if (!discussion?.createdBy?.name) {
+        this.discussionsService.loadProfile(discussion.createdBy.address)
+          .then(profile => {
+            if (profile.name) discussion.createdBy.name = profile.name;
+          });
+      }
+      discussionsMap.set(id, discussion);
+    });
+
+    return discussionsMap;
+  }
 
   private findClauseIndex(discussionId: string): string {
     const discussionsIds = this.deal?.registrationData?.terms?.clauses.map(clause => clause.id);
-    return (discussionsIds.indexOf(discussionId) + 1).toString() || "-";
+    const notFoundText = "-";
+
+    if (discussionsIds.indexOf(discussionId) > -1) {
+      return (discussionsIds.indexOf(discussionId) + 1).toString() || notFoundText;
+    }
+
+    return notFoundText;
   }
 
   constructor(
@@ -47,6 +78,7 @@ export class DiscussionsList{
     private dealService: DealService,
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
+    private bindingSignaler: BindingSignaler,
   ) {}
 
   attached(): void {
@@ -54,39 +86,20 @@ export class DiscussionsList{
     this.eventAggregator.subscribe("Network.Changed.Account", (): void => {
       this.initialize();
     });
+
+    this.commentTimeInterval = setInterval((): void => {
+      this.bindingSignaler.signal(this.updateTimeSignal);
+    }, 30000);
   }
 
   private initialize() {
     this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
 
-    this.discussionsArray = Object
-      .keys(this.discussionsService.discussions)
-      .map(key => (
-        {
-          id: key,
-          ...this.discussionsService.discussions[key],
-          lastModified: this.dateService.formattedTime(new Date(this.discussionsService.discussions[key].modifiedAt)).diff(),
-        }
-      ));
-
-    this.discussionsArray.forEach((listDiscussionItem: IDiscussionListItem) => {
-      if (!listDiscussionItem.createdBy.name) {
-        this.discussionsService.loadProfile(listDiscussionItem.createdBy.address)
-          .then(profile => {
-            if (profile.name) listDiscussionItem.createdBy.name = profile.name;
-          });
-      }
-
-      this.times.intervals.push(setInterval((): void => {
-        listDiscussionItem.lastModified = this.dateService.formattedTime(new Date(listDiscussionItem.modifiedAt)).diff();
-      }, 30000));
-    });
-
-    this.hasDiscussions = !!this.discussionsArray.length;
+    this.hasDiscussions = !!this.discussions.size;
   }
 
   detached() {
-    this.times.intervals.forEach((interval: ReturnType<typeof setTimeout>) => clearInterval(interval));
+    clearInterval(this.commentTimeInterval);
   }
 
   private navigateTo(discussionId: string): void {

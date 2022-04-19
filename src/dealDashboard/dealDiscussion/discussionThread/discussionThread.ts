@@ -2,8 +2,9 @@ import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framewo
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
-import { DiscussionsService } from "dealDashboard/discussionsService";
-import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
+import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/discussionsService";
+import { Types } from "dealDashboard/discussionsStreamService";
+import { Address, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { Utils } from "services/utils";
@@ -14,8 +15,6 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./discussionThread.scss";
 
 // import { Convo } from "@theconvospace/sdk";
-import { Realtime } from "ably/promises";
-import { Types } from "ably";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
@@ -39,13 +38,16 @@ export class DiscussionThread {
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
   private deletedComment: IComment = {
     _id: "",
     text: "This message has been removed.",
     author: "",
     authorENS: "",
     metadata: {
+      isPrivate: undefined,
+      allowedMembers: undefined,
+      encrypted: undefined,
+      iv: undefined,
       isDeleted: true,
     },
     replyTo: "",
@@ -73,7 +75,7 @@ export class DiscussionThread {
   }
 
   detached(): void {
-    this.unsubscribeFromDiscussion();
+    this.discussionsService.unsubscribeFromDiscussion();
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
@@ -110,7 +112,7 @@ export class DiscussionThread {
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
     ) {
       // Loads the discussion details - necessary for thread header
-      this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
+      this.dealDiscussion = this.deal.clauseDiscussions[this.discussionId];
       // Ensures comment fetching and subscription
       await this.ensureDealDiscussion(this.discussionId);
       if (this.isInView(this.refThread) && !isIdChange) {
@@ -121,8 +123,12 @@ export class DiscussionThread {
     }
   }
 
-  private arrayToDictionary(comments): Record<string, IComment> {
+  private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
     return comments.reduce((r, e): Record<string, IComment> => {
+      if (e === undefined) {
+        return r;
+      }
+
       r[e._id] = e;
       return r;
     }, {});
@@ -144,24 +150,28 @@ export class DiscussionThread {
     }
 
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
+
     if (commentStreamMessage.name === "commentDelete") {
-      if (this.threadDictionary[newComment._id]) delete this.threadDictionary[newComment._id];
+      if (this.threadDictionary[newComment._id]) {
+        this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+      }
     } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
-      newComment.text = (newComment.metadata.encrypted) ?
-        await this.discussionsService.decryptWithAES(
-          newComment.metadata.encrypted,
-          newComment.metadata.iv,
-          key,
-        ) :
-        newComment.text;
-
+      const decrypted = await this.discussionsService.decryptWithAES(
+        newComment.metadata.encrypted,
+        newComment.metadata.iv,
+        key,
+      );
+      if (newComment.metadata.encrypted) {
+        newComment.text = decrypted;
+      }
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
     }
-    this.threadComments = Object.values(this.threadDictionary);
+    this.updateThreadsFromDictionary();
     this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
 
     // scroll to bottom only if the user is at seeing the last message
@@ -177,22 +187,17 @@ export class DiscussionThread {
     commentStreamMessage = null;
   }
 
-  private async subscribeToDiscussion(discussionId: string): Promise<void> {
-    const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-
-    // const convo = new Convo(process.env.CONVO_API_KEY);
-    // const res = convo.threads.subscribe(channelName, this.updateThread);
-    // console.log({res});
-
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-    this.discussionCommentsStream = await ably.channels.get(channelName);
-    this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
-  }
-
-  private unsubscribeFromDiscussion(): void {
-    if (this.discussionCommentsStream) {
-      this.discussionCommentsStream.unsubscribe();
-    }
+  private updateThreadsFromDictionary() {
+    this.threadComments = Object
+      .values(this.threadDictionary)
+      /**
+       * Handle bug, where values from `this.threadDictionary` are undefined.
+       * Eg. {
+       *   "id1": xyz,
+       *   "id2": undefined
+       * }
+       */
+      .filter(comment => comment !== undefined);
   }
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
@@ -222,7 +227,7 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    this.subscribeToDiscussion(discussionId);
+    this.discussionsService.subscribeToDiscussion(this.discussionId, this.updateCommentsThreadUponMessageArrival.bind(this));
 
     if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
@@ -336,9 +341,9 @@ export class DiscussionThread {
   async replyComment(_id: string): Promise<void> {
     const comment = await this.discussionsService.getSingleComment(_id);
     if (!comment._id) {
-      this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
-      delete this.threadDictionary[_id];
-      this.threadComments = Object.values(this.threadDictionary);
+      this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
+      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
       return;
     }
 
@@ -361,27 +366,31 @@ export class DiscussionThread {
 
     const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
-    this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
-      if (res.error) {
-        this.eventAggregator.publish("handleFailure", "An error occurred while voting. " + res.error);
-        if (res.code === 404) {
-          delete this.threadDictionary[_id];
-          this.threadComments = [...Object.values(this.threadDictionary)];
+    this.discussionsService.voteComment(this.discussionId, _id, type)
+      .catch(error => {
+        /* On API failure- revert voting */
+        if (error.code === 404) {
+          if (error.error) {
+            this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
+            /**
+             * Only revert vote action, when api error occured.
+             * In this case, it was very likely, that the comment was deleted by the original author (note error code 404)
+             */
+            this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+            this.threadDictionary = this.arrayToDictionary(this.threadComments);
+          }
         }
+        else if (error.code === 4001) {
+          this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
+        } else {
+          this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+        }
+
+        this.threadDictionary[_id] = swrVote;
+        this.updateThreadsFromDictionary();
+
         this.isLoading[`isVoting ${_id}`] = false;
-        return;
-      }
-    }).catch(error => {
-      /* On API failure- revert voting */
-      this.threadDictionary[_id] = swrVote;
-      if (error.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted. ");
-      }
-    }).finally(() => {
-      this.threadComments = [...Object.values(this.threadDictionary)];
-    });
+      });
 
     /* Toggle vote locally */
     const message = Utils.cloneDeep(this.threadDictionary[_id]);
@@ -393,7 +402,7 @@ export class DiscussionThread {
     }
 
     this.threadDictionary[_id] = message;
-    this.threadComments = [...Object.values(this.threadDictionary)];
+    this.updateThreadsFromDictionary();
     this.isLoading[`isVoting ${_id}`] = false;
   }
 
@@ -402,8 +411,8 @@ export class DiscussionThread {
 
     const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
-    delete this.threadDictionary[_id];
-    this.threadComments = Object.values(this.threadDictionary);
+    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {

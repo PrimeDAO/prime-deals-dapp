@@ -30,6 +30,7 @@ export class PPopupModal {
   showCancelButton: boolean;
   showOkButton: boolean;
   body: HTMLElement;
+  headerElement: HTMLElement;
 
   constructor(private aureliaHelperService: AureliaHelperService) {}
 
@@ -47,6 +48,10 @@ export class PPopupModal {
     if (this.message) {
       this.body.innerHTML = this.message;
       this.aureliaHelperService.enhanceElement(this.body, this, true);
+    }
+    if (this.header) {
+      this.headerElement.innerHTML = this.header;
+      this.aureliaHelperService.enhanceElement(this.headerElement, this, true);
     }
   }
 }

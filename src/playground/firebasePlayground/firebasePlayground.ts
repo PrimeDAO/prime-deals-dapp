@@ -56,7 +56,6 @@ export class FirebasePlayground {
   addDealDiscussion(dealId: string, discussionId: string) {
     const discussion: IDealDiscussion = {
       version: "0.0.1",
-      topic: "Topic",
       createdBy: {
         address: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
       },

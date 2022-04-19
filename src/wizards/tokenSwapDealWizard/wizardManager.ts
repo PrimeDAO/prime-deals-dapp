@@ -11,9 +11,9 @@ import {
 } from "entities/DealRegistrationTokenSwap";
 import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
-import { EthereumService } from "services/EthereumService";
-import { Utils } from "services/utils";
+import { Address, EthereumService } from "services/EthereumService";
 import "../wizards.scss";
+import { DisposableCollection } from "services/DisposableCollection";
 
 @autoinject
 export class WizardManager {
@@ -35,6 +35,9 @@ export class WizardManager {
 
   private stages: IWizardStage[] = [];
   private registrationData: IDealRegistrationTokenSwap;
+  private originalRegistrationData: IDealRegistrationTokenSwap;
+  private subscriptions = new DisposableCollection();
+
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
@@ -105,27 +108,59 @@ export class WizardManager {
   ) {
   }
 
-  async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<void> {
-    if (!params[STAGE_ROUTE_PARAMETER]) return;
+  public async canActivate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<boolean> {
+    let canActivate = true;
 
+    if (!params[STAGE_ROUTE_PARAMETER]) {
+      canActivate = false;
+    } else {
+
+      const dealId = params.id;
+      /**
+       * unless we are editing an existing deal there is nothing further to check
+       */
+      if (dealId) {
+        if (!this.originalRegistrationData) {
+          this.originalRegistrationData = await this.getDeal(dealId);
+        }
+        /**
+         * app.ts is assumed to make sure that if there is going to be a connection on startup,
+         * it will already have been made.
+         *
+         * We have to check this on every activation to handle the case of using browser navigation functions
+         * and changing
+         */
+        canActivate = this.ensureAccess(routeConfig.settings.wizardType, this.ethereumService.defaultAccountAddress);
+      }
+
+      return canActivate;
+    }
+  }
+
+  /**
+   * This viewmodel is a singleton as long as we stay inside the wizard.  Leave the wizard and we start all over again with
+   * a new viewmodel which will need to reinitialize and register itself with the wizardService.
+   *
+   * activate will be invoked when we enter the wizard and everytime we switch stages in the wizard. The only time
+   * we need to do all the initialization is the first time.
+   */
+  public async activate(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, routeConfig: RouteConfig): Promise<void> {
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
     const wizardType = routeConfig.settings.wizardType;
 
-    // if we are accessing an already existing deal, get its registration data
-    const dealId = params.id;
-
-    if ((wizardType !== this.wizardType) || (dealId !== this.dealId)) {
+    if (!this.wizardService.hasWizard(this)) {
 
       this.wizardType = wizardType;
-      this.dealId = dealId;
+      this.dealId = params.id;
 
-      this.registrationData = dealId ? await this.getDeal(dealId) : new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+      this.registrationData = this.originalRegistrationData ?
+        JSON.parse(JSON.stringify(this.originalRegistrationData))
+        :
+        new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
 
       if (wizardType === WizardType.makeAnOffer) {
         this.registrationData.partnerDAO = emptyDaoDetails();
       }
-
-      await this.ensureAccess(wizardType);
 
       this.stages = this.configureStages(wizardType);
 
@@ -143,6 +178,10 @@ export class WizardManager {
       });
     }
 
+    this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
+      this.ensureAccess(wizardType, account);
+    }));
+
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
@@ -150,6 +189,10 @@ export class WizardManager {
     this.setupStageComponent(indexOfActiveStage, wizardType);
 
     this.wizardService.setActiveStage(this, indexOfActiveStage);
+  }
+
+  public deactivate() {
+    this.subscriptions.dispose();
   }
 
   private getPreviousRoute(wizardType: WizardType) {
@@ -209,7 +252,7 @@ export class WizardManager {
     switch (wizardType) {
       case WizardType.makeAnOffer:
         stages.map((stage) => {
-          stage.valid = (stage !== this.partnerDaoStage) ? true : undefined;
+          stage.valid = (stage !== this.partnerDaoStage && stage !== this.tokenDetailsStage) ? true : undefined;
         });
         break;
       case WizardType.editPartneredDeal:
@@ -233,24 +276,21 @@ export class WizardManager {
     }
 
     await deal.ensureInitialized();
-    return JSON.parse(JSON.stringify(deal.registrationData));
+    return deal.registrationData;
   }
 
-  private async ensureAccess(wizardType: any): Promise<void> {
-    if (wizardType !== WizardType.editOpenProposal && wizardType !== WizardType.editPartneredDeal) {
-      return;
-    }
+  private ensureAccess(wizardType: any, account: Address): boolean {
+    let canAccess = true;
 
-    try {
-      await Utils.waitUntilTrue(() => !!this.ethereumService.defaultAccountAddress, 5000);
-
-      if (this.registrationData.proposalLead.address !== this.ethereumService.defaultAccountAddress) {
-        throw new Error("Current account is not authorized");
+    if ((wizardType === WizardType.editOpenProposal) || (wizardType === WizardType.editPartneredDeal)) {
+      if (this.originalRegistrationData.proposalLead.address !== account) {
+        this.eventAggregator.publish("handleFailure", "Sorry, you are not authorized to modify this deal");
+        canAccess = false;
+        this.router.navigate("/home");
       }
-    } catch (error) {
-      this.router.navigate(this.getPreviousRoute(wizardType));
-      throw new Error("Error authorizing the current account");
     }
+
+    return canAccess;
   }
 
   private isHiddenStage(stageRoute: string): boolean {

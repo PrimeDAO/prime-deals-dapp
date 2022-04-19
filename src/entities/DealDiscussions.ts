@@ -1,10 +1,18 @@
+export interface ICommentMetaData {
+  isPrivate: string;
+  allowedMembers: string;
+  encrypted: string;
+  iv: string;
+  isDeleted?: boolean;
+}
+
 export interface IComment {
   // Following the comment structure of `theconvo.space` api:
   _id: string;
   text: string;
   author: string;
   authorENS?: string;
-  metadata: any;
+  metadata: ICommentMetaData;
   replyTo?: string;
   upvotes: Array<string>;
   downvotes: Array<string>;
@@ -34,17 +42,6 @@ export interface IDealDiscussion {
     address: string,
     name?: string | null;
   } | null;
-  topic: string;
   replies: number;
   key: string;
-}
-
-export class DealDiscussion implements IDealDiscussion {
-  public version: string;
-  public createdAt: string | null;
-  public modifiedAt: string | null;
-  public createdBy: {address: string, name?: string | null} | null;
-  public topic: string;
-  public replies: number;
-  public key: string;
 }

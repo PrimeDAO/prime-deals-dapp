@@ -12,18 +12,21 @@
     </section>
     <section
       class="section deposit"
-      if.to-view="firstDaoTokens && firstDaoTokens.length && !deal.isClaiming"
+      if.to-view="firstDao.tokens && firstDao.tokens.length && !deal.isClaiming"
     >
       <div class="box-container">
         <deposit-grid
+          deal.bind="deal"
           dao.bind="firstDao"
-          dao-tokens.bind="firstDaoTokens"
+          dao-tokens.bind="firstDao.tokens"
+          show-chip.bind="true"
           funding-days-left="${(deal.timeLeftToExecute / (60*60*24*1000)).toFixed(0)}"
         ></deposit-grid>
         <deposit-grid
+          deal.bind="deal"
           if.to-view="deal.isUserProposalLead"
           dao.bind="secondDao"
-          dao-tokens.bind="secondDaoTokens"
+          dao-tokens.bind="secondDao.tokens"
           show-chip.bind="false"
         ></deposit-grid>
         <div class="container-footer">
@@ -44,8 +47,8 @@
                 Their funds are secured.
               </span>
               <span if.to-view="showDepositForm">
-                You're depositing on behalf of ${deal.firstDao.name}. This deal needs to be funded
-                and executed within ${deal.timeLeftToExecute | timespan:'largest2'} days.
+                You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
+                executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
               <span
                 if.to-view="!deal.isFailed && !deal.isTargetReached && !deal.isRepresentativeUser"
@@ -63,32 +66,39 @@
               <div>
                 <div class="inputs">
                   <pselect
-                    disabled.bind="firstDaoTokens.length === 1"
+                    disabled.bind="firstDao.tokens.length === 1"
                     placeholder="Select a Token"
                     data.bind="tokenSelectData"
                     value.bind="selectedToken"
-                    ref="refSelectToken"
                   ></pselect>
                   <numeric-input
                     css="pInput"
                     value.bind="depositAmount"
                     keyup.delegate="checkMaxAmount()"
-                    decimals.bind="firstDaoTokens[selectedToken].decimals"
+                    decimals.bind="firstDao.tokens[selectedToken].decimals"
                   >
                   </numeric-input>
                   <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
                     >Max</pbutton
                   >
                   <span class="balance" if.to-view="accountBalance">
-                    Your ${firstDaoTokens[selectedToken].symbol} Balance:
+                    Your ${firstDao.tokens[selectedToken].symbol} Balance:
                     <tokenbalance
                       formatted="0.00a"
-                      token-address.to-view="firstDaoTokens[selectedToken].address"
+                      token-address.bind="firstDao.tokens[selectedToken].address"
                     ></tokenbalance>
                   </span>
                 </div>
               </div>
               <pbutton
+                if.to-view="lockRequired"
+                type="primary"
+                click.delegate="unlockTokens()"
+                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
+                >Unlock</pbutton
+              >
+              <pbutton
+                else
                 type="primary"
                 click.delegate="depositTokens()"
                 disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
@@ -98,7 +108,7 @@
           </div>
           <div class="links ${!deal.isRepresentativeUser ? 'right' : ''}">
             <address-link
-              address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
+              address.to-view="deal.daoDepositContracts.get(firstDao).address"
               link-text="DAODepositManager Contract"
               show-arrow-inside-link.bind="true"
               show-copy-icon.bind="false"
@@ -120,25 +130,20 @@
         <div class="box-container">
           <div>
             <div class="token-grid">
-              <h4 class="title heading heading3 gradient">
-                ${!deal.isRepresentativeUser ? 'Vested Token Status of' : 'Claim Tokens for'}
-                ${firstDao.name}
-              </h4>
+              <h4 class="title heading heading3 gradient">${firstDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="firstDaoTokens"
+                rows.bind="secondDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
               </pgrid>
             </div>
             <div class="token-grid" if.to-view="deal.isUserProposalLead">
-              <h4 class="title heading heading3 gradient">
-                Vested Token Status of ${secondDao.name}
-              </h4>
+              <h4 class="title heading heading3 gradient">${secondDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="secondDaoTokens"
+                rows.bind="firstDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
@@ -155,7 +160,7 @@
             </p>
             <div>
               <address-link
-                address.to-view="deal.daoDepositContracts.get(deal.firstDao).address"
+                address.to-view="deal.daoDepositContracts.get(firstDao).address"
                 link-text="DAODepositManager Contract"
                 show-arrow-inside-link.bind="true"
                 show-copy-icon.bind="false"
@@ -169,7 +174,19 @@
               >
               </address-link>
             </div>
-            <pbutton type="primary" if.to-view="deal.isRepresentativeUser">Claim Tokens</pbutton>
+            <h4
+              class="claim-tokens-header title heading gradient"
+              if.to-view="deal.isRepresentativeUser && deal.isUserProposalLead"
+            >
+              Claim Tokens for ${firstDao.name}
+            </h4>
+            <pbutton
+              type="primary"
+              if.to-view="deal.isRepresentativeUser"
+              disabled.bind="!hasTokensToClaim"
+              click.delegate="claimTokens()"
+              >Claim Tokens</pbutton
+            >
           </div>
         </div>
       </div>
@@ -184,18 +201,10 @@
         rows.bind="deposits"
         columns.bind="depositColumns"
         condensed.bind="false"
+        sort-column="createdAt"
+        sort-direction.bind="-1"
         if.to-view="deposits.length > 0"
       ></pgrid>
-      <template if.to-view="deposits.length > 10">
-        <div if.to-view="!loadingDeposits && !seeingMore" class="seeMore">
-          <div class="arrow">&darr;</div>
-          <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
-        </div>
-        <div if.to-view="!loadingDeposits && seeingMore" class="seeMore">
-          <div class="arrow">&uarr;</div>
-          <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
-        </div>
-      </template>
     </section>
   </main>
 </template>

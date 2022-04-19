@@ -4,7 +4,7 @@ import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
 import { getAddress } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
-import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
@@ -56,6 +56,15 @@ export const createCustomToken = functions.https.onRequest(
 );
 
 /**
+ * Run every time a document (a deal) in deals-token-swap collection is created
+ */
+export const onDealCreate = functions.firestore
+  .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+  .onCreate((snapshot) => {
+    updateDealUpdatesCollection(snapshot.id);
+  });
+
+/**
  * Run every time a document (a deal) in deals-token-swap collection is updated
  */
 export const updateDealStructure = functions.firestore
@@ -69,6 +78,8 @@ export const updateDealStructure = functions.firestore
     if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
       return;
     }
+
+    updateDealUpdatesCollection(dealId);
 
     // Creates a write batch, used for performing multiple writes as a single atomic operation.
     const batch = firestore.batch();

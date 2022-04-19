@@ -1,7 +1,9 @@
 # Prime Deals dApp
-Prime Deals is an An Interface for DAO to DAO interactions, such as token swaps, co-liquidity provision, and joint venture formation. An introduction to Prime Deals [TODO: ADD LINK](link-to-introduction).
+Prime Deals is an Interface for DAO to DAO interactions, such as token swaps, joint venture provision, and joint venture
+formation. An introduction to Prime Deals [TODO: ADD LINK](link-to-introduction).
 
-This prime-deals-dapp repository contains in its master branch the web user interface for the Prime Deals website that is deployed to https://deals.prime.xyz.
+This prime-deals-dapp repository contains in its master branch the web user interface for the Prime Deals website that
+is deployed to https://deals.prime.xyz.
 
 ## Development
 

@@ -78,12 +78,13 @@ export interface IDaoTransaction {
 }
 
 export interface ITokenCalculated extends IToken {
-  deposited?: BigNumber,
-  required?: BigNumber,
-  percentCompleted?: number,
-  claimable?: BigNumber,
-  claimed?: BigNumber,
-  locked?: BigNumber,
+  fundingDeposited?: BigNumber,
+  fundingRequired?: BigNumber,
+  fundingPercentCompleted?: number,
+  claimingClaimable?: BigNumber,
+  claimingClaimed?: BigNumber,
+  claimingLocked?: BigNumber,
+  claimingPercentCompleted?: number,
 }
 
 @autoinject
@@ -115,6 +116,10 @@ export class DealTokenSwap implements IDeal {
   public totalPrice?: number;
   public initializing = true;
   public corrupt = false;
+  /**
+   * Attention: Even though, this is public, we try to minimizedirect usage.
+   * If possible try to create wrapper properties.
+   */
   public dealDocument: IDealTokenSwapDocument;
 
   /**
@@ -211,7 +216,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenTransactions.forEach((transactions, dao) => { //loop through each dao
       if (!isReached) return; //immediately returns if it's already false from a previous loop
       isReached = dao.tokens.every(daoToken => {
-        const tokenTransactions = transactions.filter(x => x.address === daoToken.address); //filter transactions by token
+        const tokenTransactions = transactions.filter(x => x.token.address === daoToken.address); //filter transactions by token
         const totalDeposited : BigNumber = tokenTransactions.reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
         return totalDeposited.gte(daoToken.amount);
       });
@@ -321,11 +326,11 @@ export class DealTokenSwap implements IDeal {
   private getDao(relatedToAccount: boolean) : IDAO | null {
     if (this.partnerDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
       //the connected account is a representative of the partner DAO
-      return relatedToAccount ? this.registrationData.partnerDAO : this.registrationData.primaryDAO;
+      return relatedToAccount ? this.partnerDao : this.primaryDao;
     }
     if (this.primaryDaoRepresentatives.has(this.ethereumService.defaultAccountAddress)){
       //the connceted account is either a representative of the primary DAO or the proposal lead
-      return relatedToAccount ? this.registrationData.primaryDAO : this.registrationData.partnerDAO;
+      return relatedToAccount ? this.primaryDao : this.partnerDao;
     }
     return null;
   }
@@ -418,7 +423,10 @@ export class DealTokenSwap implements IDeal {
   /**
    * key is the clauseId, value is the discussion key
    */
-  public clauseDiscussions: Map<string, IDealDiscussion>;
+  @computedFrom("dealDocument.clauseDiscussions")
+  public get clauseDiscussions(): Record<string, IDealDiscussion> {
+    return this.dealDocument.clauseDiscussions ?? {};
+  }
 
   @computedFrom("registrationData.partnerDAO")
   public get isOpenProposal(): boolean {
@@ -534,7 +542,6 @@ export class DealTokenSwap implements IDeal {
       this.createdAt = new Date(this.dealDocument.createdAt);
 
       await this.loadDepositContracts(); // now that we have registrationData
-      this.clauseDiscussions = this.dealDocument.clauseDiscussions ? new Map(Object.entries(this.dealDocument.clauseDiscussions)) : new Map();
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
 
@@ -564,10 +571,11 @@ export class DealTokenSwap implements IDeal {
 
   private async hydrateDaoClaims(): Promise<void> {
     const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
-
-    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao));
+    //need to pass the other DAO into getDaoClaims because the contract swapped the tokens and the primary dao needs access to the partnerDao's tokens
+    daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao, this.partnerDao));
     if (this.partnerDao) {
-      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao));
+      //need to pass the other DAO into getDaoClaims because the contract swapped the tokens and the partner dao needs access to the primaryDao's tokens
+      daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao, this.primaryDao));
     }
 
     this.daoTokenClaims = daoTokenClaims;
@@ -615,7 +623,7 @@ export class DealTokenSwap implements IDeal {
       discussionId,
       discussion,
     ).then(() => {
-      this.clauseDiscussions.set(discussionId, discussion);
+      this.clauseDiscussions[discussionId] = discussion;
     });
   }
 
@@ -645,6 +653,8 @@ export class DealTokenSwap implements IDeal {
       () => this.moduleContract.createSwap(...dealParameters))
       .then(receipt => {
         if (receipt) {
+          //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
+          this.fundingStartedAt = new Date();
           this.hydrate();
           return receipt;
         }
@@ -686,6 +696,11 @@ export class DealTokenSwap implements IDeal {
             return receipt;
           }
         }));
+  }
+
+  public unlockTokens(dao: IDAO, token: Address, amount: BigNumber): Promise<TransactionReceipt> {
+    const tokenContract = this.tokenService.getTokenContract(token);
+    return this.transactionsService.send(() => tokenContract.approve(this.daoDepositContracts.get(dao).address, amount));
   }
 
   public depositTokens(dao: IDAO, tokenAddress: Address, amount: BigNumber): Promise<TransactionReceipt> {
@@ -742,7 +757,7 @@ export class DealTokenSwap implements IDeal {
   public execute(): Promise<TransactionReceipt> {
     if (!this.isFailed) {
       return this.transactionsService.send(
-        () => this.moduleContract.executeSwap(this.id))
+        () => this.moduleContract.executeSwap(this.contractDealId))
         .then(async (receipt) => {
           if (receipt) {
             this.isExecuted = true;
@@ -782,7 +797,7 @@ export class DealTokenSwap implements IDeal {
       this.dealDocument.votingSummary.partnerDAO;
   }
 
-  private async getDaoClaims(dao: IDAO): Promise<Array<IDaoClaim>> {
+  private async getDaoClaims(dao: IDAO, otherDao: IDAO): Promise<Array<IDaoClaim>> {
     const claims = new Array<IDaoClaim>();
     const depositContract = this.daoDepositContracts.get(dao);
 
@@ -797,7 +812,7 @@ export class DealTokenSwap implements IDeal {
           const params = event.args;
           claims.push({
             dao: dao,
-            token: this.getTokenInfoFromDao(params.token, dao),
+            token: this.getTokenInfoFromDao(params.token, otherDao), // assign the other dao's tokens to the initial dao
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             dealId: params.dealId,
@@ -813,7 +828,7 @@ export class DealTokenSwap implements IDeal {
     const transactions = new Array<IDaoTransaction>();
     const depositContract = this.daoDepositContracts.get(dao);
 
-    const depositFilter = depositContract.filters.Deposited();
+    const depositFilter = depositContract.filters.Deposited(this.moduleContract.address, this.contractDealId);
     await depositContract.queryFilter(depositFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {
@@ -831,7 +846,7 @@ export class DealTokenSwap implements IDeal {
         }
       });
 
-    const withdrawFilter = depositContract.filters.Withdrawn();
+    const withdrawFilter = depositContract.filters.Withdrawn(this.moduleContract.address, this.contractDealId);
     await depositContract.queryFilter(withdrawFilter)
       .then(async (events: Array<IStandardEvent<IDepositEventArgs>>): Promise<void> => {
         for (const event of events) {
@@ -862,21 +877,32 @@ export class DealTokenSwap implements IDeal {
   /**
    * Sets the additional token info from the contract
    */
-  public async setTokenContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+  public setFundingContractInfo(token: ITokenCalculated, dao: IDAO): void {
     if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
-      token.deposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+      token.fundingDeposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
       // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
-      token.required = BigNumber.from(token.amount).sub(token.deposited);
+      token.fundingRequired = BigNumber.from(token.amount).sub(token.fundingDeposited);
       // calculate the percent completed based on deposited divided by target
       // We're using bignumberjs because BigNumber can't handle division
-      token.percentCompleted = this.numberService.fromString(fromWei(toBigNumberJs(token.deposited.toString()).div(BigNumber.from(token.amount).toString()).toString(), token.decimals)) * 100;
-    } else {
-      //calculate only claiming properties
+      token.fundingPercentCompleted = toBigNumberJs(token.fundingDeposited).dividedBy(token.amount).toNumber() * 100;
+    }
+  }
+
+  public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
+    //calculate claiming properties
+    if (this.isExecuted){
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
-      token.claimable = tokenClaimableAmounts.get(token.address);
-      token.claimed = this.getClaimedAmount(dao, token.address);
-      token.locked = BigNumber.from(token.amount).sub(token.claimable);
+      if (tokenClaimableAmounts.size > 0){
+        token.claimingClaimable = tokenClaimableAmounts.get(token.address);
+        token.claimingClaimed = this.getClaimedAmount(dao, token.address);
+        token.claimingLocked = BigNumber.from(token.amount).sub(BigNumber.from(token.instantTransferAmount).add(token.claimingClaimable).add(token.claimingClaimed));
+      } else {
+        token.claimingClaimable = BigNumber.from(0);
+        token.claimingClaimed = BigNumber.from(0);
+        token.claimingLocked = BigNumber.from(0);
+      }
+      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(BigNumber.from(token.instantTransferAmount))).dividedBy(token.amount).toNumber() * 100;
     }
   }
 
@@ -905,25 +931,26 @@ export class DealTokenSwap implements IDeal {
     for (let i = 0; i < this.primaryDao.tokens.length; i++) {
       if (!tokens.includes(this.primaryDao.tokens[i].address)) {
         tokens.push(this.primaryDao.tokens[i].address);
-        pathFrom.push([this.primaryDao.tokens[i].amount, zero]);
+        pathFrom.push([BigNumber.from(this.primaryDao.tokens[i].amount), zero]);
         pathTo.push([
           ...fourZeros,
-          this.primaryDao.tokens[i].instantTransferAmount,
-          this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf,
-          this.primaryDao.tokens[i].vestedFor,
+          BigNumber.from(this.primaryDao.tokens[i].instantTransferAmount),
+          BigNumber.from(this.primaryDao.tokens[i].vestedTransferAmount),
+          this.primaryDao.tokens[i].cliffOf ?? 0,
+          this.primaryDao.tokens[i].vestedFor ?? 0,
         ]);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < this.partnerDao.tokens.length; i++) {
       if (!tokens.includes(this.partnerDao.tokens[i].address)) {
         tokens.push(this.partnerDao.tokens[i].address);
-        pathFrom.push([zero, this.partnerDao.tokens[i].amount]);
+        pathFrom.push([zero, BigNumber.from(this.partnerDao.tokens[i].amount)]);
         pathTo.push([
-          this.primaryDao.tokens[i].instantTransferAmount,
-          this.primaryDao.tokens[i].vestedTransferAmount,
-          this.primaryDao.tokens[i].cliffOf,
-          this.primaryDao.tokens[i].vestedFor,
+          BigNumber.from(this.partnerDao.tokens[i].instantTransferAmount),
+          BigNumber.from(this.partnerDao.tokens[i].vestedTransferAmount),
+          this.partnerDao.tokens[i].cliffOf ?? 0,
+          this.partnerDao.tokens[i].vestedFor ?? 0,
           ...fourZeros,
         ]);
       }

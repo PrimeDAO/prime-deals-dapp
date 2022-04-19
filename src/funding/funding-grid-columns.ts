@@ -17,8 +17,8 @@ export const depositColumns: IGridColumn[] = [
       <address-link address.to-view="address" show-arrow-icon.bind="false" link-text.bind="address | smallHexString" >
         
         ` },
-  { field: "createdAt", width: ".5fr", headerText: "age", sortable: true, template: "${getFormattedTime(createdAt)}" },
-  { field: "address", width: ".2fr", headerText: "TxID", sortable: false, template: "<etherscan-button href-text='View' address.to-view=\"address\" is-transaction.bind=\"true\"></etherscan-button>" },
+  { field: "createdAt", width: ".5fr", headerText: "age", sortable: true, template: "${dateService.formattedTime(createdAt).diff('en-US', false)}" },
+  { field: "txid", width: ".2fr", headerText: "TxID", sortable: false, template: "<etherscan-button href-text='View' address.to-view=\"txid\" is-transaction.bind=\"true\"></etherscan-button>" },
   {
     field: "address", width: ".25fr", sortable: false, headerText: "", template: `
         <div class="withdraw">
@@ -27,22 +27,24 @@ export const depositColumns: IGridColumn[] = [
         type="secondary"
         click.delegate="withdraw(row)"
         >WITHDRAW</pbutton>
-        <pbutton type="formfield" if.to-view="withdrawTxId" ptooltip.bind="getFormattedTime(withdrawnAt, 'en-US')" click.delegate="gotoEtherscan(withdrawTxId, true)">Withdrawn</pbutton>
+        <pbutton type="formfield" if.to-view="withdrawTxId" ptooltip.bind="dateService.formattedTime(withdrawnAt).diff('en-US', false)" click.delegate="gotoEtherscan(withdrawTxId, true)">Withdrawn</pbutton>
         </div>  ` },
 ];
 
 export const tokenGridColumns: IGridColumn[] = [
   { field: "name", sortable: true, width: ".5fr", headerText: "token", template: "<dao-icon-name primary-dao.to-view=\"row\" icon-size=\"24\" use-token-symbol.to-view=\"true\"></dao-icon-name>" },
-  { field: "target", sortable: true, width: ".5fr", template: "${amount | ethwei:row.decimals}" },
-  { field: "deposited", sortable: true, width: ".5fr", template: "${deposited | ethwei:row.decimals}" },
-  { field: "required", sortable: true, width: ".5fr", template: "<div class='required'>${required | ethwei:row.decimals}</div>" },
-  { field: "percentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='deposited'></pprogress-bar>" },
-  { field: "percentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "${percentCompleted}%" },
+  { field: "target", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
+  { field: "fundingDeposited", headerText: "Deposited", sortable: true, width: ".5fr", template: "<formatted-number thousands-separated value.to-view='fundingDeposited | ethwei:decimals'></formatted-number>" },
+  { field: "fundingRequired", headerText: "Required", sortable: true, width: ".5fr", template: "<div class='fundingRequired'><formatted-number thousands-separated value.to-view='fundingRequired | ethwei:decimals'></formatted-number></div>" },
+  { field: "fundingPercentCompleted", sortable: true, headerText: "Completed", width: "1fr", template: "<pprogress-bar  style='height: 10px; width: 100%'  max.bind='amount'  current.bind='fundingDeposited'></pprogress-bar>" },
+  { field: "fundingPercentCompleted", sortable: true, align: "right", headerText: "%", width: ".2fr", template: "<formatted-number thousands-separated value.to-view='fundingPercentCompleted'></formatted-number>%" },
 ];
 
 export const claimTokenGridColumns: IGridColumn[] = [
   { field: "token", headerText: "Token", sortable: true, width: ".5fr", template: "<dao-icon-name primary-dao.to-view='row' icon-size='24' use-token-symbol.to-view='true'></dao-icon-name>" },
-  { field: "claimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimable | ethwei:decimals'></formatted-number>" },
-  { field: "locked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='locked | ethwei:decimals'></formatted-number>" },
+  { field: "instantTransferAmount", headerText: "Instant", sortable: true, width: ".5fr", template: "<formatted-number mantissa='2' thousands-separated value.to-view='instantTransferAmount | ethwei:decimals'></formatted-number>" },
+  { field: "claimingClaimed", headerText: "Claimed", sortable: true, width: ".5fr", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingClaimed | ethwei:decimals'></formatted-number>" },
+  { field: "claimingClaimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingClaimable | ethwei:decimals'></formatted-number>" },
+  { field: "claimingLocked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingLocked | ethwei:decimals'></formatted-number>" },
   { field: "amount", headerText: "Total", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
 ];

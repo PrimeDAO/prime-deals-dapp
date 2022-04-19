@@ -1,4 +1,4 @@
-import { autoinject, bindingMode } from "aurelia-framework";
+import { computedFrom, autoinject, bindingMode } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EthereumService } from "services/EthereumService";
@@ -12,16 +12,15 @@ export class DealClauses {
   @bindable.booleanAttr authorized = false;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
 
-  private clauses: IClause[];
+  @computedFrom("deal.registrationData.terms.clauses.length")
+  private get clauses(): IClause[] {
+    return this.deal.registrationData.terms.clauses;
+  }
 
   constructor(
     private ethereumService: EthereumService,
     private discussionsService: DiscussionsService,
   ) {
-  }
-
-  attached(): void {
-    this.clauses = this.deal.registrationData.terms.clauses;
   }
 
   /**
@@ -32,7 +31,7 @@ export class DealClauses {
    * @param id the id of the clause the discussion is for or null if it is a general discussion
    */
   private async addOrReadDiscussion(topic: string, clauseId: string | null): Promise<void> {
-    if (this.deal.clauseDiscussions.get(clauseId)) {
+    if (this.discussionsService.discussions[clauseId]) {
       this.discussionId = clauseId;
     } else {
       // If no discussion hash provided- create a new discussion

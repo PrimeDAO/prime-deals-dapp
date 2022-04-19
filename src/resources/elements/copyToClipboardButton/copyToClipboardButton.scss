@@ -1,12 +1,26 @@
-@import "styles/styles.scss";
+@import "src/styles/colors";
 
 .copy-to-clip-button {
-  outline: none;
-  path {
-    fill: $Secondary05;
-  }
   cursor: pointer;
-  &:hover>path {
-    fill: $White;
+  display: inline-flex;
+
+  &:focus {
+    color: $White;
+  }
+
+  &:hover {
+    color: $Neutral02;
+  }
+
+  svg {
+    outline: none;
+
+    path {
+      fill: $Secondary05;
+    }
+
+    &:hover > path {
+      fill: $White;
+    }
   }
 }
