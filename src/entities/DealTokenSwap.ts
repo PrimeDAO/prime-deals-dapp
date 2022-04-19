@@ -571,9 +571,10 @@ export class DealTokenSwap implements IDeal {
 
   private async hydrateDaoClaims(): Promise<void> {
     const daoTokenClaims = new Map<IDAO, Array<IDaoClaim>>();
-
+    //need to pass the other DAO into getDaoClaims because the contract swapped the tokens and the primary dao needs access to the partnerDao's tokens
     daoTokenClaims.set(this.primaryDao, await this.getDaoClaims(this.primaryDao, this.partnerDao));
     if (this.partnerDao) {
+      //need to pass the other DAO into getDaoClaims because the contract swapped the tokens and the partner dao needs access to the primaryDao's tokens
       daoTokenClaims.set(this.partnerDao, await this.getDaoClaims(this.partnerDao, this.primaryDao));
     }
 
@@ -761,7 +762,6 @@ export class DealTokenSwap implements IDeal {
           if (receipt) {
             this.isExecuted = true;
             this.executedAt = new Date((await this.ethereumService.getBlock(receipt.blockNumber)).timestamp * 1000);
-            this.hydrate();
             return receipt;
           }
         });
@@ -812,7 +812,7 @@ export class DealTokenSwap implements IDeal {
           const params = event.args;
           claims.push({
             dao: dao,
-            token: this.getTokenInfoFromDao(params.token, otherDao),
+            token: this.getTokenInfoFromDao(params.token, otherDao), // assign the other dao's tokens to the initial dao
             createdAt: new Date((await event.getBlock()).timestamp * 1000),
             txid: event.transactionHash,
             dealId: params.dealId,
