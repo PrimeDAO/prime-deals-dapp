@@ -16,7 +16,8 @@ import {
   where,
 } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { firebaseAuth, firebaseDatabase, FirebaseService } from "./FirebaseService";
+import { FirebaseService } from "./FirebaseService";
+import { firebaseAuth, firebaseDatabase } from "./firebase-helpers";
 import { combineLatest, fromEventPattern, merge, Observable, Subject } from "rxjs";
 import { map, mergeAll, skip } from "rxjs/operators";
 import { DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, IFirebaseDocument } from "./FirestoreTypes";
