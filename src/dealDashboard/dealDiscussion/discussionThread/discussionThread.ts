@@ -372,6 +372,10 @@ export class DiscussionThread {
         if (error.code === 404) {
           if (error.error) {
             this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
+            /**
+             * Only revert vote action, when api error occured.
+             * In this case, it was very likely, that the comment was deleted by the original author (note error code 404)
+             */
             this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
             this.threadDictionary = this.arrayToDictionary(this.threadComments);
           }

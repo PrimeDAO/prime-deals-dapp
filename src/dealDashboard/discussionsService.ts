@@ -265,6 +265,7 @@ export class DiscussionsService {
         threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
       }));
 
+      // Is typed as Array<IComment>, but the convoSdk also throws AbortController errors, so we catch it here
       if ((commentsResponse as any).error) throw (commentsResponse as any).error;
 
       const comments = commentsResponse.filter((comment: IComment) => !(
@@ -356,6 +357,7 @@ export class DiscussionsService {
         replyTo,
       );
 
+      // Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here
       if ((createResponse as any).error) throw (createResponse as any).error;
 
       // Return un-encrypted comment to the view
@@ -445,6 +447,11 @@ export class DiscussionsService {
         const inverseVoteResponse = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
         if (inverseVoteResponse.error) throw inverseVoteResponse.error;
 
+        /**
+         * Seems redundant, but adding this just to make sure.
+         * Reason: The convo space has various returns types for each response.
+         * Change this, when this.convo.comments has a built-in return type.
+         */
         if (inverseVoteResponse.success) return true;
         return false;
       }
