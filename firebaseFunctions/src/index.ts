@@ -12,6 +12,7 @@ const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+const USERS_COLLECTION = "users";
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
@@ -213,6 +214,18 @@ export const getDateToSign = functions.https.onRequest(
         return response.sendStatus(400);
       }
 
+      /**
+       * Address coming from the request body
+       */
+      const address: string = request.body.address;
+
+      // Fail if provided address is not an ethereum address
+      try {
+        getAddress(address);
+      } catch {
+        return response.sendStatus(500);
+      }
+
       try {
         /**
          * Current date as a UTC string, later used as a part of message the user is going to sign
@@ -222,8 +235,8 @@ export const getDateToSign = functions.https.onRequest(
         // Create/update document for the provided address, storing the current time, to be used to create signature
         await admin
           .firestore()
-          .collection("users")
-          .doc(request.body.address)
+          .collection(USERS_COLLECTION)
+          .doc(address)
           .set({authenticationRequestDate});
 
         return response.status(200).json({ authenticationRequestDate });
@@ -254,6 +267,14 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
        * Address coming from the request body
        */
       const address: string = request.body.address;
+
+      // Fail if provided address is not an ethereum address
+      try {
+        getAddress(address);
+      } catch {
+        return response.sendStatus(500);
+      }
+
       /**
        * Signature of the message which should be signed by the address, coming from the request body
        */
@@ -261,7 +282,7 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
 
       try {
         // Get the document with date when authentication process was started for this address
-        const userDocRef = admin.firestore().collection("users").doc(address);
+        const userDocRef = admin.firestore().collection(USERS_COLLECTION).doc(address);
         const userDoc = await userDocRef.get();
 
         if (userDoc.exists) {
