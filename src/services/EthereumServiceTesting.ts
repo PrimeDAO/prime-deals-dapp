@@ -154,10 +154,6 @@ export class EthereumServiceTesting {
     return false;
   }
 
-  public getEnsForAddress(_address: Address): Promise<string> {
-    return Promise.resolve("anens.eth");
-  }
-
   public lastBlock: IBlockInfo;
 
   /**
