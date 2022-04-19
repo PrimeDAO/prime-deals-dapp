@@ -1,11 +1,10 @@
 @import "./carousel";
 @import "./pinput";
 @import "./typography";
+@import "./variables";
 
-@mixin pcardBgAndGradient($backgroundColor: $BG02, $grColor01: $Primary01, $grColor02: $Secondary02) {
-  background: /* this is the card background: */ linear-gradient($backgroundColor, $backgroundColor) padding-box,
-    /* this is the gradient on the left side: */ linear-gradient(to bottom, $grColor01, $grColor02) border-box;
-  border-left: $border-radius-small solid transparent;
+:root {
+  --mobile-width: #{$MobileWidth};
 }
 
 .pcard {

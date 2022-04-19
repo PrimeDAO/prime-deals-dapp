@@ -110,7 +110,7 @@ export class DiscussionThread {
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
     ) {
       // Loads the discussion details - necessary for thread header
-      this.dealDiscussion = this.deal.clauseDiscussions.get(this.discussionId);
+      this.dealDiscussion = this.deal.clauseDiscussions[this.discussionId];
       // Ensures comment fetching and subscription
       await this.ensureDealDiscussion(this.discussionId);
       if (this.isInView(this.refThread) && !isIdChange) {
@@ -121,8 +121,12 @@ export class DiscussionThread {
     }
   }
 
-  private arrayToDictionary(comments): Record<string, IComment> {
+  private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
     return comments.reduce((r, e): Record<string, IComment> => {
+      if (e === undefined) {
+        return r;
+      }
+
       r[e._id] = e;
       return r;
     }, {});
@@ -145,23 +149,26 @@ export class DiscussionThread {
 
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
     if (commentStreamMessage.name === "commentDelete") {
-      if (this.threadDictionary[newComment._id]) delete this.threadDictionary[newComment._id];
+      if (this.threadDictionary[newComment._id]) {
+        this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+      }
     } else {
       const key = await this.discussionsService.importKey(this.discussionId);
 
-      newComment.text = (newComment.metadata.encrypted) ?
-        await this.discussionsService.decryptWithAES(
-          newComment.metadata.encrypted,
-          newComment.metadata.iv,
-          key,
-        ) :
-        newComment.text;
-
+      const decrypted = await this.discussionsService.decryptWithAES(
+        newComment.metadata.encrypted,
+        newComment.metadata.iv,
+        key,
+      );
+      if (newComment.metadata.encrypted) {
+        newComment.text = decrypted;
+      }
       this.threadDictionary[newComment._id] = {
         ...newComment,
       };
     }
-    this.threadComments = Object.values(this.threadDictionary);
+    this.updateThreadsFromDictionary();
     this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
 
     // scroll to bottom only if the user is at seeing the last message
@@ -175,6 +182,19 @@ export class DiscussionThread {
     }
     this.isLoading.commenting = false;
     commentStreamMessage = null;
+  }
+
+  private updateThreadsFromDictionary() {
+    this.threadComments = Object
+      .values(this.threadDictionary)
+      /**
+       * Handle bug, where values from `this.threadDictionary` are undefined.
+       * Eg. {
+       *   "id1": xyz,
+       *   "id2": undefined
+       * }
+       */
+      .filter(comment => comment !== undefined);
   }
 
   private async subscribeToDiscussion(discussionId: string): Promise<void> {
@@ -337,8 +357,8 @@ export class DiscussionThread {
     const comment = await this.discussionsService.getSingleComment(_id);
     if (!comment._id) {
       this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
-      delete this.threadDictionary[_id];
-      this.threadComments = Object.values(this.threadDictionary);
+      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+      this.threadDictionary = this.arrayToDictionary(this.threadComments);
       return;
     }
 
@@ -393,7 +413,7 @@ export class DiscussionThread {
     }
 
     this.threadDictionary[_id] = message;
-    this.threadComments = [...Object.values(this.threadDictionary)];
+    this.updateThreadsFromDictionary();
     this.isLoading[`isVoting ${_id}`] = false;
   }
 
@@ -402,8 +422,8 @@ export class DiscussionThread {
 
     const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
-    delete this.threadDictionary[_id];
-    this.threadComments = Object.values(this.threadDictionary);
+    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
       if (!isDeleted) {

@@ -23,14 +23,18 @@ Then("I can see Partner DAO section with inputs for collecting its details", () 
     });
 
     cy.get("[data-test=\"dao-social-media\"]").within(() => {
-      cy.contains("div", "Social media (optional)");
-      cy.get("[data-test=\"add-social-media\"]").should("contain.text", "+ Add social media");
+      cy.contains("div", "External Links (optional)");
+      cy.get("[data-test=\"add-social-media\"]").should("contain.text", "+ Add An External Link");
       cy.get("pselect").within(() => {
         cy.contains(".ss-option", "Twitter");
         cy.contains(".ss-option", "Discord");
         cy.contains(".ss-option", "Telegram");
         cy.contains(".ss-option", "Reddit");
-        cy.contains(".ss-option", "LinkedIn");
+        cy.contains(".ss-option", "Facebook");
+        cy.contains(".ss-option", "Forum");
+        cy.contains(".ss-option", "Github");
+        cy.contains(".ss-option", "YouTube");
+        cy.contains(".ss-option", "Newsletter");
       });
     });
   });

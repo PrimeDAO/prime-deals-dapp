@@ -1,5 +1,4 @@
-@import "src/styles/styles.scss";
-@import "src/resources/elements/primeDesignSystem/styles";
+@import "src/styles/variables";
 
 .page.dealDashboardContainer {
   display: grid;
@@ -24,7 +23,7 @@
 
     .title {
       padding-bottom: 12px;
-      word-break: break-all;
+      word-break: break-word;
     }
 
     time-left {
@@ -45,10 +44,12 @@
   deal-clauses {
     grid-area: clauses;
   }
+
   deal-swap-status {
     grid-area: swapstatus;
     margin-top: 30px;
   }
+
   deal-discussion {
     grid-area: discussion;
 
@@ -89,6 +90,7 @@
     grid-column-gap: 0;
   }
 }
+
 @media screen and (max-width: $MaxContentBodyWidthMobile) {
   .page.dealDashboardContainer {
     grid-template-columns: 1fr;
@@ -100,9 +102,11 @@
       "aside"
       "swapstatus"
       "discussion";
+
     .top {
       margin-top: 28px;
       margin-bottom: 0;
+
       .title {
         margin-bottom: 0;
       }
@@ -111,6 +115,7 @@
     deal-description {
       margin-bottom: 28px;
     }
+
     deal-clauses {
       margin-bottom: 28px;
     }

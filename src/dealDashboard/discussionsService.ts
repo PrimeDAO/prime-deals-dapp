@@ -113,17 +113,12 @@ export class DiscussionsService {
    * @param clauseDiscussions A map of clause discussions
    * @returns void
    */
-  public loadDealDiscussions(clauseDiscussions: Map<string, IDealDiscussion>): void {
-    this.discussions = {};
-    for (const [id, discussion] of clauseDiscussions.entries()) {
-      this.discussions[id] = {
-        ...discussion,
-      };
-    }
+  public loadDealDiscussions(clauseDiscussions: Record<string, IDealDiscussion>): void {
+    this.discussions = clauseDiscussions;
   }
 
   public async setEnsName(address: string): Promise<void> {
-    this.ensName = await this.ethereumService.walletProvider.lookupAddress(address);
+    this.ensName = await this.ethereumService.getEnsForAddress(address);
   }
 
   /**
@@ -164,9 +159,8 @@ export class DiscussionsService {
         ["encrypt", "decrypt"],
       );
 
-      const discussion = {
+      const discussion: IDealDiscussion = {
         version: "0.0.1",
-        topic: args.topic,
         createdBy,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),

@@ -2,7 +2,7 @@
 
 deal-menubar {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto auto;
   align-items: center;
   justify-content: end;
   grid-column-gap: 10px;
@@ -21,13 +21,16 @@ deal-menubar {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin-right: 30px;
     gap: 10px;
-    grid-column: 1/ span 2;
   }
 
 
   @media screen and (max-width: 700px) {
     grid-template-columns: auto auto;
     justify-content: center;
+    .shareButton {
+      grid-column: 1/ span 2;
+    }
   }
 }

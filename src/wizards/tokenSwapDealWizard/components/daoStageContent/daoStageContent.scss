@@ -1,18 +1,17 @@
-@import "styles/styles.scss";
-@import "resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
 
 dao-stage-content {
   .daoRepresentative, .daoSocialMedia {
     display: grid;
     grid-template-columns: 1fr 50px;
   }
-  
+
   .removeButton {
     margin-left: auto;
     cursor: pointer;
     height: 66px;
   }
-  
+
   .addButton {
     font-family: Inter;
     cursor: pointer;

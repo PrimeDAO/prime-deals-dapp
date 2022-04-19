@@ -1,3 +1,4 @@
+import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, Networks } from "./EthereumService";
@@ -14,6 +15,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import * as applyDiff from "services/ApplyDiffService";
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -39,6 +41,7 @@ interface ITokenSwapCreatedArgs {
 interface ITokenSwapExecutedArgs {
   module: Address,
   dealId: number;
+  metadata: string;
 }
 
 interface IExecutedDeal {
@@ -193,8 +196,8 @@ export class DealService {
         for (const event of events) {
           const params = event.args;
           // hack until the event has it
-          const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
-          //const dealId = parseBytes32String(params.metadata);
+          // const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
+          const dealId = parseBytes32String(params.metadata);
           dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
         }
       });
@@ -224,51 +227,48 @@ export class DealService {
   }
 
   private async observeDeals(): Promise<void> {
-    const dealsObservable = await this.dataSourceDeals.getDealsObservables(this.ethereumService.defaultAccountAddress, true);
-
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
 
-    this.dealsSubscription = dealsObservable.subscribe(
+    this.dealsSubscription = this.dataSourceDeals.allDealsUpdatesObservable().pipe(skip(1)).subscribe(
+      /**
+       * Pawel => confirm whether the `updates` array will ever contain more than one item,
+       * and if so, when.
+       *
+       * Use of microtasks is an attempt to aggregate changes prior to Aurelia's
+       * handling of them, hoping this will be the cleanest and most correct
+       * presentation of the changes to the app that is observing Deal data.
+       *
+       * Consider this case:  Suppose we have Deal A and B, in a single callback having
+       * two updates, A is removed from the deals map, B is added to the deals map.
+       * Elsewhere some code C is observing deals.size, will this appear as two changes or none?
+       * The net effect on deal.size is 0.  Will code C pick up any change?
+       *
+       * Reggardless, anyone can easily observe changes to the collection set using
+       * `aureliaHelperService.createCollectionWatch(this.dealService.deals, ...)`
+       *
+       */
       updates => {
-
-        try {
-          if (!updates || !this.deals) {
-            throw new Error("Deals are not accessible");
-          }
-
-          const dealsMap = new Map<IDealIdType, DealTokenSwap>(this.deals.entries());
-
-          for (const dealDoc of updates.removed) {
-            dealsMap.delete(dealDoc.id);
-          }
-
-          for (const dealDoc of updates.modified) {
-            if (dealsMap.has(dealDoc.id)) {
-              /**
-               * note this change will instantly propogate across the app, any dependencies on dealDocument
-               */
-              dealsMap.get(dealDoc.id).dealDocument = dealDoc;
+        updates.forEach(update => {
+          this.dataSourceDeals.getDealById(update.dealId).then(dealDoc => {
+            if (dealDoc) {
+              if (this.deals.has(dealDoc.id)) {
+                this.updateDealDocument(this.deals.get(dealDoc.id).dealDocument, dealDoc);
+              } else {
+                /**
+                 * This should only happen when a deal is created in another browser instance.
+                 * It will create new deal entity asynchronously, once created it will be part of dealsMap
+                 */
+                this._createDeal(dealDoc);
+              }
             } else {
-              /**
-               * This should only happen when a deal is created in another browser instance.
-               * It will create new deal entity asynchronously, once created it will be part of dealsMap
-               */
-              this._createDeal(dealDoc, dealsMap);
+              this.taskQueue.queueMicroTask(() => {
+                this.deals.delete(update.dealId);
+              });
             }
-          }
-
-          /**
-           * now the deletions will propagate
-           */
-          this.deals = dealsMap;
-        }
-        catch (error) {
-          this.deals = new Map();
-          this.eventAggregator.publish("handleException", new EventConfigException("An error occurred loading deals", error));
-        }
-
+          });
+        });
       },
     );
   }
@@ -339,5 +339,31 @@ export class DealService {
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
     deal.initialize(); // asynchronous
     return deal;
+  }
+
+  /**
+   * Updates only parts of dealDocument that were updated
+   */
+  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
+
+    this.taskQueue.queueMicroTask(() => {
+      // ignore updates to modifiedAt property
+      updatedDocument.modifiedAt = dealDocument.modifiedAt;
+
+      /**
+       * if partnerDAO is undefined set it to undefined on the updated document
+       * because it doesn't exist on the updated document and that would trigger an update
+       */
+      if (dealDocument.registrationData.partnerDAO === undefined) {
+        updatedDocument.registrationData.partnerDAO = undefined;
+      }
+
+      /**
+       * applies any structural differences from the updatedDocument to the dealDocument
+       * and doesn't modified properties that didn't change
+       * it is granular and works with updating changes to nested objects (including objects inside arrays)
+       */
+      applyDiff(dealDocument, updatedDocument);
+    });
   }
 }

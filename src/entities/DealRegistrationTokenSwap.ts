@@ -78,7 +78,7 @@ export interface IDealRegistrationTokenSwap {
   offersPrivate: boolean;
   isPrivate: boolean;
   fundingPeriod: number;
-  dealType: "token-swap"/* | "co-liquidity"*/
+  dealType: "token-swap" | "joint-venture"
   ;
 }
 
@@ -104,7 +104,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
   public offersPrivate: boolean;
   public isPrivate: boolean;
   public fundingPeriod: number;
-  public dealType: "token-swap"/* | "co-liquidity" */;
+  public dealType: IDealRegistrationTokenSwap["dealType"];
 
   constructor(isPartneredDeal = false) {
     this.clearState(isPartneredDeal);

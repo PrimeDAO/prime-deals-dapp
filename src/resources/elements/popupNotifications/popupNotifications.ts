@@ -21,6 +21,7 @@ export class PopupNotifications {
   private message: string;
   private submessage: string;
   private title: string;
+  private data: Record<string, unknown>;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -67,6 +68,7 @@ export class PopupNotifications {
     this.showing = true;
     this.countdownRunning = true;
     this.title = config.title;
+    this.data = config.data;
   }
 
   public dispose(): void {
@@ -131,7 +133,6 @@ export class PopupNotifications {
       ex = config.exception;
       message = config.message;
     }
-
     this.queueEventConfig({
       message: `${message ? `${message}: ` : ""}${ex?.reason ?? ex?.message ?? ex}`,
       submessage: null,
@@ -148,6 +149,7 @@ export class PopupNotifications {
       submessage: null,
       type: EventMessageType.Failure,
       title: !(typeof config === "string") && config.title,
+      data: !(typeof config === "string") && config.data,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -163,6 +165,7 @@ export class PopupNotifications {
       submessage: null,
       type: EventMessageType.Warning,
       title: !(typeof config === "string") && config.title,
+      data: !(typeof config === "string") && config.data,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -178,6 +181,7 @@ export class PopupNotifications {
       type: EventMessageType.Failure,
       submessage: null,
       title: !(typeof config === "string") && config.title,
+      data: !(typeof config === "string") && config.data,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -194,6 +198,7 @@ export class PopupNotifications {
       type: EventMessageType.Info,
       submessage: null,
       title: !(typeof config === "string") && config.title,
+      data: !(typeof config === "string") && config.data,
     };
 
     this.queueEventConfig(bannerConfig);
@@ -210,4 +215,5 @@ interface IBannerConfig {
   message: string;
   submessage?: string;
   title?: string;
+  data?: Record<string, unknown>;
 }

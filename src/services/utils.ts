@@ -123,7 +123,7 @@ export class Utils {
 
   public static isAddress(address: string, emptyOk = false): boolean {
     try {
-      return (emptyOk && (!address || !address.trim())) || (address && !!getAddress(address));
+      return (emptyOk && (!address || !address.trim())) || (!!address && !!getAddress(address));
     } catch (e) { return false; }
   }
 

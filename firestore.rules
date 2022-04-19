@@ -37,6 +37,11 @@ service cloud.firestore {
       allow update: if request.auth.uid == resource.id;
     }
 
+    match /deals-token-swap-updates/{document} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if true;
     }

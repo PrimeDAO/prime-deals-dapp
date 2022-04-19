@@ -20,12 +20,14 @@
         data-test="dao-treasury-address-field"
         class="wizardFormInput wizardFormInputNarrow"
         label.bind="name +' Treasury Address'"
-        label-info="This address will receive tokens from the token swap">
-        <pinput-text
+        label-info="This address will receive tokens from the token swap"
+        input-reference.bind="daoTreasuryAddressInput"
+        helper-message.bind="daoTreasuryAddressInput.ens">
+        <form-address-input
           value.bind="data.treasury_address | checksumAddress & validate:form"
-          placeholder="0x..."
+          view-model.ref="daoTreasuryAddressInput"
           disabled.bind="disabled">
-        </pinput-text>
+        </form-address-input>
       </pform-input>
 
       <div class="daoStageAvatar" data-test="dao-avatar-section">
@@ -50,7 +52,7 @@
 
       <div data-test="dao-social-media" if.bind="disabled && data.social_medias.length > 0 || !disabled">
         <div class="multiFieldTitle">
-          Social media (optional)
+          External Links (optional)
         </div>
 
         <div
@@ -77,7 +79,7 @@
           class="addButton"
           if.bind="data.social_medias.length < 5 && !disabled"
           click.delegate="addSocialMedia()">
-          + Add social media
+          + Add An External Link
         </button>
       </div>
 
@@ -98,13 +100,13 @@
         repeat.for="representative of data.representatives"
         class="wizardFormInput wizardFormInputNarrow daoRepresentative">
         <dao-representative-address
+          id="${$index}"
           data-test="dao-representatives-addresses-field"
           representative.bind="representative"
           disabled.bind="disabled"
           form.bind="form"
           data.bind="data"
-          wizard-manager.bind="wizardManager"
-        >
+          wizard-manager.bind="wizardManager">
         </dao-representative-address>
         <button
           data-test="remove-dao-representative"

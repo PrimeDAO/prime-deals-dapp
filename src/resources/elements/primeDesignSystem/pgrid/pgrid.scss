@@ -1,4 +1,6 @@
-@import "styles/styles.scss";
+@import "src/styles/colors";
+@import "src/styles/variables";
+
 .prime-grid {
   margin-bottom: 20px;
   font-size: 16px;
@@ -136,6 +138,19 @@
       }
       &:hover {
         color: inherit;
+      }
+    }
+  }
+  .seeMoreSection {
+    margin-bottom: 36px;
+
+    .seeMore {
+      display: flex;
+      color: $Neutral02;
+      cursor: pointer;
+
+      > .arrow {
+        margin-right: 6px;
       }
     }
   }
