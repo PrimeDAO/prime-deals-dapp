@@ -528,8 +528,13 @@ export class EthereumService {
     return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
   }
 
+  /**
+   * returns ENS if the address maps to one
+   * @param address
+   * @returns null if there is no ENS
+   */
   public getEnsForAddress(address: Address): Promise<string> {
-    return this.walletProvider?.lookupAddress(address)
+    return this.readOnlyProvider?.lookupAddress(address)
       .catch(() => null);
   }
 
@@ -539,11 +544,10 @@ export class EthereumService {
    * Returns address if it already is an address
    */
   public getAddressForEns(ens: string): Promise<Address> {
-
     /**
      * returns the address if ens already is an address
      */
-    return this.walletProvider?.resolveName(ens)
+    return this.readOnlyProvider?.resolveName(ens)
       .catch(() => null); // is neither address nor ENS
   }
 }

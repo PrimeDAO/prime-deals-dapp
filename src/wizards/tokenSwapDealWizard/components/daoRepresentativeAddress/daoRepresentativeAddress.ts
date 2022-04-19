@@ -22,7 +22,7 @@ export class DaoRepresentativeAddress {
 
     ValidationRules
       .ensure((representative: {address: string}) => representative.address)
-      .satisfiesRule(Validation.isETHAddress)
+      .satisfiesRule(Validation.isEthAddress)
       .satisfies((value) => {
         return this.data.representatives.filter(representative => representative.address === value).length === 1;
       })
