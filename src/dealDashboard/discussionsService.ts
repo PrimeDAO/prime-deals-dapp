@@ -2,7 +2,7 @@ import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, Networks, AllowedNetworks, Address } from "services/EthereumService";
+import { EthereumService, Address } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -26,7 +26,6 @@ export class DiscussionsService {
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
   private ensName: string;
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
 
   constructor(
     private ethereumService: EthereumService,
@@ -262,7 +261,7 @@ export class DiscussionsService {
     let latestTimestamp = 0;
     try {
       const commentsResponse: Array<IComment> = (await this.convo.comments.query({
-        threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+        threadId: `${discussionId}:${EthereumService.targetedChainId}`,
       }));
 
       // Is typed as Array<IComment>, but the convoSdk also throws AbortController errors, so we catch it here
@@ -306,12 +305,6 @@ export class DiscussionsService {
     }
   }
 
-  public getNetworkId(network: AllowedNetworks): number {
-    if (network === Networks.Mainnet) return 1;
-    if (network === Networks.Rinkeby) return 4;
-    if (network === Networks.Kovan) return 42;
-  }
-
   /**
   * Add a new comment to thread. Must validate the connection to a wallet before.
   * @param discussionId string - The ID of the discussion to create the comment in
@@ -346,7 +339,7 @@ export class DiscussionsService {
         this.ethereumService.defaultAccountAddress,
         localStorage.getItem("discussionToken"),
         "This comment is encrypted",
-        `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+        `${discussionId}:${EthereumService.targetedChainId}`,
         "https://deals.prime.xyz",
         {
           isPrivate: isPrivate.toString(),
