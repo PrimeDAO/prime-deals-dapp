@@ -16,6 +16,7 @@ import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
+import { AureliaHelperService } from "../services/AureliaHelperService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -90,23 +91,7 @@ export interface ITokenCalculated extends IToken {
 @autoinject
 export class DealTokenSwap implements IDeal {
 
-  constructor(
-    private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
-    private dataSourceDeals: IDataSourceDeals,
-    private tokenService: TokenService,
-    private contractsService: ContractsService,
-    private transactionsService: TransactionsService,
-    private numberService: NumberService,
-    eventAggregator: EventAggregator,
-  ) {
-    eventAggregator.subscribe("Contracts.Changed", async () => {
-      await this.loadContracts();
-    });
-    eventAggregator.subscribe("secondPassed", (params: { _blockDate, now: Date }) => {
-      this.now = params.now;
-    });
-  }
+  public partnerDao?: IDAO;
 
   private initializedPromise: Promise<void>;
   private now: Date;
@@ -134,7 +119,26 @@ export class DealTokenSwap implements IDeal {
   public dealManager: any;
 
   public primaryDao?: IDAO;
-  public partnerDao: IDAO;
+
+  constructor(
+    private consoleLogService: ConsoleLogService,
+    private ethereumService: EthereumService,
+    private dataSourceDeals: IDataSourceDeals,
+    private tokenService: TokenService,
+    private contractsService: ContractsService,
+    private transactionsService: TransactionsService,
+    private numberService: NumberService,
+    private aureliaHelperService: AureliaHelperService,
+    eventAggregator: EventAggregator,
+  ) {
+    eventAggregator.subscribe("Contracts.Changed", async () => {
+      await this.loadContracts();
+    });
+    eventAggregator.subscribe("secondPassed", (params: { _blockDate, now: Date }) => {
+      this.now = params.now;
+    });
+  }
+
   public createdAt: Date;
   /**
    * isExecuted and executedAt are both detected by the presence of an TokenSwapModule.TokenSwapExecuted event
@@ -495,9 +499,32 @@ export class DealTokenSwap implements IDeal {
     this.initializing = true;
     await this.loadContracts();
     /**
-       * no, intentionally don't await
-       */
-    this.hydrate();
+     * no, intentionally don't await
+     */
+    this.hydrate().then(() => {
+
+      this.aureliaHelperService.createCollectionWatch(this.primaryDao.tokens, () => {
+        this.processTotalPrice();
+      });
+
+      this.primaryDao.tokens.forEach(token => {
+        this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
+          this.processTotalPrice();
+        });
+      });
+
+      if (this.partnerDao?.tokens) {
+        this.aureliaHelperService.createCollectionWatch(this.partnerDao.tokens, () => {
+          this.processTotalPrice();
+        });
+
+        this.partnerDao.tokens.forEach(token => {
+          this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
+            this.processTotalPrice();
+          });
+        });
+      }
+    });
   }
 
   private async loadContracts(): Promise<void> {
@@ -548,7 +575,7 @@ export class DealTokenSwap implements IDeal {
       // no need to await
       this.hydrateDaoTransactions();
       this.hydrateDaoClaims();
-      this.hydrateDealSize();
+      this.processTotalPrice();
     }
     catch (error) {
       this.corrupt = true;
@@ -581,12 +608,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
-  private async hydrateDealSize(): Promise<void> {
-    // if the total price is already figured out we don't need to try again
-    if (this.totalPrice) {
-      return;
-    }
-
+  private async processTotalPrice(): Promise<void> {
     try {
       const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
       const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
