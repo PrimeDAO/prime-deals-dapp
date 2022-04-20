@@ -1,10 +1,18 @@
+export interface ICommentMetaData {
+  isPrivate: string;
+  allowedMembers: string;
+  encrypted: string;
+  iv: string;
+  isDeleted?: boolean;
+}
+
 export interface IComment {
   // Following the comment structure of `theconvo.space` api:
   _id: string;
   text: string;
   author: string;
   authorENS?: string;
-  metadata: any;
+  metadata: ICommentMetaData;
   replyTo?: string;
   upvotes: Array<string>;
   downvotes: Array<string>;

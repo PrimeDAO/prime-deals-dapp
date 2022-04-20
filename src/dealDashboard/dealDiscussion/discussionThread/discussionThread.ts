@@ -2,24 +2,25 @@ import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framewo
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 
-import { DiscussionsService } from "dealDashboard/discussionsService";
-import { Address, AllowedNetworks, EthereumService } from "services/EthereumService";
+import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/discussionsService";
+import { Types } from "dealDashboard/discussionsStreamService";
+import { Address, EthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { Utils } from "services/utils";
 
 import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 
 import "./discussionThread.scss";
 
 // import { Convo } from "@theconvospace/sdk";
-import { Realtime } from "ably/promises";
-import { Types } from "ably";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DiscussionThread {
+  @bindable clauses: Map<string, IClause>;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
   @bindable authorized: boolean;
@@ -39,13 +40,16 @@ export class DiscussionThread {
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
-  private discussionCommentsStream: Types.RealtimeChannelPromise;
   private deletedComment: IComment = {
     _id: "",
     text: "This message has been removed.",
     author: "",
     authorENS: "",
     metadata: {
+      isPrivate: undefined,
+      allowedMembers: undefined,
+      encrypted: undefined,
+      iv: undefined,
       isDeleted: true,
     },
     replyTo: "",
@@ -73,7 +77,7 @@ export class DiscussionThread {
   }
 
   detached(): void {
-    this.unsubscribeFromDiscussion();
+    this.discussionsService.unsubscribeFromDiscussion();
     document.removeEventListener("scroll", this.scrollEvent);
   }
 
@@ -148,6 +152,7 @@ export class DiscussionThread {
     }
 
     const newComment: IComment = Utils.cloneDeep(commentStreamMessage.data);
+
     if (commentStreamMessage.name === "commentDelete") {
       if (this.threadDictionary[newComment._id]) {
         this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
@@ -197,24 +202,6 @@ export class DiscussionThread {
       .filter(comment => comment !== undefined);
   }
 
-  private async subscribeToDiscussion(discussionId: string): Promise<void> {
-    const channelName = `${discussionId}:${this.discussionsService.getNetworkId(process.env.NETWORK as AllowedNetworks)}`;
-
-    // const convo = new Convo(process.env.CONVO_API_KEY);
-    // const res = convo.threads.subscribe(channelName, this.updateThread);
-    // console.log({res});
-
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
-    this.discussionCommentsStream = await ably.channels.get(channelName);
-    this.discussionCommentsStream.subscribe((comment: Types.Message) => this.updateCommentsThreadUponMessageArrival(comment));
-  }
-
-  private unsubscribeFromDiscussion(): void {
-    if (this.discussionCommentsStream) {
-      this.discussionCommentsStream.unsubscribe();
-    }
-  }
-
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
       this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
@@ -242,7 +229,7 @@ export class DiscussionThread {
         this.isLoading[this.dealDiscussion.createdBy.address] = false;
       });
 
-    this.subscribeToDiscussion(discussionId);
+    this.discussionsService.subscribeToDiscussion(this.discussionId, this.updateCommentsThreadUponMessageArrival.bind(this));
 
     if (!this.threadComments || !Object.keys(this.threadComments).length) return;
 
@@ -355,8 +342,22 @@ export class DiscussionThread {
 
   async replyComment(_id: string): Promise<void> {
     const comment = await this.discussionsService.getSingleComment(_id);
+
+    /**
+     * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
+     *   TODO: better describe return type from discussionsService.
+     *
+     * 2. DOMException: theconvo sdk throws this error.
+     *   This happens, when there was no response from their endpoint within a timeout limit.
+     *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
+     */
+    if ((comment as any).error instanceof DOMException) {
+      this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
+      return;
+    }
+
     if (!comment._id) {
-      this.eventAggregator.publish("handleFailure", "An error occurred. Comment was deleted by the author.");
+      this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
       this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       return;
@@ -381,27 +382,35 @@ export class DiscussionThread {
 
     const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
-    this.discussionsService.voteComment(this.discussionId, _id, type).then(res => {
-      if (res.error) {
-        this.eventAggregator.publish("handleFailure", "An error occurred while voting. " + res.error);
-        if (res.code === 404) {
-          delete this.threadDictionary[_id];
-          this.threadComments = [...Object.values(this.threadDictionary)];
+    this.discussionsService.voteComment(this.discussionId, _id, type)
+      .catch(error => {
+        /* On API failure- revert voting */
+        if (error.code === 404) {
+          if (error.error) {
+            this.eventAggregator.publish("handleFailure", "An error occurred while voting." + error.error);
+            /**
+             * Only revert vote action, when api error occured.
+             * In this case, it was very likely, that the comment was deleted by the original author (note error code 404)
+             */
+            this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+            this.threadDictionary = this.arrayToDictionary(this.threadComments);
+          }
+        } else {
+          if (error.code === 4001) {
+            this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
+          } else {
+            this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+          }
+
+          /**
+           * In this case, no API error, so just revert the vote.
+           */
+          this.threadDictionary[_id] = swrVote;
+          this.updateThreadsFromDictionary();
         }
+      }).finally(() => {
         this.isLoading[`isVoting ${_id}`] = false;
-        return;
-      }
-    }).catch(error => {
-      /* On API failure- revert voting */
-      this.threadDictionary[_id] = swrVote;
-      if (error.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted. ");
-      }
-    }).finally(() => {
-      this.threadComments = [...Object.values(this.threadDictionary)];
-    });
+      });
 
     /* Toggle vote locally */
     const message = Utils.cloneDeep(this.threadDictionary[_id]);
@@ -414,7 +423,6 @@ export class DiscussionThread {
 
     this.threadDictionary[_id] = message;
     this.updateThreadsFromDictionary();
-    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {
