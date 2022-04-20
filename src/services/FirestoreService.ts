@@ -100,7 +100,7 @@ export class FirestoreService<
       }
 
       const dealRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
-      await setDoc(dealRef, {registrationData}, {merge: true});
+      await setDoc(dealRef, { registrationData }, { merge: true });
     } catch (error) {
       throw new Error(error);
     }
