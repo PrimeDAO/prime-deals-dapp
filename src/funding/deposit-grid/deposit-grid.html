@@ -5,7 +5,8 @@
       color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
       if.to-view="showChip && fundingDaysLeft > 0"
     >
-      <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} days left
+      <span class="icon far fa-clock" slot="icon"></span>${fundingDaysLeft} day${fundingDaysLeft > 1
+      ? "s" : ""} left
     </pchip>
     <pchip color="danger" if.to-view="showChip && deal.isFailed">Target not reached</pchip>
   </div>

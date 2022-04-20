@@ -30,9 +30,6 @@
           show-chip.bind="false"
         ></deposit-grid>
         <div class="container-footer">
-          <let
-            show-deposit-form.bind="deal.isRepresentativeUser && !deal.isTargetReached && !deal.isFailed"
-          ></let>
           <div class="contracts">
             <p>
               <i class="fas fa-info-circle"></i>
@@ -50,11 +47,16 @@
                 You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
                 executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
+              <span if.to-view="!showDepositForm && !secondDaoTokensAllDeposited">
+                ${firstDao.name} is fully funded. ${secondDao.name} is still waiting to be fully
+                funded. Funding and deal execution must be complete within ${deal.timeLeftToExecute
+                | timespan:'largest2'} for the deal to succeed.
+              </span>
               <span
                 if.to-view="!deal.isFailed && !deal.isTargetReached && !deal.isRepresentativeUser"
               >
                 This deal needs to be funded and executed within ${deal.timeLeftToExecute |
-                timespan:'largest2'} days. Only representatives can deposit the tokens.
+                timespan:'largest2'}. Only representatives can deposit the tokens.
               </span>
               <span if.to-view="!deal.isFailed && deal.isTargetReached">
                 All parties have deposited their funds. You may now execute the deal.
@@ -94,19 +96,25 @@
                 if.to-view="lockRequired"
                 type="primary"
                 click.delegate="unlockTokens()"
-                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
-                >Unlock</pbutton
-              >
+                disabled.bind="processing || !selectedToken || !depositAmount || depositAmount <= 0"
+                >${processing ? 'Unlocking' : 'Unlock'}<i
+                  if.to-view="processing"
+                  class="spinner fa fas fa-circle-notch fa-spin"
+                ></i
+              ></pbutton>
               <pbutton
                 else
                 type="primary"
                 click.delegate="depositTokens()"
-                disabled.bind="!selectedToken || !depositAmount || depositAmount <= 0"
-                >Deposit</pbutton
-              >
+                disabled.bind="processing || !selectedToken || !depositAmount || depositAmount <= 0"
+                >${processing ? 'Depositing' : 'Deposit'}<i
+                  if.to-view="processing"
+                  class="spinner fa fas fa-circle-notch fa-spin"
+                ></i
+              ></pbutton>
             </div>
           </div>
-          <div class="links ${!deal.isRepresentativeUser ? 'right' : ''}">
+          <div class="links ${!deal.isRepresentativeUser || !showDepositForm ? 'right' : ''}">
             <address-link
               address.to-view="deal.daoDepositContracts.get(firstDao).address"
               link-text="DAODepositManager Contract"
@@ -126,7 +134,7 @@
       </div>
     </section>
     <swap-status deal.bind="deal">
-      <div class="claim-tokens" if.to-view="deal.isClaiming">
+      <div class="claim-tokens" if.to-view="deal.isClaiming && !deal.isFullyClaimed">
         <div class="box-container">
           <div>
             <div class="token-grid">
@@ -183,10 +191,13 @@
             <pbutton
               type="primary"
               if.to-view="deal.isRepresentativeUser"
-              disabled.bind="!hasTokensToClaim"
+              disabled.bind="processing || !hasTokensToClaim"
               click.delegate="claimTokens()"
-              >Claim Tokens</pbutton
-            >
+              >${processing ? 'Claiming' : 'Claim Tokens'}<i
+                if.to-view="processing"
+                class="spinner fa fas fa-circle-notch fa-spin"
+              ></i
+            ></pbutton>
           </div>
         </div>
       </div>
