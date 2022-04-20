@@ -29,9 +29,8 @@ export class TermsStage implements IBaseWizardStage {
     this.stageMetadata = stageMeta.settings;
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
-    this.addIdsToClauses(stageMeta.wizardType);
-
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
+      this.addIdsToClauses(stageMeta.wizardType);
       this.checkedForUnsavedChanges();
       const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
       return formsAreValid && !this.hasUnsavedChanges;
