@@ -5,19 +5,18 @@
     <hr>
 
     <div class="infoSection">
-      <span
-        class="bodySmallTextBold infoTitle ${deal.primaryDao.social_medias.length >= 7 ? 'makeLabelSmaller' : undefined}">Primary DAO</span>
-      <div class="daoDetails ${deal.primaryDao.social_medias.length >= 7 ? 'moreSpaceForLinks' : undefined}">
+      <span class="bodySmallTextBold infoTitle">Primary DAO</span>
+      <div class="daoDetails">
         <img class="daoLogo" src.bind="deal.primaryDao.logoURI">
         <div class="daoTitle">
           ${deal.primaryDao.name}
-          <div class="daoSocialLinks">
-            <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
-              <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
-            </a>
-          </div>
         </div>
       </div>
+    </div>
+    <div class="daoSocialLinks">
+      <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
+        <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+      </a>
     </div>
 
     <hr if.bind="partnerDao">
@@ -28,15 +27,16 @@
         <img class="daoLogo" src.bind="deal.partnerDao.logoURI">
         <div class="daoTitle">
           ${deal.partnerDao.name}
-          <div class="daoSocialLinks">
-            <a href.bind="socialMedia.url"
-              repeat.for="socialMedia of deal.partnerDao.social_medias"
-              target="_blank">
-              <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
-            </a>
-          </div>
         </div>
       </div>
+    </div>
+
+    <div class="daoSocialLinks" if.bind="deal.partnerDao">
+      <a href.bind="socialMedia.url"
+        repeat.for="socialMedia of deal.partnerDao.social_medias"
+        target="_blank">
+        <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+      </a>
     </div>
 
     <hr>
