@@ -8,6 +8,7 @@ import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
+import { Utils } from "services/utils";
 
 @autoinject
 export class DealVotes {
@@ -81,6 +82,7 @@ export class DealVotes {
     }
 
     if (await this.deal.createSwap()) {
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     }

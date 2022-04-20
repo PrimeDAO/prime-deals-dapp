@@ -56,12 +56,12 @@ export class DealSwapStatus {
           buttonTextPrimary: "Close",
           className: "congratulatePopup",
         };
+        this.eventAggregator.publish("deal.executed", true);
         await this.alertService.showAlert(congratulatePopupModel);
       } else {
         this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to execute the token swap. Please try again later", EventMessageType.Info, "Execute Swap Error"));
       }
       this.isExecutingSwap = false;
-      this.eventAggregator.publish("deal.executed", true);
     }
   }
 }

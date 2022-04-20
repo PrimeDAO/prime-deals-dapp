@@ -230,18 +230,21 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("daoTokenClaims")
   public get isFullyClaimed(): boolean {
-    if (!this.daoTokenClaims) return false;
-    let isClaimed = true;
-    this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
-      if (!isClaimed) return; //immediately returns if it's already false from a previous loop
-      isClaimed = dao.tokens.every(daoToken => {
-        const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
-        if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
-        const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
-        return totalClaimed.gte(daoToken.amount);
+    let returnVal = false;
+    if (this.isClaiming && this.daoTokenClaims){
+      let isClaimed = true;
+      this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
+        if (!isClaimed) return; //immediately returns if it's already false from a previous loop
+        isClaimed = dao.tokens.every(daoToken => {
+          const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
+          if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
+          const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
+          return totalClaimed.add(BigNumber.from(daoToken.instantTransferAmount)).gte(daoToken.amount);
+        });
       });
-    });
-    return isClaimed;
+      returnVal = isClaimed;
+    }
+    return returnVal;
   }
 
   /**
@@ -251,9 +254,12 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    if (!this.fundingWasInitiated) return -1;
-    const timeLeft = (this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
-    return timeLeft > 0 ? timeLeft : 0;
+    let returnVal = -1;
+    if (this.fundingWasInitiated && this.fundingStartedAt && this.now){//need to check for fundingStartedAt and now because they are undefined on first load sometimes
+      const timeLeft = (this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+      returnVal = timeLeft > 0 ? timeLeft : 0;
+    }
+    return returnVal;
   }
 
   /**
@@ -556,7 +562,7 @@ export class DealTokenSwap implements IDeal {
           ContractNames.DAODEPOSITMANAGER,
           await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address)));
 
-      if (this.registrationData.partnerDAO) {
+      if (this.partnerDao) {
         daoDepositContracts.set(this.partnerDao,
           this.contractsService.getContractAtAddress(
             ContractNames.DAODEPOSITMANAGER,
@@ -679,7 +685,7 @@ export class DealTokenSwap implements IDeal {
 
     return this.transactionsService.send(
       () => this.moduleContract.createSwap(...dealParameters))
-      .then(receipt => {
+      .then(async receipt => {
         if (receipt) {
           //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
           this.fundingStartedAt = new Date();
@@ -920,6 +926,7 @@ export class DealTokenSwap implements IDeal {
   public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
     //calculate claiming properties
     if (this.isExecuted){
+      await this.hydrateDaoClaims();
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
       if (tokenClaimableAmounts.size > 0){
         token.claimingClaimable = tokenClaimableAmounts.get(token.address);
