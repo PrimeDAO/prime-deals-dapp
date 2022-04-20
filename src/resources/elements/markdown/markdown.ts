@@ -1,5 +1,6 @@
 import axios from "axios";
 import { bindable } from "aurelia-framework";
+import "./markdown.scss";
 
 const marked = require("marked");
 
