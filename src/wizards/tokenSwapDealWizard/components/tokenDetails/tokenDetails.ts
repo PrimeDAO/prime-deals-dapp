@@ -148,8 +148,8 @@ export class TokenDetails {
   private watchTokenProperties() {
     this.aureliaHelperService.createPropertyWatch(this.token, "vestedTransferAmount", newValue => {
       if (BigNumber.from((newValue || 0).toString()).isZero()) {
-        this.token.vestedFor = undefined;
-        this.token.cliffOf = undefined;
+        this.token.vestedFor = 0;
+        this.token.cliffOf = 0;
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "vestedFor", newValue => {
@@ -157,7 +157,7 @@ export class TokenDetails {
       if (newValue >= 0) {
         this.token.cliffOf = this.token.cliffOf ? Math.min(newValue, this.token.cliffOf) : this.token.cliffOf;
       } else {
-        this.token.cliffOf = undefined;
+        this.token.cliffOf = 0;
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
