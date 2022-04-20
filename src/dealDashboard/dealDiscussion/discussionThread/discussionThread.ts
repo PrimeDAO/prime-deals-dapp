@@ -11,6 +11,7 @@ import { Utils } from "services/utils";
 
 import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
 import { DealTokenSwap } from "entities/DealTokenSwap";
+import { IClause } from "entities/DealRegistrationTokenSwap";
 
 import "./discussionThread.scss";
 
@@ -19,6 +20,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 
 @autoinject
 export class DiscussionThread {
+  @bindable clauses: Map<string, IClause>;
   @bindable({defaultBindingMode: bindingMode.twoWay}) discussionId?: string;
   @bindable deal: DealTokenSwap;
   @bindable authorized: boolean;
@@ -340,6 +342,20 @@ export class DiscussionThread {
 
   async replyComment(_id: string): Promise<void> {
     const comment = await this.discussionsService.getSingleComment(_id);
+
+    /**
+     * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
+     *   TODO: better describe return type from discussionsService.
+     *
+     * 2. DOMException: theconvo sdk throws this error.
+     *   This happens, when there was no response from their endpoint within a timeout limit.
+     *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
+     */
+    if ((comment as any).error instanceof DOMException) {
+      this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
+      return;
+    }
+
     if (!comment._id) {
       this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
       this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
@@ -379,16 +395,20 @@ export class DiscussionThread {
             this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
             this.threadDictionary = this.arrayToDictionary(this.threadComments);
           }
-        }
-        else if (error.code === 4001) {
-          this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
         } else {
-          this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+          if (error.code === 4001) {
+            this.eventAggregator.publish("handleFailure", "Signature is needed in order to like/dislike a comment. ");
+          } else {
+            this.eventAggregator.publish("handleFailure", "An error occurred. Like action reverted.");
+          }
+
+          /**
+           * In this case, no API error, so just revert the vote.
+           */
+          this.threadDictionary[_id] = swrVote;
+          this.updateThreadsFromDictionary();
         }
-
-        this.threadDictionary[_id] = swrVote;
-        this.updateThreadsFromDictionary();
-
+      }).finally(() => {
         this.isLoading[`isVoting ${_id}`] = false;
       });
 
@@ -403,7 +423,6 @@ export class DiscussionThread {
 
     this.threadDictionary[_id] = message;
     this.updateThreadsFromDictionary();
-    this.isLoading[`isVoting ${_id}`] = false;
   }
 
   async deleteComment(_id: string): Promise<void> {

@@ -45,9 +45,24 @@
       <span class="bodySmallTextBold infoTitle">Type</span>
       Token Swap
     </div>
-    <div class="infoSection">
+    <div class="infoSection totalRepresentatives ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
-      ${deal.representatives.size}
+      <span>
+        ${deal.registrationData.primaryDAO.representatives.length + (deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.length : 0)}
+        <i class="fas fa-angle-down arrow"></i>
+      </span>
+    </div>
+    <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+      <div class="panel-content">
+        <p class="representative bodySmallText" repeat.for="address of deal.primaryDaoRepresentatives">
+          <span class="representative-dao">${deal.primaryDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+        </p>
+        <p class="representative bodySmallText" repeat.for="address of deal.partnerDaoRepresentatives">
+          <span class="representative-dao">${deal.partnerDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+        </p>
+      </div>
     </div>
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
@@ -60,28 +75,26 @@
 
     <div class="infoSection" if.bind="deal.primaryDao.tokens.length" ref="primaryFunds">
       <div class="bodySmallTextBold infoTitle">Primary DAO Funds</div>
-      <div>
-        <div class="tokenDetails" repeat.for="tokenDetails of deal.primaryDao.tokens">
-          <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
-          <formatted-number mantissa="0" thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
-          ${tokenDetails.symbol}
-        </div>
-        <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
+      <div class="tokenDetails" repeat.for="tokenIndex of deal.primaryDao.tokens.length">
+        <let token-details.bind="deal.primaryDao.tokens[tokenIndex]"></let>
+        <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
+        <formatted-number mantissa="0" thousands-separated
+          value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+        ${tokenDetails.symbol}
       </div>
+      <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
     </div>
 
     <hr if.bind="partnerFunds">
 
     <div class="infoSection" if.bind="deal.partnerDao" ref="partnerFunds">
       <div class="bodySmallTextBold infoTitle">Partner DAO Funds</div>
-      <div>
-        <div class="tokenDetails" repeat.for="tokenDetails of deal.partnerDao.tokens">
-          <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
-          <formatted-number mantissa="0" thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
-          ${tokenDetails.symbol}
-        </div>
+      <div class="tokenDetails" repeat.for="tokenIndex of deal.partnerDao.tokens.length">
+        <let token-details.bind="deal.partnerDao.tokens[tokenIndex]"></let>
+        <img class="daoSmallLogo" src.bind="tokenDetails.logoURI">
+        <formatted-number mantissa="0" thousands-separated
+          value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
+        ${tokenDetails.symbol}
       </div>
     </div>
 
@@ -108,8 +121,7 @@
           disabled.bind="!deal.isUserProposalLead"
           ptooltip.bind="deal.isUserProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
           value.bind="deal.isPrivate"
-          changed.call="changePrivacy(checked)"
-        ></ptoggle>
+          changed.call="changePrivacy(checked)"></ptoggle>
       </span>
     </div>
 
