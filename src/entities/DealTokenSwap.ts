@@ -511,6 +511,9 @@ export class DealTokenSwap implements IDeal {
         this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
           this.processTotalPrice();
         });
+        this.aureliaHelperService.createPropertyWatch(token, "decimals", () => {
+          this.processTotalPrice();
+        });
       });
 
       if (this.partnerDao?.tokens) {
@@ -520,6 +523,9 @@ export class DealTokenSwap implements IDeal {
 
         this.partnerDao.tokens.forEach(token => {
           this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
+            this.processTotalPrice();
+          });
+          this.aureliaHelperService.createPropertyWatch(token, "decimals", () => {
             this.processTotalPrice();
           });
         });
