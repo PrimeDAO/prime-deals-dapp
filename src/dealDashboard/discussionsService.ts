@@ -1,8 +1,9 @@
+import { BrowserStorageService } from "services/BrowserStorageService";
 import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, Networks, AllowedNetworks, Address } from "services/EthereumService";
+import { EthereumService, Address } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -10,10 +11,13 @@ import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDisc
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { IDeal } from "entities/IDealTypes";
+import { COMMENTS_STREAM_UPDATED, DiscussionsStreamService, Types } from "./discussionsStreamService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   modifiedAt: string
 }
+
+export const deletedByAuthorErrorMessage = "This comment has been deleted by the author";
 
 @autoinject
 export class DiscussionsService {
@@ -31,6 +35,8 @@ export class DiscussionsService {
     private dealService: DealService,
     private dataSourceDeals: IDataSourceDeals,
     private dateService: DateService,
+    private discussionsStreamService: DiscussionsStreamService,
+    private browserStorageService: BrowserStorageService,
   ) { }
 
   @computedFrom("ethereumService.defaultAccountAddress")
@@ -39,14 +45,14 @@ export class DiscussionsService {
   }
 
   private async isValidAuth(): Promise<boolean> {
-    if (!localStorage.getItem("discussionToken")) {
+    if (!this.browserStorageService.lsGet("discussionToken")) {
       return false;
     } else {
 
       try {
         const validation = await this.convo.auth.validate(
           this.ethereumService.defaultAccountAddress,
-          localStorage.getItem("discussionToken"),
+          this.browserStorageService.lsGet("discussionToken"),
         );
         return validation.success;
       } catch (error) {
@@ -58,7 +64,7 @@ export class DiscussionsService {
 
   private authenticateSession = async (): Promise<boolean> => {
     const timestamp = Date.now();
-    localStorage.removeItem("discussionToken");
+    this.browserStorageService.lsRemove("discussionToken");
 
     if (!this.ethereumService.walletProvider) return false;
 
@@ -83,7 +89,7 @@ export class DiscussionsService {
     );
 
     if (success) {
-      localStorage.setItem("discussionToken", message);
+      this.browserStorageService.lsSet("discussionToken", message);
       return true;
     }
 
@@ -256,9 +262,14 @@ export class DiscussionsService {
   public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
-      const comments: Array<IComment> = (await this.convo.comments.query({
-        threadId: `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
-      })).filter((comment: IComment) => !(
+      const commentsResponse: Array<IComment> = (await this.convo.comments.query({
+        threadId: `${discussionId}:${EthereumService.targetedChainId}`,
+      }));
+
+      // Is typed as Array<IComment>, but the convoSdk also throws AbortController errors, so we catch it here
+      if ((commentsResponse as any).error) throw (commentsResponse as any).error;
+
+      const comments = commentsResponse.filter((comment: IComment) => !(
         (comment.metadata.isPrivate === "true") &&
           (!this.ethereumService.defaultAccountAddress ||
           ![
@@ -296,12 +307,6 @@ export class DiscussionsService {
     }
   }
 
-  public getNetworkId(network: AllowedNetworks): number {
-    if (network === Networks.Mainnet) return 1;
-    if (network === Networks.Rinkeby) return 4;
-    if (network === Networks.Kovan) return 42;
-  }
-
   /**
   * Add a new comment to thread. Must validate the connection to a wallet before.
   * @param discussionId string - The ID of the discussion to create the comment in
@@ -332,11 +337,11 @@ export class DiscussionsService {
 
     try {
       const encrypted = await this.encryptWithAES(comment, discussionId);
-      const data: IComment = await this.convo.comments.create(
+      const createResponse: IComment = await this.convo.comments.create(
         this.ethereumService.defaultAccountAddress,
-        localStorage.getItem("discussionToken"),
+        this.browserStorageService.lsGet("discussionToken"),
         "This comment is encrypted",
-        `${discussionId}:${this.getNetworkId(process.env.NETWORK as AllowedNetworks)}`,
+        `${discussionId}:${EthereumService.targetedChainId}`,
         "https://deals.prime.xyz",
         {
           isPrivate: isPrivate.toString(),
@@ -347,11 +352,15 @@ export class DiscussionsService {
         replyTo,
       );
 
+      // Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here
+      if ((createResponse as any).error) throw (createResponse as any).error;
+
       // Return un-encrypted comment to the view
-      data.text = comment;
-      return data;
+      createResponse.text = comment;
+      return createResponse;
     } catch (error) {
       this.consoleLogService.logMessage("addComment: " + error.message);
+      throw error;
     }
   }
 
@@ -367,26 +376,29 @@ export class DiscussionsService {
     }
     if (!isValidAuth) {
       await this.authenticateSession();
-      if (!localStorage.getItem("discussionToken")) {
+      if (!this.browserStorageService.lsGet("discussionToken")) {
         this.eventAggregator.publish(
           "handleValidationError",
-          new EventConfigFailure("Signature is needed to vote a comment"),
+          new EventConfigFailure("Signature is needed to delete a comment"),
         );
         return false;
       }
     }
 
     try {
-      await this.convo.comments.delete(
+      const deleteResponse = await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
-        localStorage.getItem("discussionToken"),
+        this.browserStorageService.lsGet("discussionToken"),
         commentId,
       );
+
+      if (deleteResponse.error) throw deleteResponse.error;
+
       return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
+      throw error;
     }
-    return false;
   }
 
   public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<any> {
@@ -409,11 +421,15 @@ export class DiscussionsService {
         return false;
       }
     }
-    const token = localStorage.getItem("discussionToken");
+    const token = this.browserStorageService.lsGet("discussionToken");
 
     try {
       const message = await this.convo.comments.getComment(commentId);
-      if (!message._id) return {success: false, code: 404, error: "Comment not found"};
+      if (!message._id) {
+        const error = {success: false, code: 404, error: deletedByAuthorErrorMessage};
+        return Promise.reject(error);
+      }
+
       const types = ["toggleUpvote", "toggleDownvote"];
       const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
       const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -423,13 +439,29 @@ export class DiscussionsService {
        * the voter address from the list of down-votes (and vice versa)
        */
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
-        const success = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
-        if (!success) return false;
+        const inverseVoteResponse = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
+        if (inverseVoteResponse.error) throw inverseVoteResponse.error;
+
+        /**
+         * Seems redundant, but adding this just to make sure.
+         * Reason: The convo space has various returns types for each response.
+         * Change this, when this.convo.comments has a built-in return type.
+         */
+        if (inverseVoteResponse.success) return true;
+        return false;
       }
 
-      return (await this.convo.comments[type](this.currentWalletAddress, token, commentId)).success;
+      const actualVoteResponse = (await this.convo.comments[type](this.currentWalletAddress, token, commentId));
+      if (actualVoteResponse.error) {
+        throw actualVoteResponse.error;
+      }
+
+      return actualVoteResponse.success;
     } catch (error) {
-      throw error.message;
+      if (error.message) {
+        throw error.message;
+      }
+      throw error;
     }
   }
 
@@ -453,4 +485,13 @@ export class DiscussionsService {
     }, pauseInMs); // Bypass page transaction repositioning
   }
   // edit comment by id?
+
+  public async subscribeToDiscussion(discussionId: string, discussionMessageCallback: (commentStreamMessage: Types.Message) => void): Promise<void> {
+    this.discussionsStreamService.initStreamPublishing(discussionId);
+    this.eventAggregator.subscribe(COMMENTS_STREAM_UPDATED, discussionMessageCallback);
+  }
+
+  public unsubscribeFromDiscussion(): void {
+    this.discussionsStreamService.unsubscribeFromDiscussion();
+  }
 }

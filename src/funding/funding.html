@@ -133,7 +133,7 @@
               <h4 class="title heading heading3 gradient">${firstDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="firstDao.tokens"
+                rows.bind="secondDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
@@ -143,7 +143,7 @@
               <h4 class="title heading heading3 gradient">${secondDao.name}</h4>
               <pgrid
                 id="token-grid"
-                rows.bind="secondDao.tokens"
+                rows.bind="firstDao.tokens"
                 columns.bind="claimTokenGridColumns"
                 condensed.bind="true"
               >
@@ -183,6 +183,7 @@
             <pbutton
               type="primary"
               if.to-view="deal.isRepresentativeUser"
+              disabled.bind="!hasTokensToClaim"
               click.delegate="claimTokens()"
               >Claim Tokens</pbutton
             >

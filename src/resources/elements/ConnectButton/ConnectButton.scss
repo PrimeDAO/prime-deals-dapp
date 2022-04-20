@@ -50,13 +50,14 @@
 
   .connectedButtons {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     flex-wrap: wrap;
 
     .ethBalanceContainer {
       display: inline-block;
       white-space: nowrap;
       font-size: 14px;
+      line-height: 17px;
       margin-right: 20px;
 
       &.ETH {
@@ -78,11 +79,14 @@
             display: inline-block;
             margin-right: 6px;
           }
+
           i {
             color: $Neutral03;
           }
+
           &.confirming {
             cursor: pointer;
+
             .phase:hover {
               text-decoration: underline;
             }
@@ -111,10 +115,12 @@
   .connectButtonContainer {
     &.connected {
       padding-left: 0;
+
       .connectedButtons {
         .connectButton {
           margin-left: 0;
         }
+
         .ethBalanceContainer {
           display: none;
         }

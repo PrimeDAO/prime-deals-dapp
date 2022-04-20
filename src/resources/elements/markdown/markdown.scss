@@ -1,0 +1,35 @@
+@import "src/styles/colors";
+@import "src/styles/variables";
+
+.markdownContainer {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: $Neutral03;
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    all: revert;
+  }
+
+  h1 {
+    @include standardTextGradient;
+    font-size: 48px;
+    line-height: 46px;
+    padding-bottom: 24px;
+    font-family: "Aeonik";
+    font-style: normal;
+    font-weight: bold;
+    width: fit-content; // so gradients look right
+    white-space: break-word;
+    margin-bottom: 28px;
+  }
+
+  a {
+    color: $Secondary07;
+  }
+}
