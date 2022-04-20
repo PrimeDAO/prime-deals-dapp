@@ -286,11 +286,11 @@ export class Funding {
       if (Number(remainingNeeded) < Number(this.accountBalance)) {
         //the account has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
-        this.eventAggregator.publish("handleInfo", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
+        this.eventAggregator.publish("handleInfo", "You may not deposit more than the required amount");
       } else {
         //the account has a lower balance than the remaining needed tokens so set the deposit amount to the full account amount
         this.depositAmount = this.accountBalance;
-        this.eventAggregator.publish("handleInfo", new EventConfig("The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.", EventMessageType.Info));
+        this.eventAggregator.publish("handleInfo", "The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.");
       }
     } else {
       this.eventAggregator.publish("handleValidationError", new EventConfig("Please select a token first", EventMessageType.Info, "No token selected"));
