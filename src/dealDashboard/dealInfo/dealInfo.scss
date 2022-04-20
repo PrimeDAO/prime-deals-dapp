@@ -46,6 +46,7 @@ deal-info {
     .tokenDetails {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
     }
 
@@ -74,13 +75,13 @@ deal-info {
 
     &.totalRepresentatives {
       cursor: pointer;
-      
+
       .arrow {
         justify-self: end;
         transition: all 0.2s ease-in-out;
         margin-left: 4px;
       }
-  
+
       &.active {
         .arrow {
           transform: rotate(-180deg);
@@ -93,7 +94,7 @@ deal-info {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-    
+
     .panel-content {
       background-color: $Border01;
       border-radius: 6px;
@@ -115,8 +116,8 @@ deal-info {
           font-weight: 700;
           flex: 1;
         }
-      }  
+      }
     }
   }
-  
+
 }
