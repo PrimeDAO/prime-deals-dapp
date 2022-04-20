@@ -690,7 +690,6 @@ export class DealTokenSwap implements IDeal {
           //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
           this.fundingStartedAt = new Date();
           this.hydrate();
-          await Utils.waitUntilTrue(() => !!this.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
           return receipt;
         }
       });
