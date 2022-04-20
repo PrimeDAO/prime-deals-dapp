@@ -140,16 +140,17 @@ export class FirebaseService {
 
     const messageToSign = await this.getMessageToSign(address);
 
+    this.eventAggregator.publish("firebase.signature", true);
+
     let signature: string;
     try {
-      this.eventAggregator.publish("firebase.signature", true);
       signature = await this.ethereumService.getDefaultSigner().signMessage(messageToSign);
-      this.eventAggregator.publish("firebase.signature", false);
     } catch (error) {
-      this.eventAggregator.publish("firebase.signature", false);
       this.ethereumService.disconnect({ code: 0, message: "User requested" });
-      this.eventAggregator.publish("handleFailure", "Signature was rejected. You are not authenticated");
+      this.eventAggregator.publish("handleFailure", "Signature was rejected. Authentication to Prime Deals failed");
       return;
+    } finally {
+      this.eventAggregator.publish("firebase.signature", false);
     }
 
     const token = await this.verifySignedMessageAndCreateCustomToken(address, signature);

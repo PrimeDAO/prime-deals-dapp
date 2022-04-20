@@ -263,9 +263,6 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
         return response.sendStatus(400);
       }
 
-      /**
-       * Address coming from the request body
-       */
       const address: string = request.body.address;
 
       // Fail if provided address is not an ethereum address
@@ -275,9 +272,6 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
         return response.sendStatus(500);
       }
 
-      /**
-       * Signature of the message which should be signed by the address, coming from the request body
-       */
       const signature: string = request.body.signature;
 
       try {
@@ -286,25 +280,16 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
         const userDoc = await userDocRef.get();
 
         if (userDoc.exists) {
-          /**
-           * date is part of the message that was signed and it is used to verify the address that signed it
-           */
-          const date = userDoc.data()?.authenticationRequestDate;
-          /**
-           * This is the message user was supposed to sign
-           */
-          const message = `${FIREBASE_MESSAGE_TO_SIGN} ${date}`;
+          const authenticationRequestDate = userDoc.data()?.authenticationRequestDate;
+          const messageToSign = `${FIREBASE_MESSAGE_TO_SIGN} ${authenticationRequestDate}`;
 
-          /**
-           * Recover the address of the account used to create the given signature.
-           */
-          const recoveredAddress = verifyMessage(
-            message,
+          const signerAddress = verifyMessage(
+            messageToSign,
             signature,
           );
 
           // See if that matches the address the user is claiming the signature is from
-          if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+          if (signerAddress.toLowerCase() === address.toLowerCase()) {
             // The signature was verified - reset the date to prevent replay attacks
             // update user doc
             await userDocRef.update({
