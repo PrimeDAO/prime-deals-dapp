@@ -99,8 +99,17 @@ export class FirestoreService<
         delete registrationData.partnerDAO;
       }
 
+      registrationData.primaryDAO.tokens.concat(registrationData.partnerDAO?.tokens ?? []).forEach(token => {
+        if (token.cliffOf === undefined) {
+          delete token.cliffOf;
+        }
+        if (token.vestedFor === undefined) {
+          delete token.vestedFor;
+        }
+      });
+
       const dealRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
-      await setDoc(dealRef, { registrationData }, { merge: true });
+      await setDoc(dealRef, {registrationData}, {merge: true});
     } catch (error) {
       throw new Error(error);
     }
