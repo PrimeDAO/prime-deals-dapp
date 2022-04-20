@@ -29,8 +29,9 @@ export class TermsStage implements IBaseWizardStage {
     this.stageMetadata = stageMeta.settings;
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
+    this.addIdsToClauses(stageMeta.wizardType);
+
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      this.addIdsToClauses();
       this.checkedForUnsavedChanges();
       const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
       return formsAreValid && !this.hasUnsavedChanges;
@@ -59,9 +60,13 @@ export class TermsStage implements IBaseWizardStage {
     this.hasUnsavedChanges = this.termClauses.filter(viewModel => viewModel.viewMode === "edit").length > 0;
   }
 
-  addIdsToClauses() {
+  addIdsToClauses(wizardType: WizardType) {
     this.wizardState.registrationData.terms.clauses.forEach(clause => {
-      if (!clause.id) {
+      /**
+       * 1. !clause.id: If non, generate one.
+       * 2. `makeAnOffer`: Generate new ids, else Open Proposal and the new Partnered Deal, will have same ids.
+       */
+      if (!clause.id || wizardType === WizardType.makeAnOffer) {
         clause.id = shortUuid.generate();
       }
     });
