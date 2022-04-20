@@ -292,8 +292,10 @@ export class DiscussionThread {
    */
   private async updateDiscussionListStatus(timestamp: Date, replies: number): Promise<void> {
     if (
-      this.dealDiscussion?.replies === replies &&
-      new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
+      (
+        this.dealDiscussion?.replies === replies &&
+        new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
+      ) || !this.discussionId
     ) return;
 
     this.dealDiscussion.replies = replies;
