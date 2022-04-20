@@ -45,9 +45,24 @@
       <span class="bodySmallTextBold infoTitle">Type</span>
       Token Swap
     </div>
-    <div class="infoSection">
+    <div class="infoSection totalRepresentatives ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
-      ${deal.registrationData.primaryDAO.representatives.length + (deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.length : 0)}
+      <span>
+        ${deal.registrationData.primaryDAO.representatives.length + (deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.length : 0)}
+        <i class="fas fa-angle-down arrow"></i>
+      </span>
+    </div>
+    <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+      <div class="panel-content">
+        <p class="representative bodySmallText" repeat.for="address of deal.primaryDaoRepresentatives">
+          <span class="representative-dao">${deal.primaryDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+        </p>
+        <p class="representative bodySmallText" repeat.for="address of deal.partnerDaoRepresentatives">
+          <span class="representative-dao">${deal.partnerDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+        </p>
+      </div>
     </div>
     <div class="infoSection" if.bind="deal.isOpenProposal">
       <span class="bodySmallTextBold infoTitle">Deal Lead</span>
@@ -106,8 +121,7 @@
           disabled.bind="!deal.isUserProposalLead"
           ptooltip.bind="deal.isUserProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
           value.bind="deal.isPrivate"
-          changed.call="changePrivacy(checked)"
-        ></ptoggle>
+          changed.call="changePrivacy(checked)"></ptoggle>
       </span>
     </div>
 
