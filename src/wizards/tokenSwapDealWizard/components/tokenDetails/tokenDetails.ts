@@ -125,6 +125,10 @@ export class TokenDetails {
 
   async save(): Promise<void> {
     this.saving = true;
+
+    this.token.vestedFor = this.token.vestedFor ?? 0;
+    this.token.cliffOf = this.token.cliffOf ?? 0;
+
     const result = await this.form.validate({
       object: this.token,
       rules: this.getValidationRules(),
