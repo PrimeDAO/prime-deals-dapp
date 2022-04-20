@@ -142,8 +142,11 @@ export class FirebaseService {
 
     let signature: string;
     try {
+      this.eventAggregator.publish("firebase.signature", true);
       signature = await this.ethereumService.getDefaultSigner().signMessage(messageToSign);
+      this.eventAggregator.publish("firebase.signature", false);
     } catch (error) {
+      this.eventAggregator.publish("firebase.signature", false);
       this.ethereumService.disconnect({ code: 0, message: "User requested" });
       this.eventAggregator.publish("handleFailure", "Signature was rejected. You are not authenticated");
       return;
@@ -151,8 +154,9 @@ export class FirebaseService {
 
     const token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
 
-    // Firebase Authentication will be persisted in memory only
-    // that is on browser refresh the Firebase access token will be lost
+    // Firebase Authentication will be persisted in the browser storage (IndexedDB)
+    // user will be authenticated to Firebase as long as they don't clear the browser storage
+    // (or disconnect their wallet account, or switch to another account which will sign them out)
     await setPersistence(firebaseAuth, browserLocalPersistence);
 
     // Signs in to Firebase with a given custom token
