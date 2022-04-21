@@ -12,6 +12,7 @@ import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { IDeal } from "entities/IDealTypes";
 import { COMMENTS_STREAM_UPDATED, DiscussionsStreamService, Types } from "./discussionsStreamService";
+import { DealTokenSwap } from "entities/DealTokenSwap";
 
 interface IDiscussionListItem extends IDealDiscussion {
   modifiedAt: string
@@ -259,7 +260,7 @@ export class DiscussionsService {
     return await this.convo.comments.getComment(_id);
   }
 
-  public async loadDiscussionComments(discussionId: string): Promise<IComment[]> {
+  public async loadDiscussionComments(discussionId: string, deal: DealTokenSwap): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
       const commentsResponse: Array<IComment> = (await this.convo.comments.query({
@@ -274,7 +275,7 @@ export class DiscussionsService {
           (!this.ethereumService.defaultAccountAddress ||
           ![
             comment.author,
-            ...JSON.parse(comment.metadata.allowedMembers || "[]"),
+            ...deal.memberAddresses,
           ].includes(this.ethereumService.defaultAccountAddress))
       ));
 

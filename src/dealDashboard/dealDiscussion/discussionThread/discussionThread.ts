@@ -204,7 +204,7 @@ export class DiscussionThread {
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
-      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId, this.deal);
 
       this.hasApiError = false;
 
