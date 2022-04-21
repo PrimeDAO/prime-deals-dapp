@@ -126,6 +126,8 @@
     grid-area: comment;
     padding-left: $spacing-normal + 30px;
     @include pre;
+    word-wrap: anywhere;
+
     .replyContainer {
       display: flex;
       align-items: center;
