@@ -780,6 +780,9 @@ export class DealTokenSwap implements IDeal {
       const daoKey = whichDao.name === this.primaryDao.name ? "PRIMARY_DAO" : "PARTNER_DAO";
       return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown)
         .then(() => {
+          if (daoVotingSummary.votes[userAddress] === null) {
+            this.dealDocument.votingSummary.totalSubmitted++;
+          }
           daoVotingSummary.votes = {
             ...daoVotingSummary.votes,
             [userAddress]: upDown,
