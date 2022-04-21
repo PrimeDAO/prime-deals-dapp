@@ -369,9 +369,15 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
-  @computedFrom("dealDocument.votingSummary.totalSubmitted", "dealDocument.votingSummary.totalSubmittable")
+  @computedFrom(
+    "dealDocument.votingSummary.primaryDAO.acceptedVotesCount",
+    "dealDocument.votingSummary.primaryDAO.totalSubmittable",
+    "dealDocument.votingSummary.partnerDAO.acceptedVotesCount",
+    "dealDocument.votingSummary.partnerDAO.totalSubmittable",
+  )
   public get majorityHasVoted(): boolean {
-    return this.dealDocument.votingSummary.totalSubmitted > (this.dealDocument.votingSummary.totalSubmittable / 2);
+    return this.dealDocument.votingSummary.primaryDAO.acceptedVotesCount > (this.dealDocument.votingSummary.primaryDAO.totalSubmittable / 2)
+      && this.dealDocument.votingSummary.partnerDAO.acceptedVotesCount > (this.dealDocument.votingSummary.partnerDAO.totalSubmittable / 2);
   }
 
   // TODO: observe the right things here to recompute when votes have changed
@@ -908,7 +914,7 @@ export class DealTokenSwap implements IDeal {
   public setFundingContractInfo(token: ITokenCalculated, dao: IDAO): void {
     if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
-      token.fundingDeposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+      token.fundingDeposited = this.daoTokenTransactions.get(dao).filter(x => x.token.address === token.address).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
       // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
       token.fundingRequired = BigNumber.from(token.amount).sub(token.fundingDeposited);
       // calculate the percent completed based on deposited divided by target

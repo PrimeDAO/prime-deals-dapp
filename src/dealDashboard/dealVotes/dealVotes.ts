@@ -138,9 +138,12 @@ export class DealVotes {
     const daoVotingSummary = this.deal.daoVotingSummary(whichDao);
     const userAddress = this.ethereumService.defaultAccountAddress;
 
-    if (daoVotingSummary.votes[userAddress] === null) {
-      this.deal.dealDocument.votingSummary.totalSubmitted++;
-    }
+    const oldVote = daoVotingSummary.votes[userAddress];
+
+    // manually add or subtract votes based on what the user clicked
+    daoVotingSummary.acceptedVotesCount += (value === true) ? 1 : (oldVote === null ? 0 : -1);
+    daoVotingSummary.rejectedVotesCount += (value === false) ? 1 : (oldVote === null ? 0 : -1);
+
     daoVotingSummary.votes = {
       ...daoVotingSummary.votes,
       [userAddress]: value,
