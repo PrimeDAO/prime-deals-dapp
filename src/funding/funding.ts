@@ -98,8 +98,6 @@ export class Funding {
         //and get the account balance for that token
         await this.setAccountBalance();
         await this.setFundingTokenAllowance();
-      } else {
-        this.selectedToken = null;
       }
     } else if (this.deal.isClaiming){
       await this.setTokenClaimingData();
