@@ -778,16 +778,7 @@ export class DealTokenSwap implements IDeal {
 
     if (upDown !== daoVotingSummary.votes[userAddress]) {
       const daoKey = whichDao.name === this.primaryDao.name ? "PRIMARY_DAO" : "PARTNER_DAO";
-      return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown)
-        .then(() => {
-          if (daoVotingSummary.votes[userAddress] === null) {
-            this.dealDocument.votingSummary.totalSubmitted++;
-          }
-          daoVotingSummary.votes = {
-            ...daoVotingSummary.votes,
-            [userAddress]: upDown,
-          };
-        });
+      return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown);
     }
   }
 
@@ -828,7 +819,7 @@ export class DealTokenSwap implements IDeal {
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
   }
 
-  private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
+  public daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
     return whichDao.name === this.primaryDao.name ?
       this.dealDocument.votingSummary.primaryDAO :
       this.dealDocument.votingSummary.partnerDAO;
