@@ -914,7 +914,7 @@ export class DealTokenSwap implements IDeal {
   public setFundingContractInfo(token: ITokenCalculated, dao: IDAO): void {
     if (!this.isExecuted && this.daoTokenTransactions){
       //calculate only funding properties
-      token.fundingDeposited = this.daoTokenTransactions.get(dao).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
+      token.fundingDeposited = this.daoTokenTransactions.get(dao).filter(x => x.token.address === token.address).reduce((a, b) => b.type === "deposit" ? a.add(b.amount) : a.sub(b.amount), BigNumber.from(0));
       // calculate the required amount of tokens needed to complete the swap by subtracting target from deposited
       token.fundingRequired = BigNumber.from(token.amount).sub(token.fundingDeposited);
       // calculate the percent completed based on deposited divided by target
