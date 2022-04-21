@@ -26,6 +26,7 @@ export const depositColumns: IGridColumn[] = [
         if.to-view="ethereumService.defaultAccountAddress === address && deal.isFunding && !withdrawTxId"
         type="secondary"
         click.delegate="withdraw(row)"
+        disabled.bind="processing"
         >WITHDRAW</pbutton>
         <pbutton type="formfield" if.to-view="withdrawTxId" ptooltip.bind="dateService.formattedTime(withdrawnAt).diff('en-US', false)" click.delegate="gotoEtherscan(withdrawTxId, true)">Withdrawn</pbutton>
         </div>  ` },

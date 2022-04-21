@@ -16,6 +16,7 @@ import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
 import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
+import { AureliaHelperService } from "../services/AureliaHelperService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -90,23 +91,7 @@ export interface ITokenCalculated extends IToken {
 @autoinject
 export class DealTokenSwap implements IDeal {
 
-  constructor(
-    private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
-    private dataSourceDeals: IDataSourceDeals,
-    private tokenService: TokenService,
-    private contractsService: ContractsService,
-    private transactionsService: TransactionsService,
-    private numberService: NumberService,
-    eventAggregator: EventAggregator,
-  ) {
-    eventAggregator.subscribe("Contracts.Changed", async () => {
-      await this.loadContracts();
-    });
-    eventAggregator.subscribe("secondPassed", (params: { _blockDate, now: Date }) => {
-      this.now = params.now;
-    });
-  }
+  public partnerDao?: IDAO;
 
   private initializedPromise: Promise<void>;
   private now: Date;
@@ -134,7 +119,26 @@ export class DealTokenSwap implements IDeal {
   public dealManager: any;
 
   public primaryDao?: IDAO;
-  public partnerDao: IDAO;
+
+  constructor(
+    private consoleLogService: ConsoleLogService,
+    private ethereumService: EthereumService,
+    private dataSourceDeals: IDataSourceDeals,
+    private tokenService: TokenService,
+    private contractsService: ContractsService,
+    private transactionsService: TransactionsService,
+    private numberService: NumberService,
+    private aureliaHelperService: AureliaHelperService,
+    eventAggregator: EventAggregator,
+  ) {
+    eventAggregator.subscribe("Contracts.Changed", async () => {
+      await this.loadContracts();
+    });
+    eventAggregator.subscribe("secondPassed", (params: { _blockDate, now: Date }) => {
+      this.now = params.now;
+    });
+  }
+
   public createdAt: Date;
   /**
    * isExecuted and executedAt are both detected by the presence of an TokenSwapModule.TokenSwapExecuted event
@@ -226,18 +230,21 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("daoTokenClaims")
   public get isFullyClaimed(): boolean {
-    if (!this.daoTokenClaims) return false;
-    let isClaimed = true;
-    this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
-      if (!isClaimed) return; //immediately returns if it's already false from a previous loop
-      isClaimed = dao.tokens.every(daoToken => {
-        const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
-        if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
-        const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
-        return totalClaimed.gte(daoToken.amount);
+    let returnVal = false;
+    if (this.isClaiming && this.daoTokenClaims){
+      let isClaimed = true;
+      this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
+        if (!isClaimed) return; //immediately returns if it's already false from a previous loop
+        isClaimed = dao.tokens.every(daoToken => {
+          const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
+          if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
+          const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
+          return totalClaimed.add(BigNumber.from(daoToken.instantTransferAmount)).gte(daoToken.amount);
+        });
       });
-    });
-    return isClaimed;
+      returnVal = isClaimed;
+    }
+    return returnVal;
   }
 
   /**
@@ -247,9 +254,12 @@ export class DealTokenSwap implements IDeal {
    */
   @computedFrom("fundingWasInitiated", "fundingStartedAt", "fundingPeriod", "now")
   get timeLeftToExecute(): number | undefined {
-    if (!this.fundingWasInitiated) return -1;
-    const timeLeft = (this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
-    return timeLeft > 0 ? timeLeft : 0;
+    let returnVal = -1;
+    if (this.fundingWasInitiated && this.fundingStartedAt && this.now){//need to check for fundingStartedAt and now because they are undefined on first load sometimes
+      const timeLeft = (this.fundingStartedAt.getTime() + this.fundingPeriod * 1000) - this.now.getTime();
+      returnVal = timeLeft > 0 ? timeLeft : 0;
+    }
+    return returnVal;
   }
 
   /**
@@ -495,9 +505,38 @@ export class DealTokenSwap implements IDeal {
     this.initializing = true;
     await this.loadContracts();
     /**
-       * no, intentionally don't await
-       */
-    this.hydrate();
+     * no, intentionally don't await
+     */
+    this.hydrate().then(() => {
+
+      this.aureliaHelperService.createCollectionWatch(this.primaryDao.tokens, () => {
+        this.processTotalPrice();
+      });
+
+      this.primaryDao.tokens.forEach(token => {
+        this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
+          this.processTotalPrice();
+        });
+        this.aureliaHelperService.createPropertyWatch(token, "decimals", () => {
+          this.processTotalPrice();
+        });
+      });
+
+      if (this.partnerDao?.tokens) {
+        this.aureliaHelperService.createCollectionWatch(this.partnerDao.tokens, () => {
+          this.processTotalPrice();
+        });
+
+        this.partnerDao.tokens.forEach(token => {
+          this.aureliaHelperService.createPropertyWatch(token, "amount", () => {
+            this.processTotalPrice();
+          });
+          this.aureliaHelperService.createPropertyWatch(token, "decimals", () => {
+            this.processTotalPrice();
+          });
+        });
+      }
+    });
   }
 
   private async loadContracts(): Promise<void> {
@@ -523,7 +562,7 @@ export class DealTokenSwap implements IDeal {
           ContractNames.DAODEPOSITMANAGER,
           await this.dealManager.daoDepositManager(this.registrationData.primaryDAO.treasury_address)));
 
-      if (this.registrationData.partnerDAO) {
+      if (this.partnerDao) {
         daoDepositContracts.set(this.partnerDao,
           this.contractsService.getContractAtAddress(
             ContractNames.DAODEPOSITMANAGER,
@@ -548,7 +587,7 @@ export class DealTokenSwap implements IDeal {
       // no need to await
       this.hydrateDaoTransactions();
       this.hydrateDaoClaims();
-      this.hydrateDealSize();
+      this.processTotalPrice();
     }
     catch (error) {
       this.corrupt = true;
@@ -581,12 +620,7 @@ export class DealTokenSwap implements IDeal {
     this.daoTokenClaims = daoTokenClaims;
   }
 
-  private async hydrateDealSize(): Promise<void> {
-    // if the total price is already figured out we don't need to try again
-    if (this.totalPrice) {
-      return;
-    }
-
+  private async processTotalPrice(): Promise<void> {
     try {
       const dealTokens = this.primaryDao?.tokens.concat(this.partnerDao?.tokens ?? []) ?? [];
       const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
@@ -651,7 +685,7 @@ export class DealTokenSwap implements IDeal {
 
     return this.transactionsService.send(
       () => this.moduleContract.createSwap(...dealParameters))
-      .then(receipt => {
+      .then(async receipt => {
         if (receipt) {
           //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
           this.fundingStartedAt = new Date();
@@ -744,13 +778,7 @@ export class DealTokenSwap implements IDeal {
 
     if (upDown !== daoVotingSummary.votes[userAddress]) {
       const daoKey = whichDao.name === this.primaryDao.name ? "PRIMARY_DAO" : "PARTNER_DAO";
-      return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown)
-        .then(() => {
-          daoVotingSummary.votes = {
-            ...daoVotingSummary.votes,
-            [userAddress]: upDown,
-          };
-        });
+      return this.dataSourceDeals.updateVote(this.id, userAddress, daoKey, upDown);
     }
   }
 
@@ -791,7 +819,7 @@ export class DealTokenSwap implements IDeal {
     return dao.tokens.find((token: IToken) => token.address.toLowerCase() === tokenAddress );
   }
 
-  private daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
+  public daoVotingSummary(whichDao: IDAO): IDealDAOVotingSummary {
     return whichDao.name === this.primaryDao.name ?
       this.dealDocument.votingSummary.primaryDAO :
       this.dealDocument.votingSummary.partnerDAO;
@@ -892,6 +920,7 @@ export class DealTokenSwap implements IDeal {
   public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
     //calculate claiming properties
     if (this.isExecuted){
+      await this.hydrateDaoClaims();
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
       if (tokenClaimableAmounts.size > 0){
         token.claimingClaimable = tokenClaimableAmounts.get(token.address);

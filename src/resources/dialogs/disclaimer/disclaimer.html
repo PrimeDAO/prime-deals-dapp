@@ -2,7 +2,7 @@
   <section class="ppopup-dialog disclaimer pcard gradient">
     <p class="dialogHeader ellipses">&nbsp;</p>
     <p class="dialogBody loading" if.to-view="loading"><i class="fas fa-circle-notch fa-spin"></i></p>
-    <p else class="dialogBody" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
+    <p else class="dialogBody markdownContainer" innerhtml.to-view="disclaimerHtml | sanitizeHTML"></p>
     <p class="dialogFooter">
       <pform-input
         class="checkbox"

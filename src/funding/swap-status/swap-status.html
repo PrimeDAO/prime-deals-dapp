@@ -9,7 +9,7 @@
         is-data-loaded.bind="contractDataLoaded"
       ></status-card>
       <!-- only display these swap icons if the deal hasn't executed swap yet -->
-      <div class="swap ${swapCompleted || fundingFailed ? 'complete' : ''}">
+      <div class="swap ${deal.isFullyClaimed || fundingFailed ? 'complete' : ''}">
         <i class="fas fa-arrow-right" if.to-view="!deal.isClaiming"></i>
         <i
           if.to-view="!deal.isClaiming && deal.isTargetReached"

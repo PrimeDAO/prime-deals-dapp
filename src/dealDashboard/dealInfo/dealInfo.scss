@@ -2,6 +2,7 @@
 
 deal-info {
   pcard.pcard {
+    font-family: 'Inter', sans-serif;
 
     .title {
       margin-bottom: 24px;
@@ -28,35 +29,31 @@ deal-info {
         text-overflow: ellipsis;
         overflow: hidden;
 
-        .daoSocialLinks {
-          display: flex;
-          flex-direction: row;
-          gap: 7px;
-
-          i {
-            font-size: 16px;
-            color: $Secondary05;
-          }
-        }
       }
 
     }
 
+    .daoSocialLinks {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: -10px;
+      margin-bottom: 4px;
+
+      i {
+        font-size: 16px;
+        color: $Secondary05;
+      }
+    }
+
+
     .tokenDetails {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
     }
-
-    .makeLabelSmaller {
-      flex: 0;
-    }
-
-    .moreSpaceForLinks {
-      flex: 1;
-      justify-content: flex-end;
-    }
-
   }
 
   .infoSection {
@@ -70,5 +67,52 @@ deal-info {
     .infoTitle {
       font-size: $font-size2;
     }
+
+    &.totalRepresentatives {
+      cursor: pointer;
+
+      .arrow {
+        justify-self: end;
+        transition: all 0.2s ease-in-out;
+        margin-left: 4px;
+      }
+
+      &.active {
+        .arrow {
+          transform: rotate(-180deg);
+        }
+      }
+    }
   }
+
+  .panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+
+    .panel-content {
+      background-color: $Border01;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 12px;
+
+      .representative {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .representative-dao {
+          font-weight: 700;
+          flex: 1;
+        }
+      }
+    }
+  }
+
 }
