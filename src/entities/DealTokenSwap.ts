@@ -369,7 +369,12 @@ export class DealTokenSwap implements IDeal {
     return this.isWithdrawn || this.isRejected;
   }
 
-  @computedFrom("dealDocument.votingSummary.primaryDAO.acceptedVotesCount", "dealDocument.votingSummary.primaryDAO.totalSubmittable", "dealDocument.votingSummary.partnerDAO.acceptedVotesCount", "dealDocument.votingSummary.partnerDAO.totalSubmittable")
+  @computedFrom(
+    "dealDocument.votingSummary.primaryDAO.acceptedVotesCount",
+    "dealDocument.votingSummary.primaryDAO.totalSubmittable",
+    "dealDocument.votingSummary.partnerDAO.acceptedVotesCount",
+    "dealDocument.votingSummary.partnerDAO.totalSubmittable",
+  )
   public get majorityHasVoted(): boolean {
     return this.dealDocument.votingSummary.primaryDAO.acceptedVotesCount > (this.dealDocument.votingSummary.primaryDAO.totalSubmittable / 2)
       && this.dealDocument.votingSummary.partnerDAO.acceptedVotesCount > (this.dealDocument.votingSummary.partnerDAO.totalSubmittable / 2);
