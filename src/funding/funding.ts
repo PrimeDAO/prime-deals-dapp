@@ -271,7 +271,7 @@ export class Funding {
     this.depositAmount = null;
     if (typeof newVal === "string") newVal = Number(newVal);
     if (typeof prevVal === "string") prevVal = Number(prevVal);
-    if (newVal !== prevVal) {
+    if (newVal !== prevVal && newVal !== null && newVal >= 0) {
       await this.setAccountBalance(); //selected token has changed, so set the account balance of the newly selected token
       await this.setFundingTokenAllowance();
     }
@@ -324,8 +324,10 @@ export class Funding {
   }
 
   public async setAccountBalance() : Promise<void> {
-    const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
-    this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+    if (this.selectedToken !== null && this.selectedToken >= 0){
+      const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
+      this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+    }
   }
 
   public async setFundingTokenAllowance(): Promise<void> {
