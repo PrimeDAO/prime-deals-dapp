@@ -448,6 +448,15 @@ export class DealTokenSwap implements IDeal {
     return !!this.registrationData.partnerDAO;
   }
 
+  @computedFrom("registrationData.proposalLead.address")
+  public get memberAddresses(): Array<string> {
+    return [
+      this.registrationData.proposalLead.address,
+      ...this.registrationData.primaryDAO.representatives.map(rep => rep.address),
+      ...this.registrationData.partnerDAO.representatives.map(rep => rep.address),
+    ];
+  }
+
   @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead")
   public get isUserRepresentativeOrLead(): boolean {
     return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
