@@ -47,7 +47,6 @@ export class DiscussionThread {
     authorENS: "",
     metadata: {
       isPrivate: undefined,
-      allowedMembers: undefined,
       encrypted: undefined,
       iv: undefined,
       isDeleted: true,
@@ -316,7 +315,6 @@ export class DiscussionThread {
         this.discussionId,
         this.comment,
         this.deal.isPrivate,
-        [...this.deal.representativesAndLead],
         this.replyToComment?._id || "",
       );
 

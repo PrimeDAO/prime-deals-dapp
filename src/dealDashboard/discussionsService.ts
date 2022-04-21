@@ -3,7 +3,7 @@ import { DealService } from "services/DealService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject, computedFrom } from "aurelia-framework";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService, Address } from "services/EthereumService";
+import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -313,11 +313,10 @@ export class DiscussionsService {
   * @param discussionId string - The ID of the discussion to create the comment in
   * @param comment string - The comment to create
   * @param isPrivate boolean - Mark comment as private, if the thread is currently private
-  * @param allowedMembers Array<string> - An array of addresses that are allowed to view the comment if private
   * @param replyTo string - The ID of the comment to reply to (empty if not a reply)
   * @returns void
   */
-  public async addComment(discussionId: string, comment: string, isPrivate = false, allowedMembers: Address[] = [], replyTo: string): Promise<IComment> {
+  public async addComment(discussionId: string, comment: string, isPrivate = false, replyTo: string): Promise<IComment> {
     const isValidAuth = await this.isValidAuth();
 
     if (!isValidAuth) {
@@ -346,7 +345,6 @@ export class DiscussionsService {
         "https://deals.prime.xyz",
         {
           isPrivate: isPrivate.toString(),
-          allowedMembers: JSON.stringify(allowedMembers),
           encrypted: encrypted.cipherText,
           iv: this.convertArrayBufferToString(encrypted.iv),
         },

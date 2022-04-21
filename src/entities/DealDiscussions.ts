@@ -1,6 +1,5 @@
 export interface ICommentMetaData {
   isPrivate: string;
-  allowedMembers: string;
   encrypted: string;
   iv: string;
   isDeleted?: boolean;
