@@ -7,6 +7,7 @@ import { E2eWallet } from "../wallet.e2e";
 import { IComment, ICommentMetaData } from "../../../../src/entities/DealDiscussions";
 import { CommentBuilder } from "../../../fixtures/CommentsBuilder";
 import { E2E_ADDRESSES, getRandomId } from "../../../fixtures/dealFixtures";
+import { StaticResponse } from "cypress/types/net-stubbing";
 
 const COMMENTS_STREAM_UPDATED = "commentsStreamUpdated";
 
@@ -20,7 +21,7 @@ interface ICommentOptions {
   isAuthor?: boolean;
 }
 
-interface IDiscussionsResponse {
+interface IDiscussionsResponse extends StaticResponse {
   _id: string; // <unique-id-of-comment>
   createdOn: string; // <timestamp>,
   author: string; // <same-as-signerAddress>,
@@ -52,7 +53,22 @@ const firstComment = CommentBuilder.create()
   .withAuthor(E2E_ADDRESSES.RepresentativeOne)
   .comment;
 const replyToFirstComment = CommentBuilder.create().replyTo(firstComment).withText("Reply to the first one").comment;
-const comments = [firstComment, replyToFirstComment];
+const private_firstComment = CommentBuilder.create()
+  .withText("Private - e2e private comment")
+  .withAuthor(E2E_ADDRESSES.RepresentativeOne)
+  .withPrivacy("true")
+  .comment;
+const private_replyToFirstComment = CommentBuilder.create()
+  .replyTo(private_firstComment)
+  .withText("Private - Reply to the private one")
+  .withPrivacy("true")
+  .comment;
+const comments = [
+  firstComment,
+  replyToFirstComment,
+  private_firstComment,
+  private_replyToFirstComment,
+];
 
 export class E2eDiscussionsProvider {
   public static lastDeletedComment;
@@ -65,6 +81,7 @@ export class E2eDiscussionsProvider {
     };
     const authResponse = { statusCode: 200, body: successfulAuth };
     cy.intercept("**/auth**", authRouteOptions, authResponse);
+    // cy.intercept("**/auth**", {method: "OPTIONS"}, authResponse);
 
     cy.intercept("**/validateAuth**", authRouteOptions, authResponse);
   }
@@ -114,7 +131,6 @@ export class E2eDiscussionsProvider {
         tid: undefined,
         metadata: {
           isPrivate: undefined,
-          allowedMembers: undefined,
           encrypted: undefined,
           iv: undefined,
           isDeleted: false,
@@ -128,11 +144,9 @@ export class E2eDiscussionsProvider {
   }
 
   public static mockCreateComment() {
-    cy.intercept("**/comments**", {method: "OPTIONS"}, "ok");
+    // cy.intercept("**/comments?apikey**", {method: "OPTIONS"}, "ok");
 
-    // const createRouteOptions = { method: "POST", statusCode: 600 };
-    const createRouteOptions = { method: "POST" };
-    cy.intercept("**/comments**", createRouteOptions, async (req) => {
+    cy.intercept("POST", "**/comments?apikey**", async (req) => {
       let reqBody: ICreateRequest = req.body;
       try {
         if (typeof req.body === "string") {
@@ -151,7 +165,13 @@ export class E2eDiscussionsProvider {
           downvotes: [],
           replyTo: reqBody.replyTo,
         };
-        req.reply(response);
+
+        E2eDiscussion.currentDiscussion.push(response);
+
+        req.reply({
+          body: response,
+          delay: 2000,
+        });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -164,6 +184,15 @@ export class E2eDiscussionsProvider {
     const deleteResponse = { statusCode: 200, body: deleteResponseBody };
     const delteRouteOptions = { method: "DELETE" };
     cy.intercept("**/comments**", delteRouteOptions, deleteResponse).as(DELETE_COMMENTS_ALIAS);
+  }
+
+  public static mockVoteComment() {
+    // cy.intercept("**/vote**", {method: "OPTIONS"}, "ok");
+
+    const voteResponseBody = { success: true };
+    const voteResponse = { statusCode: 200, body: voteResponseBody };
+    const voteRouteOptions = { method: "POST" };
+    cy.intercept("**/vote**", voteRouteOptions, voteResponse);
   }
 
   // public static publishToCommentsStream(response: IDiscussionsResponse) {
@@ -356,6 +385,7 @@ Given("I mock the Discussions Provider", () => {
   E2eDiscussionsProvider.mockGetComment();
   E2eDiscussionsProvider.mockCreateComment();
   E2eDiscussionsProvider.mockDeleteComment();
+  E2eDiscussionsProvider.mockVoteComment();
 
 });
 
