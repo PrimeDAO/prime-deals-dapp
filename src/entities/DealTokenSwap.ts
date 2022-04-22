@@ -448,7 +448,7 @@ export class DealTokenSwap implements IDeal {
     return !!this.registrationData.partnerDAO;
   }
 
-  @computedFrom("registrationData.proposalLead.address")
+  @computedFrom("registrationData.proposalLead.address, registrationData.primaryDAO.representatives.length, registrationData.partnerDAO.representatives.length")
   public get memberAddresses(): Array<string> {
     return [
       this.registrationData.proposalLead.address,
