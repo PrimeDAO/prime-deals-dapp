@@ -193,26 +193,21 @@ export class DealService {
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapExecuted();
     const dealIds = new Map<string, IExecutedDeal>();
+    const promises = new Array<Promise<void>>();
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
       .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
-        const dealBlockPromises: Array<{dealId: string; promise: Promise<IBlockInfoNative>}> = [];
         for (const event of events) {
           const params = event.args;
-          // hack until the event has it
-          // const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
           const dealId = parseBytes32String(params.metadata);
-          dealBlockPromises.push({dealId, promise: event.getBlock()});
-        }
+          promises.push(event.getBlock()
+            .then((block: IBlockInfoNative) => {
+              dealIds.set(dealId, { executedAt: new Date(block.timestamp * 1000) });
+            }));
+        }});
 
-        const blockPromises = dealBlockPromises.map(item => item.promise);
-
-        const blocks = await Promise.all(blockPromises);
-
-        blocks.forEach((block, index) => {
-          dealIds.set(dealBlockPromises[index].dealId, { executedAt: new Date(block.timestamp * 1000) });
-        });
-      });
+    // no need to await
+    Promise.all(promises);
 
     // TODO figure out how to gkeep this up-to-date
     this.executedDealIds = dealIds;
@@ -223,26 +218,21 @@ export class DealService {
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapCreated();
     const dealIds = new Map<string, IFundedDeal>();
+    const promises = new Array<Promise<void>>();
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
       .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
-        const dealBlockPromises: Array<{dealId: string; promise: Promise<IBlockInfoNative>}> = [];
-
         for (const event of events) {
           const params = event.args;
           const dealId = parseBytes32String(params.metadata);
-          dealBlockPromises.push({dealId, promise: event.getBlock()});
-        }
+          promises.push(event.getBlock()
+            .then((block: IBlockInfoNative) => {
+              dealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
+            }));
+        }});
 
-        const blockPromises = dealBlockPromises.map(item => item.promise);
-
-        const blocks = await Promise.all(blockPromises);
-
-        blocks.forEach((block, index) => {
-          dealIds.set(dealBlockPromises[index].dealId, { fundedAt: new Date(block.timestamp * 1000) });
-        });
-
-      });
+    // no need to await
+    Promise.all(promises);
 
     // TODO figure out how to gkeep this up-to-date
     this.fundedDealIds = dealIds;
