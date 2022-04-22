@@ -23,7 +23,7 @@
       </div>
 
       <!-- Deals Carousel -->
-      <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
+      <div class="section deal-carousel" if.to-view="featuredDeals && featuredDeals.length">
         <div class="heading02Gradient carousel-selector">
           <span if.to-view="allDeals.open.length"
             data-test="open-proposals-tab"
@@ -37,23 +37,18 @@
             Partnered Deals
           </span>
         </div>
-        <template if.to-view="featuredDeals && featuredDeals.length">
-          <horizontal-scroller class="featuredDealsScroller" item-count.to-view="featuredDeals.length">
-            <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
-          </horizontal-scroller>
-          <div class="dealsButton">
-            <div class="centered">
-              <pbutton
-                type="tertiary"
-                click.delegate="navigate('deals')"
-                rel="noopener noreferrer">
-                View All Deals
-              </pbutton>
-            </div>
+        <horizontal-scroller class="featuredDealsScroller" item-count.to-view="featuredDeals.length">
+          <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
+        </horizontal-scroller>
+        <div class="dealsButton">
+          <div class="centered">
+            <pbutton
+              type="tertiary"
+              click.delegate="navigate('deals')"
+              rel="noopener noreferrer">
+              View All Deals
+            </pbutton>
           </div>
-        </template>
-        <div if.to-view="!featuredDeals" class="loading">
-          <i class="fas fa-circle-notch fa-spin"></i>
         </div>
       </div>
 
