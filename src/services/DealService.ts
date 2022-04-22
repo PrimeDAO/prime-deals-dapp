@@ -1,7 +1,7 @@
 import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address, EthereumService, Networks } from "./EthereumService";
+import { Address, EthereumService, IBlockInfoNative, Networks } from "./EthereumService";
 import { autoinject, computedFrom, Container, TaskQueue } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { EventAggregator } from "aurelia-event-aggregator";
@@ -196,13 +196,22 @@ export class DealService {
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
       .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
+        const dealBlockPromises: Array<{dealId: string; promise: Promise<IBlockInfoNative>}> = [];
         for (const event of events) {
           const params = event.args;
           // hack until the event has it
           // const dealId = (await moduleContract.tokenSwaps(params.dealId)).metadata;
           const dealId = parseBytes32String(params.metadata);
-          dealIds.set(dealId, { executedAt: new Date((await event.getBlock()).timestamp * 1000) });
+          dealBlockPromises.push({dealId, promise: event.getBlock()});
         }
+
+        const blockPromises = dealBlockPromises.map(item => item.promise);
+
+        const blocks = await Promise.all(blockPromises);
+
+        blocks.forEach((block, index) => {
+          dealIds.set(dealBlockPromises[index].dealId, { executedAt: new Date(block.timestamp * 1000) });
+        });
       });
 
     // TODO figure out how to gkeep this up-to-date
@@ -217,11 +226,22 @@ export class DealService {
 
     await moduleContract.queryFilter(filter, StartingBlockNumber)
       .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+        const dealBlockPromises: Array<{dealId: string; promise: Promise<IBlockInfoNative>}> = [];
+
         for (const event of events) {
           const params = event.args;
           const dealId = parseBytes32String(params.metadata);
-          dealIds.set(dealId, { fundedAt: new Date((await event.getBlock()).timestamp * 1000) });
+          dealBlockPromises.push({dealId, promise: event.getBlock()});
         }
+
+        const blockPromises = dealBlockPromises.map(item => item.promise);
+
+        const blocks = await Promise.all(blockPromises);
+
+        blocks.forEach((block, index) => {
+          dealIds.set(dealBlockPromises[index].dealId, { fundedAt: new Date(block.timestamp * 1000) });
+        });
+
       });
 
     // TODO figure out how to gkeep this up-to-date
