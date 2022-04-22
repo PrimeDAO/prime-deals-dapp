@@ -24,7 +24,7 @@ export class DiscussionsStreamService {
   public async initStreamPublishing(discussionId: string): Promise<void> {
     const channelName = `${discussionId}:${EthereumService.targetedChainId}`;
 
-    const ably = new Realtime.Promise({ authUrl: `https://theconvo.space/api/getAblyAuth?apikey=${ process.env.CONVO_API_KEY }` });
+    const ably = new Realtime.Promise({ authUrl: `${process.env.CONVO_API_NODE}/getAblyAuth?apikey=${process.env.CONVO_API_KEY}` });
     this.discussionCommentsStream = await ably.channels.get(channelName);
     this.discussionCommentsStream.subscribe((commentStreamMessage: Types.Message) => {
       this.eventAggregator.publish(COMMENTS_STREAM_UPDATED, commentStreamMessage);

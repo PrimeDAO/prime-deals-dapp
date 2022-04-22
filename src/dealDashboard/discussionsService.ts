@@ -23,7 +23,7 @@ export const deletedByAuthorErrorMessage = "This comment has been deleted by the
 @autoinject
 export class DiscussionsService {
 
-  private convo = new Convo(process.env.CONVO_API_KEY);
+  private convo = new Convo(process.env.CONVO_API_KEY, process.env.CONVO_API_NODE);
 
   public discussions: Record<string, IDiscussionListItem> = {};
   private comment: string;
