@@ -52,6 +52,9 @@ interface IFundedDeal {
   fundedAt: Date;
 }
 
+/**
+ * the block in which the TokenSwapModule contract was created
+ */
 export let StartingBlockNumber: number;
 
 @autoinject
@@ -106,7 +109,7 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
       case Networks.Rinkeby:
-        StartingBlockNumber = 10376393;
+        StartingBlockNumber = 10534149;
         break;
       default:
         StartingBlockNumber = 0;
