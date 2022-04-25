@@ -23,6 +23,9 @@ import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
+  // Note, this Cypress hack has to be at the very start.
+  // Reason: Imports in eg. /resources/index, where EthereumService is imported to
+  //   /binding-behaviors results in EthereumService not being mocked "in time" for Cypress.
   if ((window as any).Cypress) {
     /**
      * Mock wallet connection
