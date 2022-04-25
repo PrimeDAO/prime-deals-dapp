@@ -29,35 +29,31 @@ deal-info {
         text-overflow: ellipsis;
         overflow: hidden;
 
-        .daoSocialLinks {
-          display: flex;
-          flex-direction: row;
-          gap: 7px;
-
-          i {
-            font-size: 16px;
-            color: $Secondary05;
-          }
-        }
       }
 
     }
 
+    .daoSocialLinks {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: -10px;
+      margin-bottom: 4px;
+
+      i {
+        font-size: 16px;
+        color: $Secondary05;
+      }
+    }
+
+
     .tokenDetails {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
     }
-
-    .makeLabelSmaller {
-      flex: 0;
-    }
-
-    .moreSpaceForLinks {
-      flex: 1;
-      justify-content: flex-end;
-    }
-
   }
 
   .infoSection {
@@ -74,13 +70,13 @@ deal-info {
 
     &.totalRepresentatives {
       cursor: pointer;
-      
+
       .arrow {
         justify-self: end;
         transition: all 0.2s ease-in-out;
         margin-left: 4px;
       }
-  
+
       &.active {
         .arrow {
           transform: rotate(-180deg);
@@ -93,7 +89,7 @@ deal-info {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-    
+
     .panel-content {
       background-color: $Border01;
       border-radius: 6px;
@@ -115,8 +111,8 @@ deal-info {
           font-weight: 700;
           flex: 1;
         }
-      }  
+      }
     }
   }
-  
+
 }

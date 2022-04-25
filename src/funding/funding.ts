@@ -33,6 +33,7 @@ export class Funding {
   private seeingMore = false;
   private accountBalance: BigNumber;
   private userFundingTokenAllowance: BigNumber;
+  private processing = false;
   @observable
   private selectedToken: number | string;
   private tokenDepositContractUrl = "";
@@ -97,8 +98,6 @@ export class Funding {
         //and get the account balance for that token
         await this.setAccountBalance();
         await this.setFundingTokenAllowance();
-      } else {
-        this.selectedToken = null;
       }
     } else if (this.deal.isClaiming){
       await this.setTokenClaimingData();
@@ -141,6 +140,7 @@ export class Funding {
    * @param transaction
    */
   public async withdraw(transaction: IDaoTransaction): Promise<void> {
+    this.processing = true;
     //Check if the connected wallet is the same as the deposit to make sure they can initiate the withdraw
     //the UI already checks this but wanted to validate again to make sure
     if (this.ethereumService.defaultAccountAddress !== transaction.address){
@@ -171,6 +171,7 @@ export class Funding {
     }
     //reload all data after deposit
     await this.initializeData();
+    this.processing = false;
   }
 
   /**
@@ -196,21 +197,24 @@ export class Funding {
    * Unlocks the desired amount of tokens that the user wants to deposit on the contract
    */
   private async unlockTokens(): Promise<void>{
+    this.processing = true;
     // unlock the tokens on the contract
     const transactionReceipt = await this.deal.unlockTokens(this.firstDao, this.firstDao.tokens[this.selectedToken].address, this.depositAmount);
     if (transactionReceipt){
       //the tokens have been approved on the contract so re-hydrate the funding allowance
       await this.setFundingTokenAllowance();
       this.eventAggregator.publish("handleInfo", new EventConfig(`<formatted-number mantissa='2' hide-tooltip.bind='true' thousands-separated value.to-view='data.amount | ethwei:data.decimals'></formatted-number> ${this.firstDao.tokens[this.selectedToken].symbol} has been unlocked. You can now deposit these tokens to the deal!`, EventMessageType.Info, "Unlock completed", {amount: this.depositAmount, decimals: this.firstDao.tokens[this.selectedToken].decimals}));
-      return;
+    } else {
+      this.eventAggregator.publish("handleFailure", "An error occurred while trying to unlock tokens. Please try again.");
     }
-    this.eventAggregator.publish("handleFailure", "An error occurred while trying to unlock tokens. Please try again.");
+    this.processing = false;
   }
 
   /**
    * Deposits the tokens from the account to the contract
    */
   private async depositTokens(): Promise<void> {
+    this.processing = true;
     //hydrate the latest contract transaction data
     await this.deal.hydrateDaoTransactions();
     //now that the daoTransactions are hydrated, update the tokens with the contract data
@@ -244,6 +248,7 @@ export class Funding {
       //something happened to make the deposit not happen
       this.eventAggregator.publish("handleFailure", "An error occurred while trying to deposit tokens. Please try again.");
     }
+    this.processing = false;
     //reload all data after deposit
     await this.initializeData();
   }
@@ -264,7 +269,7 @@ export class Funding {
     this.depositAmount = null;
     if (typeof newVal === "string") newVal = Number(newVal);
     if (typeof prevVal === "string") prevVal = Number(prevVal);
-    if (newVal !== prevVal) {
+    if (newVal !== prevVal && newVal !== null && newVal >= 0) {
       await this.setAccountBalance(); //selected token has changed, so set the account balance of the newly selected token
       await this.setFundingTokenAllowance();
     }
@@ -279,11 +284,11 @@ export class Funding {
       if (Number(remainingNeeded) < Number(this.accountBalance)) {
         //the account has a higher balance than the remaining needed tokens so set the deposit amount to the remaining needed
         this.depositAmount = remainingNeeded;
-        this.eventAggregator.publish("handleValidationError", new EventConfig("You may not deposit more than the required amount", EventMessageType.Info));
+        this.eventAggregator.publish("handleInfo", "You may not deposit more than the required amount");
       } else {
         //the account has a lower balance than the remaining needed tokens so set the deposit amount to the full account amount
         this.depositAmount = this.accountBalance;
-        this.eventAggregator.publish("handleValidationError", new EventConfig("The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.", EventMessageType.Info));
+        this.eventAggregator.publish("handleInfo", "The required funding exceeds your balance. You will be able to deposit your balance but it will not completely fund the deal for this token.");
       }
     } else {
       this.eventAggregator.publish("handleValidationError", new EventConfig("Please select a token first", EventMessageType.Info, "No token selected"));
@@ -317,8 +322,10 @@ export class Funding {
   }
 
   public async setAccountBalance() : Promise<void> {
-    const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
-    this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+    if (this.selectedToken !== null && this.selectedToken >= 0){
+      const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
+      this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+    }
   }
 
   public async setFundingTokenAllowance(): Promise<void> {
@@ -364,6 +371,7 @@ export class Funding {
   }
 
   private async claimTokens(){
+    this.processing = true;
     const transaction = await this.deal.claim(this.firstDao);
     if (transaction){
       const congratulatePopupModel: IAlertModel = {
@@ -373,11 +381,23 @@ export class Funding {
         buttonTextPrimary: "Close",
         className: "congratulatePopup",
       };
+      //reload all data after claim
+      this.initializeData(); //don't await on purpose
       await this.alertService.showAlert(congratulatePopupModel);
     } else {
       this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to claim your tokens. Please try again later", EventMessageType.Info, "Claim Token Error"));
     }
-    //reload all data after claim
-    await this.initializeData();
+    this.processing = false;
+  }
+
+  //using @computedFrom here doesn't update the UI when withdrawing tokens and showing the form again
+  //so I took it off to make it work
+  private get showDepositForm(){
+    const firstDaoTokensAllDeposited = (this.firstDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.fundingDeposited ?? 0));
+    return this.deal.isRepresentativeUser && !this.deal.isFailed && !firstDaoTokensAllDeposited;
+  }
+
+  private get secondDaoTokensAllDeposited(){
+    return (this.secondDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.fundingDeposited ?? 0));
   }
 }

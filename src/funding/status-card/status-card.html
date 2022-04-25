@@ -7,7 +7,11 @@
       <pchip color="${chipColor}"> ${status} </pchip>
     </header>
     <div class="content">
-      <div class="token-progress" repeat.for="token of tokenDao.tokens" if.to-view="!swapCompleted">
+      <div
+        class="token-progress"
+        repeat.for="token of tokenDao.tokens"
+        if.to-view="!deal.isFullyClaimed"
+      >
         <img src="${token.logoURI}" />
         <div>
           <div class="progress-bar-content">
@@ -40,15 +44,15 @@
           </div>
         </div>
       </div>
-      <div class="token-completed" if.to-view="swapCompleted">
+      <div class="token-completed" if.to-view="deal.isFullyClaimed">
         <div repeat.for="token of tokenDao.tokens">
           <img src="${token.logoURI}" />
           <span
             ><formatted-number
               thousands-separated
-              value.to-view="token.fundingDeposited | ethwei:token.decimals"
+              value.to-view="token.amount | ethwei:token.decimals"
             ></formatted-number>
-            <strong>${token.symbol}</strong></span
+            <strong>${token.symbol}</strong> RECIEVED</span
           >
         </div>
       </div>

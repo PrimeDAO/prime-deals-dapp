@@ -47,7 +47,6 @@ export class DiscussionThread {
     authorENS: "",
     metadata: {
       isPrivate: undefined,
-      allowedMembers: undefined,
       encrypted: undefined,
       iv: undefined,
       isDeleted: true,
@@ -204,7 +203,7 @@ export class DiscussionThread {
 
   private async ensureDealDiscussion(discussionId: string): Promise<void> {
     try {
-      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId);
+      this.threadComments = await this.discussionsService.loadDiscussionComments(discussionId, this.deal);
 
       this.hasApiError = false;
 
@@ -292,8 +291,10 @@ export class DiscussionThread {
    */
   private async updateDiscussionListStatus(timestamp: Date, replies: number): Promise<void> {
     if (
-      this.dealDiscussion?.replies === replies &&
-      new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
+      (
+        this.dealDiscussion?.replies === replies &&
+        new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
+      ) || !this.discussionId
     ) return;
 
     this.dealDiscussion.replies = replies;
@@ -314,7 +315,6 @@ export class DiscussionThread {
         this.discussionId,
         this.comment,
         this.deal.isPrivate,
-        [...this.deal.representativesAndLead],
         this.replyToComment?._id || "",
       );
 

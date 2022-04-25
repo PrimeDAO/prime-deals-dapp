@@ -8,6 +8,7 @@ import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
+import { Utils } from "services/utils";
 
 @autoinject
 export class DealVotes {
@@ -81,6 +82,7 @@ export class DealVotes {
     }
 
     if (await this.deal.createSwap()) {
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     }
@@ -115,10 +117,36 @@ export class DealVotes {
   private async vote(value: boolean) {
     try {
       await this.deal.vote(value);
+
+      this.updateDealVote(value);
+
       this.eventAggregator.publish("handleInfo", "Your vote has been successfully submitted");
     } catch (error) {
       this.consoleLogService.logMessage(`Voting error ${error}`, "error");
       this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred submitting your vote", error));
     }
+  }
+
+  /**
+   * This method updates the vote in the page, so we instantly get the page re-rendered.
+   * It's called just to avoid the delay from Firebase when voting and make the app
+   *  show the Funding button immediately.
+   */
+  private updateDealVote(value: boolean) {
+    const whichDao = this.deal.daoRepresentedByCurrentAccount;
+
+    const daoVotingSummary = this.deal.daoVotingSummary(whichDao);
+    const userAddress = this.ethereumService.defaultAccountAddress;
+
+    const oldVote = daoVotingSummary.votes[userAddress];
+
+    // manually add or subtract votes based on what the user clicked
+    daoVotingSummary.acceptedVotesCount += (value === true) ? 1 : (oldVote === null ? 0 : -1);
+    daoVotingSummary.rejectedVotesCount += (value === false) ? 1 : (oldVote === null ? 0 : -1);
+
+    daoVotingSummary.votes = {
+      ...daoVotingSummary.votes,
+      [userAddress]: value,
+    };
   }
 }

@@ -3,6 +3,7 @@
 
 .deal-carousel {
   margin-bottom: 64px;
+  min-height: 537px; // hold space for spinner
 
   .scrollerContainer {
     margin-bottom: 28px;
@@ -65,13 +66,17 @@
     }
   }
 
-  .loading {
-    text-align: center;
-    font-size: 32px;
-    padding-top: 24px;
+  > .loading {
 
-    i {
-      color: $Secondary07;
+    text-align: center;
+
+    > .text {
+      margin-bottom: 16px;
+    }
+
+    > .icon {
+      font-size: 32px;
+      color: $Primary01;
     }
   }
 }
