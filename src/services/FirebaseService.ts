@@ -174,7 +174,7 @@ export class FirebaseService {
     } catch (error) {
       const modal: IAlertModel = {
         header: "Authentication failure",
-        message: "<p>You didn't sign authentication message. You will only see public deals and you want be able to edit your deals.</p>",
+        message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",
       };
       this.alertService.showAlert(modal);
     }
