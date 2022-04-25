@@ -1,5 +1,7 @@
+/* eslint-disable comma-spacing */
+/* eslint-disable no-multi-spaces */
 import { IDealRegistrationTokenSwap, IRepresentative } from "../../src/entities/DealRegistrationTokenSwap";
-import { TokenBuilder } from "./bulders/TokenBuilder";
+import { AvailableTokenNames, TokenBuilder } from "./bulders/TokenBuilder";
 
 function getRandomId (){
   /**
@@ -170,13 +172,69 @@ PRIVATE_PARTNERED_DEAL.isPrivate = true;
 
 // [Pri:1 DAI]-[Par:2 Prime, D2D]-[Vesting:No]    – http://localhost:3340/deal/feYLYPCNiK67G7DrfC8XzB
 
-/** Amount: 1000 (18 decimals) */
-const daiToken_1000 = TokenBuilder.create("DAI").withAllInstant("1000000000000000000000").token;
-const primeToken_1000 = TokenBuilder.create("PRIME").withAllInstant("1000000000000000000000").token;
-const d2dToken_1000 = TokenBuilder.create("D2D").withAllInstant("1000000000000000000000").token;
-export const BARTU_DEAL = DealDataBuilder
-  .create()
-  .withProposalData({title: "[1] Vesting: No"})
-  .withPrimaryDaoData({name: "DAI", "tokens": [daiToken_1000]})
-  .withPartnerDaoData({name: "PRIME, D2D", tokens: [primeToken_1000, d2dToken_1000]})
-  .deal;
+/**
+ * Primary DAO Tokens: 1 - DAI
+ * Partner DAO Tokens: 1 - PRIME ; 2 - D2D
+ *
+ * |     | Pri Tokens (Amount) | Part Tokens (Amount) | Instant | Vesting amount | Vested For | Cliff Of |
+ * | --- | ------------------- | -------------------- | ------- | -------------- | ---------- | -------- |
+ * | 1   | 1 (1k)              | 2 (1k; 1k)           | 100%    | 0              | 0          | 0        |
+ * | 2   | 1 (1k)              | 2 (1k; 1k)           | 100%    | 0              | 1d         | 0.5d     |
+ * | 3   | 1 (1k)              | 1 (1k)               | 100%    | 0              | 0          | 0        |
+ * | 4   | 1 (1k)              | 1 (1k)               | 50%     | 50%            | 0          | 0        |
+ */
+
+type TokenAndAmount = [AvailableTokenNames, number]
+type FundingDealsPermutations = [number, TokenAndAmount[], TokenAndAmount[], number, number, number, number]
+const fundingDealsPermutations: FundingDealsPermutations[] = [
+  //[Id  , [[Pri ]]       , [[Part ]]                     , Instant (%) , Vesting (%) , Vested For (days) , Cliff Of (days) ]
+  [1     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 0                 , 0 ] ,
+  [2     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 1                 , 0.5 ] ,
+  [3     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 0                 , 0 ] ,
+  [4     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 0.5         , 50          , 0                 , 0 ] ,
+];
+
+function createTestDealsForFunding(fundingDealsPermutations: FundingDealsPermutations[]) {
+  const deals = fundingDealsPermutations.map(permutation => {
+    const [id, rawPrimaryDaoTokens, rawPartnerDaoTokens, instantAmount, vestingAmount, vestedFor, cliffOf] = permutation;
+
+    // 1. Init Deal builder
+    const BARTU_DEAL_BUILDER = DealDataBuilder.create();
+
+    // 2. Proposal title
+    const finalTitle = `[${id}] Isnt:${instantAmount} - VFor:${vestedFor} - COf:${cliffOf}`;
+    BARTU_DEAL_BUILDER.withProposalData({title: finalTitle});
+
+    // 3. Primary DAO Tokens
+    const primaryDaoTokens = rawPrimaryDaoTokens.map(([tokenName, tokenAmount]) => {
+      const { token } = TokenBuilder.create(tokenName);
+      const amountNumber = (tokenAmount * token.decimals);
+      token.amount = amountNumber.toString();
+      token.instantTransferAmount = (amountNumber * instantAmount).toString();
+      token.vestedTransferAmount = (amountNumber * vestingAmount).toString();
+      token.vestedFor = vestedFor;
+      token.cliffOf = cliffOf;
+      return token;
+    });
+    const primaryDaoName = primaryDaoTokens.map(token => token.symbol).join(", ");
+    BARTU_DEAL_BUILDER
+      .withPrimaryDaoData({name: primaryDaoName, tokens: primaryDaoTokens});
+
+    // 4. Partner DAO Tokens
+    const partnerDaoTokens = rawPartnerDaoTokens.map(([tokenName, tokenAmount]) => {
+      const { token } = TokenBuilder.create(tokenName);
+      token.amount = (tokenAmount * token.decimals).toString();
+      return token;
+    });
+    const partnerDaoName = partnerDaoTokens.map(token => token.symbol).join(", ");
+    BARTU_DEAL_BUILDER
+      .withPartnerDaoData({name: partnerDaoName, tokens: partnerDaoTokens});
+
+    return BARTU_DEAL_BUILDER.deal;
+  });
+
+  return deals;
+}
+
+const deals = createTestDealsForFunding(fundingDealsPermutations);
+/* prettier-ignore */ console.log("TCL ~ file: dealFixtures.ts ~ line 242 ~ deals", deals);

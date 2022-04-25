@@ -52,7 +52,7 @@ const WETH_TOKEN = {
   vestedTransferAmount: "0",
 };
 
-type AvailableTokenNames = "DAI" | "PRIME" | "D2D" | "WETH"
+export type AvailableTokenNames = "DAI" | "PRIME" | "D2D" | "WETH"
 
 const tokenMap = {
   /** 0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa */
