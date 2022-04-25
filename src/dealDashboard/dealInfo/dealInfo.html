@@ -56,11 +56,11 @@
       <div class="panel-content">
         <p class="representative bodySmallText" repeat.for="address of deal.primaryDaoRepresentatives">
           <span class="representative-dao">${deal.primaryDao.name}</span>
-          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
         </p>
         <p class="representative bodySmallText" repeat.for="address of deal.partnerDaoRepresentatives">
           <span class="representative-dao">${deal.partnerDao.name}</span>
-          <etherscanlink address.bind="address" text="${address | smallHexString}" hide-clipboard-button></etherscanlink>
+          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
         </p>
       </div>
     </div>
