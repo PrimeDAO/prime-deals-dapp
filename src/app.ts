@@ -74,13 +74,6 @@ export class App {
       this.handleOnOff(true);
     });
 
-    this.eventAggregator.subscribe("firebase.signature", async (onOff: boolean) => {
-      const dealsLoadingMessage = "Thank you for your patience while we initialize for a few moments.";
-      const signatureMessage = "Check your wallet provider to ensure it is not waiting for your signature.";
-      this.modalMessage = `${dealsLoadingMessage} ${signatureMessage}`;
-      this.handleOnOff(onOff);
-    });
-
     this.eventAggregator.subscribe("transaction.confirmed", async () => {
       this.handleOnOff(false);
     });
