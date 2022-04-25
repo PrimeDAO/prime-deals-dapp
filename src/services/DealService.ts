@@ -148,7 +148,7 @@ export class DealService {
     return this.loadDeals();
   }
 
-  private async loadDeals(): Promise<void> {
+  public async loadDeals(): Promise<void> {
     // compute the message here - are we going to ask for the signature??
     // add that method (to figure out if we are going to request signature) to dataSourceDeals
     this.eventAggregator.publish("deals.loading", true);

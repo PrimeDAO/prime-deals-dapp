@@ -1,11 +1,10 @@
 import { FirebaseService } from "services/FirebaseService";
-import { autoinject } from "aurelia-framework";
-import { firebaseAuth } from "./FirebaseService";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { FirestoreService } from "./FirestoreService";
 import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
@@ -19,6 +18,7 @@ export class FirestoreDealsService<
     private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
     private consoleLogService: ConsoleLogService,
     private firebaseService: FirebaseService,
+    private ethereumService: EthereumService,
   ) {}
 
   public initialize(): void {
@@ -113,15 +113,24 @@ export class FirestoreDealsService<
   }
 
   /**
-   * check if provided accountAddress is currently authenticated user
+   * check if provided accountAddress is currently authenticated to Firebase
    * @param accountAddress string
    * @returns boolean
    */
-  private isUserAuthenticated(accountAddress: string) {
-    if (!firebaseAuth.currentUser) {
-      return;
+  public isUserAuthenticated(accountAddress = this.ethereumService.defaultAccountAddress): boolean {
+    if (!this.firebaseService.currentFirebaseUserAddress || !accountAddress) {
+      return false;
     }
 
-    return accountAddress.toLowerCase() === firebaseAuth.currentUser.uid.toLowerCase();
+    return accountAddress.toLowerCase() === this.firebaseService.currentFirebaseUserAddress.toLowerCase();
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "firebaseService.currentFirebaseUserAddress")
+  public get isUserAuthenticatedWithConnectedWallet(): boolean {
+    if (!this.firebaseService.currentFirebaseUserAddress || !this.ethereumService.defaultAccountAddress) {
+      return false;
+    }
+
+    return this.ethereumService.defaultAccountAddress.toLowerCase() === this.firebaseService.currentFirebaseUserAddress.toLowerCase();
   }
 }

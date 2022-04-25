@@ -463,19 +463,19 @@ export class DealTokenSwap implements IDeal {
     ];
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead")
+  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
   public get isUserRepresentativeOrLead(): boolean {
-    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
+    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address")
+  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
   public get isUserProposalLead(): boolean {
-    return this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress;
+    return (this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "representatives")
+  @computedFrom("ethereumService.defaultAccountAddress", "representatives", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
   public get isRepresentativeUser(): boolean {
-    return this.representatives.has(this.ethereumService.defaultAccountAddress);
+    return this.representatives.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
   }
 
   @computedFrom("primaryDaoRepresentatives", "partnerDaoRepresentatives")

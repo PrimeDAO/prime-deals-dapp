@@ -50,11 +50,23 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
 @autoinject
 export class FirebaseService {
 
+  public currentFirebaseUserAddress: string;
+
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
     private alertService: AlertService,
   ) {
+  }
+
+  public initialize() {
+    firebaseAuth.onAuthStateChanged(user => {
+      if (user) {
+        this.currentFirebaseUserAddress = user.uid;
+      } else {
+        this.currentFirebaseUserAddress = null;
+      }
+    });
   }
 
   /**
