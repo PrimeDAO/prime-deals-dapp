@@ -75,7 +75,7 @@ const TWITTER_SOCIAL_MEDIA_DATA = {
 };
 
 const PRIMARY_DAO_DATA = {
-  treasury_address: E2E_ADDRESSES.PrimaryTreasury,
+  treasury_address: E2E_ADDRESSES.ProposalLead,
   logoURI: "https://picsum.photos/seed/picsum/400/400",
   social_medias: [TWITTER_SOCIAL_MEDIA_DATA],
   name: `${randomId}_PrimeDAO`,
