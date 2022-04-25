@@ -185,13 +185,16 @@ PRIVATE_PARTNERED_DEAL.isPrivate = true;
  */
 
 type TokenAndAmount = [AvailableTokenNames, number]
-type FundingDealsPermutations = [number, TokenAndAmount[], TokenAndAmount[], number, number, number, number]
+type Percentage = number;
+type Days = number;
+type FundingDealsPermutations = [number, TokenAndAmount[], TokenAndAmount[], Percentage, Percentage, Days, Days]
+
 const fundingDealsPermutations: FundingDealsPermutations[] = [
-  //[Id  , [[Pri ]]       , [[Part ]]                     , Instant (%) , Vesting (%) , Vested For (days) , Cliff Of (days) ]
-  [1     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 0                 , 0 ] ,
-  [2     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 1                 , 0.5 ] ,
-  [3     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 1           , 0           , 0                 , 0 ] ,
-  [4     , [["DAI",1000]] , [["PRIME",1000],["D2D",1000]] , 0.5         , 50          , 0                 , 0 ] ,
+  //[Id, [[Pri ]]      , [[Part ]]                    , Inst, Vest, VFor, COf ]
+  [1   , [["DAI",1000]], [["PRIME",1000],["D2D",1000]], 1   , 0   , 0   , 0 ] ,
+  [2   , [["DAI",1000]], [["PRIME",1000],["D2D",1000]], 1   , 0   , 1   , 0.5 ] ,
+  [3   , [["DAI",1000]], [["PRIME",1000],["D2D",1000]], 1   , 0   , 0   , 0 ] ,
+  [4   , [["DAI",1000]], [["PRIME",1000],["D2D",1000]], 0.5 , 50  , 0   , 0 ] ,
 ];
 
 function createTestDealsForFunding(fundingDealsPermutations: FundingDealsPermutations[]) {
