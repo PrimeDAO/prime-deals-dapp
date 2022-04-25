@@ -1,4 +1,5 @@
 import { IDealRegistrationTokenSwap, IRepresentative } from "../../src/entities/DealRegistrationTokenSwap";
+import { TokenBuilder } from "./bulders/TokenBuilder";
 
 function getRandomId (){
   /**
@@ -166,3 +167,16 @@ export const PRIVATE_PARTNERED_DEAL = DealDataBuilder
   .withPartnerDaoData()
   .deal;
 PRIVATE_PARTNERED_DEAL.isPrivate = true;
+
+// [Pri:1 DAI]-[Par:2 Prime, D2D]-[Vesting:No]    – http://localhost:3340/deal/feYLYPCNiK67G7DrfC8XzB
+
+/** Amount: 1000 (18 decimals) */
+const daiToken_1000 = TokenBuilder.create("DAI").withAllInstant("1000000000000000000000").token;
+const primeToken_1000 = TokenBuilder.create("PRIME").withAllInstant("1000000000000000000000").token;
+const d2dToken_1000 = TokenBuilder.create("D2D").withAllInstant("1000000000000000000000").token;
+export const BARTU_DEAL = DealDataBuilder
+  .create()
+  .withProposalData({title: "[1] Vesting: No"})
+  .withPrimaryDaoData({name: "DAI", "tokens": [daiToken_1000]})
+  .withPartnerDaoData({name: "PRIME, D2D", tokens: [primeToken_1000, d2dToken_1000]})
+  .deal;
