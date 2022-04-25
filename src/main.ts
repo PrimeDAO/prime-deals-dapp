@@ -17,7 +17,6 @@ import { TokenService } from "services/TokenService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
-import { FirebaseService } from "services/FirebaseService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
@@ -54,13 +53,6 @@ export function configure(aurelia: Aurelia): void {
     try {
 
       aurelia.container.registerTransient(DealTokenSwap);
-
-      /**
-       * must do before ethereum service, to capture network connections
-       * and in general to be the first to do so.
-       */
-      const firebaseService = aurelia.container.get(FirebaseService);
-      firebaseService.initialize();
 
       if ((window as any).Cypress) {
         /**

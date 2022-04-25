@@ -10,6 +10,7 @@ import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
+import { AlertService, IAlertModel } from "services/AlertService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -49,18 +50,11 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
 @autoinject
 export class FirebaseService {
 
-  public authenticationIsSynced = true;
-
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
+    private alertService: AlertService,
   ) {
-  }
-
-  public initialize(): void {
-    this.eventAggregator.subscribe("Network.Changed.Account", (address: Address) => {
-      this.syncFirebaseAuthentication(address);
-    });
   }
 
   /**
@@ -68,16 +62,15 @@ export class FirebaseService {
    * Signs out from the Firebase when wallet is disconnected
    */
   public syncFirebaseAuthentication(address?: Address) : Promise<boolean> {
-    this.authenticationIsSynced = false;
     // Checks if address is a valid address (if a wallet was disconnected it will be undefined)
     if (Utils.isAddress(address)) {
       try {
-        return this.signInToFirebase(address).then(() => this.authenticationIsSynced = true);
+        return this.signInToFirebase(address).then(() => true).catch(() => false);
       } catch (error) {
         this.eventAggregator.publish("handleException", new EventConfigException("An error occurred signing into the database", error));
       }
     } else {
-      return signOut(firebaseAuth).then(() => this.authenticationIsSynced = true);
+      return signOut(firebaseAuth).then(() => true);
     }
   }
 
@@ -140,17 +133,10 @@ export class FirebaseService {
 
     const messageToSign = await this.getMessageToSign(address);
 
-    this.eventAggregator.publish("firebase.signature", true);
+    const signature = await this.requestSignature(messageToSign);
 
-    let signature: string;
-    try {
-      signature = await this.ethereumService.getDefaultSigner().signMessage(messageToSign);
-    } catch (error) {
-      this.ethereumService.disconnect({ code: 0, message: "User requested" });
-      this.eventAggregator.publish("handleFailure", "Signature was rejected. Authentication to Prime Deals failed");
-      return;
-    } finally {
-      this.eventAggregator.publish("firebase.signature", false);
+    if (!signature) {
+      throw new Error();
     }
 
     const token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
@@ -162,5 +148,25 @@ export class FirebaseService {
 
     // Signs in to Firebase with a given custom token
     return this.signInWithCustomToken(token);
+  }
+
+  private async requestSignature(messageToSign: string): Promise<string> {
+    let signature: string;
+    try {
+      // Wait up to 30 seconds
+      signature = await Promise.race([
+        this.ethereumService.getDefaultSigner().signMessage(messageToSign),
+        Utils.timeout(30000),
+      ]);
+      this.eventAggregator.publish("handleSuccess", "Message was successfully signed");
+    } catch (error) {
+      const modal: IAlertModel = {
+        header: "Authentication failure",
+        message: "<p>You didn't sign authentication message. You will only see public deals and you want be able to edit your deals.</p>",
+      };
+      this.alertService.showAlert(modal);
+    }
+
+    return signature;
   }
 }

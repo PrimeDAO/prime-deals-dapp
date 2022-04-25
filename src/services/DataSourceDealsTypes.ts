@@ -36,7 +36,7 @@ export abstract class IDataSourceDeals {
     throw new Error("Method not implemented.");
   }
 
-  getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<Array<IDealTokenSwapDocument>>> {
+  syncAuthentication(accountAddress: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 
