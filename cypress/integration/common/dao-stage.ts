@@ -21,38 +21,30 @@ Then("I can add link to DAO avatar", () => {
   });
 });
 
-Then("I can add up to 5 social media", () => {
+Then("I can add up to {int} social media", (amount: number) => {
   cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
     expect($socialMedias).to.have.length(1);
   });
-  cy.get("[data-test=\"add-social-media\"]").click();
-  cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
-    expect($socialMedias).to.have.length(2);
-  });
-  cy.get("[data-test=\"add-social-media\"]").click();
-  cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
-    expect($socialMedias).to.have.length(3);
-  });
-  cy.get("[data-test=\"add-social-media\"]").click();
-  cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
-    expect($socialMedias).to.have.length(4);
-  });
-  cy.get("[data-test=\"add-social-media\"]").click();
-  cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
-    expect($socialMedias).to.have.length(5);
-  });
+
+  for (let i = 1; i < amount; i++) {
+    cy.get("[data-test=\"add-social-media\"]").click();
+    cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
+      expect($socialMedias).to.have.length(i + 1);
+    });
+  }
+
   cy.get("[data-test=\"add-social-media\"]").should("not.exist");
 });
 
 Then("I can remove all social media", () => {
+  const amount = 10;
   cy.get("[data-test=\"dao-social-media-item\"]").should(($socialMedias) => {
-    expect($socialMedias).to.have.length(5);
+    expect($socialMedias).to.have.length(amount);
   });
-  cy.get("[data-test=\"remove-social-media\"]").last().click();
-  cy.get("[data-test=\"remove-social-media\"]").last().click();
-  cy.get("[data-test=\"remove-social-media\"]").last().click();
-  cy.get("[data-test=\"remove-social-media\"]").last().click();
-  cy.get("[data-test=\"remove-social-media\"]").last().click();
+
+  for (let i = 1; i <= amount; i++) {
+    cy.get("[data-test=\"remove-social-media\"]").last().click();
+  }
   cy.get("[data-test=\"dao-social-media-item\"]").should("not.exist");
 });
 
