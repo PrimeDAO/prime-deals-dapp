@@ -22,7 +22,7 @@ export class FirestoreDealsService<
   ) {}
 
   public initialize(): void {
-    throw new Error("Method not implemented.");
+    this.firebaseService.initialize();
   }
 
   public async syncAuthentication(accountAddress: string): Promise<boolean> {
@@ -34,7 +34,7 @@ export class FirestoreDealsService<
 
     // If the user is authenticated load all deals they can see.
     // Otherwise load all public deals
-    if (accountAddress && this.isUserAuthenticated(accountAddress)) {
+    if (accountAddress && this.isUserAuthenticatedWithAddress(accountAddress)) {
       this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
       try {
         deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
@@ -49,7 +49,7 @@ export class FirestoreDealsService<
   }
 
   public createDeal<TDealDocument, TRegistrationData>(accountAddress: string, registration: TRegistrationData): Promise<TDealDocument> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -57,7 +57,7 @@ export class FirestoreDealsService<
   }
 
   public updateRegistration<TRegistrationData>(dealId: string, accountAddress: string, registration: TRegistrationData): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -65,7 +65,7 @@ export class FirestoreDealsService<
   }
 
   public updateVote(dealId: string, accountAddress: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", yes: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -77,7 +77,7 @@ export class FirestoreDealsService<
   }
 
   public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussion: any): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -85,7 +85,7 @@ export class FirestoreDealsService<
   }
 
   public updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -97,7 +97,7 @@ export class FirestoreDealsService<
   }
 
   public updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -117,7 +117,7 @@ export class FirestoreDealsService<
    * @param accountAddress string
    * @returns boolean
    */
-  public isUserAuthenticated(accountAddress = this.ethereumService.defaultAccountAddress): boolean {
+  public isUserAuthenticatedWithAddress(accountAddress: string): boolean {
     if (!this.firebaseService.currentFirebaseUserAddress || !accountAddress) {
       return false;
     }
@@ -126,7 +126,7 @@ export class FirestoreDealsService<
   }
 
   @computedFrom("ethereumService.defaultAccountAddress", "firebaseService.currentFirebaseUserAddress")
-  public get isUserAuthenticatedWithConnectedWallet(): boolean {
+  public get isUserAuthenticated(): boolean {
     if (!this.firebaseService.currentFirebaseUserAddress || !this.ethereumService.defaultAccountAddress) {
       return false;
     }

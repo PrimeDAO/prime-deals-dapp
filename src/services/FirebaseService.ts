@@ -60,6 +60,7 @@ export class FirebaseService {
   }
 
   public initialize() {
+    this.currentFirebaseUserAddress = firebaseAuth?.currentUser?.uid;
     firebaseAuth.onAuthStateChanged(user => {
       if (user) {
         this.currentFirebaseUserAddress = user.uid;
@@ -135,7 +136,7 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
-    if (firebaseAuth.currentUser && firebaseAuth.currentUser.uid === address) {
+    if (this.currentFirebaseUserAddress === address) {
       return;
     }
 

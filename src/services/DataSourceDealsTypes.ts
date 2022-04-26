@@ -46,11 +46,11 @@ export abstract class IDataSourceDeals {
   /**
    * Is user authenticated to the data source
    */
-  isUserAuthenticated(accountAddress?: string): boolean {
+  isUserAuthenticatedWithAddress(accountAddress: string): boolean {
     throw new Error("Method not implemented.");
   }
 
-  isUserAuthenticatedWithConnectedWallet: boolean;
+  isUserAuthenticated: boolean;
 
   /**
    * Returns Observable of all deals, and emits when any of them update

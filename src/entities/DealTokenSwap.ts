@@ -463,19 +463,19 @@ export class DealTokenSwap implements IDeal {
     ];
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
+  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead", "dataSourceDeals.isUserAuthenticated")
   public get isUserRepresentativeOrLead(): boolean {
-    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
+    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticated;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
+  @computedFrom("ethereumService.defaultAccountAddress", "registrationData.proposalLead.address", "dataSourceDeals.isUserAuthenticated")
   public get isUserProposalLead(): boolean {
-    return (this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
+    return (this.registrationData.proposalLead?.address === this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticated;
   }
 
-  @computedFrom("ethereumService.defaultAccountAddress", "representatives", "dataSourceDeals.isUserAuthenticatedWithConnectedWallet")
+  @computedFrom("ethereumService.defaultAccountAddress", "representatives", "dataSourceDeals.isUserAuthenticated")
   public get isRepresentativeUser(): boolean {
-    return this.representatives.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticatedWithConnectedWallet;
+    return this.representatives.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticated;
   }
 
   @computedFrom("primaryDaoRepresentatives", "partnerDaoRepresentatives")

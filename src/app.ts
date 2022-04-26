@@ -16,7 +16,6 @@ import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-mod
 /* eslint-disable linebreak-style */
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
-import { FirebaseService } from "services/FirebaseService";
 
 export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
 
@@ -30,7 +29,6 @@ export class App {
     private alertService: AlertService,
     private storageService: BrowserStorageService,
     private dealService: DealService,
-    private firebaseService: FirebaseService,
   ) { }
 
   router: Router;
@@ -128,7 +126,6 @@ export class App {
      * do this after we've gotten an account, if there is one
      */
     this.dealService.initialize();
-    this.firebaseService.initialize();
   }
 
   private handleOnOff(onOff: boolean): void {

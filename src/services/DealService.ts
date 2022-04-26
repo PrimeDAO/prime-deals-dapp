@@ -124,6 +124,7 @@ export class DealService {
    * when they handle a new account.
    */
   public async initialize(): Promise<void> {
+    this.dataSourceDeals.initialize();
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       if (this.initializing) {
         /**
