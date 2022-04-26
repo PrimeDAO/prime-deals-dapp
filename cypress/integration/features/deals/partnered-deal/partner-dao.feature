@@ -15,7 +15,7 @@ Feature: Create Partnered Deal Partner DAO stage
   #   Then I can add link to DAO avatar
 
   # Scenario: Add and remove social media fields in Partner DAO stage
-  #   Then I can add up to 5 social media
+  #   Then I can add up to 10 social media
   #   Then I can remove all social media
 
   # Scenario: Try to proceed from Partner DAO stage after filling the required DAO details fields
