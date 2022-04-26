@@ -80,6 +80,8 @@ $hover-transition-speed-slow: 0.4s;
           padding: 20px 24px 20px 24px;
           .contracts {
             p {
+              font-family: Inter;
+              font-weight: 400;
               font-size: 14px;
               color: $Neutral02;
               line-height: 17px;
@@ -97,6 +99,7 @@ $hover-transition-speed-slow: 0.4s;
           }
           .links {
             a {
+              font-family: Inter;
               font-size: 14px;
               font-weight: 400;
               color: $Neutral04;
@@ -136,8 +139,17 @@ $hover-transition-speed-slow: 0.4s;
                       }
                     }
                   }
+                  font-family: Inter;
+                  font-weight: 700;
+                  font-size: 18px;
+                }
+                numeric-input input {
+                  font-family: Inter;
+                  font-weight: 700;
+                  font-size: 18px;
                 }
                 .balance {
+                  font-family: Inter;
                   display: block;
                   margin: 4px 10px 0 0;
                   color: $Neutral02;

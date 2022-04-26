@@ -2,8 +2,7 @@
 @import "src/styles/variables";
 
 .box-header.deposit-grid {
-  padding-bottom: 10px;
-  padding-top: 20px;
+  padding: 20px 0;
   display: grid;
   grid-template-columns: 1fr auto;
 }
