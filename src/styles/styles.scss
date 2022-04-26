@@ -81,7 +81,7 @@ html {
       width: fit-content; // so gradients look right
       white-space: break-word;
 
-      .gradient {
+      &.gradient {
         @include standardTextGradient;
       }
 
