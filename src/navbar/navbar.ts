@@ -1,3 +1,4 @@
+import { jsonDocs } from "./../../test/data/index";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Utils } from "services/utils";
@@ -13,7 +14,7 @@ export class Navbar {
 
   menuOpen = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   private toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -24,9 +25,9 @@ export class Navbar {
     Utils.goto(url, newTab);
   }
 
-  private async resetDeals(){
-    if (process.env.FIREBASE_ENVIRONMENT !== "production"){
-      await (await import("../server-browser-scripts/seed-data")).resetDeals();
+  private async resetDeals() {
+    if (process.env.FIREBASE_ENVIRONMENT !== "production") {
+      await (await import("../server-browser-scripts/seed-data")).resetDeals((jsonDocs as any[]).map(y => y.default));
     }
   }
 

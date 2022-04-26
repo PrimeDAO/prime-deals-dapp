@@ -9,7 +9,7 @@ import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
-import { IDealTokenSwapDocument } from "entities/IDealTypes";
+import { IDealTokenSwapDocument, IDealVotingSummary } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
 import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
@@ -80,12 +80,12 @@ export class DealService {
 
   @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
-    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal );
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal);
   }
 
   @computedFrom("dealsArray.length")
   public get partneredDeals(): Array<any> {
-    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered );
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered);
   }
 
   // public dealsObject: any = {};
@@ -126,8 +126,7 @@ export class DealService {
         /**
          * queue up to handle reentrancy
          */
-        this.taskQueue.queueTask(async () =>
-        {
+        this.taskQueue.queueTask(async () => {
           /**
            * wait until the previous load is done
            */
@@ -142,7 +141,7 @@ export class DealService {
       }
     });
 
-    return this.getDeals().then(() => this.observeDeals() );
+    return this.getDeals().then(() => this.observeDeals());
   }
 
   private async loadDeals(): Promise<void> {
@@ -344,7 +343,7 @@ export class DealService {
   /**
    * Updates only parts of dealDocument that were updated
    */
-  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
+  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument): void {
 
     this.taskQueue.queueMicroTask(() => {
       // ignore updates to modifiedAt property
@@ -366,4 +365,32 @@ export class DealService {
       applyDiff(dealDocument, updatedDocument);
     });
   }
+
+  /**
+  * Initializes the voting summary object with default values
+  *
+  * Used to create an initial voting summary as well as to reset the existing one
+  */
+  public static initializeVotingSummary = (
+    primaryDaoRepresentativesAddresses: string[],
+    partnerDaoRepresentativesAddresses: string[],
+  ): IDealVotingSummary => {
+    return {
+      primaryDAO: {
+        totalSubmittable: primaryDaoRepresentativesAddresses.length,
+        acceptedVotesCount: 0,
+        rejectedVotesCount: 0,
+        votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
+      },
+      partnerDAO: {
+        totalSubmittable: partnerDaoRepresentativesAddresses.length,
+        acceptedVotesCount: 0,
+        rejectedVotesCount: 0,
+        votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
+      },
+      totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
+      totalSubmitted: 0,
+    };
+  };
+
 }

@@ -1,7 +1,10 @@
+import shortUuid from "short-uuid";
+import { DealService } from "services/DealService";
+import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
 import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
-import { jsonDocs } from "../../test/data/index";
 import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
 import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
+import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 
 export const addCollectionAndDocuments = async <T>(
   collectionKey: string,
@@ -37,11 +40,11 @@ export const deleteDocument = (
 export const addDocument = (
   collectionKey: string,
   data: Record<string, unknown>,
+  dealId?: string,
 ) => {
-  const { dealId, ...correctedData } = data;
   return dealId ?
-    setDoc(doc(firebaseDatabase, collectionKey, String(dealId)), correctedData) :
-    addDoc(collection(firebaseDatabase, collectionKey), correctedData);
+    setDoc(doc(firebaseDatabase, collectionKey, String(dealId)), data) :
+    addDoc(collection(firebaseDatabase, collectionKey), data);
 };
 try {
   signInToFirebase(DefaultTestAddressForSignIn);
@@ -49,11 +52,30 @@ try {
   //swallow
 }
 
-export async function resetDeals() {
+type ResetDeal = { dealId: string } & IDealRegistrationTokenSwap
+export async function resetDeals(registrationData: ResetDeal[] = []) {
   await clearCollection("deals-token-swap");
 
-  await Promise.all(jsonDocs.map(y => {
-    addDocument("deals-token-swap", y);
+  await Promise.all(registrationData.map(data => {
+    const primaryDaoRepresentativesAddresses = data.primaryDAO?.representatives?.map(item => item.address) ?? [];
+    const partnerDaoRepresentativesAddresses = data.partnerDAO?.representatives?.map(item => item.address) ?? [];
+    const date = new Date().toISOString();
+    const { dealId, ...registrationData } = data;
+    const existingOrGeneratedDealId = dealId?? shortUuid.generate();
+
+    const dealData: Partial<IDealTokenSwapDocument> = {
+      id: existingOrGeneratedDealId as string,
+      registrationData: registrationData,
+      createdByAddress: "created-by-test-data",
+      createdAt: date,
+      modifiedAt: date,
+      representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+      votingSummary: DealService.initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+      isWithdrawn: false,
+      isRejected: false,
+    };
+
+    addDocument("deals-token-swap", dealData, dealId as string);
   }));
 }
 
