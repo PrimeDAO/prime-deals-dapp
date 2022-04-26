@@ -77,10 +77,6 @@ export class FirestoreDealsService<
   }
 
   public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussion: any): Promise<void> {
-    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
-      return;
-    }
-
     return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussion);
   }
 

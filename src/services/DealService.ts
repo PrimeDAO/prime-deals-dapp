@@ -158,13 +158,13 @@ export class DealService {
   }
 
   private async getDeals(force = false): Promise<void> {
-    await this.dataSourceDeals.syncAuthentication(this.ethereumService.defaultAccountAddress);
-
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
 
     this.initializing = true;
+
+    await this.dataSourceDeals.syncAuthentication(this.ethereumService.defaultAccountAddress);
 
     return this.getDealInfo().then(() => {
       return this.getDealFundedInfo().then(() => {
