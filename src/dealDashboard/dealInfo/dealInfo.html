@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="daoSocialLinks">
+      <div class="daoSocialLinks" if.bind="deal.primaryDao.social_medias.length">
         <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
           <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
         </a>
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="daoSocialLinks" if.bind="deal.partnerDao">
+      <div class="daoSocialLinks" if.bind="deal.partnerDao && deal.partnerDao.social_medias.length">
         <a href.bind="socialMedia.url"
           repeat.for="socialMedia of deal.partnerDao.social_medias"
           target="_blank">
