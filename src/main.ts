@@ -70,6 +70,8 @@ export function configure(aurelia: Aurelia): void {
          */
         const firestoreService = aurelia.container.get(FirestoreService);
         (window as any).Cypress.firestoreService = firestoreService;
+        const dataSourceDeals = aurelia.container.get(FirestoreDealsService);
+        (window as any).Cypress.dataSourceDeals = dataSourceDeals;
         (window as any).Cypress.eventAggregator = aurelia.container.get(EventAggregator);
       }
 
