@@ -73,9 +73,6 @@ html {
       }
     }
 
-    .gradient {
-      @include standardTextGradient;
-    }
 
     .heading {
       font-family: "Aeonik";
@@ -84,6 +81,9 @@ html {
       width: fit-content; // so gradients look right
       white-space: break-word;
 
+      .gradient {
+        @include standardTextGradient;
+      }
 
       &.heading0 {
         font-size: 64px;
