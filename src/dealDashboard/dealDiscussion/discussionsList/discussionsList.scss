@@ -1,11 +1,12 @@
-@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
 
 .discussions-list {
   .table {
     width: 100%;
-    .thead, .tr {
+    .thead, .tbody>.tr {
       display: grid;
       grid-template-columns: 30px 1fr 75px 75px;
+      grid-template-areas: "idx topic replies activity";
       justify-content: space-around;
       gap: $spacing-normal;
     }
@@ -42,7 +43,6 @@
           line-height: 17px;
           color: $Neutral02;
           height: 17px;
-          display: inline-block;
           i {
             display: inline;
             width: 12px;
@@ -53,6 +53,21 @@
           }
         }
       }
+    }
+    .idx {
+      grid-area: idx;
+    }
+    .topic {
+      grid-area: topic;
+    }
+    .replies {
+      grid-area: replies;
+    }
+    .activity {
+      grid-area: activity;
+    }
+    .created-at {
+      grid-area: created;
     }
     .v-centered {
       vertical-align: middle;
@@ -99,5 +114,49 @@
     font-weight: 700;
   }
 
+  .mobile.only {
+    display: none;
+  }
+  .desktop.only {
+    display: inline;
+  }
 }
 
+
+@media screen and (max-width: 745px) {
+  .discussions-list {
+    .table {
+      .thead, .tbody>.tr {
+        grid-template-columns: 30px 1fr auto auto;
+      }
+      .thead {
+        grid-template-areas:
+          "idx topic topic topic";
+      }
+      .tbody {
+        .tr {
+          grid-template-rows: 1fr 30px;
+          grid-template-areas:
+            "idx topic topic topic"
+            ". created replies activity";
+          gap: 0 $spacing-normal * 2;
+
+          .created-at, .replies, .activity {
+            font-size: 14px;
+            font-weight: 400;
+            color: $Neutral02;
+            line-height: 17px;
+            padding: 0;
+            padding-bottom: $spacing-normal;
+          }
+        }
+      }
+    }
+    .mobile.only {
+      display: inline;
+    }
+    .desktop.only {
+      display: none;
+    }
+  }
+}
