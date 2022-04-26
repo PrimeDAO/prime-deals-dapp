@@ -48,3 +48,6 @@ cypress/screenshots
 # Coverage
 coverage
 .nyc_output
+
+# Scripts
+scripts/generate

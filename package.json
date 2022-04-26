@@ -24,6 +24,7 @@
     "test": "au test",
     "e2e": "npx cypress open",
     "e2e-run": "npx cypress run",
+    "generate:funding-deals": "cd scripts; npx tsc --resolveJsonModule --outDir \"./generate\" ./generateDeals.ts; node ./generate/scripts/generateDeals.js",
     "lint": "eslint --ext .ts ./src ./test ./cypress",
     "lint.fix": "npm run lint -- --fix",
     "fetchContracts": "node scripts/fetchContracts.js",
