@@ -11,24 +11,30 @@
       type="primary"
       click.delegate="proceed()"
       data-test="wizard-proceed-button"
-      is-loading.bind="validating"
-    >
+      is-loading.bind="validating">
       Proceed
     </pbutton>
-    <template if.bind="showSubmit" >
+    <template if.bind="showSubmit">
       <pbutton
-        if.bind="connectedAddress"
+        if.bind="dataSourceDeals.isUserAuthenticated"
         type="primary"
         click.delegate="onSubmit()"
         data-test="wizard-submit-button">
         Submit
       </pbutton>
       <pbutton
-        else
+        if.bind="!dataSourceDeals.isUserAuthenticated && !connectedAddress"
         type="primary"
         click.delegate="connectToWallet()"
         data-test="wizard-submit-button">
         Connect to Submit
+      </pbutton>
+      <pbutton
+        if.bind="!dataSourceDeals.isUserAuthenticated && connectedAddress"
+        type="primary"
+        click.delegate="authenticate()"
+        data-test="wizard-submit-button">
+        Authenticate to Submit
       </pbutton>
     </template>
     <pbutton

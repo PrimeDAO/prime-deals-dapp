@@ -117,8 +117,8 @@
       <span class="bodySmallTextBold infoTitle">Time left to execute</span>
       <span class="textRight">
         ${deal.timeLeftToExecute | timespan
-      :
-      "largest2"}
+        :
+        "largest2"}
       </span>
     </div>
 
@@ -127,12 +127,11 @@
     <div class="infoSection" if.bind="deal.isPartnered" ref="privateDeal">
       <div class="bodySmallTextBold infoTitle">Private Deal</div>
       <ptoggle
-        disabled.bind="!deal.isUserProposalLead"
-        ptooltip.bind="deal.isUserProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
+        disabled.bind="!deal.isAuthenticatedProposalLead"
+        ptooltip.bind="deal.isAuthenticatedProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
         value.bind="deal.isPrivate"
         changed.call="changePrivacy(checked)"
-        class="dealPrivacyToggle"
-      ></ptoggle>
+        class="dealPrivacyToggle"></ptoggle>
     </div>
 
   </pcard>
