@@ -9,7 +9,6 @@ export class StatusCard {
   @bindable isPrimary: boolean;
   @bindable isDataLoaded: boolean;
 
-  @computedFrom("isDataLoaded", "deal.isFunding", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
   get chipColor(): string{
     if ((this.deal.isClaiming && this.deal.isFullyClaimed) || this.isDaoFullyClaimed()){
       return "success";
@@ -21,7 +20,6 @@ export class StatusCard {
     }
   }
 
-  @computedFrom("isDataLoaded", "deal.isFailed", "deal.isClaiming", "deal.isFullyClaimed", "deal.isExecuted", "tokenDao.tokens")
   get status(): string{
     if (this.deal.isClaiming && this.deal.isFullyClaimed){
       return "Swap completed";
