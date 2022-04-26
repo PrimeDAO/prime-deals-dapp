@@ -114,22 +114,16 @@
     font-weight: 700;
   }
 
-}
-
-.mobile.only {
-  display: none;
-}
-.desktop.only {
-  display: inline;
-}
-
-@media screen and (max-width: 745px) {
   .mobile.only {
-    display: inline;
-  }
-  .desktop.only {
     display: none;
   }
+  .desktop.only {
+    display: inline;
+  }
+}
+
+
+@media screen and (max-width: 745px) {
   .discussions-list {
     .table {
       .thead, .tbody>.tr {
@@ -157,6 +151,12 @@
           }
         }
       }
+    }
+    .mobile.only {
+      display: inline;
+    }
+    .desktop.only {
+      display: none;
     }
   }
 }
