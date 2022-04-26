@@ -31,7 +31,11 @@
   font-family: Inter;
   font-size: 28px;
   font-weight: 700;
+}
 
+.heading03Gradient {
+  @extend .heading03;
+  @extend .standardTextGradient;
 }
 
 .heading04 {

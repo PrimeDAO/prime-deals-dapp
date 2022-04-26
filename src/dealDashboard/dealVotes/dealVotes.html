@@ -3,11 +3,11 @@
 
   <pcard>
     <div class="content">
-      <h1 class="title heading heading3 gradient">Vote</h1>
+      <h1 class="title heading03Gradient">Vote</h1>
       <p class="bodySmallText">
         ${statusText.voteText}
       </p>
-      <pbutton-group if.bind="deal.isRepresentativeUser">
+      <pbutton-group if.bind="deal.isRepresentativeUser && !deal.isFunding">
         <pbutton
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
@@ -21,6 +21,7 @@
           ${deal.userVote === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
+          if.bind="!deal.isFunding"
           class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
@@ -34,7 +35,7 @@
         </pbutton>
       </pbutton-group>
 
-      <div class="negotiate" if.bind="ethereumService.defaultAccountAddress">
+      <div class="negotiate" if.bind="ethereumService.defaultAccountAddress && !deal.isFunding">
         <pbutton type="tertiary" click.delegate="goToDiscussions()">
           <img src="/static/comment.svg"/>
           Negotiate
@@ -48,7 +49,7 @@
       <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao"></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
-      <div class="orangeColor">${statusText.statusText}</div>
+      <div class="orangeColor dealStatusText">${statusText.statusText}</div>
     </div>
 
     <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.isFunding && !deal.isCancelled">

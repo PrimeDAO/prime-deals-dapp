@@ -16,7 +16,7 @@ Feature: Create Open Proposal Primary DAO stage
 
   Scenario: Add and remove social media fields in Primary DAO stage
     When I add social medias
-    Then I can add up to 5 social media
+    Then I can add up to 10 social media
     Then I can remove all social media
 
   Scenario: Try to proceed from Primary DAO stage after filling the required DAO details fields

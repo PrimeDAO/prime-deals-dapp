@@ -84,7 +84,7 @@ export const daoStageValidationRules = (title: string) =>
     .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
     .ensure<ISocialMedia[]>(dao => dao.social_medias)
     .required()
-    .maxItems(5)
+    .maxItems(10)
     .ensure<{address: string}[]>(dao => dao.representatives)
     .required()
     .minItems(1)
