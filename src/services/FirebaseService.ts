@@ -1,13 +1,15 @@
+import { EthereumService } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, inMemoryPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential } from "firebase/auth";
+import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
+import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -47,16 +49,22 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
 @autoinject
 export class FirebaseService {
 
-  public authenticationIsSynced = true;
+  public currentFirebaseUserAddress: string;
 
   constructor(
     private eventAggregator: EventAggregator,
+    private ethereumService: EthereumService,
   ) {
   }
 
-  public initialize(): void {
-    this.eventAggregator.subscribe("Network.Changed.Account", (address: Address) => {
-      this.syncFirebaseAuthentication(address);
+  public initialize() {
+    this.currentFirebaseUserAddress = firebaseAuth?.currentUser?.uid;
+    firebaseAuth.onAuthStateChanged(user => {
+      if (user) {
+        this.currentFirebaseUserAddress = user.uid;
+      } else {
+        this.currentFirebaseUserAddress = null;
+      }
     });
   }
 
@@ -65,16 +73,20 @@ export class FirebaseService {
    * Signs out from the Firebase when wallet is disconnected
    */
   public syncFirebaseAuthentication(address?: Address) : Promise<boolean> {
-    this.authenticationIsSynced = false;
     // Checks if address is a valid address (if a wallet was disconnected it will be undefined)
     if (Utils.isAddress(address)) {
       try {
-        return this.signInToFirebase(address).then(() => this.authenticationIsSynced = true);
+        return this.signInToFirebase(address)
+          .then(() => true)
+          .catch(() => {
+            this.eventAggregator.publish("handleFailure", "Authentication failed");
+            return false;
+          });
       } catch (error) {
         this.eventAggregator.publish("handleException", new EventConfigException("An error occurred signing into the database", error));
       }
     } else {
-      return signOut(firebaseAuth).then(() => this.authenticationIsSynced = true);
+      return signOut(firebaseAuth).then(() => true);
     }
   }
 
@@ -94,10 +106,23 @@ export class FirebaseService {
   }
 
   /**
-   * Calls Firebase function which creates a token used to sign in to Firebase from the frontend
+   * Calls Firebase function which creates a Timestamp that is going to be a part of the signed message
+   * Later used to verify if user owns account address
    */
-  private async createCustomToken(address: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/createCustomToken`, {address});
+  private async getDateToSign(address: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/getDateToSign`, {address});
+
+    return response.data.authenticationRequestDate;
+  }
+
+  private async getMessageToSign(address: string): Promise<string> {
+    const date = await this.getDateToSign(address);
+
+    return `${FIREBASE_MESSAGE_TO_SIGN} ${date}`;
+  }
+
+  private async verifySignedMessageAndCreateCustomToken(address: string, signature: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, signature});
 
     return response.data.token;
   }
@@ -114,18 +139,47 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    if (this.currentFirebaseUserAddress === address) {
+      return;
+    }
+
     // Signs out from Firebase in case another user was authenticated
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    // Requests a custom Firebase Token used for signing in to Firebase, from our Firebase Function
-    const token = await this.createCustomToken(address);
+    const messageToSign = await this.getMessageToSign(address);
 
-    // Firebase Authentication will be persisted in memory only
-    // that is on browser refresh the Firebase access token will be lost
-    await setPersistence(firebaseAuth, inMemoryPersistence);
+    let signature: string;
+    try {
+      signature = await this.requestSignature(messageToSign);
+      this.eventAggregator.publish("handleInfo", "Message was successfully signed");
+    } catch {
+      this.eventAggregator.publish("database.account.signature.cancelled");
+      throw new Error();
+    }
+
+    let token: string;
+    try {
+      token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
+    } catch (error) {
+      this.eventAggregator.publish("handleFailure", "Signature wasn't verified successfully");
+      throw new Error(error);
+    }
+
+    // Firebase Authentication will be persisted in the browser storage (IndexedDB)
+    // user will be authenticated to Firebase as long as they don't clear the browser storage
+    // (or disconnect their wallet account, or switch to another account which will sign them out)
+    await setPersistence(firebaseAuth, browserLocalPersistence);
 
     // Signs in to Firebase with a given custom token
     return this.signInWithCustomToken(token);
+  }
+
+  private async requestSignature(messageToSign: string): Promise<string> {
+    // Wait up to 30 seconds
+    return await Promise.race([
+      this.ethereumService.getDefaultSigner().signMessage(messageToSign),
+      Utils.timeout(30000),
+    ]);
   }
 }

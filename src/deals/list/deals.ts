@@ -1,3 +1,4 @@
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./deals.scss";
 
 import { autoinject, computedFrom, singleton } from "aurelia-framework";
@@ -33,6 +34,7 @@ export class Deals {
     private eventAggregator: EventAggregator,
     private dateService: DateService,
     private ethereumService: EthereumService,
+    private dataSourceDeals: IDataSourceDeals,
   ) {
   }
   /**

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
-import { ethers, Signer } from "ethers";
+import { ethers } from "ethers";
 import { BaseProvider, Web3Provider } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, Networks } from "./EthereumService";
+import { E2E_ADDRESSES_PRIVATE_KEYS } from "./../../cypress/fixtures/dealFixtures";
 
 @autoinject
 export class EthereumServiceTesting {
@@ -61,8 +62,13 @@ export class EthereumServiceTesting {
     this.eventAggregator.publish("Network.Changed.Disconnect", error);
   }
 
-  public getDefaultSigner(): Signer {
-    return this.walletProvider.getSigner(this.defaultAccountAddress);
+  public getDefaultSigner() {
+    return {
+      signMessage: async (message: string) => {
+        const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
+        return wallet.signMessage(message);
+      },
+    };
   }
 
   /**

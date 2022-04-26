@@ -1,3 +1,4 @@
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDealIdType } from "./../../services/DataSourceDealsTypes";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
@@ -105,6 +106,7 @@ export class WizardManager {
     private ethereumService: EthereumService,
     private router: Router,
     private eventAggregator: EventAggregator,
+    private dataSourceDeals: IDataSourceDeals,
   ) {
   }
 
@@ -283,7 +285,7 @@ export class WizardManager {
     let canAccess = true;
 
     if ((wizardType === WizardType.editOpenProposal) || (wizardType === WizardType.editPartneredDeal)) {
-      if (this.originalRegistrationData.proposalLead.address !== account) {
+      if (this.originalRegistrationData.proposalLead.address !== account || !this.dataSourceDeals.isUserAuthenticatedWithAddress(account)) {
         this.eventAggregator.publish("handleFailure", "Sorry, you are not authorized to modify this deal");
         canAccess = false;
         this.router.navigate("/home");

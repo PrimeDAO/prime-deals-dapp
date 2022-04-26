@@ -2,16 +2,17 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
-import { getAddress } from "ethers/lib/utils";
+import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
-import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
+import { DEALS_TOKEN_SWAP_COLLECTION, FIREBASE_MESSAGE_TO_SIGN } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+const USERS_COLLECTION = "users";
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
@@ -19,41 +20,6 @@ export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 const cors = corsLib({
   origin: true,
 });
-
-/**
- * creates a token that is used to sign in to firebase from the frontend
- */
-export const createCustomToken = functions.https.onRequest(
-  (request, response) =>
-    // Allow cross-origin requests for this function
-    cors(request, response, async () => {
-      if (request.method !== "POST") {
-        return response.sendStatus(403);
-      }
-
-      if (!request.body.address) {
-        return response.sendStatus(400);
-      }
-
-      const address = request.body.address;
-
-      // Fail if provided address is not an ethereum address
-      try {
-        getAddress(address);
-      } catch {
-        return response.sendStatus(500);
-      }
-
-      try {
-        const firebaseToken = await admin.auth().createCustomToken(address);
-
-        return response.status(200).json({ token: firebaseToken });
-      } catch (error){
-        functions.logger.error("createCustomToken error:", error);
-        return response.sendStatus(500);
-      }
-    }),
-);
 
 /**
  * Run every time a document (a deal) in deals-token-swap collection is created
@@ -227,6 +193,131 @@ export const createDeal = functions.https.onRequest(
         return response.status(200).send(deal);// .json(deal);
       } catch (error){
         functions.logger.error("Error while creating a deal:", error);
+        return response.sendStatus(500);
+      }
+    }),
+);
+
+/**
+ * Creates/updates a document in the users collection,
+ * which contains date when the request was made and returns it
+ */
+export const getDateToSign = functions.https.onRequest(
+  (request, response) =>
+  // Allow cross-origin requests for this function
+    cors(request, response, async () => {
+      if (request.method !== "POST") {
+        return response.sendStatus(403);
+      }
+
+      if (!request.body.address) {
+        return response.sendStatus(400);
+      }
+
+      /**
+       * Address coming from the request body
+       */
+      const address: string = request.body.address;
+
+      // Fail if provided address is not an ethereum address
+      try {
+        getAddress(address);
+      } catch {
+        return response.sendStatus(500);
+      }
+
+      try {
+        /**
+         * Current date as a UTC string, later used as a part of message the user is going to sign
+         */
+        const authenticationRequestDate = new Date().toUTCString();
+
+        // Create/update document for the provided address, storing the current time, to be used to create signature
+        await admin
+          .firestore()
+          .collection(USERS_COLLECTION)
+          .doc(address)
+          .set({authenticationRequestDate});
+
+        return response.status(200).json({ authenticationRequestDate });
+      } catch (error) {
+        functions.logger.error(error);
+        return response.sendStatus(500);
+      }
+    }),
+);
+
+/**
+ * Verifies that a message was signed by the provided address.
+ * Therefore it proofs the ownership of the address.
+ */
+export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest(
+  (request, response) =>
+  // Allow cross-origin requests for this function
+    cors(request, response, async () => {
+      if (request.method !== "POST") {
+        return response.sendStatus(403);
+      }
+
+      if (!request.body.address || !request.body.signature) {
+        return response.sendStatus(400);
+      }
+
+      const address: string = request.body.address;
+
+      // Fail if provided address is not an ethereum address
+      try {
+        getAddress(address);
+      } catch {
+        return response.sendStatus(500);
+      }
+
+      const signature: string = request.body.signature;
+
+      try {
+        // Get the document with date when authentication process was started for this address
+        const userDocRef = admin.firestore().collection(USERS_COLLECTION).doc(address);
+        const userDoc = await userDocRef.get();
+
+        if (userDoc.exists) {
+          const authenticationRequestDate = userDoc.data()?.authenticationRequestDate;
+          const messageToSign = `${FIREBASE_MESSAGE_TO_SIGN} ${authenticationRequestDate}`;
+
+          const signerAddress = verifyMessage(
+            messageToSign,
+            signature,
+          );
+
+          // See if that matches the address the user is claiming the signature is from
+          if (signerAddress.toLowerCase() === address.toLowerCase()) {
+            // The signature was verified - reset the date to prevent replay attacks
+            // update user doc
+            await userDocRef.update({
+              authenticationRequestDate: null,
+            });
+
+            try {
+              // Create a custom token for the specified address
+              /**
+               * Firebase Token which is later going to be used to sign in to firebase from the client
+               */
+              const firebaseToken = await admin.auth().createCustomToken(address);
+
+              // Return the token
+              return response.status(200).json({ token: firebaseToken });
+            } catch (error){
+              functions.logger.error("createCustomToken error:", error);
+              return response.sendStatus(500);
+            }
+          } else {
+            // The signature could not be verified
+            return response.sendStatus(401);
+          }
+        } else {
+          return response.sendStatus(500);
+        }
+      } catch (error) {
+        functions.logger.error(error);
         return response.sendStatus(500);
       }
     }),
