@@ -62,7 +62,7 @@
   aside {
     grid-area: aside;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 20px;
 
@@ -71,6 +71,7 @@
     deal-make-an-offer {
       min-width: 335px; // min-width needs to be 335px because the mobile size is min 375px (20px padding side by side)
       flex: 1;
+      flex-grow: 0;
     }
   }
 }
@@ -88,6 +89,16 @@
       "discussion";
     grid-row-gap: 28px;
     grid-column-gap: 0;
+
+
+    aside {
+      flex-direction: row;
+      deal-votes,
+      deal-info,
+      deal-make-an-offer {
+        flex-grow: 1;
+      }
+    }
   }
 }
 

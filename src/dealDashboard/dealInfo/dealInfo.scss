@@ -53,6 +53,12 @@ deal-info {
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
+
+      .tokenLogoAndSymbol{
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
     }
   }
 
@@ -63,6 +69,10 @@ deal-info {
     align-items: center;
     gap: 10px;
     margin: 12px 0;
+
+    &:last-child{
+      margin-bottom: 0;
+    }
 
     .infoTitle {
       font-size: $font-size2;
@@ -83,6 +93,10 @@ deal-info {
         }
       }
     }
+  }
+
+  .dealPrivacyToggle {
+    width: auto;
   }
 
   .panel {
