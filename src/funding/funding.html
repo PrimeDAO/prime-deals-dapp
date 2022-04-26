@@ -46,7 +46,9 @@
                 You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
                 executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
-              <span if.to-view="!showDepositForm && !secondDaoTokensAllDeposited">
+              <span
+                if.to-view="deal.isRepresentativeUser && !showDepositForm && !secondDaoTokensAllDeposited"
+              >
                 ${firstDao.name} is fully funded. ${secondDao.name} is still waiting to be fully
                 funded. Funding and deal execution must be complete within ${deal.timeLeftToExecute
                 | timespan:'largest2'} for the deal to succeed.
