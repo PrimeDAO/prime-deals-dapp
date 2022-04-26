@@ -42,7 +42,7 @@ export class DiscussionsList{
     const discussionsMap = new Map();
 
     Object.entries(this.deal.clauseDiscussions).forEach(async ([id, discussion]) => {
-      if (!discussion) return;
+      if (!discussion || !discussion.replies) return;
 
       if (!discussion?.createdBy?.name) {
         this.discussionsService.loadProfile(discussion.createdBy.address)
