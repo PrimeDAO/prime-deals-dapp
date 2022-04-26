@@ -53,6 +53,12 @@ deal-info {
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
+
+      .tokenLogoAndSymbol{
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
     }
   }
 
