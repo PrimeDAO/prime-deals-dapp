@@ -105,6 +105,13 @@ export class App {
       }
     });
 
+    this.eventAggregator.subscribe("database.account.signature.cancelled", () => {
+      this.alertService.showAlert({
+        header: "Authentication failure",
+        message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",
+      });
+    });
+
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
       const blockDate = this.ethereumService.lastBlock?.blockDate;

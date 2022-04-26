@@ -10,7 +10,6 @@ import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
-import { AlertService, IAlertModel } from "services/AlertService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -55,7 +54,6 @@ export class FirebaseService {
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
-    private alertService: AlertService,
   ) {
   }
 
@@ -78,7 +76,12 @@ export class FirebaseService {
     // Checks if address is a valid address (if a wallet was disconnected it will be undefined)
     if (Utils.isAddress(address)) {
       try {
-        return this.signInToFirebase(address).then(() => true).catch(() => false);
+        return this.signInToFirebase(address)
+          .then(() => true)
+          .catch(() => {
+            this.eventAggregator.publish("handleFailure", "Authentication failed");
+            return false;
+          });
       } catch (error) {
         this.eventAggregator.publish("handleException", new EventConfigException("An error occurred signing into the database", error));
       }
@@ -146,13 +149,22 @@ export class FirebaseService {
 
     const messageToSign = await this.getMessageToSign(address);
 
-    const signature = await this.requestSignature(messageToSign);
-
-    if (!signature) {
+    let signature: string;
+    try {
+      signature = await this.requestSignature(messageToSign);
+      this.eventAggregator.publish("handleInfo", "Message was successfully signed");
+    } catch {
+      this.eventAggregator.publish("database.account.signature.cancelled");
       throw new Error();
     }
 
-    const token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
+    let token: string;
+    try {
+      token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
+    } catch (error) {
+      this.eventAggregator.publish("handleFailure", "Signature wasn't verified successfully");
+      throw new Error(error);
+    }
 
     // Firebase Authentication will be persisted in the browser storage (IndexedDB)
     // user will be authenticated to Firebase as long as they don't clear the browser storage
@@ -164,22 +176,10 @@ export class FirebaseService {
   }
 
   private async requestSignature(messageToSign: string): Promise<string> {
-    let signature: string;
-    try {
-      // Wait up to 30 seconds
-      signature = await Promise.race([
-        this.ethereumService.getDefaultSigner().signMessage(messageToSign),
-        Utils.timeout(30000),
-      ]);
-      this.eventAggregator.publish("handleSuccess", "Message was successfully signed");
-    } catch (error) {
-      const modal: IAlertModel = {
-        header: "Authentication failure",
-        message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",
-      };
-      this.alertService.showAlert(modal);
-    }
-
-    return signature;
+    // Wait up to 30 seconds
+    return await Promise.race([
+      this.ethereumService.getDefaultSigner().signMessage(messageToSign),
+      Utils.timeout(30000),
+    ]);
   }
 }
