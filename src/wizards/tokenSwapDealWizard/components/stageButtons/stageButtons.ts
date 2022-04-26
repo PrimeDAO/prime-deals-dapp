@@ -1,3 +1,5 @@
+import { DealService } from "services/DealService";
+import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
@@ -25,6 +27,8 @@ export class stageButtons {
     private consoleLogService: ConsoleLogService,
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
+    private dataSourceDeals: IDataSourceDeals,
+    private dealService: DealService,
   ) {
   }
 
@@ -55,6 +59,10 @@ export class stageButtons {
 
   connectToWallet() {
     this.ethereumService.ensureConnected();
+  }
+
+  async authenticate() {
+    await this.dealService.loadDeals();
   }
 
   showSubmitButton() {

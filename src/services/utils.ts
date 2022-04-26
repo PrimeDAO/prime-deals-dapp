@@ -8,6 +8,10 @@ export class Utils {
     return new Promise((resolve: (args: any[]) => void): any => setTimeout(resolve, milliseconds));
   }
 
+  public static timeout(milliseconds: number): Promise<any> {
+    return new Promise((resolve, reject) => setTimeout(reject, milliseconds));
+  }
+
   /**
    * Gets a property value from the string reprentation of it. If you pass "token.decimal" as a string, it will return the decimal prop
    * @param object

@@ -36,9 +36,21 @@ export abstract class IDataSourceDeals {
     throw new Error("Method not implemented.");
   }
 
-  getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<Array<IDealTokenSwapDocument>>> {
+  /**
+   * Tries to authenticate provided accountAddress to the data source
+   */
+  syncAuthentication(accountAddress?: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
+
+  /**
+   * Is user authenticated to the data source
+   */
+  isUserAuthenticatedWithAddress(accountAddress: string): boolean {
+    throw new Error("Method not implemented.");
+  }
+
+  isUserAuthenticated: boolean;
 
   /**
    * Returns Observable of all deals, and emits when any of them update

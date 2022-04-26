@@ -124,6 +124,7 @@ export class DealService {
    * when they handle a new account.
    */
   public async initialize(): Promise<void> {
+    this.dataSourceDeals.initialize();
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       if (this.initializing) {
         /**
@@ -145,10 +146,12 @@ export class DealService {
       }
     });
 
-    return this.getDeals().then(() => this.observeDeals() );
+    return this.loadDeals();
   }
 
-  private async loadDeals(): Promise<void> {
+  public async loadDeals(): Promise<void> {
+    // compute the message here - are we going to ask for the signature??
+    // add that method (to figure out if we are going to request signature) to dataSourceDeals
     this.eventAggregator.publish("deals.loading", true);
     await this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
     return this.observeDeals();
@@ -160,6 +163,8 @@ export class DealService {
     }
 
     this.initializing = true;
+
+    await this.dataSourceDeals.syncAuthentication(this.ethereumService.defaultAccountAddress);
 
     return this.getDealInfo().then(() => {
       return this.getDealFundedInfo().then(() => {

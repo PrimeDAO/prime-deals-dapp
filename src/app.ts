@@ -28,7 +28,8 @@ export class App {
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
     private storageService: BrowserStorageService,
-    private dealService: DealService) { }
+    private dealService: DealService,
+  ) { }
 
   router: Router;
   onOff = false;
@@ -102,6 +103,13 @@ export class App {
         this.ethereumService.disconnect({ code: -1, message: "wrong network" });
         this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
       }
+    });
+
+    this.eventAggregator.subscribe("database.account.signature.cancelled", () => {
+      this.alertService.showAlert({
+        header: "Authentication failure",
+        message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",
+      });
     });
 
     this.intervalId = setInterval(async () => {

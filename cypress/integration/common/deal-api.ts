@@ -1,3 +1,4 @@
+import { FirestoreDealsService } from "./../../../src/services/FirestoreDealsService";
 import { IDealTokenSwapDocument } from "../../../src/entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "../../../src/entities/DealRegistrationTokenSwap";
 import { FirestoreService } from "../../../src/services/FirestoreService";
@@ -17,12 +18,20 @@ const defaultDealOptions: IDealOptions = {
 };
 
 export class E2eDealsApi {
-  private static getDealService(): FirestoreService<
+  private static getFirestoreService(): FirestoreService<
   IDealTokenSwapDocument,
   IDealRegistrationTokenSwap
   > {
     // @ts-ignore - Hack to access firestore inside Cypress
     return Cypress.firestoreService;
+  }
+
+  private static getDataSourceDeals(): FirestoreDealsService<
+  IDealTokenSwapDocument,
+  IDealRegistrationTokenSwap
+  > {
+    // @ts-ignore - Hack to access firestore inside Cypress
+    return Cypress.dataSourceDeals;
   }
 
   public static getDeals(
@@ -53,17 +62,18 @@ export class E2eDealsApi {
      * 2. Interact with Firestore
      */
     return cy.then(async () => {
-      const firestoreDealsService = E2eDealsApi.getDealService();
-      await firestoreDealsService.ensureAuthenticationIsSynced();
+      const firestoreService = E2eDealsApi.getFirestoreService();
+      const dataSourceDeals = E2eDealsApi.getDataSourceDeals();
+      await dataSourceDeals.syncAuthentication(address);
 
       let deals: IFirebaseDocument<IDealTokenSwapDocument>[];
 
       if (address === undefined || address === null) {
-        deals = await firestoreDealsService.getAllPublicDeals();
+        deals = await firestoreService.getAllPublicDeals();
       } else if (isLead) {
-        deals = await firestoreDealsService.getProposalLeadDeals(address);
+        deals = await firestoreService.getProposalLeadDeals(address);
       } else {
-        deals = await firestoreDealsService.getAllDealsForTheUser(address);
+        deals = await firestoreService.getAllDealsForTheUser(address);
       }
 
       return deals.map((deal) => deal.data);
@@ -169,8 +179,7 @@ export class E2eDealsApi {
        * 2. Interact with Firestore
        */
       return cy.then(async () => {
-        const firestoreService = E2eDealsApi.getDealService();
-        await firestoreService.ensureAuthenticationIsSynced();
+        const firestoreService = E2eDealsApi.getFirestoreService();
 
         const createdDeal = await firestoreService.createDealTokenSwap(registrationData);
 

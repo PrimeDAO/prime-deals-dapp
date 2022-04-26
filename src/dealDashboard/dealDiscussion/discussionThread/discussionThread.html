@@ -20,7 +20,8 @@
           <span else>
             Created by ${dealDiscussion.createdBy.address | smallHexString}
           </span>
-          at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }</h3>
+          at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }
+        </h3>
       </span>
     </hgroup>
     <div class="sticky-area">
@@ -42,8 +43,7 @@
               data-test="reload-discussions"
               class="reload-discussions"
               type="primary"
-              click.delegate="initialize()"
-            >Reload Discussion</pbutton>
+              click.delegate="initialize()">Reload Discussion</pbutton>
           </div>
         </div>
 

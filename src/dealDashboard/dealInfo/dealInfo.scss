@@ -6,6 +6,7 @@ deal-info {
 
     .title {
       margin-bottom: 24px;
+      font-size: 24px;
     }
 
     color: $Neutral04;
@@ -16,10 +17,23 @@ deal-info {
       background-color: $Border01;
     }
 
+
+    .daoDetailsContainer{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 74px;
+    }
+
+    .daoLogo{
+      width: 32px;
+      height: 32px;
+    }
+
     .daoDetails {
       display: flex;
       flex-direction: row;
-      gap: 6px;
+      gap: 10px;
       align-items: center;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -47,6 +61,9 @@ deal-info {
       }
     }
 
+    .daoLabel{
+      font-size: 14px;
+    }
 
     .tokenDetails {
       display: flex;
