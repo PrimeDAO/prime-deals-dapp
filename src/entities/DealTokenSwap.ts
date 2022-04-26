@@ -465,6 +465,11 @@ export class DealTokenSwap implements IDeal {
 
   @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead", "dataSourceDeals.isUserAuthenticated")
   public get isUserRepresentativeOrLead(): boolean {
+    return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress);
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "representativesAndLead")
+  public get isAuthenticatedRepresentativeOrLead(): boolean {
     return this.representativesAndLead.has(this.ethereumService.defaultAccountAddress) && this.dataSourceDeals.isUserAuthenticated;
   }
 
