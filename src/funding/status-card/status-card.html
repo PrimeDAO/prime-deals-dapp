@@ -16,19 +16,21 @@
         <div>
           <div class="progress-bar-content">
             <div>
-              <formatted-number
-                if.to-view="deal.isFunding"
-                thousands-separated
-                value.to-view="token.fundingDeposited | ethwei:token.decimals"
-              ></formatted-number>
-              <formatted-number
-                if.to-view="deal.isClaiming"
-                thousands-separated
-                value.to-view="getTotalClaimed(token.claimingClaimed, token.claimingInstantTransferAmount, token.claimingFee) | ethwei:token.decimals"
-              ></formatted-number>
+              <span class="bold">
+                <formatted-number
+                  if.to-view="deal.isFunding"
+                  thousands-separated
+                  value.to-view="token.fundingDeposited | ethwei:token.decimals"
+                ></formatted-number>
+                <formatted-number
+                  if.to-view="deal.isClaiming"
+                  thousands-separated
+                  value.to-view="getTotalClaimed(token.claimingClaimed, token.claimingInstantTransferAmount, token.claimingFee) | ethwei:token.decimals"
+                ></formatted-number>
+              </span>
               <strong>${token.symbol}</strong> ${deal.isClaiming ? 'Claimed': 'Deposited'}
             </div>
-            <div>
+            <div class="bold">
               <formatted-number
                 thousands-separated
                 value.to-view="deal.isExecuted ? token.claimingPercentCompleted : token.fundingPercentCompleted"
