@@ -535,8 +535,8 @@ export class DealTokenSwap implements IDeal {
     this.initializing = true;
     await this.loadContracts();
     /**
-     * no, intentionally don't await
-     */
+       * no, intentionally don't await
+       */
     this.hydrate().then(() => {
 
       this.aureliaHelperService.createCollectionWatch(this.primaryDao.tokens, () => {
@@ -566,7 +566,10 @@ export class DealTokenSwap implements IDeal {
           });
         });
       }
-    });
+    })
+      .finally(() => {
+        this.initializing = false;
+      });
   }
 
   private async loadContracts(): Promise<void> {
@@ -577,7 +580,6 @@ export class DealTokenSwap implements IDeal {
     }
     catch (error) {
       this.corrupt = true;
-      this.initializing = false;
       this.consoleLogService.logMessage(`DealTokenSwap: Error initializing deal ${error?.message}`, "error");
     }
   }
@@ -622,8 +624,6 @@ export class DealTokenSwap implements IDeal {
     catch (error) {
       this.corrupt = true;
       this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
-    } finally {
-      this.initializing = false;
     }
   }
 

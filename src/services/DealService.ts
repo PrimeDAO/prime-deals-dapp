@@ -153,11 +153,11 @@ export class DealService {
     // compute the message here - are we going to ask for the signature??
     // add that method (to figure out if we are going to request signature) to dataSourceDeals
     this.eventAggregator.publish("deals.loading", true);
-    await this.getDeals(true).finally(() => this.eventAggregator.publish("deals.loading", false));
+    await this.getDeals().finally(() => this.eventAggregator.publish("deals.loading", false));
     return this.observeDeals();
   }
 
-  private async getDeals(force = false): Promise<void> {
+  private async getDeals(): Promise<void> {
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
@@ -169,19 +169,31 @@ export class DealService {
     return this.getDealInfo().then(() => {
       return this.getDealFundedInfo().then(() => {
         return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
-          if (force || !this.deals?.size) {
-            if (!dealDocs) {
-              throw new Error("Deals are not accessible");
-            }
-            const dealsMap = new Map<Address, DealTokenSwap>();
-
-            // const dealDocs = await this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress);
-
-            for (const dealDoc of dealDocs) {
-              this._createDeal(dealDoc, dealsMap);
-            }
-            this.deals = dealsMap;
+          if (!dealDocs) {
+            throw new Error("Deals are not accessible");
           }
+
+          if (!this.deals) {
+            this.deals = new Map<Address, DealTokenSwap>();
+          }
+
+          /**
+           * add what we don't already have
+           */
+          for (const dealDoc of dealDocs) {
+            if (!this.deals.has(dealDoc.id)) {
+              this._createDeal(dealDoc);
+            }
+          }
+          /**
+           * delete what we shouldn't have
+           */
+          const newDealIds = new Set(dealDocs.map(dealDoc => dealDoc.id));
+          this.deals.forEach((_value, key) => {
+            if (!newDealIds.has(key)) {
+              this.deals.delete(key);
+            }
+          });
         });
       });
     })
@@ -193,55 +205,53 @@ export class DealService {
       .finally(() => this.initializing = false);
   }
 
-  private async getDealInfo(): Promise<Map<string, IExecutedDeal>> {
+  private async getDealInfo(): Promise<void> {
+    if (this.executedDealIds === undefined) {
     // commented-out until we have working contract code for retrieving the metadata
-    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-    const filter = moduleContract.filters.TokenSwapExecuted();
-    const dealIds = new Map<string, IExecutedDeal>();
-    const promises = new Array<Promise<void>>();
+      const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+      const filter = moduleContract.filters.TokenSwapExecuted();
+      const dealIds = new Map<string, IExecutedDeal>();
+      const promises = new Array<Promise<void>>();
 
-    await moduleContract.queryFilter(filter, StartingBlockNumber)
-      .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          const dealId = parseBytes32String(params.metadata);
-          promises.push(event.getBlock()
-            .then((block: IBlockInfoNative) => {
-              dealIds.set(dealId, { executedAt: new Date(block.timestamp * 1000) });
-            }));
-        }});
+      await moduleContract.queryFilter(filter, StartingBlockNumber)
+        .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
+          for (const event of events) {
+            const params = event.args;
+            const dealId = parseBytes32String(params.metadata);
+            promises.push(event.getBlock()
+              .then((block: IBlockInfoNative) => {
+                dealIds.set(dealId, { executedAt: new Date(block.timestamp * 1000) });
+              }));
+          }});
 
-    // no need to await
-    Promise.all(promises);
-
-    // TODO figure out how to gkeep this up-to-date
-    this.executedDealIds = dealIds;
-    return dealIds;
+      return Promise.all(promises).then(() => {
+        this.executedDealIds = dealIds;
+      });
+    }
   }
 
-  private async getDealFundedInfo(): Promise<Map<string, IFundedDeal>> {
-    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-    const filter = moduleContract.filters.TokenSwapCreated();
-    const dealIds = new Map<string, IFundedDeal>();
-    const promises = new Array<Promise<void>>();
+  private async getDealFundedInfo(): Promise<void> {
+    if (this.fundedDealIds === undefined) {
+      const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+      const filter = moduleContract.filters.TokenSwapCreated();
+      const dealIds = new Map<string, IFundedDeal>();
+      const promises = new Array<Promise<void>>();
 
-    await moduleContract.queryFilter(filter, StartingBlockNumber)
-      .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
-        for (const event of events) {
-          const params = event.args;
-          const dealId = parseBytes32String(params.metadata);
-          promises.push(event.getBlock()
-            .then((block: IBlockInfoNative) => {
-              dealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
-            }));
-        }});
+      await moduleContract.queryFilter(filter, StartingBlockNumber)
+        .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+          for (const event of events) {
+            const params = event.args;
+            const dealId = parseBytes32String(params.metadata);
+            promises.push(event.getBlock()
+              .then((block: IBlockInfoNative) => {
+                dealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
+              }));
+          }});
 
-    // no need to await
-    Promise.all(promises);
-
-    // TODO figure out how to gkeep this up-to-date
-    this.fundedDealIds = dealIds;
-    return dealIds;
+      return Promise.all(promises).then(() => {
+        this.fundedDealIds = dealIds;
+      });
+    }
   }
 
   private async observeDeals(): Promise<void> {
@@ -295,13 +305,13 @@ export class DealService {
     const deal = this.container.get(DealTokenSwap);
 
     const executedDeal = this.executedDealIds.get(dealDoc.id);
-    if (executedDeal) { // should only happen for test data
+    if (executedDeal) {
       deal.isExecuted = true;
       deal.executedAt = executedDeal.executedAt;
     }
 
     const fundedDeal = this.fundedDealIds.get(dealDoc.id);
-    if (fundedDeal) { // should only happen for test data
+    if (fundedDeal) {
       deal.fundingStartedAt = fundedDeal.fundedAt;
     }
 
