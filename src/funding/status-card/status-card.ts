@@ -3,6 +3,7 @@ import "./status-card.scss";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { BigNumber } from "ethers";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
+import { DealService } from "services/DealService";
 @containerless
 export class StatusCard {
   @bindable deal: DealTokenSwap;
@@ -42,14 +43,18 @@ export class StatusCard {
     return (this.tokenDao.tokens as ITokenCalculated[]).every(x => {
       const totalAmount = BigNumber.from(x.amount);
       const instantTransferAmount = BigNumber.from(x.instantTransferAmount);
-      const instantTransferAmountAfterFee = instantTransferAmount.sub(instantTransferAmount.mul(3).div(1000));
-      const swapFee = totalAmount.mul(3).div(1000);
+      const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+      const swapFee = DealService.getDealFee(totalAmount);
       return totalAmount.eq(x.claimingClaimed?.add(instantTransferAmountAfterFee)?.add(swapFee) ?? 0);
     });
   }
 
-  private getTotalClaimed(claimingClaimed: ITokenCalculated["claimingClaimed"], instantTransferAmount: ITokenCalculated["instantTransferAmount"]): BigNumber{
-    return claimingClaimed?.add(BigNumber.from(instantTransferAmount));
+  private getTotalClaimed(claimingClaimed: ITokenCalculated["claimingClaimed"], claimingInstantTransferAmount: ITokenCalculated["claimingInstantTransferAmount"], claimingFee: ITokenCalculated["claimingFee"]): BigNumber{
+    let totalClaimed = BigNumber.from(0);
+    if (claimingClaimed && claimingInstantTransferAmount && claimingFee){
+      totalClaimed = claimingClaimed?.add(claimingInstantTransferAmount)?.add(claimingFee);
+    }
+    return totalClaimed;
   }
 
   @computedFrom("isPrimary")

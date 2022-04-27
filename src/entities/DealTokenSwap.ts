@@ -17,6 +17,7 @@ import TransactionsService, { TransactionReceipt } from "services/TransactionsSe
 import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "../services/AureliaHelperService";
+import { DealService } from "services/DealService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -243,8 +244,8 @@ export class DealTokenSwap implements IDeal {
           const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
           const instantTransferAmount = BigNumber.from(daoToken.instantTransferAmount);
           const totalAmount = BigNumber.from(daoToken.amount);
-          const instantTransferAmountAfterFee = instantTransferAmount.sub(instantTransferAmount.mul(3).div(1000));
-          const swapFee = totalAmount.mul(3).div(1000);
+          const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+          const swapFee = DealService.getDealFee(totalAmount);
           return totalClaimed.add(instantTransferAmountAfterFee).add(swapFee).gte(daoToken.amount);
         });
       });
@@ -971,11 +972,10 @@ export class DealTokenSwap implements IDeal {
       } else {
         token.claimingClaimable = BigNumber.from(0);
       }
-      token.claimingFee = totalAmount.mul(3).div(1000);
-      const nonInstantFee = totalAmount.sub(BigNumber.from(token.instantTransferAmount)).mul(3).div(1000);
-      token.claimingInstantTransferAmount = instantTransferAmount.sub(instantTransferAmount.mul(3).div(1000));
-      token.claimingLocked = totalAmount.sub(BigNumber.from(token.instantTransferAmount).add(token.claimingClaimable).add(token.claimingClaimed).add(nonInstantFee));
-      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(nonInstantFee).add(BigNumber.from(token.instantTransferAmount))).dividedBy(token.amount).toNumber() * 100;
+      token.claimingFee = DealService.getDealFee(totalAmount);
+      token.claimingInstantTransferAmount = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+      token.claimingLocked = totalAmount.sub(token.claimingInstantTransferAmount.add(token.claimingClaimable).add(token.claimingClaimed).add(token.claimingFee));
+      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(token.claimingFee).add(token.claimingInstantTransferAmount)).dividedBy(token.amount).toNumber() * 100;
     }
   }
 
