@@ -39,7 +39,13 @@ export class StatusCard {
   private isDaoFullyClaimed() : boolean {
     //return true if all tokens for this dao have been claimed
     if (!this.deal.isExecuted) return false;
-    return (this.tokenDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.claimingClaimed?.add(x.instantTransferAmount) ?? 0));
+    return (this.tokenDao.tokens as ITokenCalculated[]).every(x => {
+      const totalAmount = BigNumber.from(x.amount);
+      const instantTransferAmount = BigNumber.from(x.instantTransferAmount);
+      const instantTransferAmountAfterFee = instantTransferAmount.sub(instantTransferAmount.mul(3).div(1000));
+      const swapFee = totalAmount.mul(3).div(1000);
+      return totalAmount.eq(x.claimingClaimed?.add(instantTransferAmountAfterFee)?.add(swapFee) ?? 0);
+    });
   }
 
   private getTotalClaimed(claimingClaimed: ITokenCalculated["claimingClaimed"], instantTransferAmount: ITokenCalculated["instantTransferAmount"]): BigNumber{
