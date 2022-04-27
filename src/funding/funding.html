@@ -40,12 +40,12 @@
                 given period of time. The representatives can withdraw their funds at any time.
                 Their funds are secured.
               </span>
-              <span if.to-view="showDepositForm">
+              <span if.to-view="!deal.isFailed && showDepositForm">
                 You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
                 executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
               <span
-                if.to-view="deal.isRepresentativeUser && !showDepositForm && !secondDaoTokensAllDeposited"
+                if.to-view="!deal.isFailed && deal.isRepresentativeUser && !showDepositForm && !secondDaoTokensAllDeposited"
               >
                 ${firstDao.name} is fully funded. ${secondDao.name} is still waiting to be fully
                 funded. Funding and deal execution must be complete within ${deal.timeLeftToExecute

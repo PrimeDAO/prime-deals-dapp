@@ -29,10 +29,13 @@ export class StatusCard {
       }
       return "Claiming in progress";
     }
+    if (this.deal.isFailed){
+      return "Target not reached";
+    }
     if ((this.tokenDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.fundingDeposited ?? 0))){
       return "Target reached";
     } else {
-      return this.deal.isFailed ? "Target not reached" : "Funding in progress";
+      return "Funding in progress";
     }
   }
 
