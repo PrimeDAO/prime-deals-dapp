@@ -205,7 +205,7 @@ export class DealService {
       .finally(() => this.initializing = false);
   }
 
-  private async getDealInfo(): Promise<Map<string, IExecutedDeal>> {
+  private async getDealInfo(): Promise<void> {
     if (this.executedDealIds === undefined) {
     // commented-out until we have working contract code for retrieving the metadata
       const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
@@ -224,16 +224,13 @@ export class DealService {
               }));
           }});
 
-      // no need to await
-      Promise.all(promises);
-
-      // TODO figure out how to gkeep this up-to-date
-      this.executedDealIds = dealIds;
+      return Promise.all(promises).then(() => {
+        this.executedDealIds = dealIds;
+      });
     }
-    return this.executedDealIds;
   }
 
-  private async getDealFundedInfo(): Promise<Map<string, IFundedDeal>> {
+  private async getDealFundedInfo(): Promise<void> {
     if (this.fundedDealIds === undefined) {
       const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
       const filter = moduleContract.filters.TokenSwapCreated();
@@ -251,13 +248,10 @@ export class DealService {
               }));
           }});
 
-      // no need to await
-      Promise.all(promises);
-
-      // TODO figure out how to gkeep this up-to-date
-      this.fundedDealIds = dealIds;
+      return Promise.all(promises).then(() => {
+        this.fundedDealIds = dealIds;
+      });
     }
-    return this.fundedDealIds;
   }
 
   private async observeDeals(): Promise<void> {
@@ -311,13 +305,13 @@ export class DealService {
     const deal = this.container.get(DealTokenSwap);
 
     const executedDeal = this.executedDealIds.get(dealDoc.id);
-    if (executedDeal) { // should only happen for test data
+    if (executedDeal) {
       deal.isExecuted = true;
       deal.executedAt = executedDeal.executedAt;
     }
 
     const fundedDeal = this.fundedDealIds.get(dealDoc.id);
-    if (fundedDeal) { // should only happen for test data
+    if (fundedDeal) {
       deal.fundingStartedAt = fundedDeal.fundedAt;
     }
 
