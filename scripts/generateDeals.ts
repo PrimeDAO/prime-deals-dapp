@@ -7,9 +7,9 @@ import * as FundingDealsPermutationsJson from "../cypress/fixtures/fundingDealsP
 type TokenAndAmount = [AvailableTokenNames, number]
 type Percentage = number;
 type Days = number;
-type FundingDealsPermutations = [number, Array<TokenAndAmount>, Array<TokenAndAmount>, Percentage, Percentage, Days, Days]
+export type FundingDealsPermutations = [number, Array<TokenAndAmount>, Array<TokenAndAmount>, Percentage, Percentage, Days, Days]
 
-function convertPermutationsToDealData(fundingDealsPermutations: Array<FundingDealsPermutations>) {
+export function convertPermutationsToDealData(fundingDealsPermutations: Array<FundingDealsPermutations>) {
   const deals = fundingDealsPermutations.map(permutation => {
     const [id, rawPrimaryDaoTokens, rawPartnerDaoTokens, instantAmount, vestingAmount, vestedFor, cliffOf] = permutation;
 
@@ -23,10 +23,9 @@ function convertPermutationsToDealData(fundingDealsPermutations: Array<FundingDe
     // 3. Primary DAO Tokens
     const primaryDaoTokens = rawPrimaryDaoTokens.map(([tokenName, tokenAmount]) => {
       const { token } = TokenBuilder.create(tokenName);
-      const amountNumber = (tokenAmount * token.decimals);
-      token.amount = amountNumber.toString();
-      token.instantTransferAmount = (amountNumber * instantAmount).toString();
-      token.vestedTransferAmount = (amountNumber * vestingAmount).toString();
+      token.amount = `${tokenAmount}${"0".repeat(token.decimals)}`;
+      token.instantTransferAmount = `${tokenAmount * instantAmount}${"0".repeat(token.decimals)}`;
+      token.vestedTransferAmount = `${tokenAmount * vestingAmount}${"0".repeat(token.decimals)}`;
       token.vestedFor = vestedFor;
       token.cliffOf = cliffOf;
       return token;
@@ -38,7 +37,11 @@ function convertPermutationsToDealData(fundingDealsPermutations: Array<FundingDe
     // 4. Partner DAO Tokens
     const partnerDaoTokens = rawPartnerDaoTokens.map(([tokenName, tokenAmount]) => {
       const { token } = TokenBuilder.create(tokenName);
-      token.amount = (tokenAmount * token.decimals).toString();
+      token.amount = `${tokenAmount}${"0".repeat(token.decimals)}`;
+      token.instantTransferAmount = `${tokenAmount * instantAmount}${"0".repeat(token.decimals)}`;
+      token.vestedTransferAmount = `${tokenAmount * vestingAmount}${"0".repeat(token.decimals)}`;
+      token.vestedFor = vestedFor;
+      token.cliffOf = cliffOf;
       return token;
     });
     const partnerDaoName = partnerDaoTokens.map(token => token.symbol).join(", ");
