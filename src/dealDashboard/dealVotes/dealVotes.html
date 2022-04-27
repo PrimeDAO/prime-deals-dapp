@@ -7,7 +7,7 @@
       <p class="bodySmallText">
         ${statusText.voteText}
       </p>
-      <pbutton-group if.bind="deal.isRepresentativeUser && !deal.isFunding">
+      <pbutton-group if.bind="deal.isRepresentativeUser && !deal.isFunding && !deal.isCancelled">
         <pbutton
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
@@ -21,7 +21,7 @@
           ${deal.userVote === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
-          if.bind="!deal.isFunding"
+          if.bind="!deal.isFunding && !deal.isCancelled"
           class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
