@@ -55,9 +55,9 @@ export class App {
       this.handleScrollEvent();
     });
 
-    this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
-      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
-      this.handleOnOff(onOff);
+    this.eventAggregator.subscribe("deals.loading", async (config: {onOff: boolean, message?: string}) => {
+      this.modalMessage = config.message || "Thank you for your patience while we initialize for a few moments...";
+      this.handleOnOff(config.onOff);
     });
 
     this.eventAggregator.subscribe("deal.saving", async (onOff: boolean) => {

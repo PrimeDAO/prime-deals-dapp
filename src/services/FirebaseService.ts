@@ -10,6 +10,7 @@ import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
+import { DateService } from "./DateService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -54,6 +55,7 @@ export class FirebaseService {
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
+    private dateService: DateService,
   ) {
   }
 
@@ -105,24 +107,14 @@ export class FirebaseService {
     );
   }
 
-  /**
-   * Calls Firebase function which creates a Timestamp that is going to be a part of the signed message
-   * Later used to verify if user owns account address
-   */
-  private async getDateToSign(address: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/getDateToSign`, {address});
-
-    return response.data.authenticationRequestDate;
-  }
-
-  private async getMessageToSign(address: string): Promise<string> {
-    const date = await this.getDateToSign(address);
+  private async getMessageToSign(): Promise<string> {
+    const date = this.dateService.translateUtcToLocal(new Date());
 
     return `${FIREBASE_MESSAGE_TO_SIGN} ${date}`;
   }
 
-  private async verifySignedMessageAndCreateCustomToken(address: string, signature: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, signature});
+  private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }
@@ -147,7 +139,7 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    const messageToSign = await this.getMessageToSign(address);
+    const messageToSign = await this.getMessageToSign();
 
     let signature: string;
     try {
@@ -160,7 +152,7 @@ export class FirebaseService {
 
     let token: string;
     try {
-      token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
+      token = await this.verifySignedMessageAndCreateCustomToken(address, messageToSign, signature);
     } catch (error) {
       this.eventAggregator.publish("handleFailure", "Signature wasn't verified successfully");
       throw new Error(error);
