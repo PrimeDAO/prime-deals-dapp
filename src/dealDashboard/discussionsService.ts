@@ -440,14 +440,6 @@ export class DiscussionsService {
       if (message[endpoints[typeInverse]].includes(this.currentWalletAddress)) {
         const inverseVoteResponse = await this.convo.comments[typeInverse](this.currentWalletAddress, token, commentId);
         if (inverseVoteResponse.error) throw inverseVoteResponse.error;
-
-        /**
-         * Seems redundant, but adding this just to make sure.
-         * Reason: The convo space has various returns types for each response.
-         * Change this, when this.convo.comments has a built-in return type.
-         */
-        if (inverseVoteResponse.success) return true;
-        return false;
       }
 
       const actualVoteResponse = (await this.convo.comments[type](this.currentWalletAddress, token, commentId));
