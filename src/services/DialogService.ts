@@ -1,15 +1,14 @@
-import {
-  DialogCloseResult,
-  DialogService as AureliaDialogService,
-  DialogSettings,
-} from "aurelia-dialog";
+import { DialogCloseResult, DialogService as AureliaDialogService, DialogSettings } from "aurelia-dialog";
 import { autoinject } from "aurelia-framework";
+import { ConsoleLogService } from "./ConsoleLogService";
 
 @autoinject
 export class DialogService {
 
   constructor(
-    private dialogService: AureliaDialogService) {
+    private dialogService: AureliaDialogService,
+    private consoleLogService: ConsoleLogService,
+  ) {
   }
 
   public open(
@@ -41,7 +40,10 @@ export class DialogService {
           return result;
         },
         // not sure if this always gets called
-        (error: string) => { return { output: error, wasCancelled: false }; },
+        (error: string) => {
+          this.consoleLogService.logMessage(error, "error");
+          return {output: error, wasCancelled: false};
+        },
       );
   }
 }

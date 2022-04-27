@@ -17,6 +17,7 @@ import TransactionsService, { TransactionReceipt } from "services/TransactionsSe
 import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "../services/AureliaHelperService";
+import { DealService } from "services/DealService";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -86,6 +87,8 @@ export interface ITokenCalculated extends IToken {
   claimingClaimed?: BigNumber,
   claimingLocked?: BigNumber,
   claimingPercentCompleted?: number,
+  claimingFee?: BigNumber,
+  claimingInstantTransferAmount?: BigNumber
 }
 
 @autoinject
@@ -235,16 +238,24 @@ export class DealTokenSwap implements IDeal {
       let isClaimed = true;
       this.daoTokenClaims.forEach((claims, dao) => { //loop through each dao
         if (!isClaimed) return; //immediately returns if it's already false from a previous loop
-        isClaimed = dao.tokens.every(daoToken => {
+        isClaimed = this.getOtherDao(dao).tokens.every(daoToken => {
           const tokenClaims = claims.filter(x => x.token.address === daoToken.address); //filter claims by token
           if (!tokenClaims) return false; //no claimed tokens exist for the given DAO and token
           const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
-          return totalClaimed.add(BigNumber.from(daoToken.instantTransferAmount)).gte(daoToken.amount);
+          const instantTransferAmount = BigNumber.from(daoToken.instantTransferAmount);
+          const totalAmount = BigNumber.from(daoToken.amount);
+          const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+          const swapFee = DealService.getDealFee(totalAmount);
+          return totalClaimed.add(instantTransferAmountAfterFee).add(swapFee).gte(daoToken.amount);
         });
       });
       returnVal = isClaimed;
     }
     return returnVal;
+  }
+  // Return the other dao from the one passed in
+  private getOtherDao(dao: IDAO): IDAO {
+    return dao.treasury_address === this.primaryDao.treasury_address ? this.partnerDao : this.primaryDao;
   }
 
   /**
@@ -459,7 +470,7 @@ export class DealTokenSwap implements IDeal {
     return [
       this.registrationData.proposalLead.address,
       ...this.registrationData.primaryDAO.representatives.map(rep => rep.address),
-      ...this.registrationData.partnerDAO.representatives.map(rep => rep.address),
+      ...this.registrationData.partnerDAO ? this.registrationData.partnerDAO.representatives.map(rep => rep.address) : [],
     ];
   }
 
@@ -950,18 +961,21 @@ export class DealTokenSwap implements IDeal {
   public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
     //calculate claiming properties
     if (this.isExecuted){
+      const totalAmount = BigNumber.from(token.amount);
+      const instantTransferAmount = BigNumber.from(token.instantTransferAmount);
       await this.hydrateDaoClaims();
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
+
+      token.claimingClaimed = this.getClaimedAmount(dao, token.address);
       if (tokenClaimableAmounts.size > 0){
         token.claimingClaimable = tokenClaimableAmounts.get(token.address);
-        token.claimingClaimed = this.getClaimedAmount(dao, token.address);
-        token.claimingLocked = BigNumber.from(token.amount).sub(BigNumber.from(token.instantTransferAmount).add(token.claimingClaimable).add(token.claimingClaimed));
       } else {
         token.claimingClaimable = BigNumber.from(0);
-        token.claimingClaimed = BigNumber.from(0);
-        token.claimingLocked = BigNumber.from(0);
       }
-      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(BigNumber.from(token.instantTransferAmount))).dividedBy(token.amount).toNumber() * 100;
+      token.claimingFee = DealService.getDealFee(totalAmount);
+      token.claimingInstantTransferAmount = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+      token.claimingLocked = totalAmount.sub(token.claimingInstantTransferAmount.add(token.claimingClaimable).add(token.claimingClaimed).add(token.claimingFee));
+      token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(token.claimingFee).add(token.claimingInstantTransferAmount)).dividedBy(token.amount).toNumber() * 100;
     }
   }
 
