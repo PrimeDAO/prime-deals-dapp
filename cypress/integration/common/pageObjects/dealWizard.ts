@@ -155,6 +155,13 @@ export class E2eDealWizard {
     cy.get("[data-test='tokenDetailsView']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
 
+  public static addToken(sectionTitle: string) {
+    E2eDealWizard.inWizardSection(sectionTitle);
+    withinWizardSection().within(() => {
+      cy.contains("pbutton", "Add token").click();
+    });
+  }
+
   static proceed() {
     cy.get("[data-test='wizard-proceed-button']").click();
   }

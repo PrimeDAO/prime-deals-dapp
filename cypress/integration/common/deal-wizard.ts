@@ -85,12 +85,22 @@ Given("I fill out the Partner DAO Stage", () => {
 });
 
 Given("I fill out the Token Details Stage", () => {
-  const primaryToken = E2eDeals.currentDeal.primaryDAO.tokens[0];
-  E2eDealWizard.fillInWholeTokeDetailsSection("Primary DAO Tokens", primaryToken);
+  E2eDeals.currentDeal.primaryDAO.tokens.forEach((token, index) => {
+    if (index > 0) {
+      E2eDealWizard.addToken("Primary DAO Tokens");
+    }
+
+    E2eDealWizard.fillInWholeTokeDetailsSection("Primary DAO Tokens", token);
+  });
 
   if (E2eDeals.currentDeal.partnerDAO) {
-    const partnerToken = E2eDeals.currentDeal.partnerDAO.tokens[0];
-    E2eDealWizard.fillInWholeTokeDetailsSection("Partner DAO Tokens", partnerToken);
+    E2eDeals.currentDeal.partnerDAO.tokens.forEach((token, index) => {
+      if (index > 0) {
+        E2eDealWizard.addToken("Partner DAO Tokens");
+      }
+
+      E2eDealWizard.fillInWholeTokeDetailsSection("Partner DAO Tokens", token);
+    });
   }
 
   const fundingPeriodDays = secondToDays(E2eDeals.currentDeal.fundingPeriod);
@@ -262,6 +272,7 @@ Then("I can proceed to the next step", () => {
     recurse(
       () => cy.url(),
       (url) => {
+        cy.get("[data-test='wizard-proceed-button']").click();
         expect(url).not.to.equal(oldUrl);
       },
       {log: false, timeout: PAGE_LOADING_TIMEOUT},
