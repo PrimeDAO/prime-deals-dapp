@@ -109,7 +109,7 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
       case Networks.Rinkeby:
-        StartingBlockNumber = 10534149;
+        StartingBlockNumber = 10578516;
         break;
       default:
         StartingBlockNumber = 0;
