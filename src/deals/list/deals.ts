@@ -42,7 +42,7 @@ export class Deals {
    */
   @computedFrom("gridDeals")
   public get featuredDeals(): DealTokenSwap[] {
-    return this.gridDeals.slice(0, 10);
+    return this.gridDeals.slice(0, 10).filter((deal: DealTokenSwap) => !deal.isCancelled && !deal.isFailed);
   }
 
   // TODO: make this more efficient with some kind of debouncer or fewer dependencies

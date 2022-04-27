@@ -4,14 +4,13 @@ pcard {
     display: grid;
     grid-template-rows: auto 1fr;
     header {
-      padding: 0px 15px 15px 15px;
-      margin: 10px 0;
+      padding: 20px 15px;
       border-bottom: 1px solid $Border01;
       display: grid;
       grid-template-columns: 1fr auto;
       flex-direction: column;
       align-items: center;
-      .daoName .Dao .name {
+      .daoName .dao .name {
         font-size: 16px;
         font-weight: 400;
         color: $Neutral04;
@@ -35,12 +34,19 @@ pcard {
         img {
           width: 34px;
           height: 34px;
+          border-radius: 34px;
         }
         .progress-bar-content {
+          font-family: Inter;
+          font-size: 14px;
+          line-height: 24px;
           color: $Neutral02;
           display: grid;
           grid-template-columns: 1fr auto;
           flex-direction: column;
+          .bold {
+            font-weight: 700;
+          }
         }
       }
       .token-completed {

@@ -15,6 +15,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import { toBigNumberJs } from "services/BigNumberService";
 import * as applyDiff from "services/ApplyDiffService";
 
 interface ITokenSwapCreatedArgs {
@@ -67,6 +68,10 @@ export class DealService {
   private executedDealIds: Map<string, IExecutedDeal>;
   private fundedDealIds: Map<string, IFundedDeal>;
 
+  public static getDealFee(amount: BigNumber): BigNumber {
+    return BigNumber.from(toBigNumberJs(amount).multipliedBy(.003).toString());
+  }
+
   @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
     return this.deals ? Array.from(this.deals.values())
@@ -109,7 +114,7 @@ export class DealService {
         StartingBlockNumber = 0;
         break;
       case Networks.Rinkeby:
-        StartingBlockNumber = 10534149;
+        StartingBlockNumber = 10578516;
         break;
       default:
         StartingBlockNumber = 0;

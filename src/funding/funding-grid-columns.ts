@@ -43,9 +43,10 @@ export const tokenGridColumns: IGridColumn[] = [
 
 export const claimTokenGridColumns: IGridColumn[] = [
   { field: "token", headerText: "Token", sortable: true, width: ".5fr", template: "<dao-icon-name primary-dao.to-view='row' icon-size='24' use-token-symbol.to-view='true'></dao-icon-name>" },
-  { field: "instantTransferAmount", headerText: "Instant", sortable: true, width: ".5fr", template: "<formatted-number mantissa='2' thousands-separated value.to-view='instantTransferAmount | ethwei:decimals'></formatted-number>" },
+  { field: "claimingInstantTransferAmount", headerText: "Instant", sortable: true, width: ".5fr", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingInstantTransferAmount | ethwei:decimals'></formatted-number>" },
   { field: "claimingClaimed", headerText: "Claimed", sortable: true, width: ".5fr", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingClaimed | ethwei:decimals'></formatted-number>" },
   { field: "claimingClaimable", headerText: "Claimable", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingClaimable | ethwei:decimals'></formatted-number>" },
   { field: "claimingLocked", headerText: "Locked", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingLocked | ethwei:decimals'></formatted-number>" },
+  { field: "claimingFee", headerText: "Fee", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='claimingFee | ethwei:decimals'></formatted-number>" },
   { field: "amount", headerText: "Total", sortable: true, width: ".5fr", align: "right", template: "<formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:decimals'></formatted-number>" },
 ];
