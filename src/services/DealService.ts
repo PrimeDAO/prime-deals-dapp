@@ -15,6 +15,7 @@ import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import { toBigNumberJs } from "services/BigNumberService";
 import * as applyDiff from "services/ApplyDiffService";
 
 interface ITokenSwapCreatedArgs {
@@ -66,6 +67,10 @@ export class DealService {
   public deals: Map<IDealIdType, DealTokenSwap> = new Map<IDealIdType, DealTokenSwap>();
   private executedDealIds: Map<string, IExecutedDeal>;
   private fundedDealIds: Map<string, IFundedDeal>;
+
+  public static getDealFee(amount: BigNumber): BigNumber {
+    return BigNumber.from(toBigNumberJs(amount).multipliedBy(.003).toString());
+  }
 
   @computedFrom("deals.size")
   public get dealsArray(): Array<DealTokenSwap> {
