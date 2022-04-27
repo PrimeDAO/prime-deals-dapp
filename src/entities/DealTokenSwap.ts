@@ -459,7 +459,7 @@ export class DealTokenSwap implements IDeal {
     return [
       this.registrationData.proposalLead.address,
       ...this.registrationData.primaryDAO.representatives.map(rep => rep.address),
-      ...this.registrationData.partnerDAO.representatives.map(rep => rep.address),
+      ...this.registrationData.partnerDAO ? this.registrationData.partnerDAO.representatives.map(rep => rep.address) : [],
     ];
   }
 
