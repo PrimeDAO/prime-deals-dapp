@@ -24,7 +24,6 @@ export function configure(config: FrameworkConfiguration): void {
     PLATFORM.moduleName("./elements/markdown/markdown"),
     PLATFORM.moduleName("./elements/formAddressInput/formAddressInput"),
     PLATFORM.moduleName("../dealDashboard/deal-swap-modal/deal-swap-modal"), //needed globally because it's being passed as a message to the ppopup-modal component
-    PLATFORM.moduleName("../dealDashboard/dealVotes/fundingModal/fundingModal"), //needed globally because it's being passed as a message to the ppopup-modal component
     PLATFORM.moduleName("./value-converters/number"),
     PLATFORM.moduleName("./value-converters/ethwei"),
     PLATFORM.moduleName("./value-converters/date"),
