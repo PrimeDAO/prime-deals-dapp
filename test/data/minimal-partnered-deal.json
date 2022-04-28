@@ -3,9 +3,10 @@
   "dealType": "token-swap",
   "offersPrivate": false,
   "isPrivate": false,
-  "dealId":"yfd16fF0SZ3AiT3QXqj9",
+  "dealId": "yfd16fF0SZ3AiT3QXqj9",
   "keepAdminRights": true,
   "fundingPeriod": 864000,
+  "quorumReached": true,
   "proposal": {
     "summary": "ulzx4yx_summary",
     "description": "ulzx4yx_description",

@@ -3,6 +3,7 @@
   "dealType": "token-swap",
   "offersPrivate": true,
   "dealId":"d6YEOCqSeWzSeYSOrtXN",
+  "quorumReached": true,
   "isPrivate": false,
   "keepAdminRights": true,
   "fundingPeriod": 1814400,
