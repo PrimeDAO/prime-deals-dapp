@@ -2,7 +2,7 @@
 
 deal-info {
   pcard.pcard {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
 
     .title {
       margin-bottom: 24px;
@@ -17,15 +17,14 @@ deal-info {
       background-color: $Border01;
     }
 
-
-    .daoDetailsContainer{
+    .daoDetailsContainer {
       display: flex;
       flex-direction: column;
       justify-content: center;
       height: 74px;
     }
 
-    .daoLogo{
+    .daoLogo {
       width: 32px;
       height: 32px;
     }
@@ -42,9 +41,8 @@ deal-info {
       .daoTitle {
         text-overflow: ellipsis;
         overflow: hidden;
-
+        max-width: 150px;
       }
-
     }
 
     .daoSocialLinks {
@@ -61,7 +59,7 @@ deal-info {
       }
     }
 
-    .daoLabel{
+    .daoLabel {
       font-size: 14px;
     }
 
@@ -71,7 +69,7 @@ deal-info {
       justify-content: flex-end;
       gap: 10px;
 
-      .tokenLogoAndSymbol{
+      .tokenLogoAndSymbol {
         display: flex;
         align-items: center;
         gap: 4px;
@@ -108,7 +106,7 @@ deal-info {
     }
   }
 
-  .dealPrivacyContainer{
+  .dealPrivacyContainer {
     margin-bottom: 0;
   }
 
@@ -145,5 +143,4 @@ deal-info {
       }
     }
   }
-
 }
