@@ -107,6 +107,7 @@
           type="primary"
           full-width
           disabled.bind="isLoading.commenting || !comment.length"
+          is-loading.bind="true"
           loading.bind="isLoading.commenting"
           click.delegate="addComment()">
           ${replyToComment ? "Reply" : "Comment"}

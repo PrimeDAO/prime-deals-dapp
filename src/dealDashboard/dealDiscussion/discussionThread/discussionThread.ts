@@ -18,6 +18,12 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
+export type ILoadingTracker = {
+  discussions: boolean;
+  commenting: boolean;
+  replying: boolean;
+} & Record<string, boolean>
+
 @autoinject
 export class DiscussionThread {
   @bindable clauses: Map<string, IClause>;
@@ -36,7 +42,11 @@ export class DiscussionThread {
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
-  private isLoading: Record<string, boolean> = {};
+  private isLoading: ILoadingTracker = {
+    discussions: false,
+    commenting: false,
+    replying: false,
+  };
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
@@ -341,7 +351,9 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
+    this.isLoading.replying = true;
     const comment = await this.discussionsService.getSingleComment(_id);
+    this.isLoading.replying = false;
 
     /**
      * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
