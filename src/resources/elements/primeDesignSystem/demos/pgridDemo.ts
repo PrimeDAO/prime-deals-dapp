@@ -32,7 +32,7 @@ export class PGridDemo {
     [
       { field: "dao.name", width: ".5fr", sortable: true, headerText: "dao", template: "<dao-icon-name icon-size.bind='24' primary-dao.to-view='dao'></dao-icon-name>" },
       { field: "type", width: ".5fr", sortable: true, template: "<div class='type'><i class='fas fa-arrow-${type.toLowerCase() === \"deposit\" ? \"down success\" : \"up danger\"}'></i> ${type}</div>" },
-      { field: "token.amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount' ptooltip.to-view='token.amount'><img src='${token.logoURI}' /><span>${token.amount} ${token.symbol}</span></div>"},
+      { field: "token.amount", width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount' ptooltip.to-view='token.amount'><img class='roundedLogo' src='${token.logoURI}' /><span>${token.amount} ${token.symbol}</span></div>"},
       { field: "address", width: ".5fr", sortable: true, template: `<address-link address.to-view="address" >
   
   ` },

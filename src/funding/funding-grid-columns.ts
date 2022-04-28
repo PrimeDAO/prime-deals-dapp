@@ -11,7 +11,7 @@ export const depositColumns: IGridColumn[] = [
       if (a.amount < b.amount) return 1;
       if (a.amount > b.amount) return -1;
       return 0;
-    }, width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount'><img src='${token.logoURI}' /><span><formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:token.decimals'></formatted-number>${token.symbol}</span></div>" },
+    }, width: ".5fr", headerText: "amount", sortable: true, template: "<div class='amount'><img class='roundedLogo' src='${token.logoURI}' /><span><formatted-number mantissa='2' thousands-separated value.to-view='amount | ethwei:token.decimals'></formatted-number>${token.symbol}</span></div>" },
   {
     field: "address", width: ".5fr", sortable: true, template: `
       <address-link address.to-view="address" show-arrow-icon.bind="false" link-text.bind="address | smallHexString" >
