@@ -6,18 +6,17 @@
   "dealId": "yfd16fF0SZ3AiT3QXqj9",
   "keepAdminRights": true,
   "fundingPeriod": 864000,
-  "quorumReached": true,
   "proposal": {
     "summary": "ulzx4yx_summary",
     "description": "ulzx4yx_description",
-    "title": "ulzx4yx_Partnered_deal"
+    "title": "Minimal_Partnered_deal"
   },
   "proposalLead": {
     "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     "email": ""
   },
   "primaryDAO": {
-    "treasury_address": "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
+    "treasury_address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     "logoURI": "https://picsum.photos/seed/picsum/400/400",
     "social_medias": [
       {
@@ -28,17 +27,17 @@
     "name": "ulzx4yx_PrimeDAO",
     "tokens": [
       {
-        "symbol": "D2D",
-        "amount": "500000000000",
-        "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
-        "vestedFor": 8640000,
-        "logoURI": "https://assets.coingecko.com/coins/images/21609/thumb/RJD82RrV_400x400.jpg?1639559164",
-        "vestedTransferAmount": "400000000000",
-        "instantTransferAmount": "100000000000",
+        "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
+        "amount": "1000000000000000000000",
+        "cliffOf": 0,
         "decimals": 18,
-        "name": "Prime",
-        "cliffOf": 864000
-      }
+        "instantTransferAmount": "500000000000000000000",
+        "logoURI": "https://primedao.mypinata.cloud/ipfs/QmVChZZtAijsiTnMRFb6ziQLnRocXnBU2Lb3F67K2ZPHho",
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "vestedFor": 0,
+        "vestedTransferAmount": "500000000000000000000"
+}
     ],
     "representatives": [
       {
@@ -58,22 +57,22 @@
     "name": "ulzx4yx_PartnerDAO",
     "tokens": [
       {
-        "address": "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
-        "name": "Prime (D2D)",
-        "symbol": "D2D",
+        "address": "0xF70d807A0828d2498fa01246c88bA5BaCd70889b",
+        "amount": "1000000000000000000000",
+        "cliffOf": 0,
         "decimals": 18,
-        "logoURI": "https://assets.coingecko.com/coins/images/21609/small/RJD82RrV_400x400.jpg?1639559164",
-        "amount": "200000",
-        "instantTransferAmount": "150000",
-        "vestedTransferAmount": "50000",
-        "vestedFor": 1209600,
-        "cliffOf": 259200
+        "instantTransferAmount": "500000000000000000000",
+        "logoURI": "https://raw.githubusercontent.com/PrimeDAO/tokenlists/main/logos/D2D.png",
+        "name": "Prime",
+        "symbol": "D2D",
+        "vestedFor": 0,
+        "vestedTransferAmount": "500000000000000000000"
       }
     ],
-    "treasury_address": "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276",
+    "treasury_address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29",
     "representatives": [
       {
-        "address": "0x45b211cd08724D584cD94e7B974584249cD87638"
+        "address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29"
       }
     ],
     "social_medias": [
