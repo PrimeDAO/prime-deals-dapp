@@ -30,22 +30,38 @@
           <div class="contracts">
             <p>
               <i class="fas fa-info-circle"></i>
-              <span if.to-view="deal.isFailed && deal.isRepresentativeUser">
+              <span if.to-view="deal.isFailed && deal.isRepresentativeUser && deal.isTargetReached">
+                The deal has failed because the swap wasn't initiated within the given period of
+                time. Please go to the Deposits below and withdraw your funds. You can withdraw your
+                funds at any time. Your funds are secured.
+              </span>
+              <span
+                if.to-view="deal.isFailed && !deal.isRepresentativeUser && deal.isTargetReached"
+              >
+                The deal has failed because the swap wasn't initiated within the given period of
+                time. The representatives can withdraw their funds at any time. Their funds are
+                secured.
+              </span>
+              <span
+                if.to-view="deal.isFailed && deal.isRepresentativeUser && !deal.isTargetReached"
+              >
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. Please go to the Deposits below and withdraw your funds. You
                 can withdraw your funds at any time. Your funds are secured.
               </span>
-              <span if.to-view="deal.isFailed && !deal.isRepresentativeUser">
+              <span
+                if.to-view="deal.isFailed && !deal.isRepresentativeUser && !deal.isTargetReached"
+              >
                 The deal has failed as one or more parties failed to deposit their funds within the
                 given period of time. The representatives can withdraw their funds at any time.
                 Their funds are secured.
               </span>
-              <span if.to-view="showDepositForm">
+              <span if.to-view="!deal.isFailed && showDepositForm">
                 You're depositing on behalf of ${firstDao.name}. This deal needs to be funded and
                 executed within ${deal.timeLeftToExecute | timespan:'largest2'}.
               </span>
               <span
-                if.to-view="deal.isRepresentativeUser && !showDepositForm && !secondDaoTokensAllDeposited"
+                if.to-view="!deal.isFailed && deal.isRepresentativeUser && !showDepositForm && !secondDaoTokensAllDeposited"
               >
                 ${firstDao.name} is fully funded. ${secondDao.name} is still waiting to be fully
                 funded. Funding and deal execution must be complete within ${deal.timeLeftToExecute
