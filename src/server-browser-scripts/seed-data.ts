@@ -1,5 +1,6 @@
 import shortUuid from "short-uuid";
-import { IDealTokenSwapDocument, IDealVotingSummary } from "./../entities/IDealTypes";
+import { DealService } from "services/DealService";
+import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
 import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
 import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
 import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
@@ -73,24 +74,20 @@ try {
   //swallow
 }
 
-type ResetDeal = { dealId: string, quorumReached: boolean } & IDealRegistrationTokenSwap
+type ResetDeal = { dealId: string } & IDealRegistrationTokenSwap
 /**
  * Called from the front end in non prod
  * @param resetDeals
  */
-export async function resetDeals(resetDeals: ResetDeal[] = []) {
+export async function resetDeals(registrationData: ResetDeal[] = []) {
   await clearCollection("deals-token-swap");
 
-  await Promise.all(resetDeals.map(resetDeal => {
-    const primaryDaoRepresentativesAddresses = resetDeal.primaryDAO?.representatives?.map(item => item.address) ?? [];
-    const partnerDaoRepresentativesAddresses = resetDeal.partnerDAO?.representatives?.map(item => item.address) ?? [];
+  await Promise.all(registrationData.map(data => {
+    const primaryDaoRepresentativesAddresses = data.primaryDAO?.representatives?.map(item => item.address) ?? [];
+    const partnerDaoRepresentativesAddresses = data.partnerDAO?.representatives?.map(item => item.address) ?? [];
     const date = new Date().toISOString();
-    const { dealId, quorumReached, ...registrationData } = resetDeal;
-    const existingOrGeneratedDealId = dealId ?? shortUuid.generate();
-
-    const votingSummary = quorumReached
-      ? initializeVotingSummaryWithQuorumReached(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses)
-      : initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+    const { dealId, ...registrationData } = data;
+    const existingOrGeneratedDealId = dealId?? shortUuid.generate();
 
     const dealData: Partial<IDealTokenSwapDocument> = {
       id: existingOrGeneratedDealId as string,
@@ -99,65 +96,13 @@ export async function resetDeals(resetDeals: ResetDeal[] = []) {
       createdAt: date,
       modifiedAt: date,
       representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-      votingSummary,
+      votingSummary: DealService.initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
       isWithdrawn: false,
       isRejected: false,
     };
 
     addDocument("deals-token-swap", dealData, dealId as string);
   }));
-}
-
-/**
-  * Initializes the voting summary object with default values
-  *
-  * Used to create an initial voting summary as well as to reset the existing one
-  */
-function initializeVotingSummary(
-  primaryDaoRepresentativesAddresses: string[],
-  partnerDaoRepresentativesAddresses: string[],
-): IDealVotingSummary {
-  return {
-    primaryDAO: {
-      totalSubmittable: primaryDaoRepresentativesAddresses.length,
-      acceptedVotesCount: 0,
-      rejectedVotesCount: 0,
-      votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
-    },
-    partnerDAO: {
-      totalSubmittable: partnerDaoRepresentativesAddresses.length,
-      acceptedVotesCount: 0,
-      rejectedVotesCount: 0,
-      votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
-    },
-    totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-    totalSubmitted: 0,
-  };
-}
-
-/**
-  * Initializes the voting summary object with every party voting "Accepted"
-  */
-function initializeVotingSummaryWithQuorumReached(
-  primaryDaoRepresentativesAddresses: string[],
-  partnerDaoRepresentativesAddresses: string[],
-): IDealVotingSummary {
-  return {
-    primaryDAO: {
-      totalSubmittable: primaryDaoRepresentativesAddresses.length,
-      acceptedVotesCount: primaryDaoRepresentativesAddresses.length,
-      rejectedVotesCount: 0,
-      votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({ [address]: true }))),
-    },
-    partnerDAO: {
-      totalSubmittable: partnerDaoRepresentativesAddresses.length,
-      acceptedVotesCount: partnerDaoRepresentativesAddresses.length,
-      rejectedVotesCount: 0,
-      votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({ [address]: true }))),
-    },
-    totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-    totalSubmitted: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-  };
 }
 
 export default resetDeals;
