@@ -3,7 +3,6 @@
   "dealType": "token-swap",
   "offersPrivate": true,
   "dealId":"d6YEOCqSeWzSeYSOrtXN",
-  "quorumReached": true,
   "isPrivate": false,
   "keepAdminRights": true,
   "fundingPeriod": 1814400,
@@ -17,7 +16,7 @@
     "email": "info@florestadao.net"
   },
   "primaryDAO": {
-    "treasury_address": "0x6f2f4748Eb6276Cd2553337869C140Ece7d28dD3",
+    "treasury_address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
     "logoURI": "https://ik.imagekit.io/primedao/FlorestaDAO_Avatar_px3ZHsS7h?ik-sdk-version=javascript-1.4.3&updatedAt=1647365118593",
     "social_medias": [
       {
@@ -33,9 +32,9 @@
         "symbol": "FLO",
         "decimals": 18,
         "logoURI": "https://ik.imagekit.io/primedao/Floresta_FLO_TOKENLOGO_92F73Qndb?ik-sdk-version=javascript-1.4.3&updatedAt=1647365173391",
-        "amount": "150000000000000000000",
+        "amount": "100000000000000000000",
         "instantTransferAmount": "0",
-        "vestedTransferAmount": "150000000000000000000",
+        "vestedTransferAmount": "100000000000000000000",
         "vestedFor": 94672800,
         "cliffOf": 15768000
       }
@@ -45,10 +44,10 @@
         "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
       },
       {
-        "address": "0xC6228945005F07254b816F82fDA37f6Cd401831d"
+        "address": "0xd1F29D0e34c7A9D54f607733e5A113493c58F1Cb"
       },
       {
-        "address": "0xc8f056AAd3e320809047Af389D658E21412325Aa"
+        "address": "0xEf9a0BaCf7836FbCda9892742dA142e528A98937"
       }
     ]
   },
@@ -72,7 +71,7 @@
     "name": "ClimatiDAO",
     "tokens": [
       {
-        "address": "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
+        "address": "0xF70d807A0828d2498fa01246c88bA5BaCd70889b",
         "decimals": 18,
         "logoURI": "https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734",
         "name": "Dai Stablecoin",
@@ -96,16 +95,16 @@
         "cliffOf": 15768000
       }
     ],
-    "treasury_address": "0xA31Bf16e4DFF43fDbcc37DbDa7dE64F79a1ff274",
+    "treasury_address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29",
     "representatives": [
       {
-        "address": "0x0879CA41cb148bd9d8f10c237a0b85862FCD851F"
+        "address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29"
       },
       {
-        "address": "0x28A0A7AA52d7F393667B6869351E6624a03f102c"
+        "address": "0x622D9f71152A3e8EDD114a9b211812b51fFCcB00"
       },
       {
-        "address": "0x8f9fAE1f0df5CaDB73CD4E40a552bb4f326D1eE2"
+        "address": "0x5D45BAa08C7936A7b788c191Ae6862C392eE32Fe"
       }
     ],
     "social_medias": [
