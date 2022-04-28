@@ -316,7 +316,7 @@ export class Funding {
   public get tokenSelectData() : IPSelectItemConfig[]{
     return this.firstDao.tokens?.map((x, index) => ({
       text: x.symbol,
-      innerHTML: `<span><img src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
+      innerHTML: `<span><img class="roundedLogo" src="${x.logoURI}" style="width: 24px;height: 24px;margin-right: 10px;" /> ${x.symbol}</span>`,
       value: index.toString(),
     })) ?? [];
   }

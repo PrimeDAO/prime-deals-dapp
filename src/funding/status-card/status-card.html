@@ -12,7 +12,7 @@
         repeat.for="token of tokenDao.tokens"
         if.to-view="!deal.isFullyClaimed"
       >
-        <img src="${token.logoURI}" />
+        <img class="roundedLogo" src="${token.logoURI}" />
         <div>
           <div class="progress-bar-content">
             <div>
@@ -48,7 +48,7 @@
       </div>
       <div class="token-completed" if.to-view="deal.isFullyClaimed">
         <div repeat.for="token of tokenDao.tokens">
-          <img src="${token.logoURI}" />
+          <img class="roundedLogo" src="${token.logoURI}" />
           <span
             ><formatted-number
               thousands-separated
