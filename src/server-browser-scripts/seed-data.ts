@@ -111,7 +111,7 @@ export async function resetDeals(registrationData: ResetDeal[] = []) {
       isRejected: false,
     };
 
-    addDocument(DEALS_TOKEN_SWAP_COLLECTION, dealData, dealId as string);
+    addDocument(DEALS_TOKEN_SWAP_COLLECTION, dealData, existingOrGeneratedDealId as string);
   }));
 }
 
