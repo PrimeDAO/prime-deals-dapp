@@ -9,7 +9,7 @@ import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
-import { IDealTokenSwapDocument, IDealVotingSummary } from "entities/IDealTypes";
+import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
 import { Subscription } from "rxjs";
 import { Utils } from "services/utils";
@@ -135,7 +135,8 @@ export class DealService {
         /**
          * queue up to handle reentrancy
          */
-        this.taskQueue.queueTask(async () => {
+        this.taskQueue.queueTask(async () =>
+        {
           /**
            * wait until the previous load is done
            */
@@ -402,32 +403,4 @@ export class DealService {
       applyDiff(dealDocument, updatedDocument);
     });
   }
-
-  /**
-  * Initializes the voting summary object with default values
-  *
-  * Used to create an initial voting summary as well as to reset the existing one
-  */
-  public static initializeVotingSummary = (
-    primaryDaoRepresentativesAddresses: string[],
-    partnerDaoRepresentativesAddresses: string[],
-  ): IDealVotingSummary => {
-    return {
-      primaryDAO: {
-        totalSubmittable: primaryDaoRepresentativesAddresses.length,
-        acceptedVotesCount: 0,
-        rejectedVotesCount: 0,
-        votes: Object.assign({}, ...primaryDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
-      },
-      partnerDAO: {
-        totalSubmittable: partnerDaoRepresentativesAddresses.length,
-        acceptedVotesCount: 0,
-        rejectedVotesCount: 0,
-        votes: Object.assign({}, ...partnerDaoRepresentativesAddresses.map(address => ({ [address]: null }))),
-      },
-      totalSubmittable: primaryDaoRepresentativesAddresses.length + partnerDaoRepresentativesAddresses.length,
-      totalSubmitted: 0,
-    };
-  };
-
 }
