@@ -1,16 +1,25 @@
 <template>
   <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
-    <img class="dao-logo" src.bind="dao.logoURI">
-    <div class="accordion-title bodySmallText">
+    <img class="dao-logo" src.bind="dao.logoURI" />
+    <div
+      class="accordion-title bodySmallText"
+      ref="daoName"
+      ptooltip.to-view="daoName.scrollWidth > daoName.offsetWidth ? dao.name : ''"
+    >
       ${dao.name}
     </div>
 
     <div class="votes-statuses-circles">
-      <template repeat.for="representative of representativesSortedByVotes(deal.representatives, deal.allVotes)">
+      <template
+        repeat.for="representative of representativesSortedByVotes(deal.representatives, deal.allVotes)"
+      >
         <div
-          class="vote-status-circle ${getVoteSlug(deal.allVotes, representative.address) ? 'vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"></div>
-        <div class="vote-status-circle-delimiter"
-          if.bind="shouldShowDelimited(dao.representatives.length, $index)"></div>
+          class="vote-status-circle ${getVoteSlug(deal.allVotes, representative.address) ? 'vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"
+        ></div>
+        <div
+          class="vote-status-circle-delimiter"
+          if.bind="shouldShowDelimited(dao.representatives.length, $index)"
+        ></div>
       </template>
     </div>
     <i class="fas fa-angle-up arrow"></i>
@@ -18,19 +27,25 @@
 
   <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
     <p class="representative bodySmallText" repeat.for="representative of dao.representatives">
-      <etherscanlink address.bind="representative.address"
-                     text="${representative.address | smallHexString}">
+      <etherscanlink
+        address.bind="representative.address"
+        text="${representative.address | smallHexString}"
+      >
       </etherscanlink>
       ${getVoteSlug(deal.allVotes, representative.address) || 'hasn’t voted'}
-      <span class="representative-vote
-            ${getVoteSlug(deal.allVotes, representative.address) ? 'representative-vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}
-      ">
+      <span
+        class="representative-vote ${getVoteSlug(deal.allVotes, representative.address) ? 'representative-vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"
+      >
         <i class="fas fa-check-circle" if.bind="deal.allVotes[representative.address] === true"></i>
-        <i class="fas fa-times-circle" if.bind="deal.allVotes[representative.address] === false"></i>
-        <i class="fas fa-question-circle" if.bind="deal.allVotes[representative.address] === null"></i>
+        <i
+          class="fas fa-times-circle"
+          if.bind="deal.allVotes[representative.address] === false"
+        ></i>
+        <i
+          class="fas fa-question-circle"
+          if.bind="deal.allVotes[representative.address] === null"
+        ></i>
       </span>
     </p>
-
   </div>
-
 </template>
