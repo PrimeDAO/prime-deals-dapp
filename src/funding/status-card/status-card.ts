@@ -3,7 +3,6 @@ import "./status-card.scss";
 import { containerless, bindable, computedFrom } from "aurelia-framework";
 import { BigNumber } from "ethers";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
-import { DealService } from "services/DealService";
 @containerless
 export class StatusCard {
   @bindable deal: DealTokenSwap;
@@ -14,7 +13,7 @@ export class StatusCard {
     if ((this.deal.isClaiming && this.deal.isFullyClaimed) || this.isDaoFullyClaimed()){
       return "success";
     }
-    if (this.deal.isFunding && this.tokenDao.tokens.every((x: ITokenCalculated) => x.fundingRequired?.lte(0))){
+    if (this.tokenDao.tokens.every((x: ITokenCalculated) => x.fundingRequired?.lte(0))){
       return "success";
     } else {
       return this.deal.isFailed ? "danger" : "warning";
@@ -30,34 +29,21 @@ export class StatusCard {
       }
       return "Claiming in progress";
     }
-    if (this.deal.isFailed){
-      return "Target not reached";
-    }
-    if ((this.tokenDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.fundingDeposited ?? 0))){
+    if (this.tokenDao.tokens.every((x: ITokenCalculated) => x.fundingRequired?.lte(0))){
       return "Target reached";
     } else {
-      return "Funding in progress";
+      return this.deal.isFailed ? "Target not reached" : "Funding in progress";
     }
   }
 
   private isDaoFullyClaimed() : boolean {
     //return true if all tokens for this dao have been claimed
     if (!this.deal.isExecuted) return false;
-    return (this.tokenDao.tokens as ITokenCalculated[]).every(x => {
-      const totalAmount = BigNumber.from(x.amount);
-      const instantTransferAmount = BigNumber.from(x.instantTransferAmount);
-      const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
-      const swapFee = DealService.getDealFee(totalAmount);
-      return totalAmount.eq(x.claimingClaimed?.add(instantTransferAmountAfterFee)?.add(swapFee) ?? 0);
-    });
+    return (this.tokenDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.claimingClaimed?.add(x.instantTransferAmount) ?? 0));
   }
 
-  private getTotalClaimed(claimingClaimed: ITokenCalculated["claimingClaimed"], claimingInstantTransferAmount: ITokenCalculated["claimingInstantTransferAmount"], claimingFee: ITokenCalculated["claimingFee"]): BigNumber{
-    let totalClaimed = BigNumber.from(0);
-    if (claimingClaimed && claimingInstantTransferAmount && claimingFee){
-      totalClaimed = claimingClaimed?.add(claimingInstantTransferAmount)?.add(claimingFee);
-    }
-    return totalClaimed;
+  private getTotalClaimed(claimingClaimed: ITokenCalculated["claimingClaimed"], instantTransferAmount: ITokenCalculated["instantTransferAmount"]): BigNumber{
+    return claimingClaimed?.add(BigNumber.from(instantTransferAmount));
   }
 
   @computedFrom("isPrimary")

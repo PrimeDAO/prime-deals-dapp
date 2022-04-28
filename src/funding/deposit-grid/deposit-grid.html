@@ -8,7 +8,9 @@
       <span class="icon far fa-clock" slot="icon"></span>${deal.timeLeftToExecute |
       timespan:'largest2'} left
     </pchip>
-    <pchip color="danger" if.to-view="showChip && deal.isFailed">Target not reached</pchip>
+    <pchip color="danger" if.to-view="showChip && deal.isFailed">
+      ${deal.isTargetReached ? "Failed: Not executed" : "Failed: Not funded"}
+    </pchip>
   </div>
   <div class="box-content deposit-grid">
     <div class="tokens">
