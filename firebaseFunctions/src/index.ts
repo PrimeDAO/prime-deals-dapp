@@ -5,14 +5,13 @@ import * as shortUuid from "short-uuid";
 import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
-import { DEALS_TOKEN_SWAP_COLLECTION, FIREBASE_MESSAGE_TO_SIGN } from "../../src/services/FirestoreTypes";
+import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
-const USERS_COLLECTION = "users";
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
@@ -198,53 +197,11 @@ export const createDeal = functions.https.onRequest(
     }),
 );
 
-/**
- * Creates/updates a document in the users collection,
- * which contains date when the request was made and returns it
- */
 export const getDateToSign = functions.https.onRequest(
-  (request, response) =>
-  // Allow cross-origin requests for this function
-    cors(request, response, async () => {
-      if (request.method !== "POST") {
-        return response.sendStatus(403);
-      }
-
-      if (!request.body.address) {
-        return response.sendStatus(400);
-      }
-
-      /**
-       * Address coming from the request body
-       */
-      const address: string = request.body.address;
-
-      // Fail if provided address is not an ethereum address
-      try {
-        getAddress(address);
-      } catch {
-        return response.sendStatus(500);
-      }
-
-      try {
-        /**
-         * Current date as a UTC string, later used as a part of message the user is going to sign
-         */
-        const authenticationRequestDate = new Date().toUTCString();
-
-        // Create/update document for the provided address, storing the current time, to be used to create signature
-        await admin
-          .firestore()
-          .collection(USERS_COLLECTION)
-          .doc(address)
-          .set({authenticationRequestDate});
-
-        return response.status(200).json({ authenticationRequestDate });
-      } catch (error) {
-        functions.logger.error(error);
-        return response.sendStatus(500);
-      }
-    }),
+  () => {
+    /* this function is obsolete, must be manually deleted, when deploying to each each environment */
+    throw new Error("Method not implemented.");
+  },
 );
 
 /**
@@ -259,66 +216,62 @@ export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest
         return response.sendStatus(403);
       }
 
-      if (!request.body.address || !request.body.signature) {
+      if (!request.body.address || !request.body.message || !request.body.signature) {
+        functions.logger.error("missing one of the required parameters");
         return response.sendStatus(400);
       }
 
       const address: string = request.body.address;
+      const message: string = request.body.message;
+      const signature: string = request.body.signature;
 
-      // Fail if provided address is not an ethereum address
+      functions.logger.info(`
+        Starting verification for the following:
+        Address: ${address},
+        Message: ${message},
+        Signature: ${signature}
+      `);
+
       try {
         getAddress(address);
       } catch {
+        functions.logger.error("Provider address is not a correct ETH address");
         return response.sendStatus(500);
       }
 
-      const signature: string = request.body.signature;
+      const signerAddress = verifyMessage(
+        message,
+        signature,
+      );
 
       try {
-        // Get the document with date when authentication process was started for this address
-        const userDocRef = admin.firestore().collection(USERS_COLLECTION).doc(address);
-        const userDoc = await userDocRef.get();
-
-        if (userDoc.exists) {
-          const authenticationRequestDate = userDoc.data()?.authenticationRequestDate;
-          const messageToSign = `${FIREBASE_MESSAGE_TO_SIGN} ${authenticationRequestDate}`;
-
-          const signerAddress = verifyMessage(
-            messageToSign,
-            signature,
-          );
-
-          // See if that matches the address the user is claiming the signature is from
-          if (signerAddress.toLowerCase() === address.toLowerCase()) {
-            // The signature was verified - reset the date to prevent replay attacks
-            // update user doc
-            await userDocRef.update({
-              authenticationRequestDate: null,
-            });
-
-            try {
-              // Create a custom token for the specified address
-              /**
-               * Firebase Token which is later going to be used to sign in to firebase from the client
-               */
-              const firebaseToken = await admin.auth().createCustomToken(address);
-
-              // Return the token
-              return response.status(200).json({ token: firebaseToken });
-            } catch (error){
-              functions.logger.error("createCustomToken error:", error);
-              return response.sendStatus(500);
-            }
-          } else {
-            // The signature could not be verified
-            return response.sendStatus(401);
-          }
-        } else {
-          return response.sendStatus(500);
-        }
-      } catch (error) {
-        functions.logger.error(error);
+        getAddress(signerAddress);
+      } catch {
+        functions.logger.error("Signer address is not a correct ETH address");
         return response.sendStatus(500);
       }
+
+      functions.logger.info("Signer address: ", signerAddress);
+
+      if (signerAddress.toLowerCase() === address.toLowerCase()) {
+        try {
+          // Create a custom token for the specified address
+          /**
+           * Firebase Token which is later going to be used to sign in to firebase from the client
+           */
+          const firebaseToken = await admin.auth().createCustomToken(address);
+
+          // Return the token
+          return response.status(200).json({ token: firebaseToken });
+        } catch (error){
+          functions.logger.error("createCustomToken error:", error);
+          return response.sendStatus(500);
+        }
+      } else {
+        // The signature could not be verified
+        functions.logger.error("Message was not signed with the claimed address");
+        return response.sendStatus(401);
+      }
+
     }),
 );

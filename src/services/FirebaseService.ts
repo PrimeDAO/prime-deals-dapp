@@ -10,6 +10,8 @@ import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
+import { DateService } from "./DateService";
+import { BrowserStorageService } from "services/BrowserStorageService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -46,6 +48,13 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
   connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
 }
 
+const FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE = "FIREBASE_AUTHENTICATION_SIGNATURES";
+
+interface ISignatureStorage {
+  signature: string;
+  messageToSign: string;
+}
+
 @autoinject
 export class FirebaseService {
 
@@ -54,6 +63,8 @@ export class FirebaseService {
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
+    private dateService: DateService,
+    private browserStorageService: BrowserStorageService,
   ) {
   }
 
@@ -106,23 +117,20 @@ export class FirebaseService {
   }
 
   /**
-   * Calls Firebase function which creates a Timestamp that is going to be a part of the signed message
-   * Later used to verify if user owns account address
+   * Checks if a signature for the provided accountAddress already exists in localStorage
    */
-  private async getDateToSign(address: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/getDateToSign`, {address});
-
-    return response.data.authenticationRequestDate;
+  public hasSignatureForAddress(address: string): boolean {
+    return !!this.getExistingSignatureAndMessageForAddress(address).signature;
   }
 
-  private async getMessageToSign(address: string): Promise<string> {
-    const date = await this.getDateToSign(address);
+  private async getMessageToSign(): Promise<string> {
+    const date = this.dateService.translateUtcToLocal(new Date());
 
     return `${FIREBASE_MESSAGE_TO_SIGN} ${date}`;
   }
 
-  private async verifySignedMessageAndCreateCustomToken(address: string, signature: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, signature});
+  private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }
@@ -147,20 +155,26 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    const messageToSign = await this.getMessageToSign(address);
+    let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
 
-    let signature: string;
-    try {
-      signature = await this.requestSignature(messageToSign);
-      this.eventAggregator.publish("handleInfo", "Message was successfully signed");
-    } catch {
-      this.eventAggregator.publish("database.account.signature.cancelled");
-      throw new Error();
+    if (!signature) {
+      messageToSign = await this.getMessageToSign();
+
+      try {
+        signature = await this.requestSignature(messageToSign);
+        this.storeSignatureForAddress(address, signature, messageToSign);
+        this.eventAggregator.publish("handleInfo", "Message was successfully signed");
+        this.eventAggregator.publish("database.account.signature.successful");
+
+      } catch {
+        this.eventAggregator.publish("database.account.signature.cancelled");
+        throw new Error();
+      }
     }
 
     let token: string;
     try {
-      token = await this.verifySignedMessageAndCreateCustomToken(address, signature);
+      token = await this.verifySignedMessageAndCreateCustomToken(address, messageToSign, signature);
     } catch (error) {
       this.eventAggregator.publish("handleFailure", "Signature wasn't verified successfully");
       throw new Error(error);
@@ -181,5 +195,19 @@ export class FirebaseService {
       this.ethereumService.getDefaultSigner().signMessage(messageToSign),
       Utils.timeout(30000),
     ]);
+  }
+
+  private getExistingSignatureAndMessageForAddress(address: string): ISignatureStorage {
+    const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
+
+    return signaturesAndMessages[address] ? signaturesAndMessages[address] : {signature: null, messageToSign: null};
+  }
+
+  private storeSignatureForAddress(address: string, signature: string, messageToSign: string): void {
+    const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
+
+    signaturesAndMessages[address] = {signature, messageToSign};
+
+    this.browserStorageService.lsSet(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, signaturesAndMessages);
   }
 }

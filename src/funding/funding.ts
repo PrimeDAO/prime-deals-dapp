@@ -90,9 +90,9 @@ export class Funding {
     await this.deal.ensureInitialized();
     await this.deal.hydrateDaoTransactions();
     //get contract token information from the other DAO
-    if (this.deal.isFunding){
+    if (this.deal.isFunding || this.deal.isFailed){
       await this.setTokenFundingData();
-      if (this.firstDao.tokens.length === 1) {
+      if (!this.deal.isFailed && this.firstDao.tokens.length === 1) {
         //if there is only one token, auto select it in the deposit form
         this.selectedToken = "0";
         //and get the account balance for that token
