@@ -198,6 +198,7 @@ Assuming that a Firebase Project is already setup and you have access to API key
     5. Under "API restrictions” select “Restrict key” and choose:
         1. Cloud Firestore API
         2. Identity Toolkit API
+        3. Token Service API
 10. Enable IAM Service Account Credentials API
     1. Go to the following link and enable the API [https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/overview](https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/overview)
 11. Add `FIREBASE_TOKEN` used to deploy firebase from CI to Github actions secrets

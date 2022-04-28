@@ -163,7 +163,6 @@ export class FirebaseService {
       try {
         signature = await this.requestSignature(messageToSign);
         this.storeSignatureForAddress(address, signature, messageToSign);
-        this.eventAggregator.publish("handleInfo", "Message was successfully signed");
         this.eventAggregator.publish("database.account.signature.successful");
 
       } catch {

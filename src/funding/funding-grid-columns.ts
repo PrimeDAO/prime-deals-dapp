@@ -23,7 +23,7 @@ export const depositColumns: IGridColumn[] = [
     field: "address", width: ".25fr", sortable: false, headerText: "", template: `
         <div class="withdraw">
         <pbutton
-        if.to-view="ethereumService.defaultAccountAddress === address && deal.isFunding && !withdrawTxId"
+        if.to-view="ethereumService.defaultAccountAddress === address && !deal.isClaiming && !withdrawTxId"
         type="secondary"
         click.delegate="withdraw(row)"
         disabled.bind="processing"
