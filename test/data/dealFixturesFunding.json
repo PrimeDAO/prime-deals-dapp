@@ -4,6 +4,7 @@
         "dealType": "token-swap",
         "offersPrivate": false,
         "isPrivate": false,
+        "quorumReached": true,
         "keepAdminRights": true,
         "fundingPeriod": 864000,
         "proposal": {
@@ -105,6 +106,7 @@
         "dealType": "token-swap",
         "offersPrivate": false,
         "isPrivate": false,
+        "quorumReached": true,
         "keepAdminRights": true,
         "fundingPeriod": 864000,
         "proposal": {
@@ -206,6 +208,7 @@
         "dealType": "token-swap",
         "offersPrivate": false,
         "isPrivate": false,
+        "quorumReached": true,
         "keepAdminRights": true,
         "fundingPeriod": 864000,
         "proposal": {
@@ -307,6 +310,7 @@
         "dealType": "token-swap",
         "offersPrivate": false,
         "isPrivate": false,
+        "quorumReached": true,
         "keepAdminRights": true,
         "fundingPeriod": 864000,
         "proposal": {
