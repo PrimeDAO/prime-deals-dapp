@@ -9,6 +9,7 @@ import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 import { DateService } from "./DateService";
 import { BrowserStorageService } from "services/BrowserStorageService";
+import { firebaseAuth } from "./firebase-helpers";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there

@@ -5,6 +5,12 @@ import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers
 import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 
+/**
+ * Creates a collection and adds a set of documents
+ * @param collectionKey
+ * @param arrayOfObjectsToAdd
+ * @returns
+ */
 export const addCollectionAndDocuments = async <T>(
   collectionKey: string,
   arrayOfObjectsToAdd: T[],
@@ -21,6 +27,10 @@ export const addCollectionAndDocuments = async <T>(
   });
 };
 
+/**
+ * Clears an entire collection from the store
+ * @param collectionKey
+ */
 export const clearCollection = async (
   collectionKey: string,
 ) => {
@@ -29,6 +39,11 @@ export const clearCollection = async (
   await Promise.all(queryResult.docs.map(doc => deleteDoc(doc.ref)));
 };
 
+/**
+ * Removes a document from the firebase store
+ * @param collectionKey
+ * @param id
+ */
 export const deleteDocument = (
   collectionKey: string,
   id: string,
@@ -36,6 +51,13 @@ export const deleteDocument = (
   deleteDoc(doc(firebaseDatabase, collectionKey, id));
 };
 
+/**
+ * Adds a document to the firebase store
+ * @param collectionKey
+ * @param data
+ * @param dealId
+ * @returns
+ */
 export const addDocument = (
   collectionKey: string,
   data: Record<string, unknown>,
@@ -52,6 +74,10 @@ try {
 }
 
 type ResetDeal = { dealId: string, quorumReached: boolean } & IDealRegistrationTokenSwap
+/**
+ * Called from the front end in non prod
+ * @param resetDeals
+ */
 export async function resetDeals(resetDeals: ResetDeal[] = []) {
   await clearCollection("deals-token-swap");
 
@@ -60,7 +86,7 @@ export async function resetDeals(resetDeals: ResetDeal[] = []) {
     const partnerDaoRepresentativesAddresses = resetDeal.partnerDAO?.representatives?.map(item => item.address) ?? [];
     const date = new Date().toISOString();
     const { dealId, quorumReached, ...registrationData } = resetDeal;
-    const existingOrGeneratedDealId = dealId?? shortUuid.generate();
+    const existingOrGeneratedDealId = dealId ?? shortUuid.generate();
 
     const votingSummary = quorumReached
       ? initializeVotingSummaryWithQuorumReached(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses)
