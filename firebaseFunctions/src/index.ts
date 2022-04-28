@@ -197,6 +197,13 @@ export const createDeal = functions.https.onRequest(
     }),
 );
 
+export const getDateToSign = functions.https.onRequest(
+  () => {
+    /* this function is obsolete, must be manually deleted, when deploying to each each environment */
+    throw new Error("Method not implemented.");
+  },
+);
+
 /**
  * Verifies that a message was signed by the provided address.
  * Therefore it proofs the ownership of the address.
