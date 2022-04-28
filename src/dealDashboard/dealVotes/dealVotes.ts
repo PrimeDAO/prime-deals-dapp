@@ -22,6 +22,16 @@ export class DealVotes {
 
   everyTextCopy = [
     {
+      condition: () => this.deal.isFullyClaimed,
+      voteText: "Deal is completed. All tokens have been claimed!",
+      statusText: "Completed",
+    },
+    {
+      condition: () => this.deal.isClaiming,
+      voteText: "Swap has been executed. Tokens can now be claimed.",
+      statusText: "Claiming",
+    },
+    {
       condition: () => this.deal.isFunding,
       voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, the token swap can be executed",
       statusText: "Deal is approved",
@@ -102,7 +112,7 @@ export class DealVotes {
     location.hash = "discussionsSection";
   }
 
-  @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress")
+  @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress", "deal.isFullyClaimed", "deal.isClaiming")
   get statusText() {
     return this.everyTextCopy.find(textCopy => textCopy.condition());
   }

@@ -4,10 +4,10 @@
   <pcard>
     <div class="content">
       <h1 class="title heading03Gradient">Vote</h1>
-      <p class="bodySmallText">
-        ${statusText.voteText}
-      </p>
-      <pbutton-group if.bind="deal.isRepresentativeUser && !deal.isFunding && !deal.isCancelled && !deal.isFailed">
+      <p class="bodySmallText">${statusText.voteText}</p>
+      <pbutton-group
+        if.bind="deal.isRepresentativeUser && !deal.fundingWasInitiated && !deal.isCancelled"
+      >
         <pbutton
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
@@ -35,9 +35,12 @@
         </pbutton>
       </pbutton-group>
 
-      <div class="negotiate" if.bind="ethereumService.defaultAccountAddress && !deal.isFunding">
+      <div
+        class="negotiate"
+        if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled"
+      >
         <pbutton type="tertiary" click.delegate="goToDiscussions()">
-          <img src="/static/comment.svg"/>
+          <img src="/static/comment.svg" />
           Negotiate
         </pbutton>
       </div>
@@ -45,21 +48,33 @@
       <p class="bodySmallText votesSubtitle representativesVotesSubtitle">
         Votes (${deal.submittedVotes.length}/${deal.representatives.size})
       </p>
-      <deal-representatives-votes deal.bind="deal" dao.bind="deal.primaryDao"></deal-representatives-votes>
-      <deal-representatives-votes deal.bind="deal" dao.bind="deal.partnerDao"></deal-representatives-votes>
+      <deal-representatives-votes
+        deal.bind="deal"
+        dao.bind="deal.primaryDao"
+      ></deal-representatives-votes>
+      <deal-representatives-votes
+        deal.bind="deal"
+        dao.bind="deal.partnerDao"
+      ></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
       <div class="orangeColor dealStatusText">${statusText.statusText}</div>
     </div>
 
-    <div class="funding" if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.isFunding && !deal.isCancelled">
+    <div
+      class="funding"
+      if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.fundingWasInitiated && !deal.isCancelled"
+    >
       <pbutton class="fundButton" click.delegate="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>
     </div>
 
-    <div class="funding" if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)">
+    <div
+      class="funding"
+      if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)"
+    >
       <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
         Go to funding
         <i class="fas fa-arrow-right"></i>
@@ -67,8 +82,7 @@
     </div>
 
     <div class="funding" if.bind="deal.majorityHasVoted && !ethereumService.defaultAccountAddress">
-      <pbutton click.delegate="ethereumService.ensureConnected()"
-        type="primary">
+      <pbutton click.delegate="ethereumService.ensureConnected()" type="primary">
         Connect Wallet
       </pbutton>
     </div>
