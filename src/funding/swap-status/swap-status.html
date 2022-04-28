@@ -12,7 +12,7 @@
       <div class="swap ${deal.isFullyClaimed || fundingFailed ? 'complete' : ''}">
         <i class="fas fa-arrow-right" if.to-view="!deal.isClaiming"></i>
         <i
-          if.to-view="!deal.isClaiming && deal.isTargetReached"
+          if.to-view="!deal.isFailed && !deal.isClaiming && deal.isTargetReached"
           class="fas fa-check-circle success"
         ></i>
         <i if.to-view="deal.isFailed" class="fas fa-times-circle danger"></i>
