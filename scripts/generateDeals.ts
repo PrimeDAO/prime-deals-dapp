@@ -1,5 +1,6 @@
 // @ts-check
 import * as fs from "fs";
+import * as path from "path";
 import { AvailableTokenNames, TokenBuilder } from "../cypress/fixtures/bulders/TokenBuilder";
 import { DealDataBuilder } from "../cypress/fixtures/dealFixtures";
 import * as FundingDealsPermutationsJson from "../cypress/fixtures/fundingDealsPermutations.json";
@@ -62,5 +63,6 @@ function generateJsonFromPermutations(destinationPath: string) {
   fs.writeFileSync(destinationPath, resultJson);
 }
 
-const destinationPath = "../cypress/fixtures/dealFixtures.json";
+const root = path.resolve(__dirname, "..");
+const destinationPath = `${root}/test/data/dealFixturesFunding.json`;
 generateJsonFromPermutations(destinationPath);
