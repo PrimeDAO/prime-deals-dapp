@@ -1,3 +1,4 @@
+import { generateVotingSummary } from "./../../firebaseFunctions/src/helpers";
 import shortUuid from "short-uuid";
 import { DealService } from "services/DealService";
 import { IDealTokenSwapDocument } from "./../entities/IDealTypes";
@@ -59,14 +60,17 @@ export const deleteDocument = (
  * @param dealId
  * @returns
  */
-export const addDocument = (
+export const addDocument = async (
   collectionKey: string,
   data: Record<string, unknown>,
   dealId?: string,
-) => {
-  return dealId ?
-    setDoc(doc(firebaseDatabase, collectionKey, String(dealId)), data) :
-    addDoc(collection(firebaseDatabase, collectionKey), data);
+): Promise<string> => {
+  if (dealId) {
+    await setDoc(doc(firebaseDatabase, collectionKey, String(dealId)), data);
+    return dealId;
+  }
+  const result = await addDoc(collection(firebaseDatabase, collectionKey), data);
+  return result.id;
 };
 try {
   signInToFirebase(DefaultTestAddressForSignIn);
@@ -87,7 +91,7 @@ export async function resetDeals(registrationData: ResetDeal[] = []) {
     const partnerDaoRepresentativesAddresses = data.partnerDAO?.representatives?.map(item => item.address) ?? [];
     const date = new Date().toISOString();
     const { dealId, ...registrationData } = data;
-    const existingOrGeneratedDealId = dealId?? shortUuid.generate();
+    const existingOrGeneratedDealId = dealId ?? shortUuid.generate();
 
     const dealData: Partial<IDealTokenSwapDocument> = {
       id: existingOrGeneratedDealId as string,
@@ -109,6 +113,7 @@ export default resetDeals;
 if (module.exports) {
   module.exports.resetDeals = resetDeals;
 }
+
 // addCollectionAndDocuments("deals-token-swap", [PRIVATE_PARTNERED_DEAL]);
 // deleteDocument("deals-token-swap", "3HWCTLjBvjmcc4K78B36em");
 
