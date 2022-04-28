@@ -88,12 +88,12 @@ export class DealService {
 
   @computedFrom("dealsArray.length")
   public get openProposals(): Array<any> {
-    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal);
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isOpenProposal );
   }
 
   @computedFrom("dealsArray.length")
   public get partneredDeals(): Array<any> {
-    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered);
+    return this.dealsArray.filter((deal: DealTokenSwap) => deal.isPartnered );
   }
 
   // public dealsObject: any = {};
@@ -381,7 +381,7 @@ export class DealService {
   /**
    * Updates only parts of dealDocument that were updated
    */
-  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument): void {
+  private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
 
     this.taskQueue.queueMicroTask(() => {
       // ignore updates to modifiedAt property
