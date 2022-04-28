@@ -19,14 +19,32 @@ export class DealMenubar {
     this.eventAggregator.publish("handleInfo", "Deal URL copied");
   }
 
-  @computedFrom("deal.isAuthenticatedProposalLead", "deal.isExecuted", "deal.isCancelled", "deal.isFunding")
+  @computedFrom(
+    "deal.isAuthenticatedProposalLead",
+    "deal.isExecuted",
+    "deal.isCancelled",
+    "deal.isFunding",
+    "deal.isFailed",
+  )
   get canEdit() {
-    return this.deal.isAuthenticatedProposalLead && !this.deal.isCancelled && !this.deal.isExecuted && !this.deal.isFunding;
+    return this.deal.isAuthenticatedProposalLead
+      && !this.deal.isCancelled
+      && !this.deal.isExecuted
+      && !this.deal.isFunding
+      && !this.deal.isFailed;
   }
 
-  @computedFrom("deal.isAuthenticatedProposalLead", "deal.isCancelled", "deal.isFunding")
+  @computedFrom(
+    "deal.isAuthenticatedProposalLead",
+    "deal.isCancelled",
+    "deal.isFunding",
+    "deal.isFailed",
+  )
   get canCancel() {
-    return this.deal.isAuthenticatedProposalLead && !this.deal.isCancelled && !this.deal.isFunding;
+    return this.deal.isAuthenticatedProposalLead
+      && !this.deal.isCancelled
+      && !this.deal.isFunding
+      && !this.deal.isFailed;
   }
 
   async cancelDeal() {
