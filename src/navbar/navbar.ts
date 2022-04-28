@@ -27,7 +27,7 @@ export class Navbar {
 
   private async resetDeals() {
     if (process.env.FIREBASE_ENVIRONMENT !== "production") {
-      await (await import("../server-browser-scripts/seed-data")).resetDeals((jsonDocs as any[]).map(y => y.default));
+      await ( await import("../server-browser-scripts/seed-data")).resetDeals((jsonDocs as any[]).map(doc => doc.default ?? doc));
     }
   }
 
