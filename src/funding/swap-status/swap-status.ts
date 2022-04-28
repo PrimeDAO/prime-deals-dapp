@@ -18,13 +18,13 @@ export class SwapStatus {
   private async initializeData() : Promise<void>{
     await this.deal.ensureInitialized();
     await this.deal.hydrateDaoTransactions();
-    if (this.deal.isFunding){
+    if (!this.deal.isClaiming){
       await Promise.all(
         [
           ...this.deal.primaryDao.tokens.map(x => this.deal.setFundingContractInfo(x, this.deal.primaryDao)),
           ...this.deal.partnerDao.tokens.map(x => this.deal.setFundingContractInfo(x, this.deal.partnerDao)),
         ]);
-    } else if (this.deal.isClaiming){
+    } else {
       await Promise.all(
         [
           ...this.deal.primaryDao.tokens.map(x => this.deal.setClaimingContractInfo(x, this.deal.partnerDao)),
