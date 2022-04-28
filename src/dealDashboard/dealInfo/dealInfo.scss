@@ -87,10 +87,6 @@ deal-info {
     gap: 10px;
     margin: 12px 0;
 
-    &:last-child{
-      margin-bottom: 0;
-    }
-
     .infoTitle {
       font-size: $font-size2;
     }
@@ -110,6 +106,10 @@ deal-info {
         }
       }
     }
+  }
+
+  .dealPrivacyContainer{
+    margin-bottom: 0;
   }
 
   .dealPrivacyToggle {

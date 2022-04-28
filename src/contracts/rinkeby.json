@@ -3,7 +3,7 @@
   "chainId": "4",
   "contracts": {
     "DaoDepositManager": {
-      "address": "0x0a1De4709d1f8a729FB77F0e7E3a97B1c95343A6",
+      "address": "0x2d50Aff01B7754e0EEb2aC07356d445D43c8925B",
       "abi": [
         {
           "anonymous": false,
@@ -957,7 +957,7 @@
       ]
     },
     "DealManager": {
-      "address": "0x910316512cB12D726c5b5C06FB7f69CCaEe339ed",
+      "address": "0xb32Dd0C93673cF0A3237D362f0a65b047469DC29",
       "abi": [
         {
           "inputs": [
@@ -1222,7 +1222,7 @@
       ]
     },
     "TokenSwapModule": {
-      "address": "0x889ef70C4cD66F7fA74991B6F0FB939C2e9D426e",
+      "address": "0xd7deC2320B7FC1018896C31E433b2E51fdD8C3Af",
       "abi": [
         {
           "inputs": [

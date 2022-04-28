@@ -9,6 +9,9 @@ import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
 import { Utils } from "services/utils";
+import { PLATFORM } from "aurelia-pal";
+
+PLATFORM.moduleName("./fundingModal/fundingModal");
 
 @autoinject
 export class DealVotes {
