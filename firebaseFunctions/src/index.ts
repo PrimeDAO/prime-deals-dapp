@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
-import { getAddress } from "ethers/lib/utils";
+import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
@@ -19,41 +19,6 @@ export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 const cors = corsLib({
   origin: true,
 });
-
-/**
- * creates a token that is used to sign in to firebase from the frontend
- */
-export const createCustomToken = functions.https.onRequest(
-  (request, response) =>
-    // Allow cross-origin requests for this function
-    cors(request, response, async () => {
-      if (request.method !== "POST") {
-        return response.sendStatus(403);
-      }
-
-      if (!request.body.address) {
-        return response.sendStatus(400);
-      }
-
-      const address = request.body.address;
-
-      // Fail if provided address is not an ethereum address
-      try {
-        getAddress(address);
-      } catch {
-        return response.sendStatus(500);
-      }
-
-      try {
-        const firebaseToken = await admin.auth().createCustomToken(address);
-
-        return response.status(200).json({ token: firebaseToken });
-      } catch (error){
-        functions.logger.error("createCustomToken error:", error);
-        return response.sendStatus(500);
-      }
-    }),
-);
 
 /**
  * Run every time a document (a deal) in deals-token-swap collection is created
@@ -229,5 +194,84 @@ export const createDeal = functions.https.onRequest(
         functions.logger.error("Error while creating a deal:", error);
         return response.sendStatus(500);
       }
+    }),
+);
+
+export const getDateToSign = functions.https.onRequest(
+  () => {
+    /* this function is obsolete, must be manually deleted, when deploying to each each environment */
+    throw new Error("Method not implemented.");
+  },
+);
+
+/**
+ * Verifies that a message was signed by the provided address.
+ * Therefore it proofs the ownership of the address.
+ */
+export const verifySignedMessageAndCreateCustomToken = functions.https.onRequest(
+  (request, response) =>
+  // Allow cross-origin requests for this function
+    cors(request, response, async () => {
+      if (request.method !== "POST") {
+        return response.sendStatus(403);
+      }
+
+      if (!request.body.address || !request.body.message || !request.body.signature) {
+        functions.logger.error("missing one of the required parameters");
+        return response.sendStatus(400);
+      }
+
+      const address: string = request.body.address;
+      const message: string = request.body.message;
+      const signature: string = request.body.signature;
+
+      functions.logger.info(`
+        Starting verification for the following:
+        Address: ${address},
+        Message: ${message},
+        Signature: ${signature}
+      `);
+
+      try {
+        getAddress(address);
+      } catch {
+        functions.logger.error("Provider address is not a correct ETH address");
+        return response.sendStatus(500);
+      }
+
+      const signerAddress = verifyMessage(
+        message,
+        signature,
+      );
+
+      try {
+        getAddress(signerAddress);
+      } catch {
+        functions.logger.error("Signer address is not a correct ETH address");
+        return response.sendStatus(500);
+      }
+
+      functions.logger.info("Signer address: ", signerAddress);
+
+      if (signerAddress.toLowerCase() === address.toLowerCase()) {
+        try {
+          // Create a custom token for the specified address
+          /**
+           * Firebase Token which is later going to be used to sign in to firebase from the client
+           */
+          const firebaseToken = await admin.auth().createCustomToken(address);
+
+          // Return the token
+          return response.status(200).json({ token: firebaseToken });
+        } catch (error){
+          functions.logger.error("createCustomToken error:", error);
+          return response.sendStatus(500);
+        }
+      } else {
+        // The signature could not be verified
+        functions.logger.error("Message was not signed with the claimed address");
+        return response.sendStatus(401);
+      }
+
     }),
 );

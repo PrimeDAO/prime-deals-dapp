@@ -50,11 +50,6 @@ export class FirestoreService<
     private axiosService: AxiosService,
   ){}
 
-  public async ensureAuthenticationIsSynced(): Promise<boolean> {
-    //TODO: consider the fact that this can theoretically block forever
-    await Utils.waitUntilTrue(() => this.firebaseService.authenticationIsSynced, 9999999999);
-    return true;
-  }
   /**
    * Creates new Deal document with registrationData inside Firestore deals collection
    * @param registrationData TRegistrationData

@@ -11,13 +11,19 @@ const randomId = getRandomId();
 
 export const E2E_ADDRESSES = {
   ConnectedPublicUser: "0x0000000000000000000000000000000000000000",
-  ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498", // The main testing account shared within Deals team;
+  ProposalLead: "0x0F73E89617FEDee6cCaB07d1d842FF8a5A1f08CC",
   PrimaryDAOToken: "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
   PrimaryTreasury: "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
   PartnerTreasury: "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276",
   PartnerTreasuryTwo: "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82",
-  RepresentativeOne: "0x45b211cd08724D584cD94e7B974584249cD87638",
-  RepresentativeTwo: "0xf525a861391e64d5126414434bFf877285378246",
+  RepresentativeOne: "0x15f23CF16Ee88B87019C716eDbFD920B54244a8f",
+  RepresentativeTwo: "0x77A9B5d500F24255307e46613904f9b346F22f26",
+};
+
+export const E2E_ADDRESSES_PRIVATE_KEYS = {
+  [E2E_ADDRESSES.ProposalLead]: "610205a884c29474f492da1fe49dafbb32fbe32f04c9241e4e095937d12bd4e6",
+  [E2E_ADDRESSES.RepresentativeOne]: "d9d540c544bfbe55a8c4df588ceaf105c64de65cc4564b2e436042e4903fea5c",
+  [E2E_ADDRESSES.RepresentativeTwo]: "b2c1c113477f18450a15267e9973b8dd51982660caf93eb3abcf14fa3cafa2a2",
 };
 
 const PROPOSAL_DATA = {

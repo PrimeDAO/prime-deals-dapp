@@ -10,7 +10,9 @@ export class DepositGrid {
   @bindable deal: DealTokenSwap;
   @bindable dao: IDAO;
   @bindable daoTokens: ITokenCalculated[];
-  @bindable fundingDaysLeft: number;
   @bindable showChip = true;
   private tokenGridColumns: IGridColumn[] = tokenGridColumns;
+  private get fundingDaysLeft():number{
+    return Number((this.deal.timeLeftToExecute / (60*60*24*1000)).toFixed(0));
+  }
 }

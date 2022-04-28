@@ -1,14 +1,13 @@
-import { autoinject } from "aurelia-framework";
+import { FirebaseService } from "services/FirebaseService";
+import { autoinject, computedFrom } from "aurelia-framework";
 import { FirestoreService } from "./FirestoreService";
 import { IDataSourceDeals } from "./DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address } from "services/EthereumService";
+import { Address, EthereumService } from "services/EthereumService";
 import { IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
-import { skip } from "rxjs/operators";
-import { firebaseAuth } from "./firebase-helpers";
 
 @autoinject
 export class FirestoreDealsService<
@@ -18,43 +17,24 @@ export class FirestoreDealsService<
   constructor(
     private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
     private consoleLogService: ConsoleLogService,
+    private firebaseService: FirebaseService,
+    private ethereumService: EthereumService,
   ) {}
 
   public initialize(): void {
-    throw new Error("Method not implemented.");
+    this.firebaseService.initialize();
   }
 
-  /**
-   * Based on the provided accountAddress returns
-   * an observable of all public deals if user in not authenticated
-   * or returns an observable of all deals provided accountAddress can read.
-   *
-   * Note it actually returns a promise of an observable
-   */
-  public async getDealsObservables(accountAddress: Address, skipFirst = false): Promise<Observable<Array<IDealTokenSwapDocument>>> {
-    await this.firestoreService.ensureAuthenticationIsSynced();
-
-    if (accountAddress) {
-      if (!this.isUserAuthenticated(accountAddress)) {
-        return;
-      }
-      this.consoleLogService.logMessage(`getting all deals observable for user ${accountAddress}`);
-      return this.firestoreService.allDealsForAddressObservable(accountAddress, skipFirst);
-    } else {
-      this.consoleLogService.logMessage("getting all public deals observable");
-      return this.firestoreService.allPublicDealsUpdatesObservable().pipe(skip(skipFirst ? 1 : 0));
-    }
+  public async syncAuthentication(accountAddress: string): Promise<boolean> {
+    return await this.firebaseService.syncFirebaseAuthentication(accountAddress);
   }
 
   public async getDeals<TDealDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
     let deals: Array<IFirebaseDocument<TDealDocument>>;
 
-    await this.firestoreService.ensureAuthenticationIsSynced();
-
-    if (accountAddress) {
-      if (!this.isUserAuthenticated(accountAddress)) {
-        return;
-      }
+    // If the user is authenticated load all deals they can see.
+    // Otherwise load all public deals
+    if (accountAddress && this.isUserAuthenticatedWithAddress(accountAddress)) {
       this.consoleLogService.logMessage(`getting all deals for user ${accountAddress}`);
       try {
         deals = await this.firestoreService.getAllDealsForTheUser(accountAddress);
@@ -69,7 +49,7 @@ export class FirestoreDealsService<
   }
 
   public createDeal<TDealDocument, TRegistrationData>(accountAddress: string, registration: TRegistrationData): Promise<TDealDocument> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -77,7 +57,7 @@ export class FirestoreDealsService<
   }
 
   public updateRegistration<TRegistrationData>(dealId: string, accountAddress: string, registration: TRegistrationData): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -85,7 +65,7 @@ export class FirestoreDealsService<
   }
 
   public updateVote(dealId: string, accountAddress: string, dao: "PRIMARY_DAO" | "PARTNER_DAO", yes: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -97,15 +77,11 @@ export class FirestoreDealsService<
   }
 
   public addClauseDiscussion(dealId: string, accountAddress: string, clauseId: string, discussion: any): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
-      return;
-    }
-
     return this.firestoreService.addClauseDiscussion(dealId, clauseId, discussion);
   }
 
   public updateDealIsWithdrawn(dealId: string, accountAddress: string, value: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -117,7 +93,7 @@ export class FirestoreDealsService<
   }
 
   public updateDealIsRejected(dealId: string, accountAddress: string, value: boolean): Promise<void> {
-    if (!this.isUserAuthenticated(accountAddress)) {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
       return;
     }
 
@@ -133,15 +109,32 @@ export class FirestoreDealsService<
   }
 
   /**
-   * check if provided accountAddress is currently authenticated user
+   * check if provided accountAddress is currently authenticated to Firebase
    * @param accountAddress string
    * @returns boolean
    */
-  private isUserAuthenticated(accountAddress: string) {
-    if (!firebaseAuth.currentUser) {
-      return;
+  public isUserAuthenticatedWithAddress(accountAddress: string): boolean {
+    if (!this.firebaseService.currentFirebaseUserAddress || !accountAddress) {
+      return false;
     }
 
-    return accountAddress.toLowerCase() === firebaseAuth.currentUser.uid.toLowerCase();
+    return accountAddress.toLowerCase() === this.firebaseService.currentFirebaseUserAddress.toLowerCase();
+  }
+
+  @computedFrom("ethereumService.defaultAccountAddress", "firebaseService.currentFirebaseUserAddress")
+  public get isUserAuthenticated(): boolean {
+    if (!this.firebaseService.currentFirebaseUserAddress || !this.ethereumService.defaultAccountAddress) {
+      return false;
+    }
+
+    return this.ethereumService.defaultAccountAddress.toLowerCase() === this.firebaseService.currentFirebaseUserAddress.toLowerCase();
+  }
+
+  public isUserSignatureRequired(address?: string): boolean {
+    if (!address) {
+      return false;
+    }
+
+    return !this.firebaseService.hasSignatureForAddress(address);
   }
 }

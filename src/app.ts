@@ -28,7 +28,8 @@ export class App {
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
     private storageService: BrowserStorageService,
-    private dealService: DealService) { }
+    private dealService: DealService,
+  ) { }
 
   router: Router;
   onOff = false;
@@ -54,9 +55,9 @@ export class App {
       this.handleScrollEvent();
     });
 
-    this.eventAggregator.subscribe("deals.loading", async (onOff: boolean) => {
-      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
-      this.handleOnOff(onOff);
+    this.eventAggregator.subscribe("deals.loading", async (config: {onOff: boolean, message?: string}) => {
+      this.modalMessage = config.message || "Thank you for your patience while we initialize for a few moments...";
+      this.handleOnOff(config.onOff);
     });
 
     this.eventAggregator.subscribe("deal.saving", async (onOff: boolean) => {
@@ -102,6 +103,18 @@ export class App {
         this.ethereumService.disconnect({ code: -1, message: "wrong network" });
         this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
       }
+    });
+
+    this.eventAggregator.subscribe("database.account.signature.successful", () => {
+      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
+    });
+
+    this.eventAggregator.subscribe("database.account.signature.cancelled", () => {
+      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
+      this.alertService.showAlert({
+        header: "Authentication failure",
+        message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",
+      });
     });
 
     this.intervalId = setInterval(async () => {

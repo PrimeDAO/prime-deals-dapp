@@ -28,7 +28,7 @@ export class Home {
 
   @computedFrom("allDeals", "dealType")
   private get featuredDeals(): Array<DealTokenSwap> {
-    return this.allDeals[this.dealType];
+    return this.allDeals[this.dealType].slice(0, 10).filter((deal: DealTokenSwap) => !deal.isCancelled && !deal.isFailed);
   }
 
   async attached(): Promise<void> {

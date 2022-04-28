@@ -1,4 +1,4 @@
-import { autoinject, bindable } from "aurelia-framework";
+import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { availableSocialMedias } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import "./dealInfo.scss";
@@ -11,6 +11,15 @@ export class DealInfo {
 
   private subscriptions = new DisposableCollection();
   private settingPrivacy = false;
+
+  showMore = false;
+
+  panel: HTMLElement;
+
+  @computedFrom("showMore")
+  get maxHeight() {
+    return this.showMore ? this.panel.scrollHeight + "px" : "";
+  }
 
   constructor(
     private eventAggregator: EventAggregator,

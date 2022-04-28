@@ -98,6 +98,12 @@ deal-clauses {
 
     @media screen and (max-width: $MaxContentBodyWidth) {
       margin-left: 0;
+
+      .clause{
+        .body{
+          width: auto;
+        }
+      }
     }
   }
 }

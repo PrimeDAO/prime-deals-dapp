@@ -50,9 +50,14 @@
           border-bottom: 1px solid $Border01;
         }
         &.no, &.isLoading {
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           padding-top: $spacing-normal * 3;
           padding-bottom: $spacing-normal * 5;
+          .spinner {
+            margin-right: $spacing-normal;
+          }
         }
 
         .fa-exclamation-triangle {

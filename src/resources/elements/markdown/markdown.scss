@@ -1,0 +1,37 @@
+@import "src/styles/colors";
+@import "src/styles/variables";
+
+.markdownContainer {
+  // trying to override dialogBody here
+  font-family: Inter !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
+  color: $Neutral03 !important;
+  white-space: normal !important;
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    all: revert;
+  }
+
+  h1 {
+    @include standardTextGradient;
+    font-size: 48px;
+    line-height: 46px;
+    padding-bottom: 24px;
+    font-family: "Aeonik";
+    font-style: normal;
+    font-weight: bold;
+    width: fit-content; // so gradients look right
+    white-space: break-word;
+    margin-bottom: 28px;
+  }
+
+  a {
+    color: $Secondary07;
+  }
+}

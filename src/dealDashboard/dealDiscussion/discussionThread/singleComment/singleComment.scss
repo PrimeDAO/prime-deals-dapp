@@ -126,6 +126,8 @@
     grid-area: comment;
     padding-left: $spacing-normal + 30px;
     @include pre;
+    word-wrap: anywhere;
+
     .replyContainer {
       display: flex;
       align-items: center;
@@ -180,6 +182,12 @@
         border-radius: $border-radius-small;
         padding: $spacing-medium-small;
         margin-bottom: $spacing-normal;
+        .copy-to-clip-button>svg {
+          display: inline-flex;
+          align-self: center;
+          width: 13.5px;
+          height: 13.5px;
+        }
       }
     }
   }

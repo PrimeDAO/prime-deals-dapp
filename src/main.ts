@@ -17,12 +17,35 @@ import { TokenService } from "services/TokenService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import "./services/ValidationService";
-import { FirebaseService } from "services/FirebaseService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
 
 export function configure(aurelia: Aurelia): void {
+  // Note, this Cypress hack has to be at the very start.
+  // Reason: Imports in eg. /resources/index, where EthereumService is imported to
+  //   /binding-behaviors results in EthereumService not being mocked "in time" for Cypress.
+  if ((window as any).Cypress) {
+    /**
+     * Mock wallet connection
+     */
+    aurelia.use.singleton(EthereumService, EthereumServiceTesting);
+    /**
+     * Tests can directly access FirestoreDealsService.
+     * We want that to, eg. get dealIds from the dealsArray
+     *
+     * Architecure note: Ideally, we want to decouple Test setup code.
+     *   Because this requires a bit more investigation on the Cypress<>Webpack side,
+     *   this is the quickest compromise for prioritizing test coverage.
+     *   Once we have a solid test coverage, it will be easier to explore more solid patters
+     */
+    const firestoreService = aurelia.container.get(FirestoreService);
+    (window as any).Cypress.firestoreService = firestoreService;
+    const dataSourceDeals = aurelia.container.get(FirestoreDealsService);
+    (window as any).Cypress.dataSourceDeals = dataSourceDeals;
+    (window as any).Cypress.eventAggregator = aurelia.container.get(EventAggregator);
+  }
+
   aurelia.use
     .standardConfiguration()
     .feature(PLATFORM.moduleName("resources/index"))
@@ -54,32 +77,6 @@ export function configure(aurelia: Aurelia): void {
     try {
 
       aurelia.container.registerTransient(DealTokenSwap);
-
-      /**
-       * must do before ethereum service, to capture network connections
-       * and in general to be the first to do so.
-       */
-      const firebaseService = aurelia.container.get(FirebaseService);
-      firebaseService.initialize();
-
-      if ((window as any).Cypress) {
-        /**
-         * Mock wallet connection
-         */
-        aurelia.use.singleton(EthereumService, EthereumServiceTesting);
-        /**
-         * Tests can directly access FirestoreDealsService.
-         * We want that to, eg. get dealIds from the dealsArray
-         *
-         * Architecure note: Ideally, we want to decouple Test setup code.
-         *   Because this requires a bit more investigation on the Cypress<>Webpack side,
-         *   this is the quickest compromise for prioritizing test coverage.
-         *   Once we have a solid test coverage, it will be easier to explore more solid patters
-         */
-        const firestoreService = aurelia.container.get(FirestoreService);
-        (window as any).Cypress.firestoreService = firestoreService;
-        (window as any).Cypress.eventAggregator = aurelia.container.get(EventAggregator);
-      }
 
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
-import { ethers, Signer } from "ethers";
+import { ethers } from "ethers";
 import { BaseProvider, Web3Provider } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, Networks } from "./EthereumService";
+import { E2E_ADDRESSES_PRIVATE_KEYS } from "./../../cypress/fixtures/dealFixtures";
 
 @autoinject
 export class EthereumServiceTesting {
@@ -61,8 +62,13 @@ export class EthereumServiceTesting {
     this.eventAggregator.publish("Network.Changed.Disconnect", error);
   }
 
-  public getDefaultSigner(): Signer {
-    return this.walletProvider.getSigner(this.defaultAccountAddress);
+  public getDefaultSigner() {
+    return {
+      signMessage: async (message: string) => {
+        const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
+        return wallet.signMessage(message);
+      },
+    };
   }
 
   /**
@@ -154,10 +160,6 @@ export class EthereumServiceTesting {
     return false;
   }
 
-  public getEnsForAddress(_address: Address): Promise<string> {
-    return Promise.resolve("anens.eth");
-  }
-
   public lastBlock: IBlockInfo;
 
   /**
@@ -174,5 +176,24 @@ export class EthereumServiceTesting {
     }
 
     return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
+  }
+
+  public getEnsForAddress(address: Address): Promise<string> {
+    return this.walletProvider?.lookupAddress(address)
+      .catch(() => null);
+  }
+
+  /**
+   * Returns address that is represented by the ENS.
+   * Returns null if it can't resolve the ENS to an address
+   * Returns address if it already is an address
+   */
+  public getAddressForEns(ens: string): Promise<Address> {
+
+    /**
+     * returns the address if ens already is an address
+     */
+    return this.walletProvider?.resolveName(ens)
+      .catch(() => null); // is neither address nor ENS
   }
 }

@@ -29,6 +29,7 @@
             background-color: $BG02;
             border-radius: 6px;
             padding: 56px;
+
             .documentBodyContainer {
                 > .title.heading {
                     margin-bottom: 28px;
@@ -36,23 +37,7 @@
                 }
 
                 .documentBody {
-                    font-family: Inter;
-                    font-weight: 500;
-                    font-size: 16px;
-                    line-height: 140%;
-                    color: $Neutral03;
                     margin-bottom: 28px;
-                    p,
-                    h1,
-                    h2,
-                    h3,
-                    h4 {
-                        all: revert;
-                    }
-
-                    a {
-                        color: $Secondary07;
-                    }
                 }
             }
 
@@ -60,10 +45,12 @@
                 display: flex;
                 justify-content: space-between;
                 color: $Secondary02;
+
                 .navigationNext {
                     @include standardTextGradient;
                     cursor: pointer;
                 }
+
                 .navigationPrevious {
                     @include standardTextGradientReversed;
                     cursor: pointer;
@@ -78,11 +65,14 @@
         > .title.heading {
             font-size: 34px;
         }
+
         .documentContainer {
             grid-template-columns: auto;
+
             .rightSection {
                 padding: 0;
             }
+
             .sidebar {
                 padding-top: 0;
                 margin-bottom: 30px;
@@ -90,6 +80,7 @@
 
             .rightSection {
                 background-color: unset;
+
                 .documentBodyContainer {
                     > .title.heading {
                         font-size: 28px;

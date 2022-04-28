@@ -3,7 +3,7 @@
   <require from="../timeLeft/timeLeft"></require>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
-      <pform-input if.to-view="ethereumService.defaultAccountAddress" click.delegate="toggleMyDeals()"
+      <pform-input if.to-view="dataSourceDeals.isUserAuthenticated" click.delegate="toggleMyDeals()"
         label="Show my deals only">
         <ptoggle value.bind="showMine"></ptoggle>
       </pform-input>
@@ -12,6 +12,12 @@
         type="secondary"
         click.delegate="ethereumService.ensureConnected()">
         Connect to Show Your Deals
+      </pbutton>
+      <pbutton
+        if.to-view="ethereumService.defaultAccountAddress && !dataSourceDeals.isUserAuthenticated"
+        type="secondary"
+        click.delegate="dealService.loadDeals()">
+        Authenticate to Show Your Deals
       </pbutton>
       <pbutton
         type="primary"

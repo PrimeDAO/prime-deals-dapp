@@ -8,6 +8,10 @@ import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
+import { Utils } from "services/utils";
+import { PLATFORM } from "aurelia-pal";
+
+PLATFORM.moduleName("./fundingModal/fundingModal");
 
 @autoinject
 export class DealVotes {
@@ -23,42 +27,42 @@ export class DealVotes {
       statusText: "Deal is approved",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && !this.deal.isRepresentativeUser && !this.deal.isUserProposalLead,
+      condition: () => !this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
       voteText: "Waiting for the representatives to vote",
       statusText: "Voting is progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isUserProposalLead,
+      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
       voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. Once the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isRepresentativeUser && !this.deal.hasRepresentativeVoted && !this.deal.isUserProposalLead,
+      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
       voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isUserProposalLead,
+      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedProposalLead,
       voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, you can initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => this.deal.majorityHasVoted && this.deal.isRepresentativeUser && !this.deal.isUserProposalLead,
+      condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
       voteText: "Waiting for the Proposal Lead to initiate the funding phase.  You may still change your vote if you wish to",
       statusText: "Voting is completed",
     },
     {
-      condition: () => this.deal.majorityHasVoted && !this.deal.isRepresentativeUser && !this.deal.isUserProposalLead,
+      condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
       voteText: "Waiting for the Proposal Lead to initiate the funding phase",
       statusText: "Voting is completed",
     },
     {
-      condition: () => this.deal.majorityHasVoted && this.deal.isRepresentativeUser && this.deal.isUserProposalLead,
+      condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
       voteText: "You can now initiate the funding phase. You may still change your vote if you wish to",
       statusText: "Voting is completed",
     },
     {
-      condition: () => this.deal.majorityHasVoted && !this.deal.isRepresentativeUser && this.deal.isUserProposalLead,
+      condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
       voteText: "You can now initiate the funding phase",
       statusText: "Voting is completed",
     },
@@ -81,6 +85,7 @@ export class DealVotes {
     }
 
     if (await this.deal.createSwap()) {
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     }
@@ -115,10 +120,36 @@ export class DealVotes {
   private async vote(value: boolean) {
     try {
       await this.deal.vote(value);
+
+      this.updateDealVote(value);
+
       this.eventAggregator.publish("handleInfo", "Your vote has been successfully submitted");
     } catch (error) {
       this.consoleLogService.logMessage(`Voting error ${error}`, "error");
       this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred submitting your vote", error));
     }
+  }
+
+  /**
+   * This method updates the vote in the page, so we instantly get the page re-rendered.
+   * It's called just to avoid the delay from Firebase when voting and make the app
+   *  show the Funding button immediately.
+   */
+  private updateDealVote(value: boolean) {
+    const whichDao = this.deal.daoRepresentedByCurrentAccount;
+
+    const daoVotingSummary = this.deal.daoVotingSummary(whichDao);
+    const userAddress = this.ethereumService.defaultAccountAddress;
+
+    const oldVote = daoVotingSummary.votes[userAddress];
+
+    // manually add or subtract votes based on what the user clicked
+    daoVotingSummary.acceptedVotesCount += (value === true) ? 1 : (oldVote === null ? 0 : -1);
+    daoVotingSummary.rejectedVotesCount += (value === false) ? 1 : (oldVote === null ? 0 : -1);
+
+    daoVotingSummary.votes = {
+      ...daoVotingSummary.votes,
+      [userAddress]: value,
+    };
   }
 }
