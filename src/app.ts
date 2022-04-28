@@ -105,7 +105,12 @@ export class App {
       }
     });
 
+    this.eventAggregator.subscribe("database.account.signature.successful", () => {
+      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
+    });
+
     this.eventAggregator.subscribe("database.account.signature.cancelled", () => {
+      this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
       this.alertService.showAlert({
         header: "Authentication failure",
         message: "<p>You didn't sign the authentication message. You will only see public deals and you won't be able to edit your deals.</p>",

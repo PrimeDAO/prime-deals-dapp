@@ -157,7 +157,10 @@ export class DealService {
   public async loadDeals(): Promise<void> {
     // compute the message here - are we going to ask for the signature??
     // add that method (to figure out if we are going to request signature) to dataSourceDeals
-    const message = "Thank you for your patience while we initialize for a few moments. Check your wallet provider to ensure it is not waiting for your signature.";
+    const message = this.dataSourceDeals.isUserSignatureRequired(this.ethereumService.defaultAccountAddress) ?
+      "Check your wallet provider to ensure it is not waiting for your signature." :
+      "Thank you for your patience while we initialize for a few moments...";
+
     this.eventAggregator.publish("deals.loading", {onOff: true, message});
     await this.getDeals().finally(() => this.eventAggregator.publish("deals.loading", {onOff: false}));
     return this.observeDeals();

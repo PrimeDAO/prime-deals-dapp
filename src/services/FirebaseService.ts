@@ -11,6 +11,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 import { DateService } from "./DateService";
+import { BrowserStorageService } from "services/BrowserStorageService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -47,6 +48,13 @@ if (process.env.FIREBASE_ENVIRONMENT === "local") {
   connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
 }
 
+const FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE = "FIREBASE_AUTHENTICATION_SIGNATURES";
+
+interface ISignatureStorage {
+  signature: string;
+  messageToSign: string;
+}
+
 @autoinject
 export class FirebaseService {
 
@@ -56,6 +64,7 @@ export class FirebaseService {
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
     private dateService: DateService,
+    private browserStorageService: BrowserStorageService,
   ) {
   }
 
@@ -107,6 +116,13 @@ export class FirebaseService {
     );
   }
 
+  /**
+   * Checks if a signature for the provided accountAddress already exists in localStorage
+   */
+  public hasSignatureForAddress(address: string): boolean {
+    return !!this.getExistingSignatureAndMessageForAddress(address).signature;
+  }
+
   private async getMessageToSign(): Promise<string> {
     const date = this.dateService.translateUtcToLocal(new Date());
 
@@ -139,15 +155,21 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    const messageToSign = await this.getMessageToSign();
+    let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
 
-    let signature: string;
-    try {
-      signature = await this.requestSignature(messageToSign);
-      this.eventAggregator.publish("handleInfo", "Message was successfully signed");
-    } catch {
-      this.eventAggregator.publish("database.account.signature.cancelled");
-      throw new Error();
+    if (!signature) {
+      messageToSign = await this.getMessageToSign();
+
+      try {
+        signature = await this.requestSignature(messageToSign);
+        this.storeSignatureForAddress(address, signature, messageToSign);
+        this.eventAggregator.publish("handleInfo", "Message was successfully signed");
+        this.eventAggregator.publish("database.account.signature.successful");
+
+      } catch {
+        this.eventAggregator.publish("database.account.signature.cancelled");
+        throw new Error();
+      }
     }
 
     let token: string;
@@ -173,5 +195,19 @@ export class FirebaseService {
       this.ethereumService.getDefaultSigner().signMessage(messageToSign),
       Utils.timeout(30000),
     ]);
+  }
+
+  private getExistingSignatureAndMessageForAddress(address: string): ISignatureStorage {
+    const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
+
+    return signaturesAndMessages[address] ? signaturesAndMessages[address] : {signature: null, messageToSign: null};
+  }
+
+  private storeSignatureForAddress(address: string, signature: string, messageToSign: string): void {
+    const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
+
+    signaturesAndMessages[address] = {signature, messageToSign};
+
+    this.browserStorageService.lsSet(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, signaturesAndMessages);
   }
 }

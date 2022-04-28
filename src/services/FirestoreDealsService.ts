@@ -129,4 +129,12 @@ export class FirestoreDealsService<
 
     return this.ethereumService.defaultAccountAddress.toLowerCase() === this.firebaseService.currentFirebaseUserAddress.toLowerCase();
   }
+
+  public isUserSignatureRequired(address?: string): boolean {
+    if (!address) {
+      return false;
+    }
+
+    return !this.firebaseService.hasSignatureForAddress(address);
+  }
 }

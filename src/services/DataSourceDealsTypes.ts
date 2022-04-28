@@ -149,4 +149,11 @@ export abstract class IDataSourceDeals {
   ): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
+  /**
+   * Should we ask user to sign authentication message
+   */
+  isUserSignatureRequired(accountAddress?: string): boolean {
+    throw new Error("Method not implemented.");
+  }
 }
