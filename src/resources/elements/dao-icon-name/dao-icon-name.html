@@ -1,10 +1,10 @@
 <template>
   <div class="icons ${ partnerDao ? 'running' : 'open' }" style.to-view="gridStyle">
     <div class="icon" if.to-view="primaryDao" style.to-view="iconStyle">
-      <img src="${primaryDao.logoURI}" style.to-view="iconStyle" />
+      <img class="roundedLogo" src="${primaryDao.logoURI}" style.to-view="iconStyle" />
     </div>
     <div class="icon" if.to-view="partnerDao" style.to-view="iconStyle">
-      <img src="${partnerDao.logoURI}" style.to-view="iconStyle" />
+      <img class="roundedLogo" src="${partnerDao.logoURI}" style.to-view="iconStyle" />
     </div>
     <div class="dao">
       <div
