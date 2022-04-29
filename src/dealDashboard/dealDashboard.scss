@@ -99,6 +99,14 @@
         flex-grow: 1;
       }
     }
+    deal-discussion {
+      .header {
+        display: inherit;
+        .heading1 {
+          margin-bottom: 0;
+        }
+      }
+    }
   }
 }
 
