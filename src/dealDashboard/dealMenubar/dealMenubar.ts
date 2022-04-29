@@ -51,7 +51,7 @@ export class DealMenubar {
       header: "You will be cancelling the deal and will not be able to re-activate it.",
       message: "Are you sure you want to cancel your deal?",
       buttons: 3,
-      buttonTextPrimary: "Continue",
+      buttonTextPrimary: "Cancel My Deal",
       buttonTextSecondary: "Keep my deal",
     });
 
