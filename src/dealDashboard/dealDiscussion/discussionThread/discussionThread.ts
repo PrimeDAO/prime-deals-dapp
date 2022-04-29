@@ -438,11 +438,16 @@ export class DiscussionThread {
       } else {
         Promise.reject("Not deleted.");
       }
-    }).catch (err => {
+    }).catch (async (err) => {
       if (err.code === 4001) {
         this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
       } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
+        const comment = await this.discussionsService.getSingleComment(_id);
+
+        // A workaround for theconvo sdk returning an error even if the comment have been deleted from the thread.
+        if (comment._id) {
+          this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
+        }
       }
     }).finally(() => {
       this.isLoading[`isDeleting ${_id}`] = false;
