@@ -1,5 +1,6 @@
 @import "src/styles/colors";
 @import "src/resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
 
 .discussionThread {
   @include pre;
@@ -18,7 +19,7 @@
     padding-top: $spacing-normal;
     padding-bottom: $spacing-medium-small + $spacing-normal;
     border-bottom: 1px solid $Secondary02;
-    &>span {
+    & > span {
       display: flex;
       justify-content: space-between;
     }
@@ -49,7 +50,8 @@
         &:not(:last-child) {
           border-bottom: 1px solid $Border01;
         }
-        &.no, &.isLoading {
+        &.no,
+        &.isLoading {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -100,11 +102,12 @@
         justify-content: flex-start;
         gap: 13px;
         &:hover {
-          button>i.fa-times {
+          button > i.fa-times {
             color: $Primary01;
           }
         }
-        i.fa-times, i.fa-share {
+        i.fa-times,
+        i.fa-share {
           cursor: pointer;
           color: $Secondary05;
           font-size: 24px;
@@ -130,19 +133,19 @@
         white-space: nowrap;
       }
 
-      &>ptextarea {
+      & > ptextarea {
         grid-area: input;
-        &>textarea {
+        & > textarea {
           min-height: (24px + $spacing-normal) * 2; // 2 rows
           height: (24px + $spacing-normal) * 2;
           resize: vertical;
           max-height: 130px;
         }
       }
-      &>.action.do{
+      & > .action.do {
         grid-area: action-bottom;
       }
-      &>.action.heading {
+      & > .action.heading {
         button {
           padding: $spacing-small $spacing-normal * 2;
         }
@@ -153,5 +156,22 @@
   .spinner {
     color: $Primary01;
   }
+}
 
+@media screen and (max-width: $MaxContentBodyWidth) {
+  .discussionThread {
+    .sticky-area {
+      .action.container {
+        display: block;
+        padding-top: 10px;
+        padding-right: 20px;
+        .action.heading {
+          margin-bottom: 10px;
+        }
+        & > .action.do {
+          margin-top: 10px;
+        }
+      }
+    }
+  }
 }
