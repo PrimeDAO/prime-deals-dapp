@@ -67,15 +67,19 @@ export const availableSocialMedias = [
 
 export const STAGE_ROUTE_PARAMETER = "stageRoute";
 
-export const daoStageValidationRules = (title: string) =>
+export const daoStageValidationRules = (title: string, otherDao: IDAO) =>
   ValidationRules
     .ensure<IDAO, string>(dao => dao.name)
     .required()
     .withMessage(`${title} name is required`)
+    .satisfies(value => value !== otherDao.name)
+    .withMessage("Name already used for the other DAO")
     .ensure<string>(dao => dao.treasury_address)
     .required()
     .withMessage("Treasury address is required")
     .satisfiesRule(Validation.isEthAddress)
+    .satisfies(value => value !== otherDao.treasury_address)
+    .withMessage("Address already used for the other DAO")
     .ensure<string>(dao => dao.logoURI)
     .required()
     .withMessage(`${title} avatar is required`)
