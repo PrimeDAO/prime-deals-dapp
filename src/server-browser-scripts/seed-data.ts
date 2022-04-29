@@ -97,7 +97,7 @@ export async function resetDeals(registrationData: ResetDeal[] = []) {
 
     const votingSummary = quorumReached
       ? await initializeVotingSummaryWithQuorumReached(existingOrGeneratedDealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses)
-      : initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+      : initializeVotingSummary(existingOrGeneratedDealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
     const dealData: Partial<IDealTokenSwapDocument> = {
       id: existingOrGeneratedDealId as string,
@@ -121,9 +121,19 @@ export async function resetDeals(registrationData: ResetDeal[] = []) {
   * Used to create an initial voting summary as well as to reset the existing one
   */
 function initializeVotingSummary(
+  existingOrGeneratedDealId: string,
   primaryDaoRepresentativesAddresses: string[],
   partnerDaoRepresentativesAddresses: string[],
 ): IDealVotingSummary {
+  primaryDaoRepresentativesAddresses.forEach(async (address) => {
+    const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
+    setDoc(voteRef, {vote: null});
+  });
+
+  partnerDaoRepresentativesAddresses.forEach(async (address) => {
+    const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
+    setDoc(voteRef, {vote: null});
+  });
   return {
     primaryDAO: {
       totalSubmittable: primaryDaoRepresentativesAddresses.length,
