@@ -1,6 +1,5 @@
 *Quick links: --- [How to add new seed data](#how-to-add-new-seed-data)*
 
-
 # Seed data
 
 ## How to execute the script
@@ -9,10 +8,10 @@
 `npm run seed-run`
 
 2. In the UI
-Non-prod instances have a button "Reset Deals", which will reset all Deals to their canonical form (and remove newly created ones).
+Non-prod instances have a button "Reset Deals" (in the navbar, top right), which will reset all Deals to their canonical form (and remove newly created ones).
 
 ## How to add new seed data
-You need consider up to 3 steps:
+You need to consider up to 3 steps:
 - Generating new seed data
 - Location - Where does the seed data live?
 - Code modifications - What places to change when new seed data was added?
@@ -32,4 +31,4 @@ Note: You can generate either one single .json object or a .json array.
 ### Code modifications - What places to change when new seed data was added?
 [`test/data/index.ts`](../../test/data/index.ts)
 
-
+Note, this part can be optional if you are modifying an .json array.
