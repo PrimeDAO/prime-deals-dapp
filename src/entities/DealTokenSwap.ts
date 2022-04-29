@@ -392,11 +392,11 @@ export class DealTokenSwap implements IDeal {
   }
 
   // TODO: observe the right things here to recompute when votes have changed
-  @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "dealDocument.votingSummary.partnerDAO.votes")
+  @computedFrom("primaryDaoVotes", "partnerDaoVotes")
   public get allVotes(): IVotesInfo {
     return {
-      ...this.dealDocument.votingSummary.primaryDAO.votes,
-      ...this.dealDocument.votingSummary.partnerDAO.votes,
+      ...this.primaryDaoVotes,
+      ...this.partnerDaoVotes,
     };
   }
 

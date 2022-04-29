@@ -3,7 +3,7 @@ import { autoinject, customElement } from "aurelia-framework";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./ppopup-modal.scss";
 // does the confetti
-import "@stackoverflow/stacks/dist/css/stacks.min.css";
+import "/src/styles/confetti.css";
 import { AureliaHelperService } from "services/AureliaHelperService";
 
 export enum ShowButtonsEnum {
