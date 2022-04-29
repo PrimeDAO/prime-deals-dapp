@@ -29,7 +29,7 @@
       color: $White;
     }
     & > :not(.deleteInfo) {
-      filter: blur(2px) brightness(0.5) grayscale(1);
+      filter: blur(1px) brightness(0.5) grayscale(1);
     }
   }
 
