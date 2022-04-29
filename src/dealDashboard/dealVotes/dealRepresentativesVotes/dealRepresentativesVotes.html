@@ -10,11 +10,9 @@
     </div>
 
     <div class="votes-statuses-circles">
-      <template
-        repeat.for="representative of representativesSortedByVotes(deal.representatives, deal.allVotes)"
-      >
+      <template repeat.for="vote of sortedVotes">
         <div
-          class="vote-status-circle ${getVoteSlug(deal.allVotes, representative.address) ? 'vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"
+          class="vote-status-circle ${vote !== null ? ('vote-' + (vote ? 'accepted' : 'declined')) : ''}"
         ></div>
         <div
           class="vote-status-circle-delimiter"
@@ -32,19 +30,13 @@
         text="${representative.address | smallHexString}"
       >
       </etherscanlink>
-      ${getVoteSlug(deal.allVotes, representative.address) || 'hasn’t voted'}
+      ${getVoteSlug(votes, representative.address) || 'hasn’t voted'}
       <span
-        class="representative-vote ${getVoteSlug(deal.allVotes, representative.address) ? 'representative-vote-' + getVoteSlug(deal.allVotes, representative.address) : ''}"
+        class="representative-vote ${getVoteSlug(votes, representative.address) ? 'representative-vote-' + getVoteSlug(votes, representative.address) : ''}"
       >
-        <i class="fas fa-check-circle" if.bind="deal.allVotes[representative.address] === true"></i>
-        <i
-          class="fas fa-times-circle"
-          if.bind="deal.allVotes[representative.address] === false"
-        ></i>
-        <i
-          class="fas fa-question-circle"
-          if.bind="deal.allVotes[representative.address] === null"
-        ></i>
+        <i class="fas fa-check-circle" if.bind="votes[representative.address] === true"></i>
+        <i class="fas fa-times-circle" if.bind="votes[representative.address] === false"></i>
+        <i class="fas fa-question-circle" if.bind="votes[representative.address] === null"></i>
       </span>
     </p>
   </div>
