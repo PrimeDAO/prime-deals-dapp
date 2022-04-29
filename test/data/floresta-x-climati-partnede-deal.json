@@ -88,9 +88,9 @@
         "logoURI": "https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734",
         "name": "SPORE",
         "symbol": "SPO",
-        "amount": "400000000",
+        "amount": "4000000000000000000000",
         "vestedTransferAmount": "0",
-        "instantTransferAmount": "400000000",
+        "instantTransferAmount": "4000000000000000000000",
         "vestedFor": 94672800,
         "cliffOf": 15768000
       }
