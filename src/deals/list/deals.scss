@@ -61,7 +61,10 @@ pbutton button.secondary {
     &.deals-actions {
       text-align: right;
       margin-bottom: 28px;
-
+      display: grid;
+      grid-template-columns: 1fr auto;
+      justify-items: right;
+      align-items: center;
       pbutton {
         margin-left: 20px;
       }
@@ -69,11 +72,16 @@ pbutton button.secondary {
       pform-input {
         display: inline-flex;
         cursor: pointer;
-
+        .pToggle {
+          margin-top: 2px;
+        }
+        .formInputLabel {
+          margin: 0;
+        }
         .formInputLabelTitle {
           text-transform: uppercase;
           color: $Neutral02;
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 700;
           margin-bottom: 0px;
         }
@@ -189,7 +197,6 @@ pbutton button.secondary {
           }
 
           &.body {
-
             .cell,
             .cell > div.icons > div.dao > div.name {
               font-size: 16px;
