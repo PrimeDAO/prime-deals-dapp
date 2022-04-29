@@ -80,7 +80,18 @@ try {
   //swallow
 }
 
-type ResetDeal = { dealId: string, quorumReached: boolean } & IDealRegistrationTokenSwap
+type ResetDeal = {
+  /**
+   * If `string`, reuse when resetting
+   * Else if `undefined` (or not present in the json), generate new id on each reset
+   */
+  dealId?: string,
+  /**
+   * If `true`, modify `votingSummary` such that all votes show up as green in the UI
+   * Else if `false` (or not present in the json), nothing special, just "normal" firestore init logic
+   */
+  quorumReached?: boolean
+} & IDealRegistrationTokenSwap
 /**
  * Called from the front end in non prod
  * @param resetDeals
