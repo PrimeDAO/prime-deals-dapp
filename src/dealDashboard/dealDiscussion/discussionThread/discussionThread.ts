@@ -1,3 +1,4 @@
+import { AlertService } from "services/AlertService";
 import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -66,6 +67,7 @@ export class DiscussionThread {
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
+    private alertService: AlertService,
   ) { }
 
   attached(): void {
@@ -427,6 +429,18 @@ export class DiscussionThread {
 
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
+
+    const result = await this.alertService.showAlert({
+      header: "You will be deleting your comment and will not be able to recover it.",
+      message: "Are you sure you want to delete your comment?",
+      buttons: 3,
+      buttonTextPrimary: "Delete my comment",
+      buttonTextSecondary: "Keep my comment",
+    });
+
+    if (result.wasCancelled) {
+      return;
+    }
 
     const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
