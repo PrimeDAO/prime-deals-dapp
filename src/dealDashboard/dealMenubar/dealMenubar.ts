@@ -42,9 +42,8 @@ export class DealMenubar {
   )
   get canCancel() {
     return this.deal.isAuthenticatedProposalLead
-      && !this.deal.isCancelled
-      && !this.deal.isFunding
-      && !this.deal.isFailed;
+      && !this.deal.fundingWasInitiated
+      && !this.deal.isCancelled;
   }
 
   async cancelDeal() {
