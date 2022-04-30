@@ -1,3 +1,4 @@
+import { DisposableCollection } from "services/DisposableCollection";
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
 import { Address, fromWei, Hash } from "./../services/EthereumService";
@@ -18,6 +19,7 @@ import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "../services/AureliaHelperService";
 import { DealService } from "services/DealService";
+import { IDisposable } from "services/IDisposable";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -392,7 +394,7 @@ export class DealTokenSwap implements IDeal {
   }
 
   // TODO: observe the right things here to recompute when votes have changed
-  @computedFrom("primaryDaoVotes", "partnerDaoVotes")
+  @computedFrom("primaryDaoVotes", "partnerDaoVotes", "daoVotesSemaphore")
   public get allVotes(): IVotesInfo {
     return {
       ...this.primaryDaoVotes,
@@ -400,13 +402,13 @@ export class DealTokenSwap implements IDeal {
     };
   }
 
-  @computedFrom("dealDocument.votingSummary.primaryDAO.votes")
-  public get primaryDaoVotes(): IVotesInfo {
+  @computedFrom("dealDocument.votingSummary.primaryDAO.votes", "daoVotesSemaphore")
+  private get primaryDaoVotes(): IVotesInfo {
     return this.dealDocument.votingSummary.primaryDAO.votes;
   }
 
-  @computedFrom("dealDocument.votingSummary.partnerDAO.votes")
-  public get partnerDaoVotes(): IVotesInfo {
+  @computedFrom("dealDocument.votingSummary.partnerDAO.votes", "daoVotesSemaphore")
+  private get partnerDaoVotes(): IVotesInfo {
     return this.dealDocument.votingSummary.partnerDAO?.votes ?? {};
   }
 
@@ -631,10 +633,22 @@ export class DealTokenSwap implements IDeal {
       this.hydrateDaoTransactions();
       this.hydrateDaoClaims();
       this.processTotalPrice();
+      this.hydrateVotingObservables();
     }
     catch (error) {
       this.corrupt = true;
       this.consoleLogService.logMessage(`Deal: Error initializing deal ${error?.message}`, "error");
+    }
+  }
+
+  private hydrateVotingObservables(): void {
+    if (this.isVoting) {
+      this.aureliaHelperService.createCollectionWatch(this.dealDocument.registrationData.primaryDAO.representatives, () => this.observeVoteChanges());
+      this.aureliaHelperService.createCollectionWatch(this.dealDocument.registrationData.partnerDAO.representatives, () => this.observeVoteChanges());
+      this.observeVoteChanges();
+    } else if (this.votesSubscription) {
+      this.votesSubscription.dispose();
+      this.votesSubscription = null;
     }
   }
 
@@ -977,6 +991,31 @@ export class DealTokenSwap implements IDeal {
       token.claimingLocked = totalAmount.sub(token.claimingInstantTransferAmount.add(token.claimingClaimable).add(token.claimingClaimed).add(token.claimingFee));
       token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(token.claimingFee).add(token.claimingInstantTransferAmount)).dividedBy(token.amount).toNumber() * 100;
     }
+  }
+
+  private daoVotesSemaphore = 0;
+  private votesSubscription: IDisposable = null;
+
+  private observeVoteChanges(): void {
+
+    if (this.votesSubscription) {
+      this.votesSubscription.dispose();
+      this.votesSubscription = null;
+    }
+
+    const subscriptions = new DisposableCollection();
+    /**
+     * For every representative in the DAO, observe changes to their vote and wave the semaphore when they happen.
+     */
+    this.primaryDaoRepresentatives.forEach((repAddress: Address) => {
+      subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.dealDocument.votingSummary.primaryDAO.votes, repAddress, () => ++this.daoVotesSemaphore ));
+    });
+
+    this.partnerDaoRepresentatives.forEach((repAddress: Address) => {
+      subscriptions.push(this.aureliaHelperService.createPropertyWatch(this.dealDocument.votingSummary.partnerDAO.votes, repAddress, () => ++this.daoVotesSemaphore ));
+    });
+
+    this.votesSubscription = subscriptions;
   }
 
   /**
