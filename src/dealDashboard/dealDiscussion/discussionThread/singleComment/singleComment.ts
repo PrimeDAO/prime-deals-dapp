@@ -5,6 +5,7 @@ import { Router } from "aurelia-router";
 import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import "./singleComment.scss";
+import { ILoadingTracker } from "../discussionThread";
 
 interface IThreadComment extends IComment {
   lastModified: string;
@@ -17,7 +18,7 @@ export class SingleComment {
   @bindable private repliesToProfile: IProfile;
   @bindable private author: string;
   @bindable private profile: IProfile;
-  @bindable private loading: Record<string, boolean>;
+  @bindable private loading: ILoadingTracker;
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;
