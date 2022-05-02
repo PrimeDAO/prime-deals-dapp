@@ -2,7 +2,7 @@ import shortUuid from "short-uuid";
 import { IDealTokenSwapDocument, IDealVotingSummary } from "./../entities/IDealTypes";
 import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
 import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
-import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
+import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc, FieldValue, deleteField, updateDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 
 export const DEALS_TOKEN_SWAP_COLLECTION = "deals-token-swap";
@@ -40,7 +40,14 @@ export const clearCollection = async (
 ) => {
   const collectionRef = collection(firebaseDatabase, collectionKey);
   const queryResult = await getDocs(collectionRef);
-  await Promise.all(queryResult.docs.map(doc => deleteDoc(doc.ref)));
+  await Promise.all(queryResult.docs.map(async doc => {
+    const subCollection1 = collection(firebaseDatabase, collectionKey, doc.id, PRIMARY_DAO_VOTES_COLLECTION);
+    const subCollection2 = collection(firebaseDatabase, collectionKey, doc.id, PRIMARY_DAO_VOTES_COLLECTION);
+    const subCollction1Docs = (await getDocs(subCollection1)).docs.concat((await getDocs(subCollection2)).docs);
+
+    return Promise.all([...subCollction1Docs.map(y =>
+      deleteDoc(y.ref)), deleteDoc(doc.ref)]);
+  }));
 };
 
 /**
@@ -138,12 +145,12 @@ function initializeVotingSummary(
 ): IDealVotingSummary {
   primaryDaoRepresentativesAddresses.forEach(async (address) => {
     const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
-    setDoc(voteRef, {vote: null});
+    setDoc(voteRef, { vote: null });
   });
 
   partnerDaoRepresentativesAddresses.forEach(async (address) => {
     const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
-    setDoc(voteRef, {vote: null});
+    setDoc(voteRef, { vote: null });
   });
   return {
     primaryDAO: {
@@ -173,12 +180,12 @@ async function initializeVotingSummaryWithQuorumReached(
 ): Promise<IDealVotingSummary> {
   primaryDaoRepresentativesAddresses.forEach(async (address) => {
     const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PRIMARY_DAO_VOTES_COLLECTION}/${address}`);
-    setDoc(voteRef, {vote: true});
+    setDoc(voteRef, { vote: true });
   });
 
   partnerDaoRepresentativesAddresses.forEach(async (address) => {
     const voteRef = await doc(firebaseDatabase, `/${DEALS_TOKEN_SWAP_COLLECTION}/${existingOrGeneratedDealId}/${PARTNER_DAO_VOTES_COLLECTION}/${address}`);
-    setDoc(voteRef, {vote: true});
+    setDoc(voteRef, { vote: true });
   });
 
   return {
