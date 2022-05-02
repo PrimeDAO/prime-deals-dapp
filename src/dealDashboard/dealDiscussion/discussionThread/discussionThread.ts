@@ -465,7 +465,6 @@ export class DiscussionThread {
     }
 
     this.isLoading[`isDeleting ${_id}`] = true;
-    this.isLoading[`isDeleting ${_id}`] = true;
     this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
       this.updateThread(_id);
     }).catch (async (err) => {
