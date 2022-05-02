@@ -6,9 +6,9 @@
  * write styles against that.  See how Alert and disclaimer dialogs are created.
  */
 body > ux-dialog-overlay.active {
-  opacity: 0.5;
-  background-color: $Border01;
+  background-color: rgba(21, 6, 45, 0.5); // rgba otherwise does not work properly with blue
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 body.ux-dialog-open {
