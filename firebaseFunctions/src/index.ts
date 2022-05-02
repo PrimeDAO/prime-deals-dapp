@@ -204,6 +204,22 @@ export const getDateToSign = functions.https.onRequest(
   },
 );
 
+export const createCustomToken = functions.https.onRequest((request, response) =>
+  cors(request, response, async () => {
+    {
+      const address: string = request.body.address;
+      try {
+        getAddress(address);
+      } catch {
+        functions.logger.error("Signer address is not a correct ETH address");
+        return response.sendStatus(500);
+      }
+
+      const firebaseToken = await admin.auth().createCustomToken(address);
+      return response.status(200).json({ token: firebaseToken });
+
+    }}));
+
 /**
  * Verifies that a message was signed by the provided address.
  * Therefore it proofs the ownership of the address.

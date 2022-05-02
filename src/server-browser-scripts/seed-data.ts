@@ -1,8 +1,9 @@
+import { jsonDocs } from "./../../test/data/index";
 import shortUuid from "short-uuid";
 import { IDealTokenSwapDocument, IDealVotingSummary } from "./../entities/IDealTypes";
 import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
 import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
-import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc, FieldValue, deleteField, updateDoc } from "firebase/firestore";
+import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 
 export const DEALS_TOKEN_SWAP_COLLECTION = "deals-token-swap";
@@ -104,6 +105,11 @@ type ResetDeal = {
  * @param resetDeals
  */
 export async function resetDeals(registrationData: ResetDeal[] = []) {
+
+  if (process.env.FIREBASE_ENVIRONMENT !== "production" && !registrationData?.length) {
+    registrationData.push(...jsonDocs as any[]);
+  }
+
   await clearCollection(DEALS_TOKEN_SWAP_COLLECTION);
 
   await Promise.all(registrationData.map(async (data) => {
@@ -111,7 +117,7 @@ export async function resetDeals(registrationData: ResetDeal[] = []) {
     const partnerDaoRepresentativesAddresses = data.partnerDAO?.representatives?.map(item => item.address) ?? [];
     const date = new Date().toISOString();
     const { dealId, quorumReached, ...registrationData } = data;
-    const existingOrGeneratedDealId = dealId ?? shortUuid.generate();
+    const existingOrGeneratedDealId = dealId ?? shortUuid?.generate();
 
     const votingSummary = quorumReached
       ? await initializeVotingSummaryWithQuorumReached(existingOrGeneratedDealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses)
