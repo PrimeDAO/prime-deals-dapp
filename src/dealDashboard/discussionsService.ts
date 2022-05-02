@@ -366,25 +366,17 @@ export class DiscussionsService {
   public async deleteComment(discussionId: string, commentId: string): Promise<boolean> {
     const isValidAuth = await this.isValidAuth();
 
-    if (!this.ethereumService.defaultAccountAddress) {
-      this.eventAggregator.publish(
-        "handleValidationError",
-        new EventConfigFailure("Please connect your wallet to add a comment"),
-      );
-      return false;
-    }
-    if (!isValidAuth) {
-      await this.authenticateSession();
-      if (!this.browserStorageService.lsGet("discussionToken")) {
-        this.eventAggregator.publish(
-          "handleValidationError",
-          new EventConfigFailure("Signature is needed to delete a comment"),
-        );
-        return false;
-      }
-    }
-
     try {
+      if (!this.ethereumService.defaultAccountAddress) {
+        throw new Error("Please connect your wallet to add a comment.");
+      }
+      if (!isValidAuth) {
+        await this.authenticateSession();
+        if (!this.browserStorageService.lsGet("discussionToken")) {
+          throw new Error("Not able to get signer token from the local storage.");
+        }
+      }
+
       const deleteResponse = await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
         this.browserStorageService.lsGet("discussionToken"),
@@ -393,9 +385,13 @@ export class DiscussionsService {
 
       if (deleteResponse.error) throw deleteResponse.error;
 
+      this.eventAggregator.publish("handleInfo", "Comment deleted.");
       return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
+      if (error.code === 4001) {
+        throw new Error("Signature is needed to delete a comment.");
+      }
       throw error;
     }
   }

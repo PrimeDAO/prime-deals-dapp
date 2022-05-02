@@ -425,42 +425,27 @@ export class DiscussionThread {
     this.updateThreadsFromDictionary();
   }
 
-  private async isActuallyDeleted(_id: string): Promise<boolean> {
+  private async isCommentPresent(_id: string): Promise<boolean> {
     const comment = await this.discussionsService.getSingleComment(_id);
-    return !comment._id;
+    return !!comment._id;
   }
 
   private updateThread(_id: string): void {
     this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
-    this.eventAggregator.publish("handleInfo", "Comment deleted.");
   }
 
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
     this.isLoading[`isDeleting ${_id}`] = true;
-    this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
-      if (isDeleted) {
-        this.updateThread(_id);
-      } else {
-        throw {code: 99001, message: "The comment was not deleted." };
-      }
+    this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
+      this.updateThread(_id);
     }).catch (async (err) => {
-      switch (err.code) {
-        case 4001:
-          this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
-          break;
-        case 99001:
-          // A workaround for theconvo sdk returning an error even if the comment have been deleted from the thread.
-          if (await this.isActuallyDeleted(_id)) {
-            this.updateThread(_id);
-          } else {
-            this.eventAggregator.publish("handleFailure", "An error occurred. " + err.message);
-          }
-          break;
-        default:
-          this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
+      if (await this.isCommentPresent(_id)) {
+        this.eventAggregator.publish("handleFailure", `An error occurred while deleting the comment. ${err.message}`);
+      } else {
+        this.updateThread(_id);
       }
     }).finally(() => {
       this.updateDiscussionListStatus(new Date(), this.threadComments.length);
