@@ -1,6 +1,6 @@
 <template>
   <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
-    <header class="header">
+    <header class="commentHeader">
       <figure class="avatar">
         <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${comment.author}.svg" alt="">
         <img else src.bind="profile.image" alt.bind="profile.name">
