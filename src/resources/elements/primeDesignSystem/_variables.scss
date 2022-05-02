@@ -83,12 +83,13 @@ $heading: Aeonik;
   @include spin;
 }
 
-@mixin pcardBgAndGradient($backgroundColor: $BG02, $grColor01: $Primary01, $grColor02: $Secondary02) {
+@mixin pcardBgAndGradient($backgroundColor: $BG01, $grColor01: $Primary01, $grColor02: $Secondary02) {
   background: /* this is the card background: */
     linear-gradient($backgroundColor, $backgroundColor) padding-box,
       /* this is the gradient on the left side: */
     linear-gradient(to bottom, $grColor01, $grColor02) border-box;
   border-left: $border-radius-small solid transparent;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 $pPopupNotificationWidth: 336px;
