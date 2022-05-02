@@ -55,16 +55,18 @@
           <template else>${row[column.field]}</template>
         </div>
       </a>
-    </template>
-    <div class="seeMoreSection" if.to-view="rows.length > numberToShow && hideMore">
-      <div if.to-view="!seeingMore" class="seeMore">
+    </template>    
+  </div>
+  <div class="seeMoreSection" if.to-view="rows.length > numberToShow && hideMore">
+    <div class="centered">
+      <pbutton type="tertiary" click.delegate="seeMore(true)" if.to-view="!seeingMore">
+        SEE ALL
         <div class="arrow">&darr;</div>
-        <div class="text" click.delegate="seeMore(true)">SEE ALL</div>
-      </div>
-      <div if.to-view="seeingMore" class="seeMore">
+      </pbutton>
+      <pbutton type="tertiary" click.delegate="seeMore(false)" if.to-view="seeingMore">
+        SEE A FEW
         <div class="arrow">&uarr;</div>
-        <div class="text" click.delegate="seeMore(false)">SEE A FEW</div>
-      </div>
+      </pbutton>
     </div>
   </div>
 </template>

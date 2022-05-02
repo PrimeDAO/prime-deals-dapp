@@ -141,16 +141,19 @@
       }
     }
   }
-  .seeMoreSection {
-    margin-bottom: 36px;
+}
 
-    .seeMore {
-      display: flex;
-      color: $Neutral02;
-      cursor: pointer;
-
-      > .arrow {
-        margin-right: 6px;
+pgrid .seeMoreSection {
+  margin-bottom: 36px;
+  .centered {
+    display: flex;
+    justify-content: center;
+    button.tertiary{
+      color: #dcdae5;
+      opacity: 0.3;
+      transition: 0.2s;
+      &:hover{
+        opacity: 1;
       }
     }
   }
