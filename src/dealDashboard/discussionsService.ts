@@ -398,6 +398,8 @@ export class DiscussionsService {
         if (!await this.isCommentPresent(commentId)) {
           throw deleteResponse.error;
         }
+      } else if (!deleteResponse.success) {
+        throw new Error("Comment not deleted");
       }
 
       this.eventAggregator.publish("handleInfo", "Comment deleted.");
