@@ -53,11 +53,18 @@
   }
 
   > .dialogFooter {
+    display: flex;
+    justify-content: end;
+
     padding-top: 12px;
     padding-bottom: 12px;
     padding-right: 20px;
     color: $Neutral04;
     text-align: right;
+
+    .primaryFooterButton {
+      margin-left: 20px;
+    }
   }
 }
 
