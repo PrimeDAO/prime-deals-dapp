@@ -18,7 +18,7 @@
             <div>
               <span class="bold">
                 <formatted-number
-                  if.to-view="deal.isFunding"
+                  if.to-view="deal.fundingWasInitiated && !deal.isClaiming"
                   thousands-separated
                   value.to-view="token.fundingDeposited | ethwei:token.decimals"
                 ></formatted-number>
