@@ -83,7 +83,7 @@ $heading: Aeonik;
   @include spin;
 }
 
-@mixin pcardBgAndGradient($backgroundColor: $BG01, $grColor01: $Primary01, $grColor02: $Secondary02) {
+@mixin pcardBgAndGradient($backgroundColor: $BG02, $grColor01: $Primary01, $grColor02: $Secondary02) {
   background: /* this is the card background: */
     linear-gradient($backgroundColor, $backgroundColor) padding-box,
       /* this is the gradient on the left side: */
