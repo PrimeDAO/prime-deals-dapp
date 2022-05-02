@@ -439,12 +439,7 @@ export class DiscussionThread {
     this.updateThreadsFromDictionary();
   }
 
-  private async isCommentPresent(_id: string): Promise<boolean> {
-    const comment = await this.discussionsService.getSingleComment(_id);
-    return !!comment._id;
-  }
-
-  private updateThread(_id: string): void {
+  private removeCommentFromThread(_id: string): void {
     this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
   }
@@ -466,13 +461,9 @@ export class DiscussionThread {
 
     this.isLoading[`isDeleting ${_id}`] = true;
     this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
-      this.updateThread(_id);
-    }).catch (async (err) => {
-      if (await this.isCommentPresent(_id)) {
-        this.eventAggregator.publish("handleFailure", `An error occurred while deleting the comment. ${err.message}`);
-      } else {
-        this.updateThread(_id);
-      }
+      this.removeCommentFromThread(_id);
+    }).catch ((err) => {
+      this.eventAggregator.publish("handleFailure", `An error occurred while deleting the comment. ${err.message}`);
     }).finally(() => {
       this.updateDiscussionListStatus(new Date(), this.threadComments.length);
       this.isLoading[`isDeleting ${_id}`] = false;
