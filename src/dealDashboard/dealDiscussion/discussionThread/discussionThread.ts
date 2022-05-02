@@ -1,3 +1,4 @@
+import { AlertService } from "services/AlertService";
 import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -18,6 +19,12 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
+export type ILoadingTracker = {
+  discussions: boolean;
+  commenting: boolean;
+  replying: boolean;
+} & Record<string, boolean>
+
 @autoinject
 export class DiscussionThread {
   @bindable clauses: Map<string, IClause>;
@@ -36,7 +43,11 @@ export class DiscussionThread {
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
-  private isLoading: Record<string, boolean> = {};
+  private isLoading: ILoadingTracker = {
+    discussions: false,
+    commenting: false,
+    replying: false,
+  };
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
@@ -66,6 +77,7 @@ export class DiscussionThread {
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
+    private alertService: AlertService,
   ) { }
 
   attached(): void {
@@ -341,7 +353,9 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
+    this.isLoading.replying = true;
     const comment = await this.discussionsService.getSingleComment(_id);
+    this.isLoading.replying = false;
 
     /**
      * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
@@ -438,6 +452,19 @@ export class DiscussionThread {
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
+    const result = await this.alertService.showAlert({
+      header: "You will be deleting your comment and will not be able to recover it.",
+      message: "Are you sure you want to delete your comment?",
+      buttons: 3,
+      buttonTextPrimary: "Delete my comment",
+      buttonTextSecondary: "Keep my comment",
+    });
+
+    if (result.wasCancelled) {
+      return;
+    }
+
+    this.isLoading[`isDeleting ${_id}`] = true;
     this.isLoading[`isDeleting ${_id}`] = true;
     this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
       this.updateThread(_id);
