@@ -1,6 +1,6 @@
 {
   "name": "@primedao/prime-deals-dapp",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "The PrimeDAO’s Home for DAO to DAO Deals",
   "repository": {
     "type": "git",
