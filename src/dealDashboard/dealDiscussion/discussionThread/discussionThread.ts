@@ -354,20 +354,21 @@ export class DiscussionThread {
   }
 
   private addAuthorToThreadProfiles(comment: IComment): void {
-    if (this.threadProfiles[comment.author]) return;
-
-    if (comment.authorENS /* author has ENS name */) {
-      this.threadProfiles[comment.author] = {
-        name: comment.authorENS,
-        address: comment.author,
-        image: "",
-      };
-    } else {
-      /* required for replies */
-      this.discussionsService.loadProfile(comment.author).then(profile => {
-        this.threadProfiles[comment.author] = profile;
-        this.isLoading[comment.author] = false;
-      });
+    if (!this.threadProfiles[comment.author]) {
+      this.isLoading[comment.author] = true;
+      if (comment.authorENS /* author has ENS name */) {
+        this.threadProfiles[comment.author] = {
+          name: comment.authorENS,
+          address: comment.author,
+          image: "",
+        };
+      } else {
+        /* required for replies */
+        this.discussionsService.loadProfile(comment.author).then(profile => {
+          this.threadProfiles[comment.author] = profile;
+          this.isLoading[comment.author] = false;
+        });
+      }
     }
   }
 
