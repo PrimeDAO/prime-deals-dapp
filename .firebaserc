@@ -3,6 +3,6 @@
     "default": "prime-deals-6ace4",
     "development": "prime-deals-development",
     "staging": "prime-deals-staging",
-    "production": "todo"
+    "production": "prime-deals-production"
   }
 }
