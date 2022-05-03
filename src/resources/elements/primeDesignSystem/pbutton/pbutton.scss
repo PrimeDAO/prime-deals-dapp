@@ -14,7 +14,7 @@
     */
   all: initial;
   outline: none;
-  padding: 14px 28px;
+  padding: 14px 24px;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -148,7 +148,7 @@ pbutton {
       @include standardButton;
 
       &:hover {
-        background-color: $Border01;
+        background-color: $Secondary05;
       }
 
       &.disabled,

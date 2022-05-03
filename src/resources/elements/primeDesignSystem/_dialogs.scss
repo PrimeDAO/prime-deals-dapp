@@ -12,6 +12,14 @@
 
   &.pcard.gradient {
     @include pcardBgAndGradient($backgroundColor: $Border01);
+
+    /* Disabling shadow for now */
+    /* Reasons: */
+    /*   1. For the popups, box-shadow do not show up unless we add margins (see 2.) */
+    // box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    /*   2. Apparently, one has to add a margin for the box-shadow to appear. */
+    /*     I wasn't able to have the shadow appear otherwise. */
+    // margin: 10px;
   }
 
   > .dialogHeader,
@@ -53,11 +61,18 @@
   }
 
   > .dialogFooter {
+    display: flex;
+    justify-content: end;
+
     padding-top: 12px;
     padding-bottom: 12px;
     padding-right: 20px;
     color: $Neutral04;
     text-align: right;
+
+    .primaryFooterButton {
+      margin-left: 20px;
+    }
   }
 }
 

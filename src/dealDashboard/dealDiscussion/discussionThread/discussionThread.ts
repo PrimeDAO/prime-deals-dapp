@@ -439,6 +439,11 @@ export class DiscussionThread {
     this.updateThreadsFromDictionary();
   }
 
+  private removeCommentFromThread(_id: string): void {
+    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
+  }
+
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
@@ -454,27 +459,13 @@ export class DiscussionThread {
       return;
     }
 
-    const swrThreadComments = Utils.cloneDeep(this.threadComments);
     this.isLoading[`isDeleting ${_id}`] = true;
-    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-    this.threadDictionary = this.arrayToDictionary(this.threadComments);
-
-    this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
-      if (!isDeleted) {
-        /* If deletion did not happened, restore original comments */
-        this.threadComments = swrThreadComments;
-      } else {
-        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
-        this.eventAggregator.publish("handleSuccess", "Comment deleted.");
-      }
-    }).catch (err => {
-      this.threadComments = swrThreadComments;
-      if (err.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
-      }
+    this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
+      this.removeCommentFromThread(_id);
+    }).catch ((err) => {
+      this.eventAggregator.publish("handleFailure", `An error occurred while deleting the comment. ${err.message}`);
     }).finally(() => {
+      this.updateDiscussionListStatus(new Date(), this.threadComments.length);
       this.isLoading[`isDeleting ${_id}`] = false;
     });
   }
