@@ -65,7 +65,7 @@ export class FirestoreService<
       const idToken = await firebaseAuth.currentUser.getIdToken();
 
       const response = await axios.post(
-        `${process.env.FIREBASE_FUNCTIONS_URL}/createDeal`,
+        `${process.env.FIREBASE_FUNCTIONS_URL}/CI-createDeal`,
         {registrationData},
         {headers: {Authorization: `Bearer ${idToken}`}},
       );
