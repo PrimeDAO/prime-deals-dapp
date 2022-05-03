@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 import { ethers } from "ethers";
-import { BaseProvider, Web3Provider } from "@ethersproject/providers";
+import { BaseProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
@@ -113,10 +113,26 @@ export class EthereumServiceTesting {
   }
 
   private async setProvider(): Promise<void> {
-    // Just mock required props
-    // @ts-ignore
-    this.walletProvider = {
+    const account = localStorage.getItem("PRIME_E2E_ADDRESS");
+    const mockFetchFunc: JsonRpcFetchFunc = (method: string) => {
+      let payload;
+      switch (method) {
+        case "eth_accounts": {
+          payload = [account];
+          break;
+        }
+        default: {
+          payload = method;
+        }
+      }
+      return Promise.resolve(payload);
     };
+
+    const walletProvider = new ethers.providers.Web3Provider(mockFetchFunc);
+
+    this.walletProvider = walletProvider;
+
+    this.walletProvider.lookupAddress = () => Promise.resolve("");
 
     let address = localStorage.getItem("PRIME_E2E_ADDRESS");
     if (address === "null") {
