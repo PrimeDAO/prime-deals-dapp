@@ -185,7 +185,7 @@ export class DiscussionThread {
       };
     }
     this.updateThreadsFromDictionary();
-    this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
+    this.updateDiscussionListStatus(new Date());
 
     // scroll to bottom only if the user is at seeing the last message
     if (
@@ -229,7 +229,7 @@ export class DiscussionThread {
 
     if (!this.dealDiscussion) return;
 
-    this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+    this.updateDiscussionListStatus(new Date());
     this.isLoading.discussions = false;
 
     // Author profile for the discussion header
@@ -268,10 +268,7 @@ export class DiscussionThread {
     });
 
     // Update the discussion status
-    this.updateDiscussionListStatus(
-      new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
-      this.threadComments.length,
-    );
+    this.updateDiscussionListStatus(new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)));
   }
 
   private isInView(element: HTMLElement): boolean {
@@ -301,15 +298,16 @@ export class DiscussionThread {
    * @param timestamp Date
    * @returns void
    */
-  private async updateDiscussionListStatus(timestamp: Date, replies: number): Promise<void> {
+  private async updateDiscussionListStatus(timestamp: Date): Promise<void> {
     if (
       (
-        this.dealDiscussion?.replies === replies &&
+        this.dealDiscussion?.replies === this.threadComments?.length &&
         new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
       ) || !this.discussionId
     ) return;
 
-    this.dealDiscussion.replies = replies;
+    this.dealDiscussion.replies = this.threadComments?.length || 0;
+    this.dealDiscussion.publicReplies = this.threadComments?.filter(comment => comment.metadata.isPrivate === "false").length || 0;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
@@ -333,10 +331,7 @@ export class DiscussionThread {
       if (newComment) {
         this.threadComments.push({ ...newComment });
 
-        this.updateDiscussionListStatus(
-          new Date(parseFloat(newComment.createdOn)),
-          this.threadComments.length,
-        );
+        this.updateDiscussionListStatus(new Date(parseFloat(newComment.createdOn)));
       }
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -464,7 +459,7 @@ export class DiscussionThread {
         /* If deletion did not happened, restore original comments */
         this.threadComments = swrThreadComments;
       } else {
-        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+        this.updateDiscussionListStatus(new Date());
         this.eventAggregator.publish("handleSuccess", "Comment deleted.");
       }
     }).catch (err => {

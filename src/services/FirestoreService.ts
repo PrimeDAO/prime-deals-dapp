@@ -357,6 +357,7 @@ export class FirestoreService<
       modifiedAt: discussion.modifiedAt,
       createdBy: discussion.createdBy,
       replies: discussion.replies,
+      publicReplies: discussion.publicReplies,
       key: discussion.key,
     };
 
