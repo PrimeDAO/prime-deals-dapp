@@ -127,13 +127,24 @@ export class DealVotes {
     await this.vote(false).finally(() => this.declining = false);
   }
 
+  private getCurrentVote(): boolean | null {
+    const whichDao = this.deal.daoRepresentedByCurrentAccount;
+
+    const daoVotingSummary = this.deal.daoVotingSummary(whichDao);
+
+    return daoVotingSummary.votes[this.ethereumService.defaultAccountAddress];
+  }
+
   private async vote(value: boolean) {
     try {
-      await this.deal.vote(value);
 
-      this.updateDealVote(value);
+      if (value !== this.getCurrentVote()) {
+        await this.deal.vote(value);
 
-      this.eventAggregator.publish("handleInfo", "Your vote has been successfully submitted");
+        this.updateDealVote(value);
+
+        this.eventAggregator.publish("handleInfo", "Your vote has been successfully submitted");
+      }
     } catch (error) {
       this.consoleLogService.logMessage(`Voting error ${error}`, "error");
       this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred submitting your vote", error));
