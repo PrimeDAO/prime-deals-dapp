@@ -1,11 +1,15 @@
 @import "../resources/elements/primeDesignSystem/colors";
+@import "src/styles/variables";
 
 .wizardManager {
+  padding-top: $MainContentExtraPaddingTop;
+
   h2 {
     &.sidebarHeader {
       margin-bottom: 18px !important;
     }
   }
+
   p {
     &.sidebarText {
       color: $Neutral03;
@@ -14,6 +18,7 @@
       font-size: 16px;
       line-height: 24px;
       margin-bottom: 16px;
+
       :first-letter {
         text-transform: capitalize;
       }

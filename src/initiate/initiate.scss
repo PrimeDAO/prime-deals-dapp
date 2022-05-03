@@ -1,6 +1,7 @@
 @import "src/styles/variables";
 
 .selectDealTypePage {
+  padding-top: $MainContentExtraPaddingTop;
   font-size: 28px;
   display: flex;
   flex-flow: column wrap;
