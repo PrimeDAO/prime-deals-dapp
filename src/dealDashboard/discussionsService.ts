@@ -391,11 +391,15 @@ export class DiscussionsService {
       if (deleteResponse.error) {
         /**
          * Handle theconvo issue, where the request gets aborted too quickly,
-         * but the deletion actually went through
+         * but the deletion actually went through.
+         * The workaround is to try fetch the comment to be able to give a more confident response
+         * for whether the comment was indeed deleted.
          */
         if (!await this.isCommentPresent(commentId)) {
           throw deleteResponse.error;
         }
+      } else if (!deleteResponse.success) {
+        throw new Error("Comment not deleted");
       }
 
       this.eventAggregator.publish("handleInfo", "Comment deleted.");
