@@ -30,19 +30,6 @@ export function configure(aurelia: Aurelia): void {
      * Mock wallet connection
      */
     aurelia.use.singleton(EthereumService, EthereumServiceTesting);
-    /**
-     * Tests can directly access FirestoreDealsService.
-     * We want that to, eg. get dealIds from the dealsArray
-     *
-     * Architecure note: Ideally, we want to decouple Test setup code.
-     *   Because this requires a bit more investigation on the Cypress<>Webpack side,
-     *   this is the quickest compromise for prioritizing test coverage.
-     *   Once we have a solid test coverage, it will be easier to explore more solid patters
-     */
-    const firestoreService = aurelia.container.get(FirestoreService);
-    (window as any).Cypress.firestoreService = firestoreService;
-    const dataSourceDeals = aurelia.container.get(FirestoreDealsService);
-    (window as any).Cypress.dataSourceDeals = dataSourceDeals;
     (window as any).Cypress.eventAggregator = aurelia.container.get(EventAggregator);
   }
 
@@ -77,6 +64,30 @@ export function configure(aurelia: Aurelia): void {
     try {
 
       aurelia.container.registerTransient(DealTokenSwap);
+
+      /**
+       * ! The order of when the below injection is happening is important!
+       *   Before, it was in the upper `window.Cypress` block, and it threw errors around
+       *   "BindingLanguage must implement inspectTextContent()."
+       */
+      if ((window as any).Cypress) {
+        /**
+         * Mock wallet connection
+         */
+        /**
+         * Tests can directly access FirestoreDealsService.
+         * We want that to, eg. get dealIds from the dealsArray
+         *
+         * Architecure note: Ideally, we want to decouple Test setup code.
+         *   Because this requires a bit more investigation on the Cypress<>Webpack side,
+         *   this is the quickest compromise for prioritizing test coverage.
+         *   Once we have a solid test coverage, it will be easier to explore more solid patters
+         */
+        const firestoreService = aurelia.container.get(FirestoreService);
+        (window as any).Cypress.firestoreService = firestoreService;
+        const dataSourceDeals = aurelia.container.get(FirestoreDealsService);
+        (window as any).Cypress.dataSourceDeals = dataSourceDeals;
+      }
 
       const ethereumService = aurelia.container.get(EthereumService);
       ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));

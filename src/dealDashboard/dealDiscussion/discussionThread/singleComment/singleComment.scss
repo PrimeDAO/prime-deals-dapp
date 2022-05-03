@@ -19,6 +19,19 @@
   &.even{
     background-color: $BG01;
   }
+  &.isDeleting {
+    position: relative;
+    pointer-events: none;
+    .deleteInfo {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: $White;
+    }
+    & > :not(.deleteInfo) {
+      filter: blur(1px) brightness(0.5) grayscale(1);
+    }
+  }
 
   &.highlighted:not(.isReply, .reply) {
     background-color: $BG02;
