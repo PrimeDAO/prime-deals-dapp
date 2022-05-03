@@ -1,5 +1,5 @@
 <template>
-  <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
+  <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType} ${loading['isDeleting ' + comment._id] ? 'isDeleting' : ''}">
     <header class="commentHeader">
       <figure class="avatar">
         <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${comment.author}.svg" alt="">
@@ -96,5 +96,9 @@
       </div>
       <pre>${comment.text}</pre>
     </section>
+    <div if.bind="loading['isDeleting ' + comment._id]" class="deleteInfo">
+      <i class="spinner fa fas fa-circle-notch fa-spin"></i>
+      Deleting this comment.
+    </div>
   </div>
 </template>

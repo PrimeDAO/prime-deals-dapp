@@ -363,39 +363,52 @@ export class DiscussionsService {
     }
   }
 
+  private async isCommentPresent(commentId: string): Promise<boolean> {
+    const comment = await this.getSingleComment(commentId);
+    return !!comment._id;
+  }
+
   public async deleteComment(discussionId: string, commentId: string): Promise<boolean> {
     const isValidAuth = await this.isValidAuth();
 
-    if (!this.ethereumService.defaultAccountAddress) {
-      this.eventAggregator.publish(
-        "handleValidationError",
-        new EventConfigFailure("Please connect your wallet to add a comment"),
-      );
-      return false;
-    }
-    if (!isValidAuth) {
-      await this.authenticateSession();
-      if (!this.browserStorageService.lsGet("discussionToken")) {
-        this.eventAggregator.publish(
-          "handleValidationError",
-          new EventConfigFailure("Signature is needed to delete a comment"),
-        );
-        return false;
-      }
-    }
-
     try {
+      if (!this.ethereumService.defaultAccountAddress) {
+        throw new Error("Please connect your wallet to add a comment.");
+      }
+      if (!isValidAuth) {
+        await this.authenticateSession();
+        if (!this.browserStorageService.lsGet("discussionToken")) {
+          throw new Error("Not able to get signer token from the local storage.");
+        }
+      }
+
       const deleteResponse = await this.convo.comments.delete(
         this.ethereumService.defaultAccountAddress,
         this.browserStorageService.lsGet("discussionToken"),
         commentId,
       );
 
-      if (deleteResponse.error) throw deleteResponse.error;
+      if (deleteResponse.error) {
+        /**
+         * Handle theconvo issue, where the request gets aborted too quickly,
+         * but the deletion actually went through.
+         * The workaround is to try fetch the comment to be able to give a more confident response
+         * for whether the comment was indeed deleted.
+         */
+        if (await this.isCommentPresent(commentId)) {
+          throw deleteResponse.error;
+        }
+      } else if (!deleteResponse.success) {
+        throw new Error("Comment not deleted");
+      }
 
+      this.eventAggregator.publish("handleInfo", "Comment deleted.");
       return true;
     } catch (error) {
       this.consoleLogService.logMessage("deleteComment: " + error.message);
+      if (error.code === 4001) {
+        throw new Error("Signature is needed to delete a comment.");
+      }
       throw error;
     }
   }
