@@ -166,6 +166,8 @@ Assuming that a Firebase Project is already setup and you have access to API key
 2. Upgrade it to “Blaze” plan (or any plan that allows us to use Firestore, Functions and Authentication, as of 03/2022 Blaze is the only one)
 3. Go to Firebase console [https://console.firebase.google.com](https://console.firebase.google.com/)
 4. Add new app for the Web
+    1. Add app nickname of your choice, suggested name "prime-deals-dapp"
+    2. Don't setup Firebase hosting
 5. Copy provided secrets to environment variables (to your local .env or to Vercel Environment Variables)
     
     ```

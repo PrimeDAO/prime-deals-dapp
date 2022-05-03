@@ -6,7 +6,8 @@
  * write styles against that.  See how Alert and disclaimer dialogs are created.
  */
 body > ux-dialog-overlay.active {
-  background-color: rgba(21, 6, 45, 0.5); // rgba otherwise does not work properly with blue
+  // Need rgba (= #15062d = $Neutral01) otherwise does not work properly with blur
+  background-color: rgba(21, 6, 45, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
