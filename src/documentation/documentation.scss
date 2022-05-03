@@ -1,9 +1,11 @@
 @import "src/styles/colors";
+@import "src/styles/variables";
 
 .documentsContainer {
   display: grid;
   grid-template-rows: 0.01fr 1fr;
   gap: 28px;
+  padding-top: $MainContentExtraPaddingTop;
 
   .documentContainer {
     display: grid;
