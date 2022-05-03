@@ -363,8 +363,8 @@ export class DiscussionsService {
     }
   }
 
-  private async isCommentPresent(_id: string): Promise<boolean> {
-    const comment = await this.getSingleComment(_id);
+  private async isCommentPresent(commentId: string): Promise<boolean> {
+    const comment = await this.getSingleComment(commentId);
     return !!comment._id;
   }
 
@@ -395,7 +395,7 @@ export class DiscussionsService {
          * The workaround is to try fetch the comment to be able to give a more confident response
          * for whether the comment was indeed deleted.
          */
-        if (!await this.isCommentPresent(commentId)) {
+        if (await this.isCommentPresent(commentId)) {
           throw deleteResponse.error;
         }
       } else if (!deleteResponse.success) {
