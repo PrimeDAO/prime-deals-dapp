@@ -332,6 +332,7 @@ export class DiscussionThread {
 
       if (newComment) {
         this.threadComments.push({ ...newComment });
+        this.addAuthorToThreadProfiles(newComment);
 
         this.updateDiscussionListStatus(
           new Date(parseFloat(newComment.createdOn)),
@@ -349,6 +350,24 @@ export class DiscussionThread {
       this.eventAggregator.publish("handleFailure", "An error occurred while adding a comment. " + err.message);
     } finally {
       this.isLoading.commenting = false;
+    }
+  }
+
+  private addAuthorToThreadProfiles(comment: IComment): void {
+    if (this.threadProfiles[comment.author]) return;
+
+    if (comment.authorENS /* author has ENS name */) {
+      this.threadProfiles[comment.author] = {
+        name: comment.authorENS,
+        address: comment.author,
+        image: "",
+      };
+    } else {
+      /* required for replies */
+      this.discussionsService.loadProfile(comment.author).then(profile => {
+        this.threadProfiles[comment.author] = profile;
+        this.isLoading[comment.author] = false;
+      });
     }
   }
 
