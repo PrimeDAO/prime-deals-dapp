@@ -282,17 +282,17 @@ export class DiscussionThread {
    * @returns void
    */
   private async updateDiscussionListStatus(timestamp: Date): Promise<void> {
+    const threadSnapshot = await this.discussionsService.loadDiscussionComments(this.discussionId, this.deal, true);
     if (
       (
-        this.dealDiscussion?.replies === this.threadComments?.length &&
+        this.dealDiscussion?.replies === threadSnapshot?.length &&
         new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
       ) || !this.discussionId
     ) return;
 
-    this.dealDiscussion.replies = this.threadComments?.length || 0;
-    this.dealDiscussion.publicReplies = this.threadComments?.filter(comment => comment.metadata.isPrivate === "false").length || 0;
+    this.dealDiscussion.replies = threadSnapshot.length || 0;
+    this.dealDiscussion.publicReplies = threadSnapshot?.filter(comment => comment.metadata.isPrivate === "false").length || 0;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
-    this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
     this.deal.addClauseDiscussion(
       this.discussionId,

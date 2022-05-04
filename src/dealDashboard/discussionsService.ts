@@ -261,7 +261,7 @@ export class DiscussionsService {
     return await this.convo.comments.getComment(_id);
   }
 
-  public async loadDiscussionComments(discussionId: string, deal: DealTokenSwap): Promise<IComment[]> {
+  public async loadDiscussionComments(discussionId: string, deal: DealTokenSwap, replySnapshot = false): Promise<IComment[]> {
     let latestTimestamp = 0;
     try {
       const commentsResponse: Array<IComment> = (await this.convo.comments.query({
@@ -271,13 +271,16 @@ export class DiscussionsService {
       // Is typed as Array<IComment>, but the convoSdk also throws AbortController errors, so we catch it here
       if ((commentsResponse as any).error) throw (commentsResponse as any).error;
 
+      /**
+       * Sends full snapshot (of non decrypted) thread.
+       * Used to keep track new reply count and activity.
+      */
+      if (replySnapshot) {
+        return [...commentsResponse];
+      }
+
       const comments = commentsResponse.filter((comment: IComment) => !(
-        (comment.metadata.isPrivate === "true") &&
-          (!this.ethereumService.defaultAccountAddress ||
-          ![
-            comment.author,
-            ...deal.memberAddresses,
-          ].includes(this.ethereumService.defaultAccountAddress))
+        (comment.metadata.isPrivate === "true") && !deal.isAuthenticatedRepresentativeOrLead
       ));
 
       if (!comments || comments.length === undefined) return null;
