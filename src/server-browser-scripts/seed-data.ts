@@ -2,7 +2,7 @@ import { jsonDocs } from "./../../test/data/index";
 import shortUuid from "short-uuid";
 import { IDealTokenSwapDocument, IDealVotingSummary } from "./../entities/IDealTypes";
 import { DefaultTestAddressForSignIn } from "./../../test/data/configuration";
-import { firebaseDatabase, signInToFirebase } from "../services/firebase-helpers";
+import { firebaseDatabase, firebaseAuth, signInToFirebase } from "../services/firebase-helpers";
 import { collection, doc, writeBatch, getDocs, deleteDoc, addDoc, setDoc } from "firebase/firestore";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 
@@ -83,7 +83,8 @@ export const addDocument = async (
   return result.id;
 };
 try {
-  signInToFirebase(DefaultTestAddressForSignIn);
+  if (!firebaseAuth.currentUser)
+    signInToFirebase(DefaultTestAddressForSignIn);
 } catch {
   //swallow
 }
