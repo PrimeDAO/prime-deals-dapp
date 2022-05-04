@@ -3,10 +3,8 @@
 .appWrapper {
   display: grid;
   grid-template-columns:
-    minmax($ContentMinLeftRightPadding, auto)
-    minmax(auto, $MaxContentBodyWidth)
-    minmax($ContentMinLeftRightPadding, auto);
-  grid-template-rows: 192px 100fr 1fr;
+    minmax($ContentMinLeftRightPadding, auto) minmax(auto, $MaxContentBodyWidth) minmax($ContentMinLeftRightPadding, auto);
+  grid-template-rows: 162px 100fr 1fr;
   grid-template-areas:
     ". . ."
     ". mainContent ."

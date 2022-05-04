@@ -37,6 +37,11 @@ export class DealVotes {
       statusText: "Deal is approved",
     },
     {
+      condition: () => this.deal.isFailed,
+      voteText: "Voting is closed. You can find the voting history below.",
+      statusText: "Token Swap Failed",
+    },
+    {
       condition: () => !this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
       voteText: "Waiting for the representatives to vote",
       statusText: "Voting is progress",
