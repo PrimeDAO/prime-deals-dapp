@@ -60,7 +60,7 @@
           </div>
           <div data-test="number-of-replies" class="td replies h-centered v-centered">
             <i class="fas fa-reply mobile only"></i>
-            <span if.to-view="deal.isAuthenticatedRepresentativeOrLead">
+            <span if.to-view="authorized">
               ${discussion.replies || 0}
             </span>
             <span else>

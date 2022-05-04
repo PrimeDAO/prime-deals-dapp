@@ -43,8 +43,8 @@ export class DiscussionsList{
 
     Object.entries(this.deal.clauseDiscussions).forEach(async ([id, discussion]) => {
       if (!discussion
-        || (!discussion.replies && this.deal.isAuthenticatedRepresentativeOrLead)
-        || (!discussion.publicReplies && !this.deal.isAuthenticatedRepresentativeOrLead)
+        || (!discussion.replies && this.authorized)
+        || (!discussion.publicReplies && !this.authorized)
       ) return;
 
       if (!discussion?.createdBy?.name) {
