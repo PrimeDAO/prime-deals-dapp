@@ -111,7 +111,7 @@
           </section>
 
           <section class="stageSectionContent">
-            <pcard if.bind="submitData.partnerDAO">
+            <pcard if.bind="!isOpenProposalLike">
               <div class="submitCardContent">
                 <h4 class="submitCardHeader">Partner DAO</h4>
                 <dao-information dao-data.bind="submitData.partnerDAO"></dao-information>

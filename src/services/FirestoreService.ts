@@ -87,13 +87,6 @@ export class FirestoreService<
     registrationData: TRegistrationData,
   ): Promise<void> {
     try {
-      if (registrationData.fundingPeriod === undefined) {
-        delete registrationData.fundingPeriod;
-      }
-      if (!registrationData.partnerDAO) {
-        delete registrationData.partnerDAO;
-      }
-
       const dealRef = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
       await setDoc(dealRef, { registrationData }, { merge: true });
     } catch (error) {
