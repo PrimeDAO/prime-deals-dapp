@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/seed",
+    "module": "CommonJS",
+    "typeRoots": ["../../node_modules/@types"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+  },
+  "lib": ["ESNext"],
+  "exclude": ["../../node_modules"],
+  "include": ["./seed-data.ts", "../definitions.d.ts"]
+}

@@ -1,0 +1,118 @@
+{
+  "version": "0.0.2",
+  "dealType": "token-swap",
+  "offersPrivate": true,
+  "dealId":"d6YEOCqSeWzSeYSOrtXN",
+  "isPrivate": false,
+  "keepAdminRights": true,
+  "fundingPeriod": 1814400,
+  "proposal": {
+    "summary": "We propose a token swap in which ClimatiDAO is committing 2% of their stablecoin reserve in exchange of 1500 Floresta Tokens (FLO) to support the purchase of 20000 ha of land across Europe to be locked in a shared Swiss Foundation. Land cannot be sold but only put into production of carbon credits.",
+    "description": "FlorestaDAO will acquire the resources to setup the foundation and acquire an initial lot of 20000 ha of impoverished land to generate Carbon Credits as per step 2 of FlorestaDAO Roadmap. ClimatiDAO holders will therefore acquire at a very advantageous price future equity in the proceedings of this work by holding the 1500 Floresta Token (FLO) that will be redeemable for carbon credits.",
+    "title": "FlorestaDAO to partner with ClimatiDAO"
+  },
+  "proposalLead": {
+    "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    "email": "info@florestadao.net"
+  },
+  "primaryDAO": {
+    "treasury_address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    "logoURI": "https://ik.imagekit.io/primedao/FlorestaDAO_Avatar_px3ZHsS7h?ik-sdk-version=javascript-1.4.3&updatedAt=1647365118593",
+    "social_medias": [
+      {
+        "name": "Twitter",
+        "url": "https://twitter.com/florestadao"
+      }
+    ],
+    "name": "FlorestaDAO",
+    "tokens": [
+      {
+        "address": "0x7b578Aea29eb52C4DCC2792e792936bbcFaBF37C",
+        "name": "FlorestaDAO",
+        "symbol": "FLO",
+        "decimals": 18,
+        "logoURI": "https://ik.imagekit.io/primedao/Floresta_FLO_TOKENLOGO_92F73Qndb?ik-sdk-version=javascript-1.4.3&updatedAt=1647365173391",
+        "amount": "100000000000000000000",
+        "instantTransferAmount": "0",
+        "vestedTransferAmount": "100000000000000000000",
+        "vestedFor": 94672800,
+        "cliffOf": 15768000
+      }
+    ],
+    "representatives": [
+      {
+        "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
+      },
+      {
+        "address": "0xd1F29D0e34c7A9D54f607733e5A113493c58F1Cb"
+      },
+      {
+        "address": "0xEf9a0BaCf7836FbCda9892742dA142e528A98937"
+      }
+    ]
+  },
+  "terms": {
+    "clauses": [
+      {
+        "id": "floresta_climati_1",
+        "text": "FlorestaDAO will use the DAI funds from ClimatiDAO for the sole purpose to setup the Swiss Foundation that will own the deeds of the lands, and for the purchase of the land and needed infrastructures to get the land to work."
+      },
+      {
+        "id": "floresta_climati_2",
+        "text": "FlorestaDAO will not use the DAI funds for the labor needed to restore the land. This will happen with other sources and will be responsibility of FlorestaDAO to facilitate the work around this endevour."
+      },
+      {
+        "id": "floresta_climati_3",
+        "text": "ClimatiDAO will be able to burn their token in exchange on BCT from a dedicated interface in which FlorestaDAO will accumulate the carbon credits."
+      }
+    ]
+  },
+  "partnerDAO": {
+    "name": "ClimatiDAO",
+    "tokens": [
+      {
+        "address": "0xF70d807A0828d2498fa01246c88bA5BaCd70889b",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734",
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "amount": "150000000000000000000",
+        "vestedTransferAmount": "150000000000000000000",
+        "instantTransferAmount": "0",
+        "vestedFor": 94672800,
+        "cliffOf": 15768000
+      },
+      {
+        "address": "0x7ed27a2DC35C1dd03E8Ae3eD18c53fEdd88F9aE5",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734",
+        "name": "SPORE",
+        "symbol": "SPO",
+        "amount": "4000000000000000000000",
+        "vestedTransferAmount": "0",
+        "instantTransferAmount": "4000000000000000000000",
+        "vestedFor": 94672800,
+        "cliffOf": 15768000
+      }
+    ],
+    "treasury_address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29",
+    "representatives": [
+      {
+        "address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29"
+      },
+      {
+        "address": "0x622D9f71152A3e8EDD114a9b211812b51fFCcB00"
+      },
+      {
+        "address": "0x5D45BAa08C7936A7b788c191Ae6862C392eE32Fe"
+      }
+    ],
+    "social_medias": [
+      {
+        "name": "Twitter",
+        "url": "https://twitter.com/climatidao"
+      }
+    ],
+    "logoURI": "https://ik.imagekit.io/primedao/ClimatiDAO_Avatar_SF8UmUZhE.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1647364415385"
+  }
+}
