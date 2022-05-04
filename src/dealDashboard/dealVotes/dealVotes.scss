@@ -46,7 +46,7 @@ deal-votes {
         flex-direction: row;
         justify-content: center;
 
-        pbutton button {
+        .negotiateButton button {
           gap: 12px;
           color: $Neutral02;
           display: flex;

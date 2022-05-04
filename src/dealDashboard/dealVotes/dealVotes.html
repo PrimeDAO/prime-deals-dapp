@@ -39,7 +39,7 @@
         class="negotiate"
         if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled"
       >
-        <pbutton click.delegate="goToDiscussions()">
+        <pbutton class="negotiateButton" click.delegate="goToDiscussions()">
           <img src="/static/comment.svg"/>
           Negotiate
         </pbutton>
