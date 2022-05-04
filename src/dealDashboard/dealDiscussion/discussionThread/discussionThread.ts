@@ -166,8 +166,7 @@ export class DiscussionThread {
 
     if (commentStreamMessage.name === "commentDelete") {
       if (this.threadDictionary[newComment._id]) {
-        this.threadComments = this.threadComments.filter(comment => comment._id !== newComment._id);
-        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+        this.removeCommentFromThread(newComment._id);
       }
     } else {
       const key = await this.discussionsService.importKey(this.discussionId);
@@ -229,7 +228,6 @@ export class DiscussionThread {
 
     if (!this.dealDiscussion) return;
 
-    this.updateDiscussionListStatus(new Date());
     this.isLoading.discussions = false;
 
     // Author profile for the discussion header
@@ -372,8 +370,7 @@ export class DiscussionThread {
 
     if (!comment._id) {
       this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
-      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
+      this.removeCommentFromThread(_id);
       return;
     }
 
@@ -406,8 +403,7 @@ export class DiscussionThread {
              * Only revert vote action, when api error occured.
              * In this case, it was very likely, that the comment was deleted by the original author (note error code 404)
              */
-            this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-            this.threadDictionary = this.arrayToDictionary(this.threadComments);
+            this.removeCommentFromThread(_id);
           }
         } else {
           if (error.code === 4001) {
