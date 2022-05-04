@@ -37,7 +37,6 @@
           <pbutton
             type="tertiary"
             disabled.bind="loading['isVoting ' + comment._id] || loading.replying[comment._id]"
-            is-loading.bind="loading.replying[comment._id]"
             click.delegate="reply()">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
