@@ -27,8 +27,8 @@ export const addCollectionAndDocuments = async <T>(
     batch.set(docRef, obj);
   });
 
-  return await batch.commit().catch(e => {
-    console.log(e);
+  return await batch.commit().catch(_ => {
+    // swallow
   });
 };
 
