@@ -43,7 +43,7 @@ export const clearCollection = async (
   const queryResult = await getDocs(collectionRef);
   await Promise.all(queryResult.docs.map(async doc => {
     const subCollection1 = collection(firebaseDatabase, collectionKey, doc.id, PRIMARY_DAO_VOTES_COLLECTION);
-    const subCollection2 = collection(firebaseDatabase, collectionKey, doc.id, PRIMARY_DAO_VOTES_COLLECTION);
+    const subCollection2 = collection(firebaseDatabase, collectionKey, doc.id, PARTNER_DAO_VOTES_COLLECTION);
     const subCollction1Docs = (await getDocs(subCollection1)).docs.concat((await getDocs(subCollection2)).docs);
 
     return Promise.all([...subCollction1Docs.map(y =>
