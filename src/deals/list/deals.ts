@@ -12,7 +12,6 @@ import { SortOrder } from "../../services/SortService";
 import { SortService } from "services/SortService";
 import { DisposableCollection } from "services/DisposableCollection";
 
-let dealsLoadedOnce = false;
 /**
  * This is the view model for the deals page
  */
@@ -23,7 +22,7 @@ export class Deals {
   private cardIndex;
   private seeingMore = false;
   private showMine = false;
-  private dealsLoadedOnce = dealsLoadedOnce;
+  private dealsLoading = false;
   private sortColumn: string;
   private sortDirection = SortOrder.DESC;
   private sortEvaluator: (a: DealTokenSwap, b: DealTokenSwap) => number;
@@ -52,17 +51,16 @@ export class Deals {
   }
 
   public async attached(): Promise<void> {
-    if (!dealsLoadedOnce) {
-      await this.dealService.ensureAllDealsInitialized();
-      if (this.cardIndex === undefined) {
-        this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
-      }
-      this.sortDirection = SortOrder.DESC;
-      this.sort("age");
-      // eslint-disable-next-line require-atomic-updates
-      dealsLoadedOnce = true;
-      this.dealsLoadedOnce = dealsLoadedOnce;
+    this.dealsLoading= true;
+    await this.dealService.ensureAllDealsInitialized();
+    this.dealsLoading = false;
+
+    if (this.cardIndex === undefined) {
+      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
     }
+    this.sortDirection = SortOrder.DESC;
+    this.sort("age");
+
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", (account: Address) => {
       if (!account) {
         this.showMine = false;
