@@ -1,3 +1,4 @@
+import { AlertService } from "services/AlertService";
 import { autoinject, computedFrom, bindable, bindingMode } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
@@ -18,6 +19,12 @@ import "./discussionThread.scss";
 // import { Convo } from "@theconvospace/sdk";
 import { ConsoleLogService } from "services/ConsoleLogService";
 
+export type ILoadingTracker = {
+  discussions: boolean;
+  commenting: boolean;
+  replying: boolean;
+} & Record<string, boolean>
+
 @autoinject
 export class DiscussionThread {
   @bindable clauses: Map<string, IClause>;
@@ -36,7 +43,11 @@ export class DiscussionThread {
   private threadComments: IComment[] = [];
   private threadDictionary: TCommentDictionary = {};
   private threadProfiles: Record<string, IProfile> = {};
-  private isLoading: Record<string, boolean> = {};
+  private isLoading: ILoadingTracker = {
+    discussions: false,
+    commenting: false,
+    replying: false,
+  };
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
   private dealDiscussionComments: IComment[];
@@ -66,6 +77,7 @@ export class DiscussionThread {
     private discussionsService: DiscussionsService,
     private ethereumService: EthereumService,
     private eventAggregator: EventAggregator,
+    private alertService: AlertService,
   ) { }
 
   attached(): void {
@@ -173,7 +185,7 @@ export class DiscussionThread {
       };
     }
     this.updateThreadsFromDictionary();
-    this.updateDiscussionListStatus(new Date(), this.threadComments?.length || 0);
+    this.updateDiscussionListStatus(new Date());
 
     // scroll to bottom only if the user is at seeing the last message
     if (
@@ -217,7 +229,7 @@ export class DiscussionThread {
 
     if (!this.dealDiscussion) return;
 
-    this.updateDiscussionListStatus(new Date(), this.threadComments.length);
+    this.updateDiscussionListStatus(new Date());
     this.isLoading.discussions = false;
 
     // Author profile for the discussion header
@@ -237,29 +249,11 @@ export class DiscussionThread {
 
     /* Comments author profiles */
     this.threadComments.forEach((comment: IComment) => {
-      if (!this.threadProfiles[comment.author]) {
-        this.isLoading[comment.author] = true;
-        if (comment.authorENS /* author has ENS name */) {
-          this.threadProfiles[comment.author] = {
-            name: comment.authorENS,
-            address: comment.author,
-            image: "",
-          };
-        } else {
-          /* required for replies */
-          this.discussionsService.loadProfile(comment.author).then(profile => {
-            this.threadProfiles[comment.author] = profile;
-            this.isLoading[comment.author] = false;
-          });
-        }
-      }
+      this.addAuthorToThreadProfiles(comment);
     });
 
     // Update the discussion status
-    this.updateDiscussionListStatus(
-      new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)),
-      this.threadComments.length,
-    );
+    this.updateDiscussionListStatus(new Date(parseFloat(this.threadComments[this.threadComments.length - 1].createdOn)));
   }
 
   private isInView(element: HTMLElement): boolean {
@@ -289,15 +283,16 @@ export class DiscussionThread {
    * @param timestamp Date
    * @returns void
    */
-  private async updateDiscussionListStatus(timestamp: Date, replies: number): Promise<void> {
+  private async updateDiscussionListStatus(timestamp: Date): Promise<void> {
     if (
       (
-        this.dealDiscussion?.replies === replies &&
+        this.dealDiscussion?.replies === this.threadComments?.length &&
         new Date(this.dealDiscussion.modifiedAt).getTime() <= timestamp?.getTime()
       ) || !this.discussionId
     ) return;
 
-    this.dealDiscussion.replies = replies;
+    this.dealDiscussion.replies = this.threadComments?.length || 0;
+    this.dealDiscussion.publicReplies = this.threadComments?.filter(comment => comment.metadata.isPrivate === "false").length || 0;
     this.dealDiscussion.modifiedAt = timestamp.toISOString();
     this.threadDictionary = this.arrayToDictionary(this.threadComments);
 
@@ -320,11 +315,9 @@ export class DiscussionThread {
 
       if (newComment) {
         this.threadComments.push({ ...newComment });
+        this.addAuthorToThreadProfiles(newComment);
 
-        this.updateDiscussionListStatus(
-          new Date(parseFloat(newComment.createdOn)),
-          this.threadComments.length,
-        );
+        this.updateDiscussionListStatus(new Date(parseFloat(newComment.createdOn)));
       }
       this.threadDictionary = this.arrayToDictionary(this.threadComments);
       this.comment = "";
@@ -340,8 +333,29 @@ export class DiscussionThread {
     }
   }
 
+  private addAuthorToThreadProfiles(comment: IComment): void {
+    if (!this.threadProfiles[comment.author]) {
+      this.isLoading[comment.author] = true;
+      if (comment.authorENS /* author has ENS name */) {
+        this.threadProfiles[comment.author] = {
+          name: comment.authorENS,
+          address: comment.author,
+          image: "",
+        };
+      } else {
+        /* required for replies */
+        this.discussionsService.loadProfile(comment.author).then(profile => {
+          this.threadProfiles[comment.author] = profile;
+          this.isLoading[comment.author] = false;
+        });
+      }
+    }
+  }
+
   async replyComment(_id: string): Promise<void> {
+    this.isLoading.replying = true;
     const comment = await this.discussionsService.getSingleComment(_id);
+    this.isLoading.replying = false;
 
     /**
      * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
@@ -425,30 +439,33 @@ export class DiscussionThread {
     this.updateThreadsFromDictionary();
   }
 
+  private removeCommentFromThread(_id: string): void {
+    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+    this.threadDictionary = this.arrayToDictionary(this.threadComments);
+  }
+
   async deleteComment(_id: string): Promise<void> {
     if (this.isLoading[`isDeleting ${_id}`]) return;
 
-    const swrThreadComments = Utils.cloneDeep(this.threadComments);
-    this.isLoading[`isDeleting ${_id}`] = true;
-    this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-    this.threadDictionary = this.arrayToDictionary(this.threadComments);
+    const result = await this.alertService.showAlert({
+      header: "You will be deleting your comment and will not be able to recover it.",
+      message: "Are you sure you want to delete your comment?",
+      buttons: 3,
+      buttonTextPrimary: "Delete my comment",
+      buttonTextSecondary: "Keep my comment",
+    });
 
-    this.discussionsService.deleteComment(this.discussionId, _id).then((isDeleted: boolean) => {
-      if (!isDeleted) {
-        /* If deletion did not happened, restore original comments */
-        this.threadComments = swrThreadComments;
-      } else {
-        this.updateDiscussionListStatus(new Date(), this.threadComments.length);
-        this.eventAggregator.publish("handleSuccess", "Comment deleted.");
-      }
-    }).catch (err => {
-      this.threadComments = swrThreadComments;
-      if (err.code === 4001) {
-        this.eventAggregator.publish("handleFailure", "Your signature is needed in order to delete a comment");
-      } else {
-        this.eventAggregator.publish("handleFailure", "An error occurred while deleting a comment. " + err.message);
-      }
+    if (result.wasCancelled) {
+      return;
+    }
+
+    this.isLoading[`isDeleting ${_id}`] = true;
+    this.discussionsService.deleteComment(this.discussionId, _id).then(() => {
+      this.removeCommentFromThread(_id);
+    }).catch ((err) => {
+      this.eventAggregator.publish("handleFailure", `An error occurred while deleting the comment. ${err.message}`);
     }).finally(() => {
+      this.updateDiscussionListStatus(new Date());
       this.isLoading[`isDeleting ${_id}`] = false;
     });
   }

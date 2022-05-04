@@ -1,6 +1,6 @@
 <template>
-  <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType}">
-    <header class="header">
+  <div data-test="single-comment" class="single comment ${repliesTo ? 'isReply' : ''} ${bgType} ${loading['isDeleting ' + comment._id] ? 'isDeleting' : ''}">
+    <header class="commentHeader">
       <figure class="avatar">
         <img if.to-view="!profile.image" src="https://avatars.dicebear.com/api/bottts/${comment.author}.svg" alt="">
         <img else src.bind="profile.image" alt.bind="profile.name">
@@ -36,7 +36,8 @@
           </pbutton>
           <pbutton
             type="tertiary"
-            disabled.bind="loading['isVoting ' + comment._id]"
+            disabled.bind="loading['isVoting ' + comment._id] || loading.replying"
+            is-loading.bind="loading.replying"
             click.delegate="reply()">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
@@ -55,7 +56,7 @@
           <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>
           <!-- Commenting out until `edit` is implemented in the convo.space -->
           <!-- <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton> -->
-          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()">
+          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()" disabled.bind="loading.replying" is-loading.bind="loading.replying">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
           </pbutton>
@@ -95,5 +96,9 @@
       </div>
       <pre>${comment.text}</pre>
     </section>
+    <div if.bind="loading['isDeleting ' + comment._id]" class="deleteInfo">
+      <i class="spinner fa fas fa-circle-notch fa-spin"></i>
+      Deleting this comment.
+    </div>
   </div>
 </template>

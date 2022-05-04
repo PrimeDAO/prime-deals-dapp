@@ -12,9 +12,13 @@
     display: grid;
     align-items: center;
     justify-content: center;
+
     &:not(:first-child) {
+      .roundedLogo {
+        clip-path: path("M 2 0 A 1,1, 0,0,1 -12,34 L 0 72 L 72 0 z");
+      }
+
       margin-left: -15px;
-      z-index: 2;
     }
   }
 

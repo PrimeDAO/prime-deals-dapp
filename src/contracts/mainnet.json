@@ -1,9 +1,9 @@
 {
-  "name": "rinkeby",
-  "chainId": "4",
+  "name": "mainnet",
+  "chainId": "1",
   "contracts": {
     "DaoDepositManager": {
-      "address": "0x4621eC063FA5C199BFdd2aC1f7a7fF3A1EdB0ef2",
+      "address": "0xB448335Ff3105145dc6Cf805e544F1e4a41B35ca",
       "abi": [
         {
           "anonymous": false,
@@ -892,7 +892,7 @@
       ]
     },
     "DealManager": {
-      "address": "0xdFB4bEd32051382576BD5f6147347Cb59d2E492A",
+      "address": "0x44251350E82B044a7c86DE0b25f63a52c4A2B8D5",
       "abi": [
         {
           "inputs": [
@@ -1156,7 +1156,7 @@
       ]
     },
     "TokenSwapModule": {
-      "address": "0x014aFcFA24A5302b371F5A83270E5472AFd668F3",
+      "address": "0x0E9036D6bE10a1C135503F6B94D095eff15F54fc",
       "abi": [
         {
           "inputs": [
@@ -1616,7 +1616,7 @@
     },
     "WETH": {
       "abi": "ERC20",
-      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab"
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
     }
   }
 }
