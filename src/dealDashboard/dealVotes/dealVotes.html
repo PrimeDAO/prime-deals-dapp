@@ -39,8 +39,8 @@
         class="negotiate"
         if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled"
       >
-        <pbutton type="tertiary" click.delegate="goToDiscussions()">
-          <img src="/static/comment.svg" />
+        <pbutton class="negotiateButton" click.delegate="goToDiscussions()">
+          <img src="/static/comment.svg"/>
           Negotiate
         </pbutton>
       </div>
@@ -49,11 +49,11 @@
         Votes (${deal.submittedVotes.length}/${deal.representatives.size})
       </p>
       <deal-representatives-votes
-        deal.bind="deal"
+        votes.bind="deal.allVotes"
         dao.bind="deal.primaryDao"
       ></deal-representatives-votes>
       <deal-representatives-votes
-        deal.bind="deal"
+        votes.bind="deal.allVotes"
         dao.bind="deal.partnerDao"
       ></deal-representatives-votes>
 
