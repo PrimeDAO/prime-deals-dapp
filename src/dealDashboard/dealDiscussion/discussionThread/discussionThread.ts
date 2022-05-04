@@ -22,6 +22,7 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 export type ILoadingTracker = {
   discussions: boolean;
   commenting: boolean;
+  voting: Record<string, boolean>;
   replying: Record<string, boolean>;
 } & Record<string, boolean | Record<string, boolean>>
 
@@ -46,6 +47,7 @@ export class DiscussionThread {
   private isLoading: ILoadingTracker = {
     discussions: false,
     commenting: false,
+    voting: {},
     replying: {},
   };
   private accountAddress: Address;
@@ -391,8 +393,8 @@ export class DiscussionThread {
     const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
     const currentWalletAddress = this.ethereumService.defaultAccountAddress;
 
-    if (this.isLoading[`isVoting ${_id}`]) return;
-    this.isLoading[`isVoting ${_id}`] = true;
+    if (this.isLoading.voting[_id]) return;
+    this.isLoading.voting[_id] = true;
 
     const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
@@ -423,7 +425,7 @@ export class DiscussionThread {
           this.updateThreadsFromDictionary();
         }
       }).finally(() => {
-        this.isLoading[`isVoting ${_id}`] = false;
+        this.isLoading.voting[_id] = false;
       });
 
     /* Toggle vote locally */
