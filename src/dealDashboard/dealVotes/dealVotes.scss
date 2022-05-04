@@ -11,7 +11,7 @@ deal-votes {
     .content {
       padding: 20px;
 
-      .title{
+      .title {
         font-size: 24px;
         margin-bottom: 20px;
         width: fit-content; // so gradients look right
@@ -46,12 +46,28 @@ deal-votes {
         flex-direction: row;
         justify-content: center;
 
-        pbutton button.tertiary {
+        .negotiateButton button {
           gap: 12px;
           color: $Neutral02;
+          display: flex;
+          align-items: center;
+          margin: 17px 0 35px 0;
+          cursor: pointer;
+
+          &:hover {
+            color: $Neutral04;
+
+            img {
+              filter: saturate(0) brightness(3) opacity(0.9);
+            }
+          }
 
           img {
-            filter: saturate(0) brightness(1.2);
+            filter: saturate(1.5) brightness(3) contrast(0.3) opacity(0.9) hue-rotate(275deg);
+          }
+
+          object svg path {
+            fill: red
           }
         }
       }
@@ -63,7 +79,7 @@ deal-votes {
         font-family: $heading;
       }
 
-      .dealStatusText{
+      .dealStatusText {
         font-size: 14px;
       }
 
