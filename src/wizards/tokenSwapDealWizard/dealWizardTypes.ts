@@ -72,7 +72,7 @@ export const daoStageValidationRules = (title: string, otherDao?: IDAO) =>
     .ensure<IDAO, string>(dao => dao.name)
     .required()
     .withMessage(`${title} name is required`)
-    .satisfies(value => !otherDao || (value !== otherDao.name))
+    .satisfies((value: string) => !otherDao || (value?.toLowerCase() !== otherDao.name?.toLowerCase()))
     .withMessage("Name already used for the other DAO")
     .ensure<string>(dao => dao.treasury_address)
     .required()
