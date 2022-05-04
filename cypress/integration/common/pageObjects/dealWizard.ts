@@ -74,7 +74,12 @@ export class E2eDealWizard {
         cy.get(`[data-test='${this.fieldTitle.toLowerCase().replaceAll(" ", "-")}-field']`).last().within(() => {
           cy.get("input, textarea")
             .invoke("val", value)
-            .trigger("change", { data: value });
+            .trigger("change", { data: value })
+            /**
+             * focus then blur to trigger validation (we are validating on blur)
+             */
+            .focus()
+            .blur();
         });
 
         if (this.fieldTitle === "Token address") {
