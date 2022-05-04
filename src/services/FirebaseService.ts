@@ -101,7 +101,7 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, message, signature});
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }
