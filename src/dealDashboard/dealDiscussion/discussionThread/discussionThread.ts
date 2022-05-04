@@ -22,8 +22,8 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 export type ILoadingTracker = {
   discussions: boolean;
   commenting: boolean;
-  replying: boolean;
-} & Record<string, boolean>
+  replying: Record<string, boolean>;
+} & Record<string, boolean | Record<string, boolean>>
 
 @autoinject
 export class DiscussionThread {
@@ -46,7 +46,7 @@ export class DiscussionThread {
   private isLoading: ILoadingTracker = {
     discussions: false,
     commenting: false,
-    replying: false,
+    replying: {},
   };
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
@@ -353,9 +353,9 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isLoading.replying = true;
+    this.isLoading.replying[_id] = true;
     const comment = await this.discussionsService.getSingleComment(_id);
-    this.isLoading.replying = false;
+    this.isLoading.replying[_id] = false;
 
     /**
      * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
