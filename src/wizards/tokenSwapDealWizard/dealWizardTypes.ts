@@ -67,7 +67,7 @@ export const availableSocialMedias = [
 
 export const STAGE_ROUTE_PARAMETER = "stageRoute";
 
-export const daoStageValidationRules = (title: string, otherDao?: IDAO) =>
+export const daoStageValidationRules = (title: string, otherDao: IDAO | null) =>
   ValidationRules
     .ensure<IDAO, string>(dao => dao.name)
     .required()

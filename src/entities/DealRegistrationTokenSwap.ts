@@ -134,6 +134,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
     if (isPartneredDeal) {
       this.partnerDAO = emptyDaoDetails();
     }
+    this.fundingPeriod = null;
     this.dealType = "token-swap";
   }
 }
