@@ -80,21 +80,14 @@ export class TokenDetailsStage {
       this.checkedForUnsavedChanges();
 
       return this.form.validate()
-        .then(async (result) => {
-          if (result.valid) {
-            if (this.wizardState.registrationData.fundingPeriod === undefined) {
-              this.wizardState.registrationData.fundingPeriod = null;
-            }
-          }
-
-          return result.valid &&
-            this.hasValidPrimaryDAOTokensDetailsCount &&
-            !this.hasUnsavedChangesForPrimaryDetails &&
-            !this.hasUnsavedChangesForPartnerDetails &&
-            this.hasValidPartnerDAOTokensDetailsCount &&
-            primaryTokensValid &&
-            (this.isOpenProposalWizard ? true : partnerTokensValid);
-        });
+        .then(async (result) => result.valid &&
+          this.hasValidPrimaryDAOTokensDetailsCount &&
+          !this.hasUnsavedChangesForPrimaryDetails &&
+          !this.hasUnsavedChangesForPartnerDetails &&
+          this.hasValidPartnerDAOTokensDetailsCount &&
+          primaryTokensValid &&
+          (this.isOpenProposalWizard ? true : partnerTokensValid),
+        );
     });
   }
 
