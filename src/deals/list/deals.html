@@ -27,8 +27,8 @@
         Initiate a deal
       </pbutton>
     </div>
-    <div class="section no-deals heading02" if.to-view="dealsLoadedOnce && featuredDeals && featuredDeals.length === 0">
-      ${showMine ? "You currently are not a part of any deal." : "There are no public deals available." }
+    <div class="section no-deals heading02" if.to-view="!dealsLoading && featuredDeals && featuredDeals.length === 0">
+      ${showMine ? "You are not currently part of any deal" : "No deals are authorized for view" }
       <pbutton
         type="primary"
         click.delegate="navigate('initiate')"
@@ -36,10 +36,10 @@
         Create Your Own Deal
       </pbutton>
     </div>
-    <div data-test="deals-loading" class="section loading" if.to-view="!dealsLoadedOnce">
+    <div data-test="deals-loading" class="section loading" if.to-view="dealsLoading">
       <i class="spinner fa fas fa-circle-notch fa-spin"></i>
     </div>
-    <div class="section deal-carousel" if.to-view="!featuredDeals || featuredDeals.length">
+    <div class="section deal-carousel" if.to-view="!dealsLoading && (!featuredDeals || featuredDeals.length)">
       <div class="heading02Gradient carousel-selector">
         <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
           data-test="open-proposals-tab"
@@ -134,7 +134,7 @@
             SHOW LESS
             <div class="arrow">&uarr;</div>
           </pbutton>
-        </div>        
+        </div>
       </div>
     </div>
 </template>

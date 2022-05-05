@@ -8,8 +8,9 @@ type DealType = "open" | "partnered";
 @singleton(false) // to maintain tab selection state
 @autoinject
 export class Home {
-  cardIndex = 0;
-  dealType:DealType = "open";
+  private cardIndex = 0;
+  private dealType:DealType = "open";
+  private dealsLoading = false;
   static MAX_DEALS_COUNT=10;
 
   constructor(
@@ -32,7 +33,9 @@ export class Home {
   }
 
   async attached(): Promise<void> {
+    this.dealsLoading = true;
     await this.dealService.ensureAllDealsInitialized();
+    this.dealsLoading = false;
 
     if (this.cardIndex === undefined) {
       this.cardIndex = this.allDeals.open.length ? 0 : 1;

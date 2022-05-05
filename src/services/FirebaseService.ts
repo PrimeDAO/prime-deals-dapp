@@ -2,16 +2,14 @@ import { EthereumService } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
-import { initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken, connectAuthEmulator, setPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator, initializeFirestore } from "firebase/firestore";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { signInWithCustomToken, setPersistence, signOut, onAuthStateChanged, User, Unsubscribe, UserCredential, browserLocalPersistence } from "firebase/auth";
 import { Utils } from "services/utils";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 import { DateService } from "./DateService";
 import { BrowserStorageService } from "services/BrowserStorageService";
+import { firebaseAuth } from "./firebase-helpers";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -19,34 +17,7 @@ import { BrowserStorageService } from "services/BrowserStorageService";
  * Reason: The other dependencies in `EthereumService` got pulled into Cypress webpack build as well.
  *   And the current Cypress webpack does not support, eg. scss files bundling and processing
  */
-type Address = string;
-
-// Initialize Firebase
-export const firebaseApp = initializeApp({
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  appId: process.env.FIREBASE_APP_ID,
-});
-
-/**
- * Fix Cypress specific timeout issue
- *  "Could not reach Cloud Firestore backend. Backend didn't respond within 10 seconds.""
- */
-if (process.env.FIREBASE_ENVIRONMENT === "local") {
-  initializeFirestore(firebaseApp, { experimentalForceLongPolling: true });
-}
-
-export const firebaseDatabase = getFirestore();
-export const firebaseAuth = getAuth();
-export const firebaseFunctions = getFunctions(firebaseApp);
-
-// Connects to emulators on local environment
-if (process.env.FIREBASE_ENVIRONMENT === "local") {
-  connectFirestoreEmulator(firebaseDatabase, "localhost", 8080);
-  connectAuthEmulator(firebaseAuth, "http://localhost:9099");
-  connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
-}
+ type Address = string;
 
 const FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE = "FIREBASE_AUTHENTICATION_SIGNATURES";
 
@@ -130,7 +101,7 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/verifySignedMessageAndCreateCustomToken`, {address, message, signature});
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }

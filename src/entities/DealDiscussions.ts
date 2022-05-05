@@ -42,5 +42,6 @@ export interface IDealDiscussion {
     name?: string | null;
   } | null;
   replies: number;
+  publicReplies: number;
   key: string;
 }
