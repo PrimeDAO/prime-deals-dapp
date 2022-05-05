@@ -151,6 +151,7 @@ export class DealService {
       }
     });
 
+    await Promise.all([this.getDealExecuted(), this.getDealFundedInfo()]);
     return this.loadDeals();
   }
 
@@ -175,37 +176,34 @@ export class DealService {
 
     await this.dataSourceDeals.syncAuthentication(this.ethereumService.defaultAccountAddress);
 
-    return this.getDealInfo().then(() => {
-      return this.getDealFundedInfo().then(() => {
-        return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress).then((dealDocs) => {
-          if (!dealDocs) {
-            throw new Error("Deals are not accessible");
-          }
+    return this.dataSourceDeals.getDeals<IDealTokenSwapDocument>(this.ethereumService.defaultAccountAddress)
+      .then((dealDocs) => {
+        if (!dealDocs) {
+          throw new Error("Deals are not accessible");
+        }
 
-          if (!this.deals) {
-            this.deals = new Map<Address, DealTokenSwap>();
-          }
+        if (!this.deals) {
+          this.deals = new Map<Address, DealTokenSwap>();
+        }
 
-          /**
+        /**
            * add what we don't already have
            */
-          for (const dealDoc of dealDocs) {
-            if (!this.deals.has(dealDoc.id)) {
-              this._createDeal(dealDoc);
-            }
+        for (const dealDoc of dealDocs) {
+          if (!this.deals.has(dealDoc.id)) {
+            this._createDeal(dealDoc);
           }
-          /**
+        }
+        /**
            * delete what we shouldn't have
            */
-          const newDealIds = new Set(dealDocs.map(dealDoc => dealDoc.id));
-          this.deals.forEach((_value, key) => {
-            if (!newDealIds.has(key)) {
-              this.deals.delete(key);
-            }
-          });
+        const newDealIds = new Set(dealDocs.map(dealDoc => dealDoc.id));
+        this.deals.forEach((_value, key) => {
+          if (!newDealIds.has(key)) {
+            this.deals.delete(key);
+          }
         });
-      });
-    })
+      })
       .catch((error) => {
         this.deals = new Map();
         // this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an error occurred", error));
@@ -214,53 +212,77 @@ export class DealService {
       .finally(() => this.initializing = false);
   }
 
-  private async getDealInfo(): Promise<void> {
-    if (this.executedDealIds === undefined) {
-    // commented-out until we have working contract code for retrieving the metadata
-      const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-      const filter = moduleContract.filters.TokenSwapExecuted();
-      const dealIds = new Map<string, IExecutedDeal>();
-      const promises = new Array<Promise<void>>();
+  private async getDealExecuted(): Promise<Array<void>> {
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapExecuted();
+    this.executedDealIds = new Map<string, IExecutedDeal>();
+    const promises = new Array<Promise<void>>();
 
-      await moduleContract.queryFilter(filter, StartingBlockNumber)
-        .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
-          for (const event of events) {
-            const params = event.args;
-            const dealId = parseBytes32String(params.metadata);
-            promises.push(event.getBlock()
-              .then((block: IBlockInfoNative) => {
-                dealIds.set(dealId, { executedAt: new Date(block.timestamp * 1000) });
-              }));
-          }});
+    /**
+     * We start observing right away to avoid missing any blocks
+     */
+    this.observeDealExecuted();
 
-      return Promise.all(promises).then(() => {
-        this.executedDealIds = dealIds;
-      });
-    }
+    await moduleContract.queryFilter(filter, StartingBlockNumber)
+      .then(async (events: Array<IStandardEvent<ITokenSwapExecutedArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          const dealId = parseBytes32String(params.metadata);
+          promises.push(event.getBlock()
+            .then((block: IBlockInfoNative) => {
+              this.executedDealIds.set(dealId, { executedAt: new Date(block.timestamp * 1000) });
+            }));
+        }});
+
+    return Promise.all(promises);
   }
 
-  private async getDealFundedInfo(): Promise<void> {
-    if (this.fundedDealIds === undefined) {
-      const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-      const filter = moduleContract.filters.TokenSwapCreated();
-      const dealIds = new Map<string, IFundedDeal>();
-      const promises = new Array<Promise<void>>();
+  private async observeDealExecuted(): Promise<void> {
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapExecuted();
 
-      await moduleContract.queryFilter(filter, StartingBlockNumber)
-        .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
-          for (const event of events) {
-            const params = event.args;
-            const dealId = parseBytes32String(params.metadata);
-            promises.push(event.getBlock()
-              .then((block: IBlockInfoNative) => {
-                dealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
-              }));
-          }});
+    await moduleContract.on(filter, async (_module: Address, _dealId: number, metadata: string) => {
+      const dealId = parseBytes32String(metadata);
+      this.executedDealIds.set(dealId, { executedAt: new Date(this.ethereumService.lastBlock.timestamp * 1000) });
+    });
 
-      return Promise.all(promises).then(() => {
-        this.fundedDealIds = dealIds;
-      });
-    }
+  }
+
+  private async getDealFundedInfo(): Promise<Array<void>> {
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapCreated();
+    this.fundedDealIds = new Map<string, IFundedDeal>();
+    const promises = new Array<Promise<void>>();
+
+    /**
+     * We start observing right away to avoid missing any blocks
+     */
+    this.observeDealFundedInfo();
+
+    await moduleContract.queryFilter(filter, StartingBlockNumber)
+      .then(async (events: Array<IStandardEvent<ITokenSwapCreatedArgs>>): Promise<void> => {
+        for (const event of events) {
+          const params = event.args;
+          const dealId = parseBytes32String(params.metadata);
+          promises.push(event.getBlock()
+            .then((block: IBlockInfoNative) => {
+              this.fundedDealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
+            }));
+        }});
+
+    return Promise.all(promises);
+  }
+
+  private async observeDealFundedInfo(): Promise<void> {
+    const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
+    const filter = moduleContract.filters.TokenSwapCreated();
+
+    moduleContract.on(filter, async (event: IStandardEvent<ITokenSwapCreatedArgs>) => {
+      const params = event.args;
+      const dealId = parseBytes32String(params.metadata);
+      const block = await event.getBlock();
+      this.fundedDealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
+    });
   }
 
   private async observeDeals(): Promise<void> {
