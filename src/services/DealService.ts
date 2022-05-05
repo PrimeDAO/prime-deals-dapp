@@ -239,9 +239,14 @@ export class DealService {
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapExecuted();
 
-    await moduleContract.on(filter, async (_module: Address, _dealId: number, metadata: string) => {
+    await moduleContract.on(filter, async (_module: Address, contractDealId: number, metadata: string) => {
       const dealId = parseBytes32String(metadata);
-      this.executedDealIds.set(dealId, { executedAt: new Date(this.ethereumService.lastBlock.timestamp * 1000) });
+      const executedAt = new Date(this.ethereumService.lastBlock.timestamp * 1000);
+      this.executedDealIds.set(dealId, { executedAt });
+
+      const deal = this.deals.get(dealId);
+      deal.isExecuted = true;
+      deal.executedAt = executedAt;
     });
 
   }
@@ -275,11 +280,14 @@ export class DealService {
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapCreated();
 
-    moduleContract.on(filter, async (event: IStandardEvent<ITokenSwapCreatedArgs>) => {
-      const params = event.args;
-      const dealId = parseBytes32String(params.metadata);
-      const block = await event.getBlock();
-      this.fundedDealIds.set(dealId, { fundedAt: new Date(block.timestamp * 1000) });
+    moduleContract.on(filter, async (_module: Address, contractDealId: number, metadata: string) => {
+      const dealId = parseBytes32String(metadata);
+      const fundedAt = new Date(this.ethereumService.lastBlock.timestamp * 1000);
+      this.fundedDealIds.set(dealId, { fundedAt });
+
+      const deal = this.deals.get(dealId);
+      deal.fundingStartedAt = fundedAt;
+      deal.contractDealId = contractDealId;
     });
   }
 
