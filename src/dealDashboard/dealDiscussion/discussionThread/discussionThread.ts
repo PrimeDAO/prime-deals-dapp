@@ -119,6 +119,7 @@ export class DiscussionThread {
   private async initialize(isIdChange = false): Promise<void> {
     this.isLoading.discussions = true;
     if (!this.discussionId) {
+      this.isLoading.discussions = false;
       return;
     }
     if (!this.threadComments) this.threadComments = [];
@@ -133,6 +134,8 @@ export class DiscussionThread {
       if (this.isInView(this.refThread) && !isIdChange) {
         this.discussionsService.autoScrollAfter(0);
       }
+
+      this.isLoading.discussions = false;
     } else {
       this.isLoading.discussions = false;
     }
