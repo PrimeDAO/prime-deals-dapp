@@ -53,7 +53,7 @@
           <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>
           <!-- Commenting out until `edit` is implemented in the convo.space -->
           <!-- <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton> -->
-          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()" disabled.bind="loading.replying[comment._id]">
+          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()" disabled.bind="loading.replying" is-loading.bind="loading.replying">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
           </pbutton>

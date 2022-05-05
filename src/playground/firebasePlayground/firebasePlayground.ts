@@ -62,7 +62,6 @@ export class FirebasePlayground {
       createdAt: new Date().toISOString(),
       modifiedAt: new Date().toISOString(),
       replies: 0,
-      publicReplies: 0,
       key: new Date().toISOString(),
     };
     this.firestoreService.addClauseDiscussion(dealId, discussionId, discussion);

@@ -60,12 +60,7 @@
           </div>
           <div data-test="number-of-replies" class="td replies h-centered v-centered">
             <i class="fas fa-reply mobile only"></i>
-            <span if.to-view="deal.isAuthenticatedRepresentativeOrLead">
-              ${discussion.replies || 0}
-            </span>
-            <span else>
-              ${discussion.publicReplies || 0}
-            </span>
+            ${discussion.replies || 0}
           </div>
           <div data-test="time-since-last-activity" class="td activity h-centered v-centered">
             <i class="fas fa-bolt mobile only"></i>
