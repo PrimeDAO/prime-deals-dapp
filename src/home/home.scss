@@ -1,15 +1,11 @@
 @import "../resources/elements/primeDesignSystem/variables";
-@import "src/styles/variables";
 
 .page.home {
   .section {
     &.hero {
       margin-bottom: 16px;
     }
-
     &.top {
-      padding-top: $MainContentExtraPaddingTop;
-
       .heading01Gradient {
         padding-bottom: 5px;
       }

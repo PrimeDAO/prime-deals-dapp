@@ -36,7 +36,8 @@
           </pbutton>
           <pbutton
             type="tertiary"
-            disabled.bind="loading['isVoting ' + comment._id] || loading.replying[comment._id]"
+            disabled.bind="loading['isVoting ' + comment._id] || loading.replying"
+            is-loading.bind="loading.replying"
             click.delegate="reply()">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
@@ -55,16 +56,13 @@
           <pbutton type="tertiary" click.delegate="delete()">Delete</pbutton>
           <!-- Commenting out until `edit` is implemented in the convo.space -->
           <!-- <pbutton type="tertiary" disabled click.delegate="edit()">Edit</pbutton> -->
-          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()" disabled.bind="loading.replying[comment._id]">
+          <pbutton type="tertiary" if.bind="!isReplying" click.delegate="reply()" disabled.bind="loading.replying" is-loading.bind="loading.replying">
             ${!highlighted ? "Reply" : "Cancel"}
             &nbsp;<i class="fas fa-reply"></i>
           </pbutton>
         </div>
       </div>
       <time class="lastActivity ${isAuthorized ? 'isAuthorized' : ''}">${comment.createdOn | dateDiff:'float' & signal:updateTimeSignal}</time>
-      <div if.bind="loading.replying[comment._id]" class="replying">
-        <i class="spinner fas fa-circle-notch fa-spin"></i>
-      </div>
     </header>
 
     <section class="commentBody">

@@ -172,7 +172,6 @@ export class DiscussionsService {
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
         replies: 0,
-        publicReplies: 0,
         key: (await window.crypto.subtle.exportKey("jwk", key)).k,
       };
 

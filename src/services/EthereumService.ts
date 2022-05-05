@@ -265,8 +265,8 @@ export class EthereumService {
      * but it sure helps us know whether we can connect without MetaMask asking the user to log in.
      */
     if (provider && provider._metamask.isUnlocked && (await provider._metamask.isUnlocked())) {
-      const chainName = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
-      if (chainName === EthereumService.targetedNetwork) {
+      const chainId = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
+      if (chainId === EthereumService.targetedNetwork) {
         const accounts = await provider.request({ method: "eth_accounts" });
         if (accounts?.length) {
           const account = getAddress(accounts[0]);
@@ -382,9 +382,6 @@ export class EthereumService {
 
   private handleChainChanged = async (chainId: number) => {
     const network = ethers.providers.getNetwork(Number(chainId));
-    if (network.name === "homestead") {
-      network.name = "mainnet";
-    }
 
     if (network.name !== EthereumService.targetedNetwork) {
       this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
