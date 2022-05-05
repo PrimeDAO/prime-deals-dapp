@@ -103,8 +103,7 @@ export class DealVotes {
       await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
-    }
-    else {
+    } else {
       this.eventAggregator.publish("handleFailure", "Sorry, there was a problem starting the funding phase");
     }
   }
@@ -114,7 +113,9 @@ export class DealVotes {
   }
 
   goToDiscussions() {
-    location.hash = "discussionsSection";
+    document.getElementById("discussionsSection").scrollIntoView({
+      behavior: "smooth",
+    });
   }
 
   @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress", "deal.isFullyClaimed", "deal.isClaiming")
