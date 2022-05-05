@@ -26,7 +26,6 @@ export class ContractsService {
 
   private static Contracts = new Map<ContractNames, Contract>([
     [ContractNames.DEALMANAGER, null]
-    , [ContractNames.DAODEPOSITMANAGER, null]
     , [ContractNames.TOKENSWAPMODULE, null]
     ,
   ]);
