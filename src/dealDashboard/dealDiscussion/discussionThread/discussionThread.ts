@@ -22,8 +22,9 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 export type ILoadingTracker = {
   discussions: boolean;
   commenting: boolean;
-  replying: boolean;
-} & Record<string, boolean>
+  voting: Record<string, boolean>;
+  replying: Record<string, boolean>;
+} & Record<string, boolean | Record<string, boolean>>
 
 @autoinject
 export class DiscussionThread {
@@ -46,7 +47,8 @@ export class DiscussionThread {
   private isLoading: ILoadingTracker = {
     discussions: false,
     commenting: false,
-    replying: false,
+    voting: {},
+    replying: {},
   };
   private accountAddress: Address;
   private dealDiscussion: IDealDiscussion;
@@ -353,9 +355,9 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isLoading.replying = true;
+    this.isLoading.replying[_id] = true;
     const comment = await this.discussionsService.getSingleComment(_id);
-    this.isLoading.replying = false;
+    this.isLoading.replying[_id] = false;
 
     /**
      * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
@@ -391,8 +393,8 @@ export class DiscussionThread {
     const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
     const currentWalletAddress = this.ethereumService.defaultAccountAddress;
 
-    if (this.isLoading[`isVoting ${_id}`]) return;
-    this.isLoading[`isVoting ${_id}`] = true;
+    if (this.isLoading.voting[_id]) return;
+    this.isLoading.voting[_id] = true;
 
     const swrVote = Utils.cloneDeep(this.threadDictionary[_id]);
 
@@ -423,7 +425,7 @@ export class DiscussionThread {
           this.updateThreadsFromDictionary();
         }
       }).finally(() => {
-        this.isLoading[`isVoting ${_id}`] = false;
+        this.isLoading.voting[_id] = false;
       });
 
     /* Toggle vote locally */

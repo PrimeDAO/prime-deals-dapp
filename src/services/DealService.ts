@@ -21,6 +21,10 @@ import * as applyDiff from "services/ApplyDiffService";
 interface ITokenSwapCreatedArgs {
   module: Address,
   dealId: number;
+  // unix timestamp of the execution
+  // executionDate: BigNumber; // trying to get them to switch to uint type
+  // hash of the deal information.
+  metadata: string;
   // the participating DAOs
   daos: Array<Address>;
   // the tokens involved in the swap
@@ -31,12 +35,6 @@ interface ITokenSwapCreatedArgs {
   pathTo: Array<Array<BigNumber>>;
   // unix timestamp of the deadline
   deadline: BigNumber; // trying to get them to switch to uint type
-  // unix timestamp of the execution
-  // executionDate: BigNumber; // trying to get them to switch to uint type
-  // hash of the deal information.
-  metadata: string;
-  // status of the deal
-  status: number; // 3 ("DONE") means the deal has been executed
 }
 
 interface ITokenSwapExecutedArgs {
