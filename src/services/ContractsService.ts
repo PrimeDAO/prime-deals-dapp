@@ -121,9 +121,9 @@ export class ContractsService {
       if (reuseContracts) {
         contract = ContractsService.Contracts.get(contractName).connect(signerOrProvider);
       } else {
-        contract = new ethers.Contract(
+        contract = this.getContractAtAddress(
+          contractName,
           ContractsService.getContractAddress(contractName),
-          ContractsService.getContractAbi(contractName),
           signerOrProvider);
       }
       ContractsService.Contracts.set(contractName, contract);
@@ -147,11 +147,11 @@ export class ContractsService {
     return ContractsDeploymentProvider.getContractAddress(contractName);
   }
 
-  public getContractAtAddress(contractName: ContractNames, address: Address): Contract & any {
+  public getContractAtAddress(contractName: ContractNames, address: Address, signorOrProvider?: any): Contract & any {
     return new ethers.Contract(
       address,
       ContractsService.getContractAbi(contractName),
-      this.createProvider());
+      signorOrProvider ?? this.createProvider());
   }
 
   // org.zeppelinos.proxy.implementation
