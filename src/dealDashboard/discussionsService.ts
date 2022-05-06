@@ -200,6 +200,10 @@ export class DiscussionsService {
   }
 
   public async importKey(discussionId: string): Promise<CryptoKey> {
+    if (!this.discussions[discussionId]) {
+      throw new Error(`This should not have happened. Cannot find encryption key for discussion with id: ${discussionId}. (There are currenltly ${Object.keys(this.discussions).length} discussions)`);
+    }
+
     return window.crypto.subtle.importKey(
       "jwk",
       {
