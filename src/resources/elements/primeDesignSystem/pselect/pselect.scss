@@ -36,6 +36,10 @@
       }
     }
 
+    &.ss-disabled .placeholder {
+      color: $input-text-color-disabled;
+    }
+
     .placeholder {
       color: $Neutral03;
 
