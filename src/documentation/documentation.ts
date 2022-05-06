@@ -1,6 +1,6 @@
 import { PLATFORM } from "aurelia-pal";
-import { singleton, computedFrom } from "aurelia-framework";
-import { Router, RouterConfiguration } from "aurelia-router";
+import { singleton, computedFrom, autoinject } from "aurelia-framework";
+import { Router, RouterConfiguration, RouteConfig } from "aurelia-router";
 import {activationStrategy } from "aurelia-router";
 import axios from "axios";
 const marked = require("marked");
@@ -8,15 +8,18 @@ const marked = require("marked");
 import "./documentation.scss";
 
 @singleton(false)
+@autoinject
 export class Documentation {
   router: Router;
   numDocs: number;
+  routes: RouteConfig[];
+  markdowns = new Array<Promise<any>>();
 
   @computedFrom("router.currentInstruction")
   get nextDocTitle(): string {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber < this.numDocs) {
-      return this.router.routes[docNumber + 1].title;
+      return this.routes[docNumber + 1].title;
     } else {
       return "";
     }
@@ -26,7 +29,7 @@ export class Documentation {
   get previousDocTitle(): string {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber > 1) {
-      return this.router.routes[docNumber - 1].title;
+      return this.routes[docNumber - 1].title;
     } else {
       return "";
     }
@@ -36,54 +39,69 @@ export class Documentation {
 
     config.title = "Documentation";
 
-    let documentsSpec: Array<{ title: string, url: string }>;
+    if (!this.routes) {
 
-    await axios.get(process.env.DOCUMENTS_LIST_CONFIG)
-      .then((response) => {
-        if (response.data && response.data.documents) {
-          documentsSpec = response.data.documents;
-        }
-      });
+      let documentsSpec: Array<{ title: string, url: string }>;
 
-    const markdowns = [];
-
-    /**
-     * preload the markdown or else the pages will load with visible flickering
-     */
-    for (const doc of documentsSpec) {
-      await axios.get(doc.url)
+      await axios.get(process.env.DOCUMENTS_LIST_CONFIG)
         .then((response) => {
-          if (response.data && response.data.length) {
-            markdowns.push(marked(response.data));
+          if (response.data && response.data.documents) {
+            documentsSpec = response.data.documents;
           }
         });
+
+      /**
+       * preload the markdown or else the pages will load with visible flickering
+       */
+      for (const doc of documentsSpec) {
+        this.markdowns.push(axios.get(doc.url)
+          .then((response) => {
+            if (response.data && response.data.length) {
+              return marked(response.data);
+            }
+          }));
+      }
+
+      /**
+       * navigation strategy to load eadh marked independently for faster page load
+       * @param instruction
+       * @returns
+       */
+      const navStrat = async (instruction) => {
+        const marked = await this.markdowns[instruction.config.settings.docNumber-1];
+        if (!instruction.config.settings.content) {
+          return instruction.config.settings.content = marked;
+        }
+      };
+
+      /**
+       * activationStrategy is docspec.filespec so baseDocument will be reactivated on each change
+       * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
+       */
+      const routes = documentsSpec.map((docspec: {title: string, url: string }, ndx: number) => {
+        const route = {
+          route: [docspec.title.replaceAll(" ", "")],
+          nav: true,
+          moduleId: PLATFORM.moduleName("./baseDocument"),
+          title: docspec.title,
+          activationStrategy: activationStrategy.replace,
+          navigationStrategy: navStrat,
+          settings: {
+            docNumber: ndx+1,
+            content: null,
+          },
+        };
+        if (ndx === 0) {
+          route.route.push("");
+        }
+        return route;
+      });
+
+      this.numDocs = documentsSpec.length;
+      this.routes = routes;
     }
 
-    /**
-     * activationStrategy is docspec.filespecso baseDocument will be reactivated on each change
-     * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
-     */
-    const routes = documentsSpec.map((docspec: {title: string, url: string }, ndx: number) => {
-      const route = {
-        route: [docspec.title.replaceAll(" ", "")],
-        nav: true,
-        moduleId: PLATFORM.moduleName("./baseDocument"),
-        title: docspec.title,
-        activationStrategy: activationStrategy.replace,
-        settings: {
-          content: markdowns[ndx],
-          docNumber: ndx+1,
-        },
-      };
-      if (ndx === 0) {
-        route.route.push("");
-      }
-      return route;
-    });
-
-    config.map(routes);
-
-    this.numDocs = documentsSpec.length;
+    config.map(this.routes);
 
     this.router = router;
   }
@@ -92,7 +110,7 @@ export class Documentation {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber < this.numDocs) {
       // @ts-ignore
-      this.router.navigate(this.router.routes[docNumber + 1].route);
+      this.router.navigate(this.routes[docNumber + 1].route);
     }
   }
 
@@ -100,7 +118,7 @@ export class Documentation {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber > 1) {
       // @ts-ignore
-      this.router.navigate(this.router.routes[docNumber - 1].route);
+      this.router.navigate(this.routes[docNumber - 1].route);
     }
   }
 }
