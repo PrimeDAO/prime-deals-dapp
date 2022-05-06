@@ -162,6 +162,7 @@ export class WizardManager {
 
       if (wizardType === WizardType.makeAnOffer) {
         this.registrationData.partnerDAO = emptyDaoDetails();
+        this.registrationData.isPrivate = this.registrationData.offersPrivate;
       }
 
       this.stages = this.configureStages(wizardType);
