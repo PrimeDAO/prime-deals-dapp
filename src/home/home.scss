@@ -77,11 +77,8 @@
 
         & > .introVideo {
           width: 100%;
-          height: 345px;
           border-radius: 6px;
-          display: flex;
-          margin-bottom: 4px;
-          justify-content: left;
+          aspect-ratio: 16 / 9;
         }
 
         .disclaimer {
@@ -133,14 +130,6 @@
         grid-template-columns: auto;
         row-gap: 28px;
         margin-bottom: 0;
-
-        .heroColumn {
-          justify-content: center;
-
-          & > .introVideo {
-            justify-content: center;
-          }
-        }
       }
     }
   }
