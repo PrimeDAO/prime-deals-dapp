@@ -11,19 +11,37 @@ const randomId = getRandomId();
 
 export const E2E_ADDRESSES = {
   ConnectedPublicUser: "0x0000000000000000000000000000000000000000",
-  ProposalLead: "0x0F73E89617FEDee6cCaB07d1d842FF8a5A1f08CC",
+  // ------ Primary
+  ProposalLead: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+  RepresentativeTwo: "0xd1F29D0e34c7A9D54f607733e5A113493c58F1Cb", /** TODO: should become PrimaryRepresentativeTwo */
+  PrimaryRepresentativeThree: "0xEf9a0BaCf7836FbCda9892742dA142e528A98937",
+  PrimaryRepresentativeFour: "0x7601F2bbA7E9045f06b41B4734dB7dd0D60d5786",
+  PrimaryRepresentativeFive: "0xC602f4f1829442acA1ebBE1010C55b6b27f4134b",
   PrimaryDAOToken: "0x43d4a3cd90ddd2f8f4f693170c9c8098163502ad",
-  PrimaryTreasury: "0xe904078dBE5Cb9973869B7bDA1C88189986C77fB",
+  PrimaryTreasury: "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+  // ------ Partner
+  RepresentativeOne: "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29",
+  PartnerRepresentativeTwo: "0x622D9f71152A3e8EDD114a9b211812b51fFCcB00",
+  PartnerRepresentativeThree: "0x5D45BAa08C7936A7b788c191Ae6862C392eE32Fe",
+  PartnerRepresentativeFour: "0x1573e541a10cBbd74e9C644Bbef2073532c33A2B",
+  PartnerRepresentativeFive: "0x45802BfeBc62747001f33dCf171aACD86ca774f6",
   PartnerTreasury: "0x0727d9de6838fa17Ce638E3Ba3483e8d25E99276",
   PartnerTreasuryTwo: "0x438992F8fF23d808a1BdA06cEbB9f7388b12EB82",
-  RepresentativeOne: "0x15f23CF16Ee88B87019C716eDbFD920B54244a8f",
-  RepresentativeTwo: "0x77A9B5d500F24255307e46613904f9b346F22f26",
 };
 
 export const E2E_ADDRESSES_PRIVATE_KEYS = {
-  [E2E_ADDRESSES.ProposalLead]: "610205a884c29474f492da1fe49dafbb32fbe32f04c9241e4e095937d12bd4e6",
-  [E2E_ADDRESSES.RepresentativeOne]: "d9d540c544bfbe55a8c4df588ceaf105c64de65cc4564b2e436042e4903fea5c",
-  [E2E_ADDRESSES.RepresentativeTwo]: "b2c1c113477f18450a15267e9973b8dd51982660caf93eb3abcf14fa3cafa2a2",
+  // ------ Primary
+  [E2E_ADDRESSES.ProposalLead]: process.env.ADDRESSES_PROPOSAL_LEAD,
+  [E2E_ADDRESSES.RepresentativeTwo]: process.env.ADDRESSES_REPRESENTATIVE_TWO,
+  [E2E_ADDRESSES.PrimaryRepresentativeThree]: process.env.ADDRESSES_PRIMARY_REPRESENTATIVE_THREE,
+  [E2E_ADDRESSES.PrimaryRepresentativeFour]: process.env.ADDRESSES_PRIMARY_REPRESENTATIVE_FOUR,
+  [E2E_ADDRESSES.PrimaryRepresentativeFive]: process.env.ADDRESSES_PRIMARY_REPRESENTATIVE_FIVE,
+  // ------ Partner
+  [E2E_ADDRESSES.RepresentativeOne]: process.env.ADDRESSES_REPRESENTATIVE_ONE,
+  [E2E_ADDRESSES.PartnerRepresentativeTwo]: process.env.ADDRESSES_PARTNER_REPRESENTATIVE_TWO,
+  [E2E_ADDRESSES.PartnerRepresentativeThree]: process.env.ADDRESSES_PARTNER_REPRESENTATIVE_THREE,
+  [E2E_ADDRESSES.PartnerRepresentativeFour]: process.env.ADDRESSES_PARTNER_REPRESENTATIVE_FOUR,
+  [E2E_ADDRESSES.PartnerRepresentativeFive]: process.env.ADDRESSES_PARTNER_REPRESENTATIVE_FIVE,
 };
 
 const PROPOSAL_DATA = {
