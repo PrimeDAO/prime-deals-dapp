@@ -9,7 +9,8 @@
 
   .documentContainer {
     display: grid;
-    grid-template-columns: 0.7fr 2fr;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 16px;
 
     .sidebar {
       padding-top: 28px;
@@ -62,10 +63,11 @@
   }
 }
 
-@media screen and (max-width: 1072px) {
+@media screen and (max-width: 980px) {
   .documentsContainer {
     > .title.heading {
       font-size: 34px;
+      margin: auto;
     }
 
     .documentContainer {
@@ -78,6 +80,7 @@
       .sidebar {
         padding-top: 0;
         margin-bottom: 30px;
+        text-align: center;
       }
 
       .rightSection {
