@@ -1,4 +1,4 @@
-import { bindingMode, customElement, autoinject, TaskQueue } from "aurelia-framework";
+import { autoinject, bindingMode, customElement, TaskQueue } from "aurelia-framework";
 import SlimSelect from "slim-select";
 import { bindable } from "aurelia-typed-observable-plugin";
 import "./pselect.scss";
@@ -75,13 +75,23 @@ export class PSelect {
   detached(): void {
     this.select?.destroy();
   }
+
   dataChanged(): void {
     if (this.select) {
       this.select.setData([{text: this.placeholder, placeholder: true, value: null}, ...this.data ?? []]);
       this.taskQueue.queueTask(() => this.select?.set(this.value));
     }
   }
-  valueChanged():void{
+
+  valueChanged(): void {
     this.select?.set(this.value);
+  }
+
+  disabledChanged(disabled: boolean) {
+    if (disabled) {
+      this.select.disable();
+    } else {
+      this.select.enable();
+    }
   }
 }

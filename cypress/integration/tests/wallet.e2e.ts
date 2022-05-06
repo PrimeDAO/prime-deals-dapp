@@ -96,8 +96,10 @@ Given("I connect to the wallet with address {string}", (address: string) => {
 });
 
 Given("I change the address to {string}", (address: string) => {
+  E2eWallet.currentWalletAddress = address;
   // @ts-ignore - Hack to access firestore inside Cypress
-  Cypress.eventAggregator.publish("Network.Changed.Account", address);
+  Cypress.eventAggregator.publish("accountsChanged", address);
+
 });
 
 Given("I'm a Connected Public user", () => {

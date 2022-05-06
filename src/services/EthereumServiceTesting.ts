@@ -145,6 +145,15 @@ export class EthereumServiceTesting {
 
     this.defaultAccountAddress = address;
     this.fireAccountsChangedHandler(address);
+
+    /**
+     * Simulate account changed from Metamask
+        this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
+     */
+    this.eventAggregator.subscribe("accountsChanged", (account) => {
+      this.defaultAccountAddress = account;
+      this.fireAccountsChangedHandler(account);
+    });
   }
 
   public disconnect(error: { code: number; message: string }): void {

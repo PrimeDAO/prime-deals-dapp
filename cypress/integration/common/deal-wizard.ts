@@ -204,6 +204,10 @@ Then("I should be redirected to the Home Page", () => {
 Then("I can proceed to the next step", () => {
   cy.url().then(url => {
     const oldUrl = url;
+    /**
+     * Validation is async for some stages, thus immediately proceeding triggers a validation error in the stage.
+     */
+    cy.wait(500);
     cy.get("[data-test='wizard-proceed-button']").click();
 
     recurse(
