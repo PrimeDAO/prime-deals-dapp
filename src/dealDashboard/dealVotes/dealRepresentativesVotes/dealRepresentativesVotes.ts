@@ -25,11 +25,4 @@ export class DealRepresentativesVotes {
     return this.dao.representatives.map(x => this.votes[x.address]).sort((a, b) => a > b ? -1 : 1);
   }
 
-  getVoteSlug(allVotes: IVotesInfo, representativeAddress: string) {
-    return allVotes[representativeAddress] === true
-      ? "accepted"
-      : allVotes[representativeAddress] === false
-        ? "declined"
-        : "";
-  }
 }
