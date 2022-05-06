@@ -117,12 +117,13 @@ export class DiscussionThread {
   }
 
   private async initialize(isIdChange = false): Promise<void> {
-    this.isLoading.discussions = true;
     if (!this.discussionId) {
       this.isLoading.discussions = false;
       return;
     }
     if (!this.threadComments) this.threadComments = [];
+
+    this.isLoading.discussions = true;
     if (
       !this.deal.isPrivate ||
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
@@ -134,11 +135,8 @@ export class DiscussionThread {
       if (this.isInView(this.refThread) && !isIdChange) {
         this.discussionsService.autoScrollAfter(0);
       }
-
-      this.isLoading.discussions = false;
-    } else {
-      this.isLoading.discussions = false;
     }
+    this.isLoading.discussions = false;
   }
 
   private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
@@ -226,16 +224,18 @@ export class DiscussionThread {
 
       // Early return, if there are no comments/discussions.
       if (!this.threadComments) return;
+      if (!this.dealDiscussion) {
+        if (this.discussionsService.discussions[discussionId]) {
+          this.dealDiscussion = this.discussionsService.discussions[discussionId];
+        } else {
+          throw new Error("Discussion not found. Please refresh the page");
+        }
+      }
     } catch (error) {
       this.hasApiError = true;
 
       this.consoleLogService.logMessage(error.message, "error");
     }
-
-    if (!this.dealDiscussion) return;
-
-    this.updateDiscussionListStatus(new Date());
-    this.isLoading.discussions = false;
 
     // Author profile for the discussion header
     this.isLoading[this.dealDiscussion.createdBy.address] = true;
