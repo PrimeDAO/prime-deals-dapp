@@ -22,7 +22,9 @@ export class PrimaryDaoStage implements IBaseWizardStage {
     this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
     this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
 
-    const validationRules = daoStageValidationRules("Primary DAO", this.wizardState.registrationData.partnerDAO);
+    const partnerDao = this.isPartneredDeal ? this.wizardState.registrationData.partnerDAO : null;
+
+    const validationRules = daoStageValidationRules("Primary DAO", partnerDao);
 
     this.form = this.wizardService.registerValidationRules(
       this.wizardManager,
