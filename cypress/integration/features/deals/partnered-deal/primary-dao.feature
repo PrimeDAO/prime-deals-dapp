@@ -37,10 +37,14 @@ Feature: Create Partnered Deal Primary DAO stage
   #   Then I am presented with errors about incorrect representative addresses
 
   Scenario: Getting error when trying to use the same name and address as the Partner DAO
-    And I navigate to the "Partnered Deal" "Partner DAO" stage
-    And I fill in DAO details
-    And I navigate to the "Partnered Deal" "Primary DAO" stage
-    And I fill in DAO details
+    Given I navigate to the "Partnered Deal" "Partner DAO" stage
+    And I want to fill in information for the "Partner DAO" section
+    When I fill in the "DAO Name" field with "Dao name"
+    When I fill in the "DAO Treasury Address" field with "0x0000000000000000000000000000000000000000"
+    When I use the stepper to go to the "Primary DAO" step
+    And I want to fill in information for the "Primary DAO" section
+    When I fill in the "DAO Name" field with "Dao name"
+    When I fill in the "DAO Treasury Address" field with "0x0000000000000000000000000000000000000000"
     And I try to proceed to next step
     Then I am presented with the "Name already used for the other DAO" error message for the "dao name" field
     And I am presented with the "Address already used for the other DAO" error message for the "dao treasury address" field

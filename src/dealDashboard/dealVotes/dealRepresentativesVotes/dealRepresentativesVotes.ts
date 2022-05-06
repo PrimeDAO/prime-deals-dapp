@@ -21,7 +21,7 @@ export class DealRepresentativesVotes {
   }
 
   @computedFrom("votes")
-  private get sortedVotes() : boolean[] {
+  private get sortedVotes(): boolean[] {
     return this.dao.representatives.map(x => this.votes[x.address]).sort((a, b) => a > b ? -1 : 1);
   }
 

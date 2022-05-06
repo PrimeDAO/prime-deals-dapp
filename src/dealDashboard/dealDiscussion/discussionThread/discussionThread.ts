@@ -118,6 +118,7 @@ export class DiscussionThread {
 
   private async initialize(isIdChange = false): Promise<void> {
     if (!this.discussionId) {
+      this.isLoading.discussions = false;
       return;
     }
     if (!this.threadComments) this.threadComments = [];
