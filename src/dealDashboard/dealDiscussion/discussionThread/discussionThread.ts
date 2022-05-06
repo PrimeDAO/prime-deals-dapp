@@ -358,31 +358,31 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isLoading.replying[_id] = true;
-    const comment = await this.discussionsService.getSingleComment(_id);
-    this.isLoading.replying[_id] = false;
-
-    /**
-     * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
-     *   TODO: better describe return type from discussionsService.
-     *
-     * 2. DOMException: theconvo sdk throws this error.
-     *   This happens, when there was no response from their endpoint within a timeout limit.
-     *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
-     */
-    if ((comment as any).error instanceof DOMException) {
-      this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
-      return;
-    }
-
-    if (!comment._id) {
-      this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
-      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
-      return;
-    }
-
     if (!this.replyToComment) {
+      this.isLoading.replying[_id] = true;
+      const comment = await this.discussionsService.getSingleComment(_id);
+      this.isLoading.replying[_id] = false;
+
+      /**
+       * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
+       *   TODO: better describe return type from discussionsService.
+       *
+       * 2. DOMException: theconvo sdk throws this error.
+       *   This happens, when there was no response from their endpoint within a timeout limit.
+       *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
+       */
+      if ((comment as any).error instanceof DOMException) {
+        this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
+        return;
+      }
+
+      if (!comment._id) {
+        this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
+        this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+        return;
+      }
+
       this.replyToComment = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
     } else {
