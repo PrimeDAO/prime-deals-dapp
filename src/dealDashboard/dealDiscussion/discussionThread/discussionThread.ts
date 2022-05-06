@@ -228,7 +228,7 @@ export class DiscussionThread {
         if (this.discussionsService.discussions[discussionId]) {
           this.dealDiscussion = this.discussionsService.discussions[discussionId];
         } else {
-          throw {message: "Discussion not found. Please refresh the page."};
+          throw new Error("Discussion not found. Please refresh the page");
         }
       }
     } catch (error) {
