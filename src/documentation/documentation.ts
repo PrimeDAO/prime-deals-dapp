@@ -51,7 +51,7 @@ export class Documentation {
         });
 
       /**
-       * preload the markdown or else the pages will load with visible flickering
+       * get all the pages started loading, asynchronously
        */
       for (const doc of documentsSpec) {
         this.markdowns.push(axios.get(doc.url)
@@ -63,7 +63,7 @@ export class Documentation {
       }
 
       /**
-       * navigation strategy to load eadh marked independently for faster page load
+       * navigation strategy to await each marked on demand
        * @param instruction
        * @returns
        */
