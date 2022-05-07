@@ -12,14 +12,14 @@ import "./documentation.scss";
 export class Documentation {
   router: Router;
   numDocs: number;
-  routes: RouteConfig[];
-  markdowns = new Array<Promise<any>>();
+  routes: Array<RouteConfig>;
+  markdowns: Array<Promise<any>> = [null];
 
   @computedFrom("router.currentInstruction")
   get nextDocTitle(): string {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber < this.numDocs) {
-      return this.routes[docNumber + 1].title;
+      return this.router.routes[docNumber + 1].title;
     } else {
       return "";
     }
@@ -29,7 +29,7 @@ export class Documentation {
   get previousDocTitle(): string {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber > 1) {
-      return this.routes[docNumber - 1].title;
+      return this.router.routes[docNumber - 1].title;
     } else {
       return "";
     }
@@ -68,7 +68,7 @@ export class Documentation {
        * @returns
        */
       const navStrat = async (instruction) => {
-        const marked = await this.markdowns[instruction.config.settings.docNumber-1];
+        const marked = await this.markdowns[instruction.config.settings.docNumber];
         if (!instruction.config.settings.content) {
           return instruction.config.settings.content = marked;
         }
@@ -91,6 +91,9 @@ export class Documentation {
             content: null,
           },
         };
+        /**
+         * specify as default route
+         */
         if (ndx === 0) {
           route.route.push("");
         }
@@ -110,7 +113,7 @@ export class Documentation {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber < this.numDocs) {
       // @ts-ignore
-      this.router.navigate(this.routes[docNumber + 1].route);
+      this.router.navigate(this.router.routes[docNumber + 1].route);
     }
   }
 
@@ -118,7 +121,7 @@ export class Documentation {
     const docNumber = this.router.currentInstruction.config.settings.docNumber;
     if (docNumber > 1) {
       // @ts-ignore
-      this.router.navigate(this.routes[docNumber - 1].route);
+      this.router.navigate(this.router.routes[docNumber - 1].route);
     }
   }
 }
