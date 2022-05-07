@@ -10,4 +10,4 @@ Feature: Discussions - Single Comment - Public View
     Examples:
       | UserType         |
       | Anonymous        |
-      | Connected Public |
+      # | Connected Public | <-- should not see when it's their own comment

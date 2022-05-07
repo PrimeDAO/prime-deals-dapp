@@ -117,11 +117,13 @@ export class DiscussionThread {
   }
 
   private async initialize(isIdChange = false): Promise<void> {
-    this.isLoading.discussions = true;
     if (!this.discussionId) {
+      this.isLoading.discussions = false;
       return;
     }
     if (!this.threadComments) this.threadComments = [];
+
+    this.isLoading.discussions = true;
     if (
       !this.deal.isPrivate ||
       this.deal.isPrivate && this.deal.isUserRepresentativeOrLead
@@ -133,9 +135,8 @@ export class DiscussionThread {
       if (this.isInView(this.refThread) && !isIdChange) {
         this.discussionsService.autoScrollAfter(0);
       }
-    } else {
-      this.isLoading.discussions = false;
     }
+    this.isLoading.discussions = false;
   }
 
   private arrayToDictionary(comments: Array<any>): Record<string, IComment> {
@@ -223,16 +224,18 @@ export class DiscussionThread {
 
       // Early return, if there are no comments/discussions.
       if (!this.threadComments) return;
+      if (!this.dealDiscussion) {
+        if (this.discussionsService.discussions[discussionId]) {
+          this.dealDiscussion = this.discussionsService.discussions[discussionId];
+        } else {
+          throw new Error("Discussion not found. Please refresh the page");
+        }
+      }
     } catch (error) {
       this.hasApiError = true;
 
       this.consoleLogService.logMessage(error.message, "error");
     }
-
-    if (!this.dealDiscussion) return;
-
-    this.updateDiscussionListStatus(new Date());
-    this.isLoading.discussions = false;
 
     // Author profile for the discussion header
     this.isLoading[this.dealDiscussion.createdBy.address] = true;
@@ -355,31 +358,31 @@ export class DiscussionThread {
   }
 
   async replyComment(_id: string): Promise<void> {
-    this.isLoading.replying[_id] = true;
-    const comment = await this.discussionsService.getSingleComment(_id);
-    this.isLoading.replying[_id] = false;
-
-    /**
-     * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
-     *   TODO: better describe return type from discussionsService.
-     *
-     * 2. DOMException: theconvo sdk throws this error.
-     *   This happens, when there was no response from their endpoint within a timeout limit.
-     *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
-     */
-    if ((comment as any).error instanceof DOMException) {
-      this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
-      return;
-    }
-
-    if (!comment._id) {
-      this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
-      this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
-      this.threadDictionary = this.arrayToDictionary(this.threadComments);
-      return;
-    }
-
     if (!this.replyToComment) {
+      this.isLoading.replying[_id] = true;
+      const comment = await this.discussionsService.getSingleComment(_id);
+      this.isLoading.replying[_id] = false;
+
+      /**
+       * 1. "as any": Is typed as IComment, but the convoSdk also throws AbortController errors, so we catch it here.
+       *   TODO: better describe return type from discussionsService.
+       *
+       * 2. DOMException: theconvo sdk throws this error.
+       *   This happens, when there was no response from their endpoint within a timeout limit.
+       *   Because, there was no response, we cannot assume what happened, so just early return with error popup.
+       */
+      if ((comment as any).error instanceof DOMException) {
+        this.eventAggregator.publish("handleFailure", "An error occurred. Cannot reply to comment. Please try again later");
+        return;
+      }
+
+      if (!comment._id) {
+        this.eventAggregator.publish("handleFailure", `An error occurred. ${deletedByAuthorErrorMessage}`);
+        this.threadComments = this.threadComments.filter(comment => comment._id !== _id);
+        this.threadDictionary = this.arrayToDictionary(this.threadComments);
+        return;
+      }
+
       this.replyToComment = this.threadComments.find((comment) => comment._id === _id) || null;
       this.refCommentInput.querySelector("textarea").focus();
     } else {

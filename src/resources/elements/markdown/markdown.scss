@@ -14,7 +14,12 @@
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  ul,
+  li,
+  ol,
+  code,
+  pre {
     all: revert;
   }
 
@@ -33,7 +38,9 @@
 
   a {
     color: $Secondary07;
+    white-space: pre-wrap;
   }
+
   p {
     line-height: 1.5;
     font-weight: 400;

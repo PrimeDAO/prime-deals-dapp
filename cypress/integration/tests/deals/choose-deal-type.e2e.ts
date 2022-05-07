@@ -14,7 +14,7 @@ And("I can see Joint venture deal type", () => {
 });
 
 When("I select Token Swap", () => {
-  cy.get("[data-test='button-initiate/token-swap']").click();
+  cy.get("[data-test='button-token-swap']").click();
 });
 
 Then("I can see Open Proposal and Partnered Deal", () => {
@@ -23,7 +23,7 @@ Then("I can see Open Proposal and Partnered Deal", () => {
 });
 
 And("I select Open Proposal", () => {
-  cy.get("[data-test='button-initiate/token-swap/open-proposal/proposal']").click();
+  cy.get("[data-test='open-proposal-button']").click();
 });
 
 Then("I can view the Open Proposal wizard", () => {
@@ -31,7 +31,7 @@ Then("I can view the Open Proposal wizard", () => {
 });
 
 And("I select Partnered Deal", () => {
-  cy.get("[data-test='button-initiate/token-swap/partnered-deal/proposal']").click();
+  cy.get("[data-test='partnered-deal-button']").click();
 });
 
 Then("I can view the Partnered Deal wizard", () => {
