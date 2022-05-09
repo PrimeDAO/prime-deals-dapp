@@ -112,7 +112,8 @@ export class DealVotes {
     this.router.navigate(`funding/${this.deal.id}`);
   }
 
-  goToDiscussions() {
+  async goToDiscussions() {
+    await Utils.pageScrollEnded();
     document.getElementById("discussionsSection").scrollIntoView({
       behavior: "smooth",
     });
