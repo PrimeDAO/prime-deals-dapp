@@ -29,9 +29,9 @@
     }
 
     .rightSection {
+      padding: 50px 77px 56px 77px;
       background-color: $BG02;
       border-radius: 6px;
-      padding: 56px;
 
       .documentBodyContainer {
         > .title.heading {
@@ -74,7 +74,7 @@
       grid-template-columns: auto;
 
       .rightSection {
-        padding: 0px 25px 25px 30px;
+        padding: 0;
         background-color: unset;
 
         .documentBodyContainer {
