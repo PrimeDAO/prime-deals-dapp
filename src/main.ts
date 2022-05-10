@@ -20,6 +20,7 @@ import "./services/ValidationService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
+import { DealService } from "services/DealService";
 
 export function configure(aurelia: Aurelia): void {
   // Note, this Cypress hack has to be at the very start.
@@ -105,6 +106,14 @@ export function configure(aurelia: Aurelia): void {
       const tokenService = aurelia.container.get(TokenService);
       await tokenService.initialize();
       TimingService.end("TokenService Initialization");
+
+      /**
+       * DealService needs to be instantiated after(!) ContractsService.
+       */
+      if ((window as any).Cypress) {
+        const dealService = aurelia.container.get(DealService);
+        (window as any).Cypress.dealService = dealService;
+      }
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));
