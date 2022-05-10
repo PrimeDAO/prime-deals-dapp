@@ -157,3 +157,9 @@ https://docs.cypress.io/guides/references/configuration#cypress-json
 [app_action]: (https://www.cypress.io/blog/2019/01/03/stop-using-page-objects-and-start-using-app-actions/)
 
 *[[Back to top] 🔝](#concepts)*
+
+### Coverage
+Have to run a separate command to instrument the code (instrument = add helper code, that tracks when code was executed)
+`npm run start-dev:cov`
+
+Then can run other e2e commands
