@@ -7,7 +7,7 @@
   font-weight: 300 !important;
   font-size: 16px !important;
   line-height: 22px !important;
-  color: $Neutral03 !important;
+  color: $Neutral03  !important;
   white-space: normal !important;
 
   p,
@@ -115,5 +115,18 @@
         vertical-align: middle;
       }
     }
+  }
+
+  kbd {
+    border-radius: 68px;
+    background-color: $Neutral04;
+    border: 1px solid $Neutral03;
+    color: #333;
+    display: inline-block;
+    font-size: 13.6px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 2px 5px;
+    white-space: nowrap;
   }
 }
