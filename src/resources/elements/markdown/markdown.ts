@@ -8,11 +8,7 @@ export class Markdown{
 
   @bindable document: string;
   @bindable url: string;
-  markdown = "";
-
-  // constructor() {
-  //   marked.setOptions({ breaks: true, gfm: true });
-  // }
+  private markdown = "";
 
   attached(): void {
     if (this.url) {
@@ -26,4 +22,16 @@ export class Markdown{
       this.markdown = marked(this.document);
     }
   }
+}
+
+export function initialize(): void {
+  // const renderer = {
+  //   link(href: string, title: string, text: string) {
+  //     // return `<a href="${href}">${text} blossom</a>`;
+  //     return `<a href="#" click="navigate()">${text} blossom</a>`;
+  //   },
+  // };
+
+  // marked.use({ renderer });
+  marked.setOptions({ gfm: true });
 }
