@@ -10,6 +10,7 @@ import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
 import { Utils } from "services/utils";
 import { PLATFORM } from "aurelia-pal";
+import { DiscussionsService } from "../discussionsService";
 
 PLATFORM.moduleName("./fundingModal/fundingModal");
 
@@ -89,6 +90,7 @@ export class DealVotes {
     private dialogService: DialogService,
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
+    private discussionsService: DiscussionsService,
   ) {
   }
 
@@ -113,10 +115,7 @@ export class DealVotes {
   }
 
   async goToDiscussions() {
-    await Utils.pageScrollEnded();
-    document.getElementById("discussionsSection").scrollIntoView({
-      behavior: "smooth",
-    });
+    this.discussionsService.autoScrollAfter(0);
   }
 
   @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress", "deal.isFullyClaimed", "deal.isClaiming")
