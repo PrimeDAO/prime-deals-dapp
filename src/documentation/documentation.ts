@@ -51,7 +51,9 @@ export class Documentation {
         });
 
       /**
-       * get all the pages started loading, asynchronously
+       * get all the pages started loading, asynchronously.
+       * If we let the markdown component load these itself, there would be
+       * a lot of flickering as the markdown unloads and reloads itself
        */
       for (const doc of documentsSpec) {
         this.markdowns.push(axios.get(doc.url)
