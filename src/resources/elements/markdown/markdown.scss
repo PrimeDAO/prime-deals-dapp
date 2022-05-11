@@ -37,6 +37,12 @@
     width: fit-content; // so gradients look right
     white-space: break-word;
     margin-bottom: 28px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
     scroll-margin-top: 110px;
   }
 
@@ -121,7 +127,10 @@
 
 @media screen and (max-width: $PageBreakWidth) {
   .markdownContainer {
-    h1 {
+    h1,
+    h2,
+    h3,
+    h4 {
       scroll-margin-top: 75px;
     }
   }
