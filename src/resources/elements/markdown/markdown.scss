@@ -37,6 +37,10 @@
     width: fit-content; // so gradients look right
     white-space: break-word;
     margin-bottom: 28px;
+
+    // used for aligning the title correctly in view when jumping to an anchor tag.
+    margin-top: -110px;
+    padding-top: 110px;
   }
 
   a {
@@ -114,6 +118,15 @@
         text-align: center;
         vertical-align: middle;
       }
+    }
+  }
+}
+
+@media screen and (max-width: $PageBreakWidth) {
+  .markdownContainer {
+    h1 {
+      margin-top: -75px;
+      padding-top: 75px;
     }
   }
 }
