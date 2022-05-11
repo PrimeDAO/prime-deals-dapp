@@ -289,7 +289,7 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
         ]
       },
       ...when(tests, {
-        test: /\.[jt]s$/i, loader: 'istanbul-instrumenter-loader',
+        test: /\.[jt]s$/i, loader: '@jsdevtools/coverage-istanbul-loader',
         include: srcDir, exclude: [/\.(spec|test)\.[jt]s$/i],
         enforce: 'post', options: { esModules: true },
       })

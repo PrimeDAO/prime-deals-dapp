@@ -26,6 +26,11 @@ export class E2eDealsApi {
     return Cypress.firestoreService;
   }
 
+  private static getDealService() {
+    // @ts-ignore - Hack to access dealService inside Cypress
+    return Cypress.dealService;
+  }
+
   private static getDataSourceDeals(): FirestoreDealsService<
   IDealTokenSwapDocument,
   IDealRegistrationTokenSwap
@@ -179,9 +184,16 @@ export class E2eDealsApi {
        * 2. Interact with Firestore
        */
       return cy.then(async () => {
-        const firestoreService = E2eDealsApi.getFirestoreService();
+        const dealService = E2eDealsApi.getDealService();
 
-        const createdDeal = await firestoreService.createDealTokenSwap(registrationData);
+        /**
+         * Have to use `@ts-ignore`, because we cannot import `DealService` in cypress.
+         * Cannot import, because of bundling issues (bundling does not support importing Aurelia code)
+         */
+        // @ts-ignore
+        await dealService.ensureInitialized();
+        // @ts-ignore
+        const createdDeal = await dealService.createDeal(registrationData) as IDealTokenSwapDocument;
 
         E2eDeals.setDeal(createdDeal);
 
