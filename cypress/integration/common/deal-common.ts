@@ -1,5 +1,10 @@
 import { After, Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { DealDataBuilder, MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import {
+  DealDataBuilder,
+  MINIMUM_OPEN_PROPOSAL,
+  PARTNERED_DEAL,
+  PRIVATE_PARTNERED_DEAL,
+} from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
@@ -18,10 +23,17 @@ export class E2EDashboard {
 
     cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
+
   public static editDeal() {
     cy.contains("pbutton", "Edit deal").click();
 
     E2eWizard.waitForWizardLoaded();
+  }
+
+  public static checkIfADealIsSelected() {
+    if (!E2eDeals.currentDeal) {
+      throw new Error("Please select a deal before using this statement");
+    }
   }
 }
 
@@ -59,6 +71,31 @@ Given("I'm viewing a new public Open Proposal", () => {
   });
 });
 
+Given("I'm viewing a new Partnered deal as a Representative", () => {
+  cy.then(() => {
+    if (!E2eDeals.currentDeal) {
+      E2eDeals.currentDeal = PARTNERED_DEAL;
+    }
+    E2eWallet.currentWalletAddress = E2eDeals.currentDeal.primaryDAO.representatives[0].address;
+
+    E2eDealsApi.createDeal(E2eDeals.currentDeal).then((createdDeal) => {
+      E2EDashboard.visitDeal(createdDeal.id);
+    });
+  });
+});
+Given("I'm viewing a new Partnered deal as a Proposal Lead", () => {
+  cy.then(() => {
+    if (!E2eDeals.currentDeal) {
+      E2eDeals.currentDeal = PARTNERED_DEAL;
+    }
+    E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+
+    E2eDealsApi.createDeal(E2eDeals.currentDeal).then((createdDeal) => {
+      E2EDashboard.visitDeal(createdDeal.id);
+    });
+  });
+});
+
 Given("I'm viewing the Partnered Deal", () => {
   E2eDealsApi.getFirstPartneredDealId({isLead: true}).then(dealId => {
     const url = `deal/${dealId}`;
@@ -86,6 +123,12 @@ Given("I'm the Proposal Lead of a Partnered Deal", () => {
 
 Given("I edit the Open Proposal", () => {
   E2EDashboard.editDeal();
+});
+
+Given("The deal is canceled", () => {
+  E2EDashboard.checkIfADealIsSelected();
+  cy.log("todo");
+  // E2eDeals.currentDeal.isRejected = true ???
 });
 
 Given("I create a Private Partnered Deal", () => {
