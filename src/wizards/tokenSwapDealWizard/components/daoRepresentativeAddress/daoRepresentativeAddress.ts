@@ -39,7 +39,7 @@ export class DaoRepresentativeAddress {
 
     const daos = { primaryDAO, partnerDAO };
     const primaryDaoRepsAddresses = daos.primaryDAO.representatives.map(representative => representative.address);
-    const partnerDaoRepsAddresses = daos.partnerDAO.representatives.map(representative => representative.address);
+    const partnerDaoRepsAddresses = daos.partnerDAO?.representatives.map(representative => representative.address) ?? [];
     const isAlreadyPrimaryDaoRep = primaryDaoRepsAddresses.includes(address);
     const isAlreadyPartnerDaoRep = partnerDaoRepsAddresses.includes(address);
     const isDuplicated = isAlreadyPrimaryDaoRep && isAlreadyPartnerDaoRep;
