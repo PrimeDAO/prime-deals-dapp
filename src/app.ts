@@ -16,7 +16,7 @@ import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-mod
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
 
-export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
+export const AppStartDate = new Date("2022-05-16T15:00:00.000Z");
 
 @autoinject
 export class App {
@@ -38,6 +38,7 @@ export class App {
   showingMobileMenu = false;
   showingWalletMenu = false;
   intervalId: any;
+  showCountdownPage = false;
 
   errorHandler = (ex: unknown): boolean => {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
@@ -124,6 +125,20 @@ export class App {
         this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
       }
     }, 1000);
+
+    const getShowCountdownPage = () =>
+      ((process.env.NODE_ENV === "production") && (process.env.NETWORK === "mainnet")) ? (Date.now() < AppStartDate.getTime()) : false;
+
+    this.showCountdownPage = getShowCountdownPage();
+
+    if (this.showCountdownPage) {
+      this.intervalId = setInterval(() => {
+        this.showCountdownPage = getShowCountdownPage();
+        if (!this.showCountdownPage) {
+          clearInterval(this.intervalId);
+        }
+      }, 1000);
+    }
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
 
