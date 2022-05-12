@@ -1,53 +1,37 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
-import { ethers } from "ethers";
-import { BaseProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers";
+import { ethers, Signer } from "ethers";
+import { BaseProvider, JsonRpcFetchFunc, Network, Web3Provider } from "@ethersproject/providers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
-import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, Networks } from "./EthereumService";
+import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, IChainEventInfo, Networks } from "./EthereumService";
+import { ConsoleLogService } from "./ConsoleLogService";
+import { BrowserStorageService } from "./BrowserStorageService";
 import { E2E_ADDRESSES_PRIVATE_KEYS } from "./../../cypress/fixtures/dealFixtures";
 
 @autoinject
-export class EthereumServiceTesting {
+// @ts-ignore
+export class EthereumServiceTesting extends EthereumService {
   constructor(
     private eventAggregator: EventAggregator,
     private disclaimerService: DisclaimerService,
-  ) { }
-
-  public static ProviderEndpoints = {
-    "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
-    "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
-    "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-  };
-
-  public static targetedNetwork: AllowedNetworks;
-  public static targetedChainId: number;
-
-  /**
-   * provided by ethers
-   */
-  public readOnlyProvider: BaseProvider;
-
-  public initialize(network: AllowedNetworks): void {
-
-    if (!network) {
-      throw new Error("Ethereum.initialize: `network` must be specified");
-    }
-
-    EthereumService.targetedNetwork = network;
-    EthereumService.targetedChainId = this.chainIdByName.get(network);
-
-    // comment out to run DISCONNECTED
-    this.readOnlyProvider = ethers.getDefaultProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]);
-    this.readOnlyProvider.pollingInterval = 15000;
+    consoleLogService: ConsoleLogService,
+    storageService: BrowserStorageService,
+  ) {
+    super( eventAggregator, disclaimerService, consoleLogService, storageService);
   }
 
-  private chainIdByName = new Map<AllowedNetworks, number>([
-    [Networks.Mainnet, 1],
-    [Networks.Rinkeby, 4],
-    [Networks.Kovan, 42],
-  ]);
+  /**
+   * We are relying on a provider being a signer.
+   * We are creating a provider from web3ModalProvider which is a signer, therefore walletProvider is a signer
+   *   - web3ModalProvider is provider AND a signer
+   *   - We want that!
+   */
+
+  public initialize(network: AllowedNetworks): void {
+    super.initialize(network);
+  }
 
   private async fireAccountsChangedHandler(account: Address) {
     console.info(`account changed: ${account}`);
@@ -57,25 +41,17 @@ export class EthereumServiceTesting {
     }
     this.eventAggregator.publish("Network.Changed.Account", account);
   }
-  private fireDisconnectHandler(error: { code: number; message: string }) {
-    console.info(`disconnected: ${error?.code}: ${error?.message}`);
-    this.eventAggregator.publish("Network.Changed.Disconnect", error);
-  }
 
+  // @ts-ignore
   public getDefaultSigner() {
-    return {
-      signMessage: async (message: string) => {
-        const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
-        return wallet.signMessage(message);
-      },
+    const signer = this.walletProvider.getSigner(this.defaultAccountAddress);
+    signer.signMessage = (message: string) => {
+      /* prettier-ignore */ console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 68 ~ EthereumServiceTesting ~ signMessage: ~ signMessage");
+      const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
+      return wallet.signMessage(message);
     };
+    return signer;
   }
-
-  /**
-   * provided by ethers given provider from Web3Modal
-   */
-  public walletProvider: Web3Provider;
-  public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
     /**
@@ -93,47 +69,16 @@ export class EthereumServiceTesting {
     }
   }
 
-  public ensureConnected(): boolean {
-    if (!this.defaultAccountAddress) {
-      // TODO: make this await until we're either connected or not?
-      this.connect();
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
   /**
    * silently connect to metamask if a metamask account is already connected,
    * without invoking Web3Modal nor MetaMask popups.
    */
   public async connectToConnectedProvider(): Promise<void> {
+    /* prettier-ignore */ console.log(">>>> 0 >>>> TCL ~ file: EthereumServiceTesting.ts ~ line 86 ~ EthereumServiceTesting ~ connectToConnectedProvider ~ connectToConnectedProvider");
     this.setProvider();
   }
 
   private async setProvider(): Promise<void> {
-    const account = localStorage.getItem("PRIME_E2E_ADDRESS");
-    const mockFetchFunc: JsonRpcFetchFunc = (method: string) => {
-      let payload;
-      switch (method) {
-        case "eth_accounts": {
-          payload = [account];
-          break;
-        }
-        default: {
-          payload = method;
-        }
-      }
-      return Promise.resolve(payload);
-    };
-
-    const walletProvider = new ethers.providers.Web3Provider(mockFetchFunc);
-
-    this.walletProvider = walletProvider;
-
-    this.walletProvider.lookupAddress = () => Promise.resolve("");
-
     let address = localStorage.getItem("PRIME_E2E_ADDRESS");
     if (address === "null") {
       address = null;
@@ -144,6 +89,23 @@ export class EthereumServiceTesting {
     if (address === null || address === undefined) return;
 
     this.defaultAccountAddress = address;
+
+    this.walletProvider =
+      (new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress], this.readOnlyProvider)).provider as Web3Provider;
+
+    // @ts-ignore
+    const network = await super.getNetwork(this.walletProvider);
+    if (network.name !== EthereumService.targetedNetwork) {
+      return;
+    }
+
+    this.walletProvider.lookupAddress = () => Promise.resolve("");
+    // @ts-ignore  @ethersproject/contracts/src.ts/index.ts -> line 411 -> `if (!contract.signer) {` needed
+    this.walletProvider.signer = this.walletProvider.getSigner();
+
+    /* prettier-ignore */ console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 186 ~ EthereumServiceTesting ~ this.defaultAccountAddress", this.defaultAccountAddress);
+    // @ts-ignore
+    super.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
     this.fireAccountsChangedHandler(address);
 
     /**
@@ -154,71 +116,5 @@ export class EthereumServiceTesting {
       this.defaultAccountAddress = account;
       this.fireAccountsChangedHandler(account);
     });
-  }
-
-  public disconnect(error: { code: number; message: string }): void {
-    this.defaultAccountAddress = undefined;
-    this.fireAccountsChangedHandler(null);
-    this.walletProvider = undefined;
-    this.fireDisconnectHandler(error);
-  }
-
-  /**
-   *
-   * @param provider should be a Web3Provider
-   * @returns
-   */
-  public async switchToTargetedNetwork(): Promise<boolean> {
-    return false;
-  }
-
-  public async addTokenToMetamask(
-    _tokenAddress: Address,
-    _tokenSymbol: string,
-    _tokenDecimals: number,
-    _tokenImage: string,
-  ): Promise<boolean> {
-    return Promise.resolve(false);
-  }
-
-  public getMetamaskHasToken(_tokenAddress: Address): boolean {
-    return false;
-  }
-
-  public lastBlock: IBlockInfo;
-
-  /**
-   * so unit tests will be able to complete
-   */
-  public dispose(): void {}
-
-  public getEtherscanLink(addressOrHash: Address | Hash, tx = false): string {
-    let targetedNetwork = EthereumService.targetedNetwork as string;
-    if (targetedNetwork === Networks.Mainnet) {
-      targetedNetwork = "";
-    } else {
-      targetedNetwork = targetedNetwork + ".";
-    }
-
-    return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
-  }
-
-  public getEnsForAddress(address: Address): Promise<string> {
-    return this.walletProvider?.lookupAddress(address)
-      .catch(() => null);
-  }
-
-  /**
-   * Returns address that is represented by the ENS.
-   * Returns null if it can't resolve the ENS to an address
-   * Returns address if it already is an address
-   */
-  public getAddressForEns(ens: string): Promise<Address> {
-
-    /**
-     * returns the address if ens already is an address
-     */
-    return this.walletProvider?.resolveName(ens)
-      .catch(() => null); // is neither address nor ENS
   }
 }
