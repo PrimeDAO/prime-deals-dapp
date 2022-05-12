@@ -94,7 +94,9 @@ export class ContractsService {
   public createProvider(): any {
     let signerOrProvider;
     if (this.accountAddress && this.networkInfo?.provider) {
-      signerOrProvider = Signer.isSigner(this.accountAddress) ? this.accountAddress : this.networkInfo.provider.getSigner(this.accountAddress);
+      // signerOrProvider = Signer.isSigner(this.accountAddress) ? this.accountAddress : this.networkInfo.provider.getSigner(this.accountAddress);
+      // @ts-ignore
+      signerOrProvider = this.ethereumService.testing_signer.provider;
     } else {
       signerOrProvider = this.ethereumService.readOnlyProvider;
     }
