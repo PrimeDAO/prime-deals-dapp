@@ -22,6 +22,11 @@ export class DealVotes {
 
   everyTextCopy = [
     {
+      condition: () => this.deal.isCancelled,
+      voteText: "Deal is cancelled",
+      statusText: "Voting is disabled",
+    },
+    {
       condition: () => this.deal.isFullyClaimed,
       voteText: "Deal is completed. All tokens have been claimed!",
       statusText: "Completed",
