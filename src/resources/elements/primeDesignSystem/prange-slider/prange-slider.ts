@@ -69,13 +69,13 @@ export class PRangeSlider {
   }
 
   updateRight() {
-    this.right = BigNumber.from(this.maxValue).sub(this.clamp(this.right));
+    this.right = BigNumber.from(this.maxValue).sub(this.clamp(this.left));
     this.alreadyUpdated = true;
     this.updateValue();
   }
 
   updateLeft() {
-    this.left = this.clamp(BigNumber.from(this.maxValue).sub(this.left));
+    this.left = this.clamp(BigNumber.from(this.maxValue).sub(this.right));
     this.alreadyUpdated = true;
     this.updateValue();
   }
