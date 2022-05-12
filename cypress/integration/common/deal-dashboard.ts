@@ -6,6 +6,9 @@ export class E2eDealDashboard {
   public static getContainer() {
     return cy.get("[data-test='deal-dashboard-container']", { timeout: PAGE_LOADING_TIMEOUT });
   }
+  public static getFundingButton() {
+    return cy.get("[data-test='go-to-funding-button']");
+  }
 }
 
 When("I'm viewing a private Deal", () => {

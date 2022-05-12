@@ -1,9 +1,10 @@
 import { After, Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 import { DealDataBuilder, MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
-import { E2eWallet } from "../tests/wallet.e2e";
+import { E2eNavbar, E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
 import { E2eWizard } from "./deal-wizard";
+import { E2eNavigation } from "./navigate";
 import { E2eDealWizard } from "./pageObjects/dealWizard";
 import { PAGE_LOADING_TIMEOUT } from "./test-constants";
 
@@ -81,6 +82,23 @@ Given("I'm the Proposal Lead of a Partnered Deal", () => {
     const leadAddress = PARTNERED_DEAL.proposalLead.address;
     E2eWallet.currentWalletAddress = leadAddress;
     E2eDeals.currentDeal = PARTNERED_DEAL;
+  });
+});
+Given(/^I'm a? "(.*)" of the "(.*)"$/, (role, daoType) => {
+  E2eNavigation.hasAppLoaded().then(hasLoaded => {
+    E2eDeals.currentDeal = PARTNERED_DEAL;
+    E2eWallet.currentWalletAddress = role === "Proposal Lead" ? E2eDeals.currentDeal.proposalLead.address : daoType === "Primary DAO" ? E2eDeals.currentDeal.primaryDAO.representatives[0].address : E2eDeals.currentDeal.partnerDAO.representatives[0].address;
+    if (hasLoaded) {
+      // If app loaded, then try to connect
+      cy.get("[data-test='connectButton']").then(connectButton => {
+        const isConnected = connectButton.text().trim() !== "Connect to a Wallet";
+        if (isConnected) {
+          E2eNavbar.disconnectWallet();
+        } else {
+          E2eNavbar.connectToWallet(E2eWallet.currentWalletAddress);
+        }
+      });
+    }
   });
 });
 
