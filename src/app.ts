@@ -1,7 +1,7 @@
 import { DealService } from "services/DealService";
 import "./app.scss";
 import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
-import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";
+import { NavigationInstruction, Next, Router, RouterConfiguration, RouterEvent } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { AlertService } from "services/AlertService";
 import { BindingSignaler } from "aurelia-templating-resources";
@@ -15,6 +15,7 @@ import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-mod
 /* eslint-disable linebreak-style */
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
+import { Utils } from "services/utils";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
@@ -346,12 +347,17 @@ export class App {
      */
     config.addPostRenderStep({
       run(navigationInstruction: NavigationInstruction, next: Next) {
-        let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
-        if (!position) {
-          position = "0,0";
+        const hashid = document.location.hash?.replace("#", "");
+        if (hashid){
+          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null, 5000).then(() => document.getElementById(hashid).scrollIntoView());
+        } else {
+          let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
+          if (!position) {
+            position = "0,0";
+          }
+          const scrollArgs = position.split(",");
+          setTimeout(() => window.scrollTo(Number(scrollArgs[0]), Number(scrollArgs[1])), 100);
         }
-        const scrollArgs = position.split(",");
-        setTimeout(() => window.scrollTo(Number(scrollArgs[0]), Number(scrollArgs[1])), 100);
         return next();
       },
     });
