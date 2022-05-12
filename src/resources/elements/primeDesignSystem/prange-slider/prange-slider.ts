@@ -26,7 +26,9 @@ export class PRangeSlider {
 
   bind() {
     this.updateValue();
-    this.updateLeft();
+    if (this.left || this.right) {
+      this.updateLeft();
+    }
   }
 
   attached() {
@@ -70,14 +72,14 @@ export class PRangeSlider {
 
   updateRight() {
     this.left = (BigNumber.from(this.clamp(this.left)) ?? BigNumber.from(0)).toString();
-    this.right = BigNumber.from(this.maxValue).sub(this.left).toString();
+    this.right = this.maxValue ? BigNumber.from(this.maxValue).sub(this.left).toString() : "";
     this.alreadyUpdated = true;
     this.updateValue();
   }
 
   updateLeft() {
     this.right = (BigNumber.from(this.clamp(this.right)) ?? BigNumber.from(0)).toString();
-    this.left = BigNumber.from(this.maxValue).sub(this.right).toString();
+    this.left = this.maxValue ? BigNumber.from(this.maxValue).sub(this.right).toString() : "";
     this.alreadyUpdated = true;
     this.updateValue();
   }
