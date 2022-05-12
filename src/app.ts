@@ -16,7 +16,7 @@ import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-mod
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
 
-export const AppStartDate = new Date("2022-05-16T15:00:00.000Z");
+export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
 @autoinject
 export class App {
