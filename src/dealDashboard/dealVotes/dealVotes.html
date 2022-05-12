@@ -75,7 +75,7 @@
       class="funding"
       if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)"
     >
-      <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
+      <pbutton class="fundButton" click.delegate="goToFunding()" type="primary" data-test="go-to-funding-button">
         Go to funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>

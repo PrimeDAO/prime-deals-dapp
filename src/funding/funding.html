@@ -1,7 +1,7 @@
 <template>
   <require from="./swap-status/swap-status"></require>
   <require from="./deposit-grid/deposit-grid"></require>
-  <main class="page animated-page au-animate fundContainer">
+  <main class="page animated-page au-animate fundContainer" data-test="funding-container">
     <section class="section top">
       <h1 class="title heading heading1 gradient">${deal.registrationData.proposal.title}</h1>
       <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer"
