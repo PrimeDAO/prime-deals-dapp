@@ -28,16 +28,16 @@ export class E2EDashboard {
 After(() => {
   cy.then(() => {
     cy.log("Reset e2e data");
-    E2eWallet.reset();
-    E2eDeals.reset();
-    E2eDealWizard.reset();
+    // E2eWallet.reset();
+    // E2eDeals.reset();
+    // E2eDealWizard.reset();
   });
 });
 
 Given("I'm viewing the/an Open Proposal", () => {
   cy.then(() => {
     if (E2eDeals.currentDealId) {
-      E2EDashboard.visitDeal();
+      // E2EDashboard.visitDeal();
       return;
     }
 
@@ -69,6 +69,9 @@ Given("I'm viewing the Partnered Deal", () => {
 });
 
 Given("I'm the Proposal Lead of an Open Proposal", () => {
+  console.clear();
+  // cy.visit("http://localhost:3340/deal/eiwT8G8zRcpv7fLUiBBavm");
+  // cy.pause();
   cy.then(() => {
     const leadAddress = MINIMUM_OPEN_PROPOSAL.proposalLead.address;
     E2eWallet.currentWalletAddress = leadAddress;

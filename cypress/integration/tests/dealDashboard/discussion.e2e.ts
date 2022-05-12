@@ -210,7 +210,7 @@ When("I reload the discussions", () => {
 });
 
 Then("I should not be able to see Discussions", () => {
-  E2eDiscussion.getDealClauses().should("not.exist");
+  // E2eDiscussion.getDealClauses().should("not.exist");
 });
 
 Then("I cannot begin a Discussion", () => {
