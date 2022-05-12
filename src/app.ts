@@ -1,6 +1,5 @@
 import { DealService } from "services/DealService";
 import "./app.scss";
-import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { AlertService } from "services/AlertService";
@@ -49,7 +48,6 @@ export class App {
   public async attached(): Promise<void> {
     // so all elements with data-tippy-content will automatically have a tooltip
     tippy("[data-tippy-content]");
-    initializeMarkdown();
 
     window.addEventListener("error", this.errorHandler);
 
