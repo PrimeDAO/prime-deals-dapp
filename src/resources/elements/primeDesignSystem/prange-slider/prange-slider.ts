@@ -50,7 +50,7 @@ export class PRangeSlider {
 
   valueChanged(newValue: number, oldValue?: number) {
     this.updateCssVariables();
-    if (this.alreadyUpdated || Number(newValue) === Number(oldValue)) {
+    if (this.alreadyUpdated || Number(newValue).toFixed(2) === Number(oldValue).toFixed(2)) {
       this.alreadyUpdated = false;
       return;
     }
@@ -69,14 +69,14 @@ export class PRangeSlider {
   }
 
   updateRight() {
-    this.left = this.left ?? BigNumber.from(0);
-    this.right = BigNumber.from(this.maxValue).sub(this.clamp(this.left));
+    this.left = BigNumber.from(this.left) ?? BigNumber.from(0);
+    this.right = this.clamp(BigNumber.from(this.maxValue).sub(this.left));
     this.alreadyUpdated = true;
     this.updateValue();
   }
 
   updateLeft() {
-    this.right = this.right ?? BigNumber.from(0);
+    this.right = BigNumber.from(this.right) ?? BigNumber.from(0);
     this.left = this.clamp(BigNumber.from(this.maxValue).sub(this.right));
     this.alreadyUpdated = true;
     this.updateValue();
