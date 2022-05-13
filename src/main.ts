@@ -22,6 +22,7 @@ import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
 import { DealService } from "services/DealService";
 import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
+import { ContractsServiceTesting } from "services/ContractsServiceTesting";
 
 export function configure(aurelia: Aurelia): void {
   // Note, this Cypress hack has to be at the very start.
@@ -102,7 +103,11 @@ export function configure(aurelia: Aurelia): void {
 
       ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
-      aurelia.container.get(ContractsService);
+      if ((window as any).Cypress) {
+        aurelia.use.singleton(ContractsService, ContractsServiceTesting);
+      } else {
+        aurelia.container.get(ContractsService);
+      }
 
       aurelia.container.get(ValidationService);
 
