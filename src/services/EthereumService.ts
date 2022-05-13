@@ -3,7 +3,7 @@ import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BigNumber, BigNumberish, ethers, Signer } from "ethers";
-import { BaseProvider, ExternalProvider, Web3Provider, Network } from "@ethersproject/providers";
+import { BaseProvider, ExternalProvider, Web3Provider, Network, Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
@@ -309,8 +309,12 @@ export class EthereumService {
   private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
     try {
       if (web3ModalProvider) {
-        const walletProvider = new ethers.providers.Web3Provider(web3ModalProvider as any);
-        (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
+        // checking Provider.isProvider is to accommodate automated tests
+        const walletProvider = Provider.isProvider(web3ModalProvider) ? web3ModalProvider :
+          new ethers.providers.Web3Provider(web3ModalProvider as any);
+        if ((walletProvider as any).provider) {
+          (walletProvider as any).provider.autoRefreshOnNetworkChange = false; // mainly for metamask
+        }
         const network = await this.getNetwork(walletProvider);
         if (network.name !== EthereumService.targetedNetwork) {
           this.eventAggregator.publish("Network.wrongNetwork", { provider: web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
