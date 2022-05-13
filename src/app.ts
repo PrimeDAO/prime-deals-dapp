@@ -352,7 +352,19 @@ export class App {
       run(navigationInstruction: NavigationInstruction, next: Next) {
         const hashid = document.location.hash?.replace("#", "");
         if (hashid){
-          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null, 5000).then(() => document.getElementById(hashid).scrollIntoView());
+          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null || document.getElementsByName(hashid).length > 0, 5000).then(() => {
+            const elem = document.getElementById(hashid);
+            if (elem){
+              //the hashid is referring to an element with an id
+              elem.scrollIntoView();
+            } else {
+              const elems = document.getElementsByName(hashid);
+              if (elems.length > 0){
+                //the hashid is referring to an element with a name
+                elems[0].scrollIntoView();
+              }
+            }
+          });
         } else {
           let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
           if (!position) {
