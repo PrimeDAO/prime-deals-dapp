@@ -39,6 +39,13 @@
     margin-bottom: 28px;
   }
 
+  h1,
+  h2,
+  h3,
+  h4 {
+    scroll-margin-top: 110px;
+  }
+
   a {
     color: $Secondary07;
     white-space: pre-wrap;
@@ -136,5 +143,16 @@
     display: inline-flex;
     background-image: linear-gradient(45deg, #a258a7 0%, #ff497a 50%, #8668fc 100%);
     background-size: 200% auto;
+  }
+}
+
+@media screen and (max-width: $PageBreakWidth) {
+  .markdownContainer {
+    h1,
+    h2,
+    h3,
+    h4 {
+      scroll-margin-top: 75px;
+    }
   }
 }
