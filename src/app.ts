@@ -126,7 +126,12 @@ export class App {
     }, 1000);
 
     const getShowCountdownPage = () =>
-      ((process.env.NODE_ENV === "production") && (process.env.NETWORK === "mainnet")) ? (Date.now() < AppStartDate.getTime()) : false;
+      (
+        (window.location.hostname.toLowerCase() === "deals.prime.xyz") &&
+        (process.env.NODE_ENV === "production") &&
+        (process.env.NETWORK === "mainnet")
+      ) ?
+        (Date.now() < AppStartDate.getTime()) : false;
 
     this.showCountdownPage = getShowCountdownPage();
 
