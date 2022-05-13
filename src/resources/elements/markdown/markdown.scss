@@ -118,15 +118,23 @@
   }
 
   kbd {
-    border-radius: 68px;
-    background-color: $Neutral04;
-    border: 1px solid $Neutral03;
-    color: #333;
-    display: inline-block;
-    font-size: 13.6px;
+    outline: none;
+    padding: 11px 13px;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
     font-weight: 600;
-    line-height: 1;
-    padding: 2px 5px;
+    line-height: 0px;
+    letter-spacing: 0.6px;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 50px;
+    background-color: rgba(0, 0, 0, 0);
+    color: $Neutral04;
     white-space: nowrap;
+    gap: 12px;
+    display: inline-flex;
+    background-image: linear-gradient(45deg, #a258a7 0%, #ff497a 50%, #8668fc 100%);
+    background-size: 200% auto;
   }
 }

@@ -10,6 +10,7 @@ import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
 import { Utils } from "services/utils";
 import { PLATFORM } from "aurelia-pal";
+import { DiscussionsService } from "../discussionsService";
 
 PLATFORM.moduleName("./fundingModal/fundingModal");
 
@@ -21,6 +22,11 @@ export class DealVotes {
   declining = false;
 
   everyTextCopy = [
+    {
+      condition: () => this.deal.isCancelled,
+      voteText: "Deal is cancelled",
+      statusText: "Voting is disabled",
+    },
     {
       condition: () => this.deal.isFullyClaimed,
       voteText: "Deal is completed. All tokens have been claimed!",
@@ -89,6 +95,7 @@ export class DealVotes {
     private dialogService: DialogService,
     private eventAggregator: EventAggregator,
     private consoleLogService: ConsoleLogService,
+    private discussionsService: DiscussionsService,
   ) {
   }
 
@@ -112,10 +119,8 @@ export class DealVotes {
     this.router.navigate(`funding/${this.deal.id}`);
   }
 
-  goToDiscussions() {
-    document.getElementById("discussionsSection").scrollIntoView({
-      behavior: "smooth",
-    });
+  async goToDiscussions() {
+    this.discussionsService.autoScrollAfter(0);
   }
 
   @computedFrom("deal.isVoting", "deal.majorityHasVoted", "deal.isFunding", "ethereumService.defaultAccountAddress", "deal.isFullyClaimed", "deal.isClaiming")
