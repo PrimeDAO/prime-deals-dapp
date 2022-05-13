@@ -1,224 +1,152 @@
+import { Web3Provider } from "@ethersproject/providers";
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
-import { ethers } from "ethers";
-import { BaseProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers";
+import { ethers, Signer } from "ethers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
-import { Address, AllowedNetworks, EthereumService, Hash, IBlockInfo, Networks } from "./EthereumService";
+import { EthereumService } from "./EthereumService";
+import { ConsoleLogService } from "./ConsoleLogService";
+import { BrowserStorageService } from "./BrowserStorageService";
 import { E2E_ADDRESSES_PRIVATE_KEYS } from "./../../cypress/fixtures/dealFixtures";
 
 @autoinject
-export class EthereumServiceTesting {
+// @ts-ignore
+export class EthereumServiceTesting extends EthereumService {
+
+  public testing_signer;
+
   constructor(
-    private eventAggregator: EventAggregator,
-    private disclaimerService: DisclaimerService,
-  ) { }
-
-  public static ProviderEndpoints = {
-    "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
-    "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
-    "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-  };
-
-  public static targetedNetwork: AllowedNetworks;
-  public static targetedChainId: number;
-
-  /**
-   * provided by ethers
-   */
-  public readOnlyProvider: BaseProvider;
-
-  public initialize(network: AllowedNetworks): void {
-
-    if (!network) {
-      throw new Error("Ethereum.initialize: `network` must be specified");
-    }
-
-    EthereumService.targetedNetwork = network;
-    EthereumService.targetedChainId = this.chainIdByName.get(network);
-
-    // comment out to run DISCONNECTED
-    this.readOnlyProvider = ethers.getDefaultProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]);
-    this.readOnlyProvider.pollingInterval = 15000;
+    eventAggregator: EventAggregator,
+    disclaimerService: DisclaimerService,
+    consoleLogService: ConsoleLogService,
+    storageService: BrowserStorageService,
+  ) {
+    super( eventAggregator, disclaimerService, consoleLogService, storageService);
   }
 
-  private chainIdByName = new Map<AllowedNetworks, number>([
-    [Networks.Mainnet, 1],
-    [Networks.Rinkeby, 4],
-    [Networks.Kovan, 42],
-  ]);
+  // /**
+  //  * We are relying on a provider being a signer.
+  //  * We are creating a provider from web3ModalProvider which is a signer, therefore walletProvider is a signer
+  //  *   - web3ModalProvider is provider AND a signer
+  //  *   - We want that!
+  //  */
 
-  private async fireAccountsChangedHandler(account: Address) {
-    console.info(`account changed: ${account}`);
+  // public initialize(network: AllowedNetworks): void {
+  //   super.initialize(network);
 
-    if (account !== null) {
-      account = localStorage.getItem("PRIME_E2E_ADDRESS");
-    }
-    this.eventAggregator.publish("Network.Changed.Account", account);
-  }
-  private fireDisconnectHandler(error: { code: number; message: string }) {
-    console.info(`disconnected: ${error?.code}: ${error?.message}`);
-    this.eventAggregator.publish("Network.Changed.Disconnect", error);
-  }
+  //   this.testing_signer =
+  //     new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress], this.readOnlyProvider);
+  // }
 
-  public getDefaultSigner() {
-    return {
-      signMessage: async (message: string) => {
-        const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
-        return wallet.signMessage(message);
-      },
-    };
-  }
+  // private async fireAccountsChangedHandler(account: Address) {
+  //   console.info(`account changed: ${account}`);
 
-  /**
-   * provided by ethers given provider from Web3Modal
-   */
-  public walletProvider: Web3Provider;
-  public defaultAccountAddress: Address;
+  //   if (account !== null) {
+  //     account = localStorage.getItem("PRIME_E2E_ADDRESS");
+  //   }
+  //   this.eventAggregator.publish("Network.Changed.Account", account);
+  // }
 
   private async connect(): Promise<void> {
-    /**
-     * Difference to normal EthereumService: Only open Disclaimer, when clicking on "Connect to a Wallet" button.
-     *   In E2e tests, the disclaimer modal popped up on first load, because localStorage is always cleared.
-     */
-    let account = localStorage.getItem("PRIME_E2E_ADDRESS");
-    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
-      account = null;
-    }
-
-    if (account !== null) {
-      this.setProvider();
+    if (!this.walletProvider) {
+      // @ts-ignore
+      this.setProvider(new ethers.providers.JsonRpcProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]));
     }
   }
 
-  public ensureConnected(): boolean {
-    if (!this.defaultAccountAddress) {
-      // TODO: make this await until we're either connected or not?
-      this.connect();
-      return false;
-    }
-    else {
-      return true;
-    }
+  private async getCurrentAccountFromProvider(_provider: Web3Provider): Promise<Signer | string> {
+    const address = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
+    return address;
   }
 
-  /**
-   * silently connect to metamask if a metamask account is already connected,
-   * without invoking Web3Modal nor MetaMask popups.
-   */
-  public async connectToConnectedProvider(): Promise<void> {
-    this.setProvider();
-  }
+  public getDefaultSigner(): Signer {
+    const address = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
 
-  private async setProvider(): Promise<void> {
-    const account = localStorage.getItem("PRIME_E2E_ADDRESS");
-    const mockFetchFunc: JsonRpcFetchFunc = (method: string) => {
-      let payload;
-      switch (method) {
-        case "eth_accounts": {
-          payload = [account];
-          break;
-        }
-        default: {
-          payload = method;
-        }
-      }
-      return Promise.resolve(payload);
-    };
+    const mockedProvideXYZ = new ethers.providers.JsonRpcProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]);
 
-    const walletProvider = new ethers.providers.Web3Provider(mockFetchFunc);
-
-    this.walletProvider = walletProvider;
-
-    this.walletProvider.lookupAddress = () => Promise.resolve("");
-
-    let address = localStorage.getItem("PRIME_E2E_ADDRESS");
-    if (address === "null") {
-      address = null;
-    } else if (address === "undefined") {
-      address = undefined;
+    if (!this.testing_signer) {
+      this.testing_signer =
+        new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[address], mockedProvideXYZ);
     }
-
-    if (address === null || address === undefined) return;
-
-    this.defaultAccountAddress = address;
-    this.fireAccountsChangedHandler(address);
+    return this.testing_signer;
 
     /**
-     * Simulate account changed from Metamask
-        this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
+     * Problem with readonlyProvider is that it can't seem to sign things.
+     * Other code worked, because it supports that
+     * but the jsonRpcProvider, we break ^ stuff, but we can expect to sign stuff
      */
-    this.eventAggregator.subscribe("accountsChanged", (account) => {
-      this.defaultAccountAddress = account;
-      this.fireAccountsChangedHandler(account);
-    });
+
+    // const signer = this.walletProvider.getSigner(this.defaultAccountAddress);
+    // signer.signMessage = (message: string) => {
+    //   const wallet = new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress]);
+    //   return wallet.signMessage(message);
+    // };
+    // return signer;
   }
 
-  public disconnect(error: { code: number; message: string }): void {
-    this.defaultAccountAddress = undefined;
-    this.fireAccountsChangedHandler(null);
-    this.walletProvider = undefined;
-    this.fireDisconnectHandler(error);
-  }
+  // private async connect(): Promise<void> {
+  //   /**
+  //    * Difference to normal EthereumService: Only open Disclaimer, when clicking on "Connect to a Wallet" button.
+  //    *   In E2e tests, the disclaimer modal popped up on first load, because localStorage is always cleared.
+  //    */
+  //   let account = localStorage.getItem("PRIME_E2E_ADDRESS");
+  //   if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
+  //     this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
+  //     account = null;
+  //   }
 
-  /**
-   *
-   * @param provider should be a Web3Provider
-   * @returns
-   */
-  public async switchToTargetedNetwork(): Promise<boolean> {
-    return false;
-  }
+  //   if (account !== null) {
+  //     this.setProvider();
+  //   }
+  // }
 
-  public async addTokenToMetamask(
-    _tokenAddress: Address,
-    _tokenSymbol: string,
-    _tokenDecimals: number,
-    _tokenImage: string,
-  ): Promise<boolean> {
-    return Promise.resolve(false);
-  }
+  // /**
+  //  * silently connect to metamask if a metamask account is already connected,
+  //  * without invoking Web3Modal nor MetaMask popups.
+  //  */
+  // public async connectToConnectedProvider(): Promise<void> {
+  //   /* prettier-ignore */ console.log(">>>> 0 >>>> TCL ~ file: EthereumServiceTesting.ts ~ line 86 ~ EthereumServiceTesting ~ connectToConnectedProvider ~ connectToConnectedProvider");
+  //   this.setProvider();
+  // }
 
-  public getMetamaskHasToken(_tokenAddress: Address): boolean {
-    return false;
-  }
+  // private async setProvider(): Promise<void> {
+  //   let address = localStorage.getItem("PRIME_E2E_ADDRESS");
+  //   if (address === "null") {
+  //     address = null;
+  //   } else if (address === "undefined") {
+  //     address = undefined;
+  //   }
 
-  public lastBlock: IBlockInfo;
+  //   if (address === null || address === undefined) return;
 
-  /**
-   * so unit tests will be able to complete
-   */
-  public dispose(): void {}
+  //   this.defaultAccountAddress = address;
 
-  public getEtherscanLink(addressOrHash: Address | Hash, tx = false): string {
-    let targetedNetwork = EthereumService.targetedNetwork as string;
-    if (targetedNetwork === Networks.Mainnet) {
-      targetedNetwork = "";
-    } else {
-      targetedNetwork = targetedNetwork + ".";
-    }
+  // this.walletProvider =
+  //   (new ethers.Wallet(E2E_ADDRESSES_PRIVATE_KEYS[this.defaultAccountAddress], this.readOnlyProvider)).provider as Web3Provider;
 
-    return `http://${targetedNetwork}etherscan.io/${tx ? "tx" : "address"}/${addressOrHash}`;
-  }
+  // // @ts-ignore
+  // const network = await super.getNetwork(this.walletProvider);
+  // if (network.name !== EthereumService.targetedNetwork) {
+  //   return;
+  // }
 
-  public getEnsForAddress(address: Address): Promise<string> {
-    return this.walletProvider?.lookupAddress(address)
-      .catch(() => null);
-  }
+  //   this.walletProvider.lookupAddress = () => Promise.resolve("");
+  //   // @ts-ignore  @ethersproject/contracts/src.ts/index.ts -> line 411 -> `if (!contract.signer) {` needed
+  //   this.walletProvider.signer = this.walletProvider.getSigner();
 
-  /**
-   * Returns address that is represented by the ENS.
-   * Returns null if it can't resolve the ENS to an address
-   * Returns address if it already is an address
-   */
-  public getAddressForEns(ens: string): Promise<Address> {
+  //   /* prettier-ignore */ console.log("TCL ~ file: EthereumServiceTesting.ts ~ line 186 ~ EthereumServiceTesting ~ this.defaultAccountAddress", this.defaultAccountAddress);
+  //   // @ts-ignore
+  //   super.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
+  //   this.fireAccountsChangedHandler(address);
 
-    /**
-     * returns the address if ens already is an address
-     */
-    return this.walletProvider?.resolveName(ens)
-      .catch(() => null); // is neither address nor ENS
-  }
+  //   /**
+  //    * Simulate account changed from Metamask
+  //       this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
+  //    */
+  //   this.eventAggregator.subscribe("accountsChanged", (account) => {
+  //     this.defaultAccountAddress = account;
+  //     this.fireAccountsChangedHandler(account);
+  //   });
+  // }
 }
