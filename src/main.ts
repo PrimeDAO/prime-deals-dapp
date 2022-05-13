@@ -20,6 +20,8 @@ import "./services/ValidationService";
 import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
+import { DealService } from "services/DealService";
+import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 
 export function configure(aurelia: Aurelia): void {
   // Note, this Cypress hack has to be at the very start.
@@ -66,6 +68,12 @@ export function configure(aurelia: Aurelia): void {
       aurelia.container.registerTransient(DealTokenSwap);
 
       /**
+       * this is how you have to obtain the instance of DOMPurifier that will
+       * be used by the app.
+       */
+      initializeMarkdown(aurelia.container.get(HTMLSanitizer));
+
+      /**
        * ! The order of when the below injection is happening is important!
        *   Before, it was in the upper `window.Cypress` block, and it threw errors around
        *   "BindingLanguage must implement inspectTextContent()."
@@ -105,6 +113,14 @@ export function configure(aurelia: Aurelia): void {
       const tokenService = aurelia.container.get(TokenService);
       await tokenService.initialize();
       TimingService.end("TokenService Initialization");
+
+      /**
+       * DealService needs to be instantiated after(!) ContractsService.
+       */
+      if ((window as any).Cypress) {
+        const dealService = aurelia.container.get(DealService);
+        (window as any).Cypress.dealService = dealService;
+      }
     } catch (ex) {
       const eventAggregator = aurelia.container.get(EventAggregator);
       eventAggregator.publish("handleException", new EventConfigException("Sorry, couldn't connect to ethereum", ex));

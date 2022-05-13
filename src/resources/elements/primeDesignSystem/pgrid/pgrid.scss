@@ -21,6 +21,7 @@
       padding-top: 10px;
       padding-bottom: 10px;
       text-transform: uppercase;
+
       &.right {
         text-align: right;
       }
@@ -36,6 +37,7 @@
 
     .cell {
       border-bottom: 1px solid $Border01;
+
       &.condensed {
         border-bottom: none;
       }
@@ -44,14 +46,17 @@
         height: 74px;
         display: flex;
         align-items: center;
+
         &.right {
           text-align: right;
           justify-content: right;
         }
+
         &.condensed {
           height: 40px;
         }
       }
+
       /**
          * for when columns get scrunched together
          */
@@ -95,6 +100,7 @@
           }
         }
       }
+
       &.eslink {
         i {
           cursor: pointer;
@@ -118,6 +124,7 @@
         font-family: Aeonik;
       }
     }
+
     .cell {
       &.body {
         &.cell {
@@ -128,6 +135,7 @@
         }
       }
     }
+
     &.body {
       .cell {
         &.title {
@@ -136,6 +144,7 @@
           padding-right: 35px;
         }
       }
+
       &:hover {
         color: inherit;
       }
@@ -145,14 +154,17 @@
 
 pgrid .seeMoreSection {
   margin-bottom: 36px;
+
   .centered {
     display: flex;
     justify-content: center;
-    button.tertiary{
-      color: #dcdae5;
+
+    button.tertiary {
+      color: $Neutral04;
       opacity: 0.3;
       transition: 0.2s;
-      &:hover{
+
+      &:hover {
         opacity: 1;
       }
     }

@@ -1,9 +1,7 @@
 import { DealService } from "services/DealService";
 import "./app.scss";
-
 import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
-
 import { AlertService } from "services/AlertService";
 import { BindingSignaler } from "aurelia-templating-resources";
 import { BrowserStorageService } from "services/BrowserStorageService";
@@ -16,8 +14,9 @@ import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-mod
 /* eslint-disable linebreak-style */
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
+import { Utils } from "services/utils";
 
-export const AppStartDate = new Date("2022-05-03T14:00:00.000Z");
+export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
 @autoinject
 export class App {
@@ -39,6 +38,7 @@ export class App {
   showingMobileMenu = false;
   showingWalletMenu = false;
   intervalId: any;
+  showCountdownPage = false;
 
   errorHandler = (ex: unknown): boolean => {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
@@ -124,6 +124,20 @@ export class App {
         this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
       }
     }, 1000);
+
+    const getShowCountdownPage = () =>
+      ((process.env.NODE_ENV === "production") && (process.env.NETWORK === "mainnet")) ? (Date.now() < AppStartDate.getTime()) : false;
+
+    this.showCountdownPage = getShowCountdownPage();
+
+    if (this.showCountdownPage) {
+      this.intervalId = setInterval(() => {
+        this.showCountdownPage = getShowCountdownPage();
+        if (!this.showCountdownPage) {
+          clearInterval(this.intervalId);
+        }
+      }, 1000);
+    }
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
 
@@ -331,12 +345,17 @@ export class App {
      */
     config.addPostRenderStep({
       run(navigationInstruction: NavigationInstruction, next: Next) {
-        let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
-        if (!position) {
-          position = "0,0";
+        const hashid = document.location.hash?.replace("#", "");
+        if (hashid){
+          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null, 5000).then(() => document.getElementById(hashid).scrollIntoView());
+        } else {
+          let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
+          if (!position) {
+            position = "0,0";
+          }
+          const scrollArgs = position.split(",");
+          setTimeout(() => window.scrollTo(Number(scrollArgs[0]), Number(scrollArgs[1])), 100);
         }
-        const scrollArgs = position.split(",");
-        setTimeout(() => window.scrollTo(Number(scrollArgs[0]), Number(scrollArgs[1])), 100);
         return next();
       },
     });
