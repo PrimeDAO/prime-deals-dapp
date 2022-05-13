@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
+import * as googleCloudFirestore from "@google-cloud/firestore";
 import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
 import { getAddress, verifyMessage } from "ethers/lib/utils";
@@ -8,6 +9,7 @@ import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModi
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
+const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
@@ -297,3 +299,41 @@ export const createCustomToken = functions.https.onRequest((request, response) =
     return response.status(200).json({ token: firebaseToken });
   });
 });
+
+/**
+ * Function responsible for running automated Backups.
+ * It runs every 60 minutes.
+ * It stores backups inside a Google Cloud Storage bucket, specified in `firebaseFunctions/.env` file
+ */
+export const scheduledFirestoreBackup = functions.pubsub
+  .schedule("every 60 minutes")
+  .onRun(() => {
+    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+    const bucket = `gs://${process.env.PRIME_BACKUP_BUCKET_NAME}`;
+    const databaseName =
+    firestoreAdminClient.databasePath(projectId, "(default)");
+
+    functions.logger.log(`
+      Trying to create a backup for
+      Project ID: ${projectId},
+      Database name: ${databaseName},
+      Inside a bucket: ${bucket}
+    `);
+
+    return firestoreAdminClient.exportDocuments({
+      name: databaseName,
+      outputUriPrefix: bucket,
+      // Leave collectionIds empty to export all collections
+      // or set to a list of collection IDs to export,
+      // collectionIds: ['users', 'posts']
+      collectionIds: [],
+    })
+      .then(responses => {
+        const response = responses[0];
+        functions.logger.log(`Creating backup was successful. Operation Name: ${response["name"]}`);
+      })
+      .catch(err => {
+        functions.logger.error(err);
+        throw new Error("Creating backup failed");
+      });
+  });
