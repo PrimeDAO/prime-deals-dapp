@@ -29,7 +29,7 @@
             "tokens": [
                 {
                     "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
-                    "amount": "1000000000000000000000",
+                    "amount": "10000000000000000000",
                     "cliffOf": 0,
                     "decimals": 18,
                     "instantTransferAmount": "500000000000000000000",
@@ -131,7 +131,7 @@
             "tokens": [
                 {
                     "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
-                    "amount": "1000000000000000000000",
+                    "amount": "10000000000000000000",
                     "cliffOf": 0,
                     "decimals": 18,
                     "instantTransferAmount": "500000000000000000000",
@@ -233,7 +233,7 @@
             "tokens": [
                 {
                     "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
-                    "amount": "1000000000000000000000",
+                    "amount": "10000000000000000000",
                     "cliffOf": 0,
                     "decimals": 18,
                     "instantTransferAmount": "500000000000000000000",
@@ -335,7 +335,7 @@
             "tokens": [
                 {
                     "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
-                    "amount": "1000000000000000000000",
+                    "amount": "10000000000000000000",
                     "cliffOf": 0,
                     "decimals": 18,
                     "instantTransferAmount": "500000000000000000000",
