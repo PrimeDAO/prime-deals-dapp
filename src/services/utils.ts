@@ -232,4 +232,25 @@ export class Utils {
   public static cloneDeep<T>(obj: T) : T{
     return structuredClone ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
   }
+
+  public static pageScrollEnded() {
+    return new Promise<void>(resolve => {
+      let timer = null;
+      const handler = function () {
+        if (timer !== null) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(function () {
+          resolve();
+          window.removeEventListener("scroll", handler);
+        }, 200);
+      };
+      window.addEventListener("scroll", handler, false);
+      setTimeout(function () {
+        if (timer === null) {
+          resolve();
+        }
+      }, 200);
+    });
+  }
 }
