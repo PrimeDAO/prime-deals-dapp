@@ -189,7 +189,7 @@ function givenImAConnectedPublicUser() {
 function givenImAConnectedProposalLeadUser() {
   E2eNavigation.hasAppLoaded().then(hasLoaded => {
     E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
-    E2eWallet.isLead = false;
+    E2eWallet.isLead = true;
 
     if (hasLoaded) {
       // If app loaded, then try to connect
