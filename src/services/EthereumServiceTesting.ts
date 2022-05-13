@@ -1,10 +1,11 @@
+import { Web3Provider } from "@ethersproject/providers";
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 import { ethers, Signer } from "ethers";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { DisclaimerService } from "services/DisclaimerService";
-import { AllowedNetworks, EthereumService } from "./EthereumService";
+import { EthereumService } from "./EthereumService";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { BrowserStorageService } from "./BrowserStorageService";
 import { E2E_ADDRESSES_PRIVATE_KEYS } from "./../../cypress/fixtures/dealFixtures";
@@ -49,15 +50,14 @@ export class EthereumServiceTesting extends EthereumService {
 
   private async connect(): Promise<void> {
     if (!this.walletProvider) {
-      // this.ensureWeb3Modal();
-      // const web3ModalProvider = await this.web3Modal.connect();
-
       // @ts-ignore
-      const web3ModalProvider = this.getDefaultSigner().provider;
-      // @ts-ignore
-      this.setProvider(this.readOnlyProvider); // <--- your suggested change?
-      // this.setProvider(web3ModalProvider);
+      this.setProvider(new ethers.providers.JsonRpcProvider(EthereumService.ProviderEndpoints[EthereumService.targetedNetwork]));
     }
+  }
+
+  private async getCurrentAccountFromProvider(_provider: Web3Provider): Promise<Signer | string> {
+    const address = "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498";
+    return address;
   }
 
   public getDefaultSigner(): Signer {

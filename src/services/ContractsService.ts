@@ -1,4 +1,4 @@
-import { BigNumber, Contract, ethers, Signer } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "services/EthereumService";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
@@ -96,7 +96,7 @@ export class ContractsService {
     if (this.accountAddress && this.networkInfo?.provider) {
       // signerOrProvider = Signer.isSigner(this.accountAddress) ? this.accountAddress : this.networkInfo.provider.getSigner(this.accountAddress);
       // @ts-ignore
-      signerOrProvider = this.ethereumService.testing_signer.provider;
+      signerOrProvider = this.ethereumService.getDefaultSigner();
     } else {
       signerOrProvider = this.ethereumService.readOnlyProvider;
     }
