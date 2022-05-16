@@ -6,5 +6,6 @@
       "source": "/:path*",
       "destination": "/"
     }
-  ]
+  ],
+  "trailingSlash": false
 }
