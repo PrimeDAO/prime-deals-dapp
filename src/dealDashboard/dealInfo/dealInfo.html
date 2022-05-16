@@ -117,10 +117,8 @@
           <formatted-number
             mantissa="0"
             thousands-separated
-            if.bind="tokenDetails.amount.toString().length >= tokenDetails.decimals"
             value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"
           ></formatted-number>
-          <span else>${tokenDetails.amount | ethwei:tokenDetails.decimals}</span>
         </div>
       </div>
       <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
