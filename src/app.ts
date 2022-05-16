@@ -1,7 +1,6 @@
 import { DealService } from "services/DealService";
 import "./app.scss";
-import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
-import { NavigationInstruction, Next, Router, RouterConfiguration, RouterEvent } from "aurelia-router";
+import { NavigationInstruction, Next, Router, RouterConfiguration } from "aurelia-router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { AlertService } from "services/AlertService";
 import { BindingSignaler } from "aurelia-templating-resources";
@@ -49,7 +48,6 @@ export class App {
   public async attached(): Promise<void> {
     // so all elements with data-tippy-content will automatically have a tooltip
     tippy("[data-tippy-content]");
-    initializeMarkdown();
 
     window.addEventListener("error", this.errorHandler);
 
@@ -128,7 +126,12 @@ export class App {
     }, 1000);
 
     const getShowCountdownPage = () =>
-      ((process.env.NODE_ENV === "production") && (process.env.NETWORK === "mainnet")) ? (Date.now() < AppStartDate.getTime()) : false;
+      (
+        (window.location.hostname.toLowerCase() === "deals.prime.xyz") &&
+        (process.env.NODE_ENV === "production") &&
+        (process.env.NETWORK === "mainnet")
+      ) ?
+        (Date.now() < AppStartDate.getTime()) : false;
 
     this.showCountdownPage = getShowCountdownPage();
 
@@ -349,7 +352,19 @@ export class App {
       run(navigationInstruction: NavigationInstruction, next: Next) {
         const hashid = document.location.hash?.replace("#", "");
         if (hashid){
-          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null, 5000).then(() => document.getElementById(hashid).scrollIntoView());
+          Utils.waitUntilTrue(() => document.getElementById(hashid) !== null || document.getElementsByName(hashid).length > 0, 5000).then(() => {
+            const elem = document.getElementById(hashid);
+            if (elem){
+              //the hashid is referring to an element with an id
+              elem.scrollIntoView();
+            } else {
+              const elems = document.getElementsByName(hashid);
+              if (elems.length > 0){
+                //the hashid is referring to an element with a name
+                elems[0].scrollIntoView();
+              }
+            }
+          });
         } else {
           let position = _this.storageService.ssGet(_this.getScrollStateKey(navigationInstruction.fragment));
           if (!position) {

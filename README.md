@@ -192,6 +192,7 @@ Assuming that a Firebase Project is already setup and you have access to API key
     3. Select one with name “App Engine default service account” make sure it has at least the following roles:
         1. Editor
         2. Service Account Token Creator
+        3. Cloud Datastore Import Export Admin
 9. Set API key restrictions  [https://cloud.google.com/docs/authentication/api-keys#adding_application_restrictions](https://cloud.google.com/docs/authentication/api-keys#adding_application_restrictions)
     1. Open Google Cloud APIs and Services settings [https://console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials) and select the correct project
     2. Under “API Keys” select "Browser key (auto created by Firebase)”
