@@ -79,7 +79,7 @@ export class NumberService {
      * numeral.js is no longer maintained.  It has a bug where for small numbers it always
      * returns NaN.
      */
-    if (!!value && (Math.abs(value) <= 0.0000001)) {
+    if (!!value && (Math.abs(value) <= 0.000001)) {
       return numeral(0).format(formatString, Math.trunc) as string;
     } else {
       /**
