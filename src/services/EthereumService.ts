@@ -416,21 +416,21 @@ export class EthereumService {
 
   /**
    *
-   * @param provider should be a Web3Provider
+   * @param web3ModalProvider should be a Web3Provider
    * @returns
    */
-  public async switchToTargetedNetwork(provider: ExternalProvider): Promise<boolean> {
+  public async switchToTargetedNetwork(web3ModalProvider: ExternalProvider): Promise<boolean> {
     const hexChainId = `0x${EthereumService.targetedChainId.toString(16)}`;
     try {
-      if (provider.request) {
+      if (web3ModalProvider.request) {
         /**
          * note this will simply throw an exception when the website is running on localhost
          */
-        await provider.request({
+        await web3ModalProvider.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexChainId }],
         });
-        this.setProvider(provider as any);
+        this.setProvider(web3ModalProvider as any);
         return true;
       }
     } catch (err) {

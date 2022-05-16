@@ -21,6 +21,7 @@ import { EthereumServiceTesting } from "services/EthereumServiceTesting";
 import { FirestoreService } from "services/FirestoreService";
 import { ValidationService } from "./services/ValidationService";
 import { DealService } from "services/DealService";
+import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 
 export function configure(aurelia: Aurelia): void {
   // Note, this Cypress hack has to be at the very start.
@@ -65,6 +66,12 @@ export function configure(aurelia: Aurelia): void {
     try {
 
       aurelia.container.registerTransient(DealTokenSwap);
+
+      /**
+       * this is how you have to obtain the instance of DOMPurifier that will
+       * be used by the app.
+       */
+      initializeMarkdown(aurelia.container.get(HTMLSanitizer));
 
       /**
        * ! The order of when the below injection is happening is important!
