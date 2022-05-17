@@ -1,6 +1,16 @@
 {
   "version": 2,
   "name": "prime-deals-dapp",
+  "headers": [
+    {
+      "source": "*",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://gnosis-safe.io" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, content-type, Authorization" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/:path*",
