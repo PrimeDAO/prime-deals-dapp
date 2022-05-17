@@ -107,6 +107,9 @@ export class DealService {
     private ethereumService: EthereumService,
     private taskQueue: TaskQueue,
   ) {
+    /**
+     * set to the block of the creation of the TokenSwapModule
+     */
     switch (EthereumService.targetedNetwork) {
       case Networks.Mainnet:
         StartingBlockNumber = 14706002;
