@@ -109,7 +109,7 @@ export class DealService {
   ) {
     switch (EthereumService.targetedNetwork) {
       case Networks.Mainnet:
-        StartingBlockNumber = 0;
+        StartingBlockNumber = 14706002;
         break;
       case Networks.Rinkeby:
         StartingBlockNumber = 10578516;
