@@ -4,7 +4,7 @@ import { BrowserStorageService } from "./BrowserStorageService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { BigNumber, BigNumberish, ethers, Signer } from "ethers";
 import { BaseProvider, ExternalProvider, Web3Provider, Network } from "@ethersproject/providers";
-import Web3Modal from "web3modal";
+import { SafeAppWeb3Modal as Web3Modal } from "@gnosis.pm/safe-apps-web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
 import { EventAggregator } from "aurelia-event-aggregator";
