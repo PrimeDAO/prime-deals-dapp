@@ -18,7 +18,7 @@ const defaultDealOptions: IDealOptions = {
 };
 
 export class E2eDealsApi {
-  private static getFirestoreService(): FirestoreService<
+  static getFirestoreService(): FirestoreService<
   IDealTokenSwapDocument,
   IDealRegistrationTokenSwap
   > {
