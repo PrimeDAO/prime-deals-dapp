@@ -78,7 +78,7 @@
               </span>
             </p>
           </div>
-          <div class="deposit" if.to-view="showDepositForm">
+          <div class="deposit" if.to-view="showDepositForm" data-test="deposit-form">
             <div class="form">
               <div>
                 <div class="inputs">
@@ -217,7 +217,7 @@
         </div>
       </div>
     </swap-status>
-    <section class="section deposits">
+    <section class="section deposits" data-test="deposits-section">
       <h1 class="title heading heading1 gradient">Deposits</h1>
       <div class="no-deposits heading02" if.to-view="!deposits || deposits.length === 0">
         There are no deposits for this deal

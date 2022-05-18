@@ -102,6 +102,31 @@ Given(/^I'm a? "(.*)" of the "(.*)"$/, (role, daoType) => {
   });
 });
 
+Given("I'm a Representative of the Primary Dao", () => {
+  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.primaryDAO.representatives[0].address;
+  //TODO: connect the current wallet address
+});
+
+Given("I'm a Representative of the Partner Dao", () => {
+  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.partnerDAO.representatives[0].address;
+  //TODO: connect the current wallet address
+});
+
+Given("I'm a Proposal Lead and Representative of the Primary Dao", () => {
+  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+  //TODO: connect the current wallet address
+});
+
+Given("I'm a Proposal Lead and Representative of the Partner Dao", () => {
+  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+  //TODO: connect the current wallet address
+});
+
+Given("I'm a Proposal Lead and Representative of neither Dao", () => {
+  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+  //TODO: connect the current wallet address
+});
+
 Given("I edit the Open Proposal", () => {
   E2EDashboard.editDeal();
 });
