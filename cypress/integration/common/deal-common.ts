@@ -81,13 +81,6 @@ Given("I'm viewing the Partnered Deal", () => {
   });
 });
 
-Given("I'm viewing a new Private Partnered Deal", () => {
-  E2eDeals.currentDeal = PRIVATE_PARTNERED_DEAL;
-  E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
-
-  E2eDealsApi.createDeal(E2eDeals.currentDeal);
-});
-
 And("I'm viewing that deal", () => {
   E2EDashboard.checkIfADealIsSelected();
   E2EDashboard.visitDeal(E2eDeals.currentDealId);
@@ -98,7 +91,6 @@ Given("I'm the Proposal Lead of an Open Proposal", () => {
     const leadAddress = MINIMUM_OPEN_PROPOSAL.proposalLead.address;
     E2eWallet.currentWalletAddress = leadAddress;
     E2eDeals.currentDeal = MINIMUM_OPEN_PROPOSAL;
-
   });
 });
 
@@ -108,7 +100,6 @@ Given("I'm the Proposal Lead of a new Open Proposal", () => {
     E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
 
     E2eDealsApi.createDeal(E2eDeals.currentDeal);
-
   });
 });
 
