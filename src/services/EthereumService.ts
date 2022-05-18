@@ -256,6 +256,31 @@ export class EthereumService {
 
     this.ensureWeb3Modal();
 
+    /**
+     * This if statement is handling Gnosis Safe feature
+     * https://github.com/safe-global/safe-apps-sdk/tree/master/packages/safe-apps-web3modal
+     */
+    if (await this.web3Modal.isSafeApp()) {
+      const safeProvider = await this.web3Modal.requestProvider();
+
+      /**
+       * TODO: This is copy pasted from the if statement below
+       *   --> We should not duplicate this code, and instead find a cleaner way
+       */
+      const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
+      if (chainName === EthereumService.targetedNetwork) {
+        const accounts = await safeProvider.request({ method: "eth_accounts" });
+        if (accounts?.length) {
+          const account = getAddress(accounts[0]);
+          if (this.disclaimerService.getPrimeDisclaimed(account)) {
+            this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
+            return this.setProvider(safeProvider);
+          }
+        }
+      }
+
+    }
+
     const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
 
     /**
