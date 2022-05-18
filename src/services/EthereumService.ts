@@ -264,7 +264,7 @@ export class EthereumService {
       const safeProvider = await this.web3Modal.requestProvider();
 
       /**
-       * TODO: This is copy pasted from the if statement below
+       * TODO: This is copy pasted from the if statement below (with one exception: Disclaimer is ensured here as well)
        *   --> We should not duplicate this code, and instead find a cleaner way
        */
       const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
@@ -272,6 +272,12 @@ export class EthereumService {
         const accounts = await safeProvider.request({ method: "eth_accounts" });
         if (accounts?.length) {
           const account = getAddress(accounts[0]);
+          /**
+           * Extra ensure, because in the Gnosis Safe App, the usual UX is to be autoconnected.
+           * The current code, does not exactly have that flow, so ensuring the disclaimer here
+           * is the closest we can get.
+           */
+          await this.disclaimerService.ensurePrimeDisclaimed(account);
           if (this.disclaimerService.getPrimeDisclaimed(account)) {
             this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
             return this.setProvider(safeProvider);
