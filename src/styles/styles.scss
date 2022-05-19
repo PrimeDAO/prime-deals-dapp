@@ -1,0 +1,217 @@
+@import "./animations";
+@import "./reset";
+@import "../resources/elements/primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/variables";
+@import "../resources/elements/primeDesignSystem/colors";
+@import "./colors";
+@import "./variables";
+@import "tippy.js/dist/tippy.css"; // TODO: use CDN?
+@import "the-new-css-reset/css/reset.css";
+
+html {
+  body {
+    font-size: 16px;
+    margin: 0;
+    background-color: $BG01;
+    color: $White;
+    font-family: Aeonik;
+    min-height: 100vh;
+
+    &:not(.loading) {
+      > .prepage {
+        display: none;
+      }
+    }
+
+    /**
+      * suppress browser style changes associated with autofill
+      */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: $White;
+      transition: background-color 100s ease-in-out 0s;
+      -webkit-box-shadow: 0 0 0px 3.7em $BG01 inset;
+      box-shadow: 0 0 0px 3.7em $BG01 inset;
+      caret-color: $White;
+    }
+
+    // when hovering over dropdown items
+    input:-webkit-autofill::first-line {
+      font-size: 16px;
+    }
+
+    .clearInput {
+      background-color: transparent;
+      color: $BG01;
+
+      &::placeholder {
+        color: $BG01;
+      }
+    }
+
+    // Important: Fix stacks styling messing things around
+    figure {
+      margin: unset;
+    }
+
+    hr {
+      height: 1px;
+      border: none;
+      background-color: $Neutral02;
+    }
+
+    a {
+      color: $White;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:hover {
+        color: $Neutral03;
+        text-decoration: none;
+      }
+    }
+
+
+    .heading {
+      font-family: "Aeonik";
+      font-style: normal;
+      font-weight: bold;
+      width: fit-content; // so gradients look right
+      white-space: break-word;
+
+      &.gradient {
+        @include standardTextGradient;
+      }
+
+      &.heading0 {
+        font-size: 64px;
+        line-height: 70px;
+        margin-bottom: 24px;
+      }
+
+      &.heading1 {
+        font-size: 48px;
+        line-height: 46px;
+        padding-bottom: 24px;
+      }
+
+      &.heading2 {
+        font-size: 36px;
+        line-height: 65px;
+        margin-bottom: 8px;
+      }
+
+      &.heading3 {
+        @include subHeading;
+        font-size: 26px;
+        line-height: 29px;
+        margin-bottom: 6px;
+        color: $Secondary02;
+      }
+
+      &.heading4 {
+        font-size: 14px;
+        color: $Secondary02;
+      }
+    }
+
+    .subtitle {
+      color: $Gradient01;
+      font-size: 20px;
+      line-height: 24px;
+      font-weight: 700;
+      font-family: "Inter";
+    }
+
+    .subtitle1 {
+      color: $Neutral03;
+      font-size: 18px;
+      line-height: 27px;
+      font-weight: 700;
+      font-family: "Inter";
+    }
+
+    .subtext {
+      color: $Neutral02;
+      font-size: 16px;
+      font-family: "Inter";
+      font-weight: 400;
+      line-height: 24px;
+
+      &.gradient {
+        @include standardTextGradient;
+      }
+    }
+
+    .ellipses {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  etherscanlink {
+    white-space: nowrap;
+    display: inline-block;
+
+    .etherscanlink .text {
+      margin-right: 4px;
+    }
+  }
+
+  .smallEtherScanLink {
+    display: inline-block;
+    vertical-align: middle;
+    width: 4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #WEB3_CONNECT_MODAL_ID {
+    div:first-of-type {
+      z-index: 10002; // stay over modal mask
+    }
+  }
+
+  .tippy-content {
+    text-align: center;
+  }
+
+  .daoLogo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+
+  .daoSmallLogo {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+  }
+
+  .roundedLogo {
+    border-radius: 50%;
+  }
+
+}
+
+@media screen and (max-width: 1072px) {
+  html {
+    body {
+      .heading {
+        &.heading0 {
+          font-size: 48px;
+          line-height: 44px;
+          margin-bottom: 18px;
+        }
+
+        &.heading1 {
+          font-size: 44px;
+          line-height: 40px;
+          margin-bottom: 22px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@import "../resources/elements/primeDesignSystem/variables";
+
+$MinContentBodyWidth: 250px;
+
+$MinContentBodyPaddingLeftRight: 160px;
+$MaxContentBodyWidth: 1120px;
+
+$ContentBodyWidth: clamp($MinContentBodyWidth,
+  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+  $MaxContentBodyWidth);
+
+/**
+ * For the pages whose mainContent should have extra padding at the top.
+ */
+$MainContentExtraPaddingTop: 32px;
+
+$BodyPaddingLeftRight: calc((100% - #{$ContentBodyWidth}) / 2);
+
+$ContentMinLeftRightPadding: 20px;
+$MaxContentBodyWidthMobile: calc(100% - (#{$ContentMinLeftRightPadding} * 2));
+
+$ContentBodyWidthMobile: minmax($MinContentBodyWidth,
+  calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
+  $MaxContentBodyWidthMobile);
+
+$BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
+
+@mixin tokenIcon {
+  width: 19px;
+  border-radius: 9px;
+}

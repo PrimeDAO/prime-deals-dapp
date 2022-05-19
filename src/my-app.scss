@@ -1,3 +1,29 @@
-.message {
-  background-color: lightblue;
+@import "styles/styles.scss";
+
+.appWrapper {
+  display: grid;
+  grid-template-columns:
+    minmax($ContentMinLeftRightPadding, auto) minmax(auto, $MaxContentBodyWidth) minmax($ContentMinLeftRightPadding, auto);
+  grid-template-rows: 162px 100fr 1fr;
+  grid-template-areas:
+    ". . ."
+    ". mainContent ."
+    "footer footer footer";
+  height: 100vh;
+
+  .mainContent {
+    grid-area: mainContent;
+    color: $White;
+    padding-bottom: 64px;
+  }
+
+  .appFooter {
+    grid-area: footer;
+  }
+}
+
+@media screen and (max-width: $PageBreakWidth) {
+  .appWrapper {
+    grid-template-rows: 125px 100fr 1fr;
+  }
 }
