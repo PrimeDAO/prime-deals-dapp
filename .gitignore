@@ -1,4 +1,8 @@
-
+.env
+.env.development
+.env.test
+.env.production
+.env.staging
 # You may want to customise this file depending on your Operating System
 # and the editor that you use.
 #
@@ -26,11 +30,20 @@ Thumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.editorconfig
 
 # Dependencies
 node_modules
 
 # Compiled files
 /dist
-/.nyc_output
-/coverage
+/public
+/test/coverage-jest
+
+# Cypress
+cypress/videos
+cypress/screenshots
+
+# Coverage
+coverage
+.nyc_output
