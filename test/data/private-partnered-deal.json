@@ -1,0 +1,90 @@
+{
+  "version": "0.0.2",
+  "dealType": "token-swap",
+  "offersPrivate": false,
+  "isPrivate": true,
+  "dealId":"zRuk7HbEVX8H6PM4WaHC",
+  "keepAdminRights": true,
+  "fundingPeriod": 864000,
+  "proposal": {
+    "summary": "iwb9p1d_summary",
+    "description": "iwb9p1d_description",
+    "title": "Private_partnered_deal"
+  },
+  "proposalLead": {
+    "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    "email": ""
+  },
+  "primaryDAO": {
+    "treasury_address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
+    "logoURI": "https://picsum.photos/seed/picsum/400/400",
+    "social_medias": [
+      {
+        "url": "https://twitter.com/PrimeDAO_",
+        "name": "Twitter"
+      }
+    ],
+    "name": "iwb9p1d_PrimeDAO",
+    "tokens": [
+      {
+        "address": "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
+        "amount": "1000000000000000000000",
+        "cliffOf": 0,
+        "decimals": 18,
+        "instantTransferAmount": "500000000000000000000",
+        "logoURI": "https://primedao.mypinata.cloud/ipfs/QmVChZZtAijsiTnMRFb6ziQLnRocXnBU2Lb3F67K2ZPHho",
+        "name": "Dai Stablecoin",
+        "symbol": "DAI",
+        "vestedFor": 0,
+        "vestedTransferAmount": "500000000000000000000"
+      }
+    ],
+    "representatives": [
+      {
+        "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498"
+      }
+    ]
+  },
+  "terms": {
+    "clauses": [
+      {
+        "id": "iwb9p1d",
+        "text": "iwb9p1d_clause"
+      }
+    ]
+  },
+  "partnerDAO": {
+    "name": "iwb9p1d_PartnerDAO",
+    "tokens": [
+      {
+        "address": "0x80E1B5fF7dAdf3FeE78F60D69eF1058FD979ca64",
+        "amount": "1000000000000000000000",
+        "cliffOf": 0,
+        "decimals": 18,
+        "instantTransferAmount": "500000000000000000000",
+        "logoURI": "https://static.coincost.net/logo/cryptocurrency/primedao.png",
+        "name": "PrimeDAO Token",
+        "symbol": "PRIME",
+        "vestedFor": 0,
+        "vestedTransferAmount": "500000000000000000000"
+      }
+    ],
+    "treasury_address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29",
+    "representatives": [
+      {
+        "address": "0xBf3a5599f2f6CE89862d640a248e31F30B7ddF29"
+      }
+    ],
+    "social_medias": [
+      {
+        "name": "Twitter",
+        "url": "http://twitter.com/their-dao"
+      },
+      {
+        "name": "Telegram",
+        "url": "http://telegram.com/their-dao"
+      }
+    ],
+    "logoURI": "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/uniswap.png"
+  }
+}

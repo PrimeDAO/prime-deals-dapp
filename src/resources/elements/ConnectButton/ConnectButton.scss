@@ -1,0 +1,130 @@
+@import "../../../styles/colors";
+
+.connectButtonContainer {
+  display: inline-block;
+  padding: 0;
+  z-index: 1000; // stay over modal mask
+  font-family: Inter;
+  color: $Neutral02;
+
+  .connectButton {
+    > pbutton > button {
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 17px;
+      font-weight: 400;
+      letter-spacing: unset;
+      padding: 8px 10px;
+      text-transform: none;
+      transition: none;
+      color: $Neutral03;
+      height: 13px;
+      align-items: center;
+
+      &:before {
+        border-radius: 6px;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+
+      &:hover:enabled,
+      &:hover:active:not(.disabled):not(:disabled),
+      &:focus:active:not(.disabled):not(:disabled) {
+        background: $Gradient01;
+      }
+
+      .address {
+        .caret {
+          display: inline-block;
+          padding-left: 4px;
+        }
+      }
+    }
+
+    > pbutton button.tertiary {
+      background-color: $BG02;
+    }
+  }
+
+  .connectedButtons {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+
+    .ethBalanceContainer {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: 14px;
+      line-height: 17px;
+      margin-right: 20px;
+
+      &.ETH {
+        margin-right: 12px;
+      }
+    }
+  }
+
+  &.connected {
+    padding: 1px 1px 1px 14px;
+
+    .connectedButtons {
+      .connectButton {
+        cursor: default;
+        text-align: center;
+
+        .pending {
+          .phase {
+            display: inline-block;
+            margin-right: 6px;
+          }
+
+          i {
+            color: $Neutral03;
+          }
+
+          &.confirming {
+            cursor: pointer;
+
+            .phase:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .etherscanlink a {
+          color: white;
+          text-decoration: none;
+
+          &:hover,
+          &:focus {
+            color: white;
+          }
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1068px) {
+  .connectButtonContainer {
+    &.connected {
+      padding-left: 0;
+
+      .connectedButtons {
+        .connectButton {
+          margin-left: 0;
+        }
+
+        .ethBalanceContainer {
+          display: none;
+        }
+      }
+    }
+  }
+}
