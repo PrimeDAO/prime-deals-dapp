@@ -1,0 +1,49 @@
+<template>
+  <div class="walletMenuContainer ${ showing ? 'showing' : '' }" ref="container" tabindex="0">
+    <div class="heading heading3 gradient">Account</div>
+
+    <div class="networkFeedback">
+      <hr />
+      <div class="pair connected">
+        <div class="title">Connected with MetaMask</div>
+        <div class="action" click.delegate="disconnect()" data-test="diconnect-button">Disconnect</div>
+      </div>
+      <div class="pair accountInfo">
+        <usersaddress small></usersaddress>
+        <div class="buttons">
+          <copy-to-clipboard-button handle-click.call="copyAddress()" text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
+          <!-- same as externalLinkIcon.svg -->
+          <svg
+            TODO add back below class="etherscan-button" click.delegate="gotoEtherscan()" fill="none" height="17" ptooltip="Inspect on Etherscan"
+            svg
+            the
+            this to
+            viewBox="0 0 24 24"
+            width="17"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 19H5V5H12V3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V12H19V19ZM14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z" fill="#F9F6F9" />
+          </svg>
+        </div>
+      </div>
+      <!-- <hr />
+      <div class="pair">
+        <div class="title">Recent Transactions</div>
+      </div> -->
+      <!-- <hr />
+      <div class="pair">
+        <div class="title">0.5463 PRIME $14.10</div>
+      </div> -->
+      <hr show.bind="!metamaskHasPrimeToken" />
+      <div class="pair" show.bind="!metamaskHasPrimeToken">
+        <div class="title"><img alt="Prime (D2D)" src="/static/logomark.svg"></img>Prime (D2D)</div>
+        <div class="action" click.delegate="addTokenToWallet()">Add Token to Wallet</div>
+      </div>
+      <hr />
+      <div class="pair">
+        <div class="title">Network</div>
+        <networkfeedback></networkfeedback>
+      </div>
+
+    </div>
+  </div>
+</template>
