@@ -1,34 +1,19 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "module": "esnext",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "target": "es2019",
-    "lib": [
-      "ESNext",
-      "dom"
-    ],
     "moduleResolution": "node",
-    "baseUrl": "src",
+    "skipLibCheck": true,
+    "target": "ES2017",
+    "esModuleInterop": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "sourceMap": true
   },
   "include": [
-    "src",
     "test",
-    "firebaseFunctions/src"
+    "src"
   ],
-  "exclude": [
-    "test/coverage-jest"
-  ],
-  "atom": {
-    "rewriteTsconfig": false
-  }
+  "files": [
+    "src/resource.d.ts"
+  ]
 }
