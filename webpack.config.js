@@ -4,8 +4,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const Dotenv = require('dotenv-webpack');
 
-const cssLoader = 'css-loader';
+const cssLoader = {
+  loader: 'css-loader',
+  options: {
+    modules: true,
+    // https://github.com/webpack-contrib/css-loader#importloaders
+    importLoaders: 2
+  }
+};
 
+const sassLoader = {
+  loader: 'sass-loader',
+  options: {
+    sassOptions: {
+      includePaths: ['node_modules']
+    }
+  }
+};
 
 const postcssLoader = {
   loader: 'postcss-loader',
@@ -69,10 +84,14 @@ module.exports = function(env, { analyze }) {
         { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: 'asset' },
         { test: /\.(woff|woff2|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i,  type: 'asset' },
         { test: /\.css$/i, use: [ 'style-loader', cssLoader, postcssLoader ] },
+        { test: /\.scss$/i, use: [ 'style-loader', cssLoader, postcssLoader, sassLoader ] },
         { test: /\.ts$/i, use: ['ts-loader', '@aurelia/webpack-loader'], exclude: /node_modules/ },
         {
           test: /[/\\]src[/\\].+\.html$/i,
-          use: '@aurelia/webpack-loader',
+          use: {
+            loader: '@aurelia/webpack-loader',
+            options: { useCSSModule: true }
+          },
           exclude: /node_modules/
         }
       ]

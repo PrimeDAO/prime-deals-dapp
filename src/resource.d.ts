@@ -10,4 +10,11 @@ declare module '*.html' {
   export function register(container: IContainer): void;
 }
 
-declare module '*.css';
+declare module '*.css' {
+  const value: Record<string, string>;
+  export default value;
+}
+declare module '*.scss' {
+  const value: Record<string, string>;
+  export default value;
+}
