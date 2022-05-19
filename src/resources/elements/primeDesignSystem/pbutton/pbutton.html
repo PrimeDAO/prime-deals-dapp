@@ -1,8 +1,0 @@
-<template>
-  <button class="${type} ${fullWidth?'full-width':''} ${noAnimation? 'no-animation': ''}" disabled.bind="disabled" role="button">
-    <slot></slot>
-    <span class="icon ${isLoading? 'is-loading': ''}" if.bind="isLoading">
-      <i data-test="loadingIcon"  class="spinner fas fa-sync-alt"></i>
-    </span>
-  </button>
-</template>
