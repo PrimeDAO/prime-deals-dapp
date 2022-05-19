@@ -1,3 +1,0 @@
-#!/bin/sh
-
-cd firebaseFunctions && npm run build
