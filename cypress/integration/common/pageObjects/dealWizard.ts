@@ -1,4 +1,8 @@
 import { stageTitlesToURLs, withinWizardSection, wizardTitlesToURLs } from "../deal-wizard";
+import { PAGE_LOADING_TIMEOUT } from "../test-constants";
+import { SecondsDaysValueConverter } from "../../../../src/resources/value-converters/secondsDays";
+import { formatUnits } from "ethers/lib/utils";
+import { IToken } from "entities/DealRegistrationTokenSwap";
 
 export type WizardField =
  "Proposal Title"
@@ -12,6 +16,12 @@ export type WizardField =
  | "DAO Avatar"
  | "DAO Representatives Addresses"
  | "Funding Period"
+ | "Token Address"
+ | "Token Amount"
+ | "Vested Period"
+ | "Cliff Period"
+
+export const secondToDays = new SecondsDaysValueConverter().toView;
 
 export class E2eDealWizard {
   private static sectionTitle = "";
@@ -113,6 +123,38 @@ export class E2eDealWizard {
     cy.get("[data-test='add-dao-representative']").click();
   }
 
+  public static fillInWholeTokeDetailsSection(sectionTitle: string, token: IToken) {
+    cy.then(() => {
+      E2eDealWizard.inWizardSection(sectionTitle)
+        .inField("Token Address").fillIn(token.address);
+      waitForTokenAddressLoaded();
+
+      const amountText = fromWei(token.amount, token.decimals);
+      E2eDealWizard.inField("Token Amount").fillIn(amountText);
+
+      const vestedForDays = secondToDays(token.vestedFor);
+      const cliffOfDays = secondToDays(token.cliffOf);
+      E2eDealWizard.inField("Vested Period").fillIn(vestedForDays)
+        .inField("Cliff Period").fillIn(cliffOfDays);
+
+      E2eDealWizard.saveTokenDetail();
+    });
+  }
+
+  public static getSaveTokenDetail() {
+    return cy.then(() => {
+      return withinWizardSection()
+        .find("[data-test='saveTokenDetail'] button");
+    });
+  }
+
+  public static saveTokenDetail() {
+    this.getSaveTokenDetail().then(button => {
+      cy.wrap(button).click();
+    });
+    cy.get("[data-test='tokenDetailsView']", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
+  }
+
   static proceed() {
     cy.get("[data-test='wizard-proceed-button']").click();
   }
@@ -172,4 +214,14 @@ export class E2eDealWizard {
     this.wizardTitle = undefined;
     this.stageTitle = undefined;
   }
+}
+
+export function waitForTokenAddressLoaded() {
+  cy.contains("[data-test='tokenDetails']", "Searching token address details").should("be.visible");
+  const timeoutForAddressRequest = 20000;
+  cy.contains("p", "Symbol", {timeout: timeoutForAddressRequest}).should("be.visible");
+}
+
+function fromWei(weiValue: string, decimals: string | number): string {
+  return formatUnits(weiValue.toString(), decimals);
 }

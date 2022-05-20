@@ -38,6 +38,7 @@
         <div class="tr"
           data-test="single-topic"
           id="${discussionId}"
+          data-comment-id="${discussion.id}"
           click.delegate="navigateTo(`${discussionId}`)"
           repeat.for="[discussionId, discussion] of discussions">
           <div class="td idx">${findClauseIndex(discussionId) }</div>

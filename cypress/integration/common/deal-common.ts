@@ -25,6 +25,16 @@ export class E2EDashboard {
   }
 }
 
+export class E2eUi {
+  public static getPopup() {
+    cy.contains("[data-test='pPopupNotification']").should("be.visible");
+  }
+
+  public static getErrorPopup() {
+    return cy.contains("[data-test='pPopupNotification']", "Error").should("be.visible");
+  }
+}
+
 After(() => {
   cy.then(() => {
     cy.log("Reset e2e data");
@@ -103,4 +113,8 @@ Given("I create a Partnered Deal", () => {
 
 Then("I can edit the Open Proposal", () => {
   E2EDashboard.editDeal();
+});
+
+Then(/^an error should occur reading "(.*)"$/, (errorText: string) => {
+  E2eUi.getErrorPopup().should("contain.text", errorText);
 });
