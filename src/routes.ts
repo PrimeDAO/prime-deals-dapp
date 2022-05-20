@@ -8,12 +8,6 @@ export const routes: Routeable[] = [
     component: import('./home/home')
   },
   {
-    path: 'contribute',
-    id:  'contribute',
-    title: "Contribute",
-    component: import('./contribute/contribute')
-  },
-  {
     path: 'initiate',
     id: 'initiate',
     title: "Initiate",
