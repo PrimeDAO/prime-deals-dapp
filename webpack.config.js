@@ -7,7 +7,7 @@ const Dotenv = require('dotenv-webpack');
 const cssLoader = {
   loader: 'css-loader',
   options: {
-    modules: true,
+    modules: false,
     // https://github.com/webpack-contrib/css-loader#importloaders
     importLoaders: 2
   }
@@ -88,10 +88,7 @@ module.exports = function(env, { analyze }) {
         { test: /\.ts$/i, use: ['ts-loader', '@aurelia/webpack-loader'], exclude: /node_modules/ },
         {
           test: /[/\\]src[/\\].+\.html$/i,
-          use: {
-            loader: '@aurelia/webpack-loader',
-            options: { useCSSModule: true }
-          },
+          use: '@aurelia/webpack-loader',
           exclude: /node_modules/
         }
       ]
