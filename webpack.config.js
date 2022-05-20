@@ -2,7 +2,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
-const Dotenv = require('dotenv-webpack');
+// const Dotenv = require('dotenv-webpack');
+const webpack = require("webpack");
+const dotenv = require("dotenv");
+
 
 const cssLoader = {
   loader: 'css-loader',
@@ -36,7 +39,7 @@ module.exports = function(env, { analyze }) {
   return {
     target: 'web',
     mode: production ? 'production' : 'development',
-    devtool: production ? undefined : 'eval-cheap-source-map',
+    devtool: production ? undefined : 'eval-cheap-source-map', // TODO make sourcemaps work
     entry: {
       entry: './src/main.ts'
     },
@@ -72,6 +75,21 @@ module.exports = function(env, { analyze }) {
           'aurelia': path.resolve(__dirname, 'node_modules/aurelia/dist/esm/index.dev.mjs'),
           // add your development aliasing here
         })
+      },
+      fallback: { // this is needed for packages that use native nodejs modules like 'fs', 'os', etc.
+        "fs": false,
+        "tls": false,
+        "os": false,
+        "assert": false,
+        "url": false,
+        "net": false,
+        "path": false,
+        "zlib": false,
+        "http": false,
+        "https": false,
+        "stream": false,
+        "crypto": false,
+        "crypto-browserify": require.resolve('crypto-browserify'), //if you want to use this module also don't forget npm i crypto-browserify
       }
     },
     devServer: {
@@ -95,10 +113,22 @@ module.exports = function(env, { analyze }) {
     },
     plugins: [
       new HtmlWebpackPlugin({ template: 'index.html' }),
-      new Dotenv({
-        path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
+      // new Dotenv({
+      //   // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
+      //   path: `./.env`,
+      // }),
+      new webpack.DefinePlugin({ // the above Dotenv plugin doesn't work
+        'process.env': JSON.stringify(dotenv.config().parsed)
       }),
-      analyze && new BundleAnalyzerPlugin()
+      analyze && new BundleAnalyzerPlugin(),
+      // Work around for Buffer is undefined:
+      // https://github.com/webpack/changelog-v5/issues/10
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
+      // new webpack.ProvidePlugin({ // we might need this in the future
+      //   process: 'process/browser',
+      // }),
     ].filter(p => p)
   }
 }

@@ -1,1 +1,23 @@
-<au-viewport></au-viewport>
+<require from="./footer/footer"></require>
+<require from="./navbar/navbar"></require>
+<require from="./walletMenu/walletMenu"></require>
+
+<div if.bind="showCountdownPage">
+  <compose view-model="./comingSoon/comingSoon"></compose>
+</div>
+
+<div else>
+  <popup-notifications></popup-notifications>
+  <navbar show-wallet-menu.call="handleShowWalletMenu()"></navbar>
+  <wallet-menu showing.bind="showingWalletMenu"></wallet-menu>
+  <modalscreen message.to-view="modalMessage" on-off.to-view="onOff">
+    <div class="appWrapper">
+      <div class="mainContent">
+        <au-viewport></au-viewport>
+      </div>
+      <div class="appFooter">
+        <footer></footer>
+      </div>
+    </div>
+  </modalscreen>
+</div>
