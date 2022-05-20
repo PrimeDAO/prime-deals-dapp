@@ -1,8 +1,8 @@
 @import "src/styles/colors";
 
 @mixin logo($url) {
-  -webkit-mask: url("../static/" + $url) no-repeat center; // TODO the previous path was "../../static/"
-  mask: url("../static/" + $url) no-repeat center; // TODO the previous path was "../../static/"
+  -webkit-mask: url("/static/" + $url) no-repeat center;
+  mask: url("/static/" + $url) no-repeat center;
 }
 
 .footerContainer {

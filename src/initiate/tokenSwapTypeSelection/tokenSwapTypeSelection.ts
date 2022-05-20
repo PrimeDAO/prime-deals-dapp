@@ -1,10 +1,10 @@
-import { inject } from "aurelia";
+import { inject, IRouter, IRouteViewModel } from "aurelia";
 
 @inject()
-export class TokenSwapTypeSelection {
-  // constructor(private router: Router) { }
-  //
-  // navigate(slug: string): void {
-  //   this.router.navigate(slug);
-  // }
+export class TokenSwapTypeSelection implements IRouteViewModel {
+  constructor(@IRouter private router: IRouter) { }
+  
+  navigate(slug: string): void {
+    this.router.load(slug);
+  }
 }

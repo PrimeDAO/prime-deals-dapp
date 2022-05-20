@@ -95,6 +95,10 @@ module.exports = function(env, { analyze }) {
     devServer: {
       historyApiFallback: true,
       open: !process.env.CI,
+      static: {
+        directory: path.join( __dirname, '/static' ),
+      },
+      compress: true,
       port: 9000
     },
     module: {
