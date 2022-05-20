@@ -9,6 +9,7 @@
         if.bind="deal.isRepresentativeUser && !deal.fundingWasInitiated && !deal.isCancelled"
       >
         <pbutton
+          data-test="accept-deal-vote-button"
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
@@ -21,6 +22,7 @@
           ${deal.userVote === true ? 'Accepted' : 'Accept' }
         </pbutton>
         <pbutton
+          data-test="decline-deal-vote-button"
           if.bind="!deal.isFunding && !deal.isCancelled && !deal.isFailed"
           class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width

@@ -1,5 +1,11 @@
-import { After, Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
-import { DealDataBuilder, MINIMUM_OPEN_PROPOSAL, PARTNERED_DEAL, PRIVATE_PARTNERED_DEAL } from "../../fixtures/dealFixtures";
+import { After, And, Given, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import {
+  DealDataBuilder,
+  E2E_ADDRESSES,
+  MINIMUM_OPEN_PROPOSAL,
+  PARTNERED_DEAL,
+  PRIVATE_PARTNERED_DEAL,
+} from "../../fixtures/dealFixtures";
 import { E2eDeals } from "../tests/deals/deals.e2e";
 import { E2eWallet } from "../tests/wallet.e2e";
 import { E2eDealsApi } from "./deal-api";
@@ -18,10 +24,17 @@ export class E2EDashboard {
 
     cy.get(".dealDashboardContainer", {timeout: PAGE_LOADING_TIMEOUT}).should("be.visible");
   }
+
   public static editDeal() {
     cy.contains("pbutton", "Edit deal").click();
 
     E2eWizard.waitForWizardLoaded();
+  }
+
+  public static checkIfADealIsSelected() {
+    if (!E2eDeals.currentDeal && !E2eDeals.currentDealId) {
+      throw new Error("Please select a deal before using this statement");
+    }
   }
 }
 
@@ -78,11 +91,25 @@ Given("I'm viewing the Partnered Deal", () => {
   });
 });
 
+And("I'm viewing that deal", () => {
+  E2EDashboard.checkIfADealIsSelected();
+  E2EDashboard.visitDeal(E2eDeals.currentDealId);
+});
+
 Given("I'm the Proposal Lead of an Open Proposal", () => {
   cy.then(() => {
     const leadAddress = MINIMUM_OPEN_PROPOSAL.proposalLead.address;
     E2eWallet.currentWalletAddress = leadAddress;
     E2eDeals.currentDeal = MINIMUM_OPEN_PROPOSAL;
+  });
+});
+
+Given("I'm the Proposal Lead of a new Open Proposal", () => {
+  cy.then(() => {
+    E2eDeals.currentDeal = MINIMUM_OPEN_PROPOSAL;
+    E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+
+    E2eDealsApi.createDeal(E2eDeals.currentDeal);
   });
 });
 
@@ -93,9 +120,41 @@ Given("I'm the Proposal Lead of a Partnered Deal", () => {
     E2eDeals.currentDeal = PARTNERED_DEAL;
   });
 });
+Given("I'm the Proposal Lead of a new Partnered Deal", () => {
+  cy.then(() => {
+    E2eDeals.currentDeal = PARTNERED_DEAL;
+    E2eWallet.currentWalletAddress = E2eDeals.currentDeal.proposalLead.address;
+
+    E2eDealsApi.createDeal(E2eDeals.currentDeal);
+  });
+});
+
+Given("I'm the Proposal Lead of the failed Partnered deal", () => {
+  cy.then(() => {
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
+
+    const failedDealIDFromSeed = "3iVVBv3qENmj7GPmCCRKy6";
+    E2EDashboard.visitDeal(failedDealIDFromSeed);
+  });
+});
+Given("I'm the Proposal Lead of the funding Partnered deal", () => {
+  cy.then(() => {
+    E2eWallet.currentWalletAddress = E2E_ADDRESSES.ProposalLead;
+
+    const fundingDealIDFromSeed = "pCq17fw4Y5ZK3ZqzXMBFep";
+    E2EDashboard.visitDeal(fundingDealIDFromSeed);
+  });
+});
 
 Given("I edit the Open Proposal", () => {
   E2EDashboard.editDeal();
+});
+
+Given("I cancel the deal", async () => {
+  cy.then(() => {
+    E2EDashboard.checkIfADealIsSelected();
+    E2eDealsApi.getFirestoreService().updateDealIsRejected(E2eDeals.currentDealId, true);
+  });
 });
 
 Given("I create a Private Partnered Deal", () => {
