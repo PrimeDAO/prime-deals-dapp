@@ -1,9 +1,13 @@
 # Prime Deals dApp
 Prime Deals is an Interface for DAO to DAO interactions, such as token swaps, joint venture provision, and joint venture
-formation. An introduction to Prime Deals [TODO: ADD LINK](link-to-introduction).
+formation. An introduction to Prime Deals can be found [here](https://deals.prime.xyz/documentation/GETTINGSTARTED).
 
 This prime-deals-dapp repository contains in its master branch the web user interface for the Prime Deals website that
 is deployed to https://deals.prime.xyz.
+
+Smart contracts have their own repository [here](https://github.com/PrimeDAO/deals-contracts).
+
+User documentation can be found at https://deals.prime.xyz/documentation/
 
 ## Development
 
@@ -110,6 +114,7 @@ Various code dependencies include:
 * Wallet providers - [Web3Modal](https://github.com/Web3Modal/web3modal)
 * Interactions with Ethereum and wallet providers - [ethers.js](https://docs.ethers.io/v5/)
 * Mainnet web3 provider - [Rivet](https://rivet.cloud/)
+* Web3-native based commenting system - [Convo.space](https://docs.theconvo.space/)
 
 ## Firebase
 
@@ -252,4 +257,4 @@ The project framework is [Aurelia](https://aurelia.io).
 It is written mostly in Typescript, HTML and SCSS, and is bundled using Webpack.
 
 ## Community
-[Join our Discord](https://discord.gg/primedao) and ask how you can get involved with PrimeDAO
+[Join our Discord](https://discord.gg/primedao) and ask how you can get involved with PrimeDAO.
