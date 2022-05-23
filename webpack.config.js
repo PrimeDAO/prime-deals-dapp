@@ -5,6 +5,7 @@ const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 // const Dotenv = require('dotenv-webpack');
 const webpack = require("webpack");
 const dotenv = require("dotenv");
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 
 
 const cssLoader = {
@@ -34,7 +35,11 @@ const postcssLoader = {
   }
 };
 
-module.exports = function(env, { analyze }) {
+const ensureArray = ( config ) => config && ( Array.isArray( config ) ? config : [ config ] ) || []
+const when = ( condition, config, negativeConfig ) =>
+  condition ? ensureArray( config ) : ensureArray( negativeConfig )
+
+module.exports = function ( env, { analyze, tests } ) {
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
     target: 'web',
@@ -133,6 +138,11 @@ module.exports = function(env, { analyze }) {
       // new webpack.ProvidePlugin({ // we might need this in the future
       //   process: 'process/browser',
       // }),
+      ...when( !tests, new CopyWebpackPlugin( {
+        patterns: [
+          { from: 'static', to: './', globOptions: { ignore: [ '.*' ] } }
+        ]
+      } ) )
     ].filter(p => p)
   }
 }
