@@ -159,6 +159,9 @@ export class ContractsService {
   // eip1967.proxy.implementation
   private static storagePosition1967 = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
 
+  // eip1822.proxy.implementation
+  private static storagePosition1822 = "0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7";
+
   /**
    * Attempts to obtain the addresss of a proxy contract implementation.
    * Uses a heuristic described here:
@@ -175,6 +178,11 @@ export class ContractsService {
     let result = await this.ethereumService.readOnlyProvider.getStorageAt(proxyContract, ContractsService.storagePositionZep);
     if (BigNumber.from(result).isZero()) {
       result = await this.ethereumService.readOnlyProvider.getStorageAt(proxyContract, ContractsService.storagePosition1967);
+    }
+
+    /** Still zero? Try again with 1822 */
+    if (BigNumber.from(result).isZero()) {
+      result = await this.ethereumService.readOnlyProvider.getStorageAt(proxyContract, ContractsService.storagePosition1822);
     }
 
     const bnResult = BigNumber.from(result);
