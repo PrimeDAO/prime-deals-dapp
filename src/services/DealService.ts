@@ -169,6 +169,7 @@ export class DealService {
   }
 
   private async getDeals(): Promise<void> {
+    /* prettier-ignore */ console.log(">>>> 1 >>>> ~ file: DealService.ts ~ line 172 ~ getDeals");
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
