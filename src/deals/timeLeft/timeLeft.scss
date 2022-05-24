@@ -1,0 +1,103 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/resources/elements/primeDesignSystem/colors";
+
+$completedColor: $Teal;
+$completedBackground: $Teal-BG;
+$negotiatingColor: $Green;
+$negotiatingBackground: $Green-BG;
+$failedColor: $Grey;
+$failedBackground: $Grey-BG;
+$activeColor: $Green;
+$activeBackground: $Green-BG;
+$fundingColor: $Magenta;
+$fundingBackground: $Magenta-BG;
+$cancelledColor: $Grey;
+$cancelledBackground: $Grey-BG;
+
+.timeLeftContainer {
+  font-size: $font-size1;
+
+  > div.mainStatus > div,
+  > div.adminStatus > div {
+    font-family: Inter;
+    align-self: center;
+    white-space: nowrap;
+
+    > .icon {
+      margin-right: 5px;
+    }
+
+    &:not(.timeLeft) {
+      > .icon {
+        display: inline-block;
+        font-size: 7px;
+        position: relative;
+        bottom: 3px;
+      }
+    }
+  }
+
+  > div.mainStatus > div {
+    &.completed {
+      color: $completedColor;
+    }
+
+    &.active {
+      color: $activeColor;
+    }
+
+    &.negotiating {
+      color: $negotiatingColor;
+    }
+
+    &.failed {
+      color: $failedColor;
+    }
+
+    &.funding {
+      color: $fundingColor;
+    }
+
+    &.cancelled {
+      color: $cancelledColor;
+    }
+  }
+
+  &.contained {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 6px;
+
+    > div.mainStatus > div,
+    > div.adminStatus > div {
+      border-radius: 87px;
+      padding: 4px 8px;
+    }
+
+    > div.mainStatus > div {
+      &.completed {
+        background-color: $completedBackground;
+      }
+
+      &.active {
+        background-color: $activeBackground;
+      }
+
+      &.negotiating {
+        background-color: $negotiatingBackground;
+      }
+
+      &.failed {
+        background-color: $failedBackground;
+      }
+
+      &.funding {
+        background-color: $fundingBackground;
+      }
+
+      &.cancelled {
+        background-color: $cancelledBackground;
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ﻿import { BigNumber } from "ethers";
 
-const numeral = require("numeral");
+import * as numeral from "numeral";
 
 // export enum RoundingType {
 //   Bankers = 1,

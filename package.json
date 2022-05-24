@@ -22,6 +22,8 @@
     "ethers": "^5.6.6",
     "firebase": "^9.8.1",
     "marked": "^4.0.16",
+    "moment-timezone": "^0.5.34",
+    "numeral": "^2.0.6",
     "serve": "^13.0.2",
     "short-uuid": "^4.2.0",
     "the-new-css-reset": "^1.6.0",
@@ -29,6 +31,7 @@
     "web3modal": "^1.9.7"
   },
   "devDependencies": {
+    "@aurelia/runtime-html": "^2.0.0-alpha.32",
     "@aurelia/testing": "latest",
     "@aurelia/ts-jest": "latest",
     "@aurelia/webpack-loader": "latest",

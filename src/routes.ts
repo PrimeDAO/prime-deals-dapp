@@ -19,4 +19,10 @@ export const routes: Routeable[] = [
     title: "Select Token Swap Type",
     component: import('./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection')
   },
+  {
+    path: 'deals',
+    id: 'deals',
+    title: "Deals",
+    component: import('./deals/list/deals')
+  },
 ]
