@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { autoinject } from "aurelia-framework";
 import { getAddress } from "ethers/lib/utils";
 
@@ -101,11 +102,11 @@ export class Utils {
     }
   }
 
-  public static waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000): Promise<void> {
+  public static waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000, interval = 100): Promise<void> {
     return new Promise((resolve, reject) => {
       const timerId = setInterval(async () => {
         if (await test()) { clearTimeout(timerId); return resolve(); }
-      }, 100);
+      }, interval);
       setTimeout(() => {
         clearTimeout(timerId);
         return reject(new Error("Test timed out.."));

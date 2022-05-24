@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as googleCloudFirestore from "@google-cloud/firestore";
@@ -9,331 +10,354 @@ import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModi
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
-const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
-const admin = firebaseAdmin.initializeApp();
-export const firestore = admin.firestore();
-export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
-export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+const provider = ethers.getDefaultProvider("https://e761db8d40ea4f95a10923da3ffa47a3.rinkeby.rpc.rivet.cloud/");
 
-// Allow cross-origin requests for functions which use it
-// It is necessary to accept HTTP requests from our app,
-// as firebase functions are not hosted on the same domain
-const cors = corsLib({
-  origin: true,
-});
+async function gnosis() {
+  const signerAddr = "0x40597Caffbc904396DCAFD23786A0e1626E6975c";
+  const rawMessage = "Authenticate access to Prime Deals at Tue May 24 2022 11:55:44 GMT+0200 (Central European Summer Time)";
 
-/**
- * Functions that are going to be deployed by CI
- */
-export const CI = {
-  /**
-   * Run every time a document (a deal) in deals-token-swap collection is created
-   */
-  onDealCreate: functions.firestore
-    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-    .onCreate((snapshot) => {
-      updateDealUpdatesCollection(snapshot.id);
-    }),
+  // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
+  const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
+  const EIP1271MagicValue = "0x1626ba7e";
+  const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
+  const rawMessageLength = new Blob([rawMessage]).size;
+  const message = ethers.utils.toUtf8Bytes(
+    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
+  );
+  const messageHash = ethers.utils.keccak256(message);
+  const verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0x"));
 
-  /**
-   * Run every time a document (a deal) in deals-token-swap collection is updated
-   */
-  updateDealStructure: functions.firestore
-    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-    .onUpdate(async (change, context) => {
-      const dealId: string = context.params.dealId;
-      const oldDeal = change.before.data() as IDealTokenSwapDocument;
-      const updatedDeal = change.after.data() as IDealTokenSwapDocument;
+  /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: index.ts ~ line 46 ~ verified", verified);
+  return verified;
+}
 
-      // In case it was a delete operation, or the only update was modifiedAt field
-      if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
-        return;
-      }
+gnosis();
 
-      updateDealUpdatesCollection(dealId);
+// const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
+// const admin = firebaseAdmin.initializeApp();
+// export const firestore = admin.firestore();
+// export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
+// export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 
-      // Creates a write batch, used for performing multiple writes as a single atomic operation.
-      const batch = firestore.batch();
+// // Allow cross-origin requests for functions which use it
+// // It is necessary to accept HTTP requests from our app,
+// // as firebase functions are not hosted on the same domain
+// const cors = corsLib({
+//   origin: true,
+// });
 
-      const dealUpdates: Partial<IDealTokenSwapDocument> = {
-        // modifiedAt: new Date().toISOString(),
-      };
+// /**
+//  * Functions that are going to be deployed by CI
+//  */
+// export const CI = {
+//   /**
+//    * Run every time a document (a deal) in deals-token-swap collection is created
+//    */
+//   onDealCreate: functions.firestore
+//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+//     .onCreate((snapshot) => {
+//       updateDealUpdatesCollection(snapshot.id);
+//     }),
 
-      // If registration data was updated and the update was done to field/fields other than the privacy flag
-      if (
-        isRegistrationDataUpdated(oldDeal, updatedDeal) &&
-        !isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
-      ) {
-        // get updated representatives address for both DAOs
-        const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
-        const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
+//   /**
+//    * Run every time a document (a deal) in deals-token-swap collection is updated
+//    */
+//   updateDealStructure: functions.firestore
+//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+//     .onUpdate(async (change, context) => {
+//       const dealId: string = context.params.dealId;
+//       const oldDeal = change.before.data() as IDealTokenSwapDocument;
+//       const updatedDeal = change.after.data() as IDealTokenSwapDocument;
 
-        await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+//       // In case it was a delete operation, or the only update was modifiedAt field
+//       if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
+//         return;
+//       }
 
-        dealUpdates.representativesAddresses = [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses];
-        dealUpdates.votingSummary = initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
-      }
+//       updateDealUpdatesCollection(dealId);
 
-      batch.set(
-        change.after.ref, // reference to the updated Deal document
-        dealUpdates,
-        {merge: true}, // merges provided object with the existing data
-      );
+//       // Creates a write batch, used for performing multiple writes as a single atomic operation.
+//       const batch = firestore.batch();
 
-      return batch.commit();
-    }),
+//       const dealUpdates: Partial<IDealTokenSwapDocument> = {
+//         // modifiedAt: new Date().toISOString(),
+//       };
 
-  /**
-   * Run every time a document in a deal subcollection is updated
-   */
-  onVoteUpdate: functions.firestore
-    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
-    .onUpdate(async (change, context) => {
-      const dealSubcollection = context.params.collection;
+//       // If registration data was updated and the update was done to field/fields other than the privacy flag
+//       if (
+//         isRegistrationDataUpdated(oldDeal, updatedDeal) &&
+//         !isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
+//       ) {
+//         // get updated representatives address for both DAOs
+//         const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
+//         const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-      // make sure that updated document is a subcollection of votes and not some other subcollection
-      if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
-        return;
-      }
+//         await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
-      const dealId = context.params.dealId;
+//         dealUpdates.representativesAddresses = [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses];
+//         dealUpdates.votingSummary = initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+//       }
 
-      // Creates a write batch, used for performing multiple writes as a single atomic operation.
-      const batch = firestore.batch();
+//       batch.set(
+//         change.after.ref, // reference to the updated Deal document
+//         dealUpdates,
+//         {merge: true}, // merges provided object with the existing data
+//       );
 
-      const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+//       return batch.commit();
+//     }),
 
-      // generate updated voting summary after a vote was updated
-      const votingSummary = await generateVotingSummary(dealId);
+//   /**
+//    * Run every time a document in a deal subcollection is updated
+//    */
+//   onVoteUpdate: functions.firestore
+//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
+//     .onUpdate(async (change, context) => {
+//       const dealSubcollection = context.params.collection;
 
-      batch.set(
-        dealRef,
-        {
-          votingSummary,
-          // modifiedAt: new Date().toISOString(),
-        },
-        {merge: true}, // merges provided object with the existing data
-      );
+//       // make sure that updated document is a subcollection of votes and not some other subcollection
+//       if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
+//         return;
+//       }
 
-      return batch.commit();
-    }),
+//       const dealId = context.params.dealId;
 
-  createDeal: functions.https.onRequest(
-    (request, response) =>
-      // Allow cross-origin requests for this function
-      cors(request, response, async () => {
-        if (request.method !== "POST") {
-          return response.sendStatus(403);
-        }
+//       // Creates a write batch, used for performing multiple writes as a single atomic operation.
+//       const batch = firestore.batch();
 
-        if (!request.body.registrationData) {
-          return response.sendStatus(400);
-        }
+//       const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-        functions.logger.log("Check if request is authorized with Firebase ID token");
+//       // generate updated voting summary after a vote was updated
+//       const votingSummary = await generateVotingSummary(dealId);
 
-        if ((!request.headers.authorization || !request.headers.authorization.startsWith("Bearer "))) {
-          functions.logger.error(
-            "No Firebase ID token was passed as a Bearer token in the Authorization header.",
-            "Make sure you authorize your request by providing the following HTTP header:",
-            "Authorization: Bearer <Firebase ID Token>",
-          );
-          return response.sendStatus(403);
-        }
+//       batch.set(
+//         dealRef,
+//         {
+//           votingSummary,
+//           // modifiedAt: new Date().toISOString(),
+//         },
+//         {merge: true}, // merges provided object with the existing data
+//       );
 
-        functions.logger.log("Found \"Authorization\" header");
+//       return batch.commit();
+//     }),
 
-        // Read the Token from the Authorization header.
-        const idToken = request.headers.authorization.split("Bearer ")[1];
-        let decodedIdToken: firebaseAdmin.auth.DecodedIdToken;
+//   createDeal: functions.https.onRequest(
+//     (request, response) =>
+//       // Allow cross-origin requests for this function
+//       cors(request, response, async () => {
+//         if (request.method !== "POST") {
+//           return response.sendStatus(403);
+//         }
 
-        try {
-          decodedIdToken = await admin.auth().verifyIdToken(idToken);
-          functions.logger.log("ID Token correctly decoded", decodedIdToken);
-        } catch (error) {
-          functions.logger.error("Error while verifying Firebase ID token:", error);
-          return response.sendStatus(403);
-        }
+//         if (!request.body.registrationData) {
+//           return response.sendStatus(400);
+//         }
 
-        const registrationData: IDealRegistrationTokenSwap = request.body.registrationData;
+//         functions.logger.log("Check if request is authorized with Firebase ID token");
 
-        const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
-        const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
+//         if ((!request.headers.authorization || !request.headers.authorization.startsWith("Bearer "))) {
+//           functions.logger.error(
+//             "No Firebase ID token was passed as a Bearer token in the Authorization header.",
+//             "Make sure you authorize your request by providing the following HTTP header:",
+//             "Authorization: Bearer <Firebase ID Token>",
+//           );
+//           return response.sendStatus(403);
+//         }
 
-        const dealId = shortUuid.generate();
-        const date = new Date().toISOString();
+//         functions.logger.log("Found \"Authorization\" header");
 
-        const dealData: Partial<IDealTokenSwapDocument> = {
-          id: dealId,
-          registrationData,
-          createdByAddress: decodedIdToken.uid,
-          createdAt: date,
-          modifiedAt: date,
-          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-          isWithdrawn: false,
-          isRejected: false,
-        };
+//         // Read the Token from the Authorization header.
+//         const idToken = request.headers.authorization.split("Bearer ")[1];
+//         let decodedIdToken: firebaseAdmin.auth.DecodedIdToken;
 
-        // Creates a write batch, used for performing multiple writes as a single atomic operation.
-        const batch = firestore.batch();
+//         try {
+//           decodedIdToken = await admin.auth().verifyIdToken(idToken);
+//           functions.logger.log("ID Token correctly decoded", decodedIdToken);
+//         } catch (error) {
+//           functions.logger.error("Error while verifying Firebase ID token:", error);
+//           return response.sendStatus(403);
+//         }
 
-        const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+//         const registrationData: IDealRegistrationTokenSwap = request.body.registrationData;
 
-        // set deal document
-        batch.set(
-          dealRef,
-          dealData,
-        );
+//         const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
+//         const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-        // updates batch with writes for creating vote object for each representative
-        initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+//         const dealId = shortUuid.generate();
+//         const date = new Date().toISOString();
 
-        try {
-          // commits all writes added to the batch
-          await batch.commit();
+//         const dealData: Partial<IDealTokenSwapDocument> = {
+//           id: dealId,
+//           registrationData,
+//           createdByAddress: decodedIdToken.uid,
+//           createdAt: date,
+//           modifiedAt: date,
+//           representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+//           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+//           isWithdrawn: false,
+//           isRejected: false,
+//         };
 
-          const deal = (await dealRef.get()).data();
+//         // Creates a write batch, used for performing multiple writes as a single atomic operation.
+//         const batch = firestore.batch();
 
-          return response.status(200).send(deal);// .json(deal);
-        } catch (error){
-          functions.logger.error("Error while creating a deal:", error);
-          return response.sendStatus(500);
-        }
-      }),
-  ),
+//         const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-  /**
-   * Verifies that a message was signed by the provided address.
-   * Therefore it proofs the ownership of the address.
-   */
-  verifySignedMessageAndCreateCustomToken: functions.https.onRequest(
-    (request, response) =>
-    // Allow cross-origin requests for this function
-      cors(request, response, async () => {
-        if (request.method !== "POST") {
-          return response.sendStatus(403);
-        }
+//         // set deal document
+//         batch.set(
+//           dealRef,
+//           dealData,
+//         );
 
-        if (!request.body.address || !request.body.message || !request.body.signature) {
-          functions.logger.error("missing one of the required parameters");
-          return response.sendStatus(400);
-        }
+//         // updates batch with writes for creating vote object for each representative
+//         initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
-        const address: string = request.body.address;
-        const message: string = request.body.message;
-        const signature: string = request.body.signature;
+//         try {
+//           // commits all writes added to the batch
+//           await batch.commit();
 
-        functions.logger.info(`
-          Starting verification for the following:
-          Address: ${address},
-          Message: ${message},
-          Signature: ${signature}
-        `);
+//           const deal = (await dealRef.get()).data();
 
-        try {
-          getAddress(address);
-        } catch {
-          functions.logger.error("Provider address is not a correct ETH address");
-          return response.sendStatus(500);
-        }
+//           return response.status(200).send(deal);// .json(deal);
+//         } catch (error){
+//           functions.logger.error("Error while creating a deal:", error);
+//           return response.sendStatus(500);
+//         }
+//       }),
+//   ),
 
-        const signerAddress = verifyMessage(
-          message,
-          signature,
-        );
+//   /**
+//    * Verifies that a message was signed by the provided address.
+//    * Therefore it proofs the ownership of the address.
+//    */
+//   verifySignedMessageAndCreateCustomToken: functions.https.onRequest(
+//     (request, response) =>
+//     // Allow cross-origin requests for this function
+//       cors(request, response, async () => {
+//         if (request.method !== "POST") {
+//           return response.sendStatus(403);
+//         }
 
-        try {
-          getAddress(signerAddress);
-        } catch {
-          functions.logger.error("Signer address is not a correct ETH address");
-          return response.sendStatus(500);
-        }
+//         if (!request.body.address || !request.body.message || !request.body.signature) {
+//           functions.logger.error("missing one of the required parameters");
+//           return response.sendStatus(400);
+//         }
 
-        functions.logger.info("Signer address: ", signerAddress);
+//         const address: string = request.body.address;
+//         const message: string = request.body.message;
+//         const signature: string = request.body.signature;
 
-        if (signerAddress.toLowerCase() === address.toLowerCase()) {
-          try {
-            // Create a custom token for the specified address
-            /**
-             * Firebase Token which is later going to be used to sign in to firebase from the client
-             */
-            const firebaseToken = await admin.auth().createCustomToken(address);
+//         functions.logger.info(`
+//           Starting verification for the following:
+//           Address: ${address},
+//           Message: ${message},
+//           Signature: ${signature}
+//         `);
 
-            // Return the token
-            return response.status(200).json({ token: firebaseToken });
-          } catch (error){
-            functions.logger.error("createCustomToken error:", error);
-            return response.sendStatus(500);
-          }
-        } else {
-          // The signature could not be verified
-          functions.logger.error("Message was not signed with the claimed address");
-          return response.sendStatus(401);
-        }
+//         try {
+//           getAddress(address);
+//         } catch {
+//           functions.logger.error("Provider address is not a correct ETH address");
+//           return response.sendStatus(500);
+//         }
 
-      }),
-  ),
-};
+//         const signerAddress = verifyMessage(
+//           message,
+//           signature,
+//         );
 
-/**
- * This function is not going to be deployed by CI
- * This function should not be used on production
- */
-export const createCustomToken = functions.https.onRequest((request, response) => {
-  if (process.env.GCLOUD_PROJECT === "prime-deals-production") {
-    functions.logger.error("Trying to access createCustomToken function on production. This function is not intended for production");
-    return;
-  }
+//         try {
+//           getAddress(signerAddress);
+//         } catch {
+//           functions.logger.error("Signer address is not a correct ETH address");
+//           return response.sendStatus(500);
+//         }
 
-  return cors(request, response, async () => {
-    const address: string = request.body.address;
-    try {
-      getAddress(address);
-    } catch {
-      functions.logger.error("Signer address is not a correct ETH address");
-      return response.sendStatus(500);
-    }
+//         functions.logger.info("Signer address: ", signerAddress);
 
-    const firebaseToken = await admin.auth().createCustomToken(address);
-    return response.status(200).json({ token: firebaseToken });
-  });
-});
+//         if (signerAddress.toLowerCase() === address.toLowerCase()) {
+//           try {
+//             // Create a custom token for the specified address
+//             /**
+//              * Firebase Token which is later going to be used to sign in to firebase from the client
+//              */
+//             const firebaseToken = await admin.auth().createCustomToken(address);
 
-/**
- * Function responsible for running automated Backups.
- * It runs every 60 minutes.
- * It stores backups inside a Google Cloud Storage bucket, specified in `firebaseFunctions/.env` file
- */
-export const scheduledFirestoreBackup = functions.pubsub
-  .schedule("every 60 minutes")
-  .onRun(() => {
-    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
-    const bucket = `gs://${process.env.PRIME_BACKUP_BUCKET_NAME}`;
-    const databaseName =
-    firestoreAdminClient.databasePath(projectId, "(default)");
+//             // Return the token
+//             return response.status(200).json({ token: firebaseToken });
+//           } catch (error){
+//             functions.logger.error("createCustomToken error:", error);
+//             return response.sendStatus(500);
+//           }
+//         } else {
+//           // The signature could not be verified
+//           functions.logger.error("Message was not signed with the claimed address");
+//           return response.sendStatus(401);
+//         }
 
-    functions.logger.log(`
-      Trying to create a backup for
-      Project ID: ${projectId},
-      Database name: ${databaseName},
-      Inside a bucket: ${bucket}
-    `);
+//       }),
+//   ),
+// };
 
-    return firestoreAdminClient.exportDocuments({
-      name: databaseName,
-      outputUriPrefix: bucket,
-      // Leave collectionIds empty to export all collections
-      // or set to a list of collection IDs to export,
-      // collectionIds: ['users', 'posts']
-      collectionIds: [],
-    })
-      .then(responses => {
-        const response = responses[0];
-        functions.logger.log(`Creating backup was successful. Operation Name: ${response["name"]}`);
-      })
-      .catch(err => {
-        functions.logger.error(err);
-        throw new Error("Creating backup failed");
-      });
-  });
+// /**
+//  * This function is not going to be deployed by CI
+//  * This function should not be used on production
+//  */
+// export const createCustomToken = functions.https.onRequest((request, response) => {
+//   if (process.env.GCLOUD_PROJECT === "prime-deals-production") {
+//     functions.logger.error("Trying to access createCustomToken function on production. This function is not intended for production");
+//     return;
+//   }
+
+//   return cors(request, response, async () => {
+//     const address: string = request.body.address;
+//     try {
+//       getAddress(address);
+//     } catch {
+//       functions.logger.error("Signer address is not a correct ETH address");
+//       return response.sendStatus(500);
+//     }
+
+//     const firebaseToken = await admin.auth().createCustomToken(address);
+//     return response.status(200).json({ token: firebaseToken });
+//   });
+// });
+
+// /**
+//  * Function responsible for running automated Backups.
+//  * It runs every 60 minutes.
+//  * It stores backups inside a Google Cloud Storage bucket, specified in `firebaseFunctions/.env` file
+//  */
+// export const scheduledFirestoreBackup = functions.pubsub
+//   .schedule("every 60 minutes")
+//   .onRun(() => {
+//     const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+//     const bucket = `gs://${process.env.PRIME_BACKUP_BUCKET_NAME}`;
+//     const databaseName =
+//     firestoreAdminClient.databasePath(projectId, "(default)");
+
+//     functions.logger.log(`
+//       Trying to create a backup for
+//       Project ID: ${projectId},
+//       Database name: ${databaseName},
+//       Inside a bucket: ${bucket}
+//     `);
+
+//     return firestoreAdminClient.exportDocuments({
+//       name: databaseName,
+//       outputUriPrefix: bucket,
+//       // Leave collectionIds empty to export all collections
+//       // or set to a list of collection IDs to export,
+//       // collectionIds: ['users', 'posts']
+//       collectionIds: [],
+//     })
+//       .then(responses => {
+//         const response = responses[0];
+//         functions.logger.log(`Creating backup was successful. Operation Name: ${response["name"]}`);
+//       })
+//       .catch(err => {
+//         functions.logger.error(err);
+//         throw new Error("Creating backup failed");
+//       });
+//   });

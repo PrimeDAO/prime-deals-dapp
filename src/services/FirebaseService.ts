@@ -148,52 +148,59 @@ export class FirebaseService {
 
     let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
 
-    if (await this.ethereumService.isSafeApp()) {
-      // TODO: need this?
-      // const isMultiSig = signature === "0x";
-
-      const appsSdk = new SafeAppsSDK(safeAppOpts);
-      // debugger;
-      const info = await appsSdk.safe.getInfo();
-      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 139 ~ info", info);
-      const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
-      /* prettier-ignore */ console.log("!!! >>>> _ >>>> ~ file: FirebaseService.ts ~ line 157 ~ isSigned", isSigned);
-    }
-    // const { safeTxHash } = await appsSdk.txs.signMessage(messageToSign);
-    // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 152 ~ safeTxHash", safeTxHash);
-    // const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
-
-    // debugger;
-
-    // /* prettier-ignore */ console.log(">>>> 3 >>>> ~ file: FirebaseService.ts ~ line 134 ~ getExistingSignatureAndMessageForAddress");
-    // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 134 ~ signature", signature);
-    // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 147 ~ messageToSign", messageToSign);
-    // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 150 ~ isSigned", isSigned);
-    // const isSigned_hashed = await appsSdk.safe.isMessageHashSigned("0x561b7878da250095815d18e788f12881c1e71f0d4d9d38c3104efd018c157f56");
-    // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 152 ~ isSigned_hashed", isSigned_hashed);
-
-    // await this.ethereumService.verifySafeApp(signature, messageToSign);
-
-    // messageToSign = await this.getMessageToSign();
-    // const forcingSignature = await this.requestSignature(messageToSign);
-    // /* prettier-ignore */ console.log("!!! >>>> 4 >>>> ~ file: FirebaseService.ts ~ line 138 ~ forcingSignature", forcingSignature);
-    // debugger;
-
-    else if (!signature) {
+    if (!signature) {
       messageToSign = await this.getMessageToSign();
       // @ts-ignore
       window.messageToSign = messageToSign;
 
-      try {
+      if (await this.ethereumService.isSafeApp()) {
+        // TODO: need this?
+        // const isMultiSig = signature === "0x";
 
-        signature = await this.requestSignature(messageToSign);
-        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 141 ~ signature", signature);
-        this.storeSignatureForAddress(address, signature, messageToSign);
-        this.eventAggregator.publish("database.account.signature.successful");
+        const appsSdk = new SafeAppsSDK(safeAppOpts);
+        // debugger;
+        try {
+          const info = await appsSdk.safe.getInfo();
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 139 ~ info", info);
+          const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
+          /* prettier-ignore */ console.log("!!! >>>> _ >>>> ~ file: FirebaseService.ts ~ line 157 ~ isSigned", isSigned);
 
-      } catch (error) {
-        this.eventAggregator.publish("database.account.signature.cancelled");
-        throw error;
+          /**
+           * Gnosis Safe App signature verification has different flow:
+           *   Because Gnosis Safe is a contract, we will have to query until the tx has finished executing.
+           *   Only then can we proceed with authenticating to Firebase.
+           */
+          if (!isSigned) {
+            this.eventAggregator.publish("gnosis.safe.transaction.await");
+            const { safeTxHash } = await appsSdk.txs.signMessage(messageToSign);
+            this.eventAggregator.publish("transaction.sent");
+            /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 152 ~ safeTxHash", safeTxHash);
+
+            await Utils.waitUntilTrue(async() => {
+              /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 182 ~ waitUntilTrue");
+              return await appsSdk.safe.isMessageSigned(messageToSign);
+            }, 9999999, 4000);
+
+            const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
+            /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ tx", tx);
+            this.storeSignatureForAddress(address, signature, messageToSign);
+            this.eventAggregator.publish("transaction.confirmed");
+          }
+        } catch (error) {
+          console.log("Gnosis error");
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 173 ~ error", error);
+        }
+      } else {
+        try {
+          signature = await this.requestSignature(messageToSign);
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 141 ~ signature", signature);
+          this.storeSignatureForAddress(address, signature, messageToSign);
+          this.eventAggregator.publish("database.account.signature.successful");
+
+        } catch (error) {
+          this.eventAggregator.publish("database.account.signature.cancelled");
+          throw error;
+        }
       }
     }
 
