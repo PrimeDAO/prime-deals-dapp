@@ -1,7 +1,7 @@
 import { singleton } from "aurelia";
 
 // type DealType = "open" | "partnered";
-@singleton({scoped: false}) // to maintain tab selection state
+@singleton({scoped: false}) // to maintain tab selection state TODO test with and without argument
 export class Home {
   // private cardIndex = 0;
   // private dealType:DealType = "open";

@@ -8,6 +8,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { Utils } from "./utils";
 import { IEventAggregator, inject } from "aurelia";
+import { DisclaimerService } from "./DisclaimerService";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -131,7 +132,7 @@ export class EthereumService {
 
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
-    // private disclaimerService: DisclaimerService,
+    private disclaimerService: DisclaimerService,
     private consoleLogService: ConsoleLogService,
     private storageService: BrowserStorageService,
   ) { }
@@ -200,10 +201,10 @@ export class EthereumService {
         const accounts = await provider.request({ method: "eth_accounts" });
         if (accounts?.length) {
           const account = getAddress(accounts[0]);
-          // if (this.disclaimerService.getPrimeDisclaimed(account)) {
-          //   this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-          //   return this.setProvider(provider);
-          // }
+          if (this.disclaimerService.getPrimeDisclaimed(account)) {
+            this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
+            return this.setProvider(provider);
+          }
         }
       }
     }
@@ -401,12 +402,12 @@ export class EthereumService {
   }
 
   private async fireAccountsChangedHandler(account: Address) {
-    // if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-    //   this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
-    //   account = null;
-    // }
-    // console.info(`account changed: ${account}`);
-    // this.eventAggregator.publish("Network.Changed.Account", account);
+    if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
+      this.disconnect({code: -1, message: "User declined the Prime Deals disclaimer"});
+      account = null;
+    }
+    console.info(`account changed: ${account}`);
+    this.eventAggregator.publish("Network.Changed.Account", account);
   }
 
   private fireChainChangedHandler(info: IChainEventInfo) {

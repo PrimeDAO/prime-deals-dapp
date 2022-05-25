@@ -22,6 +22,7 @@ export class MyApp implements IRouteViewModel {
 
     ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
 
+    ethereumService.connectToConnectedProvider();
   }
 
   onNavigate(): void {

@@ -5,38 +5,6 @@ import pkg from "../../package.json";
  * and support for default values.
  */
 export class BrowserStorageService {
-  public lsSet(key: string, value: unknown, version?: string): any {
-    return this.set(localStorage, key, value, version);
-  }
-
-  public lsGet<T = any>(
-    key: string,
-    defaultValue: any = null,
-    version?: string,
-  ): T {
-    return this.get(localStorage, key, defaultValue, version);
-  }
-
-  public lsRemove(key: string): void {
-    return this.remove(localStorage, key);
-  }
-
-  public ssSet(key: string, value: unknown, version?: string): any {
-    return this.set(sessionStorage, key, value, version);
-  }
-
-  public ssGet<T = any>(
-    key: string,
-    defaultValue: any = null,
-    version?: string,
-  ): T {
-    return this.get(sessionStorage, key, defaultValue, version);
-  }
-
-  public ssRemove(key: string): void {
-    return this.remove(sessionStorage, key);
-  }
-
   private addVersion(value: any, version: string) {
     return {
       data: value,
@@ -79,5 +47,37 @@ export class BrowserStorageService {
 
   private remove(storage: any, key: string): void {
     return storage.removeItem(this.getKey(key));
+  }
+
+  public lsSet(key: string, value: unknown, version?: string): any {
+    return this.set(localStorage, key, value, version);
+  }
+
+  public lsGet<T = any>(
+    key: string,
+    defaultValue: any = null,
+    version?: string,
+  ): T {
+    return this.get(localStorage, key, defaultValue, version);
+  }
+
+  public lsRemove(key: string): void {
+    return this.remove(localStorage, key);
+  }
+
+  public ssSet(key: string, value: unknown, version?: string): any {
+    return this.set(sessionStorage, key, value, version);
+  }
+
+  public ssGet<T = any>(
+    key: string,
+    defaultValue: any = null,
+    version?: string,
+  ): T {
+    return this.get(sessionStorage, key, defaultValue, version);
+  }
+
+  public ssRemove(key: string): void {
+    return this.remove(sessionStorage, key);
   }
 }

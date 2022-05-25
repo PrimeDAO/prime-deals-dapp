@@ -4,9 +4,8 @@ import axios from "axios";
 import { BrowserStorageService } from "./BrowserStorageService";
 import { Address } from "./EthereumService";
 import { AxiosService } from "./axiosService";
-import { DialogDeactivationStatuses, EventAggregator, inject } from "aurelia";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const marked = require("marked");
+import { DialogDeactivationStatuses, EventAggregator, IEventAggregator, inject } from "aurelia";
+import { marked } from "marked";
 
 @inject()
 export class DisclaimerService {
@@ -15,8 +14,8 @@ export class DisclaimerService {
   // private waiting = false;
 
   constructor(
+    @IEventAggregator private eventAggregator: EventAggregator,
     private dialogService: DialogService,
-    private eventAggregator: EventAggregator,
     private storageService: BrowserStorageService,
     private axiosService: AxiosService,
   ) {
@@ -67,7 +66,7 @@ export class DisclaimerService {
   }
 
   public showDisclaimer(disclaimerUrl: string, title: string): Promise<DialogCloseResult> {
-    return this.dialogService.open(Disclaimer, { disclaimerUrl, title }, { keyboard: true }, "disclaimer");
+    return this.dialogService.open(() => Disclaimer, {disclaimerUrl, title}, {keyboard: true});
   }
 
   private getPrimeDisclaimerStatusKey(accountAddress: Address): string {
@@ -75,7 +74,6 @@ export class DisclaimerService {
   }
 
   private async disclaimPrime(accountAddress: string): Promise<boolean> {
-
     let disclaimed = false;
 
     if (this.getPrimeDisclaimed(accountAddress)) {

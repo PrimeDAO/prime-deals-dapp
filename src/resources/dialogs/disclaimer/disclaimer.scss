@@ -1,61 +1,59 @@
 @import "../dialogs.scss";
 //@import "../../elements/primeDesignSystem/pform-input/pform-input.scss"; // TODO is this needed? looks like it can be removed
 
-body > ux-dialog-container.disclaimer {
-  top: 10vh;
-  right: 10vw;
-  bottom: 10vh;
-  left: 10vw;
-  transform: none;
+body > au-dialog-container > div.disclaimer {
 
-  > div > div {
-    .ppopup-dialog.disclaimer {
-      // > .dialogHeader {
-      //   font-size: 22px;
-      //   padding-top: 40px;
-      //   padding-bottom: 60px;
-      // }
+  width: 80vw;
+  height: 80vh;
+  margin: unset;
+  //margin-top: 100px;
 
-      > .dialogBody {
-        white-space: pre-wrap;
-        word-break: break-word;
+  .ppopup-dialog.disclaimer {
+    // > .dialogHeader {
+    //   font-size: 22px;
+    //   padding-top: 40px;
+    //   padding-bottom: 60px;
+    // }
 
-        img {
-          max-width: 100%;
-        }
+    > .dialogBody {
+      white-space: pre-wrap;
+      word-break: break-word;
 
-        &.loading {
-          text-align: center;
-          padding-top: 32px;
-
-          i {
-            color: $Primary01;
-            font-size: 28px;
-          }
-        }
+      img {
+        max-width: 100%;
       }
 
-      > .dialogFooter {
-        display: flex;
-        flex-direction: row;
+      &.loading {
+        text-align: center;
+        padding-top: 32px;
+
+        i {
+          color: $Primary01;
+          font-size: 28px;
+        }
+      }
+    }
+
+    > .dialogFooter {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: right;
+      column-gap: 20px;
+      padding-right: 72px;
+      padding-top: 24px;
+      padding-bottom: 12px;
+
+      .checkbox {
+        display: inline-flex;
         align-items: center;
-        justify-content: right;
-        column-gap: 20px;
-        padding-right: 72px;
-        padding-top: 24px;
-        padding-bottom: 12px;
+        column-gap: 14px;
 
-        .checkbox {
-          display: inline-flex;
-          align-items: center;
-          column-gap: 14px;
+        .formInputLabel {
+          margin-bottom: 0px;
 
-          .formInputLabel {
-            margin-bottom: 0px;
-
-            .formInputLabelTitle {
-              line-height: 22px;
-            }
+          .formInputLabelTitle {
+            line-height: 22px;
           }
         }
       }
@@ -64,26 +62,24 @@ body > ux-dialog-container.disclaimer {
 }
 
 @media screen and (max-width: 680px) {
-  body > ux-dialog-container.disclaimer {
+  body > au-dialog-container div.disclaimer {
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     transform: none;
 
-    > div > div {
-      .ppopup-dialog.disclaimer {
-        > .dialogFooter {
-          flex-direction: column;
-          align-items: unset;
-          row-gap: 8px;
-          padding-right: 40px;
+    .ppopup-dialog.disclaimer {
+      > .dialogFooter {
+        flex-direction: column;
+        align-items: unset;
+        row-gap: 8px;
+        padding-right: 40px;
 
-          .checkbox {
-            display: initial;
-            align-items: unset;
-            column-gap: unset;
-          }
+        .checkbox {
+          display: initial;
+          align-items: unset;
+          column-gap: unset;
         }
       }
     }

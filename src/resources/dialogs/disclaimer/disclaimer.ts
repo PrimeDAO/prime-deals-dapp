@@ -1,9 +1,8 @@
 import axios from "axios";
-import { IDialogController, inject } from "aurelia";
+import { DefaultDialogDom, IDialogController, IDialogDom, inject } from "aurelia";
 import { ConsoleLogService } from "../../../services/ConsoleLogService";
 import { AxiosService } from "../../../services/axiosService";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const marked = require("marked");
+import { marked } from "marked";
 
 @inject()
 export class Disclaimer {
@@ -15,9 +14,12 @@ export class Disclaimer {
   checked = false;
 
   constructor(
-    private controller: IDialogController,
+    @IDialogController private controller: IDialogController,
+    @IDialogDom dialogDom: DefaultDialogDom,
     private consoleLogService: ConsoleLogService,
-    private axiosService: AxiosService) {
+    private axiosService: AxiosService
+  ) {
+    dialogDom.contentHost.classList.add('disclaimer')
   }
 
   get disclaimerHtml(): string {
@@ -28,7 +30,7 @@ export class Disclaimer {
     this.model = model;
   }
 
-  public async attached(): Promise<void> {
+  public async attaching(): Promise<void> {
     let errorMsg: string;
     this.disclaimer = await axios.get(this.model.disclaimerUrl)
       .then((response) => {
@@ -42,13 +44,14 @@ export class Disclaimer {
         }
       })
       .catch((err) => {
+        console.error(err)
         errorMsg = `Error fetching disclaimer: ${this.axiosService.axiosErrorHandler(err)}`;
         this.loading = false;
         return null;
       });
 
     if (!this.disclaimer) {
-      // this.controller.close(false, errorMsg); // TODO fix this
+      this.controller.error(errorMsg); // TODO fix this. I am not sure how this should work in AU2
     } else {
       // attach-focus doesn't work
       this.okButton.focus();
