@@ -141,15 +141,20 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    debugger;
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 145 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
     if (this.currentFirebaseUserAddress === address) {
       return;
     }
 
-    // Signs out from Firebase in case another user was authenticated
-    // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
+    // Signs out from Firebase in case another user was authenticated
+    // (could happen when user disconnect and connect a new wallet)
+
     let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ signature", signature);
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ messageToSign", messageToSign);
 
     if (!signature) {
       const oldMessageToSign = messageToSign;
@@ -160,6 +165,7 @@ export class FirebaseService {
         if (!oldMessageToSign) {
           messageToCheck = messageToSign;
         }
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ messageToCheck", messageToCheck);
 
         const appsSdk = new SafeAppsSDK(safeAppOpts);
         try {
