@@ -33,6 +33,19 @@ interface ISignatureStorage {
   messageToSign: string;
 }
 
+/**
+ * Part of the answer in
+ * https://stackoverflow.com/questions/71866879/how-to-verify-message-in-wallet-connect-with-ethers-primarily-on-ambire-wallet
+ */
+function encryptForGnosis(rawMessage: string) {
+  const rawMessageLength = new Blob([rawMessage]).size;
+  const message = ethers.utils.toUtf8Bytes(
+    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
+  );
+  const messageHash = ethers.utils.keccak256(message);
+  return messageHash;
+}
+
 @autoinject
 export class FirebaseService {
 
@@ -116,7 +129,7 @@ export class FirebaseService {
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ address", address);
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ message", message);
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ signature", signature);
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature});
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network: EthereumService.targetedNetwork});
 
     return response.data.token;
   }
@@ -133,6 +146,7 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 150 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
 
     if (this.currentFirebaseUserAddress === address) {
       return;
@@ -192,12 +206,7 @@ export class FirebaseService {
             const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
             /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ tx", tx);
 
-            const rawMessageLength = new Blob([messageToCheck]).size;
-            const message = ethers.utils.toUtf8Bytes(
-              "\x19Ethereum Signed Message:\n" + rawMessageLength + messageToCheck,
-            );
-            const messageHash = ethers.utils.keccak256(message);
-            signature = messageHash;
+            signature = encryptForGnosis(messageToCheck);
 
             this.storeSignatureForAddress(address, signature, messageToCheck);
             this.eventAggregator.publish("transaction.confirmed");
