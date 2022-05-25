@@ -8,8 +8,8 @@ type DealType = "open" | "partnered";
 @singleton(false) // to maintain tab selection state
 @autoinject
 export class Home {
-  private cardIndex = 0;
-  private dealType:DealType = "open";
+  private cardIndex = 1;
+  private dealType:DealType = "partnered";
   private dealsLoading = false;
   static MAX_DEALS_COUNT=10;
 
@@ -38,7 +38,7 @@ export class Home {
     this.dealsLoading = false;
 
     if (this.cardIndex === undefined) {
-      this.cardIndex = this.allDeals.open.length ? 0 : 1;
+      this.cardIndex = this.allDeals.partnered.length ? 1 : 0;
     }
   }
 
