@@ -585,47 +585,6 @@ export class EthereumService {
       .catch(() => null); // is neither address nor ENS
   }
 
-  public async verifySafeApp(signature?, message?) {
-    // debugger;
-    const rawMessage = message;
-
-    const signerAddr = await this.walletProvider.getSigner().getAddress();
-    const provider = this.walletProvider;
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: EthereumService.ts ~ line 592 ~ signerAddr", signerAddr);
-
-    let verified;
-    const providerCode = await provider.getCode(signerAddr);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: EthereumService.ts ~ line 597 ~ providerCode", providerCode);
-    if (providerCode === "0x") {
-    // Regular RSV sig verification
-      verified = signerAddr === (await ethers.utils.verifyMessage(message, signature));
-    } else {
-      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: EthereumService.ts ~ line 603 ~ 1271");
-      // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
-      const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
-      const EIP1271MagicValue = "0x1626ba7e";
-      const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
-      const rawMessageLength = new Blob([rawMessage]).size;
-      const message = ethers.utils.toUtf8Bytes(
-        "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
-      );
-      const messageHash = ethers.utils.keccak256(message);
-
-      // debugger;
-
-      try {
-        // verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, signature));
-        // verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0xi"));
-        verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0xa37357a4e22f7fc3a9a5987ddf35c06c637293c82ccd84558c2447be1ce28d1661895ec6e88f2909c94e5a11dfe0e76bfa6a654c5782ce8cf4c5826db86b037d1b"));
-      } catch (error) {
-        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: EthereumService.ts ~ line 615 ~ error", error);
-        // throw error;
-      }
-    }
-
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 142 ~ verified", verified);
-  }
-
   public async isSafeApp(): Promise<boolean> {
     return await this.web3Modal.isSafeApp();
   }
