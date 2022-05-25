@@ -41,7 +41,8 @@ function encryptForGnosis(rawMessage: string) {
  * that requires different way of verifying a transaction (EIP-1271)
  */
 async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
-  const provider = ethers.getDefaultProvider(`https://${ProviderEndpoints[network]}.rinkeby.rpc.rivet.cloud/`);
+  functions.logger.info("Provider endpoint", ProviderEndpoints[network]);
+  const provider = ethers.getDefaultProvider(ProviderEndpoints[network]);
 
   // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
   const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
