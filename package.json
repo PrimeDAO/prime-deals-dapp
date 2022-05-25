@@ -35,6 +35,7 @@
     "firebase-emulators:start": "firebase emulators:start --project=default --import=firebase_seed",
     "firebase-functions:build": "cd firebaseFunctions && npm run build",
     "firebase-functions:watch": "cd firebaseFunctions && npm run build:watch",
+    "firebase-deploy:feat/988-gnosis-safe": "firebase deploy --project=default --only functions:CI,firestore:rules",
     "firebase-deploy:development": "firebase deploy --project=development --only functions:CI,firestore:rules",
     "firebase-deploy:staging": "firebase deploy --project=staging --only functions:CI,firestore:rules",
     "firebase-deploy:master": "firebase deploy --project=production --config=firebase-production.json --only functions:CI,firestore:rules",
