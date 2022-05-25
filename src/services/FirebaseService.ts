@@ -147,13 +147,20 @@ export class FirebaseService {
     // this.browserStorageService.lsRemove(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE);
 
     let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 150 ~ messageToSign", messageToSign);
 
     if (!signature) {
+      const oldMessageToSign = messageToSign;
       messageToSign = await this.getMessageToSign();
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 154 ~ messageToSign", messageToSign);
       // @ts-ignore
       window.messageToSign = messageToSign;
 
       if (await this.ethereumService.isSafeApp()) {
+        let messageToCheck = oldMessageToSign;
+        if (!oldMessageToSign) {
+          messageToCheck = messageToSign;
+        }
         // TODO: need this?
         // const isMultiSig = signature === "0x";
 
@@ -162,7 +169,8 @@ export class FirebaseService {
         try {
           const info = await appsSdk.safe.getInfo();
           /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 139 ~ info", info);
-          const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
+          const isSigned = await appsSdk.safe.isMessageSigned(messageToCheck);
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 166 ~ messageToCheck", messageToCheck);
           /* prettier-ignore */ console.log("!!! >>>> _ >>>> ~ file: FirebaseService.ts ~ line 157 ~ isSigned", isSigned);
 
           /**
@@ -172,18 +180,26 @@ export class FirebaseService {
            */
           if (!isSigned) {
             this.eventAggregator.publish("gnosis.safe.transaction.await");
-            const { safeTxHash } = await appsSdk.txs.signMessage(messageToSign);
+            const { safeTxHash } = await appsSdk.txs.signMessage(messageToCheck);
             this.eventAggregator.publish("transaction.sent");
             /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 152 ~ safeTxHash", safeTxHash);
 
             await Utils.waitUntilTrue(async() => {
               /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 182 ~ waitUntilTrue");
-              return await appsSdk.safe.isMessageSigned(messageToSign);
+              return await appsSdk.safe.isMessageSigned(messageToCheck);
             }, 9999999, 4000);
 
             const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
             /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ tx", tx);
-            this.storeSignatureForAddress(address, signature, messageToSign);
+
+            const rawMessageLength = new Blob([messageToCheck]).size;
+            const message = ethers.utils.toUtf8Bytes(
+              "\x19Ethereum Signed Message:\n" + rawMessageLength + messageToCheck,
+            );
+            const messageHash = ethers.utils.keccak256(message);
+            signature = messageHash;
+
+            this.storeSignatureForAddress(address, signature, messageToCheck);
             this.eventAggregator.publish("transaction.confirmed");
           }
         } catch (error) {
