@@ -1,7 +1,7 @@
 name: Deploy Firebase
 on:
   push:
-    branches: [ 'feat/988-gnosis-safe', development, staging, master ]
+    branches: [ development, staging, master ]
 jobs:
   Deploy_firebase:
     runs-on: ubuntu-latest
