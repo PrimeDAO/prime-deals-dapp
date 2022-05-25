@@ -3,8 +3,8 @@ import { Routeable } from "aurelia";
 export const routes: Routeable[] = [
   {
     path: ['', 'home'],
-    title: "Home",
     id:  'home',
+    title: "Home",
     component: import('./home/home')
   },
   {

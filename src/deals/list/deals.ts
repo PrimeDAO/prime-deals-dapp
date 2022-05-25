@@ -15,7 +15,7 @@ import { DisposableCollection } from "services/DisposableCollection";
  * This is the view model for the deals page
  */
 @singleton(/*{scoped: false}*/)
-@inject(IEventAggregator, EthereumService)
+@inject()
 export class Deals {
 
   private cardIndex;
@@ -28,7 +28,7 @@ export class Deals {
   private subscriptions = new DisposableCollection();
 
   constructor(
-    private readonly dealService: DealService,
+    private dealService: DealService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dateService: DateService,
     private ethereumService: EthereumService,

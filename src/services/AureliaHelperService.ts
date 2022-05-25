@@ -5,8 +5,8 @@ import { IObserverLocator, IObservable, ICollectionSubscriber } from "@aurelia/r
 export class AureliaHelperService {
 
   constructor(
-    public container: IContainer,
-    private observerLocator: IObserverLocator,
+    @IContainer public container: IContainer,
+    @IObserverLocator private observerLocator: IObserverLocator,
   ) {
     //
   }

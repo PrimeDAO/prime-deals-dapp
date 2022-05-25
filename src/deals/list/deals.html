@@ -22,7 +22,7 @@
       <pbutton
         type="primary"
         data-test='initiate-deal-button'
-        click.delegate="navigate('initiate')"
+        load='/initiate'
         rel="noopener noreferrer">
         Initiate a deal
       </pbutton>
@@ -31,7 +31,7 @@
       ${showMine ? "You are not currently part of any deal" : "No deals are authorized for view" }
       <pbutton
         type="primary"
-        click.delegate="navigate('initiate')"
+        load="/initiate"
         rel="noopener noreferrer">
         Create Your Own Deal
       </pbutton>

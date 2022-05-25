@@ -2,7 +2,7 @@ import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, IBlockInfoNative, Networks } from "./EthereumService";
-import { inject, IContainer, TaskQueue, IEventAggregator} from "aurelia";
+import { inject, IContainer, IEventAggregator, PLATFORM} from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
@@ -96,12 +96,11 @@ export class DealService {
   constructor(
     private dataSourceDeals: IDataSourceDeals,
     @IEventAggregator private eventAggregator: IEventAggregator,
-    private container: IContainer,
+    @IContainer private container: IContainer,
     private aureliaHelperService: AureliaHelperService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
     private ethereumService: EthereumService,
-    private taskQueue: TaskQueue,
   ) {
     /**
      * set to the block of the creation of the TokenSwapModule
@@ -132,7 +131,7 @@ export class DealService {
         /**
          * queue up to handle reentrancy
          */
-        this.taskQueue.queueTask(async () =>
+        PLATFORM.taskQueue.queueTask(async () =>
         {
           /**
            * wait until the previous load is done
@@ -326,7 +325,7 @@ export class DealService {
                 this._createDeal(dealDoc);
               }
             } else {
-              this.taskQueue.queueTask(() => {
+              PLATFORM.taskQueue.queueTask(() => {
                 this.deals.delete(update.dealId);
               });
             }
@@ -411,7 +410,7 @@ export class DealService {
    */
   private updateDealDocument(dealDocument: IDealTokenSwapDocument, updatedDocument: IDealTokenSwapDocument):void {
 
-    this.taskQueue.queueTask(() => {
+    PLATFORM.taskQueue.queueTask(() => {
       // ignore updates to modifiedAt property
       updatedDocument.modifiedAt = dealDocument.modifiedAt;
 
