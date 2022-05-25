@@ -11,365 +11,391 @@ import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModi
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
-// const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
-// const admin = firebaseAdmin.initializeApp();
-// export const firestore = admin.firestore();
-// export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
-// export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
+const admin = firebaseAdmin.initializeApp();
+export const firestore = admin.firestore();
+export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
+export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
+
+const ProviderEndpoints = {
+  "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
+  "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
+  "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
+};
+
+/**
+ * Part of the answer in
+ * https://stackoverflow.com/questions/71866879/how-to-verify-message-in-wallet-connect-with-ethers-primarily-on-ambire-wallet
+ */
+function encryptForGnosis(rawMessage: string) {
+  const rawMessageLength = new Blob([rawMessage]).size;
+  const message = ethers.utils.toUtf8Bytes(
+    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
+  );
+  const messageHash = ethers.utils.keccak256(message);
+  return messageHash;
+}
 
 /**
  * Deals is a Safe App (https://docs.gnosis-safe.io/build-with-safe/sdks/safe-apps/get-started),
  * that requires different way of verifying a transaction (EIP-1271)
  */
-async function verifyGnosisTransaction() {
+async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
   console.log("------------------------------------------------------------------------------------------");
   console.log("------------------------------------------------------------------------------------------");
   /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: index.ts ~ line 25 ~ verifyGnosisTransaction");
   console.log("------------------------------------------------------------------------------------------");
   console.log("------------------------------------------------------------------------------------------");
-  const signerAddr = "0x40597Caffbc904396DCAFD23786A0e1626E6975c";
-  const rawMessage = "Authenticate access to Prime Deals at Tue May 24 2022 11:55:44 GMT+0200 (Central European Summer Time)";
-  const provider = ethers.getDefaultProvider("https://e761db8d40ea4f95a10923da3ffa47a3.rinkeby.rpc.rivet.cloud/");
+  const provider = ethers.getDefaultProvider(`https://${ProviderEndpoints[network]}.rinkeby.rpc.rivet.cloud/`);
 
   // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
   const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
   const EIP1271MagicValue = "0x1626ba7e";
   const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
 
-  const rawMessageLength = new Blob([rawMessage]).size;
-  const message = ethers.utils.toUtf8Bytes(
-    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
-  );
-  const messageHash = ethers.utils.keccak256(message);
+  const messageHash = encryptForGnosis(rawMessage);
   /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: index.ts ~ line 43 ~ messageHash", messageHash);
   const verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0x"));
 
   return verified;
 }
 
-verifyGnosisTransaction();
+// Allow cross-origin requests for functions which use it
+// It is necessary to accept HTTP requests from our app,
+// as firebase functions are not hosted on the same domain
+const cors = corsLib({
+  origin: true,
+});
 
-// // Allow cross-origin requests for functions which use it
-// // It is necessary to accept HTTP requests from our app,
-// // as firebase functions are not hosted on the same domain
-// const cors = corsLib({
-//   origin: true,
-// });
+/**
+ * Functions that are going to be deployed by CI
+ */
+export const CI = {
+  /**
+   * Run every time a document (a deal) in deals-token-swap collection is created
+   */
+  onDealCreate: functions.firestore
+    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+    .onCreate((snapshot) => {
+      updateDealUpdatesCollection(snapshot.id);
+    }),
 
-// /**
-//  * Functions that are going to be deployed by CI
-//  */
-// export const CI = {
-//   /**
-//    * Run every time a document (a deal) in deals-token-swap collection is created
-//    */
-//   onDealCreate: functions.firestore
-//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-//     .onCreate((snapshot) => {
-//       updateDealUpdatesCollection(snapshot.id);
-//     }),
+  /**
+   * Run every time a document (a deal) in deals-token-swap collection is updated
+   */
+  updateDealStructure: functions.firestore
+    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
+    .onUpdate(async (change, context) => {
+      const dealId: string = context.params.dealId;
+      const oldDeal = change.before.data() as IDealTokenSwapDocument;
+      const updatedDeal = change.after.data() as IDealTokenSwapDocument;
 
-//   /**
-//    * Run every time a document (a deal) in deals-token-swap collection is updated
-//    */
-//   updateDealStructure: functions.firestore
-//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}`)
-//     .onUpdate(async (change, context) => {
-//       const dealId: string = context.params.dealId;
-//       const oldDeal = change.before.data() as IDealTokenSwapDocument;
-//       const updatedDeal = change.after.data() as IDealTokenSwapDocument;
+      // In case it was a delete operation, or the only update was modifiedAt field
+      if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
+        return;
+      }
 
-//       // In case it was a delete operation, or the only update was modifiedAt field
-//       if (!updatedDeal || isModifiedAtOnlyUpdate(oldDeal, updatedDeal)) {
-//         return;
-//       }
+      updateDealUpdatesCollection(dealId);
 
-//       updateDealUpdatesCollection(dealId);
+      // Creates a write batch, used for performing multiple writes as a single atomic operation.
+      const batch = firestore.batch();
 
-//       // Creates a write batch, used for performing multiple writes as a single atomic operation.
-//       const batch = firestore.batch();
+      const dealUpdates: Partial<IDealTokenSwapDocument> = {
+        // modifiedAt: new Date().toISOString(),
+      };
 
-//       const dealUpdates: Partial<IDealTokenSwapDocument> = {
-//         // modifiedAt: new Date().toISOString(),
-//       };
+      // If registration data was updated and the update was done to field/fields other than the privacy flag
+      if (
+        isRegistrationDataUpdated(oldDeal, updatedDeal) &&
+        !isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
+      ) {
+        // get updated representatives address for both DAOs
+        const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
+        const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-//       // If registration data was updated and the update was done to field/fields other than the privacy flag
-//       if (
-//         isRegistrationDataUpdated(oldDeal, updatedDeal) &&
-//         !isRegistrationDataPrivacyOnlyUpdate(oldDeal, updatedDeal)
-//       ) {
-//         // get updated representatives address for both DAOs
-//         const primaryDaoRepresentativesAddresses = updatedDeal.registrationData.primaryDAO.representatives.map(item => item.address);
-//         const partnerDaoRepresentativesAddresses = updatedDeal.registrationData.partnerDAO ? updatedDeal.registrationData.partnerDAO.representatives.map(item => item.address) : [];
+        await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
-//         await resetVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+        dealUpdates.representativesAddresses = [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses];
+        dealUpdates.votingSummary = initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+      }
 
-//         dealUpdates.representativesAddresses = [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses];
-//         dealUpdates.votingSummary = initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
-//       }
+      batch.set(
+        change.after.ref, // reference to the updated Deal document
+        dealUpdates,
+        {merge: true}, // merges provided object with the existing data
+      );
 
-//       batch.set(
-//         change.after.ref, // reference to the updated Deal document
-//         dealUpdates,
-//         {merge: true}, // merges provided object with the existing data
-//       );
+      return batch.commit();
+    }),
 
-//       return batch.commit();
-//     }),
+  /**
+   * Run every time a document in a deal subcollection is updated
+   */
+  onVoteUpdate: functions.firestore
+    .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
+    .onUpdate(async (change, context) => {
+      const dealSubcollection = context.params.collection;
 
-//   /**
-//    * Run every time a document in a deal subcollection is updated
-//    */
-//   onVoteUpdate: functions.firestore
-//     .document(`${DEALS_TOKEN_SWAP_COLLECTION}/{dealId}/{collection}/{representativeAddress}`)
-//     .onUpdate(async (change, context) => {
-//       const dealSubcollection = context.params.collection;
+      // make sure that updated document is a subcollection of votes and not some other subcollection
+      if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
+        return;
+      }
 
-//       // make sure that updated document is a subcollection of votes and not some other subcollection
-//       if (dealSubcollection !== PRIMARY_DAO_VOTES_COLLECTION && dealSubcollection !== PARTNER_DAO_VOTES_COLLECTION) {
-//         return;
-//       }
+      const dealId = context.params.dealId;
 
-//       const dealId = context.params.dealId;
+      // Creates a write batch, used for performing multiple writes as a single atomic operation.
+      const batch = firestore.batch();
 
-//       // Creates a write batch, used for performing multiple writes as a single atomic operation.
-//       const batch = firestore.batch();
+      const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-//       const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+      // generate updated voting summary after a vote was updated
+      const votingSummary = await generateVotingSummary(dealId);
 
-//       // generate updated voting summary after a vote was updated
-//       const votingSummary = await generateVotingSummary(dealId);
+      batch.set(
+        dealRef,
+        {
+          votingSummary,
+          // modifiedAt: new Date().toISOString(),
+        },
+        {merge: true}, // merges provided object with the existing data
+      );
 
-//       batch.set(
-//         dealRef,
-//         {
-//           votingSummary,
-//           // modifiedAt: new Date().toISOString(),
-//         },
-//         {merge: true}, // merges provided object with the existing data
-//       );
+      return batch.commit();
+    }),
 
-//       return batch.commit();
-//     }),
+  createDeal: functions.https.onRequest(
+    (request, response) =>
+      // Allow cross-origin requests for this function
+      cors(request, response, async () => {
+        if (request.method !== "POST") {
+          return response.sendStatus(403);
+        }
 
-//   createDeal: functions.https.onRequest(
-//     (request, response) =>
-//       // Allow cross-origin requests for this function
-//       cors(request, response, async () => {
-//         if (request.method !== "POST") {
-//           return response.sendStatus(403);
-//         }
+        if (!request.body.registrationData) {
+          return response.sendStatus(400);
+        }
 
-//         if (!request.body.registrationData) {
-//           return response.sendStatus(400);
-//         }
+        functions.logger.log("Check if request is authorized with Firebase ID token");
 
-//         functions.logger.log("Check if request is authorized with Firebase ID token");
+        if ((!request.headers.authorization || !request.headers.authorization.startsWith("Bearer "))) {
+          functions.logger.error(
+            "No Firebase ID token was passed as a Bearer token in the Authorization header.",
+            "Make sure you authorize your request by providing the following HTTP header:",
+            "Authorization: Bearer <Firebase ID Token>",
+          );
+          return response.sendStatus(403);
+        }
 
-//         if ((!request.headers.authorization || !request.headers.authorization.startsWith("Bearer "))) {
-//           functions.logger.error(
-//             "No Firebase ID token was passed as a Bearer token in the Authorization header.",
-//             "Make sure you authorize your request by providing the following HTTP header:",
-//             "Authorization: Bearer <Firebase ID Token>",
-//           );
-//           return response.sendStatus(403);
-//         }
+        functions.logger.log("Found \"Authorization\" header");
 
-//         functions.logger.log("Found \"Authorization\" header");
+        // Read the Token from the Authorization header.
+        const idToken = request.headers.authorization.split("Bearer ")[1];
+        let decodedIdToken: firebaseAdmin.auth.DecodedIdToken;
 
-//         // Read the Token from the Authorization header.
-//         const idToken = request.headers.authorization.split("Bearer ")[1];
-//         let decodedIdToken: firebaseAdmin.auth.DecodedIdToken;
+        try {
+          decodedIdToken = await admin.auth().verifyIdToken(idToken);
+          functions.logger.log("ID Token correctly decoded", decodedIdToken);
+        } catch (error) {
+          functions.logger.error("Error while verifying Firebase ID token:", error);
+          return response.sendStatus(403);
+        }
 
-//         try {
-//           decodedIdToken = await admin.auth().verifyIdToken(idToken);
-//           functions.logger.log("ID Token correctly decoded", decodedIdToken);
-//         } catch (error) {
-//           functions.logger.error("Error while verifying Firebase ID token:", error);
-//           return response.sendStatus(403);
-//         }
+        const registrationData: IDealRegistrationTokenSwap = request.body.registrationData;
 
-//         const registrationData: IDealRegistrationTokenSwap = request.body.registrationData;
+        const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
+        const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
 
-//         const primaryDaoRepresentativesAddresses = registrationData.primaryDAO.representatives.map(item => item.address);
-//         const partnerDaoRepresentativesAddresses = registrationData.partnerDAO ? registrationData.partnerDAO.representatives.map(item => item.address) : [];
+        const dealId = shortUuid.generate();
+        const date = new Date().toISOString();
 
-//         const dealId = shortUuid.generate();
-//         const date = new Date().toISOString();
+        const dealData: Partial<IDealTokenSwapDocument> = {
+          id: dealId,
+          registrationData,
+          createdByAddress: decodedIdToken.uid,
+          createdAt: date,
+          modifiedAt: date,
+          representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
+          votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
+          isWithdrawn: false,
+          isRejected: false,
+        };
 
-//         const dealData: Partial<IDealTokenSwapDocument> = {
-//           id: dealId,
-//           registrationData,
-//           createdByAddress: decodedIdToken.uid,
-//           createdAt: date,
-//           modifiedAt: date,
-//           representativesAddresses: [...primaryDaoRepresentativesAddresses, ...partnerDaoRepresentativesAddresses],
-//           votingSummary: initializeVotingSummary(primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses),
-//           isWithdrawn: false,
-//           isRejected: false,
-//         };
+        // Creates a write batch, used for performing multiple writes as a single atomic operation.
+        const batch = firestore.batch();
 
-//         // Creates a write batch, used for performing multiple writes as a single atomic operation.
-//         const batch = firestore.batch();
+        const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
 
-//         const dealRef = firestore.doc(`/${DEALS_TOKEN_SWAP_COLLECTION}/${dealId}`);
+        // set deal document
+        batch.set(
+          dealRef,
+          dealData,
+        );
 
-//         // set deal document
-//         batch.set(
-//           dealRef,
-//           dealData,
-//         );
+        // updates batch with writes for creating vote object for each representative
+        initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
 
-//         // updates batch with writes for creating vote object for each representative
-//         initializeVotes(batch, dealId, primaryDaoRepresentativesAddresses, partnerDaoRepresentativesAddresses);
+        try {
+          // commits all writes added to the batch
+          await batch.commit();
 
-//         try {
-//           // commits all writes added to the batch
-//           await batch.commit();
+          const deal = (await dealRef.get()).data();
 
-//           const deal = (await dealRef.get()).data();
+          return response.status(200).send(deal);// .json(deal);
+        } catch (error){
+          functions.logger.error("Error while creating a deal:", error);
+          return response.sendStatus(500);
+        }
+      }),
+  ),
 
-//           return response.status(200).send(deal);// .json(deal);
-//         } catch (error){
-//           functions.logger.error("Error while creating a deal:", error);
-//           return response.sendStatus(500);
-//         }
-//       }),
-//   ),
+  /**
+   * Verifies that a message was signed by the provided address.
+   * Therefore it proofs the ownership of the address.
+   */
+  verifySignedMessageAndCreateCustomToken: functions.https.onRequest(
+    (request, response) =>
+    // Allow cross-origin requests for this function
+      cors(request, response, async () => {
+        if (request.method !== "POST") {
+          return response.sendStatus(403);
+        }
 
-//   /**
-//    * Verifies that a message was signed by the provided address.
-//    * Therefore it proofs the ownership of the address.
-//    */
-//   verifySignedMessageAndCreateCustomToken: functions.https.onRequest(
-//     (request, response) =>
-//     // Allow cross-origin requests for this function
-//       cors(request, response, async () => {
-//         if (request.method !== "POST") {
-//           return response.sendStatus(403);
-//         }
+        if (!request.body.address || !request.body.message || !request.body.signature) {
+          functions.logger.error("missing one of the required parameters");
+          return response.sendStatus(400);
+        }
 
-//         if (!request.body.address || !request.body.message || !request.body.signature) {
-//           functions.logger.error("missing one of the required parameters");
-//           return response.sendStatus(400);
-//         }
+        const address: string = request.body.address;
+        const message: string = request.body.message;
+        const signature: string = request.body.signature;
+        const network: string = request.body.network;
 
-//         const address: string = request.body.address;
-//         const message: string = request.body.message;
-//         const signature: string = request.body.signature;
+        functions.logger.info(`
+          Starting verification for the following:
+          Address: ${address},
+          Message: ${message},
+          Signature: ${signature},
+          Network: ${network}
+        `);
 
-//         functions.logger.info(`
-//           Starting verification for the following:
-//           Address: ${address},
-//           Message: ${message},
-//           Signature: ${signature}
-//         `);
+        try {
+          getAddress(address);
+        } catch {
+          functions.logger.error("Provider address is not a correct ETH address");
+          return response.sendStatus(500);
+        }
 
-//         try {
-//           getAddress(address);
-//         } catch {
-//           functions.logger.error("Provider address is not a correct ETH address");
-//           return response.sendStatus(500);
-//         }
+        let signerAddress;
+        /**
+         * Verify the signature.
+         * There are 2 cases:
+         * 1. "Normal" signature
+         * 2. The WalletConnect Safe App uses EIP-1271
+         */
+        try {
+          signerAddress = verifyMessage(
+            message,
+            signature,
+          );
+        } catch {
+          /**
+           * Have to set signature manually
+           */
+          signerAddress = address;
+          await verifyEIP1271Signature(signerAddress, message, network);
+        }
 
-//         // const signerAddress = verifyMessage(
-//         //   message,
-//         //   signature,
-//         // );
-//         const signerAddress = "0x40597Caffbc904396DCAFD23786A0e1626E6975c";
-//         await verifyGnosisTransaction();
+        try {
+          getAddress(signerAddress);
+        } catch {
+          functions.logger.error("Signer address is not a correct ETH address");
+          return response.sendStatus(500);
+        }
 
-//         try {
-//           getAddress(signerAddress);
-//         } catch {
-//           functions.logger.error("Signer address is not a correct ETH address");
-//           return response.sendStatus(500);
-//         }
+        functions.logger.info("Signer address: ", signerAddress);
 
-//         functions.logger.info("Signer address: ", signerAddress);
+        if (signerAddress.toLowerCase() === address.toLowerCase()) {
+          try {
+            // Create a custom token for the specified address
+            /**
+             * Firebase Token which is later going to be used to sign in to firebase from the client
+             */
+            const firebaseToken = await admin.auth().createCustomToken(address);
 
-//         if (signerAddress.toLowerCase() === address.toLowerCase()) {
-//           try {
-//             // Create a custom token for the specified address
-//             /**
-//              * Firebase Token which is later going to be used to sign in to firebase from the client
-//              */
-//             const firebaseToken = await admin.auth().createCustomToken(address);
+            // Return the token
+            return response.status(200).json({ token: firebaseToken });
+          } catch (error){
+            functions.logger.error("createCustomToken error:", error);
+            return response.sendStatus(500);
+          }
+        } else {
+          // The signature could not be verified
+          functions.logger.error("Message was not signed with the claimed address");
+          return response.sendStatus(401);
+        }
 
-//             // Return the token
-//             return response.status(200).json({ token: firebaseToken });
-//           } catch (error){
-//             functions.logger.error("createCustomToken error:", error);
-//             return response.sendStatus(500);
-//           }
-//         } else {
-//           // The signature could not be verified
-//           functions.logger.error("Message was not signed with the claimed address");
-//           return response.sendStatus(401);
-//         }
+      }),
+  ),
+};
 
-//       }),
-//   ),
-// };
+/**
+ * This function is not going to be deployed by CI
+ * This function should not be used on production
+ */
+export const createCustomToken = functions.https.onRequest((request, response) => {
+  if (process.env.GCLOUD_PROJECT === "prime-deals-production") {
+    functions.logger.error("Trying to access createCustomToken function on production. This function is not intended for production");
+    return;
+  }
 
-// /**
-//  * This function is not going to be deployed by CI
-//  * This function should not be used on production
-//  */
-// export const createCustomToken = functions.https.onRequest((request, response) => {
-//   if (process.env.GCLOUD_PROJECT === "prime-deals-production") {
-//     functions.logger.error("Trying to access createCustomToken function on production. This function is not intended for production");
-//     return;
-//   }
+  return cors(request, response, async () => {
+    const address: string = request.body.address;
+    try {
+      getAddress(address);
+    } catch {
+      functions.logger.error("Signer address is not a correct ETH address");
+      return response.sendStatus(500);
+    }
 
-//   return cors(request, response, async () => {
-//     const address: string = request.body.address;
-//     try {
-//       getAddress(address);
-//     } catch {
-//       functions.logger.error("Signer address is not a correct ETH address");
-//       return response.sendStatus(500);
-//     }
+    const firebaseToken = await admin.auth().createCustomToken(address);
+    return response.status(200).json({ token: firebaseToken });
+  });
+});
 
-//     const firebaseToken = await admin.auth().createCustomToken(address);
-//     return response.status(200).json({ token: firebaseToken });
-//   });
-// });
+/**
+ * Function responsible for running automated Backups.
+ * It runs every 60 minutes.
+ * It stores backups inside a Google Cloud Storage bucket, specified in `firebaseFunctions/.env` file
+ */
+export const scheduledFirestoreBackup = functions.pubsub
+  .schedule("every 60 minutes")
+  .onRun(() => {
+    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+    const bucket = `gs://${process.env.PRIME_BACKUP_BUCKET_NAME}`;
+    const databaseName =
+    firestoreAdminClient.databasePath(projectId, "(default)");
 
-// /**
-//  * Function responsible for running automated Backups.
-//  * It runs every 60 minutes.
-//  * It stores backups inside a Google Cloud Storage bucket, specified in `firebaseFunctions/.env` file
-//  */
-// export const scheduledFirestoreBackup = functions.pubsub
-//   .schedule("every 60 minutes")
-//   .onRun(() => {
-//     const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
-//     const bucket = `gs://${process.env.PRIME_BACKUP_BUCKET_NAME}`;
-//     const databaseName =
-//     firestoreAdminClient.databasePath(projectId, "(default)");
+    functions.logger.log(`
+      Trying to create a backup for
+      Project ID: ${projectId},
+      Database name: ${databaseName},
+      Inside a bucket: ${bucket}
+    `);
 
-//     functions.logger.log(`
-//       Trying to create a backup for
-//       Project ID: ${projectId},
-//       Database name: ${databaseName},
-//       Inside a bucket: ${bucket}
-//     `);
-
-//     return firestoreAdminClient.exportDocuments({
-//       name: databaseName,
-//       outputUriPrefix: bucket,
-//       // Leave collectionIds empty to export all collections
-//       // or set to a list of collection IDs to export,
-//       // collectionIds: ['users', 'posts']
-//       collectionIds: [],
-//     })
-//       .then(responses => {
-//         const response = responses[0];
-//         functions.logger.log(`Creating backup was successful. Operation Name: ${response["name"]}`);
-//       })
-//       .catch(err => {
-//         functions.logger.error(err);
-//         throw new Error("Creating backup failed");
-//       });
-//   });
+    return firestoreAdminClient.exportDocuments({
+      name: databaseName,
+      outputUriPrefix: bucket,
+      // Leave collectionIds empty to export all collections
+      // or set to a list of collection IDs to export,
+      // collectionIds: ['users', 'posts']
+      collectionIds: [],
+    })
+      .then(responses => {
+        const response = responses[0];
+        functions.logger.log(`Creating backup was successful. Operation Name: ${response["name"]}`);
+      })
+      .catch(err => {
+        functions.logger.error(err);
+        throw new Error("Creating backup failed");
+      });
+  });
