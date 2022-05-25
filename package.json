@@ -10,6 +10,7 @@
   "homepage": "./",
   "license": "MIT",
   "dependencies": {
+    "@aurelia/runtime-html": "^2.0.0-alpha.32",
     "@metamask/detect-provider": "^1.2.0",
     "@toruslabs/torus-embed": "^1.22.6",
     "@walletconnect/web3-provider": "^1.7.8",
@@ -31,7 +32,6 @@
     "web3modal": "^1.9.7"
   },
   "devDependencies": {
-    "@aurelia/runtime-html": "^2.0.0-alpha.32",
     "@aurelia/testing": "latest",
     "@aurelia/ts-jest": "latest",
     "@aurelia/webpack-loader": "latest",
