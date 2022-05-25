@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { autoinject } from "aurelia-framework";
 import { getAddress } from "ethers/lib/utils";
 

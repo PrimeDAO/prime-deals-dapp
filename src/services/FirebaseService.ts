@@ -17,6 +17,8 @@ import { ConsoleLogService } from "./ConsoleLogService";
 const safeAppOpts = {
   allowedDomains: [/gnosis-safe.io/],
 };
+const RETRY_SAFE_APP_INTERVAL = 4000;
+const RETRY_SAFE_APP_TIMEOUT = 999999;
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -58,8 +60,6 @@ export class FirebaseService {
     private browserStorageService: BrowserStorageService,
     private consoleLogService: ConsoleLogService,
   ) {
-    // @ts-ignore
-    window.ethereumService = ethereumService;
   }
 
   public initialize() {
@@ -83,9 +83,7 @@ export class FirebaseService {
       try {
         return this.signInToFirebase(address)
           .then(() => true)
-          .catch((error) => {
-            // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 74 ~ error", error);
-            this.consoleLogService.logMessage(error.message);
+          .catch(() => {
             this.eventAggregator.publish("handleFailure", "Authentication failed");
             return false;
           });
@@ -126,9 +124,6 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ address", address);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ message", message);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 104 ~ signature", signature);
     const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network: EthereumService.targetedNetwork});
 
     return response.data.token;
@@ -146,8 +141,6 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 150 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
-
     if (this.currentFirebaseUserAddress === address) {
       return;
     }
@@ -156,36 +149,21 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    // const safeInfo = await appsSdk.safe.getInfo();
-
-    // this.browserStorageService.lsRemove(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE);
-
     let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 150 ~ messageToSign", messageToSign);
 
     if (!signature) {
       const oldMessageToSign = messageToSign;
       messageToSign = await this.getMessageToSign();
-      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 154 ~ messageToSign", messageToSign);
-      // @ts-ignore
-      window.messageToSign = messageToSign;
 
       if (await this.ethereumService.isSafeApp()) {
         let messageToCheck = oldMessageToSign;
         if (!oldMessageToSign) {
           messageToCheck = messageToSign;
         }
-        // TODO: need this?
-        // const isMultiSig = signature === "0x";
 
         const appsSdk = new SafeAppsSDK(safeAppOpts);
-        // debugger;
         try {
-          const info = await appsSdk.safe.getInfo();
-          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 139 ~ info", info);
           const isSigned = await appsSdk.safe.isMessageSigned(messageToCheck);
-          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 166 ~ messageToCheck", messageToCheck);
-          /* prettier-ignore */ console.log("!!! >>>> _ >>>> ~ file: FirebaseService.ts ~ line 157 ~ isSigned", isSigned);
 
           /**
            * Gnosis Safe App signature verification has different flow:
@@ -196,15 +174,12 @@ export class FirebaseService {
             this.eventAggregator.publish("gnosis.safe.transaction.await");
             const { safeTxHash } = await appsSdk.txs.signMessage(messageToCheck);
             this.eventAggregator.publish("transaction.sent");
-            /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 152 ~ safeTxHash", safeTxHash);
 
             await Utils.waitUntilTrue(async() => {
-              /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 182 ~ waitUntilTrue");
               return await appsSdk.safe.isMessageSigned(messageToCheck);
-            }, 9999999, 4000);
+            }, RETRY_SAFE_APP_TIMEOUT, RETRY_SAFE_APP_INTERVAL);
 
             const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
-            /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ tx", tx);
 
             signature = encryptForGnosis(messageToCheck);
 
@@ -212,13 +187,12 @@ export class FirebaseService {
             this.eventAggregator.publish("transaction.confirmed");
           }
         } catch (error) {
-          console.log("Gnosis error");
-          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 173 ~ error", error);
+          this.eventAggregator.publish("database.account.signature.cancelled");
+          throw error;
         }
       } else {
         try {
           signature = await this.requestSignature(messageToSign);
-          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 141 ~ signature", signature);
           this.storeSignatureForAddress(address, signature, messageToSign);
           this.eventAggregator.publish("database.account.signature.successful");
 
@@ -231,10 +205,8 @@ export class FirebaseService {
 
     let token: string;
     try {
-      /* prettier-ignore */ console.log(">>>> 2 >>>> ~ file: FirebaseService.ts ~ line 149 ~ verifySignedMessageAndCreateCustomToken");
       token = await this.verifySignedMessageAndCreateCustomToken(address, messageToSign, signature);
     } catch (error) {
-      // /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 149 ~ error", error);
       this.eventAggregator.publish("handleFailure", "Signature wasn't verified successfully");
       throw new Error(error);
     }
@@ -257,7 +229,6 @@ export class FirebaseService {
   }
 
   private getExistingSignatureAndMessageForAddress(address: string): ISignatureStorage {
-    // debugger;
     const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
 
     return signaturesAndMessages[address] ? signaturesAndMessages[address] : {signature: null, messageToSign: null};
