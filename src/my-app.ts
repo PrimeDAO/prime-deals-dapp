@@ -53,6 +53,7 @@ export class MyApp implements IRouteViewModel {
     this.showingWalletMenu = true;
   }
 
+  // TODO: fix navigation behavior. Apply event subscriptions.
   // load(params: Params, next: RouteNode, current: RouteNode | null) {
   //   this.onNavigate();
   //   this.router.load(next);
