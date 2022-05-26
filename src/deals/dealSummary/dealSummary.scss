@@ -1,0 +1,142 @@
+@import "src/styles/colors";
+@import "src/resources/elements/primeDesignSystem/variables";
+
+deal-summary {
+  .pcard {
+    display: inline-block;
+    max-width: 360px;
+    min-width: 360px;
+    background-color: $BG02;
+    padding: $spacing-normal;
+    /* don't do this transition until we can do it with gradient pcards too
+    transition: 0.35s ease-in-out;
+    */
+    cursor: pointer;
+
+    &:hover {
+      background-color: $Border01;
+
+      .button:after {
+        opacity: 0;
+      }
+    }
+
+    .dealSummary {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 190px 67px;
+      grid-template-areas:
+        "countdown"
+        "proposal"
+        "footer";
+
+      .titleContainer {
+        grid-area: title;
+
+        .titleType {
+          color: $Secondary05;
+          text-transform: uppercase;
+          font-weight: 700;
+          font-family: $sub-heading;
+          font-size: $font-size1;
+        }
+
+        .title {
+          font-size: 20px;
+          font-weight: 700;
+        }
+      }
+
+      .dao {
+        display: grid;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: $Neutral04;
+      }
+
+      .proposal {
+        grid-area: proposal;
+        display: grid;
+        grid-template-areas:
+          "title"
+          "description";
+        grid-template-rows: min-content auto;
+        height: 190px;
+        row-gap: 12px;
+        padding: 0 $spacing-normal $spacing-normal $spacing-normal;
+      }
+
+      .description {
+        grid-area: description;
+        font-family: Inter;
+        font-size: 14px;
+        line-height: 140%;
+        font-weight: 400;
+        color: $Neutral02;
+        padding-bottom: 12px;
+        text-overflow: ellipsis;
+      }
+
+      > .countdown {
+        grid-area: countdown;
+        display: flex;
+        justify-content: flex-end;
+        font-size: 12px;
+      }
+
+      > .footer {
+        grid-area: footer;
+        display: flex;
+        padding: $spacing-normal;
+
+        .button {
+          margin: 0 12px 0 0;
+        }
+
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding-top: 32px;
+
+      i {
+        color: $Secondary07;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $PageBreakWidth) {
+  .dealSummaryContainer {
+    // because this is going to be vertically-aligned
+    padding-right: 0;
+    margin-bottom: 20px;
+    width: 50%;
+
+    .dealSummary {
+      > .icon {
+        img {
+          height: 36px;
+          width: 36px;
+        }
+      }
+
+      > .footer,
+      > .countdown,
+      > .proposal {
+        text-align: left;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .dealSummaryContainer {
+    min-width: 100%;
+    width: 100%;
+  }
+}

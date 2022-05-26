@@ -1,0 +1,140 @@
+<template>
+  <require from="../dealSummary/dealSummary"></require>
+  <require from="../timeLeft/timeLeft"></require>
+  <div class="page animated-page au-animate deals">
+    <div class="section deals-actions">
+      <pform-input if.to-view="dataSourceDeals.isUserAuthenticated" click.delegate="toggleMyDeals()"
+        label="Show my deals only">
+        <ptoggle value.bind="showMine"></ptoggle>
+      </pform-input>
+      <pbutton
+        if.to-view="!ethereumService.defaultAccountAddress"
+        type="secondary"
+        click.delegate="ethereumService.ensureConnected()">
+        Connect to Show Your Deals
+      </pbutton>
+      <pbutton
+        if.to-view="ethereumService.defaultAccountAddress && !dataSourceDeals.isUserAuthenticated"
+        type="secondary"
+        click.delegate="dealService.loadDeals()">
+        Authenticate to Show Your Deals
+      </pbutton>
+      <pbutton
+        type="primary"
+        data-test='initiate-deal-button'
+        load='/initiate'
+        rel="noopener noreferrer">
+        Initiate a deal
+      </pbutton>
+    </div>
+    <div class="section no-deals heading02" if.to-view="!dealsLoading && featuredDeals && featuredDeals.length === 0">
+      ${showMine ? "You are not currently part of any deal" : "No deals are authorized for view" }
+      <pbutton
+        type="primary"
+        load="/initiate"
+        rel="noopener noreferrer">
+        Create Your Own Deal
+      </pbutton>
+    </div>
+    <div data-test="deals-loading" class="section loading" if.to-view="dealsLoading">
+      <i class="spinner fa fas fa-circle-notch fa-spin"></i>
+    </div>
+    <div class="section deal-carousel" if.to-view="!dealsLoading && (!featuredDeals || featuredDeals.length)">
+      <div class="heading02Gradient carousel-selector">
+        <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
+          data-test="open-proposals-tab"
+          class="selector-tab ${cardIndex==0?'active':''}"
+          click.delegate="dealToggle(0, 'open')">
+          Open Proposals
+        </span>
+        <span if.to-view="isTabVisible(1,showMine,ethereumService.defaultAccountAddress)"
+          data-test="partnered-deals-tab"
+          class="selector-tab ${cardIndex==1?'active':''}"
+          click.delegate="dealToggle(1, 'partnered')">
+          Partnered Deals
+        </span>
+      </div>
+      <template if.to-view="featuredDeals && featuredDeals.length">
+        <horizontal-scroller class="featuredDealsScroller" item-count.to-view="featuredDeals.length">
+          <deal-summary deal.to-view="deal" repeat.for="deal of featuredDeals"></deal-summary>
+        </horizontal-scroller>
+      </template>
+    </div>
+
+    <div class="section all-deals" if.to-view="!gridDeals || gridDeals.length">
+      <div class="heading02Gradient">${showMine ? "My " : "All "}${cardIndex === 0 ? "open proposals" : "partnered deals"}</div>
+      <div if.to-view="!gridDeals" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+      <!-- Desktop grid -->
+      <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">
+        <div class="row header">
+          <div class="cell daos header sortable" click.delegate="sort('daos')">DAOs</div>
+          <div class="cell title header sortable" click.delegate="sort('title')">TITLE</div>
+          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
+          <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
+          <div class="cell age header sortable" click.delegate="sort('age')">AGE</div>
+          <div class="cell dealSize header sortable" click.delegate="sort('dealSize')">DEAL SIZE (USD)</div>
+        </div>
+        <template repeat.for="deal of gridDeals | sort:sortEvaluator">
+          <a
+            class="row body hot"
+            if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
+            click.delegate="navigate(`deal/${deal.id}`)">
+            <div class="project cell body ellipses hot">
+              <dao-icon-name primary-dao.to-view="deal.registrationData.primaryDAO" partner-dao.to-view="deal.registrationData.partnerDAO"></dao-icon-name>
+            </div>
+            <div class="title cell body hot">${deal.registrationData.proposal.title}</div>
+            <div class="type cell body hot sortable">Token Swap</div>
+            <div class="status cell body hot sortable">
+              <time-left contained deal.to-view="deal" hide-icons.to-view="false" largest></time-left>
+            </div>
+            <div class="age cell body hot sortable">${getFormattedTime(deal.createdAt)}</div>
+            <div class="dealSize cell body hot sortable">
+              <span if.to-view="cardIndex === 1 && deal.totalPrice === undefined"><i class="spinner fa fas fa-circle-notch fa-spin"></i></span>
+              <span if.to-view="cardIndex === 1 && deal.totalPrice !== undefined">${getPrice(deal) | currency}</span>
+              <span if.to-view="cardIndex === 0">-</span>
+            </div>
+          </a>
+        </template>
+      </div>
+      <!-- Mobile grid
+      <div if.to-view="!loading" class="grid dealGridMobile">
+        <div class="row header">
+          <div class="cell project header sortable" click.delegate="sort('project')">PROJECT</div>
+          <div class="cell projectToken header sortable" click.delegate="sort('projectToken')">PROJECT TOKEN</div>
+          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
+          <div class="cell whitelist header" click.delegate="sort('whitelist')">WHITELIST</div>
+          <div class="cell starts header sortable" click.delegate="sort('starts')">STARTS</div>
+          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
+          <div class="cell target header">&nbsp;</div>
+        </div>
+        <template repeat.for="deal of gridDeals | sort:sortEvaluator">
+          <a
+            class="row body hot"
+            if.to-view="!deal.initializing && (($index < 4) || seeingMore)"
+            click.delegate="onDealClick(deal)">
+            <div class="project cell body hot">${deal.metadata.general.projectName}</div>
+            <div class="projectToken cell body hot"><img src.to-view="deal.projectTokenInfo.logoURI"></img>${deal.projectTokenInfo.symbol}</div>
+            <div class="type cell body hot">${deal.dealType.toUpperCase()}</div>
+            <div class="whitelist cell body hot"><span if.to-view="deal.whitelisted" class="fa fa-check"></span><span else>&nbsp;</span></div>
+            <div class="starts cell body hot">
+              <time-left deal.to-view="deal" hide-icons largest></time-left>
+            </div>
+            <div class="fundingToken cell body hot"><img src.to-view="deal.fundingTokenInfo.logoURI"></img>${deal.fundingTokenInfo.symbol}</div>
+            <div class="cell body hot">&nbsp;</div>
+          </a>
+        </template>
+      </div> -->
+      <div class="seeMoreSection">
+        <div class="centered">
+          <pbutton type="tertiary" click.delegate="seeMore(true)" if.to-view="(gridDeals.length > 4) && !loading && !seeingMore">
+            SHOW ALL
+            <div class="arrow">&darr;</div>
+          </pbutton>
+          <pbutton type="tertiary" click.delegate="seeMore(false)" if.to-view="(gridDeals.length > 4) && !loading && seeingMore">
+            SHOW LESS
+            <div class="arrow">&uarr;</div>
+          </pbutton>
+        </div>
+      </div>
+    </div>
+</template>

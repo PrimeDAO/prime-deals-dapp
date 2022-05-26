@@ -1,8 +1,8 @@
 import { EventConfig, EventConfigException, EventConfigTransaction, EventMessageType } from "./GeneralEvents";
 import { DisposableCollection } from "./DisposableCollection";
 import { Utils } from "./utils";
-import { EventAggregator, IEventAggregator, inject } from "aurelia";
-import * as LogManager from 'aurelia-logging';
+import { IEventAggregator, inject } from "aurelia";
+import * as LogManager from "aurelia-logging";
 
 export type ConsoleLogMessageTypes = "info"|"warn"|"warning"|"error"|"debug";
 
@@ -13,8 +13,8 @@ export class ConsoleLogService {
   private subscriptions: DisposableCollection = new DisposableCollection();
   private logger = LogManager.getLogger("Prime Deals");
 
-  constructor(
-    @IEventAggregator eventAggregator: EventAggregator,
+  constructor (
+    @IEventAggregator eventAggregator: IEventAggregator,
   ) {
     this.subscriptions.push(eventAggregator
       .subscribe("handleException",

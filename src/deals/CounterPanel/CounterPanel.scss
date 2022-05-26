@@ -1,0 +1,39 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
+.counter-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px);
+  grid-gap: 10px;
+  justify-content: center;
+  width: calc(100% + 320px);
+  background: #292235;
+  margin-left: -160px;
+  padding: 63px 0;
+  .counter-column {
+    text-align: center;
+    .counter-number {
+      @include standardTextGradient;
+      font-size: 62px;
+      font-weight: 400;
+      line-height: 72px;
+      font-family: "Aeonik";
+    }
+    .counter-description {
+      color: $Neutral03;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 33px;
+      font-family: "Inter";
+    }
+    position: relative;
+    &:not(:last-child):after {
+      content: '';
+      position: absolute;
+      left: calc(100% + 4px);
+      background: #403453;
+      width: 2px;
+      height: 80%;
+      top: 10%;
+    }
+  }
+}

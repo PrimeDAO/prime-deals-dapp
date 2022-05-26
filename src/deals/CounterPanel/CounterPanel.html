@@ -1,0 +1,29 @@
+<template>
+  <div class="counter-panel">
+    <div class="counter-column">
+      <div class="counter-number">
+        <formatted-number average mantissa="0" value.to-view="deals.created | number"></formatted-number>+
+      </div>
+      <div class="counter-description">
+        DEALS<br/>CREATED
+      </div>
+    </div>
+    <div class="counter-column">
+      <div class="counter-number">
+        <formatted-number average mantissa="0" value.to-view="deals.successful | number"></formatted-number>+
+      </div>
+      <div class="counter-description">
+        SUCCESSFUL<br/>DEALS
+      </div>
+    </div>
+    <div class="counter-column">
+      <div class="counter-number">
+        <formatted-number average mantissa="0" value.to-view="deals.coLiquidities | number"></formatted-number>+
+      </div>
+      <div class="counter-description">
+        UNIQUE DAO<br/>JOINT VENTURES
+      </div>
+    </div>
+  </div>
+
+</template>
