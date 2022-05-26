@@ -1,20 +1,20 @@
 import { ConsoleLogService } from "./ConsoleLogService";
 import { DialogCloseResult, DialogDeactivationStatuses, IDialogService, inject } from "aurelia";
+import { Constructable } from "@aurelia/kernel";
 
 @inject()
 export class DialogService {
 
   constructor(
-    private dialogService: IDialogService,
+    @IDialogService private dialogService: IDialogService,
     private consoleLogService: ConsoleLogService,
   ) {
   }
 
   public open(
-    viewModule: unknown, // result of `import {view} from "path to module files"`
+    viewModule: () => Constructable<object>, // result of `import {view} from "path to module files"`
     model: unknown, // object that is given to the module's `activate` function
     settings: object = {},
-    className = "pPopupModal", // gets set on ux-dialog-container
   ): Promise<DialogCloseResult> {
 
     /**
@@ -22,19 +22,13 @@ export class DialogService {
      * to the desired dialog type.
      */
     let theContainer: Element;
-    return this.dialogService.open(
-      Object.assign({
-        model,
-        viewModel: viewModule,
-      }, Object.assign({}, settings, {
-        position: (modalContainer: Element, _modalOverlay: Element): void => {
-          theContainer = modalContainer;
-          theContainer.classList.add(className);
-        },
-      })))
+    return this.dialogService.open({
+      model,
+      component: viewModule,
+      ...settings,
+    })
       .whenClosed(
         (result: DialogCloseResult) => {
-          theContainer.classList.remove(className);
           return result;
         },
         // not sure if this always gets called

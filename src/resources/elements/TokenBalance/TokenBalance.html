@@ -1,0 +1,10 @@
+<template>
+  <span if.to-view="balance !== null">
+    <formatted-number
+      average
+      class="tokenbalance"
+      placement.to-view="placement"
+      value.to-view="balance | ethwei:tokenInfo.decimals"></formatted-number>
+  </span>
+  <span class="tokenbalance" else>--</span>
+</template>

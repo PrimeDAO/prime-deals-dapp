@@ -1,10 +1,10 @@
-import { inject } from "aurelia";
+import { bindable, inject } from "aurelia";
 
 @inject()
 export class Navbar {
+  @bindable private showWalletMenu?: () => void;
+
   // TODO uncomment everything here
-  // @bindable private showWalletMenu?: () => void;
-  //
   // environment = process.env.FIREBASE_ENVIRONMENT;
   //
   // menuOpen = false;
@@ -31,8 +31,8 @@ export class Navbar {
   //   this.menuOpen = false;
   //   this.router.load(href);
   // }
-  //
-  // private handleShowWalletMenu(): void {
-  //   this.showWalletMenu();
-  // }
+
+  private handleShowWalletMenu(): void {
+    this.showWalletMenu();
+  }
 }

@@ -1,0 +1,10 @@
+<template>
+  <span if.to-view="balance !== null">
+    <formatted-number
+      average
+      class="ethbalance"
+      placement.to-view="placement"
+      value.to-view="balance | ethwei:18"></formatted-number>
+  </span>
+  <span class="ethbalance" else>--</span>
+</template>

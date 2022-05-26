@@ -3,10 +3,12 @@
     <div class="connectedButtons" if.to-view="accountAddress">
       <template if.to-view="!hideBalances">
         <div class="ethBalanceContainer">
-          <tokenbalance formatted="0.00a" token-address.to-view="primeAddress"></tokenbalance>D2D
+          <token-balance formatted="0.00a" token-address.to-view="primeAddress"></token-balance>
+          D2D
         </div>
         <div class="ethBalanceContainer ETH">
-          <ethbalance formatted="0.00a"></ethbalance>ETH
+          <eth-balance formatted="0.00a"></eth-balance>
+          ETH
         </div>
       </template>
       <div class="connectButton" data-test="connectButton">
