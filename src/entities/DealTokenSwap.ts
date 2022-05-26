@@ -18,7 +18,6 @@ import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "services/AureliaHelperService";
 import { DealService } from "services/DealService";
-import { watch } from "@aurelia/runtime-html";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -236,9 +235,9 @@ export class DealTokenSwap implements IDeal {
           const totalClaimed : BigNumber = tokenClaims.reduce((a, b) => a.add(b.claimedAmount), BigNumber.from(0));
           const instantTransferAmount = BigNumber.from(daoToken.instantTransferAmount);
           const totalAmount = BigNumber.from(daoToken.amount);
-          // const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
-          // const swapFee = DealService.getDealFee(totalAmount);
-          // return totalClaimed.add(instantTransferAmountAfterFee).add(swapFee).gte(daoToken.amount);
+          const instantTransferAmountAfterFee = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+          const swapFee = DealService.getDealFee(totalAmount);
+          return totalClaimed.add(instantTransferAmountAfterFee).add(swapFee).gte(daoToken.amount);
         });
       });
       returnVal = isClaimed;
