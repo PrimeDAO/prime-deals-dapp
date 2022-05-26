@@ -9,6 +9,7 @@ import { RouteNode, Params } from "aurelia";
 
 @inject()
 export class MyApp implements IRouteViewModel {
+  static title = "Prime Deals"
   static routes = routes
 
   constructor(
@@ -30,10 +31,9 @@ export class MyApp implements IRouteViewModel {
     dealsService.initialize()
   }
 
-  load(params: Params, next: RouteNode, current: RouteNode | null) {
-    console.log("Load", params, next, current);
-    // this.onNavigate();
-    // this.router.load(next);
-  }
+  // load(params: Params, next: RouteNode, current: RouteNode | null) {
+  //   this.onNavigate();
+  //   this.router.load(next);
+  // }
 
 }
