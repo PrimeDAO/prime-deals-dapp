@@ -20,7 +20,7 @@ export class DealRepresentativesVotes {
     return this.dao.representatives.length > 2 && !Math.round(index - count / 2);
   }
 
-  @computedFrom("votes")
+  @computedFrom("votes", "dao")
   private get sortedVotes(): boolean[] {
     return this.dao.representatives.map(x => this.votes[x.address]).sort((a, b) => a > b ? -1 : 1);
   }

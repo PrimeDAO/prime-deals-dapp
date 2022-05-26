@@ -6,14 +6,12 @@
       <h1 class="title heading03Gradient">Vote</h1>
       <p class="bodySmallText">${statusText.voteText}</p>
       <pbutton-group
-        if.bind="deal.isRepresentativeUser && !deal.fundingWasInitiated && !deal.isCancelled"
-      >
+        if.bind="deal.isRepresentativeUser && !deal.fundingWasInitiated && !deal.isCancelled">
         <pbutton
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="acceptDeal()"
-        >
+          click.delegate="acceptDeal()">
           <span class="icon is-loading" if.bind="accepting">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
@@ -25,8 +23,7 @@
           class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="declineDeal()"
-        >
+          click.delegate="declineDeal()">
           <span class="icon is-loading" if.bind="declining">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
           </span>
@@ -37,25 +34,24 @@
 
       <div
         class="negotiate"
-        if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled"
-      >
+        if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled">
         <pbutton class="negotiateButton" click.delegate="goToDiscussions()">
-          <img src="/static/comment.svg"/>
+          <img src="/static/comment.svg" />
           Negotiate
         </pbutton>
       </div>
 
       <p class="bodySmallText votesSubtitle representativesVotesSubtitle">
-        Votes (${deal.submittedVotes.length}/${deal.representatives.size})
+        Votes (${deal.submittedVotes.length}/${deal.registrationData.primaryDAO.representatives.length +
+        (deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.length
+        : 0)})
       </p>
       <deal-representatives-votes
         votes.bind="deal.allVotes"
-        dao.bind="deal.primaryDao"
-      ></deal-representatives-votes>
+        dao.bind="deal.registrationData.primaryDAO"></deal-representatives-votes>
       <deal-representatives-votes
         votes.bind="deal.allVotes"
-        dao.bind="deal.partnerDao"
-      ></deal-representatives-votes>
+        dao.bind="deal.registrationData.partnerDAO"></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
       <div class="orangeColor dealStatusText">${statusText.statusText}</div>
@@ -63,8 +59,7 @@
 
     <div
       class="funding"
-      if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.fundingWasInitiated && !deal.isCancelled"
-    >
+      if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.fundingWasInitiated && !deal.isCancelled">
       <pbutton class="fundButton" click.delegate="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
@@ -73,8 +68,7 @@
 
     <div
       class="funding"
-      if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)"
-    >
+      if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)">
       <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
         Go to funding
         <i class="fas fa-arrow-right"></i>

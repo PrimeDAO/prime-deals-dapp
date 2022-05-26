@@ -12,8 +12,7 @@
           <div
             class="daoTitle"
             ref="primaryDaoTitle"
-            ptooltip.to-view="primaryDaoTitle.scrollWidth > primaryDaoTitle.offsetWidth ? deal.primaryDao.name : ''"
-          >
+            ptooltip.to-view="primaryDaoTitle.scrollWidth > primaryDaoTitle.offsetWidth ? deal.primaryDao.name : ''">
             ${deal.primaryDao.name}
           </div>
         </div>
@@ -35,8 +34,7 @@
           <div
             class="daoTitle"
             ref="partnerDaoTitle"
-            ptooltip.to-view="partnerDaoTitle.scrollWidth > partnerDaoTitle.offsetWidth ? deal.partnerDao.name : ''"
-          >
+            ptooltip.to-view="partnerDaoTitle.scrollWidth > partnerDaoTitle.offsetWidth ? deal.partnerDao.name : ''">
             ${deal.partnerDao.name}
           </div>
         </div>
@@ -46,8 +44,7 @@
         <a
           href.bind="socialMedia.url"
           repeat.for="socialMedia of deal.partnerDao.social_medias"
-          target="_blank"
-        >
+          target="_blank">
           <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
         </a>
       </div>
@@ -64,15 +61,13 @@
       <span class="bodySmallTextBold infoTitle">Proposal Lead</span>
       <etherscanlink
         address.bind="deal.proposalLead.address"
-        text="${deal.proposalLead.address | smallHexString}"
-      >
+        text="${deal.proposalLead.address | smallHexString}">
       </etherscanlink>
     </div>
 
     <div
       class="infoSection totalRepresentatives ${showMore ? 'active' : ''}"
-      click.delegate="showMore = !showMore"
-    >
+      click.delegate="showMore = !showMore">
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
       <span>
         ${deal.registrationData.primaryDAO.representatives.length +
@@ -85,17 +80,15 @@
       <div class="panel-content">
         <p
           class="representative bodySmallText"
-          repeat.for="address of deal.primaryDaoRepresentatives"
-        >
+          repeat.for="representative of deal.registrationData.primaryDAO.representatives">
           <span class="representative-dao">${deal.primaryDao.name}</span>
-          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
+          <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}"></etherscanlink>
         </p>
         <p
           class="representative bodySmallText"
-          repeat.for="address of deal.partnerDaoRepresentatives"
-        >
+          repeat.for="representative of deal.registrationData.partnerDAO.representatives">
           <span class="representative-dao">${deal.partnerDao.name}</span>
-          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
+          <etherscanlink address.bind="representative.address" text="${representative.address | smallHexString}"></etherscanlink>
         </p>
       </div>
     </div>
@@ -117,8 +110,7 @@
           <formatted-number
             mantissa="2"
             thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"
-          ></formatted-number>
+            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
         </div>
       </div>
       <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
@@ -141,8 +133,7 @@
           <formatted-number
             mantissa="2"
             thousands-separated
-            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"
-          ></formatted-number>
+            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"></formatted-number>
         </div>
       </div>
     </div>
@@ -152,8 +143,7 @@
     <div
       class="infoSection"
       if.bind="deal.primaryDao.tokens.length && deal.totalPrice"
-      ref="totalFunds"
-    >
+      ref="totalFunds">
       <span class="bodySmallTextBold infoTitle">Total funds value</span>
       ${deal.totalPrice | currency}
     </div>
@@ -172,8 +162,7 @@
         ptooltip.bind="deal.isAuthenticatedProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
         value.bind="deal.isPrivate"
         changed.call="changePrivacy(checked)"
-        class="dealPrivacyToggle"
-      ></ptoggle>
+        class="dealPrivacyToggle"></ptoggle>
     </div>
   </pcard>
 </template>
