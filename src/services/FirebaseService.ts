@@ -157,19 +157,15 @@ export class FirebaseService {
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ messageToSign", messageToSign);
 
     if (!signature) {
-      const oldMessageToSign = messageToSign;
       messageToSign = await this.getMessageToSign();
 
       if (await this.ethereumService.isSafeApp()) {
-        let messageToCheck = oldMessageToSign;
-        if (!oldMessageToSign) {
-          messageToCheck = messageToSign;
-        }
-        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ messageToCheck", messageToCheck);
+
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 164 ~ messageToSign", messageToSign);
 
         const appsSdk = new SafeAppsSDK(safeAppOpts);
         try {
-          const isSigned = await appsSdk.safe.isMessageSigned(messageToCheck);
+          const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
 
           /**
            * Gnosis Safe App signature verification has different flow:
@@ -178,18 +174,18 @@ export class FirebaseService {
            */
           if (!isSigned) {
             this.eventAggregator.publish("gnosis.safe.transaction.await");
-            const { safeTxHash } = await appsSdk.txs.signMessage(messageToCheck);
+            const { safeTxHash } = await appsSdk.txs.signMessage(messageToSign);
             this.eventAggregator.publish("transaction.sent");
 
             await Utils.waitUntilTrue(async() => {
-              return await appsSdk.safe.isMessageSigned(messageToCheck);
+              return await appsSdk.safe.isMessageSigned(messageToSign);
             }, RETRY_SAFE_APP_TIMEOUT, RETRY_SAFE_APP_INTERVAL);
 
             const tx = await appsSdk.txs.getBySafeTxHash(safeTxHash);
 
-            signature = encryptForGnosis(messageToCheck);
+            signature = encryptForGnosis(messageToSign);
 
-            this.storeSignatureForAddress(address, signature, messageToCheck);
+            this.storeSignatureForAddress(address, signature, messageToSign);
             this.eventAggregator.publish("transaction.confirmed");
           }
         } catch (error) {
