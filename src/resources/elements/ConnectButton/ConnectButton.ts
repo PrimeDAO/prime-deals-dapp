@@ -12,7 +12,7 @@ enum Phase {
   Confirming = "Confirming"
 }
 
-// @singleton // TODO make this work because v1 had it
+// @singleton() // TODO make this work because v1 had it
 @containerless
 export class ConnectButton {
 

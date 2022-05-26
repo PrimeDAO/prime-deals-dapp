@@ -2,6 +2,7 @@ import { IContainer, inject, IRouter, IRouteViewModel } from "aurelia";
 import { routes } from "./routes";
 import { AllowedNetworks, EthereumService, Networks } from "./services/EthereumService";
 import { ContractsDeploymentProvider } from "./services/ContractsDeploymentProvider";
+import { TokenService } from "./services/TokenService";
 
 @inject()
 export class MyApp implements IRouteViewModel {
@@ -12,17 +13,21 @@ export class MyApp implements IRouteViewModel {
 
   constructor(
     @IRouter protected router: IRouter,
-    @IContainer container: IContainer,
+    @IContainer private container: IContainer,
   ) {
+  }
+
+  async created() {
     const network = process.env.NETWORK as AllowedNetworks;
     const inDev = process.env.NODE_ENV === "development";
 
-    const ethereumService = container.get(EthereumService);
+    const ethereumService = this.container.get(EthereumService);
     ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
 
     ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
-
-    ethereumService.connectToConnectedProvider();
+    const tokenService = this.container.get(TokenService);
+    await tokenService.initialize();
+    await ethereumService.connectToConnectedProvider();
   }
 
   onNavigate(): void {
