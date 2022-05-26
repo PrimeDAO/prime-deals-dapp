@@ -1,0 +1,158 @@
+@import "src/styles/colors";
+@import "src/styles/variables";
+
+.markdownContainer {
+  // trying to override dialogBody here
+  font-family: Inter !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
+  color: $Neutral03 !important;
+  white-space: normal !important;
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  ul,
+  li,
+  ol,
+  code,
+  pre,
+  strong,
+  i,
+  b {
+    all: revert;
+  }
+
+  h1 {
+    @include standardTextGradient;
+    font-size: 48px;
+    line-height: 46px;
+    padding-bottom: 24px;
+    font-family: "Aeonik";
+    font-style: normal;
+    font-weight: bold;
+    width: fit-content; // so gradients look right
+    white-space: break-word;
+    margin-bottom: 28px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    scroll-margin-top: 110px;
+  }
+
+  a {
+    color: $Secondary07;
+    white-space: pre-wrap;
+  }
+
+  p {
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  code,
+  pre {
+    background-color: $Neutral01;
+    color: $Secondary04;
+    border-radius: 0.3em;
+    padding: 4px 5px 6px;
+    white-space: nowrap;
+  }
+
+  ul {
+    padding-inline-start: 2em;
+  }
+
+  li {
+    margin: 10px 0;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 40px;
+  }
+
+  h3 {
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+
+  img {
+    width: 600px;
+    // height: 600px;
+  }
+
+  table {
+    border-spacing: 0;
+    /* Removes the cell spacing via CSS */
+    border-collapse: collapse;
+
+    th {
+      padding: 6px 13px;
+      border: 1px solid;
+    }
+
+    tr {
+      border-top: 1px solid;
+
+      &:nth-child(2n) {
+        background-color: $BG01;
+      }
+
+      td {
+        width: 215px;
+        height: 40px;
+        padding: 6px 13px;
+        border: 1px solid;
+      }
+
+      td:not(td:first-child) {
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  kbd {
+    outline: none;
+    padding: 11px 13px;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 0px;
+    letter-spacing: 0.6px;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 50px;
+    background-color: rgba(0, 0, 0, 0);
+    color: $Neutral04;
+    white-space: nowrap;
+    gap: 12px;
+    display: inline-flex;
+    background-image: linear-gradient(45deg, #a258a7 0%, #ff497a 50%, #8668fc 100%);
+    background-size: 200% auto;
+  }
+}
+
+@media screen and (max-width: $PageBreakWidth) {
+  .markdownContainer {
+    h1,
+    h2,
+    h3,
+    h4 {
+      scroll-margin-top: 75px;
+    }
+  }
+}

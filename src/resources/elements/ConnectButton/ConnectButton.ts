@@ -1,4 +1,4 @@
-import { bindable, containerless, EventAggregator } from "aurelia";
+import { bindable, containerless, IEventAggregator } from "aurelia";
 import { DisposableCollection } from "../../../services/DisposableCollection";
 import { Address, EthereumService } from "../../../services/EthereumService";
 import { Utils } from "../../../services/utils";
@@ -27,9 +27,10 @@ export class ConnectButton {
 
   constructor(
     private ethereumService: EthereumService,
-    private eventAggregator: EventAggregator,
+    @IEventAggregator private eventAggregator: IEventAggregator,
   ) {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {
+      console.log('address changed (does not work) ->', account)
       this.accountAddress = account;
       this.txPhase = Phase.None;
       this.txReceipt = null;

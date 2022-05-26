@@ -18,5 +18,10 @@
     "browser": true,
     "node": true,
     "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/no-inferrable-types": [
+      false
+    ]
   }
 }
