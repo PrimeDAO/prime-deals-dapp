@@ -48,23 +48,18 @@ export class DealVotes {
       statusText: "Token Swap Failed",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
-      voteText: "Waiting for the representatives to vote",
-      statusText: "Voting is progress",
-    },
-    {
       condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
       voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. Once the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
-      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, the Proposal Lead will initiate the funding phase",
+      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedProposalLead,
+      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, you can initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedProposalLead,
-      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, you can initiate the funding phase",
+      condition: () => !this.deal.majorityHasVoted,
+      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, the Proposal Lead will initiate the funding phase",
       statusText: "Voting in progress",
     },
     {
