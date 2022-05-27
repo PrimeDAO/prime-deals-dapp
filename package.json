@@ -65,7 +65,8 @@
     "webpack": "^5.71.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4",
+    "firebase-tools": "^10.2.2"
   },
   "scripts": {
     "lint:js": "eslint src test cypress --ext .js,.ts",
@@ -81,7 +82,20 @@
     "analyze": "rimraf dist && webpack --env production --analyze",
     "test": "jest",
     "cypress": "cypress run",
-    "test:e2e": "cross-env CI=1 start-server-and-test start http://localhost:9000 cypress"
+    "test:e2e": "cross-env CI=1 start-server-and-test start http://localhost:9000 cypress",
+    "firebase": "npm run firebase-functions:build && npm run firebase-emulators:start",
+    "firebase-e2e": "firebase emulators:start --project=default --import=firebase_seed_e2e",
+    "firebase:all": "npm run firebase-functions:watch & npm run firebase-emulators:start",
+    "firebase-update-seed-data": "firebase emulators:export --force firebase_seed",
+    "firebase-update-seed-data:e2e": "firebase emulators:export --project=default --force firebase_seed_e2e",
+    "firebase-emulators:start": "firebase emulators:start --project=default --import=firebase_seed",
+    "firebase-functions:build": "cd firebaseFunctions && npm run build",
+    "firebase-functions:watch": "cd firebaseFunctions && npm run build:watch",
+    "firebase-deploy:development": "firebase deploy --project=development --only functions:CI,firestore:rules",
+    "firebase-deploy:staging": "firebase deploy --project=staging --only functions:CI,firestore:rules",
+    "firebase-deploy:master": "firebase deploy --project=production --config=firebase-production.json --only functions:CI,firestore:rules",
+    "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
+    "postinstall": "cd firebaseFunctions && npm ci && npm run build"
   },
   "jest": {
     "testEnvironment": "jsdom",
