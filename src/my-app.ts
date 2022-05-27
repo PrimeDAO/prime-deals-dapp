@@ -8,7 +8,6 @@ import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 // import { RouteNode, Params } from "aurelia";
 import { TokenService } from "./services/TokenService";
 
-@inject()
 export class MyApp implements IRouteViewModel {
   static title = "Prime Deals"
   static routes = routes

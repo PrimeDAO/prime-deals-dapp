@@ -1,6 +1,6 @@
 <template>
-  <require from="../dealSummary/dealSummary"></require>
-  <require from="../timeLeft/timeLeft"></require>
+  <import from="../dealSummary/dealSummary"></import>
+  <import from="../timeLeft/timeLeft"></import>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
       <pform-input if.to-view="dataSourceDeals.isUserAuthenticated" click.delegate="toggleMyDeals()"
