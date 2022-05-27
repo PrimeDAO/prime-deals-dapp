@@ -1,0 +1,11 @@
+<div class="pcountdown-closebutton  ${ paused ? 'isPaused' : ''}">
+  <pcountdown-circular
+    class="countdowner"
+    start-at="5"
+    running.bind="running"
+    paused.bind="paused"
+    stopped.call="countdownStopped(cancelled)"
+    closed.call="closed()">
+  </pcountdown-circular>
+  <div class="closeButton" click.trigger="close()"></div>
+</div>

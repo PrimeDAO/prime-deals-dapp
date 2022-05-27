@@ -1,0 +1,67 @@
+@import "../variables";
+
+.pstepper {
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 33px;
+  color: $Border01;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,136px 0px);
+  justify-content: center;
+
+  .active {
+    color: $Secondary02;
+
+    .valid {
+      color: $Secondary02;
+    }
+  }
+  .valid {
+    color: $Neutral02;
+  }
+  .stepNumber {
+    cursor: pointer;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    >div {
+      text-align: center;
+    }
+    transition: color 125ms ease-in-out;
+    .circledNumber {
+      transition: background-color 125ms ease-in-out;
+    }
+  }
+
+  pcircled-number {
+    position: relative;
+    margin-bottom: 6px;
+
+    &.hasConnector {
+      &:after {
+        position: absolute;
+        display: block;
+        width: 90px;
+        height: 3px;
+        background: $Border01;
+        top: 18.5px;
+        left: 43px;
+        content: '';
+      }
+    }
+
+    &.isValid {
+      &:after {
+        background: $Neutral02;
+      }
+    }
+  }
+
+  .stepNumber:hover {
+    .circledNumber {
+      background-color: $Neutral04;
+    }
+    color: $Neutral04;
+  }
+}

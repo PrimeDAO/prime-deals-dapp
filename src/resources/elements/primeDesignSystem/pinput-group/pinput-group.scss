@@ -1,0 +1,48 @@
+@import "../variables";
+
+pinput-group {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+
+  .addon {
+    display: flex;
+    align-items: center;
+    background-color: $Border01;
+    padding: 0 24px;
+    font-weight: 400;
+    font-size: $font-size3;
+    border-radius: $border-radius-normal;
+  }
+
+  &.disabled {
+    .addon {
+      opacity: 0.43; // from the design system mock
+    }
+  }
+
+  &.hasBeforeAddon {
+    .addon {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .pInput {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  &.hasAfterAddon {
+    .addon {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .pInput {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}

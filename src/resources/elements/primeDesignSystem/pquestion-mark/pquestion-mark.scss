@@ -1,0 +1,16 @@
+@import '../colors';
+
+pquestion-mark {
+  display: inline-block;
+
+  .question-mark {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $Neutral02;
+    border-radius: 50%;
+    color: $BG01;
+    width: 24px;
+    height: 24px;
+  }
+}

@@ -1,0 +1,22 @@
+<div class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
+  <label class="pToggle">
+    <input
+      data-test="pToggleInput"
+      checked.bind="value"
+      value.bind="value"
+      class="pToggleInput ${ validationState ? 'pInput-' + validationState : '' }"
+      disabled.bind="disabled"
+      change.delegate="changed ? changed({checked: value}): undefined"
+      type="checkbox"
+    />
+    <span class="pToggleSlider">
+      <i class="fas fa-check checkedIcon"></i>
+      <i class="fas fa-times uncheckedIcon"></i>
+    </span>
+  </label>
+
+  <i class="feedback-icon fas fa-exclamation-circle" if.bind="validationState === 'warning'"></i>
+  <i class="feedback-icon fas fa-exclamation-triangle" if.bind="validationState === 'error'"></i>
+  <i class=" feedback-icon fas fa-circle-notch loading" if.bind="validationState === 'validating'"></i>
+
+</div>

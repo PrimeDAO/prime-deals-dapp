@@ -1,30 +1,23 @@
-// TODO replace this with AU2 way of importing components
-// import { FrameworkConfiguration } from "aurelia-framework";
-// import { PLATFORM } from "aurelia-pal";
-//
-// export function configure(config: FrameworkConfiguration): void {
-//   config.globalResources([
-//     PLATFORM.moduleName("./pbutton/pbutton"),
-//     PLATFORM.moduleName("./pcard/pcard"),
-//     PLATFORM.moduleName("./pselect/pselect"),
-//     PLATFORM.moduleName("./pinput-numeric/pinput-numeric"),
-//     PLATFORM.moduleName("./pinput-text/pinput-text"),
-//     PLATFORM.moduleName("./ptextarea/ptextarea"),
-//     PLATFORM.moduleName("./pcircled-number/pcircled-number"),
-//     PLATFORM.moduleName("./pstepper/pstepper"),
-//     PLATFORM.moduleName("./pform-input/pform-input"),
-//     PLATFORM.moduleName("./ptoggle/ptoggle"),
-//     PLATFORM.moduleName("./pinput-group/pinput-group"),
-//     PLATFORM.moduleName("./pcountdown-circular/pcountdown-circular"),
-//     PLATFORM.moduleName("./prange-slider/prange-slider"),
-//     PLATFORM.moduleName("./pprogress-bar/pprogress-bar"),
-//     PLATFORM.moduleName("./pchip/pchip"),
-//     PLATFORM.moduleName("./pgrid/pgrid"),
-//     PLATFORM.moduleName("./pcountdown-closebutton/pcountdown-closebutton"),
-//     PLATFORM.moduleName("./ppopup-notification/ppopup-notification"),
-//     PLATFORM.moduleName("./ppopup-modal/ppopup-modal"),
-//     PLATFORM.moduleName("./ptooltip/ptooltip"),
-//     PLATFORM.moduleName("./pbutton-group/pbutton-group"),
-//     PLATFORM.moduleName("./pquestion-mark/pquestion-mark"),
-//   ]);
-// }
+export * from './pbutton-group/pbutton-group';
+export * from './pbutton/pbutton';
+export * from './pcard/pcard';
+export * from './pchip/pchip';
+export * from './pcircled-number/pcircled-number';
+export * from './pcountdown-circular/pcountdown-circular';
+export * from './pcountdown-closebutton/pcountdown-closebutton';
+export * from './pform-input/pform-input';
+export * from './pgrid/pgrid';
+export * from './pinput-group/pinput-group';
+export * from './pinput-numeric/pinput-numeric';
+export * from './pinput-text/pinput-text';
+export * from './ppopup-modal/ppopup-modal';
+export * from './ppopup-notification/ppopup-notification';
+export * from './pprogress-bar/pprogress-bar';
+export * from './pquestion-mark/pquestion-mark';
+export * from './prange-slider/prange-slider';
+export * from './pselect/pselect';
+export * from './pstepper/pstepper';
+export * from './ptextarea/ptextarea';
+export * from './ptoggle/ptoggle';
+export * from './ptooltip/ptooltip';
+export * from './types';

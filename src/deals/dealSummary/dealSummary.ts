@@ -1,4 +1,4 @@
-import { inject, Router, bindable } from "aurelia";
+import { Router, bindable } from "aurelia";
 import { Address } from "services/EthereumService";
 import "./dealSummary.scss";
 import { DealTokenSwap } from "../../entities/DealTokenSwap";
@@ -7,7 +7,6 @@ import { DealTokenSwap } from "../../entities/DealTokenSwap";
  * Is used as the <deal-summary /> component in the deals page
  * This displays the cards that are in the horizontal scroller
  */
-@inject()
 export class DealSummary {
 
   @bindable public address: Address;

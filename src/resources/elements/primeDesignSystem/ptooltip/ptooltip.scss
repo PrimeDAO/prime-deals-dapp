@@ -1,0 +1,18 @@
+@import '../variables';
+
+.tippy-box[data-theme="prime-design-system"] {
+  background-color: $Secondary05;
+  box-shadow: 2px 2px 8px 0 #00000040;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: $font-size1;
+  font-family: 'Inter', sans-serif;
+
+  .tippy-content {
+    padding: 0;
+  }
+
+  .tippy-arrow:before {
+    color: $Secondary05;
+  }
+}

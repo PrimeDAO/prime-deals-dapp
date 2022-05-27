@@ -1,0 +1,32 @@
+<section
+  data-test="${className}"
+  class="ppopup-dialog pPopupModal pcard gradient ${className || ''}"
+>
+  <p
+    class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}"
+    ref="headerElement"
+  >
+    <au-slot name="header"></au-slot>
+  </p>
+  <p class="dialogBody" ref="body">
+    <au-slot></au-slot>
+  </p>
+
+  <p class="dialogFooter">
+    <pbutton
+      type="tertiary"
+      show.bind="showCancelButton"
+      click.trigger="secondaryClick()"
+      >${buttonTextSecondary}</pbutton
+    >
+    <pbutton
+      type="primary"
+      class="primaryFooterButton"
+      show.bind="showOkButton"
+      ref="primaryButton"
+      click.trigger="primaryClick()"
+    >
+      <span innerhtml.bind="buttonTextPrimary | sanitizeHTML"></span
+    ></pbutton>
+  </p>
+</section>

@@ -1,0 +1,17 @@
+<div class="
+    ${disabled ? 'disabled' : ''}
+    ${beforeSlot.length ? 'hasBeforeAddon' : ''}
+    ${afterSlot.length ? 'hasAfterAddon' : ''}
+  "
+>
+  <div class="addon" show.bind="beforeSlot">
+    <au-slot name="before"></au-slot>
+  </div>
+
+  <au-slot></au-slot>
+
+  <div class="addon" show.bind="afterSlot">
+    <au-slot name="after"></au-slot>
+  </div>
+
+</div>

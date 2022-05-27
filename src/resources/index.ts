@@ -10,4 +10,4 @@ export * from './value-converters/ethwei';
 export * from './value-converters/smallHexString';
 export * from './value-converters/htmlSanitizer';
 
-export * from './elements/primeDesignSystem/pbutton/pbutton';
+export * from './elements/primeDesignSystem';
