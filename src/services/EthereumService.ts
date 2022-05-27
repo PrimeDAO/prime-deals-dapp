@@ -61,7 +61,7 @@ export interface IChainEventInfo {
 }
 
 export type IEthereumService = EthereumService;
-export const IEthereumService = DI.createInterface<IEthereumService>('EthereeumService');
+export const IEthereumService = DI.createInterface<IEthereumService>('EthereumService');
 
 @inject()
 export class EthereumService {
