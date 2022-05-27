@@ -1,7 +1,7 @@
 import { BigNumber, Contract, ethers, Signer } from "ethers";
-import { Address, EthereumService, Hash, IBlockInfoNative, IChainEventInfo } from "./EthereumService";
+import { Address,  Hash, IBlockInfoNative, IChainEventInfo, IEthereumService } from "./EthereumService";
 import { ContractsDeploymentProvider } from "./ContractsDeploymentProvider";
-import { EventAggregator, inject } from "aurelia";
+import { IEventAggregator, inject } from "aurelia";
 
 export enum ContractNames {
   DEALMANAGER = "DealManager"
@@ -38,8 +38,8 @@ export class ContractsService {
   private accountAddress: Address;
 
   constructor(
-    private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService) {
+    @IEventAggregator private readonly eventAggregator: IEventAggregator,
+    @IEthereumService private readonly ethereumService: IEthereumService) {
 
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
       if (account !== this.accountAddress) {
@@ -126,11 +126,11 @@ export class ContractsService {
 
   private setInitializingContracts(): void {
     if (!this.initializingContractsResolver) {
-    /**
-     * jump through this hook because the order of receipt of `EthereumService.onConnect`
-     * is indeterminant, but we have to make sure `ContractsService.initializeContracts`
-     * has completed before someone tries to use `this.Contracts` (see `getContractFor`).
-     */
+      /**
+       * jump through this hook because the order of receipt of `EthereumService.onConnect`
+       * is indeterminant, but we have to make sure `ContractsService.initializeContracts`
+       * has completed before someone tries to use `this.Contracts` (see `getContractFor`).
+       */
       this.initializingContracts = new Promise<void>((resolve: () => void) => {
         this.initializingContractsResolver = resolve;
       });

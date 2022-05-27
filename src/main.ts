@@ -2,6 +2,7 @@ import Aurelia, { DialogDefaultConfiguration, RouterConfiguration, } from 'aurel
 import { StandardConfiguration } from '@aurelia/runtime-html';
 import { MyApp } from './my-app';
 import * as ResourcesComponents from './resources/index';
+import {register as services} from './services/register';
 
 new Aurelia
   (StandardConfiguration
@@ -13,5 +14,6 @@ new Aurelia
   .register(RouterConfiguration)
   .register(ResourcesComponents)
   .register(DialogDefaultConfiguration)
+  .register(services)
   .app(MyApp)
   .start()

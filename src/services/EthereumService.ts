@@ -7,7 +7,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { Utils } from "./utils";
-import { IEventAggregator, inject } from "aurelia";
+import { DI, IEventAggregator, inject, Registration } from "aurelia";
 import { DisclaimerService } from "./DisclaimerService";
 
 interface IEIP1193 {
@@ -59,6 +59,9 @@ export interface IChainEventInfo {
   chainName: AllowedNetworks;
   provider: Web3Provider;
 }
+
+export type IEthereumService = EthereumService;
+export const IEthereumService = DI.createInterface<IEthereumService>('EthereeumService');
 
 @inject()
 export class EthereumService {
@@ -273,7 +276,7 @@ export class EthereumService {
       }
 
       try {
-      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        // wasAdded is a boolean. Like any RPC method, an error may be thrown.
         wasAdded = await (this.web3ModalProvider as any).request({
           method: "wallet_watchAsset",
           params: {
@@ -403,7 +406,7 @@ export class EthereumService {
 
   private async fireAccountsChangedHandler(account: Address) {
     if (account && !(await this.disclaimerService.ensurePrimeDisclaimed(account))) {
-      this.disconnect({code: -1, message: "User declined the Prime Deals disclaimer"});
+      this.disconnect({ code: -1, message: "User declined the Prime Deals disclaimer" });
       account = null;
     }
     console.info(`account changed: ${account}`);
@@ -587,3 +590,4 @@ export const fromWei = (weiValue: BigNumberish, decimals: string | number): stri
 };
 
 export const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
