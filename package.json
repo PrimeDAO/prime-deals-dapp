@@ -97,6 +97,12 @@
     "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
     "postinstall": "cd firebaseFunctions && npm ci && npm run build"
   },
+  "engines": {
+    "node": ">=14.11.0 <15"
+  },
+  "browser": {
+    "http": false
+  },
   "jest": {
     "testEnvironment": "jsdom",
     "transform": {
