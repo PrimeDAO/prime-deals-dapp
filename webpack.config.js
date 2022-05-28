@@ -7,6 +7,7 @@ const webpack = require("webpack");
 const dotenv = require("dotenv");
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 
+const baseUrl = '/';
 
 const cssLoader = {
   loader: 'css-loader',
@@ -121,7 +122,13 @@ module.exports = function ( env, { analyze, tests } ) {
       ]
     },
     plugins: [
-      new HtmlWebpackPlugin({ template: 'index.html' }),
+      new HtmlWebpackPlugin({
+        template: 'index.html',
+        metadata: {
+          // available in index.html //
+          baseUrl
+        }
+      }),
       // new Dotenv({
       //   // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
       //   path: `./.env`,
