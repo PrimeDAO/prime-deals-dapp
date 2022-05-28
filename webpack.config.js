@@ -4,8 +4,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 // const Dotenv = require('dotenv-webpack');
 const webpack = require("webpack");
-const dotenv = require("dotenv");
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const { EnvironmentPlugin } = require("webpack");
+
+require("dotenv").config({ path: `${process.env.DOTENV_CONFIG_PATH}` });
+
+console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
 
 const baseUrl = '/';
 
@@ -55,7 +59,7 @@ module.exports = function ( env, { analyze, tests } ) {
     },
     resolve: {
       extensions: ['.ts', '.js'],
-      modules: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'dev-app'), 'node_modules'],
+      modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: production ? {
         // add your production aliasing here
       } : {
@@ -100,12 +104,13 @@ module.exports = function ( env, { analyze, tests } ) {
     },
     devServer: {
       historyApiFallback: true,
-      open: !process.env.CI,
+      // open: !process.env.CI,
       static: {
         directory: path.join( __dirname, '/static' ),
       },
       compress: true,
-      port: 9000
+      port: 3340,
+      hot: true
     },
     module: {
       rules: [
@@ -133,9 +138,9 @@ module.exports = function ( env, { analyze, tests } ) {
       //   // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
       //   path: `./.env`,
       // }),
-      new webpack.DefinePlugin({ // the above Dotenv plugin doesn't work
-        'process.env': JSON.stringify(dotenv.config().parsed)
-      }),
+      // new webpack.DefinePlugin({ // the above Dotenv plugin doesn't work
+      //   'process.env': JSON.stringify(dotenv.config().parsed)
+      // }),
       analyze && new BundleAnalyzerPlugin(),
       // Work around for Buffer is undefined:
       // https://github.com/webpack/changelog-v5/issues/10
@@ -149,7 +154,8 @@ module.exports = function ( env, { analyze, tests } ) {
         patterns: [
           { from: 'static', to: './', globOptions: { ignore: [ '.*' ] } }
         ]
-      } ) )
+      } ) ),
+      new EnvironmentPlugin(process.env)
     ].filter(p => p)
   }
 }
