@@ -3,15 +3,92 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Aurelia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <base href="/">
+  <title>Prime Deals</title>
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A decentralized autonomous organization and ecosystem for the adoption of decentralized, open finance.">
+  <base href="<%- htmlWebpackPlugin.options.metadata.baseUrl %>">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="./base.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.css" rel="stylesheet">
+  </link>
+  <script src="https://kit.fontawesome.com/bf98881e0a.js" crossorigin="anonymous"></script>
+
+  <% if ((process.env.NODE_ENV==="production" ) && (process.env.NETWORK==="mainnet" )) { %>
+    <script src="https://cdn.usefathom.com/script.js" data-site="LRDLXCPA" data-spa="history" defer></script>
+    <% } %>
+
+      <style>
+        /* these are here so webpack will pick up the fonts */
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-Light.ttf");
+          font-weight: 300;
+        }
+
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-Regular.ttf");
+          font-weight: 400;
+        }
+
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-Medium.ttf");
+          font-weight: 500;
+        }
+
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-SemiBold.ttf");
+          font-weight: 600;
+        }
+
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-Bold.ttf");
+          font-weight: 700;
+        }
+
+        @font-face {
+          font-family: "Inter";
+          src: url("./Inter-ExtraBold.ttf");
+          font-weight: 800;
+        }
+
+        @font-face {
+          font-family: "Aeonik";
+          src: url("./Aeonik-Regular.otf");
+        }
+
+        @font-face {
+          font-family: "Aeonik";
+          src: url("./Aeonik-Bold.otf");
+          font-weight: 600;
+        }
+      </style>
+      <!-- imported CSS are concatenated and added automatically -->
+
 </head>
 
-<body>
-<my-app></my-app>
+<body class="loading">
+  <app></app>
 
-<script crossorigin="anonymous" src="https://kit.fontawesome.com/bf98881e0a.js"></script>
+  <!-- <body class="loading"> -->
+  <div class="initialLoading preload">
+    <img src="/PD_Logo-Loop.gif">
+    <div class="body">Almost There!</div>
+    <div class="body body2">Thanks for your patience</div>
+  </div>
+
+  <!-- <div class="temporarilyDown preload">
+    <img src="/PrimeDeals.svg">
+    <div class="body">Sorry, Prime Deals is experiencing a technical issue.</div>
+    <div class="body body2">Thanks for your patience as we work hard to resolve it!</div>
+    <div class="body body2">Please feel free to make enquiries and receive updates by clicking Visit Support.</div>
+    <button><a src="#" target="_blank" rel="noopener noreferrer">VISIT SUPPORT</a></button>
+  </div> -->
+
 </body>
 
 </html>
