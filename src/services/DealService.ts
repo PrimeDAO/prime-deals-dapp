@@ -358,7 +358,7 @@ export class DealService {
 
   public async ensureAllDealsInitialized(): Promise<void> {
     console.log("Ensure all deals initialized");
-    
+
     await this.ensureInitialized();
     for (const deal of this.dealsArray) {
       await deal.ensureInitialized();

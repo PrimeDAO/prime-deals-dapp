@@ -1,4 +1,4 @@
-import { DI } from 'aurelia';
+import { DI } from "aurelia";
 import { Observable } from "rxjs";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDealDiscussion } from "entities/DealDiscussions";
@@ -64,7 +64,7 @@ export interface IDataSourceDeals {
     accountAddress: Address,
     dao: "PRIMARY_DAO" | "PARTNER_DAO",
     yes: boolean): Promise<void>;
-    
+
   deleteAllVotes(
     dealId: IDealIdType,
     accountAddress: Address): Promise<void>;
@@ -126,4 +126,4 @@ export interface IDataSourceDeals {
    */
   isUserSignatureRequired(accountAddress?: string): boolean;
 }
-export const IDataSourceDeals = DI.createInterface<IDataSourceDeals>('DataSourceDeals');
+export const IDataSourceDeals = DI.createInterface<IDataSourceDeals>("DataSourceDeals");
