@@ -5,6 +5,7 @@ export * from './elements/markdown/markdown';
 export * from './elements/UsersAddress/UsersAddress';
 export * from './elements/NetworkFeedback/NetworkFeedback';
 export * from './elements/TokenBalance/TokenBalance';
+export * from './elements/horizontal-scroller/horizontal-scroller';
 
 export * from './value-converters/ethwei';
 export * from './value-converters/smallHexString';

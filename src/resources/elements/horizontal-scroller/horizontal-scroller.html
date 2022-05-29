@@ -1,0 +1,15 @@
+<div class="scrollerContainer">
+  <div ref="scroller" scrollleft.bind="scrollleft" class="scroller">
+    <!-- must be a set of divs -->
+    <au-slot></au-slot>
+  </div>
+  <div class="leftButton ${atEnd ? 'hide' : '' }" click.delegate="left()">
+    <i class="fas fa-angle-right"></i>
+  </div>
+  <div
+    class="rightButton ${atBeginning ? 'hide' : '' }"
+    click.delegate="right()"
+  >
+    <i class="fas fa-angle-left"></i>
+  </div>
+</div>

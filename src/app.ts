@@ -1,14 +1,11 @@
-import { IContainer, IRouter, IRouteViewModel, Registration } from "aurelia";
+import { IContainer, IRouter, IRouteViewModel } from "aurelia";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
-import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DealService } from "services/DealService";
 import { AllowedNetworks, EthereumService, IEthereumService, Networks } from "services/EthereumService";
-import { FirestoreDealsService } from "services/FirestoreDealsService";
 import { TokenService } from "services/TokenService";
 import { routes } from "./routes";
 
 export class App implements IRouteViewModel {
-  public message = `Hello World from ${process.env.NODE_ENV }!`;
   static title = "Prime Deals"
   static routes = routes;
 

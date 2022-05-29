@@ -32,11 +32,13 @@
 
     <div class="productSubpages">
       <div class="container">
-        <a class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}" href="/">Home</a>
-        <a class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}" href="/initiate">Initiate a Deal</a>
-        <a class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'deals') ? 'active' : ''}" href="/deals">All Deals</a>
-        <a class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}" href="/documentation">Documentation</a>
-        <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
+        <nav>
+          <a class="item" load="/">Home</a>
+          <a class="item" load="initiate">Initiate a Deal</a>
+          <a class="item" load="deals">All Deals</a>
+          <a class="item" load="documentation">Documentation</a>
+          <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
+        </nav>
       </div>
     </div>
 
