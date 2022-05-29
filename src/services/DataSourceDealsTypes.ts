@@ -1,3 +1,4 @@
+import { DI } from 'aurelia';
 import { Observable } from "rxjs";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDealDiscussion } from "entities/DealDiscussions";
@@ -11,10 +12,8 @@ export type IDealIdType = string;
  * this is a hack using a class to simulate an interface that we
  * can inject
  */
-export abstract class IDataSourceDeals {
-  initialize(): void {
-    throw new Error("Method not implemented.");
-  }
+export interface IDataSourceDeals {
+  initialize(): void;
   /**
    * Create a new Deal
    * @param accountAddress
@@ -22,9 +21,7 @@ export abstract class IDataSourceDeals {
    */
   createDeal<TDealDocument extends IDealTokenSwapDocument, TRegistration extends IDealRegistrationTokenSwap>(
     accountAddress: Address,
-    registration: TRegistration): Promise<TDealDocument> {
-    throw new Error("Method not implemented.");
-  }
+    registration: TRegistration): Promise<TDealDocument>;
 
   /**
    * Get the collection of deal documents
@@ -32,23 +29,17 @@ export abstract class IDataSourceDeals {
    * @param accountAddress if set then can include private deals that
    * they are allowed to see
    */
-  getDeals<TDealDocument extends IDealTokenSwapDocument>(accountAddress?: Address): Promise<Array<TDealDocument>> {
-    throw new Error("Method not implemented.");
-  }
+  getDeals<TDealDocument extends IDealTokenSwapDocument>(accountAddress?: Address): Promise<Array<TDealDocument>>;
 
   /**
    * Tries to authenticate provided accountAddress to the data source
    */
-  syncAuthentication(accountAddress?: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
+  syncAuthentication(accountAddress?: string): Promise<boolean>;
 
   /**
    * Is user authenticated to the data source
    */
-  isUserAuthenticatedWithAddress(accountAddress: string): boolean {
-    throw new Error("Method not implemented.");
-  }
+  isUserAuthenticatedWithAddress(accountAddress: string): boolean;
 
   isUserAuthenticated: boolean;
 
@@ -56,16 +47,11 @@ export abstract class IDataSourceDeals {
    * Returns Observable of all deals, and emits when any of them update
    * Doesn't return the actual deal document, only the time when it was modified
    */
-  allDealsUpdatesObservable(): Observable<Array<{dealId: string, modifiedAt: string}>> {
-    throw new Error("Method not implemented.");
-  }
-
+  allDealsUpdatesObservable(): Observable<Array<{ dealId: string, modifiedAt: string }>>;
   /**
    * Get deal document by Id
    */
-  getDealById<TDealDocument extends IDealTokenSwapDocument>(dealId: string): Promise<TDealDocument> {
-    throw new Error("Method not implemented.");
-  }
+  getDealById<TDealDocument extends IDealTokenSwapDocument>(dealId: string): Promise<TDealDocument>;
 
   /**
    * add new vote or update existing
@@ -77,14 +63,11 @@ export abstract class IDataSourceDeals {
     dealId: IDealIdType,
     accountAddress: Address,
     dao: "PRIMARY_DAO" | "PARTNER_DAO",
-    yes: boolean): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+    yes: boolean): Promise<void>;
+    
   deleteAllVotes(
     dealId: IDealIdType,
-    accountAddress: Address): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+    accountAddress: Address): Promise<void>;
   /**
    * update deal registration
    * @param dealId
@@ -94,9 +77,7 @@ export abstract class IDataSourceDeals {
   updateRegistration<TRegistration extends IDealRegistrationTokenSwap>(
     dealId: IDealIdType,
     accountAddress: Address,
-    registration: TRegistration): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+    registration: TRegistration): Promise<void>;
   /**
    * Adds discussion to clauseDiscussions map
    * @param dealId
@@ -108,9 +89,7 @@ export abstract class IDataSourceDeals {
     dealId: IDealIdType,
     accountAddress: Address,
     clauseId: string,
-    discussion: IDealDiscussion): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+    discussion: IDealDiscussion): Promise<void>;
 
   /**
    * Update isWithdrawn flag
@@ -122,9 +101,7 @@ export abstract class IDataSourceDeals {
     dealId: IDealIdType,
     accountAddress: Address,
     value: boolean,
-  ): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+  ): Promise<void>;
 
   /**
    * Update isWithdrawn flag
@@ -132,10 +109,7 @@ export abstract class IDataSourceDeals {
   updateDealIsPrivate(
     dealId: IDealIdType,
     value: boolean,
-  ): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
+  ): Promise<void>;
   /**
    * Update isRejected flag
    * @param dealId
@@ -146,14 +120,10 @@ export abstract class IDataSourceDeals {
     dealId: IDealIdType,
     accountAddress: Address,
     value: boolean,
-  ): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
+  ): Promise<void>;
   /**
    * Should we ask user to sign authentication message
    */
-  isUserSignatureRequired(accountAddress?: string): boolean {
-    throw new Error("Method not implemented.");
-  }
+  isUserSignatureRequired(accountAddress?: string): boolean;
 }
+export const IDataSourceDeals = DI.createInterface<IDataSourceDeals>('DataSourceDeals');

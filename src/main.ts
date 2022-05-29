@@ -1,6 +1,8 @@
 import { StandardConfiguration } from '@aurelia/runtime-html';
 import Aurelia, { DialogDefaultConfiguration, Registration, RouterConfiguration, } from 'aurelia';
 import { App } from './app';
+import * as ResourceComponents from './resources'
+import { register as services } from './services/register'
 
 new Aurelia()
   .register(StandardConfiguration.customize(x => {
@@ -8,9 +10,7 @@ new Aurelia()
   }))
   .register(RouterConfiguration)
   .register(DialogDefaultConfiguration)
-
-  // .register(ResourcesComponents)
-  // .register(services)
-  // .register(Registration.singleton(IDataSourceDeals, FirestoreDealsService))
+  .register(ResourceComponents)
+  .register(services)
   .app(App)
   .start()

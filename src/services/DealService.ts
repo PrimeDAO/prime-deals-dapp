@@ -1,7 +1,7 @@
 import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address, EthereumService, IBlockInfoNative, Networks } from "./EthereumService";
+import { Address, EthereumService, IBlockInfoNative, IEthereumService, Networks } from "./EthereumService";
 import { inject, IContainer, IEventAggregator, PLATFORM} from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { AureliaHelperService } from "./AureliaHelperService";
@@ -94,13 +94,13 @@ export class DealService {
   // public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: IDataSourceDeals,
+    @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IContainer private container: IContainer,
     private aureliaHelperService: AureliaHelperService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
   ) {
     /**
      * set to the block of the creation of the TokenSwapModule

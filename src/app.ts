@@ -1,8 +1,11 @@
 import { IContainer, IRouter, IRouteViewModel } from "aurelia";
+import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+import { DealService } from "services/DealService";
+import { AllowedNetworks, EthereumService, IEthereumService, Networks } from "services/EthereumService";
+import { TokenService } from "services/TokenService";
 import { routes } from "./routes";
 
 export class App implements IRouteViewModel {
-  public message = `Hello World from ${process.env.NODE_ENV }!`;
   static title = "Prime Deals"
   static routes = routes;
 
@@ -12,27 +15,22 @@ export class App implements IRouteViewModel {
   constructor(
     @IRouter protected router: IRouter,
     @IContainer private container: IContainer,
+    @IEthereumService private ethereumService: IEthereumService
   ) {
   }
 
-  // async created() {
-  //   const network = process.env.NETWORK as AllowedNetworks;
-  //   const inDev = process.env.NODE_ENV === "development";
+  async created() {
+    const network = process.env.NETWORK as AllowedNetworks;
+    const inDev = process.env.NODE_ENV === "development";
 
-  //   const ethereumService = this.container.get(EthereumService);
-  //   ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
-  //   ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
-  //   const tokenService = this.container.get(TokenService);
-  //   await tokenService.initialize();
-  //   await ethereumService.connectToConnectedProvider();
-
-  //   this.container.register(
-  //     Registration.singleton(IDataSourceDeals, FirestoreDealsService)
-  //   )
-
-  //   const dealsService = this.container.get(DealService);
-  //   dealsService.initialize()
-  // }
+    this.ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
+    ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
+    const tokenService = this.container.get(TokenService);
+    await tokenService.initialize();
+    await this.ethereumService.connectToConnectedProvider();
+    const dealsService = this.container.get(DealService);
+    dealsService.initialize()
+  }
 
   onNavigate(): void {
     this.showingMobileMenu = false;

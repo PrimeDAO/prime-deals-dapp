@@ -1,12 +1,9 @@
-<div>${message}</div>
-
-
-<!-- <import from="./footer/footer"></import>
+<import from="./footer/footer"></import>
 <import from="./navbar/navbar"></import>
 <import from="./walletMenu/walletMenu"></import>
 
 <div if.bind="showCountdownPage">
-  <compose view-model="./comingSoon/comingSoon"></compose>
+  <au-compose view-model="./comingSoon/comingSoon"></au-compose>
 </div>
 
 <div else>
@@ -16,11 +13,11 @@
   <modalscreen message.to-view="modalMessage" on-off.to-view="onOff">
     <div class="appWrapper">
       <div class="mainContent">
-        <au-viewport></au-viewport>
+        <au-viewport default="home"></au-viewport>
       </div>
       <div class="appFooter">
         <footer></footer>
       </div>
     </div>
   </modalscreen>
-</div> -->
+</div>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ContractNames, ContractsService } from "./ContractsService";
 import { getAddress } from "ethers/lib/utils";
-import { EthereumService } from "./EthereumService";
+import { EthereumService, IEthereumService } from "./EthereumService";
 import { ITokenInfo } from "./TokenTypes";
 import { ethers } from "ethers";
 import { ConsoleLogService } from "./ConsoleLogService";
@@ -25,7 +25,7 @@ export type TokenInfoMap = { [address: string]: ITokenInfo };
 export default class TokenMetadataService {
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private contractsService: ContractsService,
     private consoleLogService: ConsoleLogService) { }
 

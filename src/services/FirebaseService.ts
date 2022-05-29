@@ -1,4 +1,4 @@
-import { EthereumService } from "services/EthereumService";
+import { EthereumService, IEthereumService } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { inject, IEventAggregator } from "aurelia";
 import axios from "axios";
@@ -32,7 +32,7 @@ export class FirebaseService {
 
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private dateService: DateService,
     private browserStorageService: BrowserStorageService,
   ) {

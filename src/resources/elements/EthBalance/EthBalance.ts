@@ -1,5 +1,5 @@
 import { DisposableCollection } from "services/DisposableCollection";
-import { EthereumService } from "services/EthereumService";
+import { EthereumService, IEthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
 import { bindable, containerless, EventAggregator, IEventAggregator } from "aurelia";
 
@@ -14,7 +14,7 @@ export class EthBalance {
 
   constructor(
     @IEventAggregator private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService
+    @IEthereumService private ethereumService: IEthereumService,
   ) {
   }
 

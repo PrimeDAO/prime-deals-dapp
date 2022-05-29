@@ -28,9 +28,9 @@ $menu-open-duration: 0.1s;
     display: none;
   }
 
-  #reset-deal-button{
-    > button{
-      height:10px;
+  #reset-deal-button {
+    > button {
+      height: 10px;
       padding: 10px;
     }
   }
@@ -125,7 +125,7 @@ $menu-open-duration: 0.1s;
     grid-template-columns: auto;
     align-items: center;
 
-    .container {
+    .container > nav{
       list-style-type: none;
       margin: 0;
       display: grid;
@@ -134,7 +134,7 @@ $menu-open-duration: 0.1s;
 
       column-gap: 20px;
       text-align: left;
-      > .item {
+       .item {
         cursor: pointer;
         padding: 10px 0;
         font-family: Inter;

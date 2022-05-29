@@ -1,6 +1,6 @@
 import { bindable, customElement, IEventAggregator } from "aurelia";
 import { toBoolean } from "../../binding-behaviours";
-import { EthereumService } from "../../../services/EthereumService";
+import { EthereumService, IEthereumService } from "../../../services/EthereumService";
 import { EnsService } from "../../../services/EnsService";
 
 @customElement("usersaddress")
@@ -14,7 +14,7 @@ export class UsersAddress {
 
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private ensService: EnsService,
   ) {
     this.eventAggregator.subscribe("Network.Changed.Account", () => {

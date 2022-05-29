@@ -1,6 +1,6 @@
 import { IErc20Token, ITokenInfo } from "services/TokenTypes";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address, EthereumService, IEthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
 import { TokenService } from "services/TokenService";
 import { bindable, containerless, EventAggregator } from "aurelia";
@@ -19,7 +19,7 @@ export class TokenBalance {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private tokenService: TokenService) {
   }
 

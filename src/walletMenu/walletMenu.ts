@@ -1,5 +1,5 @@
 import { bindable, BindingMode, inject, PLATFORM } from "aurelia";
-import { EthereumService } from "../services/EthereumService";
+import { EthereumService, IEthereumService } from "../services/EthereumService";
 import { TokenService } from "../services/TokenService";
 import { ContractNames, ContractsService } from "../services/ContractsService";
 import { Utils } from "../services/utils";
@@ -17,7 +17,7 @@ export class WalletMenu {
   thisEscHandler = this.handleEsc.bind(this);
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private tokenService: TokenService,
   ) {
     this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
