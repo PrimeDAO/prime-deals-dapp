@@ -11,7 +11,6 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { EventConfigException } from "services/GeneralEvents";
 import { PLATFORM } from "aurelia-pal";
 import { ShowButtonsEnum } from "resources/elements/primeDesignSystem/ppopup-modal/ppopup-modal";
-/* eslint-disable linebreak-style */
 import { autoinject } from "aurelia-framework";
 import tippy from "tippy.js";
 import { Utils } from "services/utils";
