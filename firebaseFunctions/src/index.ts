@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as googleCloudFirestore from "@google-cloud/firestore";
-import corsLib from "cors";
+import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
 import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";

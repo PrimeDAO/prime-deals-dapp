@@ -31,11 +31,6 @@ export class App implements IRouteViewModel {
     const tokenService = this.container.get(TokenService);
     await tokenService.initialize();
     await this.ethereumService.connectToConnectedProvider();
-
-    this.container.register(
-      Registration.singleton(IDataSourceDeals, FirestoreDealsService)
-    )
-
     const dealsService = this.container.get(DealService);
     dealsService.initialize()
   }

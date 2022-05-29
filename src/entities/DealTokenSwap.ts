@@ -126,7 +126,7 @@ export class DealTokenSwap implements IDeal {
   constructor(
     private consoleLogService: ConsoleLogService,
     @IEthereumService private ethereumService: IEthereumService,
-    private dataSourceDeals: IDataSourceDeals,
+    @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,

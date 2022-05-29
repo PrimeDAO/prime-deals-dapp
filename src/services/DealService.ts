@@ -94,7 +94,7 @@ export class DealService {
   // public DAOs: Array<IDaoAPIObject>;
 
   constructor(
-    private dataSourceDeals: IDataSourceDeals,
+    @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IContainer private container: IContainer,
     private aureliaHelperService: AureliaHelperService,

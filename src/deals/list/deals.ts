@@ -32,7 +32,7 @@ export class Deals {
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dateService: DateService,
     @IEthereumService private ethereumService: IEthereumService,
-    private dataSourceDeals: IDataSourceDeals,
+    @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
   ) {
     //
   }
