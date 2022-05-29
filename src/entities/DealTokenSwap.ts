@@ -1,7 +1,7 @@
 import { DisposableCollection } from "services/DisposableCollection";
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { formatBytes32String } from "ethers/lib/utils";
-import { Address, fromWei, Hash } from "services/EthereumService";
+import { Address, fromWei, Hash, IEthereumService } from "services/EthereumService";
 import { DealStatus, IDeal, IDealDAOVotingSummary, IDealTokenSwapDocument, IVotesInfo } from "entities/IDealTypes";
 import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { TokenService } from "services/TokenService";
@@ -125,7 +125,7 @@ export class DealTokenSwap implements IDeal {
 
   constructor(
     private consoleLogService: ConsoleLogService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private dataSourceDeals: IDataSourceDeals,
     private tokenService: TokenService,
     private contractsService: ContractsService,

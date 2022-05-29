@@ -1,4 +1,4 @@
-import { Address, EthereumService } from "services/EthereumService";
+import { Address, EthereumService, IEthereumService } from "services/EthereumService";
 import { inject } from "aurelia";
 
 @inject()
@@ -14,7 +14,7 @@ export class EnsService {
   private addressCache = new Map<string, Address>();
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
   ) {
   }
 

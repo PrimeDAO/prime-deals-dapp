@@ -6,7 +6,7 @@ import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address, IEthereumService } from "services/EthereumService";
 import { SortOrder } from "services/SortService";
 import { SortService } from "services/SortService";
 import { DisposableCollection } from "services/DisposableCollection";
@@ -31,7 +31,7 @@ export class Deals {
     private dealService: DealService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dateService: DateService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private dataSourceDeals: IDataSourceDeals,
   ) {
     //
@@ -50,7 +50,7 @@ export class Deals {
   }
 
   public async attached(): Promise<void> {
-    this.dealsLoading= true;
+    this.dealsLoading = true;
     await this.dealService.ensureAllDealsInitialized();
     this.dealsLoading = false;
 
@@ -143,7 +143,7 @@ export class Deals {
    * @param showMine Whether or not to show your current deals
    * @returns
    */
-  private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string) : DealTokenSwap[] {
+  private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string): DealTokenSwap[] {
     if (this.cardIndex === undefined) {
       return [];
     }
@@ -152,7 +152,7 @@ export class Deals {
       //open proposals
       return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
     } else {
-    //partnered deals
+      //partnered deals
       return !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address) || x.registrationData.partnerDAO?.representatives.some(y => y.address === address));
     }
   }
@@ -163,7 +163,7 @@ export class Deals {
    * @param showMine The toggle of deals to show
    * @returns
    */
-  private isTabVisible(cardIndex: number, showMine: boolean, address: string) : boolean {
+  private isTabVisible(cardIndex: number, showMine: boolean, address: string): boolean {
     return !!this.getDealsForCardIndex(cardIndex, showMine, address)?.length;
   }
 
@@ -172,14 +172,14 @@ export class Deals {
    */
   private toggleMyDeals(): void {
     this.showMine = !this.showMine;
-    if (this.showMine){
+    if (this.showMine) {
       //if showing only "my deals" check to see which tab to display by default if there are no deals in either tab
       const openDeals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
       const partneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
-      if (openDeals){
+      if (openDeals) {
         this.cardIndex = 0;
       }
-      else if (partneredDeals){
+      else if (partneredDeals) {
         this.cardIndex = 1;
       }
     }

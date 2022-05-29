@@ -1,7 +1,7 @@
 import { EventConfigTransaction } from "./GeneralEvents";
 import { Utils } from "./utils";
 import { TransactionReceipt, TransactionResponse } from "@ethersproject/providers";
-import { EthereumService, Hash } from "./EthereumService";
+import { EthereumService, Hash, IEthereumService } from "./EthereumService";
 import { EventAggregator, inject } from "aurelia";
 
 @inject()
@@ -11,7 +11,7 @@ export default class TransactionsService {
 
   constructor(
     private eventAggregator: EventAggregator,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private utils: Utils,
   ) { }
 

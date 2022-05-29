@@ -1,5 +1,5 @@
 import { IpfsService } from "./IpfsService";
-import { EthereumService } from "./EthereumService";
+import { EthereumService, IEthereumService } from "./EthereumService";
 import axios from "axios";
 import { TOKEN_LIST_MAP } from "../configurations/tokenLists";
 import { ConsoleLogService } from "./ConsoleLogService";
@@ -47,7 +47,7 @@ export type TokenListMap = { [uri: string]: ITokenList };
 export class TokenListService {
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private ipfsService: IpfsService,
     private consoleLogService: ConsoleLogService,
   ) {

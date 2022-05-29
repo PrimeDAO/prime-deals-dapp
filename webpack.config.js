@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
-// const Dotenv = require('dotenv-webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const Dotenv = require('dotenv-webpack');
 const webpack = require("webpack");
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const { EnvironmentPlugin } = require("webpack");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-require("dotenv").config({ path: `${process.env.DOTENV_CONFIG_PATH}` });
 
 console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
 
@@ -40,11 +38,11 @@ const postcssLoader = {
   }
 };
 
-const ensureArray = ( config ) => config && ( Array.isArray( config ) ? config : [ config ] ) || []
-const when = ( condition, config, negativeConfig ) =>
-  condition ? ensureArray( config ) : ensureArray( negativeConfig )
+const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || []
+const when = (condition, config, negativeConfig) =>
+  condition ? ensureArray(config) : ensureArray(negativeConfig)
 
-module.exports = function ( env, { analyze, tests } ) {
+module.exports = function (env, { analyze, tests }) {
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
     target: 'web',
@@ -106,7 +104,7 @@ module.exports = function ( env, { analyze, tests } ) {
       historyApiFallback: true,
       // open: !process.env.CI,
       static: {
-        directory: path.join( __dirname, '/static' ),
+        directory: path.join(__dirname, '/static'),
       },
       compress: true,
       port: 3340,
@@ -115,9 +113,9 @@ module.exports = function ( env, { analyze, tests } ) {
     module: {
       rules: [
         { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: 'asset' },
-        { test: /\.(woff|woff2|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i,  type: 'asset' },
-        { test: /\.css$/i, use: [ 'style-loader', cssLoader, postcssLoader ] },
-        { test: /\.scss$/i, use: [ 'style-loader', cssLoader, postcssLoader, sassLoader ] },
+        { test: /\.(woff|woff2|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i, type: 'asset' },
+        { test: /\.css$/i, use: ['style-loader', cssLoader, postcssLoader] },
+        { test: /\.scss$/i, use: ['style-loader', cssLoader, postcssLoader, sassLoader] },
         { test: /\.ts$/i, use: ['ts-loader', '@aurelia/webpack-loader'], exclude: /node_modules/ },
         {
           test: /[/\\]src[/\\].+\.html$/i,
@@ -134,13 +132,10 @@ module.exports = function ( env, { analyze, tests } ) {
           baseUrl
         }
       }),
-      // new Dotenv({
-      //   // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
-      //   path: `./.env`,
-      // }),
-      // new webpack.DefinePlugin({ // the above Dotenv plugin doesn't work
-      //   'process.env': JSON.stringify(dotenv.config().parsed)
-      // }),
+      new Dotenv({
+        // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
+        path: process.env.DOTENV_CONFIG_PATH,
+      }),
       analyze && new BundleAnalyzerPlugin(),
       // Work around for Buffer is undefined:
       // https://github.com/webpack/changelog-v5/issues/10
@@ -150,12 +145,11 @@ module.exports = function ( env, { analyze, tests } ) {
       // new webpack.ProvidePlugin({ // we might need this in the future
       //   process: 'process/browser',
       // }),
-      ...when( !tests, new CopyWebpackPlugin( {
+      ...when(!tests, new CopyWebpackPlugin({
         patterns: [
-          { from: 'static', to: './', globOptions: { ignore: [ '.*' ] } }
+          { from: 'static', to: './', globOptions: { ignore: ['.*'] } }
         ]
-      } ) ),
-      new EnvironmentPlugin(process.env)
+      }))
     ].filter(p => p)
   }
 }

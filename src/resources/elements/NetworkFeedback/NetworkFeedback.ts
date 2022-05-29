@@ -1,4 +1,4 @@
-import { EthereumService } from "services/EthereumService";
+import { EthereumService, IEthereumService } from "services/EthereumService";
 import { containerless, customElement } from "aurelia";
 
 @customElement("networkfeedback")
@@ -7,7 +7,8 @@ export class NetworkFeedback {
 
   private network: string;
 
-  constructor(private ethereumService: EthereumService) {
+  constructor(@IEthereumService private ethereumService: IEthereumService,
+  ) {
     this.network = EthereumService.targetedNetwork;
   }
 }

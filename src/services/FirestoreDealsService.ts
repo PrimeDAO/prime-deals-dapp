@@ -4,7 +4,7 @@ import { FirestoreService } from "services/FirestoreService";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address, EthereumService, IEthereumService } from "services/EthereumService";
 import { IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
@@ -18,7 +18,7 @@ export class FirestoreDealsService<
     private firestoreService: FirestoreService<TDealDocument, TRegistrationData>,
     private consoleLogService: ConsoleLogService,
     private firebaseService: FirebaseService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
   ) {}
 
   public initialize(): void {
