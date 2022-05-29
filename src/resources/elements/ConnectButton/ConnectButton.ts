@@ -1,6 +1,6 @@
-import { bindable, containerless, IEventAggregator } from "aurelia";
+import { bindable, containerless, IEventAggregator, singleton } from "aurelia";
 import { DisposableCollection } from "../../../services/DisposableCollection";
-import { Address, EthereumService, IEthereumService } from "../../../services/EthereumService";
+import { Address, IEthereumService } from "../../../services/EthereumService";
 import { Utils } from "../../../services/utils";
 import { ContractNames, ContractsService } from "../../../services/ContractsService";
 import { EventConfigTransaction } from "../../../services/GeneralEvents";
@@ -12,7 +12,7 @@ enum Phase {
   Confirming = "Confirming"
 }
 
-// @singleton() // TODO make this work because v1 had it
+@singleton(/*{scoped: false}*/)
 @containerless
 export class ConnectButton {
 
@@ -30,7 +30,7 @@ export class ConnectButton {
     @IEventAggregator private eventAggregator: IEventAggregator,
   ) {
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", async (account: Address) => {
-      console.log('address changed (does not work) ->', account)
+      console.log("address changed (does not work) ->", account);
       this.accountAddress = account;
       this.txPhase = Phase.None;
       this.txReceipt = null;
