@@ -11,12 +11,11 @@
   "html.format.wrapLineLength": 0,
   "html.format.wrapAttributes": "preserve",
   "html.format.unformattedContentDelimiter": "<!-- nowrap -->",
-
   // VSCucumberAutoComplete
   "cucumberautocomplete.steps": [
-		"cypress/integration/**/*.ts",
-		"cypress/integration/common/**/*.ts",
-    ],
-	"cucumberautocomplete.strictGherkinCompletion": true,
-	"cucumberautocomplete.syncfeatures": true,
+    "cypress/integration/**/*.ts",
+    "cypress/integration/common/**/*.ts",
+  ],
+  "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.syncfeatures": true,
 }
