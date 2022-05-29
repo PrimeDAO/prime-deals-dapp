@@ -7,7 +7,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { Utils } from "./utils";
-import { DI, IEventAggregator, inject, Registration } from "aurelia";
+import { DI, IEventAggregator, inject } from "aurelia";
 import { DisclaimerService } from "./DisclaimerService";
 
 interface IEIP1193 {
@@ -61,7 +61,7 @@ export interface IChainEventInfo {
 }
 
 export type IEthereumService = EthereumService;
-export const IEthereumService = DI.createInterface<IEthereumService>('EthereumService');
+export const IEthereumService = DI.createInterface<IEthereumService>("EthereumService");
 
 @inject()
 export class EthereumService {
@@ -590,4 +590,3 @@ export const fromWei = (weiValue: BigNumberish, decimals: string | number): stri
 };
 
 export const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
-

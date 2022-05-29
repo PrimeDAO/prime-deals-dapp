@@ -6,7 +6,7 @@ import { TokenService } from "services/TokenService";
 import { routes } from "./routes";
 
 export class App implements IRouteViewModel {
-  static title = "Prime Deals"
+  static title = "Prime Deals";
   static routes = routes;
 
   showingMobileMenu = false;
@@ -15,7 +15,7 @@ export class App implements IRouteViewModel {
   constructor(
     @IRouter protected router: IRouter,
     @IContainer private container: IContainer,
-    @IEthereumService private ethereumService: IEthereumService
+    @IEthereumService private ethereumService: IEthereumService,
   ) {
   }
 
@@ -29,7 +29,7 @@ export class App implements IRouteViewModel {
     await tokenService.initialize();
     await this.ethereumService.connectToConnectedProvider();
     const dealsService = this.container.get(DealService);
-    dealsService.initialize()
+    dealsService.initialize();
   }
 
   onNavigate(): void {
