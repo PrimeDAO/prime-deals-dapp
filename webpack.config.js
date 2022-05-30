@@ -16,7 +16,7 @@ const webpack = require("webpack");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
-console.dir({ path: `${process.env.DOTENV_CONFIG_PATH}` })
+console.log("environment: ", `${process.env.DOTENV_CONFIG_PATH}`)
 
 const baseUrl = '/';
 
