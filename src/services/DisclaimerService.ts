@@ -66,7 +66,7 @@ export class DisclaimerService {
   }
 
   public showDisclaimer(disclaimerUrl: string, title: string): Promise<DialogCloseResult> {
-    return this.dialogService.open(() => Disclaimer, {disclaimerUrl, title}, {keyboard: true});
+    return this.dialogService.open(() => Disclaimer, {disclaimerUrl, title});
   }
 
   private getPrimeDisclaimerStatusKey(accountAddress: Address): string {

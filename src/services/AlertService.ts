@@ -1,8 +1,9 @@
-import { inject, IEventAggregator, IDialogService, DialogCloseResult } from "aurelia";
+import { inject, IEventAggregator, DialogCloseResult } from "aurelia";
 import { EventConfig, EventConfigException } from "./GeneralEvents";
 import { DisposableCollection } from "./DisposableCollection";
 import { Utils } from "services/utils";
 import { Alert, IAlertModel } from "resources/dialogs/alert/alert";
+import { DialogService } from "services/DialogService";
 
 @inject()
 export class AlertService {
@@ -12,7 +13,7 @@ export class AlertService {
 
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
-    @IDialogService private dialogService: IDialogService,
+    private dialogService: DialogService,
   ) {
   }
 
@@ -47,12 +48,7 @@ export class AlertService {
   }
 
   public showAlert(config: IAlertModel): Promise<DialogCloseResult> {
-    return this.dialogService.open({
-      component: () => Alert,
-      lock: true,
-      model: config,
-    })
-      .then((value) => value.dialog.closed);
+    return this.dialogService.open(() => Alert, config);
   }
 }
 

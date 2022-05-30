@@ -111,7 +111,6 @@ export class App implements IRouteViewModel {
     });
 
     this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
-
       let notChanged = true;
       const connect = await this.alertService.showAlert( {
         message: `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,

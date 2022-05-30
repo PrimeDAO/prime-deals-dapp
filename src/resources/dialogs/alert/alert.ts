@@ -16,7 +16,7 @@ export class Alert {
   confetti: boolean;
   data: Record<string, unknown>;
 
-  constructor(private $dialog: IDialogController) { }
+  constructor(@IDialogController private $dialog: IDialogController) { }
 
   public activate(model: IPopupModalModel): void {
     this.data = model.data;

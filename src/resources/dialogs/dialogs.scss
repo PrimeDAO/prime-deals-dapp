@@ -10,23 +10,32 @@ body.au-dialog-open {
 }
 
 body > au-dialog-container {
-  overflow: hidden;
-  z-index: 1000;
-
+    overflow: hidden;
+    padding: 0;
+    top: 50% !important;
+    width: unset !important;
+    height: unset !important;
+    right: unset !important;
+    bottom: unset !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  
+    > div {
+      margin: 0 !important;
+      padding: 0;
+      height: 100%;
+  
+      > div {
+        height: 100%;
+        width: 100%;
+      }
+    }
   au-dialog-overlay {
     // Need rgba (= #15062d = $Neutral01) otherwise does not work properly with blur
     background-color: rgba(21, 6, 45, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-  }
-
-  > div {
-    padding: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: unset !important;
-    height: 100%;
   }
 }
 

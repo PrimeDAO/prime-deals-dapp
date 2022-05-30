@@ -17,9 +17,9 @@ export class Disclaimer {
     @IDialogController private controller: IDialogController,
     @IDialogDom dialogDom: DefaultDialogDom,
     private consoleLogService: ConsoleLogService,
-    private axiosService: AxiosService
+    private axiosService: AxiosService,
   ) {
-    dialogDom.contentHost.classList.add('disclaimer')
+    dialogDom.contentHost.classList.add("disclaimer");
   }
 
   get disclaimerHtml(): string {
@@ -44,7 +44,6 @@ export class Disclaimer {
         }
       })
       .catch((err) => {
-        console.error(err)
         errorMsg = `Error fetching disclaimer: ${this.axiosService.axiosErrorHandler(err)}`;
         this.loading = false;
         return null;
