@@ -12,7 +12,7 @@ enum Phase {
   Confirming = "Confirming"
 }
 
-@singleton(/*{scoped: false}*/)
+// @singleton causes this component to not be loaded properly
 @containerless
 export class ConnectButton {
 
