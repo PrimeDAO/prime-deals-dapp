@@ -1,23 +1,31 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "target": "ES2017",
-    "module": "ESNext",
+    "target": "es2019",
+    "module": "esnext",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": "src",
     "lib": [
-      "ESNext",
+      "esnext",
       "dom"
-    ]
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "removeComments": true,
+    "allowJs": true,
   },
   "include": [
-    "test",
     "src",
+    "test",
+    "firebaseFunctions/src"
   ],
   "exclude": [
     "test/coverage-jest"
