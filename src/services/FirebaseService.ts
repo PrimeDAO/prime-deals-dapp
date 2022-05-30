@@ -141,7 +141,7 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
-    debugger;
+    // debugger;
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 145 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
     if (this.currentFirebaseUserAddress === address) {
       return;
@@ -156,7 +156,35 @@ export class FirebaseService {
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ signature", signature);
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ messageToSign", messageToSign);
 
+    const provider = this.ethereumService.readOnlyProvider;
+    async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
+      // const provider = ethers.getDefaultProvider(ProviderEndpoints[network]);
+
+      // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
+      const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
+      const EIP1271MagicValue = "0x1626ba7e";
+      const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 167 ~ signerAddr", signerAddr);
+      const code = await provider.getCode(signerEIP1271Contract.address);
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 168 ~ code", code);
+
+      const messageHash = encryptForGnosis(rawMessage);
+      try {
+        const verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0x"));
+
+        return verified;
+      } catch (error) {
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 174 ~ error", error);
+        return false;
+      }
+    }
+
+    // debugger;
+    const result = await verifyEIP1271Signature(address, messageToSign, EthereumService.targetedNetwork);
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 175 ~ result", result);
+
     if (!signature) {
+    // if (true) {
       const oldMessageToSign = messageToSign;
       messageToSign = await this.getMessageToSign();
 
@@ -170,6 +198,8 @@ export class FirebaseService {
         const appsSdk = new SafeAppsSDK(safeAppOpts);
         try {
           const isSigned = await appsSdk.safe.isMessageSigned(messageToCheck);
+          // const isSigned = await appsSdk.safe.isMessageHashSigned(messageHash);
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 173 ~ isSigned", isSigned);
 
           /**
            * Gnosis Safe App signature verification has different flow:

@@ -17,9 +17,11 @@ export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 
+const RIVET_ID="e761db8d40ea4f95a10923da3ffa47a3";
+
 const ProviderEndpoints = {
-  "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
-  "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
+  "mainnet": `https://${RIVET_ID}.eth.rpc.rivet.cloud/`,
+  "rinkeby": `https://${RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
   "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
 };
 
@@ -288,11 +290,13 @@ export const CI = {
          * 2. The WalletConnect Safe App uses EIP-1271
          */
         try {
+          functions.logger.error("Verifying Message");
           signerAddress = verifyMessage(
             message,
             signature,
           );
         } catch {
+          functions.logger.error("[EIP1271] Verifying Message");
           /**
            * Have to set signature manually
            */

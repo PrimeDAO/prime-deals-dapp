@@ -63,7 +63,7 @@
     "bignumber.js": "^9.0.1",
     "cids": "^1.1.7",
     "dompurify": "^2.2.9",
-    "ethers": "^5.3.0",
+    "ethers": "^5.6.1",
     "firebase": "^9.6.8",
     "json-to-graphql-query": "^2.0.0",
     "litepicker": "^2.0.11",

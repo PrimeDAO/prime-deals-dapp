@@ -15,7 +15,7 @@
   },
   "main": "lib/firebaseFunctions/src/index.js",
   "dependencies": {
-    "ethers": "^5.5.4",
+    "ethers": "^5.6.1",
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",
     "lodash": "^4.17.21",
