@@ -13,6 +13,30 @@ import TokenMetadataService from "./TokenMetadataService";
 import { AxiosService } from "./axiosService";
 import { TimingService } from "./TimingService";
 
+type AllowListTokenMap = Record<string, ITokenInfo>
+
+const allowListTokenMap: AllowListTokenMap = {
+  /**
+   * FIXME: Find a way to validate custom proxy implementation.
+   *   Celo token on Ethererum uses a custom proxy implementation
+   *   https://etherscan.io/address/0xC95DC0ECEEC11aB8b2BFa1AfF3C223C5dC006fAD#readProxyContract
+   *   Since we have not found a way to validate it programmatically, use this allow list.
+   */
+  "0xC95DC0ECEEC11aB8b2BFa1AfF3C223C5dC006fAD": {
+    address: "0xC95DC0ECEEC11aB8b2BFa1AfF3C223C5dC006fAD",
+    name: "Celo",
+    symbol: "CELO",
+    decimals: 18,
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/5567.png",
+  },
+};
+
+function isAllowListToken(tokenAddress: string): boolean {
+  if (EthereumService.targetedNetwork !== "mainnet") return false;
+
+  return Object.keys(allowListTokenMap).includes(tokenAddress);
+}
+
 @inject()
 export class TokenService {
 
@@ -118,6 +142,9 @@ export class TokenService {
   }
 
   public async getTokenInfoFromAddress(tokenAddress: Address): Promise<ITokenInfo> {
+    if (isAllowListToken(tokenAddress)) {
+      return Promise.resolve(allowListTokenMap[tokenAddress]);
+    }
 
     let resolver: (value: ITokenInfo | PromiseLike<ITokenInfo>) => void;
     let rejector: (reason?: any) => void;
@@ -204,6 +231,10 @@ export class TokenService {
   }
 
   public async isERC20Token(tokenAddress: Address): Promise<boolean> {
+    if (isAllowListToken(tokenAddress)) {
+      return Promise.resolve(true);
+    }
+
     let isOk = true;
 
     TimingService.start(`isERC20Token-${tokenAddress}`);
