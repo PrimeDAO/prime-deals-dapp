@@ -28,7 +28,6 @@ export class ContractsDeploymentProvider {
     if (!ContractsDeploymentProvider.contractInfosJson) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       ContractsDeploymentProvider.contractInfosJson = require(`../contracts/${targetedNetwork}.json`) as IContractInfosJson;
-      console.dir("HEEEEERE: ", ContractsDeploymentProvider.contractInfosJson);
     }
 
     if (!ContractsDeploymentProvider.sharedContractAbisJson) {
