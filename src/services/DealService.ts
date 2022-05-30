@@ -427,6 +427,7 @@ export class DealService {
        * and doesn't modified properties that didn't change
        * it is granular and works with updating changes to nested objects (including objects inside arrays)
        */
+      // @ts-ignore (to ignore TS2349)
       applyDiff(dealDocument, updatedDocument);
     });
   }

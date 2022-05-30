@@ -18,6 +18,7 @@ export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
 // as firebase functions are not hosted on the same domain
+// @ts-ignore (to ignore TS2349)
 const cors = corsLib({
   origin: true,
 });
