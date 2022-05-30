@@ -7,14 +7,12 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { TokenService } from "services/TokenService";
 import { ITokenInfo } from "services/TokenTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { EthereumService } from "services/EthereumService";
 import { IDAO, IDealRegistrationTokenSwap, IProposalLead, IToken } from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { inject, IEventAggregator, IDisposable } from "aurelia";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { BigNumber } from "ethers";
 import TransactionsService, { TransactionReceipt } from "services/TransactionsService";
-import { NumberService } from "services/NumberService";
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "services/AureliaHelperService";
 import { DealService } from "services/DealService";
@@ -130,7 +128,6 @@ export class DealTokenSwap implements IDeal {
     private tokenService: TokenService,
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
-    private numberService: NumberService,
     private aureliaHelperService: AureliaHelperService,
     eventAggregator: IEventAggregator,
   ) {

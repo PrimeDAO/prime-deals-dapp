@@ -8,10 +8,6 @@ import { Address } from "./EthereumService";
 
 export type IDealIdType = string;
 
-/**
- * this is a hack using a class to simulate an interface that we
- * can inject
- */
 export interface IDataSourceDeals {
   initialize(): void;
   /**
