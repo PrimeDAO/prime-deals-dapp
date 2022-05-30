@@ -1,18 +1,19 @@
-import { valueConverter } from "aurelia";
-
-const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+import DOMPurify from "dompurify";
+import { valueConverter, inject } from "aurelia";
 
 /**
- * Default Html Sanitizer to prevent script injection.
+ * Html Sanitizer to prevent script injection.
  */
-
+@inject()
 @valueConverter("sanitizeHTML")
 export class HTMLSanitizer {
-  /**
-   * Sanitizes the provided input.
-   * @param input The input to be sanitized.
-   */
-  sanitize(input) {
-    return input.replace(SCRIPT_REGEX, "");
+
+  constructor(
+    private domPurify: DOMPurify,
+  ) {
+  }
+
+  toView(input: string): string {
+    return this.domPurify.sanitize(input, { USE_PROFILES: { html: true } });
   }
 }

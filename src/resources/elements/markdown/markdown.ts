@@ -1,9 +1,7 @@
 import axios from "axios";
-import "./markdown.scss";
 
 import { marked } from "marked";
 import { bindable } from "aurelia";
-
 export class Markdown {
 
   @bindable markdown: string;
@@ -36,6 +34,7 @@ export function initialize(domPurify: any): void {
   // };
 
   // marked.use({ renderer });
+
   marked.setOptions({gfm: true});
 
   // For temporarily saving original target value

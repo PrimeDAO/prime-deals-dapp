@@ -1,6 +1,6 @@
-import { EthereumService } from "services/EthereumService";
-import { IEthereumService } from "./EthereumService";
 import { IContainer, IRegistry, Registration } from "aurelia";
+import DOMPurify from "dompurify";
+import { IEthereumService, EthereumService } from "./EthereumService";
 import { FirestoreDealsService } from "./FirestoreDealsService";
 import { IDataSourceDeals } from "./DataSourceDealsTypes";
 // import { ConsoleLogService } from "services/ConsoleLogService";
@@ -12,7 +12,7 @@ export const register: IRegistry = {
     // container.get(ConsoleLogService);
     container.register(Registration.singleton(IEthereumService, EthereumService));
     container.register(Registration.singleton(IDataSourceDeals, FirestoreDealsService));
-    // container.register(Registration.singleton(HTMLSanitizer, DOMPurify));
+    container.register(Registration.singleton(DOMPurify, DOMPurify));
     container.register(Registration.transient(DealTokenSwap, DealTokenSwap));
 
     return container;

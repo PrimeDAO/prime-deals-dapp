@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { DialogDeactivationStatuses, IContainer, IEventAggregator, IRouter, IRouteViewModel } from "aurelia";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { DealService } from "services/DealService";
@@ -13,9 +14,7 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import tippy from "tippy.js";
 import { AlertService, ShowButtonsEnum } from "services/AlertService";
 import { ComingSoon } from "./comingSoon/comingSoon";
-
-// import { HTMLSanitizer } from "aurelia-templating-resources";
-// import DOMPurify from "dompurify";
+import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
@@ -56,7 +55,7 @@ export class App implements IRouteViewModel {
        * this is how you have to obtain the instance of DOMPurifier that will
        * be used by the app.
        */
-    //initializeMarkdown(this.container.get(HTMLSanitizer));
+    initializeMarkdown(this.container.get(DOMPurify));
 
     this.ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
 
