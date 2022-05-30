@@ -1,8 +1,10 @@
-import { Router } from "aurelia";
+import { inject, IRouter } from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "services/DealService";
 
  type DealType = "open" | "partnered";
+
+@inject()
 export class Home {
   private cardIndex = 0;
   private dealType: DealType = "open";
@@ -10,7 +12,7 @@ export class Home {
   static MAX_DEALS_COUNT = 10;
 
   constructor(
-    private router: Router,
+    @IRouter protected router: IRouter,
     private dealService: DealService,
   ) {
   }

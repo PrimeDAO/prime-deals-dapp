@@ -1,8 +1,7 @@
-import { inject, bindable } from "aurelia";
+import { bindable } from "aurelia";
 import { DealStatus, IDeal } from "entities/IDealTypes";
 import "./timeLeft.scss";
 
-@inject()
 export class TimeLeft {
 
   @bindable deal: IDeal;

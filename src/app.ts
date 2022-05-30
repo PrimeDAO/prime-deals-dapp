@@ -12,7 +12,8 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import tippy from "tippy.js";
 import { AlertService, ShowButtonsEnum } from "services/AlertService";
-// import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
+import { ComingSoon } from "./comingSoon/comingSoon";
+
 // import { HTMLSanitizer } from "aurelia-templating-resources";
 // import DOMPurify from "dompurify";
 
@@ -30,13 +31,14 @@ export class App implements IRouteViewModel {
   private showingWalletMenu = false;
   private intervalId: any;
   private showCountdownPage = false;
+  private comingSoon = ComingSoon;
   private errorHandler = (ex: unknown): boolean => {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
   };
 
   constructor(
-    @IRouter protected router: IRouter,
+    @IRouter private router: IRouter,
     @IContainer private container: IContainer,
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
@@ -160,8 +162,8 @@ export class App implements IRouteViewModel {
     const getShowCountdownPage = () =>
       (
         (window.location.hostname.toLowerCase() === "deals.prime.xyz") &&
-        (process.env.NODE_ENV === "production") &&
-        (process.env.NETWORK === "mainnet")
+      (process.env.NODE_ENV === "production") &&
+      (process.env.NETWORK === "mainnet")
       ) ?
         (Date.now() < AppStartDate.getTime()) : false;
 

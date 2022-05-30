@@ -3,7 +3,7 @@
 <import from="./walletMenu/walletMenu"></import>
 
 <div if.bind="showCountdownPage">
-  <au-compose view-model="./comingSoon/comingSoon"></au-compose>
+  <au-compose view-model.bind="comingSoon"></au-compose>
 </div>
 
 <div else>

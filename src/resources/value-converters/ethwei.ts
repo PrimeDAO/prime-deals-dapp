@@ -7,7 +7,7 @@ import { valueConverter } from "aurelia";
  * Note that even if the viewmodel supplies a number, modified values are saved back
  * to the viewmodel as BigNumber.
  */
-@valueConverter('ethwei')
+@valueConverter("ethwei")
 export class EthweiValueConverter {
 
   /**
