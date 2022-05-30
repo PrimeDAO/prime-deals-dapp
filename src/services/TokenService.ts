@@ -31,6 +31,12 @@ const allowListTokenMap: AllowListTokenMap = {
   },
 };
 
+function isAllowListToken(tokenAddress: string): boolean {
+  if (EthereumService.targetedNetwork !== "mainnet") return false;
+
+  return Object.keys(allowListTokenMap).includes(tokenAddress);
+}
+
 @autoinject
 export class TokenService {
 
@@ -219,7 +225,7 @@ export class TokenService {
   }
 
   public async getTokenInfoFromAddress(tokenAddress: Address): Promise<ITokenInfo> {
-    if (Object.keys(allowListTokenMap).includes(tokenAddress)) {
+    if (isAllowListToken(tokenAddress)) {
       return Promise.resolve(allowListTokenMap[tokenAddress]);
     }
 
@@ -308,7 +314,7 @@ export class TokenService {
   }
 
   public async isERC20Token(tokenAddress: Address): Promise<boolean> {
-    if (Object.keys(allowListTokenMap).includes(tokenAddress)) {
+    if (isAllowListToken(tokenAddress)) {
       return Promise.resolve(true);
     }
 
