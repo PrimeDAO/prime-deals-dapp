@@ -1,0 +1,13 @@
+<template>
+  <ppopup-modal
+    class-name.bind="className"
+    buttons.bind="buttons"
+    header.bind="header"
+    message.bind="message"
+    confetti.bind="confetti"
+    button-text-primary.bind="buttonTextPrimary"
+    button-text-secondary.bind="buttonTextSecondary"
+    primary-click.call="$dialog.ok()"
+    secondary-click.call="$dialog.cancel()"
+    data.bind="data"></ppopup-modal>
+</template>
