@@ -922,7 +922,7 @@ export class DealTokenSwap implements IDeal {
     //calculate claiming properties
     if (this.isExecuted){
       const totalAmount = BigNumber.from(token.amount);
-      const instantTransferAmount = BigNumber.from(token.instantTransferAmount);
+      // const instantTransferAmount = BigNumber.from(token.instantTransferAmount);
       await this.hydrateDaoClaims();
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
 
