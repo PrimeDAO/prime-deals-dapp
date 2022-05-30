@@ -72,6 +72,13 @@ export class App implements IRouteViewModel {
     await this.ethereumService.connectToConnectedProvider();
   }
 
+  attaching() {
+    /**
+     * undo stuff from base.css now that we don't need it
+     */
+    document.querySelector("body").classList.remove("loading");
+  }
+
   async attached(): Promise<void> {
     // so all elements with data-tippy-content will automatically have a tooltip
     tippy("[data-tippy-content]");
@@ -170,11 +177,6 @@ export class App implements IRouteViewModel {
     }
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
-
-    /**
-     * undo stuff from base.css now that we don't need it
-     */
-    document.querySelector("body").classList.remove("loading");
 
     await this.ethereumService.connectToConnectedProvider();
     const dealsService = this.container.get(DealService);

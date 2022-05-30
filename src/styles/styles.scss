@@ -18,7 +18,7 @@ html {
     min-height: 100vh;
 
     &:not(.loading) {
-      > .prepage {
+      div.initialLoading.preload {
         display: none;
       }
     }
