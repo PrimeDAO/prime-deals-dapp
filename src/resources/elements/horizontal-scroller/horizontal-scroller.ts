@@ -1,6 +1,6 @@
-import { processContent } from '@aurelia/runtime-html';
-import { bindable } from 'aurelia';
-import { autoSlot } from './../../temporary-code';
+import { processContent } from "@aurelia/runtime-html";
+import { bindable } from "aurelia";
+import { autoSlot } from "./../../temporary-code";
 import "./horizontal-scroller.scss";
 
 @processContent(autoSlot)
@@ -43,6 +43,7 @@ export class HorizontalScroller {
   }
 
   get atEnd(): boolean {
+    if (!this.scroller) return false;
     /**
      * if the distance between the scrollPos and the end of the scroller is <= the
      * the width of the scroller, then presume we have scrolled as far as we can, or close enough.

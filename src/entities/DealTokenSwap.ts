@@ -129,7 +129,7 @@ export class DealTokenSwap implements IDeal {
     private contractsService: ContractsService,
     private transactionsService: TransactionsService,
     private aureliaHelperService: AureliaHelperService,
-    eventAggregator: IEventAggregator,
+    @IEventAggregator eventAggregator: IEventAggregator,
   ) {
     eventAggregator.subscribe("Contracts.Changed", async () => {
       await this.loadContracts();

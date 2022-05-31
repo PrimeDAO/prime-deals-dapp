@@ -1,28 +1,34 @@
-import { Routeable } from "aurelia";
+import { IRoute } from "@aurelia/router";
 
-export const routes: Routeable[] = [
+export const routes: IRoute[] = [
   {
-    path: ['', 'home'],
-    id:  'home',
+    path: ["", "home"],
+    id:  "home",
     title: "Home",
-    component: import('./home/home')
+    component: import("./home/home"),
   },
   {
-    path: 'initiate',
-    id: 'initiate',
+    path: "initiate",
+    id: "initiate",
     title: "Initiate",
-    component: import('./initiate/initiate')
+    component: import("./initiate/initiate"),
   },
   {
-    path: 'initiate/token-swap',
-    id: 'tokenSwapTypeSelection',
+    path: "initiate/token-swap",
+    id: "tokenSwapTypeSelection",
     title: "Select Token Swap Type",
-    component: import('./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection')
+    component: import("./initiate/tokenSwapTypeSelection/tokenSwapTypeSelection"),
   },
   {
-    path: 'deals',
-    id: 'deals',
+    path: "deals",
+    id: "deals",
     title: "Deals",
-    component: import('./deals/list/deals')
+    component: import("./deals/list/deals"),
   },
-]
+  {
+    path: "documentation",
+    id: "documentation",
+    title: "Documentation",
+    component: import("./documentation/documentation"),
+  },
+];

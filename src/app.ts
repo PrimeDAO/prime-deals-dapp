@@ -1,5 +1,6 @@
 import DOMPurify from "dompurify";
-import { DialogDeactivationStatuses, IContainer, IEventAggregator, IRouter, IRouteViewModel } from "aurelia";
+import { DialogDeactivationStatuses, IContainer, IEventAggregator } from "aurelia";
+import {IRouteableComponent, IRouter} from "@aurelia/router";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { DealService } from "services/DealService";
 import { AllowedNetworks, EthereumService, IEthereumService, Networks } from "services/EthereumService";
@@ -18,7 +19,7 @@ import { initialize as initializeMarkdown} from "resources/elements/markdown/mar
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
-export class App implements IRouteViewModel {
+export class App implements IRouteableComponent {
   static title = "Prime Deals";
   static routes = routes;
 

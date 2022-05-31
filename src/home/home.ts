@@ -1,10 +1,8 @@
-import { inject, IRouter } from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "services/DealService";
+import { IRouter } from "@aurelia/router";
+type DealType = "open" | "partnered";
 
- type DealType = "open" | "partnered";
-
-@inject()
 export class Home {
   private cardIndex = 0;
   private dealType: DealType = "open";

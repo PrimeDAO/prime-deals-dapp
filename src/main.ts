@@ -1,16 +1,22 @@
 import { StandardConfiguration } from "@aurelia/runtime-html";
-import Aurelia, { DialogDefaultConfiguration, RouterConfiguration } from "aurelia";
+import Aurelia, { DialogDefaultConfiguration } from "aurelia";
+import {RouterConfiguration} from "@aurelia/router";
 import { App } from "./app";
 import * as ResourceComponents from "./resources";
 import { register as services } from "./services/register";
+import * as valueConverters from "./resources/value-converters";
 
 new Aurelia()
   .register(StandardConfiguration.customize(x => {
     x.coercingOptions.enableCoercion = true;
   }))
-  .register(RouterConfiguration)
+  .register(RouterConfiguration.customize({
+    useUrlFragmentHash: false,
+    useHref: false,
+  }))
   .register(DialogDefaultConfiguration)
   .register(ResourceComponents)
   .register(services)
+  .register(valueConverters)
   .app(App)
   .start();
