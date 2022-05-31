@@ -60,6 +60,8 @@ export class FirebaseService {
     private browserStorageService: BrowserStorageService,
     private consoleLogService: ConsoleLogService,
   ) {
+    // @ts-ignore
+    // window.sign = this.signInToFirebase;
   }
 
   public initialize() {
@@ -144,17 +146,44 @@ export class FirebaseService {
     // debugger;
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 145 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
     if (this.currentFirebaseUserAddress === address) {
-      return;
+      // ;
     }
 
     await signOut(firebaseAuth);
 
-    // Signs out from Firebase in case another user was authenticated
-    // (could happen when user disconnect and connect a new wallet)
-
     let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ signature", signature);
-    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 153 ~ messageToSign", messageToSign);
+
+    const provider = this.ethereumService.readOnlyProvider;
+    const signer = this.ethereumService.getDefaultSigner();
+    async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
+      const EIP1271ABI = ["function isValidSignature(bytes calldata _data, bytes calldata _signature) external returns (bytes4)"];
+      const EIP1271MagicValue = "0x20c13b0b";
+
+      const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, signer);
+
+      const messageHash = encryptForGnosis(rawMessage);
+      try {
+        debugger;
+        const returnValue = await signerEIP1271Contract.isValidSignature(messageHash, "0x");
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 168 ~ returnValue", returnValue);
+        const waitOneTime = await returnValue.wait();
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 169 ~ waitOneTime", waitOneTime);
+
+        const verified = EIP1271MagicValue === (returnValue);
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 170 ~ verified", verified);
+
+        return verified;
+      } catch (error) {
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 174 ~ error", error);
+        debugger;
+        /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 174 ~ error", error.message);
+        return false;
+      }
+    }
+
+    const result = await verifyEIP1271Signature(address, messageToSign, EthereumService.targetedNetwork);
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 175 ~ result", result);
+    debugger;
 
     const provider = this.ethereumService.readOnlyProvider;
     async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
@@ -228,6 +257,7 @@ export class FirebaseService {
         }
       } else {
         try {
+          debugger;
           signature = await this.requestSignature(messageToSign);
           this.storeSignatureForAddress(address, signature, messageToSign);
           this.eventAggregator.publish("database.account.signature.successful");
