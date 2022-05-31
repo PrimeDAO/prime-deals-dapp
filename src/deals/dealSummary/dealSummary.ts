@@ -1,8 +1,8 @@
-import { Router, bindable } from "aurelia";
+import { bindable } from "aurelia";
 import { Address } from "services/EthereumService";
 import "./dealSummary.scss";
 import { DealTokenSwap } from "../../entities/DealTokenSwap";
-
+import { IRouter } from "@aurelia/router";
 /**
  * Is used as the <deal-summary /> component in the deals page
  * This displays the cards that are in the horizontal scroller
@@ -17,8 +17,8 @@ export class DealSummary {
   public container: HTMLElement;
 
   constructor(
-    private router: Router,
-  ) {}
+    @IRouter private router: IRouter,
+  ) { }
 
   public async attached(): Promise<void> {
     this.loading = false;

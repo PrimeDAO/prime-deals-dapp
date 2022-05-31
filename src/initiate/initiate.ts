@@ -1,4 +1,5 @@
-import { inject, IRouter, IRouteViewModel } from "aurelia";
+import { inject, IRouteViewModel } from "aurelia";
+import { IRouter } from "@aurelia/router";
 
 @inject()
 export class Initiate implements IRouteViewModel {
