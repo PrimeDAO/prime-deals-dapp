@@ -45,14 +45,32 @@ async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, ne
   const provider = ethers.getDefaultProvider(ProviderEndpoints[network]);
 
   // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
-  const EIP1271ABI = ["function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)"];
-  const EIP1271MagicValue = "0x1626ba7e";
+  const EIP1271ABI = [
+    "function VERSION() external returns (string)",
+    "function isValidSignature(bytes calldata _data, bytes calldata _signature) external returns (bytes4)", // string public constant VERSION = "1.1.1";
+    "function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)",
+  ];
+
   const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
 
   const messageHash = encryptForGnosis(rawMessage);
-  const verified = EIP1271MagicValue === (await signerEIP1271Contract.isValidSignature(messageHash, "0x"));
+  try {
+    const version = await signerEIP1271Contract.callStatic.VERSION();
+    let verified;
+    if (version === "1.1.1") {
+      const returnValue = await signerEIP1271Contract.callStatic["isValidSignature(bytes,bytes)"](messageHash, "0x");
+      const EIP1271MagicValue = "0x20c13b0b";
+      verified = EIP1271MagicValue === (returnValue);
+    } else {
+      const returnValue = await signerEIP1271Contract.callStatic["isValidSignature(bytes32,bytes)"](messageHash, "0x");
+      const EIP1271MagicValue = "0x1626ba7e";
+      verified = EIP1271MagicValue === (returnValue);
+    }
 
-  return verified;
+    return verified;
+  } catch (error) {
+    return false;
+  }
 }
 
 // Allow cross-origin requests for functions which use it
