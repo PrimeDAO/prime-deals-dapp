@@ -1,5 +1,3 @@
-import { Blob } from "buffer";
-import { ethers } from "ethers";
 import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 import * as googleCloudFirestore from "@google-cloud/firestore";
@@ -10,68 +8,13 @@ import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
+import { verifyEIP1271Signature } from "./hash-validation";
 
 const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
 const admin = firebaseAdmin.initializeApp();
 export const firestore = admin.firestore();
 export const PRIMARY_DAO_VOTES_COLLECTION = "primary-dao-votes";
 export const PARTNER_DAO_VOTES_COLLECTION = "partner-dao-votes";
-
-const ProviderEndpoints = {
-  "mainnet": `https://${process.env.RIVET_ID}.eth.rpc.rivet.cloud/`,
-  "rinkeby": `https://${process.env.RIVET_ID}.rinkeby.rpc.rivet.cloud/`,
-  "kovan": `https://kovan.infura.io/v3/${process.env.INFURA_ID}`,
-};
-
-/**
- * Part of the answer in
- * https://stackoverflow.com/questions/71866879/how-to-verify-message-in-wallet-connect-with-ethers-primarily-on-ambire-wallet
- */
-function encryptForGnosis(rawMessage: string) {
-  const rawMessageLength = new Blob([rawMessage]).size;
-  const message = ethers.utils.toUtf8Bytes(
-    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
-  );
-  const messageHash = ethers.utils.keccak256(message);
-  return messageHash;
-}
-
-/**
- * Deals is a Safe App (https://docs.gnosis-safe.io/build-with-safe/sdks/safe-apps/get-started),
- * that requires different way of verifying a transaction (EIP-1271)
- */
-async function verifyEIP1271Signature(signerAddr: string, rawMessage: string, network: string) {
-  functions.logger.info("Provider endpoint", ProviderEndpoints[network]);
-  const provider = ethers.getDefaultProvider(ProviderEndpoints[network]);
-
-  // Smart contract wallet (EIP 1271) verification: see https://eips.ethereum.org/EIPS/eip-1271 for more info
-  const EIP1271ABI = [
-    "function VERSION() external returns (string)",
-    "function isValidSignature(bytes calldata _data, bytes calldata _signature) external returns (bytes4)", // string public constant VERSION = "1.1.1";
-    "function isValidSignature(bytes32 _hash, bytes memory _signature) public view returns (bytes4 magicValue)",
-  ];
-
-  const signerEIP1271Contract = new ethers.Contract(signerAddr, EIP1271ABI, provider);
-
-  const messageHash = encryptForGnosis(rawMessage);
-  try {
-    const version = await signerEIP1271Contract.callStatic.VERSION();
-    let verified;
-    if (version === "1.1.1") {
-      const returnValue = await signerEIP1271Contract.callStatic["isValidSignature(bytes,bytes)"](messageHash, "0x");
-      const EIP1271MagicValue = "0x20c13b0b";
-      verified = EIP1271MagicValue === (returnValue);
-    } else {
-      const returnValue = await signerEIP1271Contract.callStatic["isValidSignature(bytes32,bytes)"](messageHash, "0x");
-      const EIP1271MagicValue = "0x1626ba7e";
-      verified = EIP1271MagicValue === (returnValue);
-    }
-
-    return verified;
-  } catch (error) {
-    return false;
-  }
-}
 
 // Allow cross-origin requests for functions which use it
 // It is necessary to accept HTTP requests from our app,
