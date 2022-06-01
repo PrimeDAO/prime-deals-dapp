@@ -4,21 +4,8 @@ import { encryptForGnosis, verifyEIP1271Signature } from "../src/hash-validation
 /******* ******* *********/
 /******* Rinkeby *********/
 /******* ******* *********/
-/**
- * v1.1.1
- * 1. https://rinkeby.etherscan.io/address/0x2E46E481d57477A0663a7Ec61E7eDc65F4cb7F5C#readProxyContract
- * 2. then expand "VERSION"
- */
-const ADDRESSE_OLD_PROXY = "0x2E46E481d57477A0663a7Ec61E7eDc65F4cb7F5C";
-
-/**
- * v1.3.0
- * 1. https://rinkeby.etherscan.io/address/0x40597Caffbc904396DCAFD23786A0e1626E6975c#code=
- * 2. "Similar Match Source Code"
- * 2.1 https://rinkeby.etherscan.io/address/0x4cb09344de5bccd45f045c5defa0e0452869ff0f#readProxyContract
- * 3. then expand "VERSION"
- */
-const ADDRESSE_NEW_PROXY = "0x40597Caffbc904396DCAFD23786A0e1626E6975c";
+const TEST_ADDRESSE_OLD_PROXY = "0x2E46E481d57477A0663a7Ec61E7eDc65F4cb7F5C";
+const TEST_ADDRESSE_NEW_PROXY = "0x40597Caffbc904396DCAFD23786A0e1626E6975c";
 
 const rawMessage = "Authenticate access to Prime Deals at Wed Jun 01 2022 10:24:32 GMT+0200 (Central European Summer Time)"
 
@@ -47,11 +34,11 @@ describe("EIP-1271", () => {
 
   describe.skip("rinkeby", () => {
     it("verify - old proxy", async () => {
-      const result = await verifyEIP1271Signature(ADDRESSE_OLD_PROXY, rawMessage, "rinkeby");
+      const result = await verifyEIP1271Signature(TEST_ADDRESSE_OLD_PROXY, rawMessage, "rinkeby");
       expect(result).toBe(true)
     })
     it("verify - new proxy", async () => {
-      const result = await verifyEIP1271Signature(ADDRESSE_NEW_PROXY, rawMessage, "rinkeby");
+      const result = await verifyEIP1271Signature(TEST_ADDRESSE_NEW_PROXY, rawMessage, "rinkeby");
       expect(result).toBe(true)
     })
   })

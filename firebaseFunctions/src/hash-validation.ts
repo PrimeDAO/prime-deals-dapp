@@ -2,7 +2,19 @@ import { Blob } from "buffer";
 import { ethers } from "ethers";
 import * as functions from "firebase-functions";
 
+/**
+ * v1.1.1
+ * 1. https://rinkeby.etherscan.io/address/0x2E46E481d57477A0663a7Ec61E7eDc65F4cb7F5C#readProxyContract
+ * 2. then expand "VERSION"
+ */
 // const OLD_PROXY_VERSION = "1.1.1"
+/**
+ * v1.3.0
+ * 1. https://rinkeby.etherscan.io/address/0x40597Caffbc904396DCAFD23786A0e1626E6975c#code=
+ * 2. "Similar Match Source Code"
+ * 2.1 https://rinkeby.etherscan.io/address/0x4cb09344de5bccd45f045c5defa0e0452869ff0f#readProxyContract
+ * 3. then expand "VERSION"
+ */
 const NEW_PROXY_VERSION = "1.3.0";
 
 const ProviderEndpoints = {
