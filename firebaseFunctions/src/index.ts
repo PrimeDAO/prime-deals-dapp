@@ -258,7 +258,17 @@ export const CI = {
            * Have to set signature manually
            */
           signerAddress = address;
-          await verifyEIP1271Signature(signerAddress, message, network);
+          try {
+            const verified = await verifyEIP1271Signature(signerAddress, message, network);
+
+            if (!verified) {
+              functions.logger.error(`Debug instructions: 1. address: ${signerAddress}; 2. Message: ${message}`);
+              throw new Error();
+            }
+          } catch {
+            functions.logger.error("Could not verify EIP-1271 signature");
+            return response.sendStatus(500);
+          }
         }
 
         try {

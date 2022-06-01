@@ -57,6 +57,8 @@ export async function verifyEIP1271Signature(signerAddr: string, rawMessage: str
   let version;
   try {
     version = await signerEIP1271Contract.callStatic.VERSION();
+    functions.logger.info("Contract version", version);
+
     let verified;
     if (version === NEW_PROXY_VERSION) {
       const returnValue = await signerEIP1271Contract.callStatic["isValidSignature(bytes32,bytes)"](messageHash, "0x");
@@ -70,9 +72,8 @@ export async function verifyEIP1271Signature(signerAddr: string, rawMessage: str
 
     return verified;
   } catch (error) {
-    functions.logger.info("Contract version", version);
     functions.logger.error(error.message);
-    return false;
+    throw error;
   }
 }
 
