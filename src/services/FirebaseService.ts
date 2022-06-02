@@ -141,7 +141,6 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
-    debugger;
     /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 145 ~ this.currentFirebaseUserAddress", this.currentFirebaseUserAddress);
     if (this.currentFirebaseUserAddress === address) {
       return;
