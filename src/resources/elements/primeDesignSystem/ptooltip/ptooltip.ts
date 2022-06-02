@@ -1,7 +1,7 @@
 import tippy, { Instance, Placement, Props } from "tippy.js";
 import { customAttribute, bindable, ICustomAttributeViewModel } from "aurelia";
 import { toBoolean } from "resources/binding-behaviours";
-
+import "./ptooltip.scss";
 @customAttribute("ptooltip")
 export class PTooltip implements ICustomAttributeViewModel {
   @bindable({ primary: true }) content: string;

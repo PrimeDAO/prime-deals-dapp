@@ -7,7 +7,7 @@
     <div
       repeat.for="column of columns"
       class="cell header ${column.sortable ? 'sortable' : ''} ${column.headerClass} ${column.align}"
-      click.delegate="column.sortable && sort(column.field)"
+      click.trigger="column.sortable && sort(column.field)"
     >
       ${column.headerText === undefined ? column.field : column.headerText}
       <i
@@ -64,7 +64,7 @@
   <div class="centered">
     <pbutton
       type="tertiary"
-      click.delegate="seeMore(true)"
+      click.trigger="seeMore(true)"
       if.to-view="!seeingMore"
     >
       SHOW ALL
@@ -72,7 +72,7 @@
     </pbutton>
     <pbutton
       type="tertiary"
-      click.delegate="seeMore(false)"
+      click.trigger="seeMore(false)"
       if.to-view="seeingMore"
     >
       SHOW LESS

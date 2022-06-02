@@ -12,7 +12,7 @@
         </div>
       </template>
       <div class="connectButton" data-test="connectButton">
-        <pbutton click.delegate="onConnect()" type="tertiary">
+        <pbutton click.trigger="onConnect()" type="tertiary">
           <div class.bind="'pending' + ((txPhase==='Confirming')
           ? ' confirming' : '')" if.to-view="txInProgress">
             <div class="phase">${txPhase}</div><i class="spinner fas fa-circle-notch fa-spin"></i>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="connectButton" data-test="connectButton" else>
-      <pbutton click.delegate="onConnect()" type="secondary connect">Connect to a Wallet</pbutton>
+      <pbutton click.trigger="onConnect()" type="secondary connect">Connect to a Wallet</pbutton>
     </div>
   </div>
   </div>

@@ -4,7 +4,7 @@
   <main class="page animated-page au-animate fundContainer">
     <section class="section top">
       <h1 class="title heading heading1 gradient">${deal.registrationData.proposal.title}</h1>
-      <pbutton type="secondary" click.delegate="goToDealPage()" rel="noopener noreferrer"
+      <pbutton type="secondary" click.trigger="goToDealPage()" rel="noopener noreferrer"
         >Return to deal page</pbutton
       >
     </section>
@@ -95,7 +95,7 @@
                     decimals.bind="firstDao.tokens[selectedToken].decimals"
                   >
                   </numeric-input>
-                  <pbutton type="secondary" click.delegate="setMax()" disabled.bind="!selectedToken"
+                  <pbutton type="secondary" click.trigger="setMax()" disabled.bind="!selectedToken"
                     >Max</pbutton
                   >
                   <span class="balance" if.to-view="accountBalance">
@@ -110,7 +110,7 @@
               <pbutton
                 if.to-view="lockRequired"
                 type="primary"
-                click.delegate="unlockTokens()"
+                click.trigger="unlockTokens()"
                 disabled.bind="processing || !selectedToken || !depositAmount || depositAmount <= 0"
                 >${processing ? 'Unlocking' : 'Unlock'}<i
                   if.to-view="processing"
@@ -120,7 +120,7 @@
               <pbutton
                 else
                 type="primary"
-                click.delegate="depositTokens()"
+                click.trigger="depositTokens()"
                 disabled.bind="processing || !selectedToken || !depositAmount || depositAmount <= 0"
                 >${processing ? 'Depositing' : 'Deposit'}<i
                   if.to-view="processing"
@@ -207,7 +207,7 @@
               type="primary"
               if.to-view="deal.isRepresentativeUser"
               disabled.bind="processing || !hasTokensToClaim"
-              click.delegate="claimTokens()"
+              click.trigger="claimTokens()"
               >${processing ? 'Claiming' : 'Claim Tokens'}<i
                 if.to-view="processing"
                 class="spinner fa fas fa-circle-notch fa-spin"

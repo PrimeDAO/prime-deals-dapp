@@ -28,7 +28,7 @@ deal-clauses {
       border-radius: $border-radius-normal;
       background-color: transparent;
       transition: background-color $hover-transition-speed-fast ease-in-out;
-      transition-delay: $hover-transition-speed-fast / 2;
+      transition-delay: calc($hover-transition-speed-fast / 2);
 
       @include pre;
       .body {
@@ -77,7 +77,7 @@ deal-clauses {
         transition-delay: 0s;
 
         &:not(.active) span {
-          transition-delay: $hover-transition-speed-fast / 2;
+          transition-delay: calc($hover-transition-speed-fast / 2);
           opacity: 1;
         }
 

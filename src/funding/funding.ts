@@ -382,8 +382,6 @@ export class Funding {
     this.processing = false;
   }
 
-  //using @computedFrom here doesn't update the UI when withdrawing tokens and showing the form again
-  //so I took it off to make it work
   private get showDepositForm(){
     const firstDaoTokensAllDeposited = (this.firstDao.tokens as ITokenCalculated[]).every(x => BigNumber.from(x.amount).eq(x.fundingDeposited ?? 0));
     return this.deal.isRepresentativeUser && !this.deal.isFailed && !firstDaoTokensAllDeposited;

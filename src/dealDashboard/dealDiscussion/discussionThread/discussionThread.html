@@ -6,7 +6,7 @@
         <h1 class="subtitle heading heading1 gradient">
           Discuss
         </h1>
-        <pbutton type="secondary" click.delegate="navigateTo('')">Back To List</pbutton>
+        <pbutton type="secondary" click.trigger="navigateTo('')">Back To List</pbutton>
       </div>
     </section>
     <hgroup class="title" ref="refTitle">
@@ -43,7 +43,7 @@
               data-test="reload-discussions"
               class="reload-discussions"
               type="primary"
-              click.delegate="initialize()">Reload Discussion</pbutton>
+              click.trigger="initialize()">Reload Discussion</pbutton>
           </div>
         </div>
 
@@ -68,7 +68,7 @@
           </single-comment>
         </div>
       </section>
-      <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.delegate="loadMoreComments()">Load More</pbutton> -->
+      <!-- <pbutton class="load-more" type="tertiary" if.bind="comments.length < threadComments.length" click.trigger="loadMoreComments()">Load More</pbutton> -->
 
       <!-- Comment Input -->
       <section if.bind="authorized" data-test="comment-input-section" class="action container">
@@ -81,7 +81,7 @@
             <span else if.bind="replyToComment && replyToComment.author" data-test="reply-to-address">
               Reply to ${replyToComment.author | smallHexString}
             </span>
-            <button click.delegate="closeReply()">
+            <button click.trigger="closeReply()">
               <i class="fas fa-times"></i>
             </button>
           </p>
@@ -108,7 +108,7 @@
           full-width
           disabled.bind="isLoading.commenting || !comment.length"
           loading.bind="isLoading.commenting"
-          click.delegate="addComment()">
+          click.trigger="addComment()">
           ${replyToComment ? "Reply" : "Comment"}
         </pbutton>
       </section>

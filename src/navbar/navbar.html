@@ -9,15 +9,15 @@
 
     <div class="products">
       <div class="container">
-        <div class="item" click.delegate="goto('https://launch.prime.xyz')">
+        <div class="item" click.trigger="goto('https://launch.prime.xyz')">
           <div class="icon launch"><img class="mono" src="launch-mono.svg" /><img class="color" src="launch.svg" /></div>
           <div class="text">Launch</div>
         </div>
-        <div class="item" click.delegate="goto('https://www.prime.xyz/pools')">
+        <div class="item" click.trigger="goto('https://www.prime.xyz/pools')">
           <div class="icon pools"><img class="mono" src="pools-mono.svg" /><img class="color" src="pools.svg" /></div>
           <div class="text">Pools</div>
         </div>
-        <div class="item" click.delegate="goto('https://www.prime.xyz/rating')">
+        <div class="item" click.trigger="goto('https://www.prime.xyz/rating')">
           <div class="icon rating"><img class="mono" src="rating-mono.svg" /><img class="color" src="rating.svg" /></div>
           <div class="text">Rating</div>
         </div>
@@ -37,13 +37,13 @@
           <a class="item" load="initiate">Initiate a Deal</a>
           <a class="item" load="deals">All Deals</a>
           <a class="item" load="documentation">Documentation</a>
-          <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
+          <div class="item" click.trigger="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
         </nav>
       </div>
     </div>
 
     <div class="headerConnectButton">
-      <pbutton click.delegate="resetDeals()" id="reset-deal-button" if.bind="environment !== 'production'" type="formfield">Reset deals</pbutton>
+      <pbutton click.trigger="resetDeals()" id="reset-deal-button" if.bind="environment !== 'production'" type="formfield">Reset deals</pbutton>
       <connect-button show-wallet-menu.call="handleShowWalletMenu()"></connect-button>
     </div>
 
@@ -55,7 +55,7 @@
     </mobile-menu>
     <hamburger-menu-button
       class="mobile-only"
-      click.delegate="toggleMenu()"
+      click.trigger="toggleMenu()"
       menu-open.bind="menuOpen">
     </hamburger-menu-button>
   </nav>

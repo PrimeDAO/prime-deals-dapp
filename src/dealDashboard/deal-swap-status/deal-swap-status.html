@@ -7,7 +7,7 @@
     <status-action-bar
       if.to-view="deal.isTargetReached && deal.isFunding"
       content="IMPORTANT: Funding is complete so you must initiate swapping before the funding period expires in ${deal.timeLeftToExecute | timespan:'largest2'}.">
-      <pbutton type="primary" click.delegate="executeSwap()" disabled.bind="isExecutingSwap">
+      <pbutton type="primary" click.trigger="executeSwap()" disabled.bind="isExecutingSwap">
         Execute Swap <i class="fas">&#xf021;</i>
       </pbutton>
     </status-action-bar>
@@ -15,7 +15,7 @@
     <status-action-bar
       if.to-view="deal.isClaiming && !deal.isFullyClaimed && deal.isUserRepresentativeOrLead"
       content="${deal.isRepresentativeUser ? 'Token swap has been executed and vesting is in progress.  Go To Deal Status to see the final state of the deal.' : null}">
-      <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
+      <pbutton type="primary" click.trigger="router.load(`funding/${deal.id}`)">
         ${deal.isRepresentativeUser ? 'Go to Claim' : 'Go to Status'}
         <i class="fas fa-arrow-right"></i>
       </pbutton>
@@ -25,7 +25,7 @@
       content="All the swaps have been completed.  Go To Deal Status to see the final state of the deal"
       icon-class="check-circle"
       icon-color="success">
-      <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
+      <pbutton type="primary" click.trigger="router.load(`funding/${deal.id}`)">
         Go To Deal Status
         <i class="fas fa-arrow-right"></i>
       </pbutton>
@@ -33,7 +33,7 @@
     <status-action-bar
       if.to-view="deal.isFailed && deal.isUserRepresentativeOrLead"
       content="${deal.isRepresentativeUser ? 'IMPORTANT: You can withdraw your tokens at any time as this deal has failed.  Go To Withdraw to withdraw token deposits.' : null}">
-      <pbutton type="primary" click.delegate="router.navigate(`funding/${deal.id}`)">
+      <pbutton type="primary" click.trigger="router.load(`funding/${deal.id}`)">
         ${deal.isRepresentativeUser ? 'Go To Withdraw' : 'Go to Status'}
         <i class="fas fa-arrow-right"></i>
       </pbutton>

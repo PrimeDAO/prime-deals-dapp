@@ -14,11 +14,11 @@
     <div class="rightSection">
       <router-view></router-view>
       <div class="navigationContainer">
-        <div click.delegate="previous()" class="navigationPrevious">
+        <div click.trigger="previous()" class="navigationPrevious">
           <i class="fas fa-arrow-left" if.to-view="previousDocTitle"></i>
           ${previousDocTitle}
         </div>
-        <div click.delegate="next()" class="navigationNext">
+        <div click.trigger="next()" class="navigationNext">
           ${nextDocTitle}
           <i class="fas fa-arrow-right" if.to-view="nextDocTitle"></i>
         </div>

@@ -11,7 +11,7 @@
         class="cardFooter"
       >
         <pbutton
-          click.delegate="edit()"
+          click.trigger="edit()"
           type="tertiary"
         >Edit</pbutton>
       </div>
@@ -31,7 +31,7 @@
         <pbutton
           if.bind="!hideDeleteButton"
           class="deleteButton"
-          click.delegate="delete()"
+          click.trigger="delete()"
           type="tertiary"
           ref="deleteButtonRef"
         >
@@ -39,7 +39,7 @@
           <i class="fa fa-trash"></i>
         </pbutton>
         <pbutton
-          click.delegate="save()"
+          click.trigger="save()"
           is-loading.bind="saving"
           type="primary"
           >Save</pbutton

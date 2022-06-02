@@ -11,7 +11,7 @@
       <span
         data-test="add-or-read-button"
         class="button"
-        click.delegate="addOrReadDiscussion(clause.text, clause.id)"
+        click.trigger="addOrReadDiscussion(clause.text, clause.id)"
         if.to-view="authorized">
         <div
           if.to-view="!discussionsService.discussions[clause.id] || discussionsService.discussions[clause.id].replies === 0">Begin A Discussion</div>

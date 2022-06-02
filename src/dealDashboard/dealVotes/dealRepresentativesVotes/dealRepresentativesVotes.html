@@ -1,5 +1,5 @@
 <template>
-  <div class="accordion-button ${showMore ? 'active' : ''}" click.delegate="showMore = !showMore">
+  <div class="accordion-button ${showMore ? 'active' : ''}" click.trigger="showMore = !showMore">
     <img class="dao-logo" src.bind="dao.logoURI" />
     <div
       class="accordion-title bodySmallText"
