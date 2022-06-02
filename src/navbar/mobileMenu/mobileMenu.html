@@ -23,12 +23,15 @@
         </div>
       </div>
       <div class="productSubpages">
+        
         <div class="container">
-          <div class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}" click.delegate="navigateCallback({href: '/'})">Home</div>
-          <div class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}" click.delegate="navigateCallback({href: '/initiate'})">Initiate a Deal</div>
-          <div class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'deals') ? 'active' : ''}" click.delegate="navigateCallback({href: '/deals'})">All Deals</div>
-          <div class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}" click.delegate="navigateCallback({href: '/documentation'})">Documentation</div>
-          <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
+           <nav>
+            <div class="item" click.trigger="router.load('home')">Home</a>
+            <div class="item" click.trigger="router.load('initiate')">Initiate a Deal</a>
+            <div class="item" click.trigger="router.load('deals')">All Deals</a>
+            <div class="item" click.trigger="router.load('documentation')">Documentation</a>
+            <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
+           </nav>
         </div>
       </div>
     </div>
