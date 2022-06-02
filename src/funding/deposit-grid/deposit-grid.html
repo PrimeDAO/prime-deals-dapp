@@ -5,7 +5,7 @@
       color="${fundingDaysLeft >= 10 ? 'warning' : 'danger'}"
       if.to-view="showChip && fundingDaysLeft > 0"
     >
-      <span class="icon far fa-clock" slot="icon"></span>${deal.timeLeftToExecute |
+      <span class="icon far fa-clock" au-slot="icon"></span>${deal.timeLeftToExecute |
       timespan:'largest2'} left
     </pchip>
     <pchip color="danger" if.to-view="showChip && deal.isFailed">

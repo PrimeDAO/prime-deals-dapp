@@ -22,7 +22,7 @@
       <let deal-privacy-text="${deal.isPrivate ? 'Private' : 'Public'}"></let>
       <h2 data-test="dealStatus">
         <time-left deal.to-view="deal" hide-icons largest>
-          <span slot="before">•</span>
+          <span au-slot="before">•</span>
           <span>(${dealPrivacyText})</span>
         </time-left>
       </h2>
