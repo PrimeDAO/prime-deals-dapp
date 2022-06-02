@@ -112,4 +112,23 @@ export class ConsoleLogService {
         break;
     }
   }
+
+  public logObject(msg: string, obj: any, level: ConsoleLogMessageTypes = "info"): void {
+    switch (level) {
+      case "info":
+      default:
+        this.logger.info(msg, obj);
+        break;
+      case "warn":
+      case "warning":
+        this.logger.warn(msg, obj);
+        break;
+      case "error":
+        this.logger.error(msg, obj);
+        break;
+      case "debug":
+        this.logger.debug(msg, obj);
+        break;
+    }
+  }
 }
