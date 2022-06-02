@@ -78,7 +78,7 @@
           <a
             class="row body hot"
             if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
-            click.trigger="navigate(`deal/${deal.id}`)">
+            click.trigger="router.load(`deal/${deal.id}`)">
             <div class="project cell body ellipses hot">
               <dao-icon-name primary-dao.to-view="deal.registrationData.primaryDAO" partner-dao.to-view="deal.registrationData.partnerDAO"></dao-icon-name>
             </div>

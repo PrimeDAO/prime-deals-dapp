@@ -8,6 +8,7 @@ import { Address, IEthereumService } from "services/EthereumService";
 import { SortOrder } from "services/SortService";
 import { SortService } from "services/SortService";
 import { DisposableCollection } from "services/DisposableCollection";
+import { IRouter } from "@aurelia/router";
 
 /**
  * This is the view model for the deals page
@@ -31,6 +32,7 @@ export class Deals {
     private dateService: DateService,
     @IEthereumService private ethereumService: IEthereumService,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
+    @IRouter private router: IRouter,
   ) {
     //
   }
