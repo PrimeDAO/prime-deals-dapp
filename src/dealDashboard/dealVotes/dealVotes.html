@@ -12,7 +12,7 @@
           class="${deal.userVote === true ? 'acceptButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="acceptDeal()"
+          click.trigger="acceptDeal()"
         >
           <span class="icon is-loading" if.bind="accepting">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
@@ -25,7 +25,7 @@
           class="${deal.userVote === false ? 'declineButtonActive' : ''}"
           full-width
           type="formfield"
-          click.delegate="declineDeal()"
+          click.trigger="declineDeal()"
         >
           <span class="icon is-loading" if.bind="declining">
             <i class="spinner fas fa-sync-alt" data-test="loadingIcon"></i>
@@ -39,7 +39,7 @@
         class="negotiate"
         if.bind="ethereumService.defaultAccountAddress  && !deal.fundingWasInitiated && !deal.isCancelled"
       >
-        <pbutton class="negotiateButton" click.delegate="goToDiscussions()">
+        <pbutton class="negotiateButton" click.trigger="goToDiscussions()">
           <img src="/comment.svg"/>
           Negotiate
         </pbutton>
@@ -65,7 +65,7 @@
       class="funding"
       if.bind="deal.majorityHasVoted && deal.isUserProposalLead && !deal.fundingWasInitiated && !deal.isCancelled"
     >
-      <pbutton class="fundButton" click.delegate="fund()" type="primary">
+      <pbutton class="fundButton" click.trigger="fund()" type="primary">
         Start Funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>
@@ -75,14 +75,14 @@
       class="funding"
       if.bind="deal.isFunding && (deal.isUserProposalLead || deal.isRepresentativeUser)"
     >
-      <pbutton class="fundButton" click.delegate="goToFunding()" type="primary">
+      <pbutton class="fundButton" click.trigger="goToFunding()" type="primary">
         Go to funding
         <i class="fas fa-arrow-right"></i>
       </pbutton>
     </div>
 
     <div class="funding" if.bind="deal.majorityHasVoted && !ethereumService.defaultAccountAddress">
-      <pbutton click.delegate="ethereumService.ensureConnected()" type="primary">
+      <pbutton click.trigger="ethereumService.ensureConnected()" type="primary">
         Connect Wallet
       </pbutton>
     </div>

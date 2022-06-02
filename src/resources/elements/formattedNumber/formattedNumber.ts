@@ -9,7 +9,7 @@ export class FormattedNumber {
   /**
    * how many significant digits we want to display
    */
-    // @bindable public precision?: string | number;
+  // @bindable public precision?: string | number;
   @bindable({set: toBoolean}) public average = false;
   /**
    * places after the decimal, padded with zeroes if needed
@@ -27,17 +27,16 @@ export class FormattedNumber {
   constructor(private numberService: NumberService) {
   }
 
-  // @computedFrom("_value")
   private get tooltip(): string { // TODO test this and remove comment
     return this._value?.toString(10);
   }
 
   binding() {
-    this.updateValue()
+    this.updateValue();
   }
 
   public valueChanged(): void {
-    this.updateValue()
+    this.updateValue();
   }
 
   public updateValue(): void {

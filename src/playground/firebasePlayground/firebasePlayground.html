@@ -10,41 +10,41 @@
   <h3>Firebase</h3>
   <br>
   <div>
-    <pbutton type="primary" click.delegate="createOpenProposal()">Create dummy Open Proposal</pbutton>
-    <pbutton type="primary" click.delegate="createPartneredDeal()">Create dummy Partnered Deal</pbutton>
+    <pbutton type="primary" click.trigger="createOpenProposal()">Create dummy Open Proposal</pbutton>
+    <pbutton type="primary" click.trigger="createPartneredDeal()">Create dummy Partnered Deal</pbutton>
   </div>
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="getDealId"></pinput-text>
-    <pbutton type="primary" click.delegate="getDealById(getDealId)">Get a Deal</pbutton>
+    <pbutton type="primary" click.trigger="getDealById(getDealId)">Get a Deal</pbutton>
   </div>
   <br>
-  <pbutton type="primary" click.delegate="getAllPublicDeals()">get All Public Deals</pbutton>
-  <pbutton type="primary" click.delegate="getRepresentativeDeals()">Get deals where I am representative</pbutton>
-  <pbutton type="primary" click.delegate="getProposalLeadDeals()">Get deals where I am Proposal Lead</pbutton>
-  <pbutton type="primary" click.delegate="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
+  <pbutton type="primary" click.trigger="getAllPublicDeals()">get All Public Deals</pbutton>
+  <pbutton type="primary" click.trigger="getRepresentativeDeals()">Get deals where I am representative</pbutton>
+  <pbutton type="primary" click.trigger="getProposalLeadDeals()">Get deals where I am Proposal Lead</pbutton>
+  <pbutton type="primary" click.trigger="getAllDealsForTheUser()">Get all deals which I can see</pbutton>
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="discussionDealId" placeholder="dealId"></pinput-text>
     <pinput-text value.bind="clauseIndex" placeholder="clauseIndex"></pinput-text>
-    <pbutton type="primary" click.delegate="addDealDiscussion(discussionDealId, clauseIndex)">Add deal clause discussion</pbutton>
+    <pbutton type="primary" click.trigger="addDealDiscussion(discussionDealId, clauseIndex)">Add deal clause discussion</pbutton>
   </div>
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="editDealId" placeholder="editDealId"></pinput-text>
     <pinput-text value.bind="editTitle" placeholder="editTitle"></pinput-text>
-    <pbutton type="primary" click.delegate="updateDealTitle(editDealId, editTitle)">Edit deal Title</pbutton>
+    <pbutton type="primary" click.trigger="updateDealTitle(editDealId, editTitle)">Edit deal Title</pbutton>
   </div>
   <br>
   <div style="display: flex;">
     <pinput-text value.bind="isWithdrawnDealId" placeholder="DealId"></pinput-text>
-    <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
-    <pbutton type="primary" click.delegate="updateDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
+    <pbutton type="primary" click.trigger="updateDealIsWithdrawn(isWithdrawnDealId, true)">Set isWithdrawn to true</pbutton>
+    <pbutton type="primary" click.trigger="updateDealIsWithdrawn(isWithdrawnDealId, false)">Set isWithdrawn to false</pbutton>
   </div>
   <div style="display: flex;">
     <pinput-text value.bind="isRejectedDealId" placeholder="DealId"></pinput-text>
-    <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
-    <pbutton type="primary" click.delegate="updateDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
+    <pbutton type="primary" click.trigger="updateDealIsRejected(isRejectedDealId, true)">Set isRejected to true</pbutton>
+    <pbutton type="primary" click.trigger="updateDealIsRejected(isRejectedDealId, false)">Set isRejected to false</pbutton>
   </div>
   <h3>All deals</h3>
   <div>
@@ -58,18 +58,18 @@
       <ul>
         <li repeat.for="representative of deal.data.registrationData.primaryDAO.representatives">
           Address: ${representative.address}
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', true)">Vote Yes</pbutton>
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', false)">Vote No</pbutton>
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PRIMARY_DAO', null)">Reset Vote</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PRIMARY_DAO', true)">Vote Yes</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PRIMARY_DAO', false)">Vote No</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PRIMARY_DAO', null)">Reset Vote</pbutton>
         </li>
       </ul>
       <label>PartnerDao representatives:</label>
       <ul>
         <li repeat.for="representative of deal.data.registrationData.partnerDAO.representatives">
           Address: ${representative.address}
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', true)">Vote Yes</pbutton>
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', false)">Vote No</pbutton>
-          <pbutton type="secondary" click.delegate="vote(deal.id, representative.address, 'PARTNER_DAO', null)">Reset Vote</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PARTNER_DAO', true)">Vote Yes</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PARTNER_DAO', false)">Vote No</pbutton>
+          <pbutton type="secondary" click.trigger="vote(deal.id, representative.address, 'PARTNER_DAO', null)">Reset Vote</pbutton>
         </li>
       </ul>
     </div>

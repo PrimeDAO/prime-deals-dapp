@@ -23,7 +23,7 @@
     <section if.to-view="!ethereumService.defaultAccountAddress">
       <p data-test="discussions-list-instructions" class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
-        <a class="connect-link" href="" click.delegate="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
+        <a class="connect-link" href="" click.trigger="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
       </p>
     </section>
 
@@ -38,7 +38,7 @@
         <div class="tr"
           data-test="single-topic"
           id="${discussionId}"
-          click.delegate="navigateTo(`${discussionId}`)"
+          click.trigger="navigateTo(`${discussionId}`)"
           repeat.for="[discussionId, discussion] of discussions">
           <div class="td idx">${findClauseIndex(discussionId) }</div>
           <div class="td topic">

@@ -3,7 +3,7 @@
     <a
       if.to-view="textClickable"
       ptooltip.to-view="address && showTooltip ? address : null"
-      click.delegate="gotoEtherscan()"
+      click.trigger="gotoEtherscan()"
     >
       ${linkText ? linkText : address }
       <span if.to-view="showArrowInsideLink" class="arrowIcon" />
