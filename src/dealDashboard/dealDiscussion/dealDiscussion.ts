@@ -9,6 +9,6 @@ export class DealDiscussion {
   @bindable({mode: BindingMode.twoWay}) discussionId?: string;
 
   private get clauses(): Map<string, IClause> {
-    return new Map<string, IClause>(this.deal.registrationData.terms.clauses.map(clause => [clause.id, clause]));
+    return new Map<string, IClause>(this.deal?.registrationData.terms.clauses.map(clause => [clause.id, clause]));
   }
 }

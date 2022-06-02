@@ -1,6 +1,6 @@
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import "./dealVotes.scss";
-import { EthereumService } from "../../services/EthereumService";
+import { IEthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";
 import { ConsoleLogService } from "../../services/ConsoleLogService";
@@ -86,7 +86,7 @@ export class DealVotes {
 
   constructor(
     @IRouter private router: IRouter,
-    public ethereumService: EthereumService,
+    @IEthereumService public ethereumService: IEthereumService,
     private dialogService: DialogService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private consoleLogService: ConsoleLogService,

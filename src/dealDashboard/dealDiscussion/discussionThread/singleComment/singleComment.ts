@@ -1,4 +1,4 @@
-import { EthereumService } from "services/EthereumService";
+import { IEthereumService } from "services/EthereumService";
 import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
 import { ILoadingTracker } from "../discussionThread";
@@ -33,7 +33,7 @@ export class SingleComment {
 
   constructor(
     private dateService: DateService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     @IRouter private router: IRouter,
     @ISignaler private bindingSignaler: ISignaler,
   ) {}

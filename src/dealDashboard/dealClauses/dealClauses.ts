@@ -1,5 +1,5 @@
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
+import { IEthereumService } from "services/EthereumService";
 import { DiscussionsService } from "dealDashboard/discussionsService";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { bindable, BindingMode } from "aurelia";
@@ -15,7 +15,7 @@ export class DealClauses {
   }
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private discussionsService: DiscussionsService,
   ) {
   }

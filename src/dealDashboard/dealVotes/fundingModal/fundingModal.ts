@@ -8,7 +8,7 @@ export class FundingModal {
   constructor(public controller: DialogController) {
   }
 
-  public activate(model: { deal: DealTokenSwap }): void {
+  public load(model: { deal: DealTokenSwap }): void {
     this.deal = model.deal;
   }
 }

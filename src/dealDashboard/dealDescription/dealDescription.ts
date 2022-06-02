@@ -31,7 +31,7 @@ export class DealDescription {
   }
 
   get originalDescriptionText(): string {
-    return this.deal.registrationData.proposal.description;
+    return this.deal?.registrationData.proposal.description;
   }
 
   bind() {

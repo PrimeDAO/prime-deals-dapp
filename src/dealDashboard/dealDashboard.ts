@@ -1,17 +1,17 @@
-import { EthereumService } from "services/EthereumService";
+import { IEthereumService } from "./../services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DealService } from "../services/DealService";
-import { IRouter } from "@aurelia/router";
+import { IRouter, IRouteableComponent } from "@aurelia/router";
 import { IEventAggregator } from "aurelia";
 import { watch } from "@aurelia/runtime-html";
 
-export class DealDashboard {
+export class DealDashboard implements IRouteableComponent {
   private deal: DealTokenSwap;
   private discussionId: string = null;
   private dealId: string;
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private dealService: DealService,
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
@@ -22,12 +22,13 @@ export class DealDashboard {
     return (this.deal?.isUserRepresentativeOrLead) || (!this.deal?.isPartnered && !!this.ethereumService.defaultAccountAddress);
   }
 
-  public async canActivate(params: { id: string }): Promise<void> {
+  public async canLoad(params: { id: string }): Promise<boolean> {
     await this.dealService.ensureInitialized();
     this.checkUserCanAccessDashboard(params.id);
+    return true;
   }
 
-  public async activate(params: { id: string }) {
+  public async load(params: { id: string }) {
     this.deal = this.dealService.deals.get(params.id);
     await this.deal.ensureInitialized();
   }

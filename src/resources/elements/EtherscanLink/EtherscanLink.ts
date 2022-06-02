@@ -1,7 +1,6 @@
 ﻿import { customElement, bindable, BindingMode } from "aurelia";
 import { toBoolean } from "resources/binding-behaviours";
-import { EthereumService } from "services/EthereumService";
-import "./EtherscanLink.scss";
+import { IEthereumService } from "services/EthereumService";
 
 @customElement("etherscanlink")
 export class EtherscanLink {
@@ -26,7 +25,7 @@ export class EtherscanLink {
   }
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
   ) { }
 
   public attached(): void {

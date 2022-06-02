@@ -17,7 +17,7 @@ export class DealMenubar {
   }
 
   get canEdit() {
-    return this.deal.isAuthenticatedProposalLead
+    return this.deal && this.deal.isAuthenticatedProposalLead
       && !this.deal.isCancelled
       && !this.deal.isExecuted
       && !this.deal.isFunding
@@ -25,7 +25,7 @@ export class DealMenubar {
   }
 
   get canCancel() {
-    return this.deal.isAuthenticatedProposalLead
+    return this.deal && this.deal.isAuthenticatedProposalLead
       && !this.deal.fundingWasInitiated
       && !this.deal.isCancelled;
   }

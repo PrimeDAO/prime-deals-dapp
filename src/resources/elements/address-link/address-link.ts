@@ -1,10 +1,10 @@
 import { bindable, containerless } from "aurelia";
-import { EthereumService } from "services/EthereumService";
+import { IEthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
 import "./address-link.scss";
 @containerless()
 export class AddressLink {
-  @bindable address:string;
+  @bindable address: string;
   @bindable isTransaction = false;
   @bindable showArrowIcon = true;
   @bindable showCopyIcon = true;
@@ -12,7 +12,7 @@ export class AddressLink {
   @bindable textClickable = true;
   @bindable showArrowInsideLink = false;
   @bindable showTooltip = true;
-  constructor(private readonly ethereumService:EthereumService ) {
+  constructor(@IEthereumService private readonly ethereumService: IEthereumService) {
     // you can inject the element or any DI in the constructor
   }
   public gotoEtherscan = (): void => {

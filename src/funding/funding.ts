@@ -1,3 +1,4 @@
+import { IEthereumService } from "./../services/EthereumService";
 import { TokenService } from "services/TokenService";
 import { AlertService, ShowButtonsEnum } from "./../services/AlertService";
 import { NumberService } from "./../services/NumberService";
@@ -8,7 +9,6 @@ import { EventConfig } from "./../services/GeneralEvents";
 import { BigNumber } from "ethers";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { EthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { IPSelectItemConfig } from "resources/elements/primeDesignSystem/pselect/pselect";
@@ -46,7 +46,7 @@ export class Funding {
   constructor(
     @IRouter private router: IRouter,
     private readonly dealService: DealService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private dateService: DateService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private numberService: NumberService,

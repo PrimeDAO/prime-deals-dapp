@@ -1,4 +1,4 @@
-import { EthereumService } from "services/EthereumService";
+import { IEthereumService } from "./../../../services/EthereumService";
 
 import { DiscussionsService } from "../../discussionsService";
 import { DealService } from "services/DealService";
@@ -36,6 +36,7 @@ export class DiscussionsList{
 
   private get discussions(): Map<string, IDealDiscussion> {
     const discussionsMap = new Map();
+    if (!this.deal) return discussionsMap;
 
     Object.entries(this.deal.clauseDiscussions).forEach(async ([id, discussion]) => {
       if (!discussion
@@ -71,7 +72,7 @@ export class DiscussionsList{
     @IRouter private router: IRouter,
     private dateService: DateService,
     private dealService: DealService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private discussionsService: DiscussionsService,
     @ISignaler private bindingSignaler: ISignaler,
   ) {}
@@ -88,7 +89,9 @@ export class DiscussionsList{
   }
 
   private initialize() {
-    this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
+    if (this.deal){
+      this.discussionsService.loadDealDiscussions(this.deal.clauseDiscussions);
+    }
 
     this.hasDiscussions = !!this.discussions.size;
   }

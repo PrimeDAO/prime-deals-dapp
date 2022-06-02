@@ -1,7 +1,7 @@
+import { EthereumService, IEthereumService } from "./../services/EthereumService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { DealService } from "services/DealService";
 import { EventConfigFailure } from "services/GeneralEvents";
-import { EthereumService } from "services/EthereumService";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
@@ -29,11 +29,11 @@ export class DiscussionsService {
   private ensName: string;
 
   constructor(
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     private consoleLogService: ConsoleLogService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dealService: DealService,
-    private dataSourceDeals: IDataSourceDeals,
+    @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     private dateService: DateService,
     private discussionsStreamService: DiscussionsStreamService,
     private browserStorageService: BrowserStorageService,

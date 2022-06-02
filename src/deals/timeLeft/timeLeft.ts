@@ -22,7 +22,7 @@ export class TimeLeft {
 
   }
   get status(): string {
-    return this.reversedEnum[this.deal.status];
+    return this.reversedEnum[this.deal?.status ?? DealStatus.active ];
   }
 
   // constructor(

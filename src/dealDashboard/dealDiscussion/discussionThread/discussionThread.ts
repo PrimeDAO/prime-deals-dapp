@@ -2,7 +2,7 @@ import { AlertService } from "services/AlertService";
 
 import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/discussionsService";
 import { Types } from "dealDashboard/discussionsStreamService";
-import { Address, EthereumService } from "services/EthereumService";
+import { Address, IEthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { Utils } from "services/utils";
@@ -75,7 +75,7 @@ export class DiscussionThread {
     private dealService: DealService,
     private consoleLogService: ConsoleLogService,
     private discussionsService: DiscussionsService,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private alertService: AlertService,
   ) { }

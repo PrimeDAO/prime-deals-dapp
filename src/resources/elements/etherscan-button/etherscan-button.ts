@@ -1,14 +1,14 @@
-import { EthereumService } from "services/EthereumService";
 import "./etherscan-button.scss";
 import { Utils } from "services/utils";
 import { containerless, bindable } from "aurelia";
+import { IEthereumService } from "services";
 
 @containerless()
 export class EtherscanButton {
   @bindable hrefText?:string;
   @bindable address:string;
   @bindable isTransaction:boolean;
-  constructor(private readonly ethereumService:EthereumService ) {
+  constructor(@IEthereumService private readonly ethereumService: IEthereumService) {
     // you can inject the element or any DI in the constructor
   }
 
