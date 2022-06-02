@@ -1,0 +1,26 @@
+<template>
+  <import from="../../resources/elements/editingCard/editingCard"></import>
+
+  <style>
+    .playground1 pcard {
+      display: block;
+      width: 600px;
+    }
+  </style>
+
+  <div class="playground1" style="margin-top: 20px;">
+    <editing-card
+      on-edit.call="onEdit()"
+      on-save.call="onSave()"
+      on-delete.call="onDelete()"
+    >
+      <!-- View -->
+      <template replace-part="view">
+        <h2 data-test="viewText">${viewContent}</h2>
+      </template>
+      <template replace-part="edit">
+        <h2 data-test="editText">${editContent}</h2>
+      </template>
+    </editing-card>
+  </div>
+</template>

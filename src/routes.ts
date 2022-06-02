@@ -3,7 +3,7 @@ import { IRoute } from "@aurelia/router";
 export const routes: IRoute[] = [
   {
     path: ["", "home"],
-    id:  "home",
+    id: "home",
     title: "Home",
     component: import("./home/home"),
   },
@@ -37,5 +37,34 @@ export const routes: IRoute[] = [
     path: "deal/:id",
     title: "DEAL Dashboard",
   },
-
+  {
+    component: import("./contribute/contribute"),
+    id: "contribute",
+    path: "contribute",
+    title: "Contribute",
+  },
+  {
+    component: import("./documentation/officialDocs/termsOfService.html"),
+    id: "termsOfService",
+    path: ["terms-of-service"],
+    title: "Terms of Service",
+  },
+  {
+    component: import("./funding/funding"),
+    id: "funding",
+    path: "/funding/:id",
+    title: "Funding",
+  },
+  {
+    component: import("./comingSoon/comingSoon"),
+    id: "comingSoon",
+    path: ["comingSoon"],
+    title: "Coming Soon!",
+  },
+  {
+    component: import("./playground/playground"),
+    id: "playground",
+    path: ["playground"],
+    title: "Playground",
+  },
 ];
