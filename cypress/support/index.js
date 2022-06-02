@@ -14,7 +14,28 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
+
+// import '@cypress/cde-coverage/support'
 
 // Alternatively you can use CommonJS syntax:
-// require('./commands')
+// require('./commands');
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  return false
+})
+
+// Hide fetch/XHR requests
+// https://github.com/cypress-io/cypress/issues/7362#issuecomment-944273204
+const app = window.top;
+
+if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
+  const style = app.document.createElement('style');
+  style.innerHTML =
+    '.command-name-request, .command-name-xhr { display: none }';
+  style.setAttribute('data-hide-command-log-request', '');
+
+  app.document.head.appendChild(style);
+}

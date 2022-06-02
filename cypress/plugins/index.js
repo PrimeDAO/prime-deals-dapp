@@ -12,7 +12,59 @@
 // the project's config changing)
 
 /* eslint-disable */
+const { ProvidePlugin } = require("webpack");
+const webpack = require("@cypress/webpack-preprocessor");
+
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
+  // bind to the event we care about
+  // on('<event>', (arg1, arg2) => {
+  //   // plugin stuff here
+  // });
+  on("file:preprocessor", webpack({
+    webpackOptions: {
+      resolve: {
+        extensions: [".ts", ".js"],
+        alias: {
+          process: 'process/browser',
+        }
+      },
+      devtool: 'cheap-module-source-map',
+      devServer: {
+        client: {
+          overlay: false,
+        },
+      },
+      module: {
+        rules: [
+          {
+            test: /\.ts$/,
+            exclude: [/node_modules/],
+            use: [
+              {
+                loader: "ts-loader"
+              }
+            ]
+          },
+          {
+            test: /\.feature$/,
+            use: [
+              {
+                loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+                options: config
+              }
+            ]
+          }
+        ]
+      },
+      plugins: [
+        new ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
+        }),
+      ]
+    }
+  }));
+
+  // require('@cypress/code-coverage/task')(on, config)
+  return config
+};
