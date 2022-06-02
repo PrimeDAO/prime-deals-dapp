@@ -10,8 +10,8 @@
     font-size: 14px;
     align-self: center;
     white-space: nowrap;
-    > [slot="icon"] {
-      margin-right: 1px;
+    > [au-slot="icon"] {
+      margin-right: 5px;
     }
   }
   .success {
