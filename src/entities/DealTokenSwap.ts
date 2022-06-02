@@ -661,6 +661,8 @@ export class DealTokenSwap implements IDeal {
     }
 
     this.daoTokenTransactions = daoTokenTransactions;
+
+    this.consoleLogService.logObject("5. [DTS#hydrateDaoTransactions] daoTokenTransactions: ", this.daoTokenTransactions);
   }
 
   private async hydrateDaoClaims(): Promise<void> {
@@ -737,11 +739,14 @@ export class DealTokenSwap implements IDeal {
       metadata,
       deadline,
     ];
+    this.consoleLogService.logMessage(`[DTS#createSwap] dealParameters: ${JSON.stringify(dealParameters)}`);
 
     return this.transactionsService.send(
       () => this.moduleContract.createSwap(...dealParameters))
       .then(async receipt => {
         if (receipt) {
+          this.consoleLogService.logMessage(`[DTS#createSwap] receipt: ${JSON.stringify(receipt)}`);
+
           //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
           this.fundingStartedAt = new Date();
           this.hydrate();
@@ -789,10 +794,19 @@ export class DealTokenSwap implements IDeal {
 
   public unlockTokens(dao: IDAO, token: Address, amount: BigNumber): Promise<TransactionReceipt> {
     const tokenContract = this.tokenService.getTokenContract(token);
+
+    this.consoleLogService.logMessage(`10.1 [DTS#unlockTokens] tokenContract address: ${tokenContract.address}`);
+    this.consoleLogService.logMessage(`10.2 [DTS#unlockTokens] Spender: ${this.daoDepositContracts.get(dao).address}`);
+
     return this.transactionsService.send(() => tokenContract.approve(this.daoDepositContracts.get(dao).address, amount));
   }
 
   public depositTokens(dao: IDAO, tokenAddress: Address, amount: BigNumber): Promise<TransactionReceipt> {
+    this.consoleLogService.logMessage(`20.1 [DTS#depositTokens] Spender: ${this.daoDepositContracts.get(dao).address}`);
+    this.consoleLogService.logMessage(`20.2 [DTS#depositTokens] moduleContract address: ${this.moduleContract.address}`);
+    this.consoleLogService.logMessage(`20.3 [DTS#depositTokens] contractDealId: ${this.contractDealId}`);
+    this.consoleLogService.logMessage(`20.4 [DTS#depositTokens] tokenAddress: ${tokenAddress}`);
+
     return this.transactionsService.send(
       () => this.daoDepositContracts.get(dao).deposit(
         this.moduleContract.address,
@@ -808,6 +822,11 @@ export class DealTokenSwap implements IDeal {
   }
 
   public withdrawTokens(dao: IDAO, depositId: number): Promise<TransactionReceipt> {
+    this.consoleLogService.logMessage(`30.1 [DTS#depositTokens] Spender: ${this.daoDepositContracts.get(dao).address}`);
+    this.consoleLogService.logMessage(`30.2 [DTS#depositTokens] moduleContract address: ${this.moduleContract.address}`);
+    this.consoleLogService.logMessage(`30.3 [DTS#depositTokens] contractDealId: ${this.contractDealId}`);
+    this.consoleLogService.logMessage(`30.4 [DTS#depositTokens] depositId: ${depositId}`);
+
     return this.transactionsService.send(
       () => this.daoDepositContracts.get(dao).withdraw(
         this.moduleContract.address,
@@ -839,10 +858,15 @@ export class DealTokenSwap implements IDeal {
 
   public execute(): Promise<TransactionReceipt> {
     if (!this.isFailed) {
+      this.consoleLogService.logMessage(`40.1 [DTS#execute] moduleContract address: ${this.moduleContract.address}`);
+      this.consoleLogService.logMessage(`40.2 [DTS#execute] contractDealId: ${this.contractDealId}`);
+
       return this.transactionsService.send(
         () => this.moduleContract.executeSwap(this.contractDealId))
         .then(async (receipt) => {
           if (receipt) {
+            this.consoleLogService.logMessage(`40.3 [DTS#execute] receipt: ${receipt}`);
+
             this.isExecuted = true;
             this.executedAt = new Date((await this.ethereumService.getBlock(receipt.blockNumber)).timestamp * 1000);
             return receipt;
@@ -970,6 +994,8 @@ export class DealTokenSwap implements IDeal {
       // We're using bignumberjs because BigNumber can't handle division
       token.fundingPercentCompleted = toBigNumberJs(token.fundingDeposited).dividedBy(token.amount).toNumber() * 100;
     }
+
+    this.consoleLogService.logObject("4. [DTS#setFundingContractInfo] token: ", token);
   }
 
   public async setClaimingContractInfo(token: ITokenCalculated, dao: IDAO): Promise<void> {
@@ -991,6 +1017,8 @@ export class DealTokenSwap implements IDeal {
       token.claimingLocked = totalAmount.sub(token.claimingInstantTransferAmount.add(token.claimingClaimable).add(token.claimingClaimed).add(token.claimingFee));
       token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(token.claimingFee).add(token.claimingInstantTransferAmount)).dividedBy(token.amount).toNumber() * 100;
     }
+
+    this.consoleLogService.logObject("3.4. [DTS#setClaimingContractInfo] token: ", token);
   }
 
   private daoVotesSemaphore = 0;

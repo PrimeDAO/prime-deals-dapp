@@ -23,6 +23,20 @@ import { ValidationService } from "./services/ValidationService";
 import { DealService } from "services/DealService";
 import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 
+const FORCE_DEBUG = "[Prime] FORCE_DEBUG";
+// @ts-ignore
+window.primeDebug = {
+  on: () => {
+    localStorage.setItem(FORCE_DEBUG, "true");
+  },
+  off: () => {
+    localStorage.removeItem(FORCE_DEBUG);
+  },
+  check: () => {
+    return localStorage.getItem(FORCE_DEBUG);
+  },
+};
+
 export function configure(aurelia: Aurelia): void {
   // Note, this Cypress hack has to be at the very start.
   // Reason: Imports in eg. /resources/index, where EthereumService is imported to
@@ -50,8 +64,11 @@ export function configure(aurelia: Aurelia): void {
 
   const network = process.env.NETWORK as AllowedNetworks;
   const inDev = process.env.NODE_ENV === "development";
+  const isForceDebug = window.localStorage.getItem(FORCE_DEBUG);
 
-  if (inDev) {
+  if (isForceDebug === "true") {
+    aurelia.use.developmentLogging(); // everything
+  } else if (inDev) {
     aurelia.use.developmentLogging(); // everything
   } else {
     aurelia.use.developmentLogging("warn"); // only errors and warnings
