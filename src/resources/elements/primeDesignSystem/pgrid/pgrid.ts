@@ -29,8 +29,8 @@ export class PGrid implements ICustomElementViewModel {
   parent: IHydratedController;
   private seeingMore = false;
 
-  created(controller: ICustomElementController<this>) {
-    this.parent = controller.parent;
+  binding(_, controller: ICustomElementController<this>) {
+    this.parent = controller;
   }
 
   getBuffedVm(row: any) {
