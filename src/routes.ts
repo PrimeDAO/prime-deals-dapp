@@ -31,4 +31,5 @@ export const routes: IRoute[] = [
     title: "Documentation",
     component: import("./documentation/documentation"),
   },
+
 ];

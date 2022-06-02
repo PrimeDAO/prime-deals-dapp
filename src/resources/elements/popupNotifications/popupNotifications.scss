@@ -1,0 +1,17 @@
+@import "src/styles/variables";
+
+.bannerContainer {
+  .pPopupNotification {
+    position: fixed;
+    top: 58px;
+    right: -$pPopupNotificationWidth - 20px;
+    z-index: 10001; // stay over modal mask and wallet popup
+  }
+
+  &.showing {
+    .pPopupNotification {
+      left: unset;
+      right: 20px;
+    }
+  }
+}

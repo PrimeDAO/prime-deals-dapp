@@ -1,0 +1,24 @@
+<template>
+  <div class="addressLink">
+    <a
+      if.to-view="textClickable"
+      ptooltip.to-view="address && showTooltip ? address : null"
+      click.delegate="gotoEtherscan()"
+    >
+      ${linkText ? linkText : address }
+      <span if.to-view="showArrowInsideLink" class="arrowIcon" />
+    </a>
+    <span else ptooltip.to-view="address">${linkText ? linkText : address }</span>
+    <div class="buttons">
+      <copy-to-clipboard-button
+        if.to-view="showCopyIcon"
+        text-to-copy.to-view="address"
+      ></copy-to-clipboard-button>
+      <etherscan-button
+        if.to-view="showArrowIcon && !showArrowInsideLink"
+        address.to-view="address"
+        is-transaction.bind="isTransaction"
+      ></etherscan-button>
+    </div>
+  </div>
+</template>
