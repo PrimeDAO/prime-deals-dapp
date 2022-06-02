@@ -11,8 +11,6 @@ import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } fro
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 
-import "./discussionThread.scss";
-
 // import { Convo } from "@theconvospace/sdk";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { bindable, BindingMode, DialogDeactivationStatuses, IEventAggregator } from "aurelia";

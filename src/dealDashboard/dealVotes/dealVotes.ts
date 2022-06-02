@@ -1,5 +1,4 @@
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import "./dealVotes.scss";
 import { IEthereumService } from "../../services/EthereumService";
 import { FundingModal } from "./fundingModal/fundingModal";
 import { DialogService } from "../../services/DialogService";

@@ -1,7 +1,6 @@
 import { bindable, customElement } from "aurelia";
 import { EventMessageType } from "resources/elements/primeDesignSystem/types";
 import { AureliaHelperService } from "services/AureliaHelperService";
-import "./ppopup-notification.scss";
 
 @customElement("ppopup-notification")
 export class PPopupNotification {

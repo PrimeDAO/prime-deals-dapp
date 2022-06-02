@@ -3,7 +3,6 @@ import { toBoolean } from "resources/binding-behaviours";
 import { ValidationState } from "resources/elements/primeDesignSystem/types";
 import { EnsService } from "services/EnsService";
 import { Utils } from "services/utils";
-import "./formAddressInput.scss";
 /**
  * an input that allows entry of either ENS or address.  If an ENS is entered,
  * then it converts to the address and displays that in the input and

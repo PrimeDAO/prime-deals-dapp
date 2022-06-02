@@ -1,4 +1,3 @@
-import "./etherscan-button.scss";
 import { Utils } from "services/utils";
 import { containerless, bindable } from "aurelia";
 import { IEthereumService } from "services";

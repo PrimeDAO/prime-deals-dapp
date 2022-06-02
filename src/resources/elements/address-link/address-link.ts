@@ -1,7 +1,6 @@
 import { bindable, containerless } from "aurelia";
 import { IEthereumService } from "services/EthereumService";
 import { Utils } from "services/utils";
-import "./address-link.scss";
 @containerless()
 export class AddressLink {
   @bindable address: string;

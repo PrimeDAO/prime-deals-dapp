@@ -1,4 +1,3 @@
-import "./pselect.scss";
 import { ValidationState } from "../types";
 import { bindable, BindingMode, customElement, IPlatform } from "aurelia";
 import SlimSelect from "slim-select";

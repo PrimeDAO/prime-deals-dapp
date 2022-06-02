@@ -1,4 +1,3 @@
-import "./ptextarea.scss";
 import {BigNumber} from "ethers";
 import {ValidationState} from "../types";
 import { customElement, bindable, BindingMode } from "aurelia";

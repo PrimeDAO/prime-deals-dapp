@@ -1,4 +1,3 @@
-import "./ptoggle.scss";
 import { ValidationState } from "../types";
 import { bindable, BindingMode, customElement } from "aurelia";
 

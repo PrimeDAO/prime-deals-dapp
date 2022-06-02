@@ -1,4 +1,3 @@
-import "./pform-input.scss";
 import { ValidationState } from "../types";
 import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 import { bindable, children, customElement } from "aurelia";

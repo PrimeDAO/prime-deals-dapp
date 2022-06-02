@@ -1,4 +1,3 @@
-import "./pgrid.scss";
 import { SortOrder, SortService } from "services/SortService";
 import { Utils } from "services/utils";
 import { bindable, customElement, ICustomElementViewModel } from "aurelia";

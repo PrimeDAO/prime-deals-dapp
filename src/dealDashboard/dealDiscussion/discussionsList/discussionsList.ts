@@ -7,7 +7,6 @@ import { DateService } from "services/DateService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IDealDiscussion } from "entities/DealDiscussions";
 
-import "./discussionsList.scss";
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { bindable, BindingMode, IEventAggregator, ISignaler } from "aurelia";
 import {IRouter} from "@aurelia/router";

@@ -1,5 +1,4 @@
 import { IDAO } from "../../../entities/DealRegistrationTokenSwap";
-import "./dealRepresentativesVotes.scss";
 import { IVotesInfo } from "../../../entities/IDealTypes";
 import { bindable } from "aurelia";
 

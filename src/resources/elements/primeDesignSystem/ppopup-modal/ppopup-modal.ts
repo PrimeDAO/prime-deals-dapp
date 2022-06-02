@@ -1,5 +1,3 @@
-/* eslint-disable no-bitwise */
-import "./ppopup-modal.scss";
 // does the confetti
 import "/src/styles/confetti.css";
 import { AureliaHelperService } from "services/AureliaHelperService";

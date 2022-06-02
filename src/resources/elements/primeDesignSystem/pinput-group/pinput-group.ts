@@ -1,5 +1,4 @@
 import { bindable, children, customElement } from "aurelia";
-import "./pinput-group.scss";
 
 @customElement("pinput-group")
 export class PInputGroup {

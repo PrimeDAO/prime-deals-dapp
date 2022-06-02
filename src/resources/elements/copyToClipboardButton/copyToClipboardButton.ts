@@ -1,5 +1,4 @@
 import { containerless, bindable, IEventAggregator } from "aurelia";
-import "./copyToClipboardButton.scss";
 
 @containerless
 export class CopyToClipboardButton {

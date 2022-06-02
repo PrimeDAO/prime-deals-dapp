@@ -1,4 +1,3 @@
-import "./fundingModal.scss";
 import { DealTokenSwap } from "../../../entities/DealTokenSwap";
 import { DialogController } from "aurelia";
 
