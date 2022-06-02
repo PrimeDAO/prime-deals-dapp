@@ -1,14 +1,15 @@
 import "./ptooltip.scss";
 import tippy, { Instance, Placement, Props } from "tippy.js";
-import { customAttribute, bindable } from "aurelia";
+import { customAttribute, bindable, ICustomAttributeViewModel } from "aurelia";
+import { toBoolean } from "resources/binding-behaviours";
 
 @customAttribute("ptooltip")
-export class PTooltip {
+export class PTooltip implements ICustomAttributeViewModel {
   @bindable({ primary: true }) content: string;
   @bindable placement: Placement;
-  @bindable interactive = false;
-  @bindable visible = true;
-  @bindable allowHtml = false;
+  @bindable({ set: toBoolean, type: Boolean }) interactive = false;
+  @bindable({ set: toBoolean, type: Boolean }) visible = true;
+  @bindable({ set: toBoolean, type: Boolean, attribute: "allowHTML" }) allowHtml = false;
   @bindable appendTo: Props["appendTo"] | string;
 
   private tooltip: Instance;
@@ -23,19 +24,21 @@ export class PTooltip {
     });
   }
 
+  bound() {
+    if (!this.content) {
+      this.tooltip.disable();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {appendTo, ...props} = this;
+    this.tooltip.setProps(props);
+  }
+
   propertyChanged(name: string, newValue: any) {
-    // Aurelia doesn't trigger change for properties like `allowHTML`. It wants properties to be like this:`allowHtml`.
-    // But Tippy.js wants that property to be `allowHTML`, so we need to convert it
-    const convertPropertyToTippyConfig: Partial<Record<keyof PTooltip, keyof Props>> = {
-      allowHtml: "allowHTML",
-    };
-    name = convertPropertyToTippyConfig[name] ?? name;
 
     // Allow appendTo be a string as well on top of what Tippy.js requires it to be
     if (name === "appendTo" && newValue !== "parent" && typeof newValue === "string") {
       newValue = document.querySelector(newValue);
     }
-
     // this works only if this component's properties have the same name as the tippy.js config properties
     // additional properties (like 'visible' for ex.) need to be handled separately (see the 'visibleChanged' method)
     this.tooltip.setProps({ [name]: newValue });
