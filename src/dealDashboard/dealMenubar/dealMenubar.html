@@ -1,0 +1,23 @@
+<template>
+  <!--  TODO: The rate buttons are optional. We need backend support to make this work -->
+  <!--    <div class="bodySmallText rateDeal center">-->
+  <!--      Rate this deal-->
+  <!--      <i class="fas fa-thumbs-up"></i>-->
+  <!--      <i class="fas fa-thumbs-down"></i>-->
+  <!--    </div>-->
+
+  <a class="bodySmallText shareButton" click.delegate="copyURL()">
+    <i class="fas fa-share-alt"></i>
+    SHARE
+  </a>
+
+  <div class="dealActionButtons" if.bind="canEdit || canCancel">
+    <a
+      if.bind="canEdit"
+      route-href="route.bind: deal.isOpenProposal ? 'editOpenProposal' : 'editPartneredDeal' ; params.bind: { id: deal.id, stageRoute: 'proposal' }">
+      <pbutton type="secondary">Edit deal</pbutton>
+    </a>
+
+    <pbutton click.delegate="cancelDeal()" if.bind="canCancel" type="tertiary">Cancel deal</pbutton>
+  </div>
+</template>

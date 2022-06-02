@@ -12,7 +12,7 @@ export class DialogService {
   }
 
   public open(
-    viewModule: () => Constructable<object>, // result of `import {view} from "path to module files"`
+    viewModule: () => Constructable, // result of `import {view} from "path to module files"`
     model: unknown, // object that is given to the module's `activate` function
     settings: IDialogSettings = { },
   ): Promise<DialogCloseResult> {

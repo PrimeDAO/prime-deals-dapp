@@ -1,6 +1,5 @@
 import { bindable } from "aurelia";
 import { DealStatus, IDeal } from "entities/IDealTypes";
-import "./timeLeft.scss";
 
 export class TimeLeft {
 

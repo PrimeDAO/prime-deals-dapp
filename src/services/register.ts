@@ -1,3 +1,4 @@
+import { DealService } from "./DealService";
 import { IContainer, IRegistry, Registration } from "aurelia";
 import DOMPurify from "dompurify";
 import { IEthereumService, EthereumService } from "./EthereumService";
@@ -14,6 +15,7 @@ export const register: IRegistry = {
     container.register(Registration.singleton(IDataSourceDeals, FirestoreDealsService));
     container.register(Registration.singleton(DOMPurify, DOMPurify));
     container.register(Registration.transient(DealTokenSwap, DealTokenSwap));
+    container.register(Registration.singleton(DealService, DealService));
 
     return container;
   },

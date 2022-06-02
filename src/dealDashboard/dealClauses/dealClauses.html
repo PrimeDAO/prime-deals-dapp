@@ -1,0 +1,27 @@
+<template data-test="deal-clauses">
+  <header>
+    <h2 class="subtitle heading heading3">Deal Clauses</h2>
+  </header>
+  <ol>
+    <!-- Note the repeat.for over the length of clauses -->
+    <!-- We are encountering an issue, where removing an element from clauses (via data storage) -->
+    <!-- causes the last element in clauses to be duplicated -->
+    <li
+      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
+      repeat.for="clauseIndex of clauses.length">
+      <let clause.bind="$this.clauses[clauseIndex]"></let>
+      <span class="marker">${$index + 1}</span>
+      <pre class="body">${clause.text}</pre>
+      <span
+        data-test="add-or-read-button"
+        class="button"
+        click.delegate="addOrReadDiscussion(clause.text, clause.id)"
+        if.to-view="authorized">
+        <div
+          if.to-view="!discussionsService.discussions[clause.id] || discussionsService.discussions[clause.id].replies === 0">Begin A Discussion</div>
+        <div else>Discuss</div>
+        <img src="/static/comment.svg" />
+      </span>
+    </li>
+  </ol>
+</template>

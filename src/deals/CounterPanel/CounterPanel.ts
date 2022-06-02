@@ -1,5 +1,4 @@
 import { containerless/*, bindable*/ } from "aurelia";
-import "./counterPanel.scss";
 
 interface ICounterInfo {
   created: number

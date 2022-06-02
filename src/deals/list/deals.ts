@@ -1,5 +1,3 @@
-import "./deals.scss";
-
 import { inject, singleton, IEventAggregator } from "aurelia";
 
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";

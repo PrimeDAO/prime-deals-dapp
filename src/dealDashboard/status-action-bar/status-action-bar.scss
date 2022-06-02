@@ -1,0 +1,66 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
+
+status-action-bar {
+  margin-top: 40px;
+  display: grid;
+  place-items: center;
+
+  div {
+    display: grid;
+    grid-template-columns: 350px auto;
+    grid-gap: 20px;
+    place-items: center;
+    pbutton {
+      i {
+        margin-left: 10px;
+      }
+    }
+    p {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-gap: 12px;
+      max-width: 350px;
+
+      i {
+        font-size: 20px;
+        &.success {
+          color: $Green;
+        }
+        &.warning {
+          color: $Orange;
+        }
+        &.info {
+          color: $Teal;
+        }
+        &.danger {
+          color: $Red;
+        }
+        &.secondary {
+          color: $Magenta;
+        }
+        &.dark {
+          color: $Grey;
+        }
+      }
+      span {
+        margin-top: -3px;
+        font-weight: 400;
+        font-family: Inter;
+        color: $White;
+        line-height: 17px;
+        font-size: 14px;
+      }
+    }
+  }
+  @media screen and (max-width: $MaxContentBodyWidthMobile) {
+    div {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media screen and (max-width: $MaxContentBodyWidth) {
+    div {
+      grid-template-columns: 1fr;
+    }
+  }
+}

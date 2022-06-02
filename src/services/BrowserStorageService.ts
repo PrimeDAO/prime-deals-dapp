@@ -1,9 +1,11 @@
+import { inject } from "aurelia";
 import pkg from "../../package.json";
 
 /**
  * local and session storage with package- and version-specific keys
  * and support for default values.
  */
+@inject()
 export class BrowserStorageService {
   private addVersion(value: any, version: string) {
     return {

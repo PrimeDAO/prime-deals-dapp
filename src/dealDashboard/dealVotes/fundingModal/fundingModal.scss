@@ -1,0 +1,64 @@
+@import "src/resources/elements/primeDesignSystem/colors";
+
+.fundingModal {
+  padding: 44px 73px 52px 73px;
+  width: 680px;
+
+  .dialogHeader {
+    font-size: 24px;
+    line-height: 33px;
+    padding: 0;
+  }
+
+  .dialogBody {
+    padding: 0;
+  }
+
+  .dialogFooter {
+    padding: 20px 0 0;
+  }
+
+  .fundInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 36px;
+    margin-top: 34px;
+    margin-bottom: 60px;
+
+    .daoInfo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      gap: 15px;
+
+      .daoLogoAndName {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+        color: $Neutral03;
+      }
+
+      .tokenDetails {
+        display: flex;
+        flex-direction: row;
+        padding-left: 54px;
+        color: $Neutral02;
+        gap: 21px;
+        font-size: 14px;
+
+        b {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .fa-exchange-alt {
+      font-size: 20px;
+      margin-top: 8px;
+    }
+  }
+
+}

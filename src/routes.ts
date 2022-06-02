@@ -31,5 +31,11 @@ export const routes: IRoute[] = [
     title: "Documentation",
     component: import("./documentation/documentation"),
   },
+  {
+    component: import("./dealDashboard/dealDashboard"),
+    id: "dealDashboard",
+    path: "deal/:id",
+    title: "DEAL Dashboard",
+  },
 
 ];
