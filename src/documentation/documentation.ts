@@ -83,7 +83,7 @@ export class Documentation implements IRouteableComponent {
         id,
         component: import("./baseDocument"),
         title: docspec.title,
-        transitionPlan: "replace", // "invoke-lifecycles",
+        transitionPlan: "invoke-lifecycles",
         data: {
           docNumber: ndx+1,
           content: this.markdowns[ndx+1], // a promise of markdown content
