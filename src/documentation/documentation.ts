@@ -52,11 +52,6 @@ export class Documentation implements IRouteableComponent {
     return "";
   }
 
-  // attached() {
-  //   // this.router.load(Documentation.routes[0]);
-  //   this.router.load("/documentation/GETTINGSTARTED");
-  // }
-
   next(): void {
     // const docNumber = this.router.currentInstruction.config.data.docNumber;
     // if (docNumber < this.numDocs) {
