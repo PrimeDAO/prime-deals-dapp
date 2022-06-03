@@ -48,7 +48,7 @@ export class App implements IRouteableComponent {
   ) {
   }
 
-  async created() {
+  async binding() {
     const network = process.env.NETWORK as AllowedNetworks;
     const inDev = process.env.NODE_ENV === "development";
 

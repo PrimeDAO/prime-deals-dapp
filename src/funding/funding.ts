@@ -76,9 +76,6 @@ export class Funding {
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
     //wait until the dao token claims from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenClaims !== undefined);
-  }
-
-  public async bind(): Promise<void> {
     await this.initializeData();
   }
 
