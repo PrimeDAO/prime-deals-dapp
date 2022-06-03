@@ -1,7 +1,7 @@
 ﻿import { valueConverter } from "aurelia";
-import { DateService } from "../../services/DateService";
+import { DateService } from "services/DateService";
 
-@valueConverter("date")
+@valueConverter("dateDiff")
 export class DateDiffValueConverter {
   constructor(private dateService: DateService) { }
 
