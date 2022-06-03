@@ -16,6 +16,7 @@ import tippy from "tippy.js";
 import { AlertService, ShowButtonsEnum } from "services/AlertService";
 import { ComingSoon } from "./comingSoon/comingSoon";
 import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
+import { DocsRouteProvider } from "documentation/docsRouteProvider";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
@@ -71,7 +72,11 @@ export class App implements IRouteableComponent {
 
     const tokenService = this.container.get(TokenService);
     await tokenService.initialize();
+    const docsRouteProvider = this.container.get(DocsRouteProvider);
+    await docsRouteProvider.initialize();
     await this.ethereumService.connectToConnectedProvider();
+    const dealsService = this.container.get(DealService);
+    dealsService.initialize();
   }
 
   attaching() {
