@@ -4,7 +4,7 @@
     <div class="documentContainer">
       <div class="sidebar">
         <template repeat.for="doc of routes">
-          <a href="documentation/${doc.id}"
+          <a load="documentation/${doc.id}"
             class="document ${doc.isActive ? 'active' : ''}">
             ${doc.title}
           </a>
