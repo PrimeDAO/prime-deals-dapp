@@ -35,12 +35,12 @@ export class PPopupModal {
 
   public attached(): void {
     this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
-    this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
-    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
+    this.showOkButton = !!(this.buttons && ShowButtonsEnum.Primary);
+    this.showCancelButton = !!(this.buttons && ShowButtonsEnum.Secondary);
     this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
     this.buttonTextSecondary = this.buttonTextSecondary ?? "CANCEL";
     // attach-focus doesn't work
-    if (this.buttons & ShowButtonsEnum.Primary) {
+    if (this.buttons && ShowButtonsEnum.Primary) {
       this.primaryButton.focus();
     }
 

@@ -62,7 +62,7 @@ export class Funding {
     });
   }
 
-  public async activate(params: { id: string }): Promise<void> {
+  public async load(params: { id: string }): Promise<void> {
     this.dealId = params.id;
     await this.dealService.ensureInitialized();
     this.deal = this.dealService.deals.get(this.dealId);
