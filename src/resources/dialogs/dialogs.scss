@@ -10,21 +10,19 @@ body.au-dialog-open {
 }
 
 body > au-dialog-container {
-    overflow: hidden;
-    padding: 0;
-    top: 50% !important;
-    width: unset !important;
-    height: unset !important;
-    right: unset !important;
-    bottom: unset !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    display: flex !important;
+    place-items: center !important;
+    justify-content: space-around !important;
+    z-index: 9999;
   
     > div {
       margin: 0 !important;
       padding: 0;
-      height: 100%;
   
       > div {
         height: 100%;
@@ -36,6 +34,11 @@ body > au-dialog-container {
     background-color: rgba(21, 6, 45, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 }
 
