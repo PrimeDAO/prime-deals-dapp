@@ -14,7 +14,7 @@ $menu-open-duration: 0.1s;
   background: $BG02;
   overflow: hidden;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh + 45px);
   transform: translate(calc(50vw - 29px), calc(-50% + 33px));
   clip-path: circle(0%);
   transition: transform $menu-open-duration ease-in-out, clip-path $menu-open-duration ease-in-out;
@@ -54,6 +54,20 @@ $menu-open-duration: 0.1s;
         padding: 0;
         margin-top: 20px;
         text-align: center;
+        .item {
+          cursor: pointer;
+          padding: 10px 0;
+          font-family: Inter;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 19px;
+          white-space: nowrap;
+          text-decoration: none;
+          color: $Neutral02;
+          &.active, &:active {
+            color: $Secondary01;
+          }
+        }
       }
     }
   }
