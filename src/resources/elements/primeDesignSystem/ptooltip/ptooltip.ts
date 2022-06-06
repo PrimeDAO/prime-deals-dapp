@@ -28,8 +28,10 @@ export class PTooltip implements ICustomAttributeViewModel {
       this.tooltip.disable();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {appendTo, ...props} = this;
-    this.tooltip.setProps(props);
+    if (this.appendTo){
+      this.appendTo = document.querySelector(this.appendTo.toString());
+    }
+    this.tooltip.setProps({...this} as unknown);
   }
 
   propertyChanged(name: string, newValue: any) {

@@ -3,15 +3,13 @@
   class="ppopup-dialog pPopupModal pcard gradient ${className || ''}"
 >
   <au-compose view.bind="header"
-  as-element="p"
     class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}"
   >
     <au-slot name="header"></au-slot>
   </au-compose>
-  <au-compose view.bind="message" as-element="p" class="dialogBody">
+  <au-compose view.bind="message" class="dialogBody">
     <au-slot></au-slot>
   </au-compose>
-
   <p class="dialogFooter">
     <pbutton
       type="tertiary"

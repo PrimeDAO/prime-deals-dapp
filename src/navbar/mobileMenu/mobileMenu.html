@@ -23,16 +23,13 @@
         </div>
       </div>
       <div class="productSubpages">
-        
-        <div class="container">
-           <nav>
-            <div class="item" click.trigger="router.load('home')">Home</a>
-            <div class="item" click.trigger="router.load('initiate')">Initiate a Deal</a>
-            <div class="item" click.trigger="router.load('deals')">All Deals</a>
-            <div class="item" click.trigger="router.load('documentation')">Documentation</a>
-            <div class="item" click.trigger="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
-           </nav>
-        </div>
+        <nav class="container">
+          <a class="item" load="home">Home</a>
+          <a class="item" load="initiate">Initiate a Deal</a>
+          <a class="item" load="deals">All Deals</a>
+          <a class="item" load="documentation">Documentation</a>
+          <a class="item" click.trigger="gotoCallback('https://form.typeform.com/to/SUCTM812')">Support</a>
+        </nav>
       </div>
     </div>
   </div>

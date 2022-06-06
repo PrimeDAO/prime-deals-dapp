@@ -50,7 +50,7 @@ export class TokenBalance {
     this.getBalance();
   }
 
-  private detached(): void {
+  private dispose(): void {
     if (this.subscriptions) {
       this.subscriptions.dispose();
     }

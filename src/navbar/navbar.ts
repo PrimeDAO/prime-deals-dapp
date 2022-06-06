@@ -1,6 +1,7 @@
 import { Utils } from "services/utils";
 import { bindable, inject } from "aurelia";
 import { IRouter } from "@aurelia/router";
+
 @inject()
 export class Navbar {
   @bindable private showWalletMenu?: () => void;

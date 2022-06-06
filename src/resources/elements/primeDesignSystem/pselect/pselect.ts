@@ -49,9 +49,6 @@ export class PSelect {
   isOpen = false;
 
   attached(): void {
-    this.platform.taskQueue.queueTask(() => this.select?.set(this.value));
-  }
-  bind(): void {
     this.select = new SlimSelect({
       placeholder: "<span class=\"loading\"><i class=\"fas fa-circle-notch\"></i> Loading...</span>",
       select: this.refSelectInput,
@@ -68,15 +65,16 @@ export class PSelect {
         this.value = Array.isArray(info) ? info.map(item => item.value) : (info.value ?? this.value);
       },
     });
+    this.select?.set(this.value);
   }
-  detached(): void {
+  dispose(): void {
     this.select?.destroy();
   }
 
   dataChanged(): void {
     if (this.select) {
       this.select.setData([{text: this.placeholder, placeholder: true, value: null}, ...this.data ?? []]);
-      this.platform.taskQueue.queueTask(() => this.select?.set(this.value));
+      this.select?.set(this.value);
     }
   }
 

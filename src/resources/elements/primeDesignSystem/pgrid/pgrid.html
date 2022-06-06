@@ -33,7 +33,7 @@
       >
         <au-compose
           if.bind="column.template"
-          view.bind="viewStrategy(column.template)"
+          view.bind="column.template"
           view-model.bind="getBuffedVm(row, rows, row[column.field])"
           containerless
         ></au-compose >
