@@ -1,5 +1,5 @@
 import { BigNumber, Contract, ethers, Signer } from "ethers";
-import { Address,  Hash, IBlockInfoNative, IChainEventInfo, IEthereumService } from "./EthereumService";
+import { Address, Hash, IBlockInfoNative, IChainEventInfo, IEthereumService } from "./EthereumService";
 import { ContractsDeploymentProvider } from "./ContractsDeploymentProvider";
 import { IEventAggregator, inject } from "aurelia";
 
@@ -41,6 +41,9 @@ export class ContractsService {
     @IEventAggregator private readonly eventAggregator: IEventAggregator,
     @IEthereumService private readonly ethereumService: IEthereumService) {
 
+  }
+
+  public setup(){
     this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
       if (account !== this.accountAddress) {
         this.accountAddress = account;

@@ -3,7 +3,7 @@ import { DisposableCollection } from "services/DisposableCollection";
 import { Address, EthereumService, IEthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
 import { TokenService } from "services/TokenService";
-import { bindable, containerless, EventAggregator } from "aurelia";
+import { bindable, containerless, IEventAggregator } from "aurelia";
 
 @containerless
 export class TokenBalance {
@@ -18,7 +18,7 @@ export class TokenBalance {
   private tokenInfo: ITokenInfo;
 
   constructor(
-    private eventAggregator: EventAggregator,
+    @IEventAggregator private eventAggregator: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
     private tokenService: TokenService) {
   }

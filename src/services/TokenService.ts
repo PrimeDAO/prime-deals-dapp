@@ -33,7 +33,6 @@ export class TokenService {
     private tokenMetadataService: TokenMetadataService,
     private axiosService: AxiosService) {
 
-    this.erc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
     this.queue = new Subject<() => Promise<void>>();
     this.tokenPrices = new Map<Address, number>();
 
@@ -43,6 +42,11 @@ export class TokenService {
       return from(resolver());
     }))
       .subscribe();
+  }
+
+  public setup(){
+    this.erc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
+
   }
 
   public async initialize(): Promise<TokenListMap> {

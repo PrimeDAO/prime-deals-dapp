@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { DialogDeactivationStatuses, IContainer, IEventAggregator } from "aurelia";
+import { DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import {IRouteableComponent, IRouter} from "@aurelia/router";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { DealService } from "services/DealService";
@@ -17,6 +17,7 @@ import { AlertService, ShowButtonsEnum } from "services/AlertService";
 import { ComingSoon } from "./comingSoon/comingSoon";
 import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
 import { DocsRouteProvider } from "documentation/docsRouteProvider";
+import { IPlatform } from "@aurelia/runtime-html";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
@@ -37,19 +38,29 @@ export class App implements IRouteableComponent {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
   };
+  dealLoadingPromise: Promise<void>;
 
   constructor(
     @IRouter private router: IRouter,
-    @IContainer private container: IContainer,
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
     private storageService: BrowserStorageService,
+    private readonly tokenService : TokenService,
+    private readonly ipfsService : IpfsService,
+    private readonly docsRouteProvider : DocsRouteProvider,
+    private readonly dealsService : DealService,
+    private readonly pinataIpfsClient : PinataIpfsClient,
+    private readonly domPurify : DOMPurify,
+    private readonly contractsService : ContractsService,
+    @IPlatform private readonly platform: IPlatform,
   ) {
   }
 
   async binding() {
+    this.modalMessage = "Thank you for your patience while we initialize for a few moments...";
+    this.handleOnOff(true);
     const network = process.env.NETWORK as AllowedNetworks;
     const inDev = process.env.NODE_ENV === "development";
 
@@ -57,49 +68,35 @@ export class App implements IRouteableComponent {
        * this is how you have to obtain the instance of DOMPurifier that will
        * be used by the app.
        */
-    initializeMarkdown(this.container.get(DOMPurify));
-
+    initializeMarkdown(this.domPurify);
     this.ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
-
     ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork);
-
-    this.container.get(ContractsService);
-
-    // this.container.get(ValidationService);
-
-    const ipfsService = this.container.get(IpfsService);
-    ipfsService.initialize(this.container.get(PinataIpfsClient));
-
-    const tokenService = this.container.get(TokenService);
-    await tokenService.initialize();
-    const docsRouteProvider = this.container.get(DocsRouteProvider);
-    await docsRouteProvider.initialize();
+    this.contractsService.setup();
+    this.tokenService.setup();
+    this.ipfsService.initialize(this.pinataIpfsClient);
+    this.tokenService.initialize();
+    this.docsRouteProvider.initialize();
     await this.ethereumService.connectToConnectedProvider();
-    const dealsService = this.container.get(DealService);
-    dealsService.initialize();
-  }
-
-  attaching() {
-    /**
-     * undo stuff from base.css now that we don't need it
-     */
-    document.querySelector("body").classList.remove("loading");
+    this.dealLoadingPromise = this.dealsService.initialize();
   }
 
   async attached(): Promise<void> {
+
+    this.platform.document.querySelector("body").classList.remove("loading");
+
     // so all elements with data-tippy-content will automatically have a tooltip
     tippy("[data-tippy-content]");
 
     window.addEventListener("error", this.errorHandler);
 
-    document.addEventListener("scroll", (_e) => {
+    this.platform.document.addEventListener("scroll", (_e) => {
       this.handleScrollEvent();
     });
 
-    this.eventAggregator.subscribe("deals.loading", async (config: {onOff: boolean, message?: string}) => {
-      this.modalMessage = config.message || "Thank you for your patience while we initialize for a few moments...";
-      this.handleOnOff(config.onOff);
-    });
+    // this.eventAggregator.subscribe("deals.loading", async (config: {onOff: boolean, message?: string}) => {
+    //   this.modalMessage = config.message || "Thank you for your patience while we initialize for a few moments...";
+    //   this.handleOnOff(config.onOff);
+    // });
 
     this.eventAggregator.subscribe("deal.saving", async (onOff: boolean) => {
       this.modalMessage = "Thank you for your patience while we register the information about your deal...";
@@ -182,12 +179,9 @@ export class App implements IRouteableComponent {
         }
       }, 1000);
     }
-
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
-
-    await this.ethereumService.connectToConnectedProvider();
-    const dealsService = this.container.get(DealService);
-    dealsService.initialize();
+    await this.dealLoadingPromise;
+    this.handleOnOff(false);
   }
 
   private handleOnOff(onOff: boolean): void {

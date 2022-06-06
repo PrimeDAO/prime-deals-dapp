@@ -167,7 +167,7 @@ export class Utils {
     /**
      * when we can use es2021, we can use the native replaceAll function
      */
-    return str.split(what).join(that);
+    return str?.split(what)?.join(that);
   }
 
   /**
