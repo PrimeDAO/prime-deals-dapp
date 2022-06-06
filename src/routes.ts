@@ -2,7 +2,13 @@ import { IRoute } from "@aurelia/router";
 
 export const routes: IRoute[] = [
   {
-    path: ["", "home"],
+    path: "",
+    id: "home",
+    title: "Home",
+    component: import("./home/home"),
+  },
+  {
+    path: "home",
     id: "home",
     title: "Home",
     component: import("./home/home"),

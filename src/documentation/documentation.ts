@@ -1,70 +1,57 @@
-import { IEventAggregator, inject } from "aurelia";
+import { ICustomElementViewModel } from "aurelia";
 import { IRouter, IRouteableComponent, IRoute } from "@aurelia/router";
 import axios from "axios";
-const marked = require("marked").marked;
+import { marked } from "marked";
 
-// @singleton(false)
-@inject()
-export class Documentation implements IRouteableComponent {
-
+import { markdowns } from "./common";
+export class Documentation implements IRouteableComponent, ICustomElementViewModel {
+  static routes: IRoute[] = [];
+  routes = Documentation.routes;
+  default: string | string[];
   constructor(
     @IRouter private router: IRouter,
-    @IEventAggregator readonly eventAggregator: IEventAggregator,
-  ) {}
+  ) { }
 
   static title = "Documentation";
-  static routes: Array<IRoute> = []; //  = new Array<Routeable>();
   numDocs: number;
-  markdowns: Array<Promise<any>> = [null];
 
-  private _routes: Array<IRoute>;
+  // get nextDocTitle(): string {
+  //   if (!this.router.activeNavigation) return "";
+  //   const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
+  //   if (docNumber < this.numDocs) {
+  //     return Documentation.routes[docNumber + 1].title;
+  //   } else {
+  //     return "";
+  //   }
+  // }
 
-  get routes(): Array<IRoute> {
-    return this._routes;
-  }
+  // get previousDocTitle(): string {
+  //   const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
+  //   if (docNumber > 1) {
+  //     return Documentation.routes[docNumber - 1].title;
+  //   } else {
+  //     return "";
+  //   }
+  // }
 
-  set routes(value: Array<IRoute>) {
-    this._routes = Documentation.routes = value;
-  }
+  async load(): Promise<void> {
 
-  get nextDocTitle(): string {
-    // const docNumber = this.router.currentInstruction.config.data.docNumber;
-    // if (docNumber < this.numDocs) {
-    //   return this.router.routes[docNumber + 1].title;
-    // } else {
-    //   return "";
-    // }
-    return "";
-  }
-
-  get previousDocTitle(): string {
-    // const docNumber = this.router.currentInstruction.config.data.docNumber;
-    // if (docNumber > 1) {
-    //   return this.router.routes[docNumber - 1].title;
-    // } else {
-    //   return "";
-    // }
-    return "";
-  }
-
-  async created(): Promise<void> {
+    if (Documentation.routes.length) return;
 
     let documentsSpec: Array<{ title: string, url: string }>;
 
-    await axios.get(process.env.DOCUMENTS_LIST_CONFIG)
-      .then((response) => {
-        if (response.data && response.data.documents) {
-          documentsSpec = response.data.documents;
-        }
-      });
+    const response = await axios.get(process.env.DOCUMENTS_LIST_CONFIG);
+    if (response.data && response.data.documents) {
+      documentsSpec = response.data.documents;
+    }
 
     /**
-       * get all the pages started loading, asynchronously.
-       * If we let the markdown component load these itself, there would be
-       * a lot of flickering as the markdown unloads and reloads itself
-       */
+     * get all the pages started loading, asynchronously.
+     * If we let the markdown component load these itself, there would be
+     * a lot of flickering as the markdown unloads and reloads itself
+     */
     for (const doc of documentsSpec) {
-      this.markdowns.push(axios.get(doc.url)
+      markdowns.push(axios.get(doc.url)
         .then((response) => {
           if (response.data && response.data.length) {
             return marked(response.data);
@@ -72,59 +59,39 @@ export class Documentation implements IRouteableComponent {
         }));
     }
 
-    /**
-     * activationStrategy is docspec.filespec so baseDocument will be reactivated on each change
-     * in route (see https://aurelia.io/docs/routing/configuration#reusing-an-existing-view-model)
-     */
-    const routes = documentsSpec.map((docspec: {title: string, url: string }, ndx: number) => {
-      const id = docspec.title.replaceAll(" ", "");
-      const route = {
-        path: [id],
-        id,
+    const navRoutes = documentsSpec.map((docspec: { title: string, url: string }, ndx: number) => {
+      const route: IRoute = {
+        path: docspec.title.replaceAll(" ", ""),
         component: import("./baseDocument"),
         title: docspec.title,
-        transitionPlan: "invoke-lifecycles",
-        data: {
-          docNumber: ndx+1,
-          content: this.markdowns[ndx+1], // a promise of markdown content
+        viewport: "documents",
+        parameters: {
+          docNumber: ndx,
+          content: null,
         },
       };
-        /**
-         * specify as default route
-         */
       if (ndx === 0) {
-        route.path.push("");
+        this.default = route.path;
       }
       return route;
     });
 
-    this.numDocs = documentsSpec.length;
-    this.routes = routes;
-    // Documentation.routes.push(...routes);
+    Documentation.routes.push(...navRoutes);
 
-    this.eventAggregator.subscribe("au:router:location-change", (payload: any) => {
-      console.dir(payload);
-    });
+    this.numDocs = documentsSpec.length;
   }
 
-  // attached() {
-  //   // this.router.load(Documentation.routes[0]);
-  //   this.router.load("/documentation/GETTINGSTARTED");
-  // }
-
   next(): void {
-    // const docNumber = this.router.currentInstruction.config.data.docNumber;
-    // if (docNumber < this.numDocs) {
-    //   // @ts-ignore
-    //   this.router.load(this.router.routes[docNumber + 1].route);
-    // }
+    const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
+    if (docNumber < this.numDocs) {
+      this.router.load(Documentation.routes[docNumber + 1].path);
+    }
   }
 
   previous(): void {
-    // const docNumber = this.router.currentInstruction.config.data.docNumber;
-    // if (docNumber > 1) {
-    //   // @ts-ignore
-    //   this.router.navigate(this.router.routes[docNumber - 1].route);
-    // }
+    const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
+    if (docNumber > 1) {
+      this.router.load(Documentation.routes[docNumber - 1].path);
+    }
   }
 }

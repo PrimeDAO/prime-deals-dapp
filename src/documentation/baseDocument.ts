@@ -1,10 +1,12 @@
-import { RouteNode } from "aurelia";
+import { IRouteableComponent, Navigation, RoutingInstruction, Parameters } from "@aurelia/router";
+import { markdowns } from "./common";
 
-export class BaseDocument {
+export class BaseDocument implements IRouteableComponent {
   content: string;
   title: string;
-  async load(_params: unknown, next: RouteNode, current: RouteNode): Promise<void> {
-    this.title = current.title as string;
-    this.content = await current.data.content;
+
+  async load(parameters: Parameters, instruction: RoutingInstruction, navigation: Navigation) {
+    this.title = navigation.title;
+    this.content = await markdowns[Number(parameters.docNumber)];
   }
 }
