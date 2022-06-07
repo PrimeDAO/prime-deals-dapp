@@ -5,7 +5,7 @@ import { EventConfigFailure } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
 import { ethers } from "ethers";
-import { IDealDiscussion, IComment, VoteType, IProfile } from "entities/DealDiscussions";
+import { IDealDiscussion, IComment, IProfile } from "entities/DealDiscussions";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { IDeal } from "entities/IDealTypes";
@@ -416,7 +416,7 @@ export class DiscussionsService {
     }
   }
 
-  public async voteComment(discussionId: string, commentId: string, type: VoteType): Promise<any> {
+  public async voteComment(discussionId: string, commentId: string, type: string): Promise<any> {
 
     if (!this.currentWalletAddress) {
       this.eventAggregator.publish(

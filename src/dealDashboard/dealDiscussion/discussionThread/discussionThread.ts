@@ -23,6 +23,11 @@ export type ILoadingTracker = {
   replying: Record<string, boolean>;
 } & Record<string, boolean | Record<string, boolean>>
 
+export interface ICommentActionArgs {
+  _id: string;
+  vote?: string;
+}
+
 export class DiscussionThread {
   @bindable clauses: Map<string, IClause>;
   @bindable({mode: BindingMode.twoWay}) discussionId?: string;
@@ -384,7 +389,7 @@ export class DiscussionThread {
     }
   }
 
-  async voteComment(_id: string, type: VoteType): Promise<void> {
+  async voteComment(_id: string, type: string): Promise<void> {
     const types = ["toggleUpvote", "toggleDownvote"];
     const endpoints = {toggleUpvote: "upvotes", toggleDownvote: "downvotes"};
     const typeInverse = types[types.length - types.indexOf(type.toString()) - 1];
@@ -469,7 +474,7 @@ export class DiscussionThread {
     });
   }
 
-  async doAction(action: string, args: any): Promise<void> {
+  async doAction(action: string, args: ICommentActionArgs): Promise<void> {
     switch (action) {
       case "reply":
         this.replyComment(args._id);

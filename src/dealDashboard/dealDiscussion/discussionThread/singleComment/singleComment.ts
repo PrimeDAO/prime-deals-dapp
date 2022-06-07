@@ -1,12 +1,17 @@
 import { IEthereumService } from "services/EthereumService";
 import { IComment, IProfile } from "entities/DealDiscussions";
 import { DateService } from "services/DateService";
-import { ILoadingTracker } from "../discussionThread";
+import { ILoadingTracker, ICommentActionArgs } from "../discussionThread";
 import { bindable, ISignaler } from "aurelia";
 import { IRouter } from "@aurelia/router";
 
 interface IThreadComment extends IComment {
   lastModified: string;
+}
+
+interface ICommentAction {
+  action: string;
+  args: ICommentActionArgs;
 }
 
 export class SingleComment {
@@ -19,7 +24,7 @@ export class SingleComment {
   @bindable private highlighted: number;
   @bindable private index: number;
   @bindable private isReply?: boolean = false;
-  @bindable private commentAction;
+  @bindable private commentAction: (commentAction: ICommentAction)=>ICommentAction;
   @bindable private isAuthorized = false;
   @bindable private discussionId;
 
