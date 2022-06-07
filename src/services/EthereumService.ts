@@ -273,9 +273,8 @@ export class EthereumService {
         if (accounts?.length) {
           const account = getAddress(accounts[0]);
           /**
-           * Extra ensure, because in the Gnosis Safe App, the usual UX is to be autoconnected.
-           * The current code, does not exactly have that flow, so ensuring the disclaimer here
-           * is the closest we can get.
+           * Expected flow: When Disclaimer not accepted, always pop up.
+           * In the Safe App case, we need to call ensure extra, else it does not show up.
            */
           await this.disclaimerService.ensurePrimeDisclaimed(account);
           if (this.disclaimerService.getPrimeDisclaimed(account)) {

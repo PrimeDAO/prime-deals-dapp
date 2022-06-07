@@ -246,7 +246,7 @@ export const CI = {
          * Verify the signature.
          * There are 2 cases:
          * 1. "Normal" signature
-         * 2. The WalletConnect Safe App uses EIP-1271
+         * 2. Safe App tx, that uses EIP-1271
          */
         try {
           signerAddress = verifyMessage(
@@ -255,7 +255,8 @@ export const CI = {
           );
         } catch {
           /**
-           * Have to set signature manually
+           * For EIP-1271 we can only verify a "signature", which is a tx on the Safe Contract.
+           * The verification method returns a boolean, and not an address as above.
            */
           signerAddress = address;
           try {
