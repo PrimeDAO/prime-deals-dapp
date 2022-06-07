@@ -12,7 +12,7 @@
     <div class="votes-statuses-circles">
       <template repeat.for="vote of sortedVotes">
         <div
-          class="vote-status-circle ${vote !== null ? ('vote-' + (vote ? 'accepted' : 'declined')) : ''}"
+          class="vote-status-circle ${!!vote ? ('vote-' + (vote ? 'accepted' : 'declined')) : ''}"
         ></div>
         <div
           class="vote-status-circle-delimiter"
