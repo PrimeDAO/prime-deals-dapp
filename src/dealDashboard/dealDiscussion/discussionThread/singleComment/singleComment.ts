@@ -21,6 +21,7 @@ export class SingleComment {
   @bindable private isReply?: boolean = false;
   @bindable private commentAction;
   @bindable private isAuthorized = false;
+  @bindable private discussionId;
 
   private connectedAddress: string;
   private dealClauseId: string;
@@ -40,7 +41,7 @@ export class SingleComment {
 
   attached(): void {
     this.connectedAddress = this.ethereumService.defaultAccountAddress;
-    this.dealClauseId = this.router.activeNavigation.parameters.discussionId as string;
+    this.dealClauseId = this.discussionId;
     this.commentTimeInterval = setInterval((): void => {
       this.bindingSignaler.dispatchSignal(this.updateTimeSignal);
     }, 30000);
