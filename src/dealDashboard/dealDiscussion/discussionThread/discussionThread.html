@@ -54,7 +54,7 @@
           id="${comment._id}"
           class="comment">
           <single-comment
-            comment-action.call="doAction(action, args)"
+            comment-action.call="doAction($event.action, $event.args)"
             discussion-id.two-way="deal.dealDocument.id"
             author.bind="dealDiscussion.createdBy.address"
             profile.bind="threadProfiles[comment.author]"

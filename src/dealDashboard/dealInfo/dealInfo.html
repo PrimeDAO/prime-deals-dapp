@@ -171,7 +171,7 @@
         disabled.bind="!deal.isAuthenticatedProposalLead"
         ptooltip.bind="deal.isAuthenticatedProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
         value.bind="deal.isPrivate"
-        changed.call="changePrivacy(checked)"
+        changed.call="changePrivacy($event.checked)"
         class="dealPrivacyToggle"
       ></ptoggle>
     </div>
