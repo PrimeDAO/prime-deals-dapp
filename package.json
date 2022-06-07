@@ -20,6 +20,7 @@
     "serve-dev-mainnet": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=mainnet webpack-dev-server --env development",
     "start-dev": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env development --open",
     "start-dev:cov": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env development tests --open",
+    "start-dev:https": "cross-env DOTENV_CONFIG_PATH=.env NETWORK=rinkeby webpack-dev-server --env development https --open",
     "analyze": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --env production analyze",
     "test": "au test",
     "e2e": "npx cypress open",
