@@ -1,6 +1,6 @@
 import DOMPurify from "dompurify";
 import { DialogDeactivationStatuses, IEventAggregator } from "aurelia";
-import {IRouteableComponent, IRouter} from "@aurelia/router";
+import { IRouteableComponent, IRouter } from "@aurelia/router";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { DealService } from "services/DealService";
 import { AllowedNetworks, EthereumService, IEthereumService, Networks } from "services/EthereumService";
@@ -15,9 +15,9 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import tippy from "tippy.js";
 import { AlertService, ShowButtonsEnum } from "services/AlertService";
 import { ComingSoon } from "./comingSoon/comingSoon";
-import { initialize as initializeMarkdown} from "resources/elements/markdown/markdown";
+import { initialize as initializeMarkdown } from "resources/elements/markdown/markdown";
 import { DocsRouteProvider } from "documentation/docsRouteProvider";
-import { IPlatform } from "@aurelia/runtime-html";
+import { IPlatform, watch } from "@aurelia/runtime-html";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
 
@@ -47,13 +47,13 @@ export class App implements IRouteableComponent {
     private consoleLogService: ConsoleLogService,
     private alertService: AlertService,
     private storageService: BrowserStorageService,
-    private readonly tokenService : TokenService,
-    private readonly ipfsService : IpfsService,
-    private readonly docsRouteProvider : DocsRouteProvider,
-    private readonly dealsService : DealService,
-    private readonly pinataIpfsClient : PinataIpfsClient,
-    private readonly domPurify : DOMPurify,
-    private readonly contractsService : ContractsService,
+    private readonly tokenService: TokenService,
+    private readonly ipfsService: IpfsService,
+    private readonly docsRouteProvider: DocsRouteProvider,
+    private readonly dealsService: DealService,
+    private readonly pinataIpfsClient: PinataIpfsClient,
+    private readonly domPurify: DOMPurify,
+    private readonly contractsService: ContractsService,
     @IPlatform private readonly platform: IPlatform,
   ) {
   }
@@ -81,6 +81,7 @@ export class App implements IRouteableComponent {
   }
 
   async attached(): Promise<void> {
+    console.log("app attached");
 
     this.platform.document.querySelector("body").classList.remove("loading");
 
@@ -123,12 +124,13 @@ export class App implements IRouteableComponent {
 
     this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
       let notChanged = true;
-      const connect = await this.alertService.showAlert( {
+      const connect = await this.alertService.showAlert({
         message: `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with launches we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
         // eslint-disable-next-line no-bitwise
         buttons: ShowButtonsEnum.Primary | ShowButtonsEnum.Secondary,
         buttonTextPrimary: "Yes, Please",
-        buttonTextSecondary: "Not Now" });
+        buttonTextSecondary: "Not Now",
+      });
 
       if (connect.status === DialogDeactivationStatuses.Ok) {
         if (await this.ethereumService.switchToTargetedNetwork(info.provider)) {
@@ -157,15 +159,15 @@ export class App implements IRouteableComponent {
     this.intervalId = setInterval(async () => {
       const blockDate = this.ethereumService.lastBlock?.blockDate;
       if (blockDate) {
-        this.eventAggregator.publish("secondPassed", {blockDate, now: new Date()});
+        this.eventAggregator.publish("secondPassed", { blockDate, now: new Date() });
       }
     }, 1000);
 
     const getShowCountdownPage = () =>
       (
         (window.location.hostname.toLowerCase() === "deals.prime.xyz") &&
-      (process.env.NODE_ENV === "production") &&
-      (process.env.NETWORK === "mainnet")
+        (process.env.NODE_ENV === "production") &&
+        (process.env.NETWORK === "mainnet")
       ) ?
         (Date.now() < AppStartDate.getTime()) : false;
 
@@ -217,21 +219,18 @@ export class App implements IRouteableComponent {
     //   `${window.scrollX},${window.scrollY}`);
   }
 
-  private onNavigate(): void {
-    this.showingMobileMenu = false;
-  }
-
   private toggleMobileMenu(): void {
     this.showingMobileMenu = !this.showingMobileMenu;
   }
 
   private handleShowWalletMenu(): void {
     this.showingWalletMenu = true;
+
   }
 
-  // TODO: fix navigation behavior. Apply event subscriptions.
-  // load(params: Params, next: RouteNode, current: RouteNode | null) {
-  //   this.onNavigate();
-  //   this.router.load(next);
-  // }
+  @watch<App>(x => x.router.isNavigating)
+  onNavigate(): void {
+    this.showingMobileMenu = false;
+  }
+
 }

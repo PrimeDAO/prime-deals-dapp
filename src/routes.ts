@@ -1,24 +1,31 @@
+import { ComingSoon } from "./comingSoon/comingSoon";
+import { Funding } from "./funding/funding";
+import { Documentation } from "./documentation/documentation";
+import { Initiate } from "./initiate/initiate";
 import { IRoute } from "@aurelia/router";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
+import { Home } from "./home/home";
+import { Deals } from "deals/list/deals";
+import { DealDashboard } from "./dealDashboard/dealDashboard";
 
 export const routes: IRoute[] = [
   {
     path: "",
     id: "home",
     title: "Home",
-    component: import("./home/home"),
+    component: Home,
   },
   {
     path: "home",
     id: "home",
     title: "Home",
-    component: import("./home/home"),
+    component: Home,
   },
   {
     path: "initiate",
     id: "initiate",
     title: "Initiate",
-    component: import("./initiate/initiate"),
+    component: Initiate,
   },
   {
     path: "initiate/token-swap",
@@ -30,25 +37,18 @@ export const routes: IRoute[] = [
     path: "deals",
     id: "deals",
     title: "Deals",
-    component: import("./deals/list/deals"),
+    component: Deals,
   },
   {
     path: "documentation",
     id: "documentation",
     title: "Documentation",
-    component: import("./documentation/documentation"),
+    component: Documentation,
   },
   {
-    component: import("./dealDashboard/dealDashboard"),
     id: "dealDashboard",
     path: "deal/:id",
-    title: "DEAL Dashboard",
-  },
-  {
-    component: import("./contribute/contribute"),
-    id: "contribute",
-    path: "contribute",
-    title: "Contribute",
+    component: DealDashboard,
   },
   {
     component: import("./documentation/officialDocs/termsOfService.html"),
@@ -57,13 +57,13 @@ export const routes: IRoute[] = [
     title: "Terms of Service",
   },
   {
-    component: import("./funding/funding"),
+    component: Funding,
     id: "funding",
     path: "/funding/:id",
     title: "Funding",
   },
   {
-    component: import("./comingSoon/comingSoon"),
+    component: ComingSoon,
     id: "comingSoon",
     path: ["comingSoon"],
     title: "Coming Soon!",
