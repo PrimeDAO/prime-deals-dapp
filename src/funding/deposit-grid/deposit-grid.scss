@@ -1,0 +1,98 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
+
+.box-header.deposit-grid {
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.box-content.deposit-grid {
+  .tokens {
+    .grid {
+      margin-bottom: 20px;
+      font-size: 16px;
+
+      .row {
+        cursor: default;
+        /**
+               * so the grid will be composed of the contents of the row element,
+               * not the row element itself.
+               */
+        display: contents;
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        .cell.header {
+          padding: 10px 0;
+          text-transform: uppercase;
+        }
+
+        .cell {
+          &.body {
+            height: 40px;
+            display: flex;
+            align-items: center;
+          }
+          /**
+                 * for when columns get scrunched together
+                 */
+          &:not(:nth-of-type(n + 7)) {
+            padding-right: 12px;
+          }
+
+          &.header {
+            &.sortable {
+              cursor: pointer;
+            }
+          }
+
+          &.project {
+            .ellipsesContainer {
+              display: inline-block;
+              overflow-x: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          &.percent {
+            text-align: right;
+            justify-content: right;
+          }
+
+          &.projectToken,
+          &.fundingToken {
+            white-space: nowrap;
+
+            img {
+              margin-right: 6px;
+              @include tokenIcon;
+            }
+          }
+
+          &.starts {
+            .timeLeftContainer {
+              .body {
+                font-family: Aeonik; // so will center properly and look consistent
+              }
+            }
+          }
+          &.eslink {
+            i {
+              cursor: pointer;
+              color: $Secondary02;
+            }
+          }
+        }
+      }
+    }
+
+    #token-grid {
+      .required {
+        color: $Orange;
+      }
+    }
+  }
+}

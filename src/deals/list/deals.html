@@ -3,20 +3,20 @@
   <import from="../timeLeft/timeLeft"></import>
   <div class="page animated-page au-animate deals">
     <div class="section deals-actions">
-      <pform-input if.to-view="dataSourceDeals.isUserAuthenticated" click.delegate="toggleMyDeals()"
+      <pform-input if.to-view="dataSourceDeals.isUserAuthenticated" click.trigger="toggleMyDeals()"
         label="Show my deals only">
         <ptoggle value.bind="showMine"></ptoggle>
       </pform-input>
       <pbutton
         if.to-view="!ethereumService.defaultAccountAddress"
         type="secondary"
-        click.delegate="ethereumService.ensureConnected()">
+        click.trigger="ethereumService.ensureConnected()">
         Connect to Show Your Deals
       </pbutton>
       <pbutton
         if.to-view="ethereumService.defaultAccountAddress && !dataSourceDeals.isUserAuthenticated"
         type="secondary"
-        click.delegate="dealService.loadDeals()">
+        click.trigger="dealService.loadDeals()">
         Authenticate to Show Your Deals
       </pbutton>
       <pbutton
@@ -44,13 +44,13 @@
         <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
           data-test="open-proposals-tab"
           class="selector-tab ${cardIndex==0?'active':''}"
-          click.delegate="dealToggle(0, 'open')">
+          click.trigger="dealToggle(0, 'open')">
           Open Proposals
         </span>
         <span if.to-view="isTabVisible(1,showMine,ethereumService.defaultAccountAddress)"
           data-test="partnered-deals-tab"
           class="selector-tab ${cardIndex==1?'active':''}"
-          click.delegate="dealToggle(1, 'partnered')">
+          click.trigger="dealToggle(1, 'partnered')">
           Partnered Deals
         </span>
       </div>
@@ -67,18 +67,18 @@
       <!-- Desktop grid -->
       <div if.to-view="gridDeals" class="grid dealGrid" data-test="all-deals-grid">
         <div class="row header">
-          <div class="cell daos header sortable" click.delegate="sort('daos')">DAOs</div>
-          <div class="cell title header sortable" click.delegate="sort('title')">TITLE</div>
-          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
-          <div class="cell status header sortable" click.delegate="sort('status')">STATUS</div>
-          <div class="cell age header sortable" click.delegate="sort('age')">AGE</div>
-          <div class="cell dealSize header sortable" click.delegate="sort('dealSize')">DEAL SIZE (USD)</div>
+          <div class="cell daos header sortable" click.trigger="sort('daos')">DAOs</div>
+          <div class="cell title header sortable" click.trigger="sort('title')">TITLE</div>
+          <div class="cell type header sortable" click.trigger="sort('type')">TYPE</div>
+          <div class="cell status header sortable" click.trigger="sort('status')">STATUS</div>
+          <div class="cell age header sortable" click.trigger="sort('age')">AGE</div>
+          <div class="cell dealSize header sortable" click.trigger="sort('dealSize')">DEAL SIZE (USD)</div>
         </div>
         <template repeat.for="deal of gridDeals | sort:sortEvaluator">
           <a
             class="row body hot"
             if.to-view="!deal.initializing && (($index < 10) || seeingMore)"
-            click.delegate="navigate(`deal/${deal.id}`)">
+            click.trigger="router.load(`deal/${deal.id}`)">
             <div class="project cell body ellipses hot">
               <dao-icon-name primary-dao.to-view="deal.registrationData.primaryDAO" partner-dao.to-view="deal.registrationData.partnerDAO"></dao-icon-name>
             </div>
@@ -99,19 +99,19 @@
       <!-- Mobile grid
       <div if.to-view="!loading" class="grid dealGridMobile">
         <div class="row header">
-          <div class="cell project header sortable" click.delegate="sort('project')">PROJECT</div>
-          <div class="cell projectToken header sortable" click.delegate="sort('projectToken')">PROJECT TOKEN</div>
-          <div class="cell type header sortable" click.delegate="sort('type')">TYPE</div>
-          <div class="cell whitelist header" click.delegate="sort('whitelist')">WHITELIST</div>
-          <div class="cell starts header sortable" click.delegate="sort('starts')">STARTS</div>
-          <div class="cell fundingToken header sortable" click.delegate="sort('fundingToken')">FUNDING TOKEN</div>
+          <div class="cell project header sortable" click.trigger="sort('project')">PROJECT</div>
+          <div class="cell projectToken header sortable" click.trigger="sort('projectToken')">PROJECT TOKEN</div>
+          <div class="cell type header sortable" click.trigger="sort('type')">TYPE</div>
+          <div class="cell whitelist header" click.trigger="sort('whitelist')">WHITELIST</div>
+          <div class="cell starts header sortable" click.trigger="sort('starts')">STARTS</div>
+          <div class="cell fundingToken header sortable" click.trigger="sort('fundingToken')">FUNDING TOKEN</div>
           <div class="cell target header">&nbsp;</div>
         </div>
         <template repeat.for="deal of gridDeals | sort:sortEvaluator">
           <a
             class="row body hot"
             if.to-view="!deal.initializing && (($index < 4) || seeingMore)"
-            click.delegate="onDealClick(deal)">
+            click.trigger="onDealClick(deal)">
             <div class="project cell body hot">${deal.metadata.general.projectName}</div>
             <div class="projectToken cell body hot"><img src.to-view="deal.projectTokenInfo.logoURI"></img>${deal.projectTokenInfo.symbol}</div>
             <div class="type cell body hot">${deal.dealType.toUpperCase()}</div>
@@ -126,11 +126,11 @@
       </div> -->
       <div class="seeMoreSection">
         <div class="centered">
-          <pbutton type="tertiary" click.delegate="seeMore(true)" if.to-view="(gridDeals.length > 4) && !loading && !seeingMore">
+          <pbutton type="tertiary" click.trigger="seeMore(true)" if.to-view="(gridDeals.length > 4) && !loading && !seeingMore">
             SHOW ALL
             <div class="arrow">&darr;</div>
           </pbutton>
-          <pbutton type="tertiary" click.delegate="seeMore(false)" if.to-view="(gridDeals.length > 4) && !loading && seeingMore">
+          <pbutton type="tertiary" click.trigger="seeMore(false)" if.to-view="(gridDeals.length > 4) && !loading && seeingMore">
             SHOW LESS
             <div class="arrow">&uarr;</div>
           </pbutton>

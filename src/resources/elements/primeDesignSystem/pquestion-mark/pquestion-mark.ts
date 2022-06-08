@@ -1,4 +1,3 @@
-import "./pquestion-mark.scss";
 import { Placement } from "tippy.js";
 import { bindable, customElement } from "aurelia";
 

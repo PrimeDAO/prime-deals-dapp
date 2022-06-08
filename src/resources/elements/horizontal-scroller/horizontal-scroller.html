@@ -3,12 +3,12 @@
     <!-- must be a set of divs -->
     <au-slot></au-slot>
   </div>
-  <div class="leftButton ${atEnd ? 'hide' : '' }" click.delegate="left()">
+  <div class="leftButton ${atEnd ? 'hide' : '' }" click.trigger="left()">
     <i class="fas fa-angle-right"></i>
   </div>
   <div
     class="rightButton ${atBeginning ? 'hide' : '' }"
-    click.delegate="right()"
+    click.trigger="right()"
   >
     <i class="fas fa-angle-left"></i>
   </div>

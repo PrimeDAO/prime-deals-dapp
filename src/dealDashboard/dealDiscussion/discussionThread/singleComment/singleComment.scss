@@ -1,0 +1,265 @@
+@import "src/styles/colors";
+@import "src/resources/elements/primeDesignSystem/variables";
+
+.single.comment {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "header" "comment";
+  height: auto;
+  grid-gap: $spacing-normal;
+
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 $spacing-normal;
+
+  &.odd{
+    background-color: $BG00;
+  }
+  &.even{
+    background-color: $BG01;
+  }
+  &.isDeleting {
+    position: relative;
+    pointer-events: none;
+    .deleteInfo {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: $White;
+    }
+    & > :not(.deleteInfo) {
+      filter: blur(1px) brightness(0.5) grayscale(1);
+    }
+  }
+
+  &.highlighted:not(.isReply, .reply) {
+    background-color: $BG02;
+  }
+  &.isReply .highlighted {
+    background-color: darken($BG02, 3%);
+  }
+
+  .commentHeader {
+    grid-area: header;
+    display: flex;
+    width: auto;
+    align-items: center;
+    justify-content: flex-start;
+    gap: $spacing-normal;
+    margin-top: 19px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 32px;
+    overflow: hidden;
+    &>img {
+      background-color: $BG05;
+      vertical-align: middle;
+    }
+  }
+
+  .identity {
+    vertical-align: middle;
+
+    .address {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 17px;
+      a, i {
+        color: $Neutral02 !important;
+      }
+      .copy-to-clip-button {
+        height: 14px;
+        & path {
+          fill: $Neutral02;
+        }
+      }
+    }
+
+    .name, .only.address {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 700;
+      a, i {
+        color: $White !important;
+      }
+      .copy-to-clip-button {
+        & path {
+          fill: $White;
+        }
+      }
+    }
+
+    &.loading {
+      background-color: $BG02;
+      overflow: hidden;
+      width: 60%;
+    }
+
+    .placeholder {
+      animation: shading 1s infinite;
+      height: 30px;
+      width: 100%;
+
+      &,
+      *,
+      ::after,
+      ::before {
+        box-sizing: border-box;
+      }
+
+      background-color: $BG02;
+      border-radius: 2px;
+
+      &::before {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 50%;
+          z-index: 1;
+          width: 500%;
+          margin-left: -250%;
+          background: linear-gradient(
+              to right,
+              rgba(255, 255, 255, 0) 46%,
+              rgba(255, 255, 255, 0.35) 50%,
+              rgba(255, 255, 255, 0) 54%) 50% 50%;
+          animation: slider 0.8s linear infinite;
+          content: " ";
+          pointer-events: none;
+      }
+    }
+  }
+
+  .commentBody {
+    grid-area: comment;
+    padding-left: $spacing-normal + 30px;
+    @include pre;
+    word-wrap: anywhere;
+
+    .replyContainer {
+      display: flex;
+      align-items: center;
+      margin-left: -$spacing-normal;
+      .reply {
+        min-width: 200px;
+        max-width: 50%;
+        &.odd{
+          background-color: $BG01;
+        }
+        &.even{
+          background-color: $BG00;
+        }
+        &>div {
+          display: flex;
+          align-items: center;
+          gap: $spacing-small;
+          margin-bottom: $spacing-normal;
+
+          .avatar {
+            width: 22.5px;
+            height: 22.5px;
+          }
+          &>.identity {
+            .address {
+              font-size: 8px;
+              line-height: 9.5px;
+            }
+            .name, .only.address {
+              font-size: 9px;
+              line-height: 13.5px;
+            }
+            .copy-to-clip-button {
+              height: 9px;
+            }
+          }
+        }
+        &>pre {
+          color: $Neutral02;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 17px;
+
+          // truncate text to fit one line in the comment box:
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          text-overflow: ellipsis;
+        }
+        border: 1px solid $Border01;
+        border-radius: $border-radius-small;
+        padding: $spacing-medium-small;
+        margin-bottom: $spacing-normal;
+        .copy-to-clip-button>svg {
+          display: inline-flex;
+          align-self: center;
+          width: 13.5px;
+          height: 13.5px;
+        }
+      }
+    }
+  }
+
+  .actions,
+  .footer {
+    display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+    gap: $spacing-normal;
+    pbutton>button {
+      padding: $spacing-small $spacing-normal;
+    }
+
+    .count {
+      display: inherit;
+      align-items: center;
+      .upVote {
+        color: $Green;
+      }
+      .downVote {
+        color: $Red;
+      }
+      .spinner {
+        color: $Primary01;
+      }
+    }
+
+    .action {
+      display: none;
+      align-items: center;
+    }
+  }
+
+  &:hover {
+    .actions>.vote.count.isAuthorized,
+    .lastActivity.isAuthorized,
+    .footer>.vote.count.isAuthorized {
+      display: none;
+    }
+    .actions>.vote.action,
+    .footer>.vote.action {
+      display: inherit;
+      .isThumbUp {
+        color: $Green;
+      }
+      .isThumbDown {
+        color: $Red;
+      }
+    }
+  }
+}
+
+@keyframes shading {
+  0% {
+    transform: translate3d(-30%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(30%, 0, 0);
+  }
+}

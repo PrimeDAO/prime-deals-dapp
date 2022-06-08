@@ -1,4 +1,3 @@
-import "./prange-slider.scss";
 import { Utils } from "../../../../services/utils";
 import { toBigNumberJs } from "../../../../services/BigNumberService";
 import { BigNumber } from "ethers";

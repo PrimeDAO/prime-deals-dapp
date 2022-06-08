@@ -1,6 +1,5 @@
 import { bindable } from "aurelia";
 import { Address } from "services/EthereumService";
-import "./dealSummary.scss";
 import { DealTokenSwap } from "../../entities/DealTokenSwap";
 import { IRouter } from "@aurelia/router";
 /**

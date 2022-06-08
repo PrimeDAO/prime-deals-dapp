@@ -1,4 +1,3 @@
-import "./pinput-text.scss";
 import {ValidationState} from "../types";
 import { bindable, BindingMode, customElement } from "aurelia";
 

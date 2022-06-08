@@ -1,6 +1,5 @@
 import { bindable } from "aurelia";
 import { DealStatus, IDeal } from "entities/IDealTypes";
-import "./timeLeft.scss";
 
 export class TimeLeft {
 
@@ -23,7 +22,7 @@ export class TimeLeft {
 
   }
   get status(): string {
-    return this.reversedEnum[this.deal.status];
+    return this.reversedEnum[this.deal?.status ?? DealStatus.active ];
   }
 
   // constructor(

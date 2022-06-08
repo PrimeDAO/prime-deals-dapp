@@ -1,4 +1,4 @@
-<div data-test="pPopupNotification" class="pPopupNotification" ref="container">
+<div data-test="pPopupNotification" class="pPopupNotification" mouseenter.trigger="pauseCountDown(true)" mouseleave.trigger="pauseCountDown(false)">
   <div class="icon">
     <i class="${typeClass} ${iconClass}"></i>
   </div>
@@ -13,9 +13,9 @@
     </pcountdown-closebutton>
   </div>
   <div class="bodyContainer">
-    <div ref="body" class="message"></div>
+    <au-compose view.bind="message" class="message"></au-compose> 
   </div>
   <div class="subbodyContainer">
-    <div ref="subbody" class="submessage"></div>
+    <au-compose view.bind="submessage" class="submessage"></au-compose> 
   </div>
 </div>

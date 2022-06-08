@@ -1,0 +1,33 @@
+<template>
+  <style>
+    .playgroundWelcome__compose compose {
+      display: block;
+      margin: 25px 20px;
+    }
+
+  </style>
+
+  <a href="#">Back to home</a>
+  --
+  <pbutton type="primary"><a href="/playground">All Playgrounds</a></pbutton>
+  <br>
+
+  <import from="../../resources/elements/primeDesignSystem/pbutton/pbutton"></import>
+  <import from="../editingCardPlayground/editingCardPlayground"></import>
+  <import from="../firebasePlayground/firebasePlayground"></import>
+
+  <pbutton type="secondary"> <a href="/playground/">Your playground</a> </pbutton>
+  <pbutton type="secondary"> <a href="/playground/editingCardPlayground">editingCard</a> </pbutton>
+  <pbutton type="secondary"> <a href="/playground/firebasePlayground">editingCard</a> </pbutton>
+
+  <div class="playgroundsWelcome__compose">
+    <compose
+      if.bind="view"
+      view.bind="view"
+      class="${view}"></compose>
+    <compose
+      else
+      view-model.bind="viewModel"
+      class="${viewModelName}"></compose>
+  </div>
+</template>

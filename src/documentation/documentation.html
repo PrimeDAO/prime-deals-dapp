@@ -2,27 +2,27 @@
   <div class="gradient title heading heading1">Documentation</div>
   <div class="documentContainer">
     <div class="sidebar">
-      <template repeat.for="doc of router.navigation">
+      <template repeat.for="doc of routes">
         <a
-          href.to-view="doc.href"
-          class="document ${doc.isActive ? 'active' : ''}"
+          load="${doc.path}"
+          class="document"
         >
-          ${doc.title}
+          ${doc.path}
         </a>
       </template>
     </div>
     <div class="rightSection">
-      <router-view></router-view>
+      <au-viewport viewport="documents" ></au-viewport>
       <div class="navigationContainer">
-        <div click.delegate="previous()" class="navigationPrevious">
+        <div click.trigger="previous()" class="navigationPrevious">
           <i class="fas fa-arrow-left" if.to-view="previousDocTitle"></i>
           ${previousDocTitle}
         </div>
-        <div click.delegate="next()" class="navigationNext">
+        <div click.trigger="next()" class="navigationNext">
           ${nextDocTitle}
           <i class="fas fa-arrow-right" if.to-view="nextDocTitle"></i>
         </div>
       </div>
     </div>
   </div>
-</div>
+</template>

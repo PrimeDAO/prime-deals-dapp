@@ -1,8 +1,7 @@
-import "./pgrid.scss";
 import { SortOrder, SortService } from "services/SortService";
 import { Utils } from "services/utils";
 import { bindable, customElement, ICustomElementViewModel } from "aurelia";
-import { ICustomElementController, IHydratedController } from "@aurelia/runtime-html";
+import { ICustomAttributeViewModel, ICustomElementController, IHydratedController } from "@aurelia/runtime-html";
 
 export interface IGridColumn {
   field: string;
@@ -27,22 +26,21 @@ export class PGrid implements ICustomElementViewModel {
   @bindable public numberToShow = 10;
   @bindable public hideMore = true;
   sortEvaluator: (a: any, b: any) => number;
-  parent: IHydratedController;
+  context: ICustomElementViewModel | ICustomAttributeViewModel;
   private seeingMore = false;
 
-  created(controller: ICustomElementController<this>) {
-    this.parent = controller.parent;
+  binding(top: ICustomElementController<this>, direct: ICustomElementController<this>) {
+    this.context = direct.viewModel ?? top.viewModel;
   }
 
   getBuffedVm(row: any) {
-    const context = this.parent.viewModel;
-    const vm = { ...context, ...row, row: row };
-    Object.keys(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(context)))
+    const vm = { ...this.context, ...row, row: row };
+    Object.keys(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this.context)))
       .filter(
         (y) => y !== "constructor" && y !== "bind" && y !== "__metadata__" && y !== "activate",
       )
       .forEach((y) => {
-        vm[y] = context[y];
+        vm[y] = this.context[y];
       });
     return vm;
   }

@@ -5,31 +5,31 @@
     </div>
     <div class="menu-body">
       <div class="products">
-        <div class="item" click.delegate="gotoCallback({url: 'https://launch.prime.xyz'})">
+        <div class="item" click.trigger="gotoCallback({url: 'https://launch.prime.xyz'})">
           <div class="icon launch"><img class="mono" src="launch-mono.svg" /><img class="color" src="launch.svg" /></div>
           <div class="text">Launch</div>
         </div>
-        <div class="item" click.delegate="gotoCallback({url: 'https://www.prime.xyz/pools'})">
+        <div class="item" click.trigger="gotoCallback({url: 'https://www.prime.xyz/pools'})">
           <div class="icon pools"><img class="mono" src="pools-mono.svg" /><img class="color" src="pools.svg" /></div>
           <div class="text">Pools</div>
         </div>
-        <div class="item" click.delegate="gotoCallback({url: 'https://www.prime.xyz/rating'})">
+        <div class="item" click.trigger="gotoCallback({url: 'https://www.prime.xyz/rating'})">
           <div class="icon rating"><img class="mono" src="rating-mono.svg" /><img class="color" src="rating.svg" /></div>
           <div class="text">Rating</div>
         </div>
-        <div class="item active" click.delegate="navigateCallback({href: '/'})">
+        <div class="item active" click.trigger="navigateCallback({href: '/'})">
           <div class="icon deals"><img class="mono" src="deals-mono.svg" /><img class="color" src="deals.svg" /></div>
           <div class="text">Deals</div>
         </div>
       </div>
       <div class="productSubpages">
-        <div class="container">
-          <div class="item ${(router.currentInstruction.config.name === 'home') ? 'active' : ''}" click.delegate="navigateCallback({href: '/'})">Home</div>
-          <div class="item ${(router.currentInstruction.config.name === 'initiate' || router.currentInstruction.config.name === 'tokenSwapTypeSelection') ? 'active' : ''}" click.delegate="navigateCallback({href: '/initiate'})">Initiate a Deal</div>
-          <div class="item ${(router.currentInstruction.config.name === 'deals' || router.currentInstruction.config.name === 'deals') ? 'active' : ''}" click.delegate="navigateCallback({href: '/deals'})">All Deals</div>
-          <div class="item ${(router.currentInstruction.config.name === 'documentation') ? 'active' : ''}" click.delegate="navigateCallback({href: '/documentation'})">Documentation</div>
-          <div class="item" click.delegate="goto('https://form.typeform.com/to/SUCTM812')">Support</div>
-        </div>
+        <nav class="container">
+          <a class="item" load="home">Home</a>
+          <a class="item" load="initiate">Initiate a Deal</a>
+          <a class="item" load="deals">All Deals</a>
+          <a class="item" load="documentation">Documentation</a>
+          <a class="item" click.trigger="gotoCallback('https://form.typeform.com/to/SUCTM812')">Support</a>
+        </nav>
       </div>
     </div>
   </div>

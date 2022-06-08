@@ -2,16 +2,14 @@
   data-test="${className}"
   class="ppopup-dialog pPopupModal pcard gradient ${className || ''}"
 >
-  <p
+  <au-compose view.bind="header"
     class="dialogHeader ${confetti ? 'bg-confetti-animated' : ''}"
-    ref="headerElement"
   >
     <au-slot name="header"></au-slot>
-  </p>
-  <p class="dialogBody" ref="body">
+  </au-compose>
+  <au-compose view.bind="message" class="dialogBody">
     <au-slot></au-slot>
-  </p>
-
+  </au-compose>
   <p class="dialogFooter">
     <pbutton
       type="tertiary"

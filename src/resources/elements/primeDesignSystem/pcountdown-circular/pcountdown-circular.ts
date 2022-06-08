@@ -1,6 +1,5 @@
 import { bindable, BindingMode, customElement } from "aurelia";
 import { Utils } from "services/utils";
-import "./pcountdown-circular.scss";
 
 @customElement("pcountdown-circular")
 export class PCountdownCircular {
@@ -17,7 +16,7 @@ export class PCountdownCircular {
    * automatically switches to false when a countdown is expired or is aborted by
    * setting running to false.  Setting start to false while paused will turn paused off too.
    */
-   @bindable({ mode: BindingMode.twoWay }) running = false;
+  @bindable({ mode: BindingMode.twoWay }) running = false;
   /**
    * invoked when countdown ends or manually stopped
    */

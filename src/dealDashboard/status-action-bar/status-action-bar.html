@@ -1,0 +1,9 @@
+<template>
+  <div>
+    <p if.to-view="content">
+      <i class="fas fa-${iconClass} ${iconColor}"></i>
+      <span>${content}</span>
+    </p>
+    <au-slot></au-slot>
+  </div>
+</template>

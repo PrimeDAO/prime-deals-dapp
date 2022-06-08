@@ -3,53 +3,48 @@ import { BigNumber } from "ethers";
 import { fromWei, toWei } from "services/EthereumService";
 import { NumberService } from "services/NumberService";
 import { Utils } from "services/utils";
-import { bindable, BindingMode, inject } from "aurelia";
+import { bindable, BindingMode } from "aurelia";
+import { toBoolean } from "resources/binding-behaviours";
 
-@inject()
 export class NumericInput {
 
-  @bindable public decimal: boolean = true;
+  @bindable({set: toBoolean, type: Boolean }) public decimal = true;
   @bindable public css?: string;
-  @bindable({mode: BindingMode.oneTime}) public id?: string;
+  @bindable({ mode: BindingMode.oneTime }) public id?: string;
   /**
    * what to display when there is no value
    */
-  @bindable public defaultText: string = "";
+  @bindable public defaultText = "";
   /**
    * handle should return falsey to accept the key.  Only fired on key strokes that have
    * already passed the default character filter.
    */
-  @bindable public handleChange: ({keyCode: number}) => boolean;
+  @bindable public handleChange: ({ keyCode: number }) => boolean;
   @bindable public autocomplete = "off";
-  @bindable public disabled: boolean;
+  @bindable({set: toBoolean, type: Boolean }) public disabled;
   /**
    * Assumed to be in Wei and will be converted to ETH for the user and back to Wei for parent component.
    * Else value us set to  whatever string the user types.
    * If nothing is entered, then value is set to `defaultText`.
    */
-  @bindable({mode: BindingMode.twoWay}) public value: number | BigNumber | string;
+  @bindable({ mode: BindingMode.twoWay }) public value: number | BigNumber | string;
   /**
    * if true then value is converted from wei to eth for editing
    */
-  @bindable public notWei?: boolean = false;
+  @bindable({set: toBoolean, type: Boolean }) public notWei?: boolean = false;
   /**
    * if isWei, then the number of decimals involved in the conversion
    */
-  @bindable public decimals?: number;
-  @bindable public outputAsString?: boolean = false;
-  @bindable public placeholder: string = "";
+  @bindable public decimals?:number;
+  @bindable({set: toBoolean, type: Boolean }) public outputAsString?: boolean = false;
+  @bindable public placeholder = "";
 
   private element: HTMLInputElement;
-  private ignoreValueChanged = false;
-
-  constructor(
-    private numberService: NumberService,
-    private consoleLogService: ConsoleLogService) {
-  }
 
   private _innerValue: string;
 
-  // @computedFrom("_innerValue") // TODO check if this works
+  private ignoreValueChanged = false;
+
   private get innerValue() {
     return this._innerValue;
   }
@@ -60,7 +55,7 @@ export class NumericInput {
      * update value from input control
      */
     if ((newValue === null) || (typeof newValue === "undefined") ||
-      ((typeof newValue === "string") && newValue.trim() === "")) {
+        ((typeof newValue === "string") && newValue.trim() === "")) {
       this.value = undefined;
     } else {
       // assuming here that the input element will always give us a string
@@ -83,27 +78,17 @@ export class NumericInput {
     }
   }
 
-  notWeiChanged() {
-    this.valueChanged(this.value, "");
-  }
-
-  public attached(): void {
-    this.element.addEventListener("keydown", (e) => {
-      this.keydown(e);
-    });
-    // this.hydrateFromDefaultValue();
-  }
-
-  public detached(): void {
-    if (this.element) {
-      this.element.removeEventListener("keydown", (e) => {
-        this.keydown(e);
-      });
-    }
+  constructor(
+    private numberService: NumberService,
+    private consoleLogService: ConsoleLogService) {
   }
 
   private decimalsChanged() {
     this.valueChanged(this.value, null);
+  }
+
+  notWeiChanged() {
+    this.valueChanged(this.value, "");
   }
 
   private valueChanged(newValue: string | BigNumber | number, oldValue: string | BigNumber | number) {
@@ -135,6 +120,17 @@ export class NumericInput {
     }
   }
 
+  public attached(): void {
+    this.element.addEventListener("keydown", (e) => { this.keydown(e); });
+    // this.hydrateFromDefaultValue();
+  }
+
+  public detached(): void {
+    if (this.element) {
+      this.element.removeEventListener("keydown", (e) => { this.keydown(e); });
+    }
+  }
+
   // http://stackoverflow.com/a/995193/725866
   private isNavigationOrSelectionKey(e): boolean {
     // Allow: backspace, delete, tab, escape, enter and .
@@ -149,7 +145,7 @@ export class NumericInput {
        */
       if ((this.decimal && (e.key === ".") &&
         (!currentValue || !currentValue.length || (currentValue.indexOf(".") === -1)))) {
-        returnValue = true;
+        returnValue =true;
       }
     }
     return returnValue;
@@ -164,7 +160,7 @@ export class NumericInput {
       }
     }
     if (this.handleChange) {
-      if (this.handleChange({keyCode: e.keyCode})) {
+      if (this.handleChange({ keyCode: e.keyCode })) {
         e.preventDefault();
       }
     }

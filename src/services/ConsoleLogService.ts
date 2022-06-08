@@ -13,9 +13,9 @@ export class ConsoleLogService {
 
   constructor (
     @IEventAggregator private readonly eventAggregator: IEventAggregator,
-    @ILogger private readonly logger: ILogger
+    @ILogger private readonly logger: ILogger,
   ) {
-    this.logger = logger.scopeTo('ConsoleLogService');
+    this.logger = logger.scopeTo("ConsoleLogService");
     this.subscriptions.push(eventAggregator
       .subscribe("handleException",
         (config: EventConfigException | any) => this.handleException(config)));

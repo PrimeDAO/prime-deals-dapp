@@ -1,5 +1,4 @@
 import { bindable, BindingMode, customElement } from "aurelia";
-import "./pcountdown-closebutton.scss";
 
 @customElement("pcountdown-closebutton")
 export class PCountdownClosebutton {

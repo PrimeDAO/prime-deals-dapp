@@ -13,6 +13,7 @@
    top: -135px;
    object-fit: cover;
    width: 950px;
+   right: calc(50% - 50vw + 8px); // 8px seems the minimal value to compensate for scrollbar width on small screen heights
  }
 
  .banner {
@@ -78,14 +79,6 @@
          text-align: center;
        }
      }
-   }
- }
-}
-
-@media screen and (min-width: 1070px) {
- .selectDealTypePage {
-   & > .bg-image {
-     right: -160px;
    }
  }
 }

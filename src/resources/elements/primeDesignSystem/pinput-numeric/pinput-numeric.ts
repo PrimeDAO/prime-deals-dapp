@@ -1,4 +1,3 @@
-import "./pinput-numeric.scss";
 import {BigNumber} from "ethers";
 import {ValidationState} from "../types";
 import { bindable, BindingMode, customElement } from "aurelia";

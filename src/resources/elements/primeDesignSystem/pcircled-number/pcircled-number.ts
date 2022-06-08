@@ -1,5 +1,4 @@
 import { bindable, customElement } from "aurelia";
-import "./pcircled-number.scss";
 
 @customElement("pcircled-number")
 export class PCircledNumber {

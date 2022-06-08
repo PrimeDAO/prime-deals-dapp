@@ -1,4 +1,4 @@
-import { EthereumService, IEthereumService } from "services/EthereumService";
+import { IEthereumService } from "services/EthereumService";
 import { fromEventPattern, Observable } from "rxjs";
 import { inject, IEventAggregator } from "aurelia";
 import axios from "axios";

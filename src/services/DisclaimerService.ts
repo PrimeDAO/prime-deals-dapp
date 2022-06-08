@@ -4,7 +4,7 @@ import axios from "axios";
 import { BrowserStorageService } from "./BrowserStorageService";
 import { Address } from "./EthereumService";
 import { AxiosService } from "./axiosService";
-import { DialogDeactivationStatuses, EventAggregator, IEventAggregator, inject } from "aurelia";
+import { DialogDeactivationStatuses, IEventAggregator, inject } from "aurelia";
 import { marked } from "marked";
 
 @inject()
@@ -14,7 +14,7 @@ export class DisclaimerService {
   // private waiting = false;
 
   constructor(
-    @IEventAggregator private eventAggregator: EventAggregator,
+    @IEventAggregator private eventAggregator: IEventAggregator,
     private dialogService: DialogService,
     private storageService: BrowserStorageService,
     private axiosService: AxiosService,

@@ -1,7 +1,5 @@
 import { bindable, customElement } from "aurelia";
 import { EventMessageType } from "resources/elements/primeDesignSystem/types";
-import { AureliaHelperService } from "services/AureliaHelperService";
-import "./ppopup-notification.scss";
 
 @customElement("ppopup-notification")
 export class PPopupNotification {
@@ -14,61 +12,19 @@ export class PPopupNotification {
   @bindable running = false;
   @bindable stopped?: ({ cancelled: boolean }) => void;
   @bindable closed?: () => void;
-
-  private body: HTMLElement;
-  private subbody: HTMLElement;
-  private container: HTMLElement;
-
-  constructor(private aureliaHelperService: AureliaHelperService) {}
-
-  attached() {
-    this.messageChanged(this.message);
-    this.submessageChanged(this.submessage);
-    this.container.addEventListener("mouseenter", ( _event ) => this.pauseCountDown(true), false);
-    this.container.addEventListener("mouseleave", ( _event ) => this.pauseCountDown(false), false);
-  }
-
-  messageChanged(newValue: string): void {
-    if (this.body) {
-      this.body.innerHTML = newValue;
-      // this.aureliaHelperService.enhanceElement(this.body, this, true);
-    }
-  }
-
-  submessageChanged(newValue: string): void {
-    if (this.subbody) {
-      if (newValue) {
-        this.subbody.innerHTML = newValue;
-        // this.aureliaHelperService.enhanceElement(this.subbody, this, true);
-      } else {
-        this.subbody.innerHTML = "";
-      }
-    }
-  }
-
   pauseCountDown(yes: boolean): void {
     this.paused = yes;
   }
-
   countDownStopped(cancelled: boolean): void {
-    this.shutdown();
     if (this.stopped) {
       this.stopped({ cancelled });
     }
   }
-
   countdownClosed(): void {
-    this.shutdown();
     if (this.closed) {
       this.closed();
     }
   }
-
-  shutdown() {
-    this.container.removeEventListener("mouseenter", ( _event ) => this.pauseCountDown(true), false);
-    this.container.removeEventListener("mouseleave", ( _event ) => this.pauseCountDown(false), false);
-  }
-
   private get iconClass(): string {
     switch (this.type) {
       case EventMessageType.Failure:

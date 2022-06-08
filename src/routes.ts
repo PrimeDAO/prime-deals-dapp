@@ -3,8 +3,14 @@ import { STAGE_ROUTE_PARAMETER, WizardType } from "./wizards/tokenSwapDealWizard
 
 export const routes: IRoute[] = [
   {
-    path: ["", "home"],
-    id:  "home",
+    path: "",
+    id: "home",
+    title: "Home",
+    component: import("./home/home"),
+  },
+  {
+    path: "home",
+    id: "home",
     title: "Home",
     component: import("./home/home"),
   },
@@ -31,6 +37,42 @@ export const routes: IRoute[] = [
     id: "documentation",
     title: "Documentation",
     component: import("./documentation/documentation"),
+  },
+  {
+    component: import("./dealDashboard/dealDashboard"),
+    id: "dealDashboard",
+    path: "deal/:id",
+    title: "DEAL Dashboard",
+  },
+  {
+    component: import("./contribute/contribute"),
+    id: "contribute",
+    path: "contribute",
+    title: "Contribute",
+  },
+  {
+    component: import("./documentation/officialDocs/termsOfService.html"),
+    id: "termsOfService",
+    path: ["terms-of-service"],
+    title: "Terms of Service",
+  },
+  {
+    component: import("./funding/funding"),
+    id: "funding",
+    path: "/funding/:id",
+    title: "Funding",
+  },
+  {
+    component: import("./comingSoon/comingSoon"),
+    id: "comingSoon",
+    path: ["comingSoon"],
+    title: "Coming Soon!",
+  },
+  {
+    component: import("./playground/playground"),
+    id: "playground",
+    path: ["playground"],
+    title: "Playground",
   },
   {
     path: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,

@@ -1,7 +1,7 @@
 import { DisposableCollection } from "services/DisposableCollection";
 import { EthereumService, IEthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
-import { bindable, containerless, EventAggregator, IEventAggregator } from "aurelia";
+import { bindable, containerless, IEventAggregator } from "aurelia";
 
 @containerless
 export class EthBalance {
@@ -13,7 +13,7 @@ export class EthBalance {
   private account: string;
 
   constructor(
-    @IEventAggregator private eventAggregator: EventAggregator,
+    @IEventAggregator private eventAggregator: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
   ) {
   }
@@ -55,7 +55,7 @@ export class EthBalance {
           this.balance = null;
         }
       } catch (ex) {
-        console.error(ex)
+        console.error(ex);
       } finally {
         this.checking = false;
       }

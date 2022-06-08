@@ -12,7 +12,7 @@
         <pcard
           data-test="all-deals-button"
           type="gradient"
-          click.delegate="navigate('deals')"
+          click.trigger="navigate('deals')"
         >
           <header>
             <span class="heading03">View all Deals</span>
@@ -26,7 +26,7 @@
         <pcard
           data-test="initiate-deal-button"
           type="gradient"
-          click.delegate="navigate('initiate')"
+          click.trigger="navigate('initiate')"
         >
           <header>
             <span class="heading03">Initiate a Deal</span>
@@ -49,14 +49,14 @@
             if.to-view="allDeals.open.length"
             data-test="open-proposals-tab"
             class="selector-tab ${cardIndex==0?'active':''}"
-            click.delegate="dealToggle(0, 'open')"
+            click.trigger="dealToggle(0, 'open')"
           >
             Open Proposals
           </span>
           <span
             if.to-view="allDeals.partnered.length"
             class="selector-tab ${cardIndex==1?'active':''}"
-            click.delegate="dealToggle(1, 'partnered')"
+            click.trigger="dealToggle(1, 'partnered')"
           >
             Partnered Deals
           </span>
@@ -74,7 +74,7 @@
           <div class="centered">
             <pbutton
               type="tertiary"
-              click.delegate="navigate('deals')"
+              click.trigger="navigate('deals')"
               rel="noopener noreferrer"
             >
               View All Deals
@@ -104,7 +104,7 @@
             <pbutton
               data-test="initiate-deal-button-video-section"
               type="primary"
-              click.delegate="navigate('initiate')"
+              click.trigger="navigate('initiate')"
               rel="noopener noreferrer"
             >
               Initiate a deal

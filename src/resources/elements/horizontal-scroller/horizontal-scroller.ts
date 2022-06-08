@@ -1,7 +1,6 @@
 import { processContent } from "@aurelia/runtime-html";
 import { bindable } from "aurelia";
 import { autoSlot } from "./../../temporary-code";
-import "./horizontal-scroller.scss";
 
 @processContent(autoSlot)
 export class HorizontalScroller {

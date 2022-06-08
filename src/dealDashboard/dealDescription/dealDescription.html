@@ -1,0 +1,14 @@
+<template>
+  <p class="descriptionLabel">Description</p>
+
+  <pre data-test="dealDescriptionText" class="dealDescriptionText">${descriptionText}</pre>
+
+  <div class="mobileButtonContainerDealDescription">
+    <pbutton
+      data-test="readMoreDealDescription"
+      if.bind="showReadMoreButton"
+      type="tertiary"
+      click.trigger="readMore()">
+      Read more</pbutton>
+  </div>
+</template>

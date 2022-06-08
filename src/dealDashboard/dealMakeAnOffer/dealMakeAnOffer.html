@@ -1,0 +1,22 @@
+<template>
+  <pcard>
+    <h1 class="title heading heading3 gradient">Make an offer</h1>
+
+    <p class="bodySmallText">
+      Make a deal proposal based off of this template with the ability to put your own modifications to the clauses.
+    </p>
+
+    <pbutton class="makeAnOfferButton" click.trigger="makeAnOffer()" type="primary">
+      <img src="/hand-holding-diamond.svg"/>
+      Make an offer
+    </pbutton>
+  </pcard>
+
+  <div class="makeAnOfferModal" ref="makeAnOfferModal">
+    Make a deal proposal based off of this template with the ability to put your own modifications to the clauses.
+
+    <div class="orangeColor" style="margin-top: 50px;">
+      Note: You are now creating a new deal. Please inform the counterparty
+    </div>
+  </div>
+</template>

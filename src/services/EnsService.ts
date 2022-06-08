@@ -1,4 +1,4 @@
-import { Address, EthereumService, IEthereumService } from "services/EthereumService";
+import { Address, IEthereumService } from "services/EthereumService";
 import { inject } from "aurelia";
 
 @inject()

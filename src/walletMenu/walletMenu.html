@@ -6,7 +6,7 @@
       <hr />
       <div class="pair connected">
         <div class="title">Connected with MetaMask</div>
-        <div class="action" click.delegate="disconnect()" data-test="diconnect-button">Disconnect</div>
+        <div class="action" click.trigger="disconnect()" data-test="diconnect-button">Disconnect</div>
       </div>
       <div class="pair accountInfo">
         <usersaddress small></usersaddress>
@@ -14,7 +14,7 @@
           <copy-to-clipboard-button handle-click.call="copyAddress()" text-to-copy.to-view="ethereumService.defaultAccountAddress"></copy-to-clipboard-button>
           <!-- same as externalLinkIcon.svg -->
           <svg
-            TODO add back below class="etherscan-button" click.delegate="gotoEtherscan()" fill="none" height="17" ptooltip="Inspect on Etherscan"
+            TODO add back below class="etherscan-button" click.trigger="gotoEtherscan()" fill="none" height="17" ptooltip="Inspect on Etherscan"
             svg
             the
             this to
@@ -36,7 +36,7 @@
       <hr show.bind="!metamaskHasPrimeToken" />
       <div class="pair" show.bind="!metamaskHasPrimeToken">
         <div class="title"><img alt="Prime (D2D)" src="logomark.svg"></img>Prime (D2D)</div>
-        <div class="action" click.delegate="addTokenToWallet()">Add Token to Wallet</div>
+        <div class="action" click.trigger="addTokenToWallet()">Add Token to Wallet</div>
       </div>
       <hr />
       <div class="pair">

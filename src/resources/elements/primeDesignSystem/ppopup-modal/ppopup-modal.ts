@@ -1,5 +1,4 @@
-/* eslint-disable no-bitwise */
-import "./ppopup-modal.scss";
+import { toBoolean } from "resources/binding-behaviours";
 // does the confetti
 import "/src/styles/confetti.css";
 import { AureliaHelperService } from "services/AureliaHelperService";
@@ -25,34 +24,23 @@ export class PPopupModal {
   @bindable buttonTextSecondary?: string;
   @bindable primaryClick: () => void;
   @bindable secondaryClick: () => void;
-  @bindable confetti = false;
+  @bindable({ set: toBoolean }) confetti = false;
 
   private primaryButton: HTMLElement;
   showCancelButton: boolean;
   showOkButton: boolean;
-  body: HTMLElement;
-  headerElement: HTMLElement;
 
-  constructor(private aureliaHelperService: AureliaHelperService) {}
+  constructor(private aureliaHelperService: AureliaHelperService) { }
 
   public attached(): void {
     this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
-    this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
-    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
+    this.showOkButton = !!(this.buttons && ShowButtonsEnum.Primary);
+    this.showCancelButton = !!(this.buttons && ShowButtonsEnum.Secondary);
     this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
     this.buttonTextSecondary = this.buttonTextSecondary ?? "CANCEL";
     // attach-focus doesn't work
-    if (this.buttons & ShowButtonsEnum.Primary) {
+    if (this.buttons && ShowButtonsEnum.Primary) {
       this.primaryButton.focus();
-    }
-
-    if (this.message) {
-      this.body.innerHTML = this.message;
-      // this.aureliaHelperService.enhanceElement(this.body, this, true);
-    }
-    if (this.header) {
-      this.headerElement.innerHTML = this.header;
-      // this.aureliaHelperService.enhanceElement(this.headerElement, this, true);
     }
   }
 }

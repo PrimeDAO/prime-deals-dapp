@@ -1,0 +1,179 @@
+<template>
+  <pcard>
+    <h1 class="title heading gradient">Deal Information</h1>
+
+    <hr />
+
+    <div class="daoDetailsContainer">
+      <div class="infoSection">
+        <span class="bodySmallTextBold infoTitle daoLabel">Primary DAO</span>
+        <div class="daoDetails">
+          <img class="daoLogo" src.bind="deal.primaryDao.logoURI" />
+          <div
+            class="daoTitle"
+            ref="primaryDaoTitle"
+            ptooltip.to-view="primaryDaoTitle.scrollWidth > primaryDaoTitle.offsetWidth ? deal.primaryDao.name : ''"
+          >
+            ${deal.primaryDao.name}
+          </div>
+        </div>
+      </div>
+      <div class="daoSocialLinks" if.bind="deal.primaryDao.social_medias.length">
+        <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
+          <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+        </a>
+      </div>
+    </div>
+
+    <hr if.bind="partnerDao" />
+
+    <div class="daoDetailsContainer" if.bind="deal.partnerDao" ref="partnerDao">
+      <div class="infoSection">
+        <span class="bodySmallTextBold infoTitle daoLabel">Partner DAO</span>
+        <div class="daoDetails">
+          <img class="daoLogo" src.bind="deal.partnerDao.logoURI" />
+          <div
+            class="daoTitle"
+            ref="partnerDaoTitle"
+            ptooltip.to-view="partnerDaoTitle.scrollWidth > partnerDaoTitle.offsetWidth ? deal.partnerDao.name : ''"
+          >
+            ${deal.partnerDao.name}
+          </div>
+        </div>
+      </div>
+
+      <div class="daoSocialLinks" if.bind="deal.partnerDao && deal.partnerDao.social_medias.length">
+        <a
+          href.bind="socialMedia.url"
+          repeat.for="socialMedia of deal.partnerDao.social_medias"
+          target="_blank"
+        >
+          <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
+        </a>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="infoSection">
+      <span class="bodySmallTextBold infoTitle">Type</span>
+      Token Swap
+    </div>
+
+    <div class="infoSection">
+      <span class="bodySmallTextBold infoTitle">Proposal Lead</span>
+      <etherscanlink
+        address.bind="deal.proposalLead.address"
+        text="${deal.proposalLead.address | smallHexString}"
+      >
+      </etherscanlink>
+    </div>
+
+    <div
+      class="infoSection totalRepresentatives ${showMore ? 'active' : ''}"
+      click.trigger="showMore = !showMore"
+    >
+      <span class="bodySmallTextBold infoTitle">Total representatives</span>
+      <span>
+        ${deal.registrationData.primaryDAO.representatives.length +
+        (deal.registrationData.partnerDAO ? deal.registrationData.partnerDAO.representatives.length
+        : 0)}
+        <i class="fas fa-angle-down arrow"></i>
+      </span>
+    </div>
+    <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+      <div class="panel-content">
+        <p
+          class="representative bodySmallText"
+          repeat.for="address of deal.primaryDaoRepresentatives"
+        >
+          <span class="representative-dao">${deal.primaryDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
+        </p>
+        <p
+          class="representative bodySmallText"
+          repeat.for="address of deal.partnerDaoRepresentatives"
+        >
+          <span class="representative-dao">${deal.partnerDao.name}</span>
+          <etherscanlink address.bind="address" text="${address | smallHexString}"></etherscanlink>
+        </p>
+      </div>
+    </div>
+
+    <hr if.bind="primaryFunds" />
+
+    <div class="infoSection" if.bind="deal.primaryDao.tokens.length" ref="primaryFunds">
+      <div class="bodySmallTextBold infoTitle">
+        Primary DAO <br />
+        Funds
+      </div>
+      <div>
+        <div class="tokenDetails" repeat.for="tokenIndex of deal.primaryDao.tokens.length">
+          <let token-details.bind="deal.primaryDao.tokens[tokenIndex]"></let>
+          <div class="tokenLogoAndSymbol">
+            <img class="daoSmallLogo" src.bind="tokenDetails.logoURI" />
+            ${tokenDetails.symbol}
+          </div>
+          <formatted-number
+            mantissa="2"
+            thousands-separated
+            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"
+          ></formatted-number>
+        </div>
+      </div>
+      <span class="bodySmallTextBold" if.bind="deal.primaryDao.tokens.length === 0">No tokens</span>
+    </div>
+
+    <hr if.bind="partnerFunds" />
+
+    <div class="infoSection" if.bind="deal.partnerDao" ref="partnerFunds">
+      <div class="bodySmallTextBold infoTitle">
+        Partner DAO <br />
+        Funds
+      </div>
+      <div>
+        <div class="tokenDetails" repeat.for="tokenIndex of deal.partnerDao.tokens.length">
+          <let token-details.bind="deal.partnerDao.tokens[tokenIndex]"></let>
+          <div class="tokenLogoAndSymbol">
+            <img class="daoSmallLogo" src.bind="tokenDetails.logoURI" />
+            ${tokenDetails.symbol}
+          </div>
+          <formatted-number
+            mantissa="2"
+            thousands-separated
+            value.to-view="tokenDetails.amount | ethwei:tokenDetails.decimals"
+          ></formatted-number>
+        </div>
+      </div>
+    </div>
+
+    <hr if.bind="totalFunds || timeLeft" />
+
+    <div
+      class="infoSection"
+      if.bind="deal.primaryDao.tokens.length && deal.totalPrice"
+      ref="totalFunds"
+    >
+      <span class="bodySmallTextBold infoTitle">Total funds value</span>
+      ${deal.totalPrice | currency}
+    </div>
+
+    <div class="infoSection" if.bind="deal.isFunding" ref="timeLeft">
+      <span class="bodySmallTextBold infoTitle">Time left to execute</span>
+      <span class="textRight"> ${deal.timeLeftToExecute | timespan : "largest2"} </span>
+    </div>
+
+    <hr if.bind="privateDeal" />
+
+    <div class="infoSection dealPrivacyContainer" if.bind="deal.isPartnered" ref="privateDeal">
+      <div class="bodySmallTextBold infoTitle">Private Deal</div>
+      <ptoggle
+        disabled.bind="!deal.isAuthenticatedProposalLead"
+        ptooltip.bind="deal.isAuthenticatedProposalLead ? '' : deal.isPrivate ? 'This deal is private' : 'This deal is public'"
+        value.bind="deal.isPrivate"
+        changed.call="changePrivacy($event.checked)"
+        class="dealPrivacyToggle"
+      ></ptoggle>
+    </div>
+  </pcard>
+</template>
