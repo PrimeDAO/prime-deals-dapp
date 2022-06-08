@@ -3,6 +3,7 @@ import { EnsService } from "services/EnsService";
 import { Utils } from "services/utils";
 import "./formAddressInput.scss";
 import { bindable, BindingMode, inject, PLATFORM } from "aurelia";
+import { toBoolean } from "../../binding-behaviours";
 
 /**
  * an input that allows entry of either ENS or address.  If an ENS is entered,
@@ -14,12 +15,12 @@ import { bindable, BindingMode, inject, PLATFORM } from "aurelia";
  */
 @inject()
 export class FormAddressInput {
-  @bindable disabled = false;
+  @bindable({set: toBoolean, type: Boolean}) disabled = false;
   @bindable({mode: BindingMode.twoWay}) value: string;
   @bindable label: string;
   @bindable labelInfo: string;
   @bindable labelDescription: string;
-  @bindable showCounter: boolean;
+  @bindable({set: toBoolean, type: Boolean}) showCounter: boolean;
   @bindable maxLength: number;
   @bindable validationMessage;
   @bindable validationState?: ValidationState;

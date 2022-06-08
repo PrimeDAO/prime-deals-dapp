@@ -1,6 +1,7 @@
 import { bindable, BindingMode } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../temporary-code";
+import { toBoolean } from "../../binding-behaviours";
 
 export type ViewMode = "edit" | "view";
 
@@ -10,7 +11,7 @@ export class EditingCard {
   @bindable onEdit: () => boolean | Promise<boolean>;
   @bindable onSave: () => boolean | Promise<boolean>;
   @bindable({mode: BindingMode.twoWay}) viewMode: ViewMode = "edit";
-  @bindable hideDeleteButton: boolean = false;
+  @bindable({set: toBoolean, type: Boolean}) hideDeleteButton: boolean = false;
 
   private deleteButtonRef: HTMLElement;
   private saving: boolean;
