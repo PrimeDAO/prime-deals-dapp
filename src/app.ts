@@ -182,8 +182,7 @@ export class App implements IRouteableComponent {
       }, 1000);
     }
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
-    await this.dealLoadingPromise;
-    this.handleOnOff(false);
+    this.dealLoadingPromise.then(() => this.handleOnOff(false));
   }
 
   private handleOnOff(onOff: boolean): void {
