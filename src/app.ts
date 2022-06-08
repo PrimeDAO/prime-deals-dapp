@@ -16,7 +16,6 @@ import tippy from "tippy.js";
 import { AlertService, ShowButtonsEnum } from "services/AlertService";
 import { ComingSoon } from "./comingSoon/comingSoon";
 import { initialize as initializeMarkdown } from "resources/elements/markdown/markdown";
-import { DocsRouteProvider } from "documentation/docsRouteProvider";
 import { IPlatform, watch } from "@aurelia/runtime-html";
 
 export const AppStartDate = new Date("2022-05-16T14:00:00.000Z");
@@ -49,7 +48,6 @@ export class App implements IRouteableComponent {
     private storageService: BrowserStorageService,
     private readonly tokenService: TokenService,
     private readonly ipfsService: IpfsService,
-    private readonly docsRouteProvider: DocsRouteProvider,
     private readonly dealsService: DealService,
     private readonly pinataIpfsClient: PinataIpfsClient,
     private readonly domPurify: DOMPurify,
@@ -75,7 +73,6 @@ export class App implements IRouteableComponent {
     this.tokenService.setup();
     this.ipfsService.initialize(this.pinataIpfsClient);
     this.tokenService.initialize();
-    this.docsRouteProvider.initialize();
     await this.ethereumService.connectToConnectedProvider();
     this.dealLoadingPromise = this.dealsService.initialize();
   }
