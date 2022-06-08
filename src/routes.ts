@@ -1,4 +1,5 @@
 import { IRoute } from "@aurelia/router";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
 
 export const routes: IRoute[] = [
   {
@@ -30,5 +31,14 @@ export const routes: IRoute[] = [
     id: "documentation",
     title: "Documentation",
     component: import("./documentation/documentation"),
+  },
+  {
+    path: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
+    id: "openProposal",
+    title: "Open Proposal",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    data: {
+      wizardType: String(WizardType.createOpenProposal),
+    },
   },
 ];

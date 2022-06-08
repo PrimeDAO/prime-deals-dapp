@@ -1,6 +1,5 @@
 import { bindable, customElement } from "aurelia";
 import { IStepperStep } from "../types";
-import "./pstepper.scss";
 
 @customElement("pstepper")
 export class PStepper {

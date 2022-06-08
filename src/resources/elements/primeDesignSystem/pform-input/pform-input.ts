@@ -2,8 +2,11 @@ import "./pform-input.scss";
 import { ValidationState } from "../types";
 import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 import { bindable, children, customElement } from "aurelia";
+import { processContent } from "@aurelia/runtime-html";
+import { autoSlot } from "../../../temporary-code";
 
 @customElement("pform-input")
+@processContent(autoSlot)
 export class PFormInput {
   @bindable label = "";
   @bindable labelInfo = "";
@@ -30,23 +33,26 @@ export class PFormInput {
    * This "child" selector is used to select any input used within the "pform-input" element.
    *  With it, we can get the character length used in the "max characters" counter section.
    */
-  @children({ query: x => x.host.querySelectorAll("input") }) input;
+  @children({
+    query: x => x.host.querySelectorAll("*"),
+    filter: (node, controller) => Boolean(controller?.definition.bindables["validationState"]),
+  }) inputs;
 
   constructor(
     private element: Element,
     private aureliaHelperService: AureliaHelperService,
   ) {
+    console.log("thin ->", this);
   }
 
-  // attached() {
-  //   this.inputReference = this.inputReference ?? this.input;
+  inputsChanged() {
+    this.inputReference = this.inputReference ?? this.inputs[0];
 
-  //   this.validationStateChanged(this.validationState);
-
-  //   if (this.inputReference && this.showCounter) {
-  //     this.limitInputCharacterLength();
-  //   }
-  // }
+    if (this.inputReference && this.showCounter) {
+      // this.limitInputCharacterLength(); // TODO add this method back
+    }
+    this.validationStateChanged(this.validationState);
+  }
 
   validationStateChanged(newValue?: ValidationState) {
     if (this.inputReference) {

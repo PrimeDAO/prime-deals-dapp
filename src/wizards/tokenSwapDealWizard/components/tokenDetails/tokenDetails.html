@@ -1,0 +1,204 @@
+<template data-test="tokenDetails">
+  <pcard>
+    <div if.bind="viewMode === 'edit'">
+
+      <pform-input
+        data-test="token-address-field"
+        helper-message.bind="tokenInfoLoading ? 'Searching token address details...': ''"
+        input-reference.bind="addressInput"
+        label="Token Address"
+        label-info="Make sure to use the native contract address of the token">
+        <pinput-text
+          placeholder="0x..."
+          validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
+          value.bind="token.address | checksumAddress & validate"
+          view-model.ref="addressInput"></pinput-text>
+      </pform-input>
+      <div class="detailsTable" data-test="tokenDetailsMetadata" if.bind="showTokenDetails">
+        <div class="detailsCell">
+          <p>Name</p>
+          <p if.bind="!tokenDetailsNotFound.name">${token.name}</p>
+          <pinput-text if.bind="tokenDetailsNotFound.name" value.bind="token.name"></pinput-text>
+        </div>
+        <div class="detailsCell">
+
+          <p>Symbol</p>
+          <p if.bind="!tokenDetailsNotFound.symbol">${token.symbol}</p>
+          <pinput-text if.bind="tokenDetailsNotFound.symbol" value.bind="token.symbol"></pinput-text>
+        </div>
+        <div class="detailsCell" data-test="decimals-field">
+          <p>Decimals</p>
+          <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
+          <pform-input data-test="token-decimals-field"
+            input-reference.bind="decimalsInput">
+            <pinput-numeric
+              if.bind="tokenDetailsNotFound.decimals"
+              not-wei
+              value.bind="token.decimals & validate"
+              view-model.ref="decimalsInput"></pinput-numeric>
+          </pform-input>
+        </div>
+        <div class="detailsCell">
+          <p>
+            Logo
+            <img error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
+              load.trigger="logoLoaded(true)"
+              src.bind="token.logoURI">
+          </p>
+          <pform-input input-reference.bind="logoImageInput">
+            <pinput-text value.bind="token.logoURI & validate"
+              view-model.ref="logoImageInput"></pinput-text>
+          </pform-input>
+        </div>
+      </div>
+      <pform-input data-test="token-amount-field"
+        input-reference.bind="amountInput"
+        label="Total Amount of Tokens to Swap"
+        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
+        <pinput-numeric
+          decimals.bind="token.decimals"
+          disabled.bind="!token.decimals"
+          output-as-string
+          placeholder="500,000"
+          value.bind="token.amount & validate"
+          view-model.ref="amountInput"></pinput-numeric>
+      </pform-input>
+      <pform-input
+        label="Instant Transfer Setup"
+        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO's treasury address, whereas the Vested amount will define the amount of tokens that will be released progressively throughout the total Vesting period defined in the Vesting setup below.">
+        <prange-slider
+          decimals.bind="token.decimals"
+          disabled.bind="!token.amount"
+          hide-Percentage
+          left-label.bind="'Instant ('+ rangeSlider.leftPercentage + '%)'"
+          left.bind="token.instantTransferAmount & validate"
+          max-value.bind="token.amount"
+          right-label.bind="'Vested ('+ rangeSlider.rightPercentage + '%)'"
+          right.bind="token.vestedTransferAmount & validate"
+          view-model.ref="rangeSlider"></prange-slider>
+      </pform-input>
+
+      <pform-input label="Vesting Setup"
+        label-description="If you have defined a Vested amount, once the deal is executed on-chain, that amount will start to be released linearly throughout the Vesting period. If you define a Cliff period, tokens will not be claimable before the Cliff period ends. If you don't define a Cliff period, tokens will be progressively available to be claimed on a daily basis after the Vesting period starts.">
+        <div class="vesting">
+          <div class="vesting-input">
+            <p>Tokens vested for</p>
+            <pform-input data-test="vested-period-field" input-reference.bind="vestedForInput">
+              <pinput-group
+                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                <pinput-numeric
+                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  not-wei
+                  value.bind="token.vestedFor | secondsDays & validate"
+                  view-model.ref="vestedForInput"></pinput-numeric>
+                <span slot="after">days</span>
+              </pinput-group>
+            </pform-input>
+          </div>
+          <div class="vesting-input">
+            <p>with a cliff of</p>
+            <pform-input data-test="cliff-period-field" input-reference.bind="cliffOfInput">
+              <pinput-group
+                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                <pinput-numeric
+                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  not-wei
+                  value.bind="token.cliffOf | secondsDays & validate"
+                  view-model.ref="cliffOfInput"></pinput-numeric>
+                <span slot="after">days</span>
+              </pinput-group>
+            </pform-input>
+          </div>
+        </div>
+      </pform-input>
+
+      <div class="tokenDetailsFooter">
+        <pbutton class="deleteButton" click.delegate="onDelete()" data-test="deleteTokenDetail"
+          if.bind="!hideDeleteButton" type="tertiary">
+          Delete
+          <i class="fa fa-trash"></i>
+        </pbutton>
+        <pbutton click.delegate="save()" data-test="saveTokenDetail" is-loading.bind="saving" type="primary">Save
+        </pbutton>
+      </div>
+    </div>
+
+    <div class="tokenDetailsView" if.bind="viewMode === 'view'">
+      <p class="tokenName">
+        <img error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
+        ${token.name || '-'}
+      </p>
+      <div class="detailsTable detailsTableInViewMode">
+        <div class="detailsCell">
+          <p>Token address</p>
+          <p if.bind="token.address">
+            <etherscanlink
+              address.bind="token.address"
+              text="${token.address | smallHexString}">
+            </etherscanlink>
+          </p>
+          <p else>-</p>
+        </div>
+
+        <div class="detailsCell detailsCellAmount">
+          <p>Total Amount of Tokens to Swap</p>
+          <p>
+            <formatted-number if.bind="token.amount >= 0" thousands-separated
+              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Instant transfer</p>
+          <p>
+            <formatted-number if.bind="token.instantTransferAmount" thousands-separated
+              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell">
+          <p>Vested transfer</p>
+          <p>
+            <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
+              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
+            <template else>
+              -
+            </template>
+          </p>
+        </div>
+
+        <div class="detailsCell" ptooltip.bind="withCommas(token.vestedFor) + ' seconds'">
+          <p>Vested for</p>
+          <p>
+            <formatted-number hide-tooltip if.bind="token.vestedFor"
+              value.to-view="token.vestedFor | secondsDays | number"></formatted-number>
+            <template else>0</template>
+            days
+          </p>
+        </div>
+
+        <div class="detailsCell" ptooltip.bind="withCommas(token.cliffOf) + ' seconds'">
+          <p>Cliff of</p>
+          <formatted-number hide-tooltip if.bind="token.cliffOf"
+            value.to-view="token.cliffOf | secondsDays | number"></formatted-number>
+          <template else>0</template>
+          days
+        </div>
+      </div>
+
+      <div class="tokenDetailsFooter">
+        <p class="feedbackMessage ${!valid ? 'feedbackMessageVisible' : ''} errorMessage">
+          Token details has invalid information. Please edit them.
+        </p>
+        <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
+      </div>
+    </div>
+  </pcard>
+
+</template>

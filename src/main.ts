@@ -1,6 +1,6 @@
 import { StandardConfiguration } from "@aurelia/runtime-html";
-import Aurelia, { DialogDefaultConfiguration } from "aurelia";
-import {RouterConfiguration} from "@aurelia/router";
+import { ValidationHtmlConfiguration, ValidationTrigger } from "@aurelia/validation-html";
+import Aurelia, { DialogDefaultConfiguration, RouterConfiguration } from "aurelia";
 import { App } from "./app";
 import * as ResourceComponents from "./resources";
 import { register as services } from "./services/register";
@@ -13,6 +13,9 @@ new Aurelia()
   .register(RouterConfiguration.customize({
     useUrlFragmentHash: false,
     useHref: false,
+  }))
+  .register(ValidationHtmlConfiguration.customize((options) => {
+    options.DefaultTrigger = ValidationTrigger.changeOrFocusout;
   }))
   .register(DialogDefaultConfiguration)
   .register(ResourceComponents)

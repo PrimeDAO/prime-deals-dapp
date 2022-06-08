@@ -1,0 +1,57 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <button click.delegate="submit()">save</button>
+  <stage-wrapper
+    header="Token Swap Proposal"
+    wizard-manager.bind="wizardManager">
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Proposal</h2>
+        <p class="sidebarText">
+          Hey there!
+        </p>
+        <p class="sidebarText">
+          You are about to create a <strong>Token Swap Deal</strong>, which allows you to easily define the on-chain
+          conditions of your deal, negotiate and safely exchange tokens with other DAOs.
+        </p>
+        <p class="sidebarText">
+          This wizard will guide you through the process. You can always come back to edit your input before you click
+          the <strong>SUBMIT</strong> button at the end of the wizard.
+        </p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          data-test="proposal-title-field"
+          label="Proposal Title"
+          label-info="Give a clear title to your proposal"
+          max-length="60"
+          show-counter>
+          <pinput-text value.bind="proposal.title & validate"></pinput-text>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          data-test="proposal-summary-field"
+          label="Proposal Summary"
+          label-info="Give a brief outline of the Token Swap deal"
+          max-length="350"
+          show-counter>
+          <ptextarea rows="7" value.bind="proposal.summary & validate"></ptextarea>
+        </pform-input>
+
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          data-test="proposal-description-field"
+          label="Proposal Description"
+          label-info="Describe the details, background and features of your Token Swap proposal. Explain why it's valuable or unique"
+          max-length="3000"
+          show-counter>
+          <ptextarea rows="7"
+            value.bind="proposal.description & validate"></ptextarea>
+        </pform-input>
+      </div>
+    </div>
+    <button click.delegate="submit()">save</button>
+  </stage-wrapper>
+</template>

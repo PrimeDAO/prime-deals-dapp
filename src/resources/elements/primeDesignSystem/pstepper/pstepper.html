@@ -2,7 +2,7 @@
   <template repeat.for="step of steps">
     <div
       class="${$index === indexOfActive ? 'active' : ''}"
-      click.delegate="onClick({index: $index})"
+      click.delegate="onClick($index)"
       data-test="pstepper-step"
     >
       <div class="stepNumber">

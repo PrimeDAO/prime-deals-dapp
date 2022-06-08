@@ -1,0 +1,52 @@
+<template>
+  <pcard>
+    <!-- View -->
+    <template class="cardEditing" if.bind="viewMode === 'view'">
+      <span data-test="editingCardViewContent">
+        <au-slot name="view">This part is replaceable.</au-slot>
+      </span>
+
+      <div
+        class="cardFooter"
+        data-test="cardFooter"
+      >
+        <pbutton
+          click.delegate="edit()"
+          type="tertiary"
+        >Edit
+        </pbutton>
+      </div>
+    </template>
+
+    <!-- Edit -->
+    <template class="cardEditing" if.bind="viewMode === 'edit'">
+      <span data-test="editingCardEditContent">
+        <au-slot name="edit">This part is replaceable.</au-slot>
+      </span>
+
+      <!-- Editing footer -->
+      <div
+        class="cardFooter"
+        data-test="cardFooter"
+      >
+        <pbutton
+          ref="deleteButtonRef"
+          class="deleteButton"
+          click.delegate="delete()"
+          if.bind="!hideDeleteButton"
+          type="tertiary"
+        >
+          Delete
+          <i class="fa fa-trash"></i>
+        </pbutton>
+        <pbutton
+          click.delegate="save()"
+          is-loading.bind="saving"
+          type="primary"
+        >Save
+        </pbutton
+        >
+      </div>
+    </template>
+  </pcard>
+</template>

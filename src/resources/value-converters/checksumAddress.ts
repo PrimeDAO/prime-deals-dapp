@@ -5,7 +5,7 @@ import { Address } from "services/EthereumService";
 /**
  * Ensure that the address is a checksum address
  */
-@valueConverter("checksum")
+@valueConverter("checksumAddress")
 export class ChecksumAddressValueConverter {
 
   /**
