@@ -53,7 +53,8 @@ export const routes: IRoute[] = [
   {
     id: "contribute",
     path: "contribute",
-    title: Contribute,
+    title: "Contribute",
+    component: Contribute,
   },
   {
     component: import("./documentation/officialDocs/termsOfService.html"),
