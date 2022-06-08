@@ -191,10 +191,10 @@ export class FirebaseService {
    */
   private async getSignatureData(address: string) {
     const existingData = this.getExistingSignatureAndMessageForAddress(address);
-    let { signature, messageToSign } = existingData;
+    let { signature, messageToSign, safeTxHash } = existingData;
 
     if (signature && messageToSign) {
-      return { messageToSign, signature };
+      return { messageToSign, signature, safeTxHash };
     }
 
     /** Production case */
@@ -219,7 +219,6 @@ export class FirebaseService {
      * 2.1 If not
      * 2.1.1 Create sign tx
      */
-    let { safeTxHash } = existingData;
     const appsSdk = new SafeAppsSDK(safeAppOpts);
 
     /**
