@@ -129,7 +129,8 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network: EthereumService.targetedNetwork});
+    const network = await this.ethereumService.isSafeApp() ? EthereumService.targetedNetwork : undefined;
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network});
 
     return response.data.token;
   }

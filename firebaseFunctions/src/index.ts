@@ -245,15 +245,12 @@ export const CI = {
         /**
          * Verify the signature.
          * There are 2 cases:
-         * 1. "Normal" signature
-         * 2. Safe App tx, that uses EIP-1271
+         * 1. Safe App tx, that uses EIP-1271
+         * 2. "Normal" signature
          */
-        try {
-          signerAddress = verifyMessage(
-            message,
-            signature,
-          );
-        } catch {
+        if (network) {
+          functions.logger.error(`Network: ${network}`);
+
           /**
            * For EIP-1271 we can only verify a "signature", which is a tx on the Safe Contract.
            * The verification method returns a boolean, and not an address as above.
@@ -266,10 +263,17 @@ export const CI = {
               functions.logger.error(`Debug instructions: 1. address: ${signerAddress}; 2. Message: ${message}`);
               throw new Error();
             }
-          } catch {
+          } catch (error) {
             functions.logger.error("Could not verify EIP-1271 signature");
+            functions.logger.error(error.message);
+            functions.logger.error(JSON.stringify(error, null, 2));
             return response.sendStatus(500);
           }
+        } else {
+          signerAddress = verifyMessage(
+            message,
+            signature,
+          );
         }
 
         try {
