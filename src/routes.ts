@@ -6,7 +6,6 @@ import { IRoute } from "@aurelia/router";
 import { Home } from "./home/home";
 import { Deals } from "deals/list/deals";
 import { DealDashboard } from "./dealDashboard/dealDashboard";
-import { Contribute } from "./contribute/contribute";
 
 export const routes: IRoute[] = [
   {
@@ -49,12 +48,6 @@ export const routes: IRoute[] = [
     id: "dealDashboard",
     path: "deal/:id",
     component: DealDashboard,
-  },
-  {
-    id: "contribute",
-    path: "contribute",
-    title: "Contribute",
-    component: Contribute,
   },
   {
     component: import("./documentation/officialDocs/termsOfService.html"),
