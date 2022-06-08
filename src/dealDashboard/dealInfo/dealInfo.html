@@ -6,7 +6,13 @@
 
     <div class="daoDetailsContainer">
       <div class="infoSection">
-        <span class="bodySmallTextBold infoTitle daoLabel">Primary DAO</span>
+        <span class="bodySmallTextBold infoTitle daoLabel">
+          <etherscanlink
+            address.bind="deal.primaryDao.treasury_address"
+            text="Primary DAO"
+          >
+          </etherscanlink>
+        </span>
         <div class="daoDetails">
           <img class="daoLogo" src.bind="deal.primaryDao.logoURI" />
           <div
@@ -29,7 +35,13 @@
 
     <div class="daoDetailsContainer" if.bind="deal.partnerDao" ref="partnerDao">
       <div class="infoSection">
-        <span class="bodySmallTextBold infoTitle daoLabel">Partner DAO</span>
+        <span class="bodySmallTextBold infoTitle daoLabel">
+          <etherscanlink
+            address.bind="deal.partnerDao.treasury_address"
+            text="Partner DAO"
+          >
+          </etherscanlink>
+        </span>
         <div class="daoDetails">
           <img class="daoLogo" src.bind="deal.partnerDao.logoURI" />
           <div
