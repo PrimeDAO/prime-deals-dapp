@@ -67,14 +67,13 @@ export class PSelect {
     });
     this.select?.set(this.value);
   }
-  dispose(): void {
+  detaching(): void {
     this.select?.destroy();
   }
-
   dataChanged(): void {
     if (this.select) {
       this.select.setData([{text: this.placeholder, placeholder: true, value: null}, ...this.data ?? []]);
-      this.select?.set(this.value);
+      this.select.set(this.value);
     }
   }
 
@@ -84,9 +83,9 @@ export class PSelect {
 
   disabledChanged(disabled: boolean) {
     if (disabled) {
-      this.select.disable();
+      this.select?.disable();
     } else {
-      this.select.enable();
+      this.select?.enable();
     }
   }
 }

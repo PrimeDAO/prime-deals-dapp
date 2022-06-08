@@ -4,6 +4,7 @@ import { Address, EthereumService, IEthereumService } from "services/EthereumSer
 import { BigNumber } from "ethers";
 import { TokenService } from "services/TokenService";
 import { bindable, containerless, IEventAggregator } from "aurelia";
+import { Utils } from "services/utils";
 
 @containerless
 export class TokenBalance {
@@ -44,7 +45,7 @@ export class TokenBalance {
 
   private async initialize(): Promise<void> {
     this.account = this.ethereumService.defaultAccountAddress;
-
+    await Utils.waitUntilTrue(() => this.tokenService.tokenLists !== undefined);
     this.contract = this.tokenService.getTokenContract(this.tokenAddress);
     this.tokenInfo = await this.tokenService.getTokenInfoFromAddress(this.tokenAddress);
     this.getBalance();

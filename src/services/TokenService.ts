@@ -22,7 +22,7 @@ export class TokenService {
   private erc20Abi: any;
   private tokenInfos = new Map<Address, ITokenInfo>();
   private queue: Subject<() => Promise<void>>;
-  private tokenLists: TokenListMap;
+  public tokenLists: TokenListMap;
   private tokenPrices: Map<Address, number>;
   private geckoCoinInfo: Map<string, string>;
 
@@ -57,16 +57,13 @@ export class TokenService {
     /**
      * prefetch all coingecko ids to use for fetching token prices, etc later
      */
-    await axios.get(uri)
-      .then((response) => {
-        if (response.data && response.data.length) {
-          response.data.map((tokenInfo: ITokenInfo) =>
-            this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id));
-        }
-      });
+    const response = await axios.get(uri);
+    if (response.data && response.data.length) {
+      response.data.map((tokenInfo: ITokenInfo) =>
+        this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id));
+    }
     TimingService.end("get geckoCoinInfo");
-
-    return this.tokenLists = await this.tokenListService.fetchLists();
+    return this.tokenLists = await this.tokenListService.fetchLists() ?? {};
   }
 
   /**
