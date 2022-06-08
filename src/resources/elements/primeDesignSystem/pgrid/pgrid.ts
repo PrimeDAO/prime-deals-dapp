@@ -34,6 +34,7 @@ export class PGrid implements ICustomElementViewModel {
   }
 
   getBuffedVm(row: any) {
+    if (!this.context) return;
     const vm = { ...this.context, ...row, row: row };
     Object.keys(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this.context)))
       .filter(
