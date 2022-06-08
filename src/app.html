@@ -8,7 +8,11 @@
 
 <div else>
   <popup-notifications></popup-notifications>
-  <navbar show-wallet-menu.call="handleShowWalletMenu()"></navbar>
+  <navbar
+    menu-open.two-way="showingMobileMenu"
+    toggle-menu.call="toggleMobileMenu()"
+    show-wallet-menu.call="handleShowWalletMenu()">
+  </navbar>
   <wallet-menu showing.bind="showingWalletMenu"></wallet-menu>
   <modalscreen message.to-view="modalMessage" on-off.to-view="onOff">
     <div class="appWrapper">
