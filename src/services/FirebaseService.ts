@@ -1,6 +1,4 @@
 import SafeAppsSDK, { GatewayTransactionDetails, SendTransactionsResponse, TransactionStatus } from "@gnosis.pm/safe-apps-sdk";
-// import SafeServiceClient from "@gnosis.pm/safe-service-client";
-// import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
 import { EthereumService } from "services/EthereumService";
 import { ethers } from "ethers";
 import { fromEventPattern, Observable } from "rxjs";
@@ -57,7 +55,6 @@ function encryptForGnosis(rawMessage: string) {
 export class FirebaseService {
 
   public currentFirebaseUserAddress: string;
-  // private safeService: SafeServiceClient;
 
   constructor(
     private eventAggregator: EventAggregator,
@@ -78,16 +75,6 @@ export class FirebaseService {
         this.currentFirebaseUserAddress = null;
       }
     });
-
-    // const ethAdapter = new EthersAdapter({
-    //   ethers,
-    //   signer: this.ethereumService.getDefaultSigner(),
-    // });
-    // this.safeService = new SafeServiceClient({
-    //   // txServiceUrl: "https://safe-transaction.gnosis.io",
-    //   txServiceUrl: "https://safe-transaction.rinkeby.gnosis.io",
-    //   ethAdapter,
-    // });
   }
 
   /**
@@ -187,6 +174,20 @@ export class FirebaseService {
     return this.signInWithCustomToken(token);
   }
 
+  /**
+   * Signature data is generated differently depending on
+   * 1. Production app
+   * 2. Safe App
+   *
+   * For 1. generate the message, and take the signature from the wallet provider
+   *
+   * For 2. genreate the message, monitor tx status in the multi-sig queue.
+   *   If there is no tx yet, create one.
+   *   If tx is ongoing, wait.
+   *   If tx successful, generate signature from message (note, signature not in the sense of a private key signature,
+   *     but just an encrypted message. We kept the "signature" variable, because validation is still based on a message
+   *     and the "signature".)
+   */
   private async getSignatureData(address: string) {
     const existingData = this.getExistingSignatureAndMessageForAddress(address);
     let { signature, messageToSign } = existingData;
@@ -229,6 +230,9 @@ export class FirebaseService {
      * Guard if in queue or done
      */
     if (safeTx?.txStatus === TransactionStatus.SUCCESS) {
+      /**
+       * Meanwhile, the tx was successful, in this case, generate the signature, and return.
+       */
       signature = encryptForGnosis(messageToSign);
 
       return { messageToSign, signature, safeTxHash };
@@ -244,7 +248,6 @@ export class FirebaseService {
        * 2.
        */
       const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
-      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: FirebaseService.ts ~ line 231 ~ isSigned", isSigned);
 
       /**
        * Gnosis Safe App signature verification has different flow:
@@ -252,8 +255,6 @@ export class FirebaseService {
        *   Only then can we proceed with authenticating to Firebase.
        */
       if (!isSigned) {
-        this.eventAggregator.publish("gnosis.safe.transaction.await");
-
         let response: SendTransactionsResponse;
         try {
           /** 2.1.1 */
@@ -271,6 +272,7 @@ export class FirebaseService {
         this.storeSignatureForAddress(address, signature, messageToSign, safeTxHash);
 
         this.eventAggregator.publish("transaction.sent");
+        this.eventAggregator.publish("gnosis.safe.transaction.await");
 
         await Utils.waitUntilTrue(async() => {
           return await appsSdk.safe.isMessageSigned(messageToSign);
@@ -298,30 +300,6 @@ export class FirebaseService {
 
   private async processAndGetTransaction(appsSdk: SafeAppsSDK, storedSafeTxHash: string | null) {
     if (!storedSafeTxHash) return;
-
-    // const allTransactions = await this.safeService.getAllTransactions(address, {executed: true});
-
-    // /**
-    //  * Check if transaction was rejected
-    //  */
-    // // @ts-ignore .nonce prop not given
-    // const targetTransaction = allTransactions.results.find(entry => entry.nonce === safeTx.detailedExecutionInfo.nonce);
-    // let wasRejected = false;
-    // // @ts-ignore props not given
-    // if (targetTransaction.isExecuted && targetTransaction.isSuccessful) {
-    //   wasRejected = true;
-
-    //   const alertResult = await this.alertService.showAlert({
-    //     header: "Transaction was rejected",
-    //     message: "<p>Transaction was rejected. Authentication failed, please try again.</p>",
-    //   });
-
-    //   // this.storeSignatureForAddress(address, "", "", "");
-
-    //   if (alertResult.wasCancelled) {
-    //     return;
-    //   }
-    // }
 
     let transaction: GatewayTransactionDetails;
     try {
