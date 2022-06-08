@@ -116,10 +116,6 @@ export class App {
       });
     });
 
-    this.eventAggregator.subscribe("gnosis.safe.transaction.await", () => {
-      this.modalMessage = "Awaiting your input from the Gnosis Safe transaction dialog...";
-    });
-
     this.intervalId = setInterval(async () => {
       this.signaler.signal("secondPassed");
       const blockDate = this.ethereumService.lastBlock?.blockDate;

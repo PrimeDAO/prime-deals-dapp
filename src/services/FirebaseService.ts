@@ -177,12 +177,12 @@ export class FirebaseService {
 
   /**
    * Signature data is generated differently depending on
-   * 1. Production app
-   * 2. Safe App
+   * A. Production app
+   * B. Safe App
    *
-   * For 1. generate the message, and take the signature from the wallet provider
+   * For A. generate the message, and take the signature from the wallet provider
    *
-   * For 2. genreate the message, monitor tx status in the multi-sig queue.
+   * For B. genreate the message, monitor tx status in the multi-sig queue.
    *   If there is no tx yet, create one.
    *   If tx is ongoing, wait.
    *   If tx successful, generate signature from message (note, signature not in the sense of a private key signature,
@@ -197,7 +197,7 @@ export class FirebaseService {
       return { messageToSign, signature, safeTxHash };
     }
 
-    /** Production case */
+    /** A. Production case */
     if (!(await this.ethereumService.isSafeApp())) {
       try {
         messageToSign = await this.getMessageToSign();
@@ -213,83 +213,76 @@ export class FirebaseService {
     }
 
     /**
-     * In case of a Safe App, we follow this flow:
+     * B. In case of a Safe App, we follow this flow:
      * 1. Check if there is a queued transaction for authentication
      * 2. Check if already signed
-     * 2.1 If not
-     * 2.1.1 Create sign tx
+     * 2.1 If yes, generate signature and return
+     * 2.2.If not, create tx
+     * 3. User waits for confirmation (Note, they may close the app, then repeat 1.)
      */
     const appsSdk = new SafeAppsSDK(safeAppOpts);
 
-    /**
-     * 1.
-     */
+    /** 1. */
     const safeTx = await this.processAndGetTransaction(appsSdk, safeTxHash);
+    this.consoleLogService.logObject("safeTx", safeTx);
 
     /**
      * Guard if in queue or done
      */
     if (safeTx?.txStatus === TransactionStatus.SUCCESS) {
-      /**
-       * Meanwhile, the tx was successful, in this case, generate the signature, and return.
-       */
-      signature = encryptForGnosis(messageToSign);
+      /** 2. */
+      const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
 
-      return { messageToSign, signature, safeTxHash };
+      /** 2.1 */
+      if (isSigned) {
+        /**
+         * Meanwhile, the tx was successful, in this case, generate the signature, and return.
+         */
+        signature = encryptForGnosis(messageToSign);
+
+        return { messageToSign, signature, safeTxHash };
+      }
     } else if (safeTx?.txStatus === TransactionStatus.AWAITING_CONFIRMATIONS || safeTx?.txStatus === TransactionStatus.AWAITING_EXECUTION || safeTx?.txStatus === TransactionStatus.PENDING) {
       return { messageToSign, signature, safeTxHash };
     }
 
+    /** 2.2 */
     try {
       if (!messageToSign) {
         messageToSign = await this.getMessageToSign();
       }
-      /**
-       * 2.
-       */
-      const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
 
-      /**
-       * Gnosis Safe App signature verification has different flow:
-       *   Because Gnosis Safe is a contract, we will have to query until the tx has finished executing.
-       *   Only then can we proceed with authenticating to Firebase.
-       */
-      if (!isSigned) {
-        let response: SendTransactionsResponse;
-        try {
-          /** 2.1.1 */
-          response = await appsSdk.txs.signMessage(messageToSign);
-        } catch (error) {
-          this.consoleLogService.logMessage("Failed to sign, so reset signature in storage.", "error");
-          throw error;
-        }
-        safeTxHash = response.safeTxHash;
-        this.consoleLogService.logMessage(`safeTxHash: ${safeTxHash}`);
-
-        /**
-         * Extra save, for when user closes app
-         */
-        this.storeSignatureForAddress(address, signature, messageToSign, safeTxHash);
-
-        this.eventAggregator.publish("transaction.sent");
-        this.eventAggregator.publish("gnosis.safe.transaction.await");
-
-        await Utils.waitUntilTrue(async() => {
-          return await appsSdk.safe.isMessageSigned(messageToSign);
-        }, RETRY_SAFE_APP_TIMEOUT, RETRY_SAFE_APP_INTERVAL);
-
-        signature = encryptForGnosis(messageToSign);
-
-        this.eventAggregator.publish("transaction.confirmed");
-      } else {
-        /**
-         * Could not retrieve signature from local storage BUT message was signed (checked by variable `isSigned`),
-         * so set the signature, because we can be sure tx was approved.
-         * (Example: This case happens, when tx was created in the Deals dApp, but was closed again.
-         *   Then only re-openend when tx was approved successfully)
-         */
-        signature = encryptForGnosis(messageToSign);
+      let response: SendTransactionsResponse;
+      try {
+        /** 2.1.1 */
+        response = await appsSdk.txs.signMessage(messageToSign);
+      } catch (error) {
+        this.consoleLogService.logMessage("Failed calling signMessage", "error");
+        throw error;
       }
+      safeTxHash = response.safeTxHash;
+      this.consoleLogService.logMessage(`safeTxHash: ${safeTxHash}`);
+
+      /**
+       * Extra save, for when user closes app.
+       * Note, signature not provided yet.
+       */
+      this.storeSignatureForAddress(address, "", messageToSign, safeTxHash);
+
+      this.eventAggregator.publish("transaction.sent");
+
+      /**
+       * 3. If the user keeps the app open, and because Gnosis Safe is a contract,
+       * we will have to query until the tx has finished executing.
+       * Only then can we proceed with authenticating to Firebase.
+       */
+      await Utils.waitUntilTrue(async() => {
+        return await appsSdk.safe.isMessageSigned(messageToSign);
+      }, RETRY_SAFE_APP_TIMEOUT, RETRY_SAFE_APP_INTERVAL);
+
+      signature = encryptForGnosis(messageToSign);
+
+      this.eventAggregator.publish("transaction.confirmed");
     } catch (error) {
       this.eventAggregator.publish("database.account.signature.cancelled");
       throw error;
@@ -298,7 +291,10 @@ export class FirebaseService {
     return { messageToSign, signature, safeTxHash };
   }
 
-  private async processAndGetTransaction(appsSdk: SafeAppsSDK, storedSafeTxHash: string | null) {
+  /**
+   * Inform user with alert if tx is ongoing, then return tx.
+   */
+  private async processAndGetTransaction(appsSdk: SafeAppsSDK, storedSafeTxHash: string | null): Promise<GatewayTransactionDetails> {
     if (!storedSafeTxHash) return;
 
     let transaction: GatewayTransactionDetails;
