@@ -53,7 +53,7 @@ export const routes: IRoute[] = [
   {
     component: import("./documentation/officialDocs/termsOfService.html"),
     id: "termsOfService",
-    path: ["terms-of-service"],
+    path: "terms-of-service",
     title: "Terms of Service",
   },
   {
