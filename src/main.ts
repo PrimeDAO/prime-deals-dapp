@@ -1,10 +1,11 @@
 import { StandardConfiguration } from "@aurelia/runtime-html";
 import { ValidationHtmlConfiguration, ValidationTrigger } from "@aurelia/validation-html";
-import Aurelia, { DialogDefaultConfiguration, RouterConfiguration } from "aurelia";
+import Aurelia, { DialogDefaultConfiguration } from "aurelia";
 import { App } from "./app";
 import * as ResourceComponents from "./resources";
 import { register as services } from "./services/register";
 import * as valueConverters from "./resources/value-converters";
+import { RouterConfiguration } from "@aurelia/router";
 
 new Aurelia()
   .register(StandardConfiguration.customize(x => {
