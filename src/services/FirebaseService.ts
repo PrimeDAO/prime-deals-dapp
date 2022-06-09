@@ -200,6 +200,7 @@ export class FirebaseService {
     /** A. Production case */
     if (!(await this.ethereumService.isSafeApp())) {
       try {
+        // eslint-disable-next-line require-atomic-updates
         messageToSign = await this.getMessageToSign();
         signature = await this.requestSignature(messageToSign);
         this.eventAggregator.publish("database.account.signature.successful");
@@ -249,6 +250,7 @@ export class FirebaseService {
     /** 2.2 */
     try {
       if (!messageToSign) {
+        // eslint-disable-next-line require-atomic-updates
         messageToSign = await this.getMessageToSign();
       }
 
@@ -303,7 +305,7 @@ export class FirebaseService {
       if (transaction.txStatus === TransactionStatus.AWAITING_CONFIRMATIONS || transaction.txStatus === TransactionStatus.AWAITING_EXECUTION || transaction.txStatus === TransactionStatus.PENDING) {
         this.alertService.showAlert({
           header: "Awaiting confirmation",
-          message: "<p>Transaction has not been approved yet.</p><p>Waiting for approval...</p>",
+          message: "<p>Transaction has not been approved yet.</p><p>Waiting for confirmation...</p>",
         });
       } else {
         this.consoleLogService.logMessage(`Status of Tx: ${transaction.txStatus}`, "warn");
