@@ -249,7 +249,7 @@ export const CI = {
          * 2. "Normal" signature
          */
         if (network) {
-          functions.logger.error(`Network: ${network}`);
+          functions.logger.info(`Network: ${network}`);
 
           /**
            * For EIP-1271 we can only verify a "signature", which is a tx on the Safe Contract.
