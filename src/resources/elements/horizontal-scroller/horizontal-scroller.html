@@ -1,5 +1,5 @@
 <div class="scrollerContainer">
-  <div ref="scroller" scrollleft.bind="scrollleft" class="scroller">
+  <div ref="scroller" scroll-left.from-view="scrollleft" class="scroller" scroll-width.from-view="scrollWidth" client-width.from-view="clientWidth">
     <!-- must be a set of divs -->
     <au-slot></au-slot>
   </div>
