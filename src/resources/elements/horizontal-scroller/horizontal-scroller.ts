@@ -5,12 +5,12 @@ import { autoSlot } from "./../../temporary-code";
 @processContent(autoSlot)
 export class HorizontalScroller {
 
-  private scroller: HTMLElement;
-  private scrollleft: number;
+  scroller: HTMLElement;
+  scrollleft: number;
 
-  private get scrollPos(): number { return this.scrollleft ?? 0; }
+  get scrollPos(): number { return this.scrollleft ?? 0; }
 
-  @bindable private itemCount: number;
+  @bindable itemCount: number;
 
   left(): void {
     const scrollDistance = this.scrollDistance();
@@ -41,7 +41,7 @@ export class HorizontalScroller {
     return itemWidth * visibleItemsCount;
   }
 
-  private get atEnd(): boolean {
+  get atEnd(): boolean {
     if (!this.scroller) return false;
     /**
      * if the distance between the scrollPos and the end of the scroller is <= the
@@ -50,7 +50,7 @@ export class HorizontalScroller {
     return (this.scroller.scrollWidth - Math.ceil(this.scrollPos)) <= this.scroller.clientWidth;
   }
 
-  private get atBeginning(): boolean {
+  get atBeginning(): boolean {
     return this.scrollPos === 0;
   }
 }
