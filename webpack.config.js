@@ -52,7 +52,14 @@ const sassRules = [
   }
 ];
 
-module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } = {} ) => ( {
+const httpsCorsRules =  {
+  "Access-Control-Allow-Origin": "*",
+  // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+  "Access-Control-Allow-Methods": "GET",
+  "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+}
+
+module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, https } = {} ) => ( {
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
@@ -234,6 +241,8 @@ module.exports = ( { production, extractCss, analyze, tests, hmr, port, host, } 
     client: {
       overlay: false,
     },
+    server: https ? 'https' : 'http',
+    headers: https ? httpsCorsRules : {}
   },
   devtool: production ? undefined : 'cheap-module-source-map',
   module: {
