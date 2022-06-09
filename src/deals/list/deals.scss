@@ -62,7 +62,7 @@ pbutton button.secondary {
       text-align: right;
       margin-bottom: 28px;
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template: 1fr / 1fr auto;
       justify-items: right;
       align-items: center;
 
@@ -322,9 +322,80 @@ pbutton button.secondary {
   }
 }
 
+@mixin prefix($text) {
+  &:before {
+    content: $text;
+    margin-right: $spacing-small;
+    font-size: small;
+  }
+}
+
 @media screen and (max-width: $PageBreakWidth) {
   .page.deals {
     .section {
+      &.deals-actions {
+      grid-template: 1fr auto / 1fr;
+        grid-row-gap: $spacing-normal;
+      }
+
+      &.all-deals {
+        .grid.dealGrid {
+          grid-template-columns: 1fr;
+          .row {
+            display: grid;
+            padding: $spacing-small 0;
+            grid-template-areas:
+              "daos daos status"
+              "type type type"
+              "title title title"
+              "size size age";
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 50px 15px auto 30px;
+            border-bottom: 1px solid $Border01;
+            &.header {
+              display: none;
+            }
+            &:first-of-type {
+              margin-top: $spacing-small;
+              border-top: 1px solid $Border01;
+            }
+            .cell {
+              padding: 0 $spacing-normal;
+              border-bottom: unset;
+              height: auto;
+            }
+            .project {
+              grid-area: daos;
+            }
+            .title {
+              grid-area: title;
+              font-size: 20px;
+              font-weight: bold;
+            }
+            .type {
+              justify-content: left;
+              grid-area: type;
+              font-size: 12px;
+              font-weight: bold;
+              color: $Secondary05;
+              text-transform: uppercase;
+            }
+            .status {
+              justify-content: center;
+              grid-area: status;
+            }
+            .age {
+              grid-area: age;
+              justify-content: center;
+            }
+            .dealSize {
+              @include prefix("Deal Size (USD):");
+              justify-content: left;
+              grid-area: size;
+            }
+          }
+        }
+      }
       > .title {
         white-space: normal;
         text-align: center;

@@ -81,14 +81,9 @@
   }
 }
 
-@media screen and (max-width: 900px) and (min-width: 550px) {
-  .deal-carousel {
-    padding: 0 45px;
-  }
-}
-
 @media screen and (max-width: $PageBreakWidth) {
   .deal-carousel {
+    min-height: 400px;
     .carousel-selector {
       margin-bottom: 20px;
 
@@ -101,24 +96,5 @@
       }
     }
 
-    .scrollerContainer {
-      margin-bottom: 0;
-
-      .scroller deal-summary {
-        margin: 0;
-
-        &:not(:last-child) {
-          margin-bottom: 20px;
-        }
-
-        .dealSummary {
-          text-align: left;
-        }
-      }
-    }
-
-    .dealsButton {
-      margin-bottom: 80px;
-    }
   }
 }
