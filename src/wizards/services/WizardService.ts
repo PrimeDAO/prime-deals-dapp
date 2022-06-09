@@ -1,5 +1,6 @@
 import { IValidationController } from "@aurelia/validation-html";
-import { IEventAggregator, inject, IRouter } from "aurelia";
+import { IEventAggregator, inject } from "aurelia";
+import {IRouter} from "@aurelia/router";
 import { Constructable } from "@aurelia/kernel";
 import { WizardManager } from "../tokenSwapDealWizard/wizardManager";
 
@@ -36,12 +37,12 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-                                 wizardStateKey,
-                                 stages,
-                                 registrationData,
-                                 cancelRoute,
-                                 previousRoute,
-                               }: {
+    wizardStateKey,
+    stages,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }: {
     wizardStateKey: WizardStateKey;
     stages: Array<IWizardStage>;
     registrationData: TData;

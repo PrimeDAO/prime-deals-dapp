@@ -8,7 +8,8 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { Utils } from "services/utils";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
-import { IEventAggregator, IRouter } from "aurelia";
+import { IEventAggregator } from "aurelia";
+import { IRouter } from "@aurelia/router";
 
 @processContent(autoSlot)
 export class SubmitStage {

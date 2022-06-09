@@ -11,7 +11,9 @@ import { DealService } from "services/DealService";
 import { Address, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
-import { IEventAggregator, IRouter, RouteConfig } from "aurelia";
+import { IEventAggregator } from "aurelia";
+import { IRouter, IRouteableComponent, RoutingInstruction} from "@aurelia/router";
+
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
 import { newInstanceForScope } from "@aurelia/kernel";
@@ -19,7 +21,7 @@ import { IValidationController } from "@aurelia/validation-html";
 import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
 @processContent(autoSlot)
-export class WizardManager {
+export class WizardManager implements IRouteableComponent {
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
   // a meta configuration passed to each stage component in the view
@@ -30,7 +32,7 @@ export class WizardManager {
 
   // view model of the currently active stage
   public viewModel: object;
-  public additionalStageMetadata: Record<string, any>[] = [];
+  public additionalStageMetadata: Record < string, any > [] =[];
   public dealId: IDealIdType;
   private wizardType: WizardType;
   private stages: IWizardStage[] = [];
@@ -112,7 +114,7 @@ export class WizardManager {
     this.form.addSubscriber(presenter);
   }
 
-  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, routeConfig: RouteConfig): Promise<boolean> {
+  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise < boolean > {
     let canActivate = true;
 
     if (!params[STAGE_ROUTE_PARAMETER]) {
@@ -134,7 +136,7 @@ export class WizardManager {
          * We have to check this on every activation to handle the case of using browser navigation functions
          * and changing
          */
-        canActivate = this.ensureAccess(routeConfig.data.wizardType, this.ethereumService.defaultAccountAddress);
+        canActivate = this.ensureAccess(instruction.parameters.parametersRecord.wizardType, this.ethereumService.defaultAccountAddress);
       }
 
       return canActivate;
@@ -148,9 +150,10 @@ export class WizardManager {
    * activate will be invoked when we enter the wizard and everytime we switch stages in the wizard. The only time
    * we need to do all the initialization is the first time.
    */
-  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, routeConfig: RouteConfig): Promise<void> {
+  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise < void> {
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
-    const wizardType = Number(routeConfig.data.wizardType);
+
+    const wizardType = Number(instruction.parameters.parametersRecord.wizardType);
 
     if (!this.wizardService.hasWizard(this)) {
 
@@ -235,7 +238,7 @@ export class WizardManager {
     this.viewModel = await this.stages[indexOfActiveStage].moduleId;
   }
 
-  private configureStages(wizardType: WizardType): Array<IWizardStage> {
+  private configureStages(wizardType: WizardType): Array < IWizardStage > {
     let stages: Array<IWizardStage>;
     switch (wizardType) {
       case WizardType.createPartneredDeal:
@@ -255,11 +258,11 @@ export class WizardManager {
   }
 
   private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
-    /**
-     * for any stages that have been previously checked and found valid,
-     * set stage.valid to true Otherwise, set to undefined, indicating
-     * they have not been checked.
-     */
+  /**
+   * for any stages that have been previously checked and found valid,
+   * set stage.valid to true Otherwise, set to undefined, indicating
+   * they have not been checked.
+   */
     switch (wizardType) {
       case WizardType.makeAnOffer:
         // stages.map((stage) => {
@@ -277,7 +280,7 @@ export class WizardManager {
     }
   }
 
-  private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
+  private async getDeal(id: string): Promise < IDealRegistrationTokenSwap > {
     await this.dealService.ensureInitialized();
     const deal = this.dealService.deals.get(id);
 
