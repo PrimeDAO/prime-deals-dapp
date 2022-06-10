@@ -1,4 +1,3 @@
-import { ComingSoon } from "./comingSoon/comingSoon";
 import { Funding } from "./funding/funding";
 import { Documentation } from "./documentation/documentation";
 import { Initiate } from "./initiate/initiate";
@@ -60,12 +59,6 @@ export const routes: IRoute[] = [
     id: "funding",
     path: "/funding/:id",
     title: "Funding",
-  },
-  {
-    component: ComingSoon,
-    id: "comingSoon",
-    path: ["comingSoon"],
-    title: "Coming Soon!",
   },
   {
     component: import("./playground/playground"),
