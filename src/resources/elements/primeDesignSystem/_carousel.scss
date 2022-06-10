@@ -83,7 +83,8 @@
 
 @media screen and (max-width: $PageBreakWidth) {
   .deal-carousel {
-    min-height: 400px;
+    min-height: unset;
+    margin-bottom: 0;
     .carousel-selector {
       margin-bottom: 20px;
 

@@ -188,7 +188,7 @@ pbutton button.secondary {
 
       .dealGrid {
         display: grid;
-        grid-template-columns: 0.6fr 0.9fr 0.5fr 0.5fr 0.5fr 0.5fr;
+        grid-template-columns: 2fr 3fr 1fr 1fr 1fr 1fr;
 
         .row {
           &.header {
@@ -332,6 +332,12 @@ pbutton button.secondary {
 
 @media screen and (max-width: $PageBreakWidth) {
   .page.deals {
+    .deal-carousel>.carousel-selector {
+      margin-bottom: -6px;
+    }
+    .featuredDealsScroller, .all-deals>.heading02Gradient {
+      display: none;
+    }
     .section {
       &.deals-actions {
       grid-template: 1fr auto / 1fr;
@@ -346,11 +352,10 @@ pbutton button.secondary {
             padding: $spacing-small 0;
             grid-template-areas:
               "daos daos status"
-              "type type type"
-              "title title title"
-              "size size age";
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 50px 15px auto 30px;
+              "type type age"
+              "title title size";
+            grid-template-columns: 2fr 2fr 1fr;
+            grid-template-rows: 50px 15px auto;
             border-bottom: 1px solid $Border01;
             &.header {
               display: none;
@@ -390,7 +395,7 @@ pbutton button.secondary {
             }
             .dealSize {
               @include prefix("Deal Size (USD):");
-              justify-content: left;
+              justify-content: center;
               grid-area: size;
             }
           }
@@ -406,6 +411,34 @@ pbutton button.secondary {
       &.featured {
         .scrollerContainer {
           margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .page.deals {
+    .section {
+      &.all-deals {
+        .grid.dealGrid {
+          .row {
+            grid-template-areas:
+              "daos daos daos"
+              "type type status"
+              "title title title"
+              "size size age"
+              "size size age";
+            grid-template-columns: 2fr 1fr 0.5fr;
+            grid-template-rows: 40px 30px auto 15px 15px;
+            .age, .status {
+              justify-content: center;
+            }
+            .dealSize {
+              @include prefix("");
+              justify-content: left;
+            }
+          }
         }
       }
     }
