@@ -2,26 +2,22 @@
 <import from="./navbar/navbar"></import>
 <import from="./walletMenu/walletMenu"></import>
 
-<div if.bind="showCountdownPage">
-  <au-compose view-model.bind="comingSoon"></au-compose>
-</div>
-
-<div else>
   <popup-notifications></popup-notifications>
   <navbar
     menu-open.two-way="showingMobileMenu"
     toggle-menu.call="toggleMobileMenu()"
-    show-wallet-menu.call="handleShowWalletMenu()">
+    show-wallet-menu.call="handleShowWalletMenu()"
+  >
   </navbar>
   <wallet-menu showing.bind="showingWalletMenu"></wallet-menu>
+
   <modalscreen message.to-view="modalMessage" on-off.to-view="onOff">
     <div class="appWrapper">
       <div class="mainContent">
-        <au-viewport default=""></au-viewport>
+        <au-viewport default="home"></au-viewport>
       </div>
       <div class="appFooter">
         <footer></footer>
       </div>
     </div>
   </modalscreen>
-</div>

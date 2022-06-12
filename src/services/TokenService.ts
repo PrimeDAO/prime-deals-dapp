@@ -46,7 +46,6 @@ export class TokenService {
 
   public setup(){
     this.erc20Abi = ContractsService.getContractAbi(ContractNames.IERC20);
-
   }
 
   public async initialize(): Promise<TokenListMap> {

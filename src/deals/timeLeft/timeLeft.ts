@@ -1,12 +1,11 @@
 import { bindable } from "aurelia";
 import { DealStatus, IDeal } from "entities/IDealTypes";
+import { toBoolean } from "resources/binding-behaviours";
 
 export class TimeLeft {
-
   @bindable deal: IDeal;
   @bindable hideIcons: boolean;
-  @bindable largest: boolean;
-  @bindable contained: boolean;
+  @bindable({set: toBoolean}) contained = false;
 
   timeLeft: HTMLElement;
   tippyInstance: any;
