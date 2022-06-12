@@ -18,7 +18,7 @@ export class DaoRepresentativeAddress {
   ) {
   }
 
-  bind() {
+  binding() {
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.validationRules

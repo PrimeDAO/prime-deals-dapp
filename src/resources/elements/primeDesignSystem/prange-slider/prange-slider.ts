@@ -22,7 +22,7 @@ export class PRangeSlider {
   constructor(public element: Element) {
   }
 
-  bind() {
+  binding() {
     this.updateValue();
     if (this.left || this.right) {
       this.updateLeft();

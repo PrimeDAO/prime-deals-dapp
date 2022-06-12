@@ -9,12 +9,6 @@ export enum ValidationState {
   error = "error"
 }
 
-export interface IStepperStep {
-  name: string;
-  valid: boolean;
-  hidden?: boolean;
-}
-
 export type AureliaElement<T> = HTMLElement & {
   au: {
     controller: Controller & { viewModel: T }

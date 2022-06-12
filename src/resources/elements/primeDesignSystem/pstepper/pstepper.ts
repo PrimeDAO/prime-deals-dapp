@@ -1,9 +1,9 @@
 import { bindable, customElement } from "aurelia";
-import { IStepperStep } from "../types";
+import { IWizardStage } from "../../../../wizards/services/WizardService";
 
 @customElement("pstepper")
 export class PStepper {
-  @bindable steps: IStepperStep[];
+  @bindable steps: IWizardStage[];
   @bindable indexOfActive: number;
   @bindable onClick: (index: number) => void;
 

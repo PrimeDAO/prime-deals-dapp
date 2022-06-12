@@ -1,8 +1,12 @@
 import { IClause } from "entities/DealRegistrationTokenSwap";
-import "./termClause.scss";
 import { ViewMode } from "../../../../../resources/elements/editingCard/editingCard";
 import { bindable, BindingMode, inject } from "aurelia";
-import { IValidationController, ValidationControllerFactory } from "@aurelia/validation-html";
+import { IValidationController } from "@aurelia/validation-html";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationRules } from "@aurelia/validation";
+import {
+  PrimeErrorPresenter,
+} from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
 @inject()
 export class TermClause {
@@ -14,26 +18,23 @@ export class TermClause {
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
 
-  constructor(private validationControllerFactory: ValidationControllerFactory) {
-    // this.form = this.validationControllerFactory.createForCurrentScope();
-    // this.form.validateTrigger = validateTrigger.change;
-    // this.form.addRenderer(new PrimeRenderer());
+  constructor(
+    @newInstanceForScope(IValidationController) form: IValidationController,
+    @IValidationRules private validationRules: IValidationRules,
+    private presenter: PrimeErrorPresenter,
+  ) {
+    this.form = form;
+    this.form.addSubscriber(presenter);
   }
 
-  attached() {
-    this.addValidationRules();
-  }
-
-  addValidationRules() {
-    // const rules = ValidationRules // TODO add rules back
-    //   .ensure<IClause, string>(clause => clause.text)
-    //   .required()
-    //   .withMessage("Clause requires a description")
-    //   .minLength(10)
-    //   .withMessage("Clause must be at least ${$config.length} characters")
-    //   .rules;
-    //
-    // this.form.addObject(this.clause, rules);
+  attaching() {
+    this.validationRules
+      .on(this.clause)
+      .ensure("text")
+      .required()
+      .withMessage("Clause requires a description")
+      .minLength(10)
+      .withMessage("Clause must be at least ${$config.length} characters");
   }
 
   onSave(): Promise<boolean> {

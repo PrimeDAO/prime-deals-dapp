@@ -18,12 +18,12 @@
       <!-- Content -->
       <div class="stageSectionContent termsStageSectionContent">
         <term-clause
+          hide-delete-button.bind="terms.clauses.length === 1"
           clause.bind="clause"
-          hide-delete-button.bind="wizardState.registrationData.terms.clauses.length === 1"
+          repeat.for="clause of terms.clauses"
           index.bind="$index"
           on-delete.call="onDelete($index)"
           on-saved.call="hasUnsavedChanges && checkedForUnsavedChanges()"
-          repeat.for="clause of wizardState.registrationData.terms.clauses"
           view-mode.bind="stageMetadata.termsViewModes[$index]"
           view-model.ref="termClauses[$index]"
         >
@@ -33,7 +33,7 @@
           class="addClauseButton"
           click.delegate="addClause()"
           data-test="addClauseButton"
-          if.bind="wizardState.registrationData.terms.clauses.length < 10"
+          if.bind="terms.clauses.length < 10"
           type="primary">
           Add Clause
           <i class="fa fa-plus"></i>

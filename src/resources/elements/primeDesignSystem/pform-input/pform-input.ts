@@ -41,7 +41,6 @@ export class PFormInput {
     private element: Element,
     private aureliaHelperService: AureliaHelperService,
   ) {
-    console.log("thin ->", this);
   }
 
   inputsChanged() {

@@ -106,9 +106,9 @@
           <pinput-group>
             <pinput-numeric
               not-wei
-              value.bind="wizardState.registrationData.fundingPeriod | defined | secondsDays & validate:form"
+              value.bind="registrationData.fundingPeriod | defined | secondsDays & validate:form"
               view-model.ref="fundingPeriodInput"></pinput-numeric>
-            <span slot="after">days</span>
+            <template au-slot="after">days</template>
           </pinput-group>
         </pform-input>
 

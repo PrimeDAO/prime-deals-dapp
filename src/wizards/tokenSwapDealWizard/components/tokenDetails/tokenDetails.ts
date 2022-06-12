@@ -9,13 +9,16 @@ import { ConsoleLogService } from "services/ConsoleLogService";
 import { bindable, BindingMode, inject } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 import { IValidationRules } from "@aurelia/validation";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../../../resources/validation-rules";
+import { ValidationService } from "../../../../services/ValidationService";
 
 @inject()
 export class TokenDetails {
   @bindable token: IToken;
   @bindable wizardType: WizardType;
   @bindable({mode: BindingMode.fromView}) onDelete: () => void;
-  @bindable({mode: BindingMode.fromView}) form: IValidationController;
   @bindable({mode: BindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
   @bindable hideDeleteButton: boolean;
   @bindable onSaved?: () => void;
@@ -38,16 +41,11 @@ export class TokenDetails {
     private tokenService: TokenService,
     private numberService: NumberService,
     @IValidationRules private validationRules: IValidationRules,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
+    private presenter: PrimeErrorPresenter,
+    private validationService: ValidationService,
   ) {
-    // this.form = this.validationControllerFactory.createForCurrentScope();// TODO add rules back
-    // this.form.validateTrigger = validateTrigger.change;
-    // this.form.addRenderer(new PrimeRenderer);
-
-    // ValidationRules.customRule(
-    //   "isValidIERC20Address",
-    //   (value) => this.tokenService.isERC20Token(value),
-    //   "Please enter a valid IERC20 address",
-    // );
+    this.form.addSubscriber(presenter);
   }
 
   async attaching() {
@@ -60,6 +58,20 @@ export class TokenDetails {
     //   if (result.type === "validate") {
     //     this.valid = result.controllerValidateResult.valid;
     //   }
+    // });
+
+    // class as {
+    //   handleValidationEvent(event: ValidationEvent) {
+    //     console.log("eve ->", event);
+    //   }
+    // }
+    //
+    // this.form.addSubscriber({
+    //   handleValidationEvent(event: ValidationEvent) {
+    //     if (event.kind === "validate") {
+    //       this.valid = event.controllerValidateResult.valid;
+    //     }
+    //   },
     // });
 
     if (this.token.address && (this.token.logoURI || this.token.name || this.token.decimals || this.token.symbol)) {
@@ -121,16 +133,13 @@ export class TokenDetails {
     this.token.vestedFor = this.token.vestedFor ?? 0;
     this.token.cliffOf = this.token.cliffOf ?? 0;
 
-    // const result = await this.form.validate({ // TODO uncomment this
-    //   object: this.token,
-    //   rules: this.getValidationRules(),
-    // }).finally(() => this.saving = false);
-    //
-    // if (!result.valid) {
-    //   return;
-    // }
-    // this.viewMode = "view";
-    // this.onSaved?.();
+    const result = await this.form.validate().finally(() => this.saving = false);
+
+    if (!result.valid) {
+      return;
+    }
+    this.viewMode = "view";
+    this.onSaved?.();
   }
 
   logoLoaded(valid: boolean) {
@@ -161,6 +170,7 @@ export class TokenDetails {
       }
     });
     this.aureliaHelperService.createPropertyWatch(this.token, "address", address => {
+      this.form.reset();
       this.token.amount = undefined;
       this.getTokenInfo(address);
     });
@@ -178,16 +188,12 @@ export class TokenDetails {
   }
 
   private addValidation() {
-    this.getValidationRules();
-  }
-
-  private getValidationRules() {
     this.validationRules
       .on(this.token)
       .ensure("address")
       .required()
-      // .satisfiesRule(Validation.isEthAddress) // TODO add rules back
-      // .satisfiesRule("isValidIERC20Address")
+      .satisfiesRule(new IsEthAddress())
+      .satisfiesRule(this.validationService.isValidIERC20Address())
       .ensure("amount")
       .required()
       .min(0)
@@ -201,35 +207,34 @@ export class TokenDetails {
       .required()
       .ensure("logoURI")
       .required()
-      .withMessage("Logo image is required");
-    // .satisfiesRule(Validation.imageUrl) // TODO add rules back
-    // .satisfiesRule(Validation.imageSize, 5000000)
-    // .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
-    // .ensure<string>(data => data.instantTransferAmount)
-    // .satisfies((value, data) => {
-    //   return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
-    // })
-    // .when(data => Boolean(data.amount))
-    // .withMessage("Instant transfer amount can't ge bigger than Token Amount")
-    // .ensure<string>(data => data.vestedTransferAmount)
-    // .satisfies((value, data) => {
-    //   return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
-    // })
-    // .when(data => Boolean(data.amount))
-    // .withMessage("Vested transfer amount can't ge bigger than Token Amount")
-    // .ensure<number>(data => data.vestedFor)
-    // .required()
-    // .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
-    // .withMessage("Please provide a vesting period")
-    // .min(0)
-    // .ensure<number>(data => data.cliffOf)
-    // .required()
-    // .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
-    // .withMessage("Please provide a cliff period")
-    // .satisfies((value: number, data) => value <= data.vestedFor)
-    // .when(data => data.vestedFor >= 0)
-    // .withMessage("Cliff period needs to be smaller or equal to vesting period")
-    // .min(0)
-    // .rules;
+      .withMessage("Logo image is required")
+      .satisfiesRule(new ImageUrl()) // TODO add rules back
+      .satisfiesRule(new ImageSize(5000000))
+      .satisfiesRule(new ImageExtension(["JPG", "PNG", "GIF", "BMP"]))
+      .ensure<string>(data => data.instantTransferAmount)
+      .satisfies((value, data) => {
+        return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
+      })
+      .when(data => Boolean(data.amount))
+      .withMessage("Instant transfer amount can't ge bigger than Token Amount")
+      .ensure<string>(data => data.vestedTransferAmount)
+      .satisfies((value, data) => {
+        return data.amount && BigNumber.from((value || 0).toString()).lte(BigNumber.from(data.amount));
+      })
+      .when(data => Boolean(data.amount))
+      .withMessage("Vested transfer amount can't ge bigger than Token Amount")
+      .ensure<number>(data => data.vestedFor)
+      .required()
+      .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
+      .withMessage("Please provide a vesting period")
+      .min(0)
+      .ensure<number>(data => data.cliffOf)
+      .required()
+      .when(data => !BigNumber.from((data.vestedTransferAmount || 0).toString()).isZero())
+      .withMessage("Please provide a cliff period")
+      .satisfies((value: number, data) => value <= data.vestedFor)
+      .when(data => data.vestedFor >= 0)
+      .withMessage("Cliff period needs to be smaller or equal to vesting period")
+      .min(0);
   }
 }

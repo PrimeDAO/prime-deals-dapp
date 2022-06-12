@@ -10,7 +10,7 @@ export class SocialMediaLink {
   @bindable availableSocialMedias: string[] = [];
   @bindable data: IDAO;
 
-  bind() {
+  binding() {
     // ValidationRules // TODO add rules back
     //   .ensure((socialMedia: ISocialMedia) => socialMedia.url)
     //   .satisfiesRule(Validation.url)

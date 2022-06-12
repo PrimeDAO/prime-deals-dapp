@@ -1,8 +1,9 @@
 import { IValidationController } from "@aurelia/validation-html";
 import { IEventAggregator, inject } from "aurelia";
-import {IRouter} from "@aurelia/router";
+import { IRouter } from "@aurelia/router";
 import { Constructable } from "@aurelia/kernel";
 import { WizardManager } from "../tokenSwapDealWizard/wizardManager";
+import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
 export interface IWizardState<Data = any> {
   stages: Array<IWizardStage>;
@@ -33,6 +34,7 @@ export class WizardService {
   constructor(
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
+    private presenter: PrimeErrorPresenter,
   ) {
   }
 
@@ -115,14 +117,13 @@ export class WizardService {
      * This will set valid state to undefined when the validate function is not uninitialized.
      * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
      */
-    // wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
-    wizardState.stages[currentIndexOfActive].valid = await wizardStateKey.validate();
+    wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
-    return;
+
     /**
      * I suspect this only handles the case where we haven't finished coding all the stages.
      * Is it possible otherwise?
@@ -176,16 +177,13 @@ export class WizardService {
     return this.wizardsStates.has(wizardStateKey);
   }
 
-  // public registerValidationRules(wizardStateKey: WizardStateKey, data: object, rules: Rule<object, any>[][]) {
-  public registerValidationRules(wizardStateKey: WizardStateKey) {
+  public registerForm(wizardStateKey: WizardStateKey, form: IValidationController) {
     const stage = this.getActiveStage(wizardStateKey);
 
     if (!stage.form) {
-      // stage.form = this.validationFactory.createForCurrentScope();
-      // stage.form.validateTrigger = validateTrigger.changeOrFocusout;
-      // stage.form.addRenderer(new PrimeRenderer);
-      // stage.validate = () => stage.form.validate().then(result => result.valid);
-      // stage.form.addObject(data, rules);
+      stage.form = form;
+      stage.form.addSubscriber(this.presenter);
+      stage.validate = () => stage.form.validate().then(result => result.valid);
     }
 
     return stage.form;

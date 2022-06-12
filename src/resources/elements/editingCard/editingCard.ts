@@ -16,7 +16,7 @@ export class EditingCard {
   private deleteButtonRef: HTMLElement;
   private saving: boolean;
 
-  async attached() {
+  async attaching() {
     this.viewMode = this.viewMode ?? "edit";
   }
 

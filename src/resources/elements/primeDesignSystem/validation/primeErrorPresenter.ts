@@ -7,31 +7,31 @@ import { ValidationState } from "../types";
 export class PrimeErrorPresenter extends ValidationResultPresenterService {
 
   remove(target: INode<HTMLElement>, results: ValidationResult[]) {
-    const formGroup = this.getFormGroup(target);
+    const formInput = this.getFormInput(target);
 
-    results = results.filter(result => result.valid);
-    if (!formGroup || !results.length) {
+    results = results.filter(result => !result.valid);
+    if (!formInput || !results.length) {
       return;
     }
 
-    formGroup.validationState = undefined;
-    formGroup.validationMessage = "";
+    formInput.validationState = undefined;
+    formInput.validationMessage = "";
   }
 
   add(target: INode<HTMLElement>, results: ValidationResult[]) {
-    const formGroup = this.getFormGroup(target);
+    const formInput = this.getFormInput(target);
 
     results = results.filter(result => !result.valid);
-    if (!formGroup || !results.length) {
+    if (!formInput || !results.length) {
       return;
     }
 
-    formGroup.validationState = ValidationState.error;
-    formGroup.validationMessage = results[0].message;
+    formInput.validationState = ValidationState.error;
+    formInput.validationMessage = results[0].message;
   }
 
-  private getFormGroup(element: Element): PFormInput | undefined {
-    const formGroup = element.closest("pform-input") as INode<HTMLElement>;
-    return formGroup?.$au["au:resource:custom-element"].viewModel as PFormInput | undefined;
+  private getFormInput(element: Element): PFormInput | undefined {
+    const formInput = element.closest("pform-input") as INode<HTMLElement>;
+    return formInput?.$au["au:resource:custom-element"].viewModel as PFormInput | undefined;
   }
 }

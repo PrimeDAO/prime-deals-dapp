@@ -12,13 +12,10 @@ import { Address, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
 import { IEventAggregator } from "aurelia";
-import { IRouter, IRouteableComponent, RoutingInstruction} from "@aurelia/router";
+import { IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
 
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
-import { newInstanceForScope } from "@aurelia/kernel";
-import { IValidationController } from "@aurelia/validation-html";
-import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
 @processContent(autoSlot)
 export class WizardManager implements IRouteableComponent {
@@ -32,7 +29,7 @@ export class WizardManager implements IRouteableComponent {
 
   // view model of the currently active stage
   public viewModel: object;
-  public additionalStageMetadata: Record < string, any > [] =[];
+  public additionalStageMetadata: Record<string, any> [] = [];
   public dealId: IDealIdType;
   private wizardType: WizardType;
   private stages: IWizardStage[] = [];
@@ -108,13 +105,10 @@ export class WizardManager implements IRouteableComponent {
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
-    @newInstanceForScope(IValidationController) private form: IValidationController,
-    private presenter: PrimeErrorPresenter,
   ) {
-    this.form.addSubscriber(presenter);
   }
 
-  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise < boolean > {
+  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
     let canActivate = true;
 
     if (!params[STAGE_ROUTE_PARAMETER]) {
@@ -150,10 +144,10 @@ export class WizardManager implements IRouteableComponent {
    * activate will be invoked when we enter the wizard and everytime we switch stages in the wizard. The only time
    * we need to do all the initialization is the first time.
    */
-  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise < void> {
+  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<void> {
     const stageRoute = params[STAGE_ROUTE_PARAMETER];
 
-    const wizardType = Number(instruction.parameters.parametersRecord.wizardType);
+    const wizardType = instruction.parameters.parametersRecord.wizardType as number;
 
     if (!this.wizardService.hasWizard(this)) {
 
@@ -207,12 +201,6 @@ export class WizardManager implements IRouteableComponent {
     this.wizardService.goToStage(this, index, false);
   }
 
-  async validate() {
-    const result = await this.form.validate();
-    console.log("validation result ->", result);
-    return result.results.length === 0;
-  }
-
   private getPreviousRoute(wizardType: WizardType) {
     switch (wizardType) {
       case WizardType.createOpenProposal:
@@ -238,7 +226,7 @@ export class WizardManager implements IRouteableComponent {
     this.viewModel = await this.stages[indexOfActiveStage].moduleId;
   }
 
-  private configureStages(wizardType: WizardType): Array < IWizardStage > {
+  private configureStages(wizardType: WizardType): Array<IWizardStage> {
     let stages: Array<IWizardStage>;
     switch (wizardType) {
       case WizardType.createPartneredDeal:
@@ -258,11 +246,11 @@ export class WizardManager implements IRouteableComponent {
   }
 
   private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
-  /**
-   * for any stages that have been previously checked and found valid,
-   * set stage.valid to true Otherwise, set to undefined, indicating
-   * they have not been checked.
-   */
+    /**
+     * for any stages that have been previously checked and found valid,
+     * set stage.valid to true Otherwise, set to undefined, indicating
+     * they have not been checked.
+     */
     switch (wizardType) {
       case WizardType.makeAnOffer:
         // stages.map((stage) => {
@@ -280,7 +268,7 @@ export class WizardManager implements IRouteableComponent {
     }
   }
 
-  private async getDeal(id: string): Promise < IDealRegistrationTokenSwap > {
+  private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
     await this.dealService.ensureInitialized();
     const deal = this.dealService.deals.get(id);
 

@@ -1,14 +1,14 @@
 import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
 import * as shortUuid from "short-uuid";
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IClause, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
+import { IClause, IDealRegistrationTokenSwap, ITerms } from "entities/DealRegistrationTokenSwap";
 import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
-import { processContent } from "@aurelia/runtime-html";
-import { autoSlot } from "../../../../resources/temporary-code";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
+import { inject } from "aurelia";
+import { areFormsValid } from "../../../../services/ValidationService";
 
-@processContent(autoSlot)
+@inject()
 export class TermsStage implements IBaseWizardStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
@@ -16,6 +16,8 @@ export class TermsStage implements IBaseWizardStage {
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
   stageMetadata: { termsViewModes?: ViewMode[] } = {};
+
+  terms: ITerms;
 
   constructor(
     public wizardService: WizardService,
@@ -29,12 +31,13 @@ export class TermsStage implements IBaseWizardStage {
     this.stageMetadata = stageMeta.settings;
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
+    this.terms = this.wizardState.registrationData.terms;
+
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      return true; // TODO add rules back
-      // this.addIdsToClauses(stageMeta.wizardType);
-      // this.checkedForUnsavedChanges();
-      // const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
-      // return formsAreValid && !this.hasUnsavedChanges;
+      this.addIdsToClauses(stageMeta.wizardType);
+      this.checkedForUnsavedChanges();
+      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
+      return formsAreValid && !this.hasUnsavedChanges;
     });
   }
 

@@ -1,20 +1,35 @@
 import { AlertService } from "./AlertService";
 import { FirestoreService } from "./FirestoreService";
 import { FirebaseService } from "services/FirebaseService";
-import { DiscussionsList } from "./../dealDashboard/dealDiscussion/discussionsList/discussionsList";
 import { IContainer, IRegistry, Registration } from "aurelia";
 import DOMPurify from "dompurify";
-import { IEthereumService, EthereumService } from "./EthereumService";
+import { EthereumService, IEthereumService } from "./EthereumService";
 import { FirestoreDealsService } from "./FirestoreDealsService";
 import { IDataSourceDeals } from "./DataSourceDealsTypes";
 // import { ConsoleLogService } from "services/ConsoleLogService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { DiscussionsStreamService } from "dealDashboard/discussionsStreamService";
 import {
-  DealService, DisclaimerService, ConsoleLogService, BrowserStorageService, DateService, ContractsService, AureliaHelperService, DialogService, TokenListService, NumberService, IpfsService, TokenService, TokenMetadataService, TransactionsService, EnsService, BigNumberService, AxiosService, PinataIpfsClient,
-
+  AureliaHelperService,
+  AxiosService,
+  BrowserStorageService,
+  ConsoleLogService,
+  ContractsService,
+  DateService,
+  DealService,
+  DialogService,
+  DisclaimerService,
+  EnsService,
+  IpfsService,
+  NumberService,
+  PinataIpfsClient,
+  TokenListService,
+  TokenMetadataService,
+  TokenService,
+  TransactionsService,
 } from "services";
 import { DiscussionsService } from "dealDashboard/discussionsService";
+import { ValidationService } from "./ValidationService";
 
 export const register: IRegistry = {
   register: (container: IContainer) => {
@@ -47,6 +62,7 @@ export const register: IRegistry = {
     container.register(Registration.singleton(AxiosService, AxiosService));
     container.register(Registration.singleton(AlertService, AlertService));
     container.register(Registration.singleton(PinataIpfsClient, PinataIpfsClient));
+    container.register(Registration.singleton(ValidationService, ValidationService));
 
     return container;
   },

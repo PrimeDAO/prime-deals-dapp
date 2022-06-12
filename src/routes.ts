@@ -79,8 +79,8 @@ export const routes: IRoute[] = [
     id: "openProposal",
     title: "Open Proposal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
-    data: {
-      wizardType: String(WizardType.createOpenProposal),
+    parameters: {
+      wizardType: WizardType.createOpenProposal,
     },
   },
 ];
