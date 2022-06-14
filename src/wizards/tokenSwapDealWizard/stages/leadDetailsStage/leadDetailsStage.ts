@@ -60,14 +60,11 @@ export class LeadDetailsStage {
       .required()
       .withMessage("Wallet address is required")
       .satisfiesRule(new IsEthAddress())
+      .withMessage("Please enter a valid ethereum address")
       .ensure("email")
       .required()
-      .satisfiesRule(new IsEmail());
+      .satisfiesRule(new IsEmail())
+      .withMessage("Please enter a valid email address");
 
-    // this.form = this.wizardService.registerValidationRules(
-    //   this.wizardManager,
-    //   this.wizardState.registrationData.proposalLead,
-    //   validationRules,
-    // );
   }
 }
