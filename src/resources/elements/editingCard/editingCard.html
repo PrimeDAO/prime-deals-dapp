@@ -3,7 +3,7 @@
     <!-- View -->
     <template class="cardEditing" if.bind="viewMode === 'view'">
       <span data-test="editingCardViewContent">
-        <au-slot name="view">This part is replaceable.</au-slot>
+        <au-slot name="view"></au-slot>
       </span>
 
       <div
@@ -21,7 +21,7 @@
     <!-- Edit -->
     <template class="cardEditing" if.bind="viewMode === 'edit'">
       <span data-test="editingCardEditContent">
-        <au-slot name="edit">This part is replaceable.</au-slot>
+        <au-slot name="edit"></au-slot>
       </span>
 
       <!-- Editing footer -->
