@@ -79,8 +79,6 @@ export class App implements IRouteableComponent {
   }
 
   async attached(): Promise<void> {
-    console.log("app attached");
-
     this.platform.document.querySelector("body").classList.remove("loading");
 
     // so all elements with data-tippy-content will automatically have a tooltip
@@ -161,24 +159,6 @@ export class App implements IRouteableComponent {
       }
     }, 1000);
 
-    const getShowCountdownPage = () =>
-      (
-        (window.location.hostname.toLowerCase() === "deals.prime.xyz") &&
-        (process.env.NODE_ENV === "production") &&
-        (process.env.NETWORK === "mainnet")
-      ) ?
-        (Date.now() < AppStartDate.getTime()) : false;
-
-    this.showCountdownPage = getShowCountdownPage();
-
-    if (this.showCountdownPage) {
-      this.intervalId = setInterval(() => {
-        this.showCountdownPage = getShowCountdownPage();
-        if (!this.showCountdownPage) {
-          clearInterval(this.intervalId);
-        }
-      }, 1000);
-    }
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
     this.dealLoadingPromise.then(() => this.handleOnOff(false));
   }
@@ -201,7 +181,7 @@ export class App implements IRouteableComponent {
       case "":
       case "/":
       case "/home":
-        return "scroll-/home";
+        return "scroll-home";
       default:
         return `scroll-${fragment}`;
     }
@@ -211,9 +191,11 @@ export class App implements IRouteableComponent {
    * store the scroll position per each page
    */
   private handleScrollEvent(): void {
-    // au2 TODO --dkent: restore this when can reproduce this.router.currentInstruction.fragment
-    // this.storageService.ssSet(this.getScrollStateKey(this.router.currentInstruction.fragment),
-    //   `${window.scrollX},${window.scrollY}`);
+    if (!this.router.activeComponents[0]) return;
+    this.storageService.ssSet(
+      this.getScrollStateKey(this.router.activeComponents[0].route.matching),
+      `${window.scrollX},${window.scrollY}`,
+    );
   }
 
   private toggleMobileMenu(): void {
@@ -227,6 +209,14 @@ export class App implements IRouteableComponent {
 
   @watch<App>(x => x.router.isNavigating)
   onNavigate(): void {
+    if (this.router.activeComponents[0]) {
+      const position = this.storageService.ssGet(
+        this.getScrollStateKey(
+          this.router.activeComponents[0].route.matching,
+        ),
+      );
+      window.scrollTo(...position.split(",").map(x => parseInt(x, 10)));
+    }
     this.showingMobileMenu = false;
   }
 
