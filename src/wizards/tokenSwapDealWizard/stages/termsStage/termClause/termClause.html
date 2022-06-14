@@ -34,7 +34,8 @@
           data-test="clauseTextarea"
           placeholder="Text describing the clause"
           rows="4"
-          value.bind="clause.text & validate:form"
+          max="500"
+          value.bind="clause.text & validate"
           view-model.ref="clauseTextareaViewModel"
         ></ptextarea>
       </pform-input>

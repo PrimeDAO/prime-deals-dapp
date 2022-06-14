@@ -19,7 +19,7 @@ export class TermClause {
   @bindable onSaved?: () => void;
 
   constructor(
-    @newInstanceForScope(IValidationController) form: IValidationController,
+  @newInstanceForScope(IValidationController) form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
     private presenter: PrimeErrorPresenter,
   ) {
@@ -34,7 +34,7 @@ export class TermClause {
       .required()
       .withMessage("Clause requires a description")
       .minLength(10)
-      .withMessage("Clause must be at least ${$config.length} characters");
+      .withMessage("Clause must be at least 10 characters");
   }
 
   onSave(): Promise<boolean> {

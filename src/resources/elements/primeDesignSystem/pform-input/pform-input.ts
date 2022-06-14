@@ -1,16 +1,14 @@
 import { ValidationState } from "../types";
-import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 import { bindable, children, customElement } from "aurelia";
-import { processContent } from "@aurelia/runtime-html";
-import { autoSlot } from "../../../temporary-code";
+import { toBoolean } from "resources/binding-behaviours";
 
 @customElement("pform-input")
-@processContent(autoSlot)
+
 export class PFormInput {
   @bindable label = "";
   @bindable labelInfo = "";
   @bindable labelDescription = "";
-  @bindable showCounter = false;
+  @bindable({set: toBoolean, type: Boolean}) showCounter = false;
   @bindable maxLength = 0;
   @bindable helperMessage = "";
   @bindable validationMessage = "";
@@ -37,18 +35,8 @@ export class PFormInput {
     filter: (node, controller) => Boolean(controller?.definition.bindables["validationState"]),
   }) inputs;
 
-  constructor(
-    private element: Element,
-    private aureliaHelperService: AureliaHelperService,
-  ) {
-  }
-
   inputsChanged() {
     this.inputReference = this.inputReference ?? this.inputs[0];
-
-    if (this.inputReference && this.showCounter) {
-      // this.limitInputCharacterLength(); // TODO add this method back
-    }
     this.validationStateChanged(this.validationState);
   }
 
@@ -58,22 +46,7 @@ export class PFormInput {
     }
   }
 
-  // private limitInputCharacterLength() {
-  //   this.inputValueObserverSubscription = this.aureliaHelperService.createPropertyWatch(
-  //     this.inputReference,
-  //     "value",
-  //     newValue => {
-  //       if (newValue?.length > this.maxLength) {
-  //         this.inputReference.value = newValue.substring(0, this.maxLength);
-  //       }
-  //     });
-  // }
-
   validationStateExists(state: ValidationState) {
     return Object.values(ValidationState).includes(state);
   }
-
-  // detached() {
-  //   this.inputValueObserverSubscription?.dispose();
-  // }
 }

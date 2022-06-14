@@ -1,11 +1,8 @@
 import { bindable, BindingMode } from "aurelia";
-import { processContent } from "@aurelia/runtime-html";
-import { autoSlot } from "../../temporary-code";
 import { toBoolean } from "../../binding-behaviours";
 
 export type ViewMode = "edit" | "view";
 
-@processContent(autoSlot)
 export class EditingCard {
   @bindable onDelete: () => boolean | Promise<boolean>;
   @bindable onEdit: () => boolean | Promise<boolean>;
