@@ -4,8 +4,17 @@ import { IWizardState } from "wizards/services/WizardService";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { WizardManager } from "./wizardManager";
 import { IValidationRules } from "@aurelia/validation";
+import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../resources/validation-rules";
+import { RoutingInstruction } from "@aurelia/router";
 
 export enum WizardType {createOpenProposal, editOpenProposal, createPartneredDeal, editPartneredDeal, makeAnOffer}
+
+export const WizardTypes = [
+  {
+    type: WizardType.createOpenProposal,
+    condition: (instruction: RoutingInstruction) => instruction.parameters.parametersRecord.wizardType === "open-proposal",
+  },
+];
 
 export interface IBaseWizardStage {
   wizardManager: any;
@@ -78,21 +87,20 @@ export const daoStageValidationRules = (dao: IDAO, validationRules: IValidationR
     .withMessage("Name already used for the other DAO")
     .ensure("treasury_address")
     .required()
-    .withMessage("Treasury address is required");
-// .satisfiesRule(Validation.isEthAddress) // TODO add rules back
-// .satisfies(value => !otherDao || (value !== otherDao.treasury_address))
-// .withMessage("Address already used for the other DAO")
-// .ensure<string>(dao => dao.logoURI)
-// .required()
-// .withMessage(`${title} avatar is required`)
-// .satisfiesRule(Validation.imageUrl)
-// .satisfiesRule(Validation.imageSize, 5000000)
-// .satisfiesRule(Validation.imageExtension, ["JPG", "PNG", "GIF", "BMP"])
-// .ensure<ISocialMedia[]>(dao => dao.social_medias)
-// .required()
-// .maxItems(10)
-// .ensure<{address: string}[]>(dao => dao.representatives)
-// .required()
-// .minItems(1)
-// .maxItems(5)
-// .rules;
+    .withMessage("Treasury address is required")
+    .satisfiesRule(new IsEthAddress())
+    .satisfies(value => !otherDao || (value !== otherDao.treasury_address))
+    .withMessage("Address already used for the other DAO")
+    .ensure<string>(dao => dao.logoURI)
+    .required()
+    .withMessage(`${title} avatar is required`)
+    .satisfiesRule(new ImageUrl())
+    .satisfiesRule(new ImageSize(5000000))
+    .satisfiesRule(new ImageExtension(["JPG", "PNG", "GIF", "BMP"]))
+    .ensure("social_medias")
+    .required()
+    .maxItems(10)
+    .ensure("representatives")
+    .required()
+    .minItems(1)
+    .maxItems(5);

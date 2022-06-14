@@ -4,6 +4,7 @@ import { WizardStateKey } from "wizards/services/WizardService";
 import { bindable } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
+import { IValidationController } from "@aurelia/validation-html";
 
 @processContent(autoSlot)
 export class DaoStageContent {
@@ -16,13 +17,16 @@ export class DaoStageContent {
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 
+  constructor(@IValidationController private form: IValidationController) {
+  }
+
   addRepresentative() {
     this.data.representatives.push({address: ""});
   }
 
   removeRepresentative(index: number) {
     this.data.representatives.splice(index, 1);
-    // this.form.revalidateErrors(); // TODO check this method
+    this.form.revalidateErrors();
   }
 
   addSocialMedia() {
@@ -31,6 +35,6 @@ export class DaoStageContent {
 
   removeSocialMedia(index: number) {
     this.data.social_medias.splice(index, 1);
-    // this.form.revalidateErrors(); // TODO check this method
+    this.form.revalidateErrors();
   }
 }

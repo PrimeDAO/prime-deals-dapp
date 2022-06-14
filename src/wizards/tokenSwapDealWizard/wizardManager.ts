@@ -16,6 +16,9 @@ import { IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/route
 
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
+import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
 @processContent(autoSlot)
 export class WizardManager implements IRouteableComponent {
@@ -105,7 +108,10 @@ export class WizardManager implements IRouteableComponent {
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
+    presenter: PrimeErrorPresenter,
   ) {
+    this.form.addSubscriber(presenter);
   }
 
   public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
@@ -299,5 +305,11 @@ export class WizardManager implements IRouteableComponent {
     const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
     const isHidden = hiddenStage !== -1;
     return isHidden;
+  }
+
+  async validate() {
+    const result = await this.form.validate();
+    console.log("default validation result ->", this.form, result);
+    return result.valid;
   }
 }
