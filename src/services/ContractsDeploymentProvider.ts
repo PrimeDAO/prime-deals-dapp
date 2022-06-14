@@ -20,7 +20,7 @@ interface ISharedContractInfos {
 
 @inject()
 export class ContractsDeploymentProvider {
-
+  public static initialized = false;
   private static contractInfosJson: IContractInfosJson;
   private static sharedContractAbisJson: ISharedContractInfos;
 
@@ -36,6 +36,7 @@ export class ContractsDeploymentProvider {
       promises.push((import("../contracts/sharedAbis.json")).then(x => ContractsDeploymentProvider.sharedContractAbisJson = x.default));
     }
     await Promise.all(promises);
+    this.initialized = true;
   }
 
   public static getContractAbi(contractName: string): Array<any> {

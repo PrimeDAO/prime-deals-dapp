@@ -922,7 +922,7 @@ export class DealTokenSwap implements IDeal {
     //calculate claiming properties
     if (this.isExecuted){
       const totalAmount = BigNumber.from(token.amount);
-      // const instantTransferAmount = BigNumber.from(token.instantTransferAmount);
+      const instantTransferAmount = BigNumber.from(token.instantTransferAmount);
       await this.hydrateDaoClaims();
       const tokenClaimableAmounts = await this.getTokenClaimableAmounts(dao);
 
@@ -932,8 +932,8 @@ export class DealTokenSwap implements IDeal {
       } else {
         token.claimingClaimable = BigNumber.from(0);
       }
-      // token.claimingFee = DealService.getDealFee(totalAmount);
-      // token.claimingInstantTransferAmount = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
+      token.claimingFee = DealService.getDealFee(totalAmount);
+      token.claimingInstantTransferAmount = instantTransferAmount.sub(DealService.getDealFee(instantTransferAmount));
       token.claimingLocked = totalAmount.sub(token.claimingInstantTransferAmount.add(token.claimingClaimable).add(token.claimingClaimed).add(token.claimingFee));
       token.claimingPercentCompleted = toBigNumberJs(token.claimingClaimed.add(token.claimingFee).add(token.claimingInstantTransferAmount)).dividedBy(token.amount).toNumber() * 100;
     }
