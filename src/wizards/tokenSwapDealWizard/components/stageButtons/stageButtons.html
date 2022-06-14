@@ -1,0 +1,48 @@
+<template>
+  <div class="stageButtons">
+    <pbutton
+      click.delegate="wizardService.previous(wizardManager)"
+      data-test="wizard-previous-button"
+      type="secondary">
+      Previous
+    </pbutton>
+    <pbutton
+      click.delegate="proceed()"
+      data-test="wizard-proceed-button"
+      if.bind="!showSubmit"
+      is-loading.bind="validating"
+      type="primary">
+      Proceed
+    </pbutton>
+    <template if.bind="showSubmit">
+      <pbutton
+        click.delegate="onSubmit()"
+        data-test="wizard-submit-button"
+        if.bind="dataSourceDeals.isUserAuthenticated"
+        type="primary">
+        Submit
+      </pbutton>
+      <pbutton
+        click.delegate="connectToWallet()"
+        data-test="wizard-submit-button"
+        if.bind="!dataSourceDeals.isUserAuthenticated && !connectedAddress"
+        type="primary">
+        Connect to Submit
+      </pbutton>
+      <pbutton
+        click.delegate="authenticate()"
+        data-test="wizard-submit-button"
+        if.bind="!dataSourceDeals.isUserAuthenticated && connectedAddress"
+        type="primary">
+        Authenticate to Submit
+      </pbutton>
+    </template>
+    <pbutton
+      class="cancel"
+      click.delegate="wizardService.cancel(wizardManager)"
+      data-test="wizard-cancel-button"
+      type="tertiary">
+      Cancel
+    </pbutton>
+  </div>
+</template>

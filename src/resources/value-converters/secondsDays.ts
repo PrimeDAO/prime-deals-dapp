@@ -3,7 +3,7 @@ import { valueConverter } from "aurelia";
 /**
  * show days from seconds.  For best results, use: `& updateTrigger:'blur'`
  */
-@valueConverter("seconds-days")
+@valueConverter("secondsDays")
 export class SecondsDaysValueConverter {
 
   /**

@@ -1,0 +1,50 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <require from="./termClause/termClause"></require>
+  <stage-wrapper header="Terms" wizard-manager.bind="wizardManager">
+    <div class="stageSection">
+      <!-- Sidebar -->
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title" data-test="stageSectionSidebarTitle">
+          Deal Clauses
+        </h2>
+        <p class="sidebarText">
+          Provide all the important clauses of your proposal (max. 10). Please be specific and clear so that everyone
+          can understand the terms of the agreement between the parties involved. This document can serve as a single
+          source of truth for future reference.
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div class="stageSectionContent termsStageSectionContent">
+        <term-clause
+          hide-delete-button.bind="terms.clauses.length === 1"
+          clause.bind="clause"
+          repeat.for="clause of terms.clauses"
+          index.bind="$index"
+          on-delete.call="onDelete($index)"
+          on-saved.call="hasUnsavedChanges && checkedForUnsavedChanges()"
+          view-mode.bind="stageMetadata.termsViewModes[$index]"
+          view-model.ref="termClauses[$index]"
+        >
+        </term-clause>
+
+        <pbutton
+          class="addClauseButton"
+          click.delegate="addClause()"
+          data-test="addClauseButton"
+          if.bind="terms.clauses.length < 10"
+          type="primary">
+          Add Clause
+          <i class="fa fa-plus"></i>
+        </pbutton>
+
+        <p
+          class="feedbackMessage errorMessage ${ hasUnsavedChanges ? 'feedbackMessageVisible' : ''}"
+          data-test="errorMessage">
+          Please save all your clauses
+        </p>
+      </div>
+    </div>
+  </stage-wrapper>
+</template>

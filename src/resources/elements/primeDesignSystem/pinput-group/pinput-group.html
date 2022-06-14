@@ -1,17 +1,16 @@
-<div class="
+<template class="
     ${disabled ? 'disabled' : ''}
-    ${beforeSlot.length ? 'hasBeforeAddon' : ''}
-    ${afterSlot.length ? 'hasAfterAddon' : ''}
+    ${slotInfo.projectedSlots.includes('before') ? 'hasBeforeAddon' : ''}
+    ${slotInfo.projectedSlots.includes('after') ? 'hasAfterAddon' : ''}
   "
 >
-  <div class="addon" show.bind="beforeSlot">
-    <au-slot name="before"></au-slot>
+  <div class="addon" show.bind="slotInfo.projectedSlots.includes('before')">
+    <au-compose view.bind="before"></au-compose>
   </div>
 
   <au-slot></au-slot>
 
-  <div class="addon" show.bind="afterSlot">
+  <div class="addon" show.bind="slotInfo.projectedSlots.includes('after')">
     <au-slot name="after"></au-slot>
   </div>
-
-</div>
+</template>

@@ -3,46 +3,48 @@
     <!-- View -->
     <template class="cardEditing" if.bind="viewMode === 'view'">
       <span data-test="editingCardViewContent">
-        <template replaceable part="view">This part is replaceable.</template>
+        <au-slot name="view">This part is replaceable.</au-slot>
       </span>
 
       <div
-        data-test="cardFooter"
         class="cardFooter"
+        data-test="cardFooter"
       >
         <pbutton
-          click.trigger="edit()"
+          click.delegate="edit()"
           type="tertiary"
-        >Edit</pbutton>
+        >Edit
+        </pbutton>
       </div>
     </template>
 
     <!-- Edit -->
     <template class="cardEditing" if.bind="viewMode === 'edit'">
       <span data-test="editingCardEditContent">
-        <template replaceable part="edit">This part is replaceable.</template>
+        <au-slot name="edit">This part is replaceable.</au-slot>
       </span>
 
       <!-- Editing footer -->
       <div
-        data-test="cardFooter"
         class="cardFooter"
+        data-test="cardFooter"
       >
         <pbutton
-          if.bind="!hideDeleteButton"
-          class="deleteButton"
-          click.trigger="delete()"
-          type="tertiary"
           ref="deleteButtonRef"
+          class="deleteButton"
+          click.delegate="delete()"
+          if.bind="!hideDeleteButton"
+          type="tertiary"
         >
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
         <pbutton
-          click.trigger="save()"
+          click.delegate="save()"
           is-loading.bind="saving"
           type="primary"
-          >Save</pbutton
+        >Save
+        </pbutton
         >
       </div>
     </template>

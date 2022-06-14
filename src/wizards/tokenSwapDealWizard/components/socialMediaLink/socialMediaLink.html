@@ -1,0 +1,18 @@
+<template>
+  <pform-input input-reference.bind="select">
+    <pselect
+      data.bind="availableSocialMedias"
+      disabled.bind="disabled"
+      value.bind="socialMedia.name & validate:form"
+      view-model.ref="select">
+    </pselect>
+  </pform-input>
+  <pform-input input-reference.bind="input">
+    <pinput-text
+      disabled.bind="disabled"
+      placeholder="${socialMedia.name ? `Your ${socialMedia.name}` : 'Platform'} URL (https://...)"
+      value.bind="socialMedia.url & validate:form"
+      view-model.ref="input">
+    </pinput-text>
+  </pform-input>
+</template>

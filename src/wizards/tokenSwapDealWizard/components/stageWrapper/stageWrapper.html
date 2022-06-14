@@ -1,0 +1,17 @@
+<template>
+  <require from="../stageButtons/stageButtons"></require>
+  <div class="page animated-page wizardStage au-animate">
+    <div class="stageHeader">
+      <h1
+        class="heading heading1 gradient"
+        data-test="stageHeaderTitle">${header}</h1>
+    </div>
+    <div class="stageContent">
+      <au-slot></au-slot>
+    </div>
+    <stage-buttons
+      on-submit.bind="onSubmit"
+      wizard-manager.bind="wizardManager"
+    ></stage-buttons>
+  </div>
+</template>

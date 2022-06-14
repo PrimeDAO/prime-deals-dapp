@@ -18,3 +18,4 @@ export * from "./modalscreen/modalscreen";
 export * from "./numericInput/numericInput";
 export * from "./popupNotifications/popupNotifications";
 export * from "./primeDesignSystem";
+export * from "./editingCard/editingCard";

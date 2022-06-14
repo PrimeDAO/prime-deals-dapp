@@ -1,0 +1,143 @@
+<template>
+  <div class="daoNameAndLogo">
+    <div
+      class="daoAvatar"
+      data-test="dao-avatar"
+      style.bind="`background-image: url(${daoData.logoURI})`">
+      <i class="fas fa-image" if.bind="!daoData.logoURI"></i>
+    </div>
+    <h3>${daoData.name}</h3>
+  </div>
+
+  <div class="submitContentLabel-sm">Treasury address</div>
+  <div class="submitContent">
+    <p class="subtext">
+      <template if.bind="daoData.treasury_address">
+        <etherscanlink
+          address.bind="daoData.treasury_address"
+          text="${daoData.treasury_address | smallHexString}">
+        </etherscanlink>
+      </template>
+      <template else>-</template>
+    </p>
+  </div>
+
+  <div class="submitContentLabel-sm">External Links</div>
+  <div class="submitContent">
+    <template if.bind="!isEmptySocialMedia()">
+      <template repeat.for="socialMedia of daoData.social_medias">
+        <div>
+          <span class="subtext">${socialMedia.name}</span> -
+          <span class="subtext">${socialMedia.url}</span>
+        </div>
+      </template>
+    </template>
+    <template else>
+      <span class="optionalContent">[optional links not supplied]</span>
+    </template>
+  </div>
+
+  <div class="submitContentLabel-sm">Representatives</div>
+  <div class="submitContent">
+    <template repeat.for="representative of daoData.representatives">
+      <template if.bind="representative.address">
+        <p class="subtext">
+          <etherscanlink
+            address.bind="representative.address"
+            text="${representative.address | smallHexString}">
+          </etherscanlink>
+        </p>
+      </template>
+      <template else>-</template>
+    </template>
+  </div>
+
+  <div class="submitContentLabel-sm">Tokens</div>
+  <div class="submitDaoTokenCard">
+    <!-- <p class="subtext">TODO: use from Token Details stage</p> -->
+
+    <pcard if.bind="daoData.tokens.length > 0" repeat.for="token of daoData.tokens">
+      <div>
+        <p class="tokenName">
+          <img height="32" src.bind="token.logoURI"/>
+          ${token.name || '-'}
+        </p>
+        <div class="detailsTable detailsTableInViewMode">
+          <div class="detailsCell">
+            <p>Token address</p>
+            <p>
+              <etherscanlink
+                address.bind="token.address"
+                text="${token.address || '-' | smallHexString}">
+              </etherscanlink>
+            </p>
+          </div>
+
+          <div class="detailsCell detailsCellAmount">
+            <p>Amount tokens</p>
+            <p>
+              <formatted-number
+                if.bind="token.amount >= 0"
+                thousands-separated
+                value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
+              <template else> -</template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Instant transfer</p>
+            <p>
+              <formatted-number
+                if.bind="token.instantTransferAmount"
+                thousands-separated
+                value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
+              <template else> -</template>
+            </p>
+          </div>
+
+          <div class="detailsCell">
+            <p>Vested transfer</p>
+            <p>
+              <formatted-number
+                if.bind="token.vestedTransferAmount"
+                thousands-separated
+                value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
+              <template else> -</template>
+            </p>
+          </div>
+
+          <let token-vested-for-tooltip.bind="token.vestedFor | withCommas"></let>
+          <div class="detailsCell" ptooltip.bind="tokenVestedForTooltip + ' seconds'">
+            <p>Vested for</p>
+            <p>
+              <formatted-number
+                hide-tooltip
+                if.bind="token.vestedFor"
+                thousands-separated
+                value.to-view="token.vestedFor | secondsDays">
+              </formatted-number>
+              <template else>0</template>
+              days
+            </p>
+          </div>
+
+          <let token-cliff-of-tooltip.bind="token.cliffOf | withCommas"></let>
+          <div class="detailsCell" ptooltip.bind="tokenCliffOfTooltip + ' seconds'">
+            <p>Cliff of</p>
+            <p>
+              <formatted-number
+                hide-tooltip
+                if.bind="token.cliffOf"
+                thousands-separated
+                value.to-view="token.cliffOf | secondsDays">
+              </formatted-number>
+              <template else>0</template>
+              days
+            </p>
+          </div>
+        </div>
+      </div>
+    </pcard>
+    <p class="optionalContent" else>[optional token information not supplied]</p class="optionalContent">
+  </div>
+</template>

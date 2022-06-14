@@ -1,0 +1,128 @@
+<template>
+  <require from="../daoRepresentativeAddress/daoRepresentativeAddress"></require>
+  <require from="../socialMediaLink/socialMediaLink"></require>
+  <div class="stageSection" data-test="dao-details-section">
+    <div class="stageSectionSidebar">
+      <h2 class="sidebarHeader heading heading3 title" data-test="section-title">${name}</h2>
+      <p class="sidebarText" data-test="section-description">
+        <au-slot name="details-description"></au-slot>
+      </p>
+    </div>
+    <div class="stageSectionContent">
+      <pform-input
+        class="wizardFormInput wizardFormInputNarrow"
+        data-test="dao-name-field"
+        label.bind="name + ' Name'">
+        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"></pinput-text>
+      </pform-input>
+
+      <pform-input
+        class="wizardFormInput wizardFormInputNarrow"
+        data-test="dao-treasury-address-field"
+        helper-message.bind="daoTreasuryAddressInput.ens"
+        input-reference.bind="daoTreasuryAddressInput"
+        label-info="This address will receive tokens from the token swap"
+        label.bind="name +' Treasury Address'">
+        <form-address-input
+          disabled.bind="disabled"
+          value.bind="data.treasury_address | checksumAddress & validate"
+          view-model.ref="daoTreasuryAddressInput">
+        </form-address-input>
+      </pform-input>
+
+      <div class="daoStageAvatar" data-test="dao-avatar-section">
+        <pform-input
+          class="wizardFormInput wizardFormInputNarrow"
+          data-test="dao-avatar-field"
+          label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size"
+          label.bind="name + ' Avatar'">
+          <pinput-text
+            disabled.bind="disabled"
+            placeholder="Image URL..."
+            value.bind="data.logoURI & debounce:600 & validate">
+          </pinput-text>
+        </pform-input>
+        <div
+          class="daoAvatar"
+          data-test="dao-avatar"
+          style.bind="`background-image: url(${data.logoURI})`">
+          <i class="fas fa-image" if.bind="!data.logoURI"></i>
+        </div>
+      </div>
+
+      <div data-test="dao-social-media" if.bind="disabled && data.social_medias.length > 0 || !disabled">
+        <div class="multiFieldTitle">
+          External Links (optional)
+        </div>
+
+        <div
+          class="wizardFormInput daoSocialMedia"
+          data-test="dao-social-media-item"
+          repeat.for="socialMedia of data.social_medias">
+          <social-media-link
+            available-social-medias.bind=" availableSocialMedias"
+            data.bind="data"
+            disabled.bind="disabled"
+            form.bind="form"
+            social-media.bind="socialMedia">
+          </social-media-link>
+          <button
+            class="removeButton"
+            click.delegate="removeSocialMedia($index)"
+            data-test="remove-social-media"
+            if.bind="!disabled">
+            <i class="far fa-trash-alt"></i>
+          </button>
+        </div>
+        <button
+          class="addButton"
+          click.delegate="addSocialMedia()"
+          data-test="add-social-media"
+          if.bind="data.social_medias.length < 10 && !disabled">
+          + Add An External Link
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <div class="stageSection" data-test="dao-representatives-section">
+    <div class="stageSectionSidebar">
+      <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Select Representatives</h2>
+      <p class="sidebarText" data-test="section-description">
+        <au-slot name="representatives-description"></au-slot>
+      </p>
+    </div>
+    <div class="stageSectionContent">
+      <div class="multiFieldTitle">
+        ${name} - Representatives Addresses (Max. 5)
+      </div>
+      <div
+        class="wizardFormInput wizardFormInputNarrow daoRepresentative"
+        repeat.for="representative of data.representatives">
+        <dao-representative-address
+          id="${$index}"
+          data-test="dao-representatives-addresses-field"
+          data.bind="data"
+          disabled.bind="disabled"
+          form.bind="form"
+          representative.bind="representative"
+          wizard-manager.bind="wizardManager">
+        </dao-representative-address>
+        <button
+          class="removeButton"
+          click.delegate="removeRepresentative($index)"
+          data-test="remove-dao-representative"
+          if.bind="data.representatives.length > 1 && !disabled">
+          <i class="far fa-trash-alt"></i>
+        </button>
+      </div>
+      <button
+        class="addButton"
+        click.delegate="addRepresentative()"
+        data-test="add-dao-representative"
+        if.bind="data.representatives.length < 5 && !disabled">
+        + Additional representative
+      </button>
+    </div>
+  </div>
+</template>

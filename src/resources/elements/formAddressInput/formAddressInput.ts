@@ -1,8 +1,10 @@
-import { bindable, BindingMode, TaskQueue } from "aurelia";
-import { toBoolean } from "resources/binding-behaviours";
 import { ValidationState } from "resources/elements/primeDesignSystem/types";
 import { EnsService } from "services/EnsService";
 import { Utils } from "services/utils";
+import "./formAddressInput.scss";
+import { bindable, BindingMode, inject, PLATFORM } from "aurelia";
+import { toBoolean } from "../../binding-behaviours";
+
 /**
  * an input that allows entry of either ENS or address.  If an ENS is entered,
  * then it converts to the address and displays that in the input and
@@ -11,23 +13,23 @@ import { Utils } from "services/utils";
  * will always be return as the address.
  * The ens will be output using the `ens` bindable propery.
  */
+@inject()
 export class FormAddressInput {
-  @bindable({set: toBoolean, type: Boolean }) disabled = false;
+  @bindable({set: toBoolean, type: Boolean}) disabled = false;
   @bindable({mode: BindingMode.twoWay}) value: string;
-  @bindable label;
-  @bindable labelInfo;
-  @bindable labelDescription;
-  @bindable({set: toBoolean, type: Boolean }) showCounter;
-  @bindable maxLength;
+  @bindable label: string;
+  @bindable labelInfo: string;
+  @bindable labelDescription: string;
+  @bindable({set: toBoolean, type: Boolean}) showCounter: boolean;
+  @bindable maxLength: number;
   @bindable validationMessage;
   @bindable validationState?: ValidationState;
-  @bindable({ mode: BindingMode.twoWay }) ens = "";
+  @bindable({mode: BindingMode.twoWay}) ens = "";
 
   ignoreNewValue = false;
 
   constructor(
     private ensService: EnsService,
-    private taskQueue: TaskQueue,
   ) {
   }
 
@@ -35,7 +37,7 @@ export class FormAddressInput {
     if (!this.ignoreNewValue) {
       if (newValue?.trim().length) {
         this.ens = "Searching for ENS...";
-        this.taskQueue.queueTask(async () => {
+        PLATFORM.taskQueue.queueTask(async () => {
           if (Utils.isAddress(newValue)) {
             this.ens = (await this.ensService.getEnsForAddress(newValue)) ?? "";
           } else {

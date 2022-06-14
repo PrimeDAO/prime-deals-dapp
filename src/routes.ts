@@ -2,6 +2,7 @@ import { Funding } from "./funding/funding";
 import { Documentation } from "./documentation/documentation";
 import { Initiate } from "./initiate/initiate";
 import { IRoute } from "@aurelia/router";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Home } from "./home/home";
 import { Deals } from "deals/list/deals";
 import { DealDashboard } from "./dealDashboard/dealDashboard";
@@ -51,7 +52,7 @@ export const routes: IRoute[] = [
   {
     component: import("./documentation/officialDocs/termsOfService.html"),
     id: "termsOfService",
-    path: ["terms-of-service"],
+    path: "terms-of-service",
     title: "Terms of Service",
   },
   {
@@ -65,5 +66,14 @@ export const routes: IRoute[] = [
     id: "playground",
     path: ["playground"],
     title: "Playground",
+  },
+  {
+    path: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
+    id: "openProposal",
+    title: "Open Proposal",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    parameters: {
+      wizardType: WizardType.createOpenProposal,
+    },
   },
 ];
