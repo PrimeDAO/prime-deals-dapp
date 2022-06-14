@@ -26,7 +26,7 @@
           label-info="Give a clear title to your proposal"
           max-length="60"
           show-counter>
-          <pinput-text value.bind="proposal.title & validate"></pinput-text>
+          <pinput-text value.bind="proposal.title & validate" max="60"></pinput-text>
         </pform-input>
 
         <pform-input
@@ -36,7 +36,7 @@
           label-info="Give a brief outline of the Token Swap deal"
           max-length="350"
           show-counter>
-          <ptextarea rows="7" value.bind="proposal.summary & validate"></ptextarea>
+          <ptextarea rows="7" value.bind="proposal.summary & validate" max="350"></ptextarea>
         </pform-input>
 
         <pform-input
@@ -47,7 +47,7 @@
           max-length="3000"
           show-counter>
           <ptextarea rows="7"
-            value.bind="proposal.description & validate"></ptextarea>
+            value.bind="proposal.description & validate" max="3000"></ptextarea>
         </pform-input>
       </div>
     </div>
