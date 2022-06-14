@@ -1,4 +1,3 @@
-import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { StandardConfiguration } from "@aurelia/runtime-html";
 import { ValidationHtmlConfiguration, ValidationTrigger } from "@aurelia/validation-html";
 import Aurelia, { DialogDefaultConfiguration } from "aurelia";
@@ -16,6 +15,7 @@ new Aurelia()
   .register(RouterConfiguration.customize({
     useUrlFragmentHash: false,
     useHref: false,
+    title: "${componentTitles}${appTitleSeparator}Prime Deals",
   }))
   .register(ValidationHtmlConfiguration.customize((options) => {
     options.DefaultTrigger = ValidationTrigger.changeOrFocusout;
