@@ -208,7 +208,7 @@ export class TokenDetails {
       .ensure("logoURI")
       .required()
       .withMessage("Logo image is required")
-      .satisfiesRule(new ImageUrl()) // TODO add rules back
+      .satisfiesRule(new ImageUrl())
       .satisfiesRule(new ImageSize(5000000))
       .satisfiesRule(new ImageExtension(["JPG", "PNG", "GIF", "BMP"]))
       .ensure<string>(data => data.instantTransferAmount)

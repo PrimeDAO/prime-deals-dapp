@@ -68,12 +68,48 @@ export const routes: IRoute[] = [
     title: "Playground",
   },
   {
-    path: `/initiate/token-swap/open-proposal/*${STAGE_ROUTE_PARAMETER}`,
-    id: "openProposal",
-    title: "Open Proposal",
+    path: `/initiate/token-swap/open-proposal/:${STAGE_ROUTE_PARAMETER}`,
+    id: "initiate/token-swap/open-proposal",
+    title: "Create an Open Proposal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
     parameters: {
       wizardType: WizardType.createOpenProposal,
+    },
+  },
+  {
+    path: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
+    id: "createPartneredDeal",
+    title: "Create a Partnered Deal",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    parameters: {
+      wizardType: WizardType.createPartneredDeal,
+    },
+  },
+  {
+    path: `/initiate/token-swap/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
+    id: "makeOfferWizard",
+    title: "Make an offer",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    parameters: {
+      wizardType: WizardType.makeAnOffer,
+    },
+  },
+  {
+    path: `/initiate/token-swap/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+    id: "editOpenProposal",
+    title: "Edit an Open Proposal",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    parameters: {
+      wizardType: WizardType.editOpenProposal,
+    },
+  },
+  {
+    path: `/initiate/token-swap/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+    id: "editPartneredDeal",
+    title: "Edit a Partnered Deal",
+    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    parameters: {
+      wizardType: WizardType.editPartneredDeal,
     },
   },
 ];

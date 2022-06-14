@@ -9,6 +9,8 @@ import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
 import { areFormsValid } from "../../../../services/ValidationService";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
@@ -29,7 +31,7 @@ export class TokenDetailsStage {
 
   constructor(
     private wizardService: WizardService,
-    // @IValidationController private form: IValidationController,
+    @newInstanceForScope(IValidationController) private form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
@@ -70,12 +72,10 @@ export class TokenDetailsStage {
       .min(0)
       .withMessage("Funding Period should be greater or equal to zero");
 
-    // this.form = this.wizardService.registerValidationRules(
-
-    //   this.wizardManager,
-    //   this.wizardState.registrationData,
-    //   validationRules,
-    // );
+    this.wizardService.registerForm(
+      this.wizardManager,
+      this.form,
+    );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
       const primaryTokensForms = this.primaryDAOTokenDetails.map(viewModel => viewModel.form);
@@ -85,21 +85,15 @@ export class TokenDetailsStage {
 
       this.checkedForUnsavedChanges();
 
-      // return this.form.validate() // TODO add this back
-      //   .then(async (result) => result.valid &&
-      //     this.hasValidPrimaryDAOTokensDetailsCount &&
-      //     !this.hasUnsavedChangesForPrimaryDetails &&
-      //     !this.hasUnsavedChangesForPartnerDetails &&
-      //     this.hasValidPartnerDAOTokensDetailsCount &&
-      //     primaryTokensValid &&
-      //     (this.isOpenProposalWizard ? true : partnerTokensValid),
-      //   );
-      return this.hasValidPrimaryDAOTokensDetailsCount &&
-        !this.hasUnsavedChangesForPrimaryDetails &&
-        !this.hasUnsavedChangesForPartnerDetails &&
-        this.hasValidPartnerDAOTokensDetailsCount &&
-        primaryTokensValid &&
-        (this.isOpenProposalWizard ? true : partnerTokensValid);
+      return this.form.validate()
+        .then(async (result) => result.valid &&
+          this.hasValidPrimaryDAOTokensDetailsCount &&
+          !this.hasUnsavedChangesForPrimaryDetails &&
+          !this.hasUnsavedChangesForPartnerDetails &&
+          this.hasValidPartnerDAOTokensDetailsCount &&
+          primaryTokensValid &&
+          (this.isOpenProposalWizard ? true : partnerTokensValid),
+        );
     });
   }
 

@@ -117,7 +117,8 @@ export class WizardService {
      * This will set valid state to undefined when the validate function is not uninitialized.
      * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
      */
-    wizardState.stages[currentIndexOfActive].valid = await wizardState.stages[currentIndexOfActive].validate?.();
+    const stage = wizardState.stages[currentIndexOfActive];
+    stage.valid = await stage.validate?.() ?? await wizardStateKey.validate();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");

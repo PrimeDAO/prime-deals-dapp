@@ -26,12 +26,6 @@ export class PartnerDaoStage implements IBaseWizardStage {
 
     this.partnerDao = this.wizardState.registrationData.primaryDAO;
     daoStageValidationRules(this.partnerDao, this.validationRules, "Partner DAO", this.wizardState.registrationData.primaryDAO);
-
-    // this.form = this.wizardService.registerValidationRules( // TODO add this back?
-    //   this.wizardManager,
-    //   this.wizardState.registrationData.partnerDAO,
-    //   validationRules,
-    // );
   }
 
   getIsPartneredDeal(wizardType: WizardType) {

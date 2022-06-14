@@ -6,6 +6,7 @@ import { IDisposable, IEventAggregator } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
+import { IsEmail, IsEthAddress } from "../../../../resources/validation-rules";
 
 @processContent(autoSlot)
 export class LeadDetailsStage {
@@ -58,12 +59,11 @@ export class LeadDetailsStage {
       .ensure("address")
       .required()
       .withMessage("Wallet address is required")
-      // .satisfiesRule(Validation.isEthAddress) // TODO add rules back
+      .satisfiesRule(new IsEthAddress())
       .ensure("email")
-      .required();
-    // .satisfiesRule(Validation.email)
-    // .rules;
-    //
+      .required()
+      .satisfiesRule(new IsEmail());
+
     // this.form = this.wizardService.registerValidationRules(
     //   this.wizardManager,
     //   this.wizardState.registrationData.proposalLead,
