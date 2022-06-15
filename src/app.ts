@@ -215,7 +215,7 @@ export class App implements IRouteableComponent {
           this.router.activeComponents[0].route.matching,
         ),
       );
-      window.scrollTo(...position.split(",").map(x => parseInt(x, 10)));
+      window.scrollTo(...position?.split(",").map(x => parseInt(x, 10)) || [0, 0]);
     }
     this.showingMobileMenu = false;
   }
