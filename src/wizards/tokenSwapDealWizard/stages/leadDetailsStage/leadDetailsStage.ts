@@ -2,7 +2,7 @@ import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { EthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
-import { IDisposable, IEventAggregator } from "aurelia";
+import { IContainer, IDisposable, IEventAggregator } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
@@ -20,6 +20,7 @@ export class LeadDetailsStage {
 
   constructor(
     public wizardService: WizardService,
+    @IContainer private container: IContainer,
     private ethereumService: EthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
@@ -46,8 +47,8 @@ export class LeadDetailsStage {
     this.accountSubscription.dispose();
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta): void {
+    this.wizardManager = this.container.get("wiz");
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
 

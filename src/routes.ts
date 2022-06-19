@@ -2,7 +2,7 @@ import { Funding } from "./funding/funding";
 import { Documentation } from "./documentation/documentation";
 import { Initiate } from "./initiate/initiate";
 import { IRoute } from "@aurelia/router";
-import { STAGE_ROUTE_PARAMETER, WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
+import { WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Home } from "./home/home";
 import { Deals } from "deals/list/deals";
 import { DealDashboard } from "./dealDashboard/dealDashboard";
@@ -67,9 +67,10 @@ export const routes: IRoute[] = [
     path: ["playground"],
     title: "Playground",
   },
+
   {
-    path: `/initiate/token-swap/open-proposal/:${STAGE_ROUTE_PARAMETER}`,
-    id: "initiate/token-swap/open-proposal",
+    path: "/initiate/token-swap/open-prop", // TODO rename "prop" into "proposal" and make the route work
+    id: "createOpenProposal",
     title: "Create an Open Proposal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
     parameters: {
@@ -77,7 +78,7 @@ export const routes: IRoute[] = [
     },
   },
   {
-    path: `/initiate/token-swap/partnered-deal/*${STAGE_ROUTE_PARAMETER}`,
+    path: "/initiate/token-swap/partnered-deal",
     id: "createPartneredDeal",
     title: "Create a Partnered Deal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
@@ -86,7 +87,7 @@ export const routes: IRoute[] = [
     },
   },
   {
-    path: `/initiate/token-swap/make-an-offer/:id/*${STAGE_ROUTE_PARAMETER}`,
+    path: "make-an-offer/:id",
     id: "makeOfferWizard",
     title: "Make an offer",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
@@ -95,7 +96,7 @@ export const routes: IRoute[] = [
     },
   },
   {
-    path: `/initiate/token-swap/open-proposal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+    path: "open-proposal/:id/edit",
     id: "editOpenProposal",
     title: "Edit an Open Proposal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),
@@ -104,7 +105,7 @@ export const routes: IRoute[] = [
     },
   },
   {
-    path: `/initiate/token-swap/partnered-deal/:id/edit/*${STAGE_ROUTE_PARAMETER}`,
+    path: "partnered-deal/:id/edit",
     id: "editPartneredDeal",
     title: "Edit a Partnered Deal",
     component: import("./wizards/tokenSwapDealWizard/wizardManager"),

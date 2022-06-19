@@ -1,7 +1,7 @@
-import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
+import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
-import { inject } from "aurelia";
+import { IContainer, inject } from "aurelia";
 import { IValidationRules } from "@aurelia/validation";
 
 @inject()
@@ -13,12 +13,13 @@ export class ProposalStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
+    @IContainer private container: IContainer,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(): void {
+    this.wizardManager = this.container.get("wiz");
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.proposal = this.wizardState.registrationData.proposal;
 

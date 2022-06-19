@@ -209,7 +209,7 @@ export class App implements IRouteableComponent {
 
   @watch<App>(x => x.router.isNavigating)
   onNavigate(): void {
-    if (this.router.activeComponents[0]) {
+    if (this.router.activeComponents[0]?.route) {
       const position = this.storageService.ssGet(
         this.getScrollStateKey(
           this.router.activeComponents[0].route.matching,

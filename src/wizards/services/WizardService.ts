@@ -1,7 +1,6 @@
 import { IValidationController } from "@aurelia/validation-html";
 import { IEventAggregator, inject } from "aurelia";
 import { IRouter } from "@aurelia/router";
-import { Constructable } from "@aurelia/kernel";
 import { WizardManager } from "../tokenSwapDealWizard/wizardManager";
 import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 
@@ -16,10 +15,9 @@ export interface IWizardState<Data = any> {
 export type WizardErrors<Model> = Partial<Record<keyof Model, string>>;
 
 export interface IWizardStage {
-  name: string;
+  name?: string;
   valid: boolean;
   route: string;
-  moduleId: Promise<Constructable>
   hidden?: boolean;
   form?: IValidationController;
   validate?: () => Promise<boolean> | boolean;
@@ -158,10 +156,16 @@ export class WizardService {
     //   [STAGE_ROUTE_PARAMETER]: wizardState.stages[destIndex].route,
     // };
 
-    this.router.load(
-      // this.router.currentInstruction.config.name,
-      `/initiate/token-swap/open-proposal/${wizardState.stages[destIndex].route}`,
-    );
+    this.router.load(wizardState.stages[destIndex].route, {
+      origin: wizardStateKey,
+      query: "",
+      parameters: {
+        settings: wizardStateKey.additionalStageMetadata,
+      },
+    });
+    // this.router.currentInstruction.config.name,
+    // `/initiate/token-swap/open-proposal/${wizardState.stages[destIndex].route}`,
+    // );
 
     /**
      * restore validation feedbacks if they were previously computed.

@@ -5,7 +5,7 @@ import { IClause, IDealRegistrationTokenSwap, ITerms } from "entities/DealRegist
 import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
-import { inject } from "aurelia";
+import { IContainer, inject } from "aurelia";
 import { areFormsValid } from "../../../../services/ValidationService";
 
 @inject()
@@ -21,14 +21,15 @@ export class TermsStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
+    @IContainer private container: IContainer,
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta): void {
+    this.wizardManager = this.container.get("wiz");
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
-    this.stageMetadata = stageMeta.settings;
+    this.stageMetadata = stageMeta.settings ?? {};
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.terms = this.wizardState.registrationData.terms;

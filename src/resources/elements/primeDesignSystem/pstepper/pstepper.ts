@@ -7,7 +7,7 @@ export class PStepper {
   @bindable indexOfActive: number;
   @bindable onClick: (index: number) => void;
 
-  bind() {
+  binding() {
     this.steps = this.steps.filter(step => !step.hidden);
   }
 }

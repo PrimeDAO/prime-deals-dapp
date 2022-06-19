@@ -56,7 +56,7 @@ module.exports = function (env, { analyze, tests }) {
   return {
     target: 'web',
     mode: production ? 'production' : 'development',
-    devtool: production ? undefined : 'eval-cheap-source-map', // TODO make sourcemaps work
+    devtool: production ? undefined : 'inline-source-map', // TODO make sourcemaps work
     entry: {
       entry: './src/main.ts'
     },
