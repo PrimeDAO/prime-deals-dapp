@@ -3,6 +3,23 @@ on:
   push:
     branches: [ development, staging, staging-mainnet, master ]
 jobs:
+  Get_environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get environment
+        id: branch_check
+        run: |
+          echo "Running on branch ${{ github.ref }}"
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "::set-output name=env_name::Production"
+          else
+              echo "::set-output name=env_name::Preview"
+          fi
+      - name: Use variable setup in previous step
+        run: echo "I'm using variable ${{ steps.branch_check.outputs.env_name }}"
+    outputs:
+      env_name: ${{ steps.branch_check.outputs.env_name }}
+
   Deploy_firebase:
     runs-on: ubuntu-latest
     environment: Production
@@ -20,5 +37,6 @@ jobs:
         cd firebaseFunctions
         touch .env
         echo "RIVET_ID=${{ secrets.RIVET_ID }}" >> .env
+
     - name: Deploy firebase
       run: npm run firebase-deploy:${GITHUB_REF_NAME} -- --token ${{ secrets.FIREBASE_TOKEN }}
