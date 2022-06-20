@@ -20,4 +20,4 @@ jobs:
         touch .env
         echo "RIVET_ID=${{ secrets.RIVET_ID }}" >> .env
     - name: Deploy firebase
-      run: npm run firebase-deploy:${GITHUB_REF_NAME} -- --token ${{ secrets.FIREBASE_TOKEN }}
+      run: npm run firebase-deploy:${GITHUB_REF_NAME} -- --token ${{ secrets.FIREBASE_PRODUCTION_TOKEN }}
