@@ -35,7 +35,6 @@ export class DialogService {
         // not sure if this always gets called
         (error: string) => {
           this.consoleLogService.logMessage(error, "error");
-          // return {output: error, wasCancelled: false};
           return {value: error, status: DialogDeactivationStatuses.Error}; // TODO update other components to use status instead of `wasCancelled`
         },
       );

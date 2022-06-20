@@ -1,8 +1,8 @@
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
-import { EthereumService } from "../../../../services/EthereumService";
+import { IEthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
-import { IContainer, IDisposable, IEventAggregator } from "aurelia";
+import { IDisposable, IEventAggregator } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
@@ -20,19 +20,17 @@ export class LeadDetailsStage {
 
   constructor(
     public wizardService: WizardService,
-    @IContainer private container: IContainer,
-    private ethereumService: EthereumService,
+    @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
-  // @computedFrom("wizardState.registrationData.keepAdminRights", "isMakeAnOfferWizard")// TODO check if this works
   get isMakeAnOfferWizardAndKeepsAdminRights() {
     return this.wizardState.registrationData.keepAdminRights && this.isMakeAnOfferWizard;
   }
 
-  attached(): void {
+  attaching(): void {
     this.ethAddress = this.ethereumService.defaultAccountAddress;
     this.accountSubscription = this.eventAggregator.subscribe("Network.Changed.Account", (address: string) => {
       this.ethAddress = address;
@@ -48,7 +46,7 @@ export class LeadDetailsStage {
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.container.get("wiz");
+    this.wizardManager = this.wizardService.currentWizard;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
 

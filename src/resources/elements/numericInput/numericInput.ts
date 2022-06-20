@@ -8,9 +8,9 @@ import { toBoolean } from "resources/binding-behaviours";
 
 export class NumericInput {
 
-  @bindable({set: toBoolean, type: Boolean }) public decimal = true;
+  @bindable({set: toBoolean, type: Boolean}) public decimal = true;
   @bindable public css?: string;
-  @bindable({ mode: BindingMode.oneTime }) public id?: string;
+  @bindable({mode: BindingMode.oneTime}) public id?: string;
   /**
    * what to display when there is no value
    */
@@ -19,24 +19,24 @@ export class NumericInput {
    * handle should return falsey to accept the key.  Only fired on key strokes that have
    * already passed the default character filter.
    */
-  @bindable public handleChange: ({ keyCode: number }) => boolean;
+  @bindable public handleChange: ({keyCode: number}) => boolean;
   @bindable public autocomplete = "off";
-  @bindable({set: toBoolean, type: Boolean }) public disabled;
+  @bindable({set: toBoolean, type: Boolean}) public disabled;
   /**
    * Assumed to be in Wei and will be converted to ETH for the user and back to Wei for parent component.
    * Else value us set to  whatever string the user types.
    * If nothing is entered, then value is set to `defaultText`.
    */
-  @bindable({ mode: BindingMode.twoWay }) public value: number | BigNumber | string;
+  @bindable({mode: BindingMode.twoWay}) public value: number | BigNumber | string;
   /**
    * if true then value is converted from wei to eth for editing
    */
-  @bindable({set: toBoolean, type: Boolean }) public notWei?: boolean = false;
+  @bindable({set: toBoolean, type: Boolean}) public notWei?: boolean = false;
   /**
    * if isWei, then the number of decimals involved in the conversion
    */
-  @bindable public decimals?:number;
-  @bindable({set: toBoolean, type: Boolean }) public outputAsString?: boolean = false;
+  @bindable public decimals?: number;
+  @bindable({set: toBoolean, type: Boolean}) public outputAsString?: boolean = false;
   @bindable public placeholder = "";
 
   private element: HTMLInputElement;
@@ -55,7 +55,7 @@ export class NumericInput {
      * update value from input control
      */
     if ((newValue === null) || (typeof newValue === "undefined") ||
-        ((typeof newValue === "string") && newValue.trim() === "")) {
+      ((typeof newValue === "string") && newValue.trim() === "")) {
       this.value = undefined;
     } else {
       // assuming here that the input element will always give us a string
@@ -83,6 +83,10 @@ export class NumericInput {
     private consoleLogService: ConsoleLogService) {
   }
 
+  binding() {
+    this.updateValue(this.value);
+  }
+
   private decimalsChanged() {
     this.valueChanged(this.value, null);
   }
@@ -91,8 +95,7 @@ export class NumericInput {
     this.valueChanged(this.value, "");
   }
 
-  private valueChanged(newValue: string | BigNumber | number, oldValue: string | BigNumber | number) {
-
+  updateValue(newValue: string | BigNumber | number, oldValue?: string | BigNumber | number) {
     if (this.ignoreValueChanged) {
       this.ignoreValueChanged = false;
       return;
@@ -121,14 +124,22 @@ export class NumericInput {
   }
 
   public attached(): void {
-    this.element.addEventListener("keydown", (e) => { this.keydown(e); });
+    this.element.addEventListener("keydown", (e) => {
+      this.keydown(e);
+    });
     // this.hydrateFromDefaultValue();
   }
 
   public detached(): void {
     if (this.element) {
-      this.element.removeEventListener("keydown", (e) => { this.keydown(e); });
+      this.element.removeEventListener("keydown", (e) => {
+        this.keydown(e);
+      });
     }
+  }
+
+  private valueChanged(newValue: string | BigNumber | number, oldValue: string | BigNumber | number) {
+    this.updateValue(newValue, oldValue);
   }
 
   // http://stackoverflow.com/a/995193/725866
@@ -145,7 +156,7 @@ export class NumericInput {
        */
       if ((this.decimal && (e.key === ".") &&
         (!currentValue || !currentValue.length || (currentValue.indexOf(".") === -1)))) {
-        returnValue =true;
+        returnValue = true;
       }
     }
     return returnValue;
@@ -160,7 +171,7 @@ export class NumericInput {
       }
     }
     if (this.handleChange) {
-      if (this.handleChange({ keyCode: e.keyCode })) {
+      if (this.handleChange({keyCode: e.keyCode})) {
         e.preventDefault();
       }
     }

@@ -29,6 +29,8 @@ export type WizardStateKey = WizardManager
 export class WizardService {
   private wizardsStates = new Map<WizardStateKey, IWizardState>();
 
+  public currentWizard?: WizardManager;
+
   constructor(
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
@@ -37,7 +39,7 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-    wizardStateKey,
+                                 wizardStateKey,
     stages,
     registrationData,
     cancelRoute,

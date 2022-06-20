@@ -4,7 +4,6 @@ import { daoStageValidationRules, IBaseWizardStage, IStageMeta, WizardType } fro
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
-import { IContainer } from "aurelia";
 
 @processContent(autoSlot)
 export class PrimaryDaoStage implements IBaseWizardStage {
@@ -16,13 +15,12 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
-    @IContainer private container: IContainer,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.container.get("wiz");
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
     this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
