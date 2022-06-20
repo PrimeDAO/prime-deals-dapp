@@ -19,8 +19,8 @@ export class PartnerDaoStage implements IBaseWizardStage {
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta): void {
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
 

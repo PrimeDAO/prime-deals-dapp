@@ -13,13 +13,14 @@ import { newInstanceForScope } from "@aurelia/kernel";
 import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../../../resources/validation-rules";
 import { ValidationService } from "../../../../services/ValidationService";
+import { ViewMode } from "../../../../resources";
 
 @inject()
 export class TokenDetails {
   @bindable token: IToken;
   @bindable wizardType: WizardType;
   @bindable({mode: BindingMode.fromView}) onDelete: () => void;
-  @bindable({mode: BindingMode.twoWay}) viewMode: "edit" | "view" = "edit";
+  @bindable({mode: BindingMode.twoWay}) viewMode: ViewMode = "edit";
   @bindable hideDeleteButton: boolean;
   @bindable onSaved?: () => void;
 

@@ -36,20 +36,18 @@ export class TokenDetailsStage {
   ) {
   }
 
-  // @computedFrom("isOpenProposalWizard", "wizardState.registrationData.primaryDAO.tokens.length")
   get hasValidPrimaryDAOTokensDetailsCount(): boolean {
     return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
   }
 
-  // @computedFrom("isOpenProposalWizard", "wizardState.registrationData.partnerDAO.tokens.length")
   get hasValidPartnerDAOTokensDetailsCount(): boolean {
     return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.partnerDAO?.tokens.length) : true;
   }
 
-  activate(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.stageMetadata = stageMeta.settings;
+    this.stageMetadata = stageMeta.settings ?? {};
 
     this.wizardType = stageMeta.wizardType;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
@@ -71,11 +69,6 @@ export class TokenDetailsStage {
       .withMessage("Funding Period is required")
       .min(0)
       .withMessage("Funding Period should be greater or equal to zero");
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
 
     this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
       const primaryTokensForms = this.primaryDAOTokenDetails.map(viewModel => viewModel.form);

@@ -106,7 +106,7 @@
           <pinput-group>
             <pinput-numeric
               not-wei
-              value.bind="registrationData.fundingPeriod | defined | secondsDays & validate:form"
+              value.bind="registrationData.fundingPeriod | defined | secondsDays & validate"
               view-model.ref="fundingPeriodInput"></pinput-numeric>
             <template au-slot="after">days</template>
           </pinput-group>

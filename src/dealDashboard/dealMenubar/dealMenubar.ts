@@ -1,12 +1,14 @@
 import { bindable, DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { AlertService } from "../../services/AlertService";
+import { IRouter } from "@aurelia/router";
 
 export class DealMenubar {
   @bindable deal: DealTokenSwap;
 
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
+    @IRouter private router: IRouter,
     private alertService: AlertService,
   ) {
   }
@@ -50,6 +52,11 @@ export class DealMenubar {
     } finally {
       this.eventAggregator.publish("deal.cancelling", false);
     }
+  }
+
+  edit() {
+    const type = this.deal.isOpenProposal ? "open-proposal" : "partnered-deal";
+    this.router.load(`${type}/${this.deal.id}/edit`);
   }
 
 }

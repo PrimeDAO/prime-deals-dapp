@@ -7,13 +7,8 @@
         on-click.call="onStepperClick($event)"
         steps.bind="wizardState.stages">
       </pstepper>
-      <div>
-        <au-compose
-          if.bind="viewModel && stageMeta"
-          model.bind="stageMeta"
-          view-model.bind="viewModel"
-        ></au-compose>
-      </div>
+
+      <au-viewport default="" viewport="stages"></au-viewport>
     </div>
   </div>
 </template>

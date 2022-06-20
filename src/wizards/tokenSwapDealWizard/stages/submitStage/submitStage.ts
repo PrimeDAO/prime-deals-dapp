@@ -8,7 +8,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 import { Utils } from "services/utils";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
-import { IEventAggregator } from "aurelia";
+import { IContainer, IEventAggregator } from "aurelia";
 import { IRouter } from "@aurelia/router";
 
 @processContent(autoSlot)
@@ -25,11 +25,12 @@ export class SubmitStage {
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dealService: DealService,
     @IRouter private router: IRouter,
+    @IContainer private container: IContainer,
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta): void {
+    this.wizardManager = this.container.get<WizardManager>("WizardManager");
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);

@@ -5,27 +5,19 @@ import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { WizardManager } from "./wizardManager";
 import { IValidationRules } from "@aurelia/validation";
 import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../resources/validation-rules";
-import { RoutingInstruction } from "@aurelia/router";
 
 export enum WizardType {createOpenProposal, editOpenProposal, createPartneredDeal, editPartneredDeal, makeAnOffer}
-
-export const WizardTypes = [
-  {
-    type: WizardType.createOpenProposal,
-    condition: (instruction: RoutingInstruction) => instruction.parameters.parametersRecord.wizardType === "open-proposal",
-  },
-];
 
 export interface IBaseWizardStage {
   wizardManager: any;
   wizardState: IWizardState;
-  activate;
+  load;
 }
 
 export interface IStageMeta<Settings = any> {
-  wizardManager: WizardManager;
+  wizardManager: WizardManager; // TODO remove this
   wizardType: WizardType;
-  settings: Settings
+  settings?: Settings
 }
 
 export const availableSocialMedias = [

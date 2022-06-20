@@ -1,5 +1,5 @@
 <template data-test="tokenDetails">
-  <pcard>
+  <pcard validation-errors.from-view="errors">
     <div if.bind="viewMode === 'edit'">
 
       <pform-input
@@ -193,7 +193,7 @@
       </div>
 
       <div class="tokenDetailsFooter">
-        <p class="feedbackMessage ${!valid ? 'feedbackMessageVisible' : ''} errorMessage">
+        <p class="feedbackMessage ${!errors.length ? 'feedbackMessageVisible' : ''} errorMessage">
           Token details has invalid information. Please edit them.
         </p>
         <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>

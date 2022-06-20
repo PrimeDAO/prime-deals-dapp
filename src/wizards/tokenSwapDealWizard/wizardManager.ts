@@ -6,32 +6,83 @@ import {
   emptyDaoDetails,
   IDealRegistrationTokenSwap,
 } from "entities/DealRegistrationTokenSwap";
-import { IStageMeta, STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
+import { STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
 import { Address, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
-import { IEventAggregator } from "aurelia";
-import { IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
+import { IContainer, IEventAggregator } from "aurelia";
+import { IRoute, IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
 
-import { processContent } from "@aurelia/runtime-html";
+import { processContent, watch } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import { ProposalStage } from "./stages/proposalStage/proposalStage";
+import { LeadDetailsStage } from "./stages/leadDetailsStage/leadDetailsStage";
+import { PrimaryDaoStage } from "./stages/primaryDaoStage/primaryDaoStage";
+import { PartnerDaoStage } from "./stages/partnerDaoStage/partnerDaoStage";
+import { TokenDetailsStage } from "./stages/tokenDetailsStage/tokenDetailsStage";
+import { TermsStage } from "./stages/termsStage/termsStage";
+import { SubmitStage } from "./stages/submitStage/submitStage";
 
 @processContent(autoSlot)
 export class WizardManager implements IRouteableComponent {
+  static routes: IRoute[] = [
+    {
+      path: "",
+      title: "Proposal",
+      viewport: "stages",
+      component: ProposalStage,
+    },
+    {
+      path: "lead-details",
+      title: "Lead Details",
+      viewport: "stages",
+      component: LeadDetailsStage,
+    },
+    {
+      path: "primary-dao",
+      title: "Primary DAO",
+      viewport: "stages",
+      component: PrimaryDaoStage,
+    },
+    {
+      path: "partner-dao",
+      title: "Partner DAO",
+      viewport: "stages",
+      component: PartnerDaoStage,
+    },
+    {
+      path: "token-details",
+      title: "Token Details",
+      viewport: "stages",
+      component: TokenDetailsStage,
+    },
+    {
+      path: "terms",
+      title: "Terms",
+      viewport: "stages",
+      component: TermsStage,
+    },
+    {
+      path: "submit",
+      title: "Submit",
+      viewport: "stages",
+      component: SubmitStage,
+    },
+  ];
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
   // a meta configuration passed to each stage component in the view
   // for stage components to know which wizardManger they belong to and what wizardType it is
-  public stageMeta: IStageMeta;
+  // public stageMeta: IStageMeta;
 
   // view of the currently active stage
 
   // view model of the currently active stage
-  public viewModel: object;
+  // public viewModel: object;
   public additionalStageMetadata: Record<string, any> [] = [];
   public dealId: IDealIdType;
   private wizardType: WizardType;
@@ -43,45 +94,32 @@ export class WizardManager implements IRouteableComponent {
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
-    route: "proposal",
-    moduleId: import("./stages/proposalStage/proposalStage").then(c => c.ProposalStage),
+    route: "",
   };
   private leadDetailsStage: IWizardStage = {
-    name: "Lead Details",
     valid: false,
     route: "lead-details",
-    moduleId: import("./stages/leadDetailsStage/leadDetailsStage").then(c => c.LeadDetailsStage),
   };
   private primaryDaoStage: IWizardStage = {
-    name: "Primary DAO",
     valid: false,
     route: "primary-dao",
-    moduleId: import("./stages/primaryDaoStage/primaryDaoStage").then(c => c.PrimaryDaoStage),
   };
   private partnerDaoStage: IWizardStage = {
-    name: "Partner DAO",
     valid: false,
     route: "partner-dao",
-    moduleId: import("./stages/partnerDaoStage/partnerDaoStage").then(c => c.PartnerDaoStage),
   };
   private tokenDetailsStage: IWizardStage = {
-    name: "Token Details",
     valid: false,
     route: "token-details",
-    moduleId: import("./stages/tokenDetailsStage/tokenDetailsStage").then(c => c.TokenDetailsStage),
   };
   private termsStage: IWizardStage = {
-    name: "Terms",
     valid: false,
     route: "terms",
-    moduleId: import("./stages/termsStage/termsStage").then(c => c.TermsStage),
   };
   private submitStage: IWizardStage = {
-    name: "Submit",
     valid: false,
     hidden: true,
     route: "submit",
-    moduleId: import("./stages/submitStage/submitStage").then(c => c.SubmitStage),
   };
   private openProposalStages: IWizardStage[] = [
     this.proposalStage,
@@ -105,42 +143,39 @@ export class WizardManager implements IRouteableComponent {
     private wizardService: WizardService,
     private dealService: DealService,
     @IEthereumService private ethereumService: IEthereumService,
+    @IContainer private container: IContainer,
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     @newInstanceForScope(IValidationController) public form: IValidationController,
     presenter: PrimeErrorPresenter,
   ) {
+    this.wizardService.currentWizard = this;
     this.form.addSubscriber(presenter);
   }
 
   public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
     let canActivate = true;
 
-    if (!params[STAGE_ROUTE_PARAMETER]) {
-      canActivate = false;
-    } else {
-
-      const dealId = params.id;
-      /**
-       * unless we are editing an existing deal there is nothing further to check
-       */
-      if (dealId) {
-        if (!this.originalRegistrationData) {
-          this.originalRegistrationData = await this.getDeal(dealId);
-        }
-        /**
-         * app.ts is assumed to make sure that if there is going to be a connection on startup,
-         * it will already have been made.
-         *
-         * We have to check this on every activation to handle the case of using browser navigation functions
-         * and changing
-         */
-        canActivate = this.ensureAccess(instruction.parameters.parametersRecord.wizardType, this.ethereumService.defaultAccountAddress);
+    const dealId = params.id;
+    /**
+     * unless we are editing an existing deal there is nothing further to check
+     */
+    if (dealId) {
+      if (!this.originalRegistrationData) {
+        this.originalRegistrationData = await this.getDeal(dealId);
       }
-
-      return canActivate;
+      /**
+       * app.ts is assumed to make sure that if there is going to be a connection on startup,
+       * it will already have been made.
+       *
+       * We have to check this on every activation to handle the case of using browser navigation functions
+       * and changing
+       */
+      canActivate = this.ensureAccess(instruction.parameters.parametersRecord.wizardType, this.ethereumService.defaultAccountAddress);
     }
+
+    return canActivate;
   }
 
   /**
@@ -151,7 +186,7 @@ export class WizardManager implements IRouteableComponent {
    * we need to do all the initialization is the first time.
    */
   public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<void> {
-    const stageRoute = params[STAGE_ROUTE_PARAMETER];
+    const stageRoute = instruction.route.remaining;
 
     const wizardType = instruction.parameters.parametersRecord.wizardType as number;
 
@@ -171,6 +206,10 @@ export class WizardManager implements IRouteableComponent {
       }
 
       this.stages = this.configureStages(wizardType);
+
+      this.stages.forEach(stage => {
+        stage.name = stage.name ?? WizardManager.routes.find(route => route.path === stage.route)?.title;
+      });
 
       if (this.isHiddenStage(stageRoute)) {
         this.router.load(this.getPreviousRoute(wizardType));
@@ -194,8 +233,6 @@ export class WizardManager implements IRouteableComponent {
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
 
-    await this.setupStageComponent(indexOfActiveStage, wizardType);
-
     this.wizardService.setActiveStage(this, indexOfActiveStage);
   }
 
@@ -216,20 +253,6 @@ export class WizardManager implements IRouteableComponent {
       default:
         return "home";
     }
-  }
-
-  private async setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
-    this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
-
-    this.stageMeta = {
-      wizardType,
-      wizardManager: this,
-      settings: this.additionalStageMetadata[indexOfActiveStage],
-    };
-
-    // const activeStage = this.stages[indexOfActiveStage];
-    // this.view = activeStage.moduleId;
-    this.viewModel = await this.stages[indexOfActiveStage].moduleId;
   }
 
   private configureStages(wizardType: WizardType): Array<IWizardStage> {
@@ -309,7 +332,14 @@ export class WizardManager implements IRouteableComponent {
 
   async validate() {
     const result = await this.form.validate();
-    console.log("default validation result ->", this.form, result);
     return result.valid;
+  }
+
+  @watch<WizardManager>(x => x.router.isNavigating)
+  onNavigate(oldValue: boolean, newValue: boolean) {
+    if (newValue) {
+      const indexOfActiveStage = this.wizardService.getWizardState(this).indexOfActive;
+      this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+    }
   }
 }

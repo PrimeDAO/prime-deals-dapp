@@ -1,4 +1,4 @@
-import { IBaseWizardStage, IStageMeta } from "../../dealWizardTypes";
+import { IBaseWizardStage } from "../../dealWizardTypes";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
 import { inject } from "aurelia";
@@ -17,8 +17,8 @@ export class ProposalStage implements IBaseWizardStage {
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(): void {
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.proposal = this.wizardState.registrationData.proposal;
 

@@ -24,11 +24,11 @@ export class TermsStage implements IBaseWizardStage {
   ) {
   }
 
-  activate(stageMeta: IStageMeta): void {
-    this.wizardManager = stageMeta.wizardManager;
+  load(stageMeta: IStageMeta): void {
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
-    this.stageMetadata = stageMeta.settings;
+    this.stageMetadata = stageMeta.settings ?? {};
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.terms = this.wizardState.registrationData.terms;
