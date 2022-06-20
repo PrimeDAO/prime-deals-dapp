@@ -1,13 +1,14 @@
 import { ValidationState } from "../types";
-import { AureliaHelperService } from "../../../../services/AureliaHelperService";
 import { bindable, children, customElement } from "aurelia";
+import { toBoolean } from "resources/binding-behaviours";
 
 @customElement("pform-input")
+
 export class PFormInput {
   @bindable label = "";
   @bindable labelInfo = "";
   @bindable labelDescription = "";
-  @bindable showCounter = false;
+  @bindable({set: toBoolean, type: Boolean}) showCounter = false;
   @bindable maxLength = 0;
   @bindable helperMessage = "";
   @bindable validationMessage = "";
@@ -29,23 +30,15 @@ export class PFormInput {
    * This "child" selector is used to select any input used within the "pform-input" element.
    *  With it, we can get the character length used in the "max characters" counter section.
    */
-  @children({ query: x => x.host.querySelectorAll("input") }) input;
+  @children({
+    query: x => x.host.querySelectorAll("*"),
+    filter: (node, controller) => Boolean(controller?.definition.bindables["validationState"]),
+  }) inputs;
 
-  constructor(
-    private element: Element,
-    private aureliaHelperService: AureliaHelperService,
-  ) {
+  inputsChanged() {
+    this.inputReference = this.inputReference ?? this.inputs[0];
+    this.validationStateChanged(this.validationState);
   }
-
-  // attached() {
-  //   this.inputReference = this.inputReference ?? this.input;
-
-  //   this.validationStateChanged(this.validationState);
-
-  //   if (this.inputReference && this.showCounter) {
-  //     this.limitInputCharacterLength();
-  //   }
-  // }
 
   validationStateChanged(newValue?: ValidationState) {
     if (this.inputReference) {
@@ -53,22 +46,7 @@ export class PFormInput {
     }
   }
 
-  // private limitInputCharacterLength() {
-  //   this.inputValueObserverSubscription = this.aureliaHelperService.createPropertyWatch(
-  //     this.inputReference,
-  //     "value",
-  //     newValue => {
-  //       if (newValue?.length > this.maxLength) {
-  //         this.inputReference.value = newValue.substring(0, this.maxLength);
-  //       }
-  //     });
-  // }
-
   validationStateExists(state: ValidationState) {
     return Object.values(ValidationState).includes(state);
   }
-
-  // detached() {
-  //   this.inputValueObserverSubscription?.dispose();
-  // }
 }

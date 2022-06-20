@@ -1,0 +1,114 @@
+<template>
+  <require from="../../components/stageWrapper/stageWrapper"></require>
+  <stage-wrapper
+    header="Proposal Lead"
+    wizard-manager.bind="wizardManager">
+
+    <div class="stageSection">
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title" data-test="section-title">Proposal Lead</h2>
+        <p class="sidebarText">Provide the Ethereum address for the Proposal Lead who will gain administrative rights of
+          the deal.</p>
+        <p class="sidebarText">Proposal Leads can edit the deal during the negotiation to integrate new points emerging
+          from the conversation. They can initiate the funding phase once a deal is approved and once completely funded,
+          they can execute the token swap.</p>
+        <p class="sidebarText">The Proposal Lead can be changed at any time until the deal is approved.</p>
+        <p class="sidebarText">You don't need to be part of DAO to be a Proposal Lead.</p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          data-test="proposal-lead-address-field"
+          helper-message.bind="proposalLeadAddressInput.ens"
+          input-reference.bind="proposalLeadAddressInput"
+          label="Proposal Lead Address">
+          <form-address-input
+            disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
+            value.bind="proposalLead.address | checksumAddress & validate"
+            view-model.ref="proposalLeadAddressInput">
+          </form-address-input>
+        </pform-input>
+        <pbutton class="walletButton" click.delegate="connectToWallet()" data-test="connect-to-get-wallet"
+          if.bind="!ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights" type="formfield">
+          Connect to get your wallet address
+        </pbutton>
+        <pbutton
+          class="walletButton"
+          click.delegate="proposalLead.address = ethAddress"
+          data-test="make-myself-proposal-lead"
+          if.bind="ethAddress && proposalLead.address !== ethAddress && !isMakeAnOfferWizardAndKeepsAdminRights"
+          type="formfield">
+          Make Me the Proposal Lead
+        </pbutton>
+
+        <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="contact-email-field"
+          label="Contact E-mail (optional)">
+          <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
+            value.bind="proposalLead.email & validate"></pinput-text>
+        </pform-input>
+      </div>
+    </div>
+
+    <div class="stageSection" if.bind="isOpenProposalWizard">
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title">Keep Administrative Rights?</h2>
+        <p class="sidebarText">Toggle this option on if you would like to retain the Proposal Lead role to yourself.
+          This will allow you to continue manage all the offers incoming to your Open Proposal.</p>
+        <p class="sidebarText">If instead you toggle this option off, you will transfer your administrative rights to
+          the prospect Partner DAO. In this case the Partner DAO will have to register a new Proposal Lead address to
+          which the administrative rights will be transfered to.</p>
+        <p class="sidebarText">We suggest transferring your administrative rights only if you anticipate many incoming
+          offers for this proposal and won't have time to manage them.</p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Keep Administrative Rights With All Incoming Offers">
+          <ptoggle value.bind="wizardState.registrationData.keepAdminRights"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+    <div class="stageSection" if.bind="isOpenProposalWizard">
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title">Make Incoming Offers Private?</h2>
+        <p class="sidebarText">Toggle this option on if you want the incoming proposals to be only visible to the
+          Proposal Lead and the Deal Representatives, and not visible to the public.</p>
+        <p class="sidebarText">You can always turn the deal to public during the negotiation phase to receive feedback
+          from the community or after the deal is ratified. Don't worry, conversations previously held in private will
+          remain private, even if the deal is turned public.</p>
+        <p class="sidebarText">A negotiated deal that has been turned public can be turned back into private, and vice
+          versa.</p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Make Offers Private">
+          <ptoggle value.bind="wizardState.registrationData.offersPrivate"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+    <div class="stageSection" if.bind="!isOpenProposalWizard">
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title">Make this Deal Private?</h2>
+        <p class="sidebarText">Toggle this option if you don't want the public to see what is being discussed by the
+          DAOs. This will make all conversations of this Partnered Deal only visible by the Proposal Lead and the Deal
+          Representatives from both DAOs.</p>
+        <p class="sidebarText">You can always turn the deal public during negotiation phase to receive feedback from the
+          community or after the deal is ratified. Don't worry, conversations previously held in private will remain
+          private, even if the deal is turned public.</p>
+      </div>
+      <div class="stageSectionContent">
+        <pform-input
+          class="wizardFormInput"
+          label="Make Deal Private">
+          <ptoggle
+            disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
+            value.bind="wizardState.registrationData.isPrivate"></ptoggle>
+        </pform-input>
+      </div>
+    </div>
+
+  </stage-wrapper>
+</template>

@@ -33,7 +33,7 @@
     <div class="productSubpages">
       <div class="container">
         <nav>
-          <a class="item" load="home">Home</a>
+          <a class="item" load="home" href="/">Home</a>
           <a class="item" load="initiate">Initiate a Deal</a>
           <a class="item" load="deals">All Deals</a>
           <a class="item" load="documentation">Documentation</a>
@@ -44,7 +44,7 @@
 
     <div class="headerConnectButton">
       <pbutton click.trigger="resetDeals()" id="reset-deal-button" if.bind="environment !== 'production'" type="formfield">Reset deals</pbutton>
-      <connect-button show-wallet-menu.call="handleShowWalletMenu()"></connect-button>
+      <connect-button show-wallet-menu.call="handleShowWalletMenu()" if.bind="provider.initialized"></connect-button>
     </div>
 
     <mobile-menu

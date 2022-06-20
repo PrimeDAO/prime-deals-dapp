@@ -1,0 +1,44 @@
+<template>
+  <editing-card
+    data-test="termsClause"
+    hide-delete-button.bind="hideDeleteButton"
+    on-delete.call="delete()"
+    on-save.call="onSave()"
+    view-mode.bind="viewMode"
+  >
+    <!-- View -->
+    <div au-slot="view">
+      <pform-input
+        class="wizardFormInput"
+        data-test="clauseFormInput"
+        data-test="clause-input"
+        label="${`Clause ${index + 1}`}"
+      >
+        <!-- Make sure to render new line characters from textarea  -->
+        <pre>${clause.text}</pre>
+      </pform-input>
+    </div>
+
+    <!-- Edit -->
+    <div au-slot="edit">
+      <pform-input
+        class="wizardFormInput"
+        data-test="clauseFormInput"
+        data-test="clause-input"
+        input-reference.bind="clauseTextareaViewModel"
+        label="${`Clause ${index + 1}`}"
+        max-length="500"
+        show-counter
+      >
+        <ptextarea
+          data-test="clauseTextarea"
+          placeholder="Text describing the clause"
+          rows="4"
+          max="500"
+          value.bind="clause.text & validate"
+          view-model.ref="clauseTextareaViewModel"
+        ></ptextarea>
+      </pform-input>
+    </div>
+  </editing-card>
+</template>

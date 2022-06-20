@@ -8,7 +8,7 @@ export class SwapStatus {
   constructor(
     @IEventAggregator private eventAggregator: IEventAggregator,
   ){}
-  public async bind(): Promise<void> {
+  public async binding(): Promise<void> {
     await this.initializeData();
     this.eventAggregator.subscribe("deal.executed", (): void => {
       this.initializeData();

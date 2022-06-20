@@ -1,5 +1,6 @@
-<div class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
+<template class="pInput-parent ${ validationState ? 'pInput-parent-' + validationState : '' }">
   <input
+    ref="input"
     class="pInput ${ validationState ? 'pInput-' + validationState : '' }"
     disabled.bind="disabled"
     value.bind="value"
@@ -13,4 +14,4 @@
     <i class=" feedback-icon fas fa-circle-notch loading" if.bind="validationState === 'validating'"></i>
   </template>
 
-</div>
+</template>

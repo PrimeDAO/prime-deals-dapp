@@ -20,20 +20,23 @@ interface ISharedContractInfos {
 
 @inject()
 export class ContractsDeploymentProvider {
-
+  public static initialized = false;
   private static contractInfosJson: IContractInfosJson;
   private static sharedContractAbisJson: ISharedContractInfos;
 
-  public static initialize(targetedNetwork: string): void {
+  public static async initialize(targetedNetwork: string): Promise<void> {
+    const promises = [];
     if (!ContractsDeploymentProvider.contractInfosJson) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      ContractsDeploymentProvider.contractInfosJson = require(`../contracts/${targetedNetwork}.json`) as IContractInfosJson;
+      promises.push((import(`../contracts/${targetedNetwork}.json`)).then(x => ContractsDeploymentProvider.contractInfosJson = x));
     }
 
     if (!ContractsDeploymentProvider.sharedContractAbisJson) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      ContractsDeploymentProvider.sharedContractAbisJson = require("../contracts/sharedAbis.json") as ISharedContractInfos;
+      promises.push((import("../contracts/sharedAbis.json")).then(x => ContractsDeploymentProvider.sharedContractAbisJson = x.default));
     }
+    await Promise.all(promises);
+    this.initialized = true;
   }
 
   public static getContractAbi(contractName: string): Array<any> {
@@ -48,6 +51,6 @@ export class ContractsDeploymentProvider {
   }
 
   public static getContractAddress(contractName: string): Address {
-    return ContractsDeploymentProvider.contractInfosJson.contracts[contractName]?.address;
+    return ContractsDeploymentProvider.contractInfosJson?.contracts[contractName]?.address;
   }
 }

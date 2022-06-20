@@ -1,12 +1,12 @@
 <template>
   <input
     ref="element"
-    type="text"
-    value.two-way="innerValue | withCommas"
-    id.to-view="id"
+    autocomplete.to-view="autocomplete"
     class.to-view="css"
     disabled.to-view="disabled"
-    placeholder.to-view="placeholder"
     focus.two-way="inFocus"
-    autocomplete.to-view="autocomplete">
+    id.to-view="id"
+    placeholder.to-view="placeholder"
+    type="text"
+    value.two-way="innerValue | withCommas">
 </template>

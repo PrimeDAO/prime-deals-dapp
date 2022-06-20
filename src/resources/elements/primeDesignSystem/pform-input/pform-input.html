@@ -9,7 +9,7 @@
     ></pquestion-mark>
   </span>
   <div class="formInputLabelExtra" if.bind="showCounter">
-    ${input.value.length || 0}${maxLength ? '/' + maxLength : ''}
+    ${inputReference.value.length || 0}${maxLength ? '/' + maxLength : ''}
   </div>
 </label>
 <au-slot name="label"></au-slot>

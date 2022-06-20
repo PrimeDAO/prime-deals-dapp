@@ -1,3 +1,4 @@
+import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { Utils } from "services/utils";
 import { bindable, BindingMode, inject } from "aurelia";
 import { IRouter } from "@aurelia/router";
@@ -7,6 +8,7 @@ export class Navbar {
   @bindable private showWalletMenu?: () => void;
   @bindable private toggleMenu?: () => void;
   @bindable({mode: BindingMode.twoWay}) private menuOpen = false;
+  provider = ContractsDeploymentProvider;
 
   environment = process.env.FIREBASE_ENVIRONMENT;
 
