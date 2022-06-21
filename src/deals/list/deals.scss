@@ -373,6 +373,7 @@ pbutton button.secondary {
               grid-area: title;
               font-size: 20px;
               font-weight: bold;
+              overflow-wrap: anywhere;
             }
             .type {
               justify-content: left;
@@ -414,7 +415,7 @@ pbutton button.secondary {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: $MobileWidth) {
   .page.deals {
     .section {
       &.all-deals {
