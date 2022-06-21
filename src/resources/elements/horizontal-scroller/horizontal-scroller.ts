@@ -39,8 +39,6 @@ export class HorizontalScroller {
     /**
      * scroll by the sum of the widths of the wholly-visible items
      */
-    console.log("visibleWidth", visibleWidth, "itemWidth", itemWidth, "visibleItemsCount", visibleItemsCount);
-
     return itemWidth * visibleItemsCount || itemWidth/* fix: visibleItemsCount is 0 */;
   }
 
