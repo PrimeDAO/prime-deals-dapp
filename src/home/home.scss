@@ -126,10 +126,9 @@
         }
 
         .scrollerContainer {
-          width: calc(100vw - 145px);
           .scroller {
             flex-direction: row;
-            gap: $spacing-normal;
+            gap: calc($spacing-normal * 2);
           }
         }
       }
@@ -140,11 +139,5 @@
         margin-bottom: 0;
       }
     }
-  }
-}
-
-@media screen and (max-width: 549px) {
-  .page.home>.section.top>.scrollerContainer {
-    width: calc(100vw - 55px);
   }
 }
