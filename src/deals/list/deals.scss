@@ -339,6 +339,10 @@ pbutton button.secondary {
       }
 
       &.all-deals {
+        .heading02Gradient {
+          padding-bottom: $spacing-small;
+          border-bottom: 1px solid $Border01;
+        }
         .grid.dealGrid {
           grid-template-columns: 1fr;
           .row {
@@ -356,10 +360,6 @@ pbutton button.secondary {
             }
             &.header {
               display: none;
-            }
-            &:first-of-type {
-              margin-top: $spacing-small;
-              border-top: 1px solid $Border01;
             }
             .cell {
               padding: 0 $spacing-normal;
