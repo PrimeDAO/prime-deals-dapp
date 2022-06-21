@@ -81,6 +81,12 @@
   }
 }
 
+@media screen and (max-width: 900px) and (min-width: 550px) {
+  .deal-carousel {
+    padding: 0 45px;
+  }
+}
+
 @media screen and (max-width: $PageBreakWidth) {
   .deal-carousel {
     .carousel-selector {
