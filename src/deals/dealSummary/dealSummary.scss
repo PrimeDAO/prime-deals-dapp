@@ -4,8 +4,7 @@
 deal-summary {
   .pcard {
     display: inline-block;
-    max-width: 360px;
-    min-width: 360px;
+    width: 360px;
     background-color: $BG02;
     padding: $spacing-normal;
     /* don't do this transition until we can do it with gradient pcards too
@@ -109,34 +108,11 @@ deal-summary {
     }
   }
 }
-
-@media screen and (max-width: $PageBreakWidth) {
-  .dealSummaryContainer {
-    // because this is going to be vertically-aligned
-    padding-right: 0;
-    margin-bottom: 20px;
-    width: 50%;
-
-    .dealSummary {
-      > .icon {
-        img {
-          height: 36px;
-          width: 36px;
-        }
-      }
-
-      > .footer,
-      > .countdown,
-      > .proposal {
-        text-align: left;
-      }
-    }
-  }
-}
-
 @media screen and (max-width: 400px) {
-  .dealSummaryContainer {
-    min-width: 100%;
-    width: 100%;
+  deal-summary {
+    .pcard {
+      width: 100%;
+      max-width: 360px;
+    }
   }
 }
