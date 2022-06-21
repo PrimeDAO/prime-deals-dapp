@@ -5,8 +5,10 @@ import { IClause, IDealRegistrationTokenSwap, ITerms } from "entities/DealRegist
 import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
-import { IContainer, inject } from "aurelia";
+import { inject } from "aurelia";
 import { areFormsValid } from "../../../../services/ValidationService";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
 
 @inject()
 export class TermsStage implements IBaseWizardStage {
@@ -21,12 +23,12 @@ export class TermsStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
-    @IContainer private container: IContainer,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
   ) {
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.container.get("wiz");
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.stageMetadata = stageMeta.settings ?? {};
@@ -40,6 +42,11 @@ export class TermsStage implements IBaseWizardStage {
       const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
       return formsAreValid && !this.hasUnsavedChanges;
     });
+
+    this.wizardService.registerForm(
+      this.wizardManager,
+      this.form,
+    );
   }
 
   onDelete(index: number): boolean | void {

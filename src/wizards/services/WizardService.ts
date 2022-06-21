@@ -29,6 +29,8 @@ export type WizardStateKey = WizardManager
 export class WizardService {
   private wizardsStates = new Map<WizardStateKey, IWizardState>();
 
+  public currentWizard?: WizardManager;
+
   constructor(
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
@@ -37,12 +39,12 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-    wizardStateKey,
-    stages,
-    registrationData,
-    cancelRoute,
-    previousRoute,
-  }: {
+                                 wizardStateKey,
+                                 stages,
+                                 registrationData,
+                                 cancelRoute,
+                                 previousRoute,
+                               }: {
     wizardStateKey: WizardStateKey;
     stages: Array<IWizardStage>;
     registrationData: TData;
@@ -116,7 +118,7 @@ export class WizardService {
      * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
      */
     const stage = wizardState.stages[currentIndexOfActive];
-    stage.valid = await stage.validate?.() ?? await wizardStateKey.validate();
+    stage.valid = await stage.validate?.();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
@@ -188,6 +190,7 @@ export class WizardService {
     if (!stage.form) {
       stage.form = form;
       stage.form.addSubscriber(this.presenter);
+      // stage.form.addSubscriber(new ValidationResultPresenterService());
       stage.validate = () => stage.form.validate().then(result => result.valid);
     }
 

@@ -88,7 +88,6 @@ export class DisclaimerService {
         // then an error occurred
         this.eventAggregator.publish("handleFailure", response.value);
         disclaimed = false;
-      // } else if (response.wasCancelled) { // TODO check if this works
       } else if (response.status === DialogDeactivationStatuses.Error) {
         disclaimed = false;
       } else {

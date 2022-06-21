@@ -2,7 +2,6 @@ import { IWizardState } from "wizards/services/WizardService";
 // import { ValidationRules } from "aurelia-validation";
 // import { Validation } from "services/ValidationService";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
-import { WizardManager } from "./wizardManager";
 import { IValidationRules } from "@aurelia/validation";
 import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../resources/validation-rules";
 
@@ -15,7 +14,6 @@ export interface IBaseWizardStage {
 }
 
 export interface IStageMeta<Settings = any> {
-  wizardManager: WizardManager; // TODO remove this
   wizardType: WizardType;
   settings?: Settings
 }

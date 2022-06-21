@@ -50,7 +50,7 @@ export class Disclaimer {
       });
 
     if (!this.disclaimer) {
-      this.controller.error(errorMsg); // TODO fix this. I am not sure how this should work in AU2
+      this.controller.error(errorMsg);
     } else {
       // attach-focus doesn't work
       this.okButton.focus();

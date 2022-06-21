@@ -3,7 +3,6 @@ import { bindable, children, customElement } from "aurelia";
 import { toBoolean } from "resources/binding-behaviours";
 
 @customElement("pform-input")
-
 export class PFormInput {
   @bindable label = "";
   @bindable labelInfo = "";

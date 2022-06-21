@@ -48,7 +48,7 @@ export class TermClause {
     this.form.removeObject(this.clause);
   }
 
-  viewModeChanged(newValue: "edit" | "view") {
+  viewModeChanged(newValue: ViewMode) {
     if (newValue === "view") {
       this.onSaved?.();
     }
