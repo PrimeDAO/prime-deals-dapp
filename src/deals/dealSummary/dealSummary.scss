@@ -109,11 +109,11 @@ deal-summary {
   }
 }
 
-@media screen and (max-width: $PageBreakWidth) {
-  deal-summary {
-    .pcard {
-      width: 100%;
-      max-width: 360px;
-    }
-  }
-}
+// @media screen and (max-width: $PageBreakWidth) {
+//   deal-summary {
+//     .pcard {
+//       width: 100%;
+//       max-width: 360px;
+//     }
+//   }
+// }
