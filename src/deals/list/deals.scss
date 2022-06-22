@@ -332,6 +332,19 @@ pbutton button.secondary {
 
 @media screen and (max-width: $PageBreakWidth) {
   .page.deals {
+    .deal-carousel {
+      min-height: unset;
+      margin-bottom: unset;
+      .carousel-selector {
+        margin-bottom: unset;
+      }
+      .featuredDealsScroller {
+        display: none;
+      }
+    }
+    .all-deals .heading02Gradient {
+      display: none;
+    }
     .section {
       &.deals-actions {
         grid-template: 1fr auto / 1fr;
