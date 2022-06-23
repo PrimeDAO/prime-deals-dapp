@@ -44,7 +44,10 @@
     "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
     "postinstall": "cd firebaseFunctions && npm ci && npm run build",
     "seed-build": "cd ./src/server-browser-scripts && tsc",
-    "seed-run": "node -e 'import(\"./dist/seed/src/server-browser-scripts/seed-data.js\").then(x=> x.resetDeals())' -r dotenv/config . dotenv_config_path=./.env"
+    "seed-run": "node -e 'import(\"./dist/seed/src/server-browser-scripts/seed-data.js\").then(x=> x.resetDeals())' -r dotenv/config . dotenv_config_path=./.env",
+    "vercel:deploy": "vercel --token $npm_config_token",
+    "vercel:deploy:production": "vercel --token $npm_config_token",
+    "vercel:alias": "vercel alias set $npm_config_deployment $npm_config_branch --token $npm_config_token --scope $npm_config_scope"
   },
   "dependencies": {
     "@gnosis.pm/safe-apps-sdk": "^7.3.0",
