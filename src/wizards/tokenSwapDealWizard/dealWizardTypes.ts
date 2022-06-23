@@ -10,7 +10,6 @@ export enum WizardType {createOpenProposal, editOpenProposal, createPartneredDea
 export interface IBaseWizardStage {
   wizardManager: any;
   wizardState: IWizardState;
-  load;
 }
 
 export interface IStageMeta<Settings = any> {

@@ -22,20 +22,6 @@ export class PartnerDaoStage implements IBaseWizardStage {
   ) {
   }
 
-  load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.wizardService.currentWizard;
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
-
-    this.partnerDao = this.wizardState.registrationData.primaryDAO;
-    daoStageValidationRules(this.partnerDao, this.validationRules, "Partner DAO", this.wizardState.registrationData.primaryDAO);
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
-  }
-
   getIsPartneredDeal(wizardType: WizardType) {
     switch (wizardType) {
       case WizardType.createPartneredDeal:

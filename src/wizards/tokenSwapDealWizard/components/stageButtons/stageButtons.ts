@@ -60,8 +60,8 @@ export class stageButtons {
   }
 
   showSubmitButton() {
-    const lastStageIndex = this.wizardState.stages.length - 1;
-    const currentStageIndex = this.wizardState.indexOfActive;
+    const lastStageIndex = this.wizardState?.stages.length - 1;
+    const currentStageIndex = this.wizardState?.indexOfActive;
     const isLastStage = lastStageIndex === currentStageIndex;
 
     return isLastStage;

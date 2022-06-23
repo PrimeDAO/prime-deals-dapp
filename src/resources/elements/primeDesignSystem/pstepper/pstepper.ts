@@ -8,6 +8,6 @@ export class PStepper {
   @bindable onClick: (index: number) => void;
 
   binding() {
-    this.steps = this.steps.filter(step => !step.hidden);
+    this.steps = this.steps?.filter(step => !step.hidden);
   }
 }
