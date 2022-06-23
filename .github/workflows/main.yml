@@ -88,7 +88,7 @@ jobs:
 
       # Run e2e tests against Vercel deployment
       - name: Cypress run
-        run: npx cypress run --config baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
+        run: npx cypress@9.5.3 run --config baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
       # after the test run completes
       # store videos and any screenshots
       # NOTE: screenshots will be generated only if E2E test failed
