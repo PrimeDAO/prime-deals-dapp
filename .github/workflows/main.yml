@@ -78,123 +78,123 @@ jobs:
           echo "::set-output name=PREVIEW_URL::$DEPLOYMENT_URL"
           echo "::set-output name=INSPECT_URL::$INSPECT_URL"
 
-  cypress-run:
-    name: Cypress run
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # cypress-run:
+  #   name: Cypress run
+  #   needs: deploy
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      # Run e2e tests against Vercel deployment
-      - name: Cypress run
-        uses: cypress-io/github-action@v4
-        with:
-          config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
-      # after the test run completes
-      # store videos and any screenshots
-      # NOTE: screenshots will be generated only if E2E test failed
-      # thus we store screenshots only on failures
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: test/e2e/screenshots
+  #     # Run e2e tests against Vercel deployment
+  #     - name: Cypress run
+  #       uses: cypress-io/github-action@v4
+  #       with:
+  #         config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
+  #     # after the test run completes
+  #     # store videos and any screenshots
+  #     # NOTE: screenshots will be generated only if E2E test failed
+  #     # thus we store screenshots only on failures
+  #     - uses: actions/upload-artifact@v2
+  #       if: failure()
+  #       with:
+  #         name: cypress-screenshots
+  #         path: test/e2e/screenshots
 
-  failed-e2e:
-    name: Comment on PR with failing tests details
-    needs: [deploy, cypress-run]
-    runs-on: ubuntu-latest
-    if: failure() && (github.event_name == 'pull_request')
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # failed-e2e:
+  #   name: Comment on PR with failing tests details
+  #   needs: [deploy, cypress-run]
+  #   runs-on: ubuntu-latest
+  #   if: failure() && (github.event_name == 'pull_request')
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Get workflow run URL
-        id: workflow-url
-        run: echo "::set-output name=WORKFLOW_RUN_URL::${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+  #     - name: Get workflow run URL
+  #       id: workflow-url
+  #       run: echo "::set-output name=WORKFLOW_RUN_URL::${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      - name: Get current date
-        id: get-current-date
-        # Stores current date as variable to use in the next step
-        run: echo "::set-output name=CURRENT_DATE::$(date -u)"
+  #     - name: Get current date
+  #       id: get-current-date
+  #       # Stores current date as variable to use in the next step
+  #       run: echo "::set-output name=CURRENT_DATE::$(date -u)"
 
-      - name: Comment on the Pull Request
-        uses: thollander/actions-comment-pull-request@v1
-        with:
-          # Content of the comment
-          message: |
-            | Type | Status | URL | Date |
-            | :--- | :----- | :------ | :------ |
-            | **Latest failed e2e tests** | ❌ Failed ([Inspect](${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }})) | [Visit Preview](${{needs.deploy.outputs.DEPLOYMENT_URL}}) | ${{ steps.get-current-date.outputs.CURRENT_DATE }} |
+  #     - name: Comment on the Pull Request
+  #       uses: thollander/actions-comment-pull-request@v1
+  #       with:
+  #         # Content of the comment
+  #         message: |
+  #           | Type | Status | URL | Date |
+  #           | :--- | :----- | :------ | :------ |
+  #           | **Latest failed e2e tests** | ❌ Failed ([Inspect](${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }})) | [Visit Preview](${{needs.deploy.outputs.DEPLOYMENT_URL}}) | ${{ steps.get-current-date.outputs.CURRENT_DATE }} |
 
-            Download Failing tests screenshots, from the workflow details page: [${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }}](${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }})
-          # This is going to replace the already existing comment based and string matching
-          comment_includes: 'Latest failed e2e tests'
-          # Pass Github token so it's possible to comment on a PR
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #           Download Failing tests screenshots, from the workflow details page: [${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }}](${{ steps.workflow-url.outputs.WORKFLOW_RUN_URL }})
+  #         # This is going to replace the already existing comment based and string matching
+  #         comment_includes: 'Latest failed e2e tests'
+  #         # Pass Github token so it's possible to comment on a PR
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # If the e2e tests were successful, assign a branch specific URL to the Vercel deployment
-  # Otherwise the latest successful deployment for that branch will be still available under the branch specific URL
-  assign-branch-url:
-    name: Assign branch specific URL
-    needs: [deploy, cypress-run]
-    runs-on: ubuntu-latest
-    if: ${{needs.deploy.outputs.DEPLOYMENT_ENVIRONMENT == 'Preview' }}
-    outputs:
-      BRANCH_DOMAIN: ${{ steps.branch-deployment-url.outputs.BRANCH_DOMAIN }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '14.15.1'
+  # # If the e2e tests were successful, assign a branch specific URL to the Vercel deployment
+  # # Otherwise the latest successful deployment for that branch will be still available under the branch specific URL
+  # assign-branch-url:
+  #   name: Assign branch specific URL
+  #   needs: [deploy, cypress-run]
+  #   runs-on: ubuntu-latest
+  #   if: ${{needs.deploy.outputs.DEPLOYMENT_ENVIRONMENT == 'Preview' }}
+  #   outputs:
+  #     BRANCH_DOMAIN: ${{ steps.branch-deployment-url.outputs.BRANCH_DOMAIN }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '14.15.1'
 
-      - name: Get branch deployment URL
-        id: branch-deployment-url
-        shell: bash
-        run: |
-          BRANCH_NAME=${{ github.ref_name }}
-          BRANCH_SUBDOMAIN=prime-deals-$BRANCH_NAME
+  #     - name: Get branch deployment URL
+  #       id: branch-deployment-url
+  #       shell: bash
+  #       run: |
+  #         BRANCH_NAME=${{ github.ref_name }}
+  #         BRANCH_SUBDOMAIN=prime-deals-$BRANCH_NAME
 
-          if ${{ github.event_name == 'pull_request' }}
-          then 
-            BRANCH_NAME=${{ github.head_ref }}
-            BRANCH_NAME="${BRANCH_NAME//[^a-zA-Z0-9]/-}"
-            BRANCH_SUBDOMAIN=prime-deals-$BRANCH_NAME
-            BRANCH_SUBDOMAIN=${BRANCH_SUBDOMAIN:0:57};
-            SUFFIX=$(echo -n "$BRANCH_NAME" | md5sum | head -c 6)
-            BRANCH_SUBDOMAIN+=$SUFFIX;
-          fi
+  #         if ${{ github.event_name == 'pull_request' }}
+  #         then 
+  #           BRANCH_NAME=${{ github.head_ref }}
+  #           BRANCH_NAME="${BRANCH_NAME//[^a-zA-Z0-9]/-}"
+  #           BRANCH_SUBDOMAIN=prime-deals-$BRANCH_NAME
+  #           BRANCH_SUBDOMAIN=${BRANCH_SUBDOMAIN:0:57};
+  #           SUFFIX=$(echo -n "$BRANCH_NAME" | md5sum | head -c 6)
+  #           BRANCH_SUBDOMAIN+=$SUFFIX;
+  #         fi
 
 
-          echo "::set-output name=BRANCH_DOMAIN::$BRANCH_SUBDOMAIN.vercel.app"
+  #         echo "::set-output name=BRANCH_DOMAIN::$BRANCH_SUBDOMAIN.vercel.app"
 
-      - run: npm run vercel:alias --deployment=${{needs.deploy.outputs.DEPLOYMENT_URL}} --branch=${{ steps.branch-deployment-url.outputs.BRANCH_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_TEAM_SLUG }}
+  #     - run: npm run vercel:alias --deployment=${{needs.deploy.outputs.DEPLOYMENT_URL}} --branch=${{ steps.branch-deployment-url.outputs.BRANCH_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_TEAM_SLUG }}
 
-  comment-pr:
-    name: Comment on the Pull Request
-    if: ${{ github.event_name == 'pull_request' }}
-    needs: [deploy, cypress-run, assign-branch-url]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # comment-pr:
+  #   name: Comment on the Pull Request
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   needs: [deploy, cypress-run, assign-branch-url]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Get current date
-        id: get-current-date
-        # Stores current date as variable to use in the next step
-        run: |
-          echo "::set-output name=CURRENT_DATE::$(date -u)"
+  #     - name: Get current date
+  #       id: get-current-date
+  #       # Stores current date as variable to use in the next step
+  #       run: |
+  #         echo "::set-output name=CURRENT_DATE::$(date -u)"
 
-      - name: Comment on the Pull Request
-        uses: thollander/actions-comment-pull-request@v1
-        with:
-          # Content of the comment
-          message: |
-            | Type | Status | URL | Date |
-            | :--- | :----- | :------ | :------ |
-            | **Latest successful deployment** | ✅ Ready ([Inspect](${{needs.deploy.outputs.INSPECT_URL}})) | [Visit Preview](https://${{needs.assign-branch-url.outputs.BRANCH_DOMAIN}}) | ${{ steps.get-current-date.outputs.CURRENT_DATE }} |
-          # This is going to replace the already existing comment based and string matching
-          comment_includes: 'Latest successful deployment'
-          # Pass Github token so it's possible to comment on a PR
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Comment on the Pull Request
+  #       uses: thollander/actions-comment-pull-request@v1
+  #       with:
+  #         # Content of the comment
+  #         message: |
+  #           | Type | Status | URL | Date |
+  #           | :--- | :----- | :------ | :------ |
+  #           | **Latest successful deployment** | ✅ Ready ([Inspect](${{needs.deploy.outputs.INSPECT_URL}})) | [Visit Preview](https://${{needs.assign-branch-url.outputs.BRANCH_DOMAIN}}) | ${{ steps.get-current-date.outputs.CURRENT_DATE }} |
+  #         # This is going to replace the already existing comment based and string matching
+  #         comment_includes: 'Latest successful deployment'
+  #         # Pass Github token so it's possible to comment on a PR
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
