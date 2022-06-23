@@ -78,28 +78,26 @@ jobs:
           echo "::set-output name=PREVIEW_URL::$DEPLOYMENT_URL"
           echo "::set-output name=INSPECT_URL::$INSPECT_URL"
 
-  # cypress-run:
-  #   name: Cypress run
-  #   needs: deploy
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  cypress-run:
+    name: Cypress run
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     # Run e2e tests against Vercel deployment
-  #     - name: Cypress run
-  #       uses: cypress-io/github-action@v4
-  #       with:
-  #         config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
-  #     # after the test run completes
-  #     # store videos and any screenshots
-  #     # NOTE: screenshots will be generated only if E2E test failed
-  #     # thus we store screenshots only on failures
-  #     - uses: actions/upload-artifact@v2
-  #       if: failure()
-  #       with:
-  #         name: cypress-screenshots
-  #         path: test/e2e/screenshots
+      # Run e2e tests against Vercel deployment
+      - name: Cypress run
+        run: npx cypress run --config baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
+      # after the test run completes
+      # store videos and any screenshots
+      # NOTE: screenshots will be generated only if E2E test failed
+      # thus we store screenshots only on failures
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
 
   # failed-e2e:
   #   name: Comment on PR with failing tests details
