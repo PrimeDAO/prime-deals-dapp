@@ -332,11 +332,4 @@ export class WizardManager implements IRouteableComponent {
     }
   }
 
-  @watch<WizardManager>(x => x.router.isNavigating)
-  onNavigate(oldValue: boolean, newValue: boolean) {
-    if (newValue) {
-      const indexOfActiveStage = this.wizardService.getWizardState(this).indexOfActive;
-      this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
-    }
-  }
 }
