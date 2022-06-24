@@ -1,9 +1,10 @@
 import { ICustomElementViewModel } from "aurelia";
-import { IRouter, IRouteableComponent, IRoute } from "@aurelia/router";
+import { IRoute, IRouteableComponent, IRouter } from "@aurelia/router";
 import axios from "axios";
 import { marked } from "marked";
 
 import { markdowns } from "./common";
+
 export class Documentation implements IRouteableComponent, ICustomElementViewModel {
   static routes: IRoute[] = [];
   routes = Documentation.routes;

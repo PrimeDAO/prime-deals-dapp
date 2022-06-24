@@ -44,7 +44,6 @@
     "firebase-deploy:staging": "firebase deploy --project=staging --only functions:CI,firestore:rules",
     "firebase-deploy:master": "firebase deploy --project=production --config=firebase-production.json --only functions:CI,firestore:rules",
     "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
-    "postinstall": "cd firebaseFunctions && npm ci && npm run build",
     "seed-build": "cd ./src/server-browser-scripts && tsc",
     "seed-run": "node -e 'import(\"./dist/seed/src/server-browser-scripts/seed-data.js\").then(x=> x.resetDeals())' -r dotenv/config . dotenv_config_path=./.env"
   },
