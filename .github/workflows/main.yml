@@ -81,7 +81,6 @@ jobs:
   e2e_tests:
     runs-on: ubuntu-latest
     needs: deploy
-    container: cypress/browsers:node14.17.0-chrome91-ff89
     strategy:
       fail-fast: false
       matrix:
@@ -94,6 +93,7 @@ jobs:
         with:
           spec: cypress/integration/features/${{ matrix.containers }}.feature 
           browser: chrome
+          install: false
           config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
