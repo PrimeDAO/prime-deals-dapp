@@ -89,11 +89,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Download Cypress artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: build
       - name: Cypress Test
         uses: cypress-io/github-action@v4
         with:
