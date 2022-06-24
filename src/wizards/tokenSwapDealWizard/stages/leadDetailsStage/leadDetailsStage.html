@@ -42,9 +42,13 @@
         </pbutton>
 
         <pform-input class="wizardFormInput wizardFormInputNarrow" data-test="contact-email-field"
-          label="Contact E-mail (optional)">
+          input-reference.bind="emailReference"
+          label="Contact E-mail (optional)"
+        >
           <pinput-text disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-            value.bind="proposalLead.email & validate"></pinput-text>
+            value.bind="proposalLead.email & validate"
+            view-model.ref="emailReference"
+          ></pinput-text>
         </pform-input>
       </div>
     </div>

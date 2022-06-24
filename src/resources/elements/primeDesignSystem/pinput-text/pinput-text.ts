@@ -1,4 +1,4 @@
-import {ValidationState} from "../types";
+import { ValidationState } from "../types";
 import { bindable, BindingMode, customElement } from "aurelia";
 
 @customElement("pinput-text")

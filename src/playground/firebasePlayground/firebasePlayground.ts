@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { IDealDiscussion } from "entities/DealDiscussions";
-import { EthereumService } from "./../../services/EthereumService";
+import { IEthereumService } from "./../../services/EthereumService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Subscription } from "rxjs";
 import { FirestoreService } from "./../../services/FirestoreService";
@@ -13,8 +13,9 @@ export class FirebasePlayground {
 
   constructor(
     private firestoreService: FirestoreService<IDealTokenSwapDocument, IDealRegistrationTokenSwap>,
-    private ethereumService: EthereumService,
-  ) {}
+    @IEthereumService private ethereumService: IEthereumService,
+  ) {
+  }
 
   async attached() {
     this.subscriptions.push(
@@ -69,7 +70,7 @@ export class FirebasePlayground {
   async updateDealIsWithdrawn(dealId: string, value: boolean) {
     try {
       await this.firestoreService.updateDealIsWithdrawn(dealId, value);
-    } catch (error){
+    } catch (error) {
       console.error(error);
     }
   }
@@ -77,7 +78,7 @@ export class FirebasePlayground {
   async updateDealIsRejected(dealId: string, value: boolean) {
     try {
       await this.firestoreService.updateDealIsRejected(dealId, value);
-    } catch (error){
+    } catch (error) {
       console.error(error);
     }
   }
@@ -86,7 +87,7 @@ export class FirebasePlayground {
     try {
       const deal = await this.firestoreService.getDealById(dealId);
       console.log(deal);
-    } catch (error){
+    } catch (error) {
       console.error(error);
     }
   }

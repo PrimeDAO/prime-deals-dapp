@@ -11,14 +11,11 @@ import { DealService } from "services/DealService";
 import { Address, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
-import { IContainer, IEventAggregator, Registration } from "aurelia";
+import { IContainer, IEventAggregator } from "aurelia";
 import { IRoute, IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
 
-import { processContent } from "@aurelia/runtime-html";
+import { processContent, watch } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
-import { newInstanceForScope } from "@aurelia/kernel";
-import { IValidationController } from "@aurelia/validation-html";
-import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import { ProposalStage } from "./stages/proposalStage/proposalStage";
 import { LeadDetailsStage } from "./stages/leadDetailsStage/leadDetailsStage";
 import { PrimaryDaoStage } from "./stages/primaryDaoStage/primaryDaoStage";
@@ -32,12 +29,7 @@ export class WizardManager implements IRouteableComponent {
   static routes: IRoute[] = [
     {
       path: "",
-      viewport: "stages",
-      redirectTo: "proposal", // redirect doesn't work
-    },
-    {
-      path: "proposal",
-      title: "Create an Open Proposal",
+      title: "Proposal",
       viewport: "stages",
       component: ProposalStage,
     },
@@ -99,7 +91,7 @@ export class WizardManager implements IRouteableComponent {
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
-    route: "proposal",
+    route: "",
   };
   private leadDetailsStage: IWizardStage = {
     valid: false,
@@ -152,42 +144,32 @@ export class WizardManager implements IRouteableComponent {
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
-    @newInstanceForScope(IValidationController) public form: IValidationController,
-    presenter: PrimeErrorPresenter,
   ) {
-    this.container.register(Registration.instance("wiz", this));
-    this.form.addSubscriber(presenter);
+    this.wizardService.currentWizard = this;
   }
 
   public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
-    const stageRoute = instruction.route.remaining || "proposal";
-
     let canActivate = true;
 
-    if (!stageRoute) {
-      canActivate = false;
-    } else {
-
-      const dealId = params.id;
-      /**
-       * unless we are editing an existing deal there is nothing further to check
-       */
-      if (dealId) {
-        if (!this.originalRegistrationData) {
-          this.originalRegistrationData = await this.getDeal(dealId);
-        }
-        /**
-         * app.ts is assumed to make sure that if there is going to be a connection on startup,
-         * it will already have been made.
-         *
-         * We have to check this on every activation to handle the case of using browser navigation functions
-         * and changing
-         */
-        canActivate = this.ensureAccess(instruction.parameters.parametersRecord.wizardType, this.ethereumService.defaultAccountAddress);
+    const dealId = params.id;
+    /**
+     * unless we are editing an existing deal there is nothing further to check
+     */
+    if (dealId) {
+      if (!this.originalRegistrationData) {
+        this.originalRegistrationData = await this.getDeal(dealId);
       }
-
-      return canActivate;
+      /**
+       * app.ts is assumed to make sure that if there is going to be a connection on startup,
+       * it will already have been made.
+       *
+       * We have to check this on every activation to handle the case of using browser navigation functions
+       * and changing
+       */
+      canActivate = this.ensureAccess(instruction.parameters.parametersRecord.wizardType, this.ethereumService.defaultAccountAddress);
     }
+
+    return canActivate;
   }
 
   /**
@@ -198,7 +180,7 @@ export class WizardManager implements IRouteableComponent {
    * we need to do all the initialization is the first time.
    */
   public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<void> {
-    const stageRoute = instruction.route.remaining ?? "proposal";
+    const stageRoute = instruction.route.remaining;
 
     const wizardType = instruction.parameters.parametersRecord.wizardType as number;
 
@@ -245,8 +227,6 @@ export class WizardManager implements IRouteableComponent {
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
 
-    await this.setupStageComponent(indexOfActiveStage, wizardType);
-
     this.wizardService.setActiveStage(this, indexOfActiveStage);
   }
 
@@ -267,10 +247,6 @@ export class WizardManager implements IRouteableComponent {
       default:
         return "home";
     }
-  }
-
-  private async setupStageComponent(indexOfActiveStage: number, wizardType: WizardType) {
-    this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
   }
 
   private configureStages(wizardType: WizardType): Array<IWizardStage> {
@@ -348,9 +324,12 @@ export class WizardManager implements IRouteableComponent {
     return isHidden;
   }
 
-  async validate() {
-    const result = await this.form.validate();
-    console.log("default validation result ->", this.form, result);
-    return result.valid;
+  @watch<WizardManager>(x => x.router.isNavigating)
+  onNavigate(oldValue: boolean, newValue: boolean) {
+    if (newValue) {
+      const indexOfActiveStage = this.wizardService.getWizardState(this).indexOfActive;
+      this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+    }
   }
+
 }
