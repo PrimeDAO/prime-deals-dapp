@@ -71,6 +71,7 @@ module.exports = function (env, _webpackOptions) {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: production ? {
         // add your production aliasing here
+        process: 'process/browser',
       } : {
         ...[
           'fetch-client',
@@ -143,12 +144,12 @@ module.exports = function (env, _webpackOptions) {
           baseUrl
         }
       }),
-      ...when(development,
-        new Dotenv({
-          // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
-          path: process.env.DOTENV_CONFIG_PATH,
-        })
-      ),
+      new Dotenv({
+        // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
+        path: process.env.DOTENV_CONFIG_PATH,
+      }),
+      // ...when(development,
+      // ),
       analyze && new BundleAnalyzerPlugin(),
       // Work around for Buffer is undefined:
       // https://github.com/webpack/changelog-v5/issues/10
