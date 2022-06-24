@@ -85,14 +85,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ['components/editingCard', 'dealDashboard/deal-description', 'dealDashboard/discussion']
+        containers: ['components/editingCard', 'dealDashboard/deal-description', 'deals/all-deals/view-all-deals']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cypress Test
         uses: cypress-io/github-action@v4
         with:
-          spec: cypress/integration/tests/${{ matrix.containers }}.e2e.ts 
+          spec: cypress/integration/features/${{ matrix.containers }}.feature 
           browser: chrome
           config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
         env:
