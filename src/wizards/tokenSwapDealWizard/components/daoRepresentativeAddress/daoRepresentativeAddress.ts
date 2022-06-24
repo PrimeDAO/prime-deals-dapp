@@ -2,6 +2,7 @@ import { IDAO, IDealRegistrationTokenSwap } from "entities/DealRegistrationToken
 import { IWizardState, WizardService, WizardStateKey } from "wizards/services/WizardService";
 import { bindable, BindingMode, inject } from "aurelia";
 import { IValidationRules } from "@aurelia/validation";
+import { IsEthAddress } from "../../../../resources/validation-rules";
 
 @inject()
 export class DaoRepresentativeAddress {
@@ -24,14 +25,14 @@ export class DaoRepresentativeAddress {
     this.validationRules
       .on(this.representative)
       .ensure("address")
-      .required();
-    // .satisfiesRule(Validation.isEthAddress) // TODO add rules back
-    // .satisfies((value) => {
-    //   return this.data.representatives.filter(representative => representative.address === value).length === 1;
-    // })
-    // .withMessage("Address duplicated")
-    // .satisfies(this.daoValidationRepresentativeRestriction.bind(this))
-    // .withMessage("The same account cannot represent more than one DAO");
+      .required()
+      .satisfiesRule(new IsEthAddress())
+      .satisfies((value) => {
+        return this.data.representatives.filter(representative => representative.address === value).length === 1;
+      })
+      .withMessage("Address duplicated")
+      .satisfies(this.daoValidationRepresentativeRestriction.bind(this))
+      .withMessage("The same account cannot represent more than one DAO");
   }
 
   private daoValidationRepresentativeRestriction(address): boolean {

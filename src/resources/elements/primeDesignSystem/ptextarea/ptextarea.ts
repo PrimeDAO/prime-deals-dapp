@@ -1,5 +1,4 @@
 import "./ptextarea.scss";
-import { BigNumber } from "ethers";
 import { ValidationState } from "../types";
 import { bindable, BindingMode, customElement } from "aurelia";
 
@@ -12,7 +11,7 @@ export class PTextarea {
   @bindable autocomplete = "off";
   @bindable disabled = false;
   @bindable rows = 4;
-  @bindable({mode: BindingMode.twoWay}) value: string | BigNumber;
+  @bindable({mode: BindingMode.twoWay}) value: string;
   @bindable placeholder = "";
   @bindable resizable = true;
 

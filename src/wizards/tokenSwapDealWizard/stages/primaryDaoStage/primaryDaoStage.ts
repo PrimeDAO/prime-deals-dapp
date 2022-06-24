@@ -4,7 +4,8 @@ import { daoStageValidationRules, IBaseWizardStage, IStageMeta, WizardType } fro
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
-import { IContainer } from "aurelia";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
 
 @processContent(autoSlot)
 export class PrimaryDaoStage implements IBaseWizardStage {
@@ -16,13 +17,13 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
-    @IContainer private container: IContainer,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.container.get("wiz");
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.disabled = stageMeta.wizardType === WizardType.makeAnOffer;
     this.isPartneredDeal = this.getIsPartneredDeal(stageMeta.wizardType);
@@ -32,11 +33,7 @@ export class PrimaryDaoStage implements IBaseWizardStage {
 
     daoStageValidationRules(this.primaryDao, this.validationRules, "Primary DAO", partnerDao);
 
-    // this.form = this.wizardService.registerValidationRules(
-    //   this.wizardManager,
-    //   this.wizardState.registrationData.primaryDAO,
-    //   validationRules,
-    // );
+    this.wizardService.registerForm(this.wizardManager, this.form);
   }
 
   getIsPartneredDeal(wizardType: WizardType) {

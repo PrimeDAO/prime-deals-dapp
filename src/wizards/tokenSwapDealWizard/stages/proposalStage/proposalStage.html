@@ -25,8 +25,9 @@
           label="Proposal Title"
           label-info="Give a clear title to your proposal"
           max-length="60"
+          input-reference.bind="titleReference"
           show-counter>
-          <pinput-text value.bind="proposal.title & validate" max="60"></pinput-text>
+          <pinput-text max="60" value.bind="proposal.title & validate" view-model.ref="titleReference"></pinput-text>
         </pform-input>
 
         <pform-input
@@ -35,8 +36,10 @@
           label="Proposal Summary"
           label-info="Give a brief outline of the Token Swap deal"
           max-length="350"
+          input-reference.bind="summaryReference"
           show-counter>
-          <ptextarea rows="7" value.bind="proposal.summary & validate" max="350"></ptextarea>
+          <ptextarea max="350" rows="7" value.bind="proposal.summary & validate"
+            view-model.ref="summaryReference"></ptextarea>
         </pform-input>
 
         <pform-input
@@ -45,9 +48,10 @@
           label="Proposal Description"
           label-info="Describe the details, background and features of your Token Swap proposal. Explain why it's valuable or unique"
           max-length="3000"
+          input-reference.bind="descriptionReference"
           show-counter>
           <ptextarea rows="7"
-            value.bind="proposal.description & validate" max="3000"></ptextarea>
+            max="3000" value.bind="proposal.description & validate" view-model.ref="descriptionReference"></ptextarea>
         </pform-input>
       </div>
     </div>

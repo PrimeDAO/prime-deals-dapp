@@ -6,6 +6,7 @@ import { WizardType } from "./wizards/tokenSwapDealWizard/dealWizardTypes";
 import { Home } from "./home/home";
 import { Deals } from "deals/list/deals";
 import { DealDashboard } from "./dealDashboard/dealDashboard";
+import { WizardManager } from "./wizards/tokenSwapDealWizard/wizardManager";
 
 export const routes: IRoute[] = [
   {
@@ -69,10 +70,10 @@ export const routes: IRoute[] = [
   },
 
   {
-    path: "/initiate/token-swap/open-prop", // TODO rename "prop" into "proposal" and make the route work
+    path: "/initiate/token-swap/open-proposal",
     id: "createOpenProposal",
     title: "Create an Open Proposal",
-    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    component: WizardManager,
     parameters: {
       wizardType: WizardType.createOpenProposal,
     },
@@ -81,7 +82,7 @@ export const routes: IRoute[] = [
     path: "/initiate/token-swap/partnered-deal",
     id: "createPartneredDeal",
     title: "Create a Partnered Deal",
-    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    component: WizardManager,
     parameters: {
       wizardType: WizardType.createPartneredDeal,
     },
@@ -90,7 +91,7 @@ export const routes: IRoute[] = [
     path: "make-an-offer/:id",
     id: "makeOfferWizard",
     title: "Make an offer",
-    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    component: WizardManager,
     parameters: {
       wizardType: WizardType.makeAnOffer,
     },
@@ -99,7 +100,7 @@ export const routes: IRoute[] = [
     path: "open-proposal/:id/edit",
     id: "editOpenProposal",
     title: "Edit an Open Proposal",
-    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    component: WizardManager,
     parameters: {
       wizardType: WizardType.editOpenProposal,
     },
@@ -108,7 +109,7 @@ export const routes: IRoute[] = [
     path: "partnered-deal/:id/edit",
     id: "editPartneredDeal",
     title: "Edit a Partnered Deal",
-    component: import("./wizards/tokenSwapDealWizard/wizardManager"),
+    component: WizardManager,
     parameters: {
       wizardType: WizardType.editPartneredDeal,
     },

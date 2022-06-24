@@ -11,7 +11,6 @@ import { IValidationRules } from "@aurelia/validation";
 import { areFormsValid } from "../../../../services/ValidationService";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
-import { IContainer } from "aurelia";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
@@ -32,24 +31,21 @@ export class TokenDetailsStage {
 
   constructor(
     private wizardService: WizardService,
-    @IContainer private container: IContainer,
     @newInstanceForScope(IValidationController) private form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
-  // @computedFrom("isOpenProposalWizard", "wizardState.registrationData.primaryDAO.tokens.length")
   get hasValidPrimaryDAOTokensDetailsCount(): boolean {
     return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.primaryDAO.tokens.length) : true;
   }
 
-  // @computedFrom("isOpenProposalWizard", "wizardState.registrationData.partnerDAO.tokens.length")
   get hasValidPartnerDAOTokensDetailsCount(): boolean {
     return !this.isOpenProposalWizard ? Boolean(this.wizardState.registrationData.partnerDAO?.tokens.length) : true;
   }
 
   load(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
-    this.wizardManager = this.container.get("wiz");
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
     this.stageMetadata = stageMeta.settings ?? {};
 

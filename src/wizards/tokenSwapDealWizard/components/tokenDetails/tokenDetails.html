@@ -1,5 +1,5 @@
 <template data-test="tokenDetails">
-  <pcard>
+  <pcard validation-errors.from-view="errors">
     <div if.bind="viewMode === 'edit'">
 
       <pform-input
@@ -65,7 +65,8 @@
       </pform-input>
       <pform-input
         label="Instant Transfer Setup"
-        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO's treasury address, whereas the Vested amount will define the amount of tokens that will be released progressively throughout the total Vesting period defined in the Vesting setup below.">
+        label-description="Once the deal is executed on-chain, the Instant Transfer amount will be immediately sent to the other DAO's treasury address, whereas the Vested amount will define the amount of tokens that will be released progressively throughout the total Vesting period defined in the Vesting setup below."
+      >
         <prange-slider
           decimals.bind="token.decimals"
           disabled.bind="!token.amount"
@@ -193,7 +194,7 @@
       </div>
 
       <div class="tokenDetailsFooter">
-        <p class="feedbackMessage ${!valid ? 'feedbackMessageVisible' : ''} errorMessage">
+        <p class="feedbackMessage ${!errors.length ? 'feedbackMessageVisible' : ''} errorMessage">
           Token details has invalid information. Please edit them.
         </p>
         <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>
