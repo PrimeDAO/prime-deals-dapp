@@ -154,10 +154,8 @@ module.exports = function (env, _webpackOptions) {
       // https://github.com/webpack/changelog-v5/issues/10
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
       }),
-      // new webpack.ProvidePlugin({ // we might need this in the future
-      //   process: 'process/browser',
-      // }),
       ...when(!tests, new CopyWebpackPlugin({
         patterns: [
           { from: 'static', to: './', globOptions: { ignore: ['.*'] } }
