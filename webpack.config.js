@@ -51,7 +51,9 @@ const ensureArray = (config) => config && (Array.isArray(config) ? config : [con
 const when = (condition, config, negativeConfig) =>
   condition ? ensureArray(config) : ensureArray(negativeConfig)
 
-module.exports = function (env, { analyze, tests }) {
+module.exports = function (env, _webpackOptions) {
+  const { analyze, tests, development } = env;
+
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
     target: 'web',
