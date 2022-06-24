@@ -331,4 +331,5 @@ export class WizardManager implements IRouteableComponent {
       this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
     }
   }
+
 }
