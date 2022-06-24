@@ -7,7 +7,7 @@ import { markdowns } from "./common";
 export class Documentation implements IRouteableComponent, ICustomElementViewModel {
   static routes: IRoute[] = [];
   routes = Documentation.routes;
-  default: string | string[];
+  default = this.routes[0].path;
   constructor(
     @IRouter private router: IRouter,
   ) { }
@@ -34,7 +34,7 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
   //   }
   // }
 
-  async load(): Promise<void> {
+  static async loadRoutes(): Promise<void> {
 
     if (Documentation.routes.length) return;
 
@@ -70,15 +70,16 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
           content: null,
         },
       };
-      if (ndx === 0) {
-        this.default = route.path;
-      }
       return route;
+    });
+
+    navRoutes.unshift({
+      ...navRoutes[0],
+      path: "",
     });
 
     Documentation.routes.push(...navRoutes);
 
-    this.numDocs = documentsSpec.length;
   }
 
   next(): void {
