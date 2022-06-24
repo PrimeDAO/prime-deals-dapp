@@ -55,26 +55,6 @@ export class TokenDetails {
 
     this.viewMode = this.viewMode ?? "edit";
 
-    // this.form.subscribe(result => { //  TODO check if this needs to be uncommented
-    //   if (result.type === "validate") {
-    //     this.valid = result.controllerValidateResult.valid;
-    //   }
-    // });
-
-    // class as {
-    //   handleValidationEvent(event: ValidationEvent) {
-    //     console.log("eve ->", event);
-    //   }
-    // }
-    //
-    // this.form.addSubscriber({
-    //   handleValidationEvent(event: ValidationEvent) {
-    //     if (event.kind === "validate") {
-    //       this.valid = event.controllerValidateResult.valid;
-    //     }
-    //   },
-    // });
-
     if (this.token.address && (this.token.logoURI || this.token.name || this.token.decimals || this.token.symbol)) {
       this.showTokenDetails = true;
     }

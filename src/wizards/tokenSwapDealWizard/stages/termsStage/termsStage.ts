@@ -7,6 +7,8 @@ import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 import { inject } from "aurelia";
 import { areFormsValid } from "../../../../services/ValidationService";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
 
 @inject()
 export class TermsStage implements IBaseWizardStage {
@@ -21,6 +23,7 @@ export class TermsStage implements IBaseWizardStage {
 
   constructor(
     public wizardService: WizardService,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
   ) {
   }
 
@@ -39,6 +42,11 @@ export class TermsStage implements IBaseWizardStage {
       const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
       return formsAreValid && !this.hasUnsavedChanges;
     });
+
+    this.wizardService.registerForm(
+      this.wizardManager,
+      this.form,
+    );
   }
 
   onDelete(index: number): boolean | void {

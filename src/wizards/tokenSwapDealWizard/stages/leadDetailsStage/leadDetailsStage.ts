@@ -7,6 +7,8 @@ import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
 import { IsEmail, IsEthAddress } from "../../../../resources/validation-rules";
+import { newInstanceForScope } from "@aurelia/kernel";
+import { IValidationController } from "@aurelia/validation-html";
 
 @processContent(autoSlot)
 export class LeadDetailsStage {
@@ -20,6 +22,7 @@ export class LeadDetailsStage {
 
   constructor(
     public wizardService: WizardService,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
@@ -65,5 +68,9 @@ export class LeadDetailsStage {
       .satisfiesRule(new IsEmail())
       .withMessage("Please enter a valid email address");
 
+    this.wizardService.registerForm(
+      this.wizardManager,
+      this.form,
+    );
   }
 }

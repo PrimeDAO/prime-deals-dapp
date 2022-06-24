@@ -39,7 +39,7 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-                                 wizardStateKey,
+    wizardStateKey,
     stages,
     registrationData,
     cancelRoute,
@@ -118,7 +118,7 @@ export class WizardService {
      * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
      */
     const stage = wizardState.stages[currentIndexOfActive];
-    stage.valid = await stage.validate?.() ?? await wizardStateKey.validate();
+    stage.valid = await stage.validate?.();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
@@ -190,6 +190,7 @@ export class WizardService {
     if (!stage.form) {
       stage.form = form;
       stage.form.addSubscriber(this.presenter);
+      // stage.form.addSubscriber(new ValidationResultPresenterService());
       stage.validate = () => stage.form.validate().then(result => result.valid);
     }
 

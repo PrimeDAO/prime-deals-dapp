@@ -16,9 +16,6 @@ import { IRoute, IRouteableComponent, IRouter, RoutingInstruction } from "@aurel
 
 import { processContent, watch } from "@aurelia/runtime-html";
 import { autoSlot } from "../../resources/temporary-code";
-import { newInstanceForScope } from "@aurelia/kernel";
-import { IValidationController } from "@aurelia/validation-html";
-import { PrimeErrorPresenter } from "../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import { ProposalStage } from "./stages/proposalStage/proposalStage";
 import { LeadDetailsStage } from "./stages/leadDetailsStage/leadDetailsStage";
 import { PrimaryDaoStage } from "./stages/primaryDaoStage/primaryDaoStage";
@@ -147,11 +144,8 @@ export class WizardManager implements IRouteableComponent {
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
-    @newInstanceForScope(IValidationController) public form: IValidationController,
-    presenter: PrimeErrorPresenter,
   ) {
     this.wizardService.currentWizard = this;
-    this.form.addSubscriber(presenter);
   }
 
   public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
@@ -330,9 +324,12 @@ export class WizardManager implements IRouteableComponent {
     return isHidden;
   }
 
-  async validate() {
-    const result = await this.form.validate();
-    return result.valid;
+  @watch<WizardManager>(x => x.router.isNavigating)
+  onNavigate(oldValue: boolean, newValue: boolean) {
+    if (newValue) {
+      const indexOfActiveStage = this.wizardService.getWizardState(this).indexOfActive;
+      this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+    }
   }
 
   @watch<WizardManager>(x => x.router.isNavigating)

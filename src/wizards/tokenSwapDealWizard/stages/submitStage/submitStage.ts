@@ -30,7 +30,7 @@ export class SubmitStage {
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.container.get<WizardManager>("WizardManager");
+    this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);

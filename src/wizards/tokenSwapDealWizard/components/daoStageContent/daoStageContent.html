@@ -12,8 +12,11 @@
       <pform-input
         class="wizardFormInput wizardFormInputNarrow"
         data-test="dao-name-field"
-        label.bind="name + ' Name'">
-        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"></pinput-text>
+        input-reference.bind="nameReference"
+        label.bind="name + ' Name'"
+      >
+        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"
+          view-model.ref="nameReference"></pinput-text>
       </pform-input>
 
       <pform-input
@@ -35,11 +38,15 @@
           class="wizardFormInput wizardFormInputNarrow"
           data-test="dao-avatar-field"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size"
-          label.bind="name + ' Avatar'">
+          input-reference.bind="imageReference"
+          label.bind="name + ' Avatar'"
+        >
           <pinput-text
             disabled.bind="disabled"
             placeholder="Image URL..."
-            value.bind="data.logoURI & debounce:600 & validate">
+            value.bind="data.logoURI & debounce:600 & validate"
+            view-model.ref="imageReference"
+          >
           </pinput-text>
         </pform-input>
         <div
