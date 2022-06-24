@@ -161,7 +161,8 @@ module.exports = function (env, _webpackOptions) {
         patterns: [
           { from: 'static', to: './', globOptions: { ignore: ['.*'] } }
         ]
-      }))
-    ].filter(p => p)
+      })),
+      new webpack.EnvironmentPlugin(process.env)
+    ].filter(p => p),
   }
 }
