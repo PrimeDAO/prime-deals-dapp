@@ -141,10 +141,12 @@ module.exports = function (env, { analyze, tests }) {
           baseUrl
         }
       }),
-      new Dotenv({
-        // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
-        path: process.env.DOTENV_CONFIG_PATH,
-      }),
+      ...when(development,
+        new Dotenv({
+          // path: `./.env${production ? '' :  '.' + (process.env.NODE_ENV || 'development')}`,
+          path: process.env.DOTENV_CONFIG_PATH,
+        })
+      ),
       analyze && new BundleAnalyzerPlugin(),
       // Work around for Buffer is undefined:
       // https://github.com/webpack/changelog-v5/issues/10
