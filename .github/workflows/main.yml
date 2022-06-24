@@ -78,9 +78,19 @@ jobs:
           echo "::set-output name=PREVIEW_URL::$DEPLOYMENT_URL"
           echo "::set-output name=INSPECT_URL::$INSPECT_URL"
 
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: cypress-io/github-action@v4
+        with:
+          runTests: false
+
   e2e_tests:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: [deploy, install]
     strategy:
       fail-fast: false
       matrix:
