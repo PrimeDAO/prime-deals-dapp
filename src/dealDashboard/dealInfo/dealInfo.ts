@@ -2,6 +2,7 @@ import { DealTokenSwap } from "entities/DealTokenSwap";
 // import { availableSocialMedias } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { DisposableCollection } from "../../services/DisposableCollection";
 import { bindable, IEventAggregator } from "aurelia";
+import { availableSocialMedias } from "../../wizards/tokenSwapDealWizard/dealWizardTypes";
 
 export class DealInfo {
   @bindable deal: DealTokenSwap;
@@ -23,8 +24,7 @@ export class DealInfo {
   }
 
   getSocialMediaDetails(socialMediaName: string) {
-    console.log(socialMediaName);
-    // return availableSocialMedias.find(socialMedia => socialMedia.name === socialMediaName);
+    return availableSocialMedias.find(socialMedia => socialMedia.name === socialMediaName);
   }
 
   async changePrivacy(checked: boolean) {

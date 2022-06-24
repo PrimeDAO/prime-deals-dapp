@@ -194,7 +194,7 @@
       </div>
 
       <div class="tokenDetailsFooter">
-        <p class="feedbackMessage ${!errors.length ? 'feedbackMessageVisible' : ''} errorMessage">
+        <p class="feedbackMessage ${errors.length ? 'feedbackMessageVisible' : ''} errorMessage">
           Token details has invalid information. Please edit them.
         </p>
         <pbutton click.delegate="viewMode = 'edit'" type="tertiary">Edit</pbutton>

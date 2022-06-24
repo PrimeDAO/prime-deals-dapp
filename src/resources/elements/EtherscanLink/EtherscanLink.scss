@@ -1,6 +1,13 @@
+@import "src/styles/colors";
+
 .etherscanlink {
   display: inline-flex;
   align-items: center;
+
+  a {
+    color: $Neutral04;
+  }
+
   .text {
     display: inline-block;
   }
