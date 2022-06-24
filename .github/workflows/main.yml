@@ -78,28 +78,69 @@ jobs:
           echo "::set-output name=PREVIEW_URL::$DEPLOYMENT_URL"
           echo "::set-output name=INSPECT_URL::$INSPECT_URL"
 
-  cypress-run:
-    name: Cypress run
-    needs: deploy
+  install:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      # Run e2e tests against Vercel deployment
-      - name: Cypress run
+      - name: Install
         uses: cypress-io/github-action@v4
         with:
-          config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
-      # after the test run completes
-      # store videos and any screenshots
-      # NOTE: screenshots will be generated only if E2E test failed
-      # thus we store screenshots only on failures
-      - uses: actions/upload-artifact@v2
-        if: failure()
+          runTests: false
+      - name: Save Cypress artifacts
+        uses: actions/upload-artifact@v2
         with:
-          name: cypress-screenshots
-          path: cypress/screenshots
+          name: build
+          if-no-files-found: error
+          path: build
+
+  e2e_tests:
+    runs-on: ubuntu-latest
+    needs: [deploy, install]
+    container: cypress/browsers:node14.17.0-chrome91-ff89
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: ['components/editingCard', 'dealDashboard/deal-description', 'dealDashboard/discussion']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download Cypress artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
+      - name: Cypress Test
+        uses: cypress-io/github-action@v4
+        with:
+          spec: cypress/integration/tests/${{ matrix.containers }}.e2e.ts 
+          browser: chrome
+          config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # cypress-run:
+  #   name: Cypress run
+  #   needs: [deploy, install]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     # Run e2e tests against Vercel deployment
+  #     - name: Cypress run
+  #       uses: cypress-io/github-action@v4
+  #       with:
+  #         config: pageLoadTimeout=100000,baseUrl=${{needs.deploy.outputs.DEPLOYMENT_URL}}
+  #     # after the test run completes
+  #     # store videos and any screenshots
+  #     # NOTE: screenshots will be generated only if E2E test failed
+  #     # thus we store screenshots only on failures
+  #     - uses: actions/upload-artifact@v2
+  #       if: failure()
+  #       with:
+  #         name: cypress-screenshots
+  #         path: cypress/screenshots
 
   # failed-e2e:
   #   name: Comment on PR with failing tests details
