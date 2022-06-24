@@ -51,7 +51,9 @@ const ensureArray = (config) => config && (Array.isArray(config) ? config : [con
 const when = (condition, config, negativeConfig) =>
   condition ? ensureArray(config) : ensureArray(negativeConfig)
 
-module.exports = function (env, { analyze, tests }) {
+module.exports = function (env, _webpackOptions) {
+  const { analyze, tests, development } = env;
+
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
     target: 'web',
@@ -69,6 +71,7 @@ module.exports = function (env, { analyze, tests }) {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: production ? {
         // add your production aliasing here
+        process: 'process/browser',
       } : {
         ...[
           'fetch-client',
@@ -150,15 +153,14 @@ module.exports = function (env, { analyze, tests }) {
       // https://github.com/webpack/changelog-v5/issues/10
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
       }),
-      // new webpack.ProvidePlugin({ // we might need this in the future
-      //   process: 'process/browser',
-      // }),
       ...when(!tests, new CopyWebpackPlugin({
         patterns: [
           { from: 'static', to: './', globOptions: { ignore: ['.*'] } }
         ]
-      }))
-    ].filter(p => p)
+      })),
+      new webpack.EnvironmentPlugin(process.env)
+    ].filter(p => p),
   }
 }
