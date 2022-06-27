@@ -162,7 +162,7 @@ export class WizardService {
       origin: wizardStateKey,
       query: "",
       parameters: {
-        settings: wizardStateKey.additionalStageMetadata,
+        // settings: wizardStateKey.additionalStageMetadata,
       },
     });
     // this.router.currentInstruction.config.name,

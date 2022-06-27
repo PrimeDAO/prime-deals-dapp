@@ -1,16 +1,12 @@
 import { IWizardState, WizardService } from "../../../services/WizardService";
-import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { IEthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
-import { IDisposable, IEventAggregator } from "aurelia";
-import { processContent } from "@aurelia/runtime-html";
-import { autoSlot } from "../../../../resources/temporary-code";
+import { IDisposable, IEventAggregator, inject } from "aurelia";
 import { IValidationRules } from "@aurelia/validation";
-import { IsEmail, IsEthAddress } from "../../../../resources/validation-rules";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 
-@processContent(autoSlot)
+@inject()
 export class LeadDetailsStage {
   wizardManager: any;
   wizardState: IWizardState<IDealRegistrationTokenSwap>;
@@ -48,29 +44,29 @@ export class LeadDetailsStage {
     this.accountSubscription.dispose();
   }
 
-  load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.wizardService.currentWizard;
-    this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
-    this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
-
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.proposalLead = this.wizardState.registrationData.proposalLead;
-
-    this.validationRules
-      .on(this.proposalLead)
-      .ensure("address")
-      .required()
-      .withMessage("Wallet address is required")
-      .satisfiesRule(new IsEthAddress())
-      .withMessage("Please enter a valid ethereum address")
-      .ensure("email")
-      .required()
-      .satisfiesRule(new IsEmail())
-      .withMessage("Please enter a valid email address");
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
-  }
+  // load(stageMeta: IStageMeta): void {
+  //   this.wizardManager = this.wizardService.currentWizard;
+  //   this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
+  //   this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
+  //
+  //   this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+  //   this.proposalLead = this.wizardState.registrationData.proposalLead;
+  //
+  //   this.validationRules
+  //     .on(this.proposalLead)
+  //     .ensure("address")
+  //     .required()
+  //     .withMessage("Wallet address is required")
+  //     .satisfiesRule(new IsEthAddress())
+  //     .withMessage("Please enter a valid ethereum address")
+  //     .ensure("email")
+  //     .required()
+  //     .satisfiesRule(new IsEmail())
+  //     .withMessage("Please enter a valid email address");
+  //
+  //   this.wizardService.registerForm(
+  //     this.wizardManager,
+  //     this.form,
+  //   );
+  // }
 }

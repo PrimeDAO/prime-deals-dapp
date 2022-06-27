@@ -1,4 +1,4 @@
-import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
+import { WizardType } from "../../dealWizardTypes";
 import * as shortUuid from "short-uuid";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IClause, IDealRegistrationTokenSwap, ITerms } from "entities/DealRegistrationTokenSwap";
@@ -6,12 +6,11 @@ import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 import { inject } from "aurelia";
-import { areFormsValid } from "../../../../services/ValidationService";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 
 @inject()
-export class TermsStage implements IBaseWizardStage {
+export class TermsStage {
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
@@ -27,27 +26,27 @@ export class TermsStage implements IBaseWizardStage {
   ) {
   }
 
-  load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.wizardService.currentWizard;
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-
-    this.stageMetadata = stageMeta.settings ?? {};
-    this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
-
-    this.terms = this.wizardState.registrationData.terms;
-
-    this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      this.addIdsToClauses(stageMeta.wizardType);
-      this.checkedForUnsavedChanges();
-      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
-      return formsAreValid && !this.hasUnsavedChanges;
-    });
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
-  }
+  // load(stageMeta: IStageMeta): void {
+  //   this.wizardManager = this.wizardService.currentWizard;
+  //   this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+  //
+  //   this.stageMetadata = stageMeta.settings ?? {};
+  //   this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
+  //
+  //   this.terms = this.wizardState.registrationData.terms;
+  //
+  //   this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
+  //     this.addIdsToClauses(stageMeta.wizardType);
+  //     this.checkedForUnsavedChanges();
+  //     const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
+  //     return formsAreValid && !this.hasUnsavedChanges;
+  //   });
+  //
+  //   this.wizardService.registerForm(
+  //     this.wizardManager,
+  //     this.form,
+  //   );
+  // }
 
   onDelete(index: number): boolean | void {
     if (this.wizardState.registrationData.terms.clauses.length === 1) {
