@@ -1,3 +1,4 @@
+import { jsonDocs } from "./../../test/data/index";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { Utils } from "services/utils";
 import { bindable, BindingMode, inject } from "aurelia";
@@ -22,7 +23,7 @@ export class Navbar {
 
   private async resetDeals() {
     if (process.env.FIREBASE_ENVIRONMENT !== "production") {
-      // await (await import("../server-browser-scripts/seed-data")).resetDeals((jsonDocs as any[]).map(doc => doc.default ?? doc));
+      await (await import("../server-browser-scripts/seed-data")).resetDeals((jsonDocs as any[]).map(doc => doc.default ?? doc));
     }
   }
 
