@@ -18,12 +18,17 @@ export class WalletMenu {
    */
   thisClickHandler = this.handleClick.bind(this);
   thisEscHandler = this.handleEsc.bind(this);
+  private isSafeApp: boolean;
 
   constructor(
     private ethereumService: EthereumService,
     private tokenService: TokenService,
   ) {
     this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
+  }
+
+  async attached() {
+    this.isSafeApp = await this.ethereumService.isSafeApp();
   }
 
   showingChanged(show: boolean): void {

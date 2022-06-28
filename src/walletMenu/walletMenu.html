@@ -5,7 +5,10 @@
     <div class="networkFeedback">
       <hr />
       <div class="pair connected">
-        <div class="title">Connected with MetaMask</div>
+        <div class="title">
+          <template if.bind="isSafeApp">Connected to Safe</template>
+          <template else>Connected with MetaMask</template>
+        </div>
         <div data-test="diconnect-button" class="action" click.delegate="disconnect()">Disconnect</div>
       </div>
       <div class="pair accountInfo">
