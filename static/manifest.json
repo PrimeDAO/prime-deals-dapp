@@ -1,5 +1,12 @@
 {
   "name": "Prime Deals",
   "description": "Platform to negotiate and execute DAO to DAO Token Swaps",
-  "iconPath": "DAO2DAO.png"
+  "iconPath": "DAO2DAO.png",
+  "icons": [
+    {
+      "src": "DAO2DAO.png",
+      "sizes": "195x195",
+      "type": "image/png"
+    }
+  ]
 }
