@@ -129,8 +129,7 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    const network = await this.ethereumService.isSafeApp() ? EthereumService.targetedNetwork : undefined;
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network});
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }
@@ -147,7 +146,13 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
-    if (this.currentFirebaseUserAddress === address) {
+    /**
+     * We don't require safe addresses to "auth" to the data storage.
+     * Reason: Safes don't have private keys, instead a public tx gets created.
+     *   All parameters are visible, so one could reproduce the "signature" and imitate a Safe address.
+     *   Note: In the very first version of the Safe App integration we required the Safe auth.
+     */
+    if (await this.ethereumService.isSafeAddress(this.ethereumService.defaultAccountAddress)) {
       return;
     }
 
@@ -156,6 +161,17 @@ export class FirebaseService {
     await signOut(firebaseAuth);
 
     const { messageToSign, signature, safeTxHash } = await this.getSignatureData(address);
+
+    /**
+     * In case of a Safe App we are first connected as the user's wallet.
+     * Upon successful auth we change to the Safe App provider.
+     */
+    if (await this.ethereumService.isSafeApp()) {
+      await this.ethereumService.connectToSafeProvider();
+    } else if (this.currentFirebaseUserAddress === address) {
+      return;
+    }
+
     this.storeSignatureForAddress(address, signature, messageToSign, safeTxHash);
 
     let token: string;
@@ -198,20 +214,18 @@ export class FirebaseService {
     }
 
     /** A. Production case */
-    if (!(await this.ethereumService.isSafeApp())) {
-      try {
-        // eslint-disable-next-line require-atomic-updates
-        messageToSign = await this.getMessageToSign();
-        signature = await this.requestSignature(messageToSign);
-        this.eventAggregator.publish("database.account.signature.successful");
+    try {
+      // eslint-disable-next-line require-atomic-updates
+      messageToSign = await this.getMessageToSign();
+      signature = await this.requestSignature(messageToSign);
+      this.eventAggregator.publish("database.account.signature.successful");
 
-      } catch (error) {
-        this.eventAggregator.publish("database.account.signature.cancelled");
-        throw error;
-      }
-
-      return { messageToSign, signature };
+    } catch (error) {
+      this.eventAggregator.publish("database.account.signature.cancelled");
+      throw error;
     }
+
+    return { messageToSign, signature };
 
     /**
      * B. In case of a Safe App, we follow this flow:

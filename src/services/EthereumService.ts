@@ -1,3 +1,4 @@
+import SafeAppsSDK from "@gnosis.pm/safe-apps-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
@@ -12,6 +13,10 @@ import { autoinject } from "aurelia-framework";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Utils } from "services/utils";
+
+const safeAppOpts = {
+  allowedDomains: [/gnosis-safe.io/],
+};
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -250,41 +255,45 @@ export class EthereumService {
    * silently connect to metamask if a metamask account is already connected,
    * without invoking Web3Modal nor MetaMask popups.
    */
-  public async connectToConnectedProvider(): Promise<void> {
+  public async connectToSafeProvider() {
     // const cachedProvider = this.cachedProvider;
     // const cachedAccount = this.cachedWalletAccount;
 
     this.ensureWeb3Modal();
 
-    /**
-     * This if statement is handling Gnosis Safe feature
-     * https://github.com/safe-global/safe-apps-sdk/tree/master/packages/safe-apps-web3modal
-     */
-    if (await this.web3Modal.isSafeApp()) {
-      const safeProvider = await this.web3Modal.requestProvider();
+    const safeProvider = await this.web3Modal.requestProvider();
 
-      /**
-       * TODO: This is copy pasted from the if statement below (with one exception: Disclaimer is ensured here as well)
-       *   --> We should not duplicate this code, and instead find a cleaner way
-       */
-      const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
-      if (chainName === EthereumService.targetedNetwork) {
-        const accounts = await safeProvider.request({ method: "eth_accounts" });
-        if (accounts?.length) {
-          const account = getAddress(accounts[0]);
-          /**
-           * Expected flow: When Disclaimer not accepted, always pop up.
-           * In the Safe App case, we need to call ensure extra, else it does not show up.
-           */
-          await this.disclaimerService.ensurePrimeDisclaimed(account);
-          if (this.disclaimerService.getPrimeDisclaimed(account)) {
-            this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-            return this.setProvider(safeProvider);
-          }
+    /**
+     * TODO: This is copy pasted from the if statement in `connectToConnectedProvider` (with one exception: Disclaimer is ensured here as well)
+     *   --> We should not duplicate this code, and instead find a cleaner way
+     */
+    const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
+    if (chainName === EthereumService.targetedNetwork) {
+      const accounts = await safeProvider.request({ method: "eth_accounts" });
+      if (accounts?.length) {
+        const account = getAddress(accounts[0]);
+        /**
+         * Expected flow: When Disclaimer not accepted, always pop up.
+         * In the Safe App case, we need to call ensure extra, else it does not show up.
+         */
+        await this.disclaimerService.ensurePrimeDisclaimed(account);
+        if (this.disclaimerService.getPrimeDisclaimed(account)) {
+          this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
+          return this.setProvider(safeProvider);
         }
       }
-
     }
+  }
+
+  /**
+   * silently connect to metamask if a metamask account is already connected,
+   * without invoking Web3Modal nor MetaMask popups.
+   */
+  public async connectToConnectedProvider(): Promise<void> {
+    // const cachedProvider = this.cachedProvider;
+    // const cachedAccount = this.cachedWalletAccount;
+
+    this.ensureWeb3Modal();
 
     const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
 
@@ -586,6 +595,14 @@ export class EthereumService {
 
   public async isSafeApp(): Promise<boolean> {
     return await this.web3Modal.isSafeApp();
+  }
+
+  public async isSafeAddress(safeAddress: string): Promise<boolean> {
+    if (!await this.isSafeApp()) return Promise.resolve(false);
+
+    const appsSdk = new SafeAppsSDK(safeAppOpts);
+    const info = await appsSdk.safe.getInfo();
+    return safeAddress === info.safeAddress;
   }
 }
 
