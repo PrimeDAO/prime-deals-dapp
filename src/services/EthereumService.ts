@@ -151,6 +151,7 @@ export class EthereumService {
     }
   }
 
+  private safeAppSdk: SafeAppsSDK;
   private web3Modal: Web3Modal;
   /**
    * provided by Web3Modal
@@ -251,6 +252,16 @@ export class EthereumService {
     }
   }
 
+  public async awaitEnsureConnected(): Promise<boolean> {
+    if (!this.defaultAccountAddress) {
+      await this.connect();
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   /**
    * silently connect to metamask if a metamask account is already connected,
    * without invoking Web3Modal nor MetaMask popups.
@@ -336,6 +347,12 @@ export class EthereumService {
     }
   }
 
+  private ensureSafeAppSdk(): void {
+    if (!this.safeAppSdk) {
+      this.safeAppSdk = new SafeAppsSDK(safeAppOpts);
+    }
+  }
+
   private async getNetwork(provider: Web3Provider): Promise<Network> {
     let network = await provider.getNetwork();
     network = Object.assign({}, network);
@@ -414,6 +431,7 @@ export class EthereumService {
   // }
 
   private handleAccountsChanged = async (accounts?: Array<Address>) => {
+    await this.awaitEnsureConnected();
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
     this.fireAccountsChangedHandler(getAddress(accounts?.[0]));
@@ -450,6 +468,19 @@ export class EthereumService {
     this.fireAccountsChangedHandler(null);
     this.web3ModalProvider = undefined;
     this.walletProvider = undefined;
+    this.fireDisconnectHandler(error);
+  }
+
+  /**
+   * Like `disconnect`, but don't reset the providers
+   */
+  public softDisconnect(error: { code: number; message: string }): void {
+    this.web3ModalProvider?.removeListener("accountsChanged", this.handleAccountsChanged);
+    this.web3ModalProvider?.removeListener("chainChanged", this.handleChainChanged);
+    this.web3ModalProvider?.removeListener("disconnect", this.handleDisconnect);
+    this.defaultAccount = undefined;
+    this.defaultAccountAddress = undefined;
+    this.fireAccountsChangedHandler(null);
     this.fireDisconnectHandler(error);
   }
 
@@ -600,9 +631,17 @@ export class EthereumService {
   public async isSafeAddress(safeAddress: string): Promise<boolean> {
     if (!await this.isSafeApp()) return Promise.resolve(false);
 
-    const appsSdk = new SafeAppsSDK(safeAppOpts);
-    const info = await appsSdk.safe.getInfo();
+    this.ensureSafeAppSdk();
+    const info = await this.safeAppSdk.safe.getInfo();
     return safeAddress === info.safeAddress;
+  }
+
+  public async isMemberOfSafe(address: string): Promise<boolean> {
+    if (!await this.isSafeApp()) return Promise.resolve(false);
+
+    this.ensureSafeAppSdk();
+    const info = await this.safeAppSdk.safe.getInfo();
+    return info.owners.includes(address);
   }
 }
 
