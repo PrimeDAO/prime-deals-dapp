@@ -58,7 +58,15 @@
       ></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
-      <div class="orangeColor dealStatusText">${statusText.statusText}</div>
+      <div class="orangeColor dealStatusText">
+        ${statusText.statusText}
+        <etherscanlink if.bind="(deal.isClaiming || deal.isCompleted) && deal.swapTxHash"
+          text="View on Etherscan"
+          type="tx"
+          address="${deal.swapTxHash}"
+          hide-clipboard-button>
+        </etherscanlink>
+      </div>
     </div>
 
     <div
