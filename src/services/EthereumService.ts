@@ -252,16 +252,6 @@ export class EthereumService {
     }
   }
 
-  public async awaitEnsureConnected(): Promise<boolean> {
-    if (!this.defaultAccountAddress) {
-      await this.connect();
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
   /**
    * silently connect to metamask if a metamask account is already connected,
    * without invoking Web3Modal nor MetaMask popups.
@@ -431,7 +421,6 @@ export class EthereumService {
   // }
 
   private handleAccountsChanged = async (accounts?: Array<Address>) => {
-    await this.awaitEnsureConnected();
     this.defaultAccount = await this.getCurrentAccountFromProvider(this.walletProvider);
     this.defaultAccountAddress = await this.getDefaultAccountAddress();
     this.fireAccountsChangedHandler(getAddress(accounts?.[0]));
