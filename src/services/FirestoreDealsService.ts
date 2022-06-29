@@ -4,7 +4,7 @@ import { FirestoreService } from "services/FirestoreService";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { Address, IEthereumService } from "services/EthereumService";
+import { Address, Hash, IEthereumService } from "services/EthereumService";
 import { IFirebaseDocument } from "services/FirestoreTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Observable } from "rxjs";
@@ -98,6 +98,14 @@ export class FirestoreDealsService<
     }
 
     return this.firestoreService.updateDealIsRejected(dealId, value);
+  }
+
+  public updateSwapTxHash(dealId: string, accountAddress: string, value: Hash): Promise<void> {
+    if (!this.isUserAuthenticatedWithAddress(accountAddress)) {
+      return;
+    }
+
+    return this.firestoreService.updateSwapTxHash(dealId, value);
   }
 
   public getDealById<TDealDocument>(dealId: string): Promise<TDealDocument> {

@@ -791,6 +791,11 @@ export class DealTokenSwap implements IDeal {
           if (receipt) {
             this.isExecuted = true;
             this.executedAt = new Date((await this.ethereumService.getBlock(receipt.blockNumber)).timestamp * 1000);
+            this.dataSourceDeals.updateSwapTxHash(
+              this.dealDocument.id,
+              this.ethereumService.defaultAccountAddress,
+              receipt.transactionHash,
+            );
             return receipt;
           }
         });
