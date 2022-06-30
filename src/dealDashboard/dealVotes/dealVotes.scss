@@ -85,18 +85,8 @@ deal-votes {
         display: flex;
         width: 100%;
         justify-content: space-between;
-        etherscanlink {
-          a {
-            color: $Neutral02;
-            &::after {
-              content: "↗";
-              color: $Secondary05;
-              display: inline-block;
-              vertical-align: middle;
-              text-align: right;
-              width: 18px;
-            }
-          }
+        .addressLink a {
+          color: $Neutral02;
         }
       }
 
