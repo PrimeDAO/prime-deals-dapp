@@ -120,7 +120,7 @@ export class DealTokenSwap implements IDeal {
   public dealManager: any;
 
   public primaryDao?: IDAO;
-  public swapTxHash?: string;
+  public swapTxHash: string;
 
   constructor(
     private consoleLogService: ConsoleLogService,
@@ -571,7 +571,7 @@ export class DealTokenSwap implements IDeal {
       this.primaryDao = this.registrationData.primaryDAO;
       this.partnerDao = this.registrationData.partnerDAO;
       this.createdAt = new Date(this.dealDocument.createdAt);
-      this.swapTxHash = this.dealDocument.swapTxHash || null;
+      this.swapTxHash = this.dealDocument.swapTxHash;
 
       await this.loadDepositContracts(); // now that we have registrationData
 
