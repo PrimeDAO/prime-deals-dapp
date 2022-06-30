@@ -68,7 +68,7 @@ deal-votes {
           }
 
           object svg path {
-            fill: red
+            fill: red;
           }
         }
       }
@@ -82,6 +82,12 @@ deal-votes {
 
       .dealStatusText {
         font-size: 14px;
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        .addressLink a {
+          color: $Neutral02;
+        }
       }
 
       .representativesVotesSubtitle {

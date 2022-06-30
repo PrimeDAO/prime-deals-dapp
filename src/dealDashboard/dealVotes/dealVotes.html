@@ -58,7 +58,16 @@
       ></deal-representatives-votes>
 
       <p class="bodySmallText votesSubtitle" if.bind="statusText">Deal status</p>
-      <div class="orangeColor dealStatusText">${statusText.statusText}</div>
+      <div class="orangeColor dealStatusText">
+        ${statusText.statusText}
+        <address-link if.bind="(deal.isClaiming || deal.isCompleted) && deal.swapTxHash"
+          link-text="View on Etherscan"
+          show-copy-icon.bind="false"
+          is-transaction.bind="true"
+          show-arrow-inside-link="true"
+          address="${deal.swapTxHash}">
+        </address-link>
+      </div>
     </div>
 
     <div

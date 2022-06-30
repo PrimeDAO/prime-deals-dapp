@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
-import { Address } from "./EthereumService";
+import { Address, Hash } from "./EthereumService";
 
 export type IDealIdType = string;
 
@@ -116,6 +116,17 @@ export interface IDataSourceDeals {
     dealId: IDealIdType,
     accountAddress: Address,
     value: boolean,
+  ): Promise<void>;
+  /**
+   * Update swapTxHash property
+   * @param dealId
+   * @param accountAddress
+   * @param value
+   */
+  updateSwapTxHash(
+    dealId: IDealIdType,
+    accountAddress: Address,
+    value: Hash,
   ): Promise<void>;
   /**
    * Should we ask user to sign authentication message

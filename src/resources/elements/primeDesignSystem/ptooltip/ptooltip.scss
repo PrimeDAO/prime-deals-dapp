@@ -10,6 +10,9 @@
 
   .tippy-content {
     padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 55px);
   }
 
   .tippy-arrow:before {
