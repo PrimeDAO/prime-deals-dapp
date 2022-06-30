@@ -10,7 +10,8 @@
 
   .tippy-content {
     padding: 0;
-    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
     max-width: calc(100vw - 55px);
   }
 
