@@ -120,7 +120,7 @@ export class DealTokenSwap implements IDeal {
   public dealManager: any;
 
   public primaryDao?: IDAO;
-  public swapTxHash: string;
+  public swapTxHash?: string;
 
   constructor(
     private consoleLogService: ConsoleLogService,
