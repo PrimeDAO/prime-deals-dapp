@@ -10,6 +10,8 @@
 
   .tippy-content {
     padding: 0;
+    word-wrap: break-word;
+    max-width: calc(100vw - 55px);
   }
 
   .tippy-arrow:before {
