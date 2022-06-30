@@ -144,7 +144,7 @@
       </etherscanlink>
     </div>
 
-    <div
+    <div if.bind="deal.registrationData.terms.daoplomatRewards"
       class="infoSection totalRepresentatives ${showMoreRewards ? 'active' : ''}"
       click.trigger="showMoreRewards = !showMoreRewards"
     >
