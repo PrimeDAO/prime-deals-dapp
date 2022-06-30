@@ -145,8 +145,35 @@
     </div>
 
     <div
-      class="infoSection totalRepresentatives ${showMore ? 'active' : ''}"
-      click.trigger="showMore = !showMore"
+      class="infoSection totalRepresentatives ${showMoreRewards ? 'active' : ''}"
+      click.trigger="showMoreRewards = !showMoreRewards"
+    >
+      <span class="bodySmallTextBold infoTitle">Total DAOplomat Reward</span>
+      <span>
+        <span class="percent">
+          ${deal.registrationData.terms.daoplomatRewards.percentageAmount}
+        </span>
+        <i class="fas fa-angle-down arrow"></i>
+      </span>
+    </div>
+    <div class="panel" css.bind="{'max-height': maxHeightRewards}" ref="panelRewards">
+      <div class="panel-content">
+        <p
+          class="representative bodySmallText"
+          repeat.for="daoplomat of deal.registrationData.terms.daoplomatRewards.daoplomats"
+        >
+          <etherscanlink 
+            class="representative-dao" 
+            address.bind="daoplomat.address"
+            text="${daoplomat.address | smallHexString}"></etherscanlink>
+          <span class="percent">${daoplomat.percentageAmount * deal.registrationData.terms.daoplomatRewards.percentageAmount / 100}</span>
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="infoSection totalRepresentatives ${showMoreRepresentatives ? 'active' : ''}"
+      click.trigger="showMoreRepresentatives = !showMoreRepresentatives"
     >
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
       <span>
@@ -156,7 +183,7 @@
         <i class="fas fa-angle-down arrow"></i>
       </span>
     </div>
-    <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+    <div class="panel" css.bind="{'max-height': maxHeightRepresentatives}" ref="panelRepresentatives">
       <div class="panel-content">
         <p
           class="representative bodySmallText"
