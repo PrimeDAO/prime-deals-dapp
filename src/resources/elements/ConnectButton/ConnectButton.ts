@@ -34,6 +34,7 @@ export class ConnectButton {
   private txReceipt: TransactionReceipt;
   private primeAddress: Address;
   private disable = false;
+  private isSafeApp: boolean;
 
   private get txInProgress(): boolean {
     return this.txPhase !== "None";
@@ -78,6 +79,10 @@ export class ConnectButton {
     this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
   }
 
+  async attached() {
+    this.isSafeApp = await this.ethereumService.isSafeApp();
+  }
+
   /**
    * Disable connect button if
    * - Not a safe address &&
@@ -118,6 +123,15 @@ export class ConnectButton {
         this.showWalletMenu();
       }
     }
+  }
+
+  private async connectToSafe(): Promise<void> {
+    if (await this.ethereumService.isReadOnlySafe()) {
+      this.eventAggregator.publish("handleException", new EventConfigException("Unauthorized", "Account is not an owner of the Safe. You will not be able to connect to the Deals Safe App"));
+      return;
+    }
+
+    this.ethereumService.connectToSafeProvider();
   }
 
   private gotoTx(): void {
