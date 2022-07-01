@@ -231,6 +231,7 @@ export class EthereumService {
    * provided by ethers given provider from Web3Modal
    */
   public walletProvider: Web3Provider;
+  public safeProvider: ExternalProvider;
   public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
@@ -261,16 +262,15 @@ export class EthereumService {
     // const cachedAccount = this.cachedWalletAccount;
 
     this.ensureWeb3Modal();
-
-    const safeProvider = await this.web3Modal.requestProvider();
+    await this.ensureSafeProvider();
 
     /**
      * TODO: This is copy pasted from the if statement in `connectToConnectedProvider` (with one exception: Disclaimer is ensured here as well)
      *   --> We should not duplicate this code, and instead find a cleaner way
      */
-    const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
+    const chainName = this.chainNameById.get(Number(await this.safeProvider.request({ method: "eth_chainId" })));
     if (chainName === EthereumService.targetedNetwork) {
-      const accounts = await safeProvider.request({ method: "eth_accounts" });
+      const accounts = await this.safeProvider.request({ method: "eth_accounts" });
       if (accounts?.length) {
         const account = getAddress(accounts[0]);
         /**
@@ -278,9 +278,13 @@ export class EthereumService {
          * In the Safe App case, we need to call ensure extra, else it does not show up.
          */
         await this.disclaimerService.ensurePrimeDisclaimed(account);
+        /**
+         * Dev note: For the Gnosis safe we could remove this if, because for a Safe app it is _expected_ to autoconnect.
+         *   The disclaimer is ensured during `setProvider`. Of course we can make extra sure though.
+         */
         if (this.disclaimerService.getPrimeDisclaimed(account)) {
           this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-          return this.setProvider(safeProvider);
+          return this.setProvider(this.safeProvider as any);
         }
       }
     }
@@ -295,6 +299,11 @@ export class EthereumService {
     // const cachedAccount = this.cachedWalletAccount;
 
     this.ensureWeb3Modal();
+
+    if (await this.isSafeApp()) {
+      await this.connectToSafeProvider();
+      return;
+    }
 
     const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
 
@@ -334,6 +343,12 @@ export class EthereumService {
        * So call clearCachedProvider() here to clear it, just in case it has ever been set.
        */
       this.web3Modal?.clearCachedProvider();
+    }
+  }
+
+  private async ensureSafeProvider(): Promise<void> {
+    if (!this.safeProvider) {
+      this.safeProvider = await this.web3Modal.requestProvider();
     }
   }
 
@@ -618,7 +633,7 @@ export class EthereumService {
   }
 
   public async isSafeAddress(safeAddress: string): Promise<boolean> {
-    if (!await this.isSafeApp()) return Promise.resolve(false);
+    if (!(await this.isSafeApp())) return Promise.resolve(false);
 
     this.ensureSafeAppSdk();
     const info = await this.safeAppSdk.safe.getInfo();
@@ -626,11 +641,19 @@ export class EthereumService {
   }
 
   public async isMemberOfSafe(address: string): Promise<boolean> {
-    if (!await this.isSafeApp()) return Promise.resolve(false);
+    if (!(await this.isSafeApp())) return Promise.resolve(false);
 
     this.ensureSafeAppSdk();
     const info = await this.safeAppSdk.safe.getInfo();
     return info.owners.includes(address);
+  }
+
+  public async isReadOnlySafe(): Promise<boolean> {
+    if (!(await this.isSafeApp())) return Promise.resolve(false);
+
+    this.ensureSafeAppSdk();
+    const info = await this.safeAppSdk.safe.getInfo();
+    return info.isReadOnly;
   }
 }
 

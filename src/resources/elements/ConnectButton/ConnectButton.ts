@@ -89,18 +89,14 @@ export class ConnectButton {
    * - Not an owner of the safe
    */
   async handleSafeAppAccountSetting(account: string): Promise<void> {
-    const isMemberOfSafe = await this.ethereumService.isMemberOfSafe(account);
+    const isReadOnlySafe = await this.ethereumService.isReadOnlySafe();
 
-    if (
-      account !== null &&
-      !(await this.ethereumService.isSafeAddress(account)) &&
-      !isMemberOfSafe
-    ) {
-      this.disable = true;
+    if (account !== null && isReadOnlySafe) {
+      // this.disable = true;
       this.ethereumService.softDisconnect({code: SAFE_APP_ERROR_CODE, message: "Address not an owner"});
       this.eventAggregator.publish("handleException", new EventConfigException("Unauthorized", "Account is not an owner of the Safe. You will not be able to connect to the Deals Safe App"));
       return;
-    } else if (isMemberOfSafe) {
+    } else {
       this.disable = false;
     }
 

@@ -134,21 +134,15 @@ export class FirebaseService {
       return;
     }
 
+    if (this.currentFirebaseUserAddress === address) {
+      return;
+    }
+
     // Signs out from Firebase in case another user was authenticated
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
     const { messageToSign, signature } = await this.getSignatureData(address);
-
-    /**
-     * In case of a Safe App we are first connected as the user's wallet.
-     * Upon successful auth we change to the Safe App provider.
-     */
-    if (await this.ethereumService.isSafeApp()) {
-      await this.ethereumService.connectToSafeProvider();
-    } else if (this.currentFirebaseUserAddress === address) {
-      return;
-    }
 
     this.storeSignatureForAddress(address, signature, messageToSign);
 
