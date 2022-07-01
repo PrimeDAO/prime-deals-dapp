@@ -8,7 +8,7 @@ import {
 } from "entities/DealRegistrationTokenSwap";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
-import { Address, IEthereumService } from "services/EthereumService";
+import { Address, fromWei, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
 import { IContainer, IEventAggregator } from "aurelia";
@@ -23,6 +23,7 @@ import { PartnerDaoStage } from "./stages/partnerDaoStage/partnerDaoStage";
 import { TokenDetailsStage } from "./stages/tokenDetailsStage/tokenDetailsStage";
 import { TermsStage } from "./stages/termsStage/termsStage";
 import { SubmitStage } from "./stages/submitStage/submitStage";
+import { ITokenInfo, TokenService, Utils } from "../../services";
 
 @processContent(autoSlot)
 export class WizardManager implements IRouteableComponent {
@@ -139,6 +140,7 @@ export class WizardManager implements IRouteableComponent {
   constructor(
     private wizardService: WizardService,
     private dealService: DealService,
+    private tokenService: TokenService,
     @IEthereumService private ethereumService: IEthereumService,
     @IContainer private container: IContainer,
     @IRouter private router: IRouter,
@@ -332,4 +334,17 @@ export class WizardManager implements IRouteableComponent {
     }
   }
 
+  async getTokensTotalPrice() {
+    const deal = this.wizardState.registrationData;
+    const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];
+    const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+    const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+    await this.tokenService.getTokenPrices(tokensDetails);
+
+    return dealTokens.reduce((sum, item) => {
+      const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+    }, 0);
+  }
 }

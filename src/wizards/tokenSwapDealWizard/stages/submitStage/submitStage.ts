@@ -19,6 +19,8 @@ export class SubmitStage {
   private isOpenProposalLike = false;
   private isMakeAnOfferWizard = false;
 
+  tokensTotal?: number;
+
   constructor(
     private wizardService: WizardService,
     private alertService: AlertService,
@@ -29,13 +31,15 @@ export class SubmitStage {
   ) {
   }
 
-  load(stageMeta: IStageMeta): void {
+  async load(stageMeta: IStageMeta) {
     this.wizardManager = this.wizardService.currentWizard;
     this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
     this.submitData = this.wizardState.registrationData;
+
+    this.tokensTotal = await this.wizardManager.getTokensTotalPrice();
   }
 
   public async onSubmit(): Promise<void> {

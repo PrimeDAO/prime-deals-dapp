@@ -1,18 +1,80 @@
-.termsStageSectionContent {
-  max-width: 645px;
-  word-wrap: break-word;
+@import "src/styles/colors";
 
-  editing-card {
-    pcard {
-      margin-bottom: 32px;
+terms-stage {
+
+  pcard.pcard {
+    display: block;
+    padding: 20px;
+  }
+
+  .termsStageSectionContent {
+    max-width: 645px;
+    word-wrap: break-word;
+
+    editing-card {
+      pcard {
+        margin-bottom: 32px;
+      }
+    }
+
+    .addClauseButton {
+      button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
     }
   }
 
-  .addClauseButton {
-    button {
+  .daoplomatRewardsTotalContainer {
+    pinput-numeric {
+      width: 70px;
+    }
+
+    .daoplomatRewardsTotal {
+      margin: 0 0 30px 0;
+
+      .daoplomatRewardsTotalContent {
+
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+
+        span {
+          font-family: Inter, "sans-serif";
+          color: $Neutral03;
+        }
+      }
+    }
+  }
+
+  .addDaoplomat {
+    margin-bottom: 20px;
+  }
+
+  .daoplomat {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    margin-bottom: 16px;
+
+    :first-child {
+      flex: 1;
+      min-width: 60%;
+    }
+
+    .daoplomatSplit {
       display: flex;
       flex-direction: row;
+      gap: 20px;
       align-items: center;
+    }
+
+    .orangeColor {
+      font-family: Inter, "sans-serif";
     }
   }
 }

@@ -187,14 +187,8 @@ export class WizardService {
   public registerForm(wizardStateKey: WizardStateKey, form: IValidationController) {
     const stage = this.getActiveStage(wizardStateKey);
 
-    if (!stage.form) {
-      stage.form = form;
-      stage.form.addSubscriber(this.presenter);
-      // stage.form.addSubscriber(new ValidationResultPresenterService());
-      stage.validate = () => stage.form.validate().then(result => result.valid);
-    }
-
-    return stage.form;
+    form.addSubscriber(this.presenter);
+    stage.validate = () => form.validate().then(result => result.valid);
   }
 
   // private getWizardStage(wizardStateKey: WizardStateKey, stageName: string): IWizardStage {
