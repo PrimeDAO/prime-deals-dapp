@@ -4,8 +4,9 @@
     <div class="sidebar">
       <template repeat.for="doc of routes">
         <a
-          load="${doc.path}"
-          class="document"
+          if.bind="doc.path"
+          load.bind="doc.path"
+          class.bind="currentPath.includes(doc.path) || (currentPath.includes('documentation') && $index === 1) ? 'active':'not-active'"
         >
           ${doc.title}
         </a>
@@ -25,4 +26,4 @@
       </div>
     </div>
   </div>
-</template>
+</div>

@@ -80,7 +80,10 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
     });
 
     Documentation.routes.push(...navRoutes);
+  }
 
+  get currentPath() {
+    return this.router.activeNavigation?.instruction;
   }
 
   next(): void {
