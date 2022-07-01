@@ -33,7 +33,6 @@ export class ConnectButton {
   private txPhase = Phase.None;
   private txReceipt: TransactionReceipt;
   private primeAddress: Address;
-  private disable = false;
   private isSafeApp: boolean;
 
   private get txInProgress(): boolean {
@@ -92,12 +91,9 @@ export class ConnectButton {
     const isReadOnlySafe = await this.ethereumService.isReadOnlySafe();
 
     if (account !== null && isReadOnlySafe) {
-      // this.disable = true;
       this.ethereumService.softDisconnect({code: SAFE_APP_ERROR_CODE, message: "Address not an owner"});
       this.eventAggregator.publish("handleException", new EventConfigException("Unauthorized", "Account is not an owner of the Safe. You will not be able to connect to the Deals Safe App"));
       return;
-    } else {
-      this.disable = false;
     }
 
     this.accountAddress = account;

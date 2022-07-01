@@ -22,8 +22,8 @@
       </div>
     </div>
     <div else data-test="connectButton" class="connectButton">
-      <pbutton if.bind="isSafeApp" type="secondary connect" click.delegate="connectToSafe()" disabled.bind="disable">Connect to Safe</pbutton>
-      <pbutton else type="secondary connect" click.delegate="onConnect()" disabled.bind="disable">Connect to a Wallet</pbutton>
+      <pbutton if.bind="isSafeApp" type="secondary connect" click.delegate="connectToSafe()">Connect to Safe</pbutton>
+      <pbutton else type="secondary connect" click.delegate="onConnect()">Connect to a Wallet</pbutton>
     </div>
   </div>
   </div>
