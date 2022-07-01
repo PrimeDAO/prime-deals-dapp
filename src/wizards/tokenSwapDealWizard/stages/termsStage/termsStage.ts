@@ -179,9 +179,13 @@ export class TermsStage implements IBaseWizardStage {
   }
 
   private bindDaoplomatRewards() {
+    if (!this.terms.daoplomatRewards) {
+      return;
+    }
+
     this.daoplomatRewards = {
       percentageAmount: this.terms.daoplomatRewards.percentageAmount * 100,
-      daoplomats: this.terms.daoplomatRewards.daoplomats.map(daoplomat => {
+      daoplomats: this.terms.daoplomatRewards?.daoplomats.map(daoplomat => {
         daoplomat.percentageAmount = daoplomat.percentageAmount / this.terms.daoplomatRewards.percentageAmount * 100;
         return daoplomat;
       }),
@@ -191,6 +195,10 @@ export class TermsStage implements IBaseWizardStage {
   }
 
   private populateRegistrationData() {
+    if (!this.daoplomatRewards) {
+      return;
+    }
+
     this.wizardState.registrationData.terms.daoplomatRewards = {
       percentageAmount: this.daoplomatRewards.percentageAmount / 100,
       daoplomats: this.daoplomatRewards.daoplomats.map(daoplomat => ({

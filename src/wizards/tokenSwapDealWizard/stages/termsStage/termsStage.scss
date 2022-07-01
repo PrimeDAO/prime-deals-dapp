@@ -27,8 +27,8 @@ terms-stage {
   }
 
   .daoplomatRewardsTotalContainer {
-    pinput-numeric {
-      width: 70px;
+    pinput-group {
+      max-width: 135px;
     }
 
     .daoplomatRewardsTotal {
@@ -61,9 +61,12 @@ terms-stage {
 
     margin-bottom: 16px;
 
-    :first-child {
+    > :first-child {
       flex: 1;
-      min-width: 60%;
+    }
+
+    > :last-child {
+      max-width: 170px;
     }
 
     .daoplomatSplit {
