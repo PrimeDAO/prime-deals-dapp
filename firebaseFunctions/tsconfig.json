@@ -22,7 +22,6 @@
   },
   "include": [
     "src",
-    "tests",
   ],
   "atom": {
     "rewriteTsconfig": false
