@@ -135,7 +135,7 @@
             </pbutton>
 
             <ul>
-              <li class="orangeColor" if.bind="!r.valid && !r.propertyName" repeat.for="r of form.results">${r}</li>
+              <li class="orangeColor" repeat.for="r of form.results" if.bind="!r.valid && !r.propertyName">${r}</li>
             </ul>
           </pcard>
         </div>
