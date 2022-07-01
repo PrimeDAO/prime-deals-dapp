@@ -28,6 +28,7 @@ export interface IDealTokenSwapDocument {
   createdByAddress: string;
   isWithdrawn: boolean,
   isRejected: boolean,
+  swapTxHash?: string,
 }
 
 export enum DealStatus {

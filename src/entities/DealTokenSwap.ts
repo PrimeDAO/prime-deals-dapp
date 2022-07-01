@@ -120,6 +120,7 @@ export class DealTokenSwap implements IDeal {
   public dealManager: any;
 
   public primaryDao?: IDAO;
+  public swapTxHash?: string;
 
   constructor(
     private consoleLogService: ConsoleLogService,
@@ -570,6 +571,7 @@ export class DealTokenSwap implements IDeal {
       this.primaryDao = this.registrationData.primaryDAO;
       this.partnerDao = this.registrationData.partnerDAO;
       this.createdAt = new Date(this.dealDocument.createdAt);
+      this.swapTxHash = this.dealDocument.swapTxHash;
 
       await this.loadDepositContracts(); // now that we have registrationData
 
@@ -791,6 +793,12 @@ export class DealTokenSwap implements IDeal {
           if (receipt) {
             this.isExecuted = true;
             this.executedAt = new Date((await this.ethereumService.getBlock(receipt.blockNumber)).timestamp * 1000);
+            this.swapTxHash = receipt.transactionHash;
+            this.dataSourceDeals.updateSwapTxHash(
+              this.dealDocument.id,
+              this.ethereumService.defaultAccountAddress,
+              this.swapTxHash,
+            );
             return receipt;
           }
         });

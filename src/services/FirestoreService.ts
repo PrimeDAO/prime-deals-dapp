@@ -24,6 +24,7 @@ import { DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, IFire
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
+import { Hash } from "./EthereumService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -327,6 +328,26 @@ export class FirestoreService<
         ref,
         {
           isRejected: value,
+        },
+        {merge: true},
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /**
+   * Sets deal swap transaction hash property
+   * @param dealId string
+   * @param value Hash
+   */
+  public async updateSwapTxHash(dealId: string, value: Hash): Promise<void> {
+    try {
+      const ref = doc(firebaseDatabase, DEALS_TOKEN_SWAP_COLLECTION, dealId);
+      await setDoc(
+        ref,
+        {
+          swapTxHash: value,
         },
         {merge: true},
       );
