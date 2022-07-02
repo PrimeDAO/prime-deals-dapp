@@ -4,16 +4,15 @@
     <div class="sidebar">
       <template repeat.for="doc of routes">
         <a
-          if.bind="doc.path"
-          load.bind="doc.path"
-          class.bind="currentPath.includes(doc.path) || (currentPath.includes('documentation') && $index === 1) ? 'active':'not-active'"
+          click.trigger="navigateTo($index)"
+          class="${routes[currentDocIndex].path.includes(doc.path) ? 'active':''}"
         >
           ${doc.title}
         </a>
       </template>
     </div>
     <div class="rightSection">
-      <au-viewport default="" viewport="documents" ></au-viewport>
+      <au-viewport viewport="documents" ></au-viewport>
       <div class="navigationContainer">
         <div click.trigger="previous()" class="navigationPrevious">
           <i class="fas fa-arrow-left" if.to-view="previousDocTitle"></i>
