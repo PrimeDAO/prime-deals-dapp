@@ -39,12 +39,12 @@ export class WizardService {
   }
 
   public registerWizard<TData>({
-                                 wizardStateKey,
-                                 stages,
-                                 registrationData,
-                                 cancelRoute,
-                                 previousRoute,
-                               }: {
+    wizardStateKey,
+    stages,
+    registrationData,
+    cancelRoute,
+    previousRoute,
+  }: {
     wizardStateKey: WizardStateKey;
     stages: Array<IWizardStage>;
     registrationData: TData;
