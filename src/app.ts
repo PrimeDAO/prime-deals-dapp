@@ -193,7 +193,7 @@ export class App implements IRouteableComponent {
   private handleScrollEvent(): void {
     if (!this.router.activeComponents[0]) return;
     this.storageService.ssSet(
-      this.getScrollStateKey(this.router.activeComponents[0].route.matching),
+      this.getScrollStateKey(this.router.activeNavigation.path),
       `${window.scrollX},${window.scrollY}`,
     );
   }
@@ -209,10 +209,10 @@ export class App implements IRouteableComponent {
 
   @watch<App>(x => x.router.isNavigating)
   onNavigate(): void {
-    if (this.router.activeComponents[0]?.route) {
+    if (this.router.activeNavigation?.path) {
       const position = this.storageService.ssGet(
         this.getScrollStateKey(
-          this.router.activeComponents[0].route.matching,
+          this.router.activeNavigation.path,
         ),
       );
       window.scrollTo(...position?.split(",").map(x => parseInt(x, 10)) || [0, 0]);
