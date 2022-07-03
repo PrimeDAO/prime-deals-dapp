@@ -4,13 +4,13 @@
        href.to-view="networkExplorerUri" if.to-view="networkExplorerUri"
        ptooltip.bind="address"
        rel="noopener noreferrer" target='${internal ? "" : "_blank"}'>
-      ${text || address}
+      ${ens || text || address}
     </a>
 
     <div class="text"
          else
          ptooltip.bind="address">
-      ${text || address}
+      ${ens || text || address}
     </div>
 
     <copy-to-clipboard-button

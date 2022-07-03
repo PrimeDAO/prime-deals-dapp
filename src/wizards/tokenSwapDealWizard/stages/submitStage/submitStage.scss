@@ -162,8 +162,13 @@ $submitCardWidth: 645px;
     table {
       width: 100%;
 
-      tr td:last-child {
-        text-align: right;
+      tr {
+        td{
+          padding-bottom: 8px;
+        }
+        td:last-child {
+          text-align: right;
+        }
       }
     }
   }
