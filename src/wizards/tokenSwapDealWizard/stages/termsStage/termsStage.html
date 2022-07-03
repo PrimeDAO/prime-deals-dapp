@@ -63,7 +63,7 @@
       <div class="stageSectionContent daoplomatRewardsTotalContainer">
         <pform-input label="Enable DAOplomat Reward">
           <ptoggle changed.bind="toggleDaoplomatRewards"
-            value.bind="daoplomatRewards"
+                   value.to-view="daoplomatRewards"
           ></ptoggle>
         </pform-input>
 
@@ -91,24 +91,26 @@
             </pform-input>
 
             <div class="daoplomat"
-              repeat.for="daoplomat of daoplomatRewards.daoplomats"
+                 repeat.for="daoplomat of daoplomatRewards.daoplomats"
             >
+              <let address-input=""></let>
+              <let split-input=""></let>
               <div>
                 <pform-input
-                  helper-message.bind="daoplomatInputs.addresses[$index].ens"
-                  input-reference.bind="daoplomatInputs.addresses[$index]"
+                  helper-message.bind="addressInput.ens"
+                  input-reference.bind="addressInput"
                   label.bind="$index === 0 ? 'DAOplomat Address': ''"
                 >
                   <form-address-input
                     value.bind="daoplomat.address | checksumAddress & validate"
-                    view-model.ref="daoplomatInputs.addresses[$index]">
+                    view-model.ref="addressInput">
                   </form-address-input>
                 </pform-input>
               </div>
               <div>
                 <pform-input
                   helper-message.bind="daoplomatRewards.percentageAmount && daoplomat.percentageAmount ? '~' + numberService.formatCurrency(daoplomat.percentageAmount/100 * daoplomatRewards.percentageAmount * tokensTotal): undefined"
-                  input-reference.bind="daoplomatInputs.splits[$index]"
+                  input-reference.bind="splitInput"
                   label.bind="$index === 0 ? 'Split': ''"
                 >
                   <div class="daoplomatSplit">
@@ -116,7 +118,7 @@
                       <pinput-numeric
                         not-wei
                         value.bind="daoplomat.percentageAmount & validate "
-                        view-model.ref="daoplomatInputs.splits[$index]"
+                        view-model.ref="splitInput"
                       ></pinput-numeric>
                       <template au-slot="after">%</template>
                     </pinput-group>
@@ -129,7 +131,7 @@
             </div>
 
             <pbutton class="addDaoplomat" click.delegate="addDaoplomat()"
-              if.bind="daoplomatRewards.daoplomats && daoplomatRewards.daoplomats.length < 8" type="primary">
+                     if.bind="daoplomatRewards.daoplomats && daoplomatRewards.daoplomats.length < 8" type="primary">
               Add Daoplomat
               <i class="fa fa-plus"></i>
             </pbutton>

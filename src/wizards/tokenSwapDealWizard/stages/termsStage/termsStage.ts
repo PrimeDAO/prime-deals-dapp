@@ -27,11 +27,7 @@ export class TermsStage implements IBaseWizardStage {
 
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
-  stageMetadata: { termsViewModes?: ViewMode[] } = {};
-  daoplomatInputs = {
-    addresses: [],
-    splits: [],
-  };
+  stageMetadata: {termsViewModes?: ViewMode[]} = {};
 
   terms: ITerms;
   daoplomatRewards?: IDaoplomatRewards;
@@ -112,13 +108,19 @@ export class TermsStage implements IBaseWizardStage {
   }
 
   toggleDaoplomatRewards = (active: boolean) => {
-    this.daoplomatRewards = active ? {
-      daoplomats: [],
-    } : undefined;
+    if (active) {
+      this.daoplomatRewards = {
+        daoplomats: [],
+      };
 
-    this.wizardState.registrationData.terms.daoplomatRewards = this.daoplomatRewards;
-    this.addDaoplomatRewardsValidation();
-    this.addDaoplomat();
+      this.wizardState.registrationData.terms.daoplomatRewards = this.daoplomatRewards;
+      this.addDaoplomatRewardsValidation();
+      this.addDaoplomat();
+    } else {
+      this.validationRules.off(this.daoplomatRewards);
+      this.daoplomatRewards = undefined;
+    }
+
   };
 
   addDaoplomat() {
@@ -132,7 +134,6 @@ export class TermsStage implements IBaseWizardStage {
 
   removeDaoplomat(index: number) {
     this.daoplomatRewards.daoplomats.splice(index, 1);
-    this.daoplomatInputs.addresses.splice(index, 1);
   }
 
   private addDaoplomatValidation(daoplomat: IDaoplomatReward) {
