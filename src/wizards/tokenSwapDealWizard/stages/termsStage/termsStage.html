@@ -79,13 +79,13 @@
                 <pinput-group>
                   <pinput-numeric
                     not-wei
-                    value.bind="daoplomatRewards.percentageAmount & validate"
+                    value.bind="daoplomatRewards.percentage & validate"
                     view-model.ref="percentageAmountInput"
                   ></pinput-numeric>
                   <template au-slot="after">%</template>
                 </pinput-group>
 
-                <span if.bind="tokensTotal && daoplomatRewards.percentageAmount">~${tokensTotal * daoplomatRewards.percentageAmount | currency} </span>
+                <span if.bind="tokensTotal && daoplomatRewards.percentage">~${tokensTotal * daoplomatRewards.percentage | currency} </span>
               </div>
 
             </pform-input>
@@ -109,7 +109,7 @@
               </div>
               <div>
                 <pform-input
-                  helper-message.bind="daoplomatRewards.percentageAmount && daoplomat.percentageAmount ? '~' + numberService.formatCurrency(daoplomat.percentageAmount/100 * daoplomatRewards.percentageAmount * tokensTotal): undefined"
+                  helper-message.bind="daoplomatRewards.percentage && daoplomat.rewardSplitPercentage ? '~' + numberService.formatCurrency(daoplomat.rewardSplitPercentage/100 * daoplomatRewards.percentage * tokensTotal): undefined"
                   input-reference.bind="splitInput"
                   label.bind="$index === 0 ? 'Split': ''"
                 >
@@ -117,7 +117,7 @@
                     <pinput-group>
                       <pinput-numeric
                         not-wei
-                        value.bind="daoplomat.percentageAmount & validate "
+                        value.bind="daoplomat.rewardSplitPercentage & validate "
                         view-model.ref="splitInput"
                       ></pinput-numeric>
                       <template au-slot="after">%</template>

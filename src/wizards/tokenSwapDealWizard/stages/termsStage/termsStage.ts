@@ -124,9 +124,9 @@ export class TermsStage implements IBaseWizardStage {
   };
 
   addDaoplomat() {
-    const daoplomat = {
+    const daoplomat: IDaoplomatReward = {
       address: "",
-      percentageAmount: undefined,
+      rewardSplitPercentage: undefined,
     };
     this.daoplomatRewards?.daoplomats.push(daoplomat);
     this.addDaoplomatValidation(daoplomat);
@@ -146,7 +146,7 @@ export class TermsStage implements IBaseWizardStage {
       .withMessage("Please enter a valid address or an ENS name")
       .satisfies((value) => this.daoplomatRewards.daoplomats.filter(daoplomat => daoplomat.address === value).length === 1)
       .withMessage("Address already used")
-      .ensure("percentageAmount")
+      .ensure("rewardSplitPercentage")
       .required()
       .withMessage("Split is required")
       .min(0.001)
@@ -163,11 +163,11 @@ export class TermsStage implements IBaseWizardStage {
     this.validationRules
       .on(this.daoplomatRewards)
       .ensureObject()
-      .satisfies(daoplomatRewards => {
-        return daoplomatRewards.daoplomats.reduce((total, daoplomat) => total + daoplomat.percentageAmount, 0) === 100;
+      .satisfies((daoplomatRewards: IDaoplomatRewards) => {
+        return daoplomatRewards.daoplomats.reduce((total, daoplomat) => total + daoplomat.rewardSplitPercentage, 0) === 100;
       })
       .withMessage("The DAOplomat reward should add up to 100%.")
-      .ensure("percentageAmount")
+      .ensure("percentage")
       .required()
       .withMessage("Please specify amount for the reward")
       .min(0.001)
@@ -185,9 +185,9 @@ export class TermsStage implements IBaseWizardStage {
     }
 
     this.daoplomatRewards = {
-      percentageAmount: this.terms.daoplomatRewards.percentageAmount * 100,
+      percentage: this.terms.daoplomatRewards.percentage * 100,
       daoplomats: this.terms.daoplomatRewards?.daoplomats.map(daoplomat => {
-        daoplomat.percentageAmount = daoplomat.percentageAmount / this.terms.daoplomatRewards.percentageAmount * 100;
+        daoplomat.rewardSplitPercentage = daoplomat.rewardSplitPercentage / this.terms.daoplomatRewards.percentage * 100;
         return daoplomat;
       }),
     };
@@ -201,10 +201,10 @@ export class TermsStage implements IBaseWizardStage {
     }
 
     this.wizardState.registrationData.terms.daoplomatRewards = {
-      percentageAmount: this.daoplomatRewards.percentageAmount / 100,
+      percentage: this.daoplomatRewards.percentage / 100,
       daoplomats: this.daoplomatRewards.daoplomats.map(daoplomat => ({
         ...daoplomat,
-        percentageAmount: daoplomat.percentageAmount / 100 * (this.daoplomatRewards.percentageAmount / 100),
+        rewardSplitPercentage: daoplomat.rewardSplitPercentage / 100 * (this.daoplomatRewards.percentage / 100),
       })),
     };
   }

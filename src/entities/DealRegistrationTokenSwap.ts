@@ -65,11 +65,11 @@ export interface IClause {
 
 export interface IDaoplomatReward {
   address: string,
-  percentageAmount: number
+  rewardSplitPercentage: number
 }
 
 export interface IDaoplomatRewards {
-  percentageAmount?: number
+  percentage?: number
   daoplomats: IDaoplomatReward[]
 }
 

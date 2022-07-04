@@ -154,8 +154,8 @@
                         </td>
                       </tr>
                       <tr>
-                        <td>${submitData.terms.daoplomatRewards.percentageAmount * 100}%</td>
-                        <td>~${submitData.terms.daoplomatRewards.percentageAmount * tokensTotal | currency}</td>
+                        <td>${submitData.terms.daoplomatRewards.percentage * 100}%</td>
+                        <td>~${submitData.terms.daoplomatRewards.percentage * tokensTotal | currency}</td>
                       </tr>
                     </table>
 
@@ -180,8 +180,8 @@
                             text="${daoplomat.address | smallHexString}">
                           </etherscanlink>
                         </td>
-                        <td>${daoplomat.percentageAmount/submitData.terms.daoplomatRewards.percentageAmount * 100}%</td>
-                        <td>~${daoplomat.percentageAmount * tokensTotal | currency}</td>
+                        <td>${daoplomat.rewardSplitPercentage / submitData.terms.daoplomatRewards.percentage * 100}%</td>
+                        <td>~${daoplomat.rewardSplitPercentage * tokensTotal | currency}</td>
                       </tr>
                     </table>
 
