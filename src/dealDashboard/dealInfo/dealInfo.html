@@ -166,7 +166,7 @@
             class="representative-dao" 
             address.bind="daoplomat.address"
             text="${daoplomat.address | smallHexString}"></etherscanlink>
-          <span class="reward-percent">${daoplomat.splitPercentage * deal.registrationData.terms.daoplomatRewards.percentage / 100}</span>
+          <span class="reward-percent">${daoplomat.rewardPercentage * deal.registrationData.terms.daoplomatRewards.percentage / 100}</span>
         </p>
       </div>
     </div>
