@@ -334,6 +334,9 @@ export class WizardManager implements IRouteableComponent {
     }
   }
 
+  /**
+   * This is a duplicate from DealTokenSwap@processTotalPrice
+   */
   async getTokensTotalPrice() {
     const deal = this.wizardState.registrationData;
     const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];

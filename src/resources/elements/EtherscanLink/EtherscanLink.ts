@@ -39,8 +39,8 @@ export class EtherscanLink {
     }
   }
 
-  async binding() {
-    await this.addressChanged(this.address);
+  binding() {
+    this.addressChanged(this.address);
   }
 
   async addressChanged(newValue: string) {

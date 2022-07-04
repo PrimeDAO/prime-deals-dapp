@@ -34,6 +34,9 @@ export class TermsStage implements IBaseWizardStage {
 
   tokensTotal?: number;
 
+  private readonly minimumSplitPercentage = 0.001;
+  private readonly maximumSplitPercentage = 5;
+
   constructor(
     public wizardService: WizardService,
     @newInstanceForScope(IValidationController) public form: IValidationController,
@@ -149,7 +152,7 @@ export class TermsStage implements IBaseWizardStage {
       .ensure("rewardSplitPercentage")
       .required()
       .withMessage("Split is required")
-      .min(0.001)
+      .min(this.minimumSplitPercentage)
       .withMessage("A reward distribution can not be lower than 0.001%")
       .max(100)
       .withMessage("The reward distribution should add up to 100%")
@@ -170,9 +173,9 @@ export class TermsStage implements IBaseWizardStage {
       .ensure("percentage")
       .required()
       .withMessage("Please specify amount for the reward")
-      .min(0.001)
+      .min(this.minimumSplitPercentage)
       .withMessage("The DAOplomat reward can not be lower than 0.001%")
-      .max(5)
+      .max(this.maximumSplitPercentage)
       .withMessage("The DAOplomat reward can not be higher than 5%")
     ;
 
