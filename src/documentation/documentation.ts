@@ -1,8 +1,7 @@
 import { ICustomElementViewModel } from "aurelia";
-import { IRoute, IRouteableComponent, IRouter, Navigation } from "@aurelia/router";
+import { IRoute, IRouteableComponent, IRouter, Parameters, RoutingInstruction, Navigation } from "@aurelia/router";
 import axios from "axios";
 import { marked } from "marked";
-
 import { markdowns } from "./common";
 
 export class Documentation implements IRouteableComponent, ICustomElementViewModel {
@@ -13,18 +12,19 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
   ) { }
 
   static title = "Documentation";
-  numDocs: number;
+  parent: string;
 
-  get currentDocIndex (): number {
-    if (!this.router.activeNavigation) return -1;
+  get currentDocIndex(): number {
+    if (!this.router.activeNavigation) return 0;
     /**
      * activeNavigation.instruction: string | string[]
      * We know the instruction path, defined by the page title, will always be a single
      * item. Hence can safely converted to a string.
      *  */
     const currentDoc = this.router.activeNavigation.instruction.toString();
-    return this.routes.findIndex(
+    const currentIndex = this.routes.findIndex(
       doc => doc.path === currentDoc.slice(currentDoc.indexOf("/", 1) + 1))/* Clean parent route from path. */;
+    return currentIndex;
   }
 
   get nextDocTitle(): string {
@@ -83,28 +83,24 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
     Documentation.routes.push(...navRoutes);
   }
 
-  async navigateTo (routeIndex: number): Promise<void>
-  {
-    this.router.load(`documentation/${this.routes[routeIndex].path}`);
+  async navigateTo (routeIndex: number): Promise<void> {
+    this.router.load(`${this.parent}/${this.routes[routeIndex].path}`);
   }
 
   next(): void {
     if (this.currentDocIndex < this.routes.length - 1) {
-      this.router.load(`documentation/${this.routes[this.currentDocIndex + 1].path}`);
+      this.navigateTo(this.currentDocIndex + 1);
     }
   }
 
   previous(): void {
     if (this.currentDocIndex > 0) {
-      this.router.load(`documentation/${this.routes[this.currentDocIndex - 1].path}`);
+      this.navigateTo(this.currentDocIndex - 1);
     }
   }
 
-  load (_, __, navigation: Navigation): void {
-    if (navigation.path) {
-      this.router.load(navigation.path);
-    } else {
-      this.router.load(`documentation/${this.routes[0].path}`);
-    }
+  load(_: Parameters, instruction: RoutingInstruction, navigation: Navigation): void {
+    this.parent = instruction.component.name;
+    this.router.load(navigation.path || `${this.parent}/${this.routes[0].path.toString()}`);
   }
 }
