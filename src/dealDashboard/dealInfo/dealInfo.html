@@ -146,7 +146,7 @@
 
     <div if.bind="deal.registrationData.terms.daoplomatRewards"
       class="infoSection totalRepresentatives ${showMoreRewards ? 'active' : ''}"
-      click.trigger="showMoreRewards = !showMoreRewards"
+      click.delegate="showMoreRewards = !showMoreRewards"
     >
       <span class="bodySmallTextBold infoTitle">Total DAOplomat Reward</span>
       <span>
@@ -173,7 +173,7 @@
 
     <div
       class="infoSection totalRepresentatives ${showMoreRepresentatives ? 'active' : ''}"
-      click.trigger="showMoreRepresentatives = !showMoreRepresentatives"
+      click.delegate="showMoreRepresentatives = !showMoreRepresentatives"
     >
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
       <span>
