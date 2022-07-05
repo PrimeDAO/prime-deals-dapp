@@ -63,8 +63,19 @@ export interface IClause {
   text: string,
 }
 
+export interface IDaoplomatReward {
+  address: string,
+  rewardSplitPercentage: number
+}
+
+export interface IDaoplomatRewards {
+  percentage?: number
+  daoplomats: IDaoplomatReward[]
+}
+
 export interface ITerms {
   clauses: Array<IClause>,
+  daoplomatRewards?: IDaoplomatRewards
 }
 
 export interface IDealRegistrationTokenSwap {
