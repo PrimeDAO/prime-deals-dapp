@@ -310,14 +310,14 @@ export class EthereumService {
     // const cachedAccount = this.cachedWalletAccount;
 
     this.ensureWeb3Modal();
+    await this.ensureMetaMaskWalletProvider();
 
     if (await this.isSafeApp()) {
-      await this.ensureMetaMaskWalletProvider();
       await this.connectToSafeProvider();
       return;
     }
 
-    const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
+    const provider = this.metaMaskWalletProvider as any;
 
     /**
      * at this writing, `_metamask.isUnlocked` is "experimental", according to MetaMask.
@@ -508,7 +508,9 @@ export class EthereumService {
     }
 
     if (network.name !== EthereumService.targetedNetwork) {
-      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
+      await this.ensureMetaMaskWalletProvider();
+
+      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.metaMaskWalletProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
       return;
     }
     else {
