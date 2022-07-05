@@ -151,7 +151,7 @@
       <span class="bodySmallTextBold infoTitle">Total DAOplomat Reward</span>
       <span>
         <span class="reward-percent">
-          ${deal.registrationData.terms.daoplomatRewards.percentage}
+          ${deal.registrationData.terms.daoplomatRewards.percentage * 100}
         </span>
         <i class="fas fa-angle-down arrow"></i>
       </span>
@@ -166,7 +166,7 @@
             class="representative-dao" 
             address.bind="daoplomat.address"
             text="${daoplomat.address | smallHexString}"></etherscanlink>
-          <span class="reward-percent">${daoplomat.rewardSplitPercentage * deal.registrationData.terms.daoplomatRewards.percentage / 100}</span>
+          <span class="reward-percent">${daoplomat.rewardSplitPercentage * 100}</span>
         </p>
       </div>
     </div>
