@@ -231,7 +231,8 @@ export class EthereumService {
    * provided by ethers given provider from Web3Modal
    */
   public walletProvider: Web3Provider;
-  public safeProvider: ExternalProvider;
+  public metaMaskWalletProvider: Web3Provider & IEIP1193 & ExternalProvider;
+  public safeProvider: Web3Provider & IEIP1193 & ExternalProvider;
   public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
@@ -258,6 +259,7 @@ export class EthereumService {
    * without invoking Web3Modal nor MetaMask popups.
    */
   public async connectToSafeProvider() {
+    await this.addWalletProviderListeners();
     // const cachedProvider = this.cachedProvider;
     // const cachedAccount = this.cachedWalletAccount;
 
@@ -301,6 +303,7 @@ export class EthereumService {
     this.ensureWeb3Modal();
 
     if (await this.isSafeApp()) {
+      await this.ensureMetaMaskWalletProvider();
       await this.connectToSafeProvider();
       return;
     }
@@ -326,6 +329,29 @@ export class EthereumService {
         }
       }
     }
+  }
+
+  public async ensureMetaMaskWalletProvider(): Promise<void> {
+    if (!this.metaMaskWalletProvider) {
+      const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
+      this.metaMaskWalletProvider = provider;
+    }
+  }
+
+  private async addWalletProviderListeners(): Promise<void> {
+    await this.ensureMetaMaskWalletProvider();
+
+    this.metaMaskWalletProvider.on("accountsChanged", this.handleAccountsChanged);
+    this.metaMaskWalletProvider.on("chainChanged", this.handleChainChanged);
+    this.metaMaskWalletProvider.on("disconnect", this.handleDisconnect);
+  }
+
+  private async removeWalletProviderListeners(): Promise<void> {
+    await this.ensureMetaMaskWalletProvider();
+
+    this.metaMaskWalletProvider.removeListener("accountsChanged", this.handleAccountsChanged);
+    this.metaMaskWalletProvider.removeListener("chainChanged", this.handleChainChanged);
+    this.metaMaskWalletProvider.removeListener("disconnect", this.handleDisconnect);
   }
 
   private ensureWeb3Modal(): void {
@@ -367,6 +393,26 @@ export class EthereumService {
     return network;
   }
 
+  public async getNetworkName(provider: any): Promise<string> {
+    const chainName = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
+
+    return chainName;
+  }
+
+  public async isWrongNetwork(): Promise<boolean> {
+    await this.ensureMetaMaskWalletProvider();
+    const chainName = await this.getNetworkName(this.metaMaskWalletProvider);
+    return chainName !== EthereumService.targetedNetwork;
+  }
+
+  public async handleWrongNetwork(): Promise<void> {
+    await this.ensureMetaMaskWalletProvider();
+    const provider = this.metaMaskWalletProvider;
+    const connectedTo = await this.getNetworkName(provider);
+
+    this.eventAggregator.publish("Network.wrongNetwork", { provider, connectedTo: connectedTo, need: EthereumService.targetedNetwork });
+  }
+
   private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
     try {
       if (web3ModalProvider) {
@@ -390,6 +436,11 @@ export class EthereumService {
            */
         this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
         this.fireAccountsChangedHandler(this.defaultAccountAddress);
+
+        /**
+         * Handle events in case of Safe App separately (-> `addWalletProviderListeners`)
+         */
+        if (await this.isSafeApp()) return;
 
         this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
 
@@ -473,6 +524,12 @@ export class EthereumService {
     this.web3ModalProvider = undefined;
     this.walletProvider = undefined;
     this.fireDisconnectHandler(error);
+
+    this.isSafeApp().then((isSafeApp) => {
+      if (isSafeApp) {
+        this.removeWalletProviderListeners();
+      }
+    });
   }
 
   /**
@@ -486,6 +543,12 @@ export class EthereumService {
     this.defaultAccountAddress = undefined;
     this.fireAccountsChangedHandler(null);
     this.fireDisconnectHandler(error);
+
+    this.isSafeApp().then((isSafeApp) => {
+      if (isSafeApp) {
+        this.removeWalletProviderListeners();
+      }
+    });
   }
 
   /**
@@ -504,10 +567,20 @@ export class EthereumService {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexChainId }],
         });
-        this.setProvider(web3ModalProvider as any);
+
+        /**
+         * Safe App: Separate method, because Safe provider does not allow changing chains/networks
+         */
+        if (await this.isSafeApp()) {
+          await this.connectToSafeProvider();
+        } else {
+          await this.setProvider(web3ModalProvider as any);
+        }
+
         return true;
       }
     } catch (err) {
+      this.consoleLogService.logObject(err.message, err, "error");
       // user rejected request
       if (err.code === 4001) {
         // return false;
