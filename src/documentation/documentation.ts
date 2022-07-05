@@ -1,39 +1,45 @@
 import { ICustomElementViewModel } from "aurelia";
-import { IRoute, IRouteableComponent, IRouter } from "@aurelia/router";
+import { IRoute, IRouteableComponent, IRouter, Parameters, RoutingInstruction, Navigation } from "@aurelia/router";
 import axios from "axios";
 import { marked } from "marked";
-
 import { markdowns } from "./common";
 
 export class Documentation implements IRouteableComponent, ICustomElementViewModel {
   static routes: IRoute[] = [];
-  routes = Documentation.routes;
-  default = this.routes[0].path;
+  private routes = Documentation.routes;
   constructor(
     @IRouter private router: IRouter,
   ) { }
 
   static title = "Documentation";
-  numDocs: number;
+  parent: string;
 
-  // get nextDocTitle(): string {
-  //   if (!this.router.activeNavigation) return "";
-  //   const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
-  //   if (docNumber < this.numDocs) {
-  //     return Documentation.routes[docNumber + 1].title;
-  //   } else {
-  //     return "";
-  //   }
-  // }
+  get currentDocIndex(): number {
+    if (!this.router.activeNavigation) return 0;
+    /**
+     * activeNavigation.instruction: string | string[]
+     * We know the instruction path, defined by the page title, will always be a single
+     * item. Hence can safely converted to a string.
+     *  */
+    const currentDoc = this.router.activeNavigation.instruction.toString();
+    const currentIndex = this.routes.findIndex(
+      doc => doc.path === currentDoc.slice(currentDoc.indexOf("/", 1) + 1))/* Clean parent route from path. */;
+    return currentIndex;
+  }
 
-  // get previousDocTitle(): string {
-  //   const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
-  //   if (docNumber > 1) {
-  //     return Documentation.routes[docNumber - 1].title;
-  //   } else {
-  //     return "";
-  //   }
-  // }
+  get nextDocTitle(): string {
+    if (this.currentDocIndex < this.routes.length - 1) {
+      return this.routes[this.currentDocIndex + 1]?.title;
+    }
+    return "";
+  }
+
+  get previousDocTitle(): string {
+    if (this.currentDocIndex > 0) {
+      return this.routes[this.currentDocIndex - 1]?.title;
+    }
+    return "";
+  }
 
   static async loadRoutes(): Promise<void> {
 
@@ -74,26 +80,27 @@ export class Documentation implements IRouteableComponent, ICustomElementViewMod
       return route;
     });
 
-    navRoutes.unshift({
-      ...navRoutes[0],
-      path: "",
-    });
-
     Documentation.routes.push(...navRoutes);
+  }
 
+  async navigateTo (routeIndex: number): Promise<void> {
+    this.router.load(`${this.parent}/${this.routes[routeIndex].path}`);
   }
 
   next(): void {
-    const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
-    if (docNumber < this.numDocs) {
-      this.router.load(Documentation.routes[docNumber + 1].path);
+    if (this.currentDocIndex < this.routes.length - 1) {
+      this.navigateTo(this.currentDocIndex + 1);
     }
   }
 
   previous(): void {
-    const docNumber = Number(this.router.activeNavigation.parameters.docNumber);
-    if (docNumber > 1) {
-      this.router.load(Documentation.routes[docNumber - 1].path);
+    if (this.currentDocIndex > 0) {
+      this.navigateTo(this.currentDocIndex - 1);
     }
+  }
+
+  load(_: Parameters, instruction: RoutingInstruction, navigation: Navigation): void {
+    this.parent = instruction.component.name;
+    this.router.load(navigation.path || `${this.parent}/${this.routes[0].path.toString()}`);
   }
 }
