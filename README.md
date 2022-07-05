@@ -12,7 +12,9 @@ User documentation can be found at https://deals.prime.xyz/documentation/
 ## Development
 
 ### Prerequisites
-Make sure you have [node.js version >= 14.11.0 < 15](https://nodejs.org/en/)
+Make sure you have
+- [node.js version >= 14.11.0 < 15](https://nodejs.org/en/)
+- [Java JDK version 11 or higher](https://openjdk.org/install/) (for firebase emulators)
 
 ### Install
 Install dependencies with the following command:
