@@ -12,10 +12,6 @@ import { Utils } from "services/utils";
 import { bindable } from "aurelia-typed-observable-plugin";
 
 const SAFE_APP_ERROR_CODE = 200;
-/**
- * When we change the network, we need to wait for gnosis safe to update their `readOnly` status as well.
- * This is just some magic value to make it work for the MPV.
- */
 const SAFE_APP_CHANGE_EVENT_TIMEOUT = 1000;
 const SAFE_APP_ERROR_TEXT = "The Account you are trying to connect to the Deals Safe App is not listed as an owner of the Safe.";
 
@@ -89,9 +85,9 @@ export class ConnectButton {
   }
 
   /**
-   * Disable connect button if
-   * - Not a safe address &&
-   * - Not an owner of the safe
+   * Handle following cases
+   * - is wrong network?
+   * - is read only safe?
    */
   async handleSafeAppAccountSetting(account: string): Promise<void> {
     if (account === null) {
@@ -101,6 +97,10 @@ export class ConnectButton {
       return;
     }
 
+    /**
+     * When we change the network, we need to wait for gnosis safe to update their `readOnly` status as well.
+     * This is just some magic value to make it work for the MPV.
+     */
     window.setTimeout(async () => {
       const isReadOnlySafe = await this.ethereumService.isReadOnlySafe();
 

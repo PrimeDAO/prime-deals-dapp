@@ -231,7 +231,16 @@ export class EthereumService {
    * provided by ethers given provider from Web3Modal
    */
   public walletProvider: Web3Provider;
+  /**
+   * Difference to `walletProvider`:
+   *   For Safe App, we need to interact with the actual wallet provider
+   *   (a todo is here to rename `walletProvider` to sth like `addressProvider` to account for
+   *     Metamask and Gnosis Safe App cases.)
+   */
   public metaMaskWalletProvider: Web3Provider & IEIP1193 & ExternalProvider;
+  /**
+   * Might be duplication of `walletProvider`, but it was easier to duplicate.
+   */
   public safeProvider: Web3Provider & IEIP1193 & ExternalProvider;
   public defaultAccountAddress: Address;
 
