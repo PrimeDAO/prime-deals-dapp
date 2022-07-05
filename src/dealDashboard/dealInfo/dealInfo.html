@@ -24,7 +24,10 @@
         </div>
       </div>
       <div class="daoSocialLinks" if.bind="deal.primaryDao.social_medias.length">
-        <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
+        <a
+          repeat.for="socialMedia of deal.primaryDao.social_medias"
+          href.bind="socialMedia.url"
+          target="_blank">
           <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
         </a>
       </div>
