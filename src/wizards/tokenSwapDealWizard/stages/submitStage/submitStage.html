@@ -144,7 +144,7 @@
                 <div class="submitDaoTokenCard">
 
                   <pcard class="rewardsCard">
-                    <table class="rewardsTable">
+                    <table>
                       <tr>
                         <td class="submitContentLabel">
                           Total DAOplomat Reward
@@ -161,29 +161,25 @@
 
                     <hr>
 
-                    <table class="rewardsTable">
-                      <tr>
-                        <td class="submitContentLabel">
-                          Total DAOplomat Reward
-                        </td>
-                        <td class="submitContentLabel">
-                          Split
-                        </td>
-                        <td class="submitContentLabel">
-                          Total Value (USD)
-                        </td>
-                      </tr>
-                      <tr repeat.for="daoplomat of submitData.terms.daoplomatRewards.daoplomats">
-                        <td>
-                          <etherscanlink
-                            address.bind="daoplomat.address"
-                            text="${daoplomat.address | smallHexString}">
-                          </etherscanlink>
-                        </td>
-                        <td>${daoplomat.rewardSplitPercentage / submitData.terms.daoplomatRewards.percentage * 100}%</td>
-                        <td>~${daoplomat.rewardSplitPercentage * tokensTotal | currency}</td>
-                      </tr>
-                    </table>
+                    <div class="rewardsTable">
+                      <div class="submitContentLabel">
+                        Total DAOplomat Reward
+                      </div>
+                      <div class="submitContentLabel">
+                        Split
+                      </div>
+                      <div class="submitContentLabel splitPriceValue">
+                        Total Value (USD)
+                      </div>
+                      <template repeat.for="daoplomat of submitData.terms.daoplomatRewards.daoplomats">
+                        <etherscanlink
+                          address.bind="daoplomat.address"
+                          text="${daoplomat.address | smallHexString}">
+                        </etherscanlink>
+                        <span>${daoplomat.rewardSplitPercentage / submitData.terms.daoplomatRewards.percentage * 100}%</span>
+                        <span class="splitPriceValue">~${daoplomat.rewardSplitPercentage * tokensTotal | currency}</span>
+                      </template>
+                    </div>
 
                   </pcard>
 
