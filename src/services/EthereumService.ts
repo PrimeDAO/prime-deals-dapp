@@ -349,6 +349,7 @@ export class EthereumService {
 
   private async addWalletProviderListeners(): Promise<void> {
     await this.ensureMetaMaskWalletProvider();
+    await this.removeWalletProviderListeners();
 
     this.metaMaskWalletProvider.on("accountsChanged", this.handleAccountsChanged);
     this.metaMaskWalletProvider.on("chainChanged", this.handleChainChanged);
