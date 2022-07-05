@@ -10,12 +10,18 @@ export class DealInfo {
   private subscriptions = new DisposableCollection();
   private settingPrivacy = false;
 
-  showMore = false;
+  showMoreRepresentatives = false;
+  showMoreRewards: false;
 
-  panel: HTMLElement;
+  panelRepresentatives: HTMLElement;
+  panelRewards: HTMLElement;
 
-  get maxHeight() {
-    return this.showMore ? this.panel.scrollHeight + "px" : "";
+  get maxHeightRepresentatives() {
+    return this.showMoreRepresentatives ? this.panelRepresentatives.scrollHeight + "px" : "";
+  }
+
+  get maxHeightRewards() {
+    return this.showMoreRewards ? this.panelRewards.scrollHeight + "px" : "";
   }
 
   constructor(

@@ -153,8 +153,20 @@ deal-info {
         .representative-dao {
           font-weight: 700;
           flex: 1;
+          a {
+            color: $Neutral02;
+          }
         }
       }
+    }
+  }
+
+  .reward-percent{
+    display: inline-flex;
+    color: $Neutral04;
+    &::after {
+      content: "%";
+      display: inline-block;
     }
   }
 }
