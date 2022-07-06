@@ -41,7 +41,7 @@
         <div class="detailsCell">
           <p>
             Logo
-            <img error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
+            <img class="daoSmallLogo" error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
               load.trigger="logoLoaded(true)"
               src.bind="token.logoURI">
           </p>
@@ -126,7 +126,7 @@
 
     <div class="tokenDetailsView" if.bind="viewMode === 'view'">
       <p class="tokenName">
-        <img error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
+        <img class="daoLogo" error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
         ${token.name || '-'}
       </p>
       <div class="detailsTable detailsTableInViewMode">
