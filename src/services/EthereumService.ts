@@ -712,6 +712,18 @@ export class EthereumService {
       .catch(() => null); // is neither address nor ENS
   }
 
+  public async getSafeNetwork(): Promise<string | undefined> {
+    if (!(await this.isSafeApp())) return Promise.resolve(undefined);
+
+    this.ensureSafeAppSdk();
+    const info = await this.safeAppSdk.safe.getInfo();
+    let networkName = ethers.providers.getNetwork(Number(info.chainId)).name;
+    if (networkName === "homestead") {
+      networkName = "mainnet";
+    }
+    return networkName;
+  }
+
   public async isSafeApp(): Promise<boolean> {
     return await this.web3Modal.isSafeApp();
   }

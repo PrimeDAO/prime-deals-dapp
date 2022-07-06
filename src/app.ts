@@ -85,8 +85,17 @@ export class App {
     this.eventAggregator.subscribe("Network.wrongNetwork", async (info: { provider: any, connectedTo: string, need: string }) => {
 
       let notChanged = true;
+
+      let message = `<p>Your wallet is connected to ${info.connectedTo ?? "an unknown network"}, but to interact with deals we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?<p>`;
+      if (await this.ethereumService.isSafeApp()) {
+        const networkName = await this.ethereumService.getSafeNetwork();
+        message = `<p>The safe is currently on ${networkName}, but your wallet is connected to ${info.connectedTo ?? "an unknown network"}.`
+          + `<p>To interact with deals we need you to connect to ${info.need} as well.<p>`
+          + `<p>Do you want to switch your connection to ${info.need} now?<p>`;
+      }
+
       const connect = await this.alertService.showAlert( {
-        message: `You are connecting to ${info.connectedTo ?? "an unknown network"}, but to interact with deals we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?`,
+        message,
         // eslint-disable-next-line no-bitwise
         buttons: ShowButtonsEnum.Primary | ShowButtonsEnum.Secondary,
         buttonTextPrimary: "Yes, Please",
