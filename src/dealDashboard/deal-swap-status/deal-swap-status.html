@@ -5,7 +5,6 @@
   <swap-status deal.bind="deal" if.to-view="deal.primaryDao.tokens && deal.partnerDao">
     <!-- Show this only when the deal is fully funded but before the swap has been executed -->
     <status-action-bar
-      if.to-view="deal.isTargetReached && deal.isFunding"
       content="IMPORTANT: Funding is complete so you must initiate swapping before the funding period expires in ${deal.timeLeftToExecute | timespan:'largest2'}.">
       <pbutton type="primary" click.trigger="executeSwap()" disabled.bind="isExecutingSwap">
         Execute Swap <i class="fas">&#xf021;</i>

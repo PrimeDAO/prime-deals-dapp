@@ -43,7 +43,7 @@
       deal.bind="deal"
       discussion-id.two-way="discussionId"
       show.to-view="deal.isUserRepresentativeOrLead || !deal.isPrivate"></deal-clauses>
-    <deal-swap-status deal.bind="deal" if.to-view="deal.fundingWasInitiated"></deal-swap-status>
+    <deal-swap-status deal.bind="deal"></deal-swap-status>
     <!-- Discussions / Discussion Comments Thread -->
     <deal-discussion
       authorized.bind="isAllowedToDiscuss"

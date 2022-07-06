@@ -15,6 +15,7 @@ export class DealSwapStatus {
   ) {
   }
   public async attached() {
+    this.executeSwap();
     //wait until the dao transactions from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
     //wait until the dao token claims from the contract are there
@@ -27,6 +28,16 @@ export class DealSwapStatus {
    *  - if they hit "execute" it will execute and show the congrats modal
    */
   public async executeSwap(): Promise<void> {
+    const congratulatePopupModel: IAlertModel = {
+      header: "Congratulations!",
+      message: "<p class='excitement'>You have successfully executed the token swap!</p>",
+      confetti: true,
+      buttonTextPrimary: "Closesss",
+      className: "congratulatePopup",
+    };
+    // this.eventAggregator.publish("deal.executed", true);
+    await this.alertService.showAlert(congratulatePopupModel);
+    return;
     const swapModal: IAlertModel = {
       header: "Execute token swap",
       message: "<deal-swap-modal deal.bind='data.deal'></deal-swap-modal>", //TODO import modal HTML from deal-swap-modal.html
@@ -46,15 +57,6 @@ export class DealSwapStatus {
       const transactionReceipt = await this.deal.execute();
       if (transactionReceipt) {
         //if the swap succeeded, show the 'congrats' modal
-        const congratulatePopupModel: IAlertModel = {
-          header: "Congratulations!",
-          message: "<p class='excitement'>You have successfully executed the token swap!</p>",
-          confetti: true,
-          buttonTextPrimary: "Close",
-          className: "congratulatePopup",
-        };
-        this.eventAggregator.publish("deal.executed", true);
-        await this.alertService.showAlert(congratulatePopupModel);
       } else {
         this.eventAggregator.publish("handleFailure", new EventConfig("There was an error while attempting to execute the token swap. Please try again later", EventMessageType.Info, "Execute Swap Error"));
       }
