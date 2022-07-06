@@ -75,10 +75,18 @@
           </div>
         </section>
 
-        <section class="stageSectionContent">
+        <section class="stageSectionContent" if.bind="isOpenProposalLike">
           <div class="submitContentLabel">
-            <template if.bind="isOpenProposalLike">Make Offers Private</template>
-            <template else>Make Deal Private</template>
+            Make Offers Private
+          </div>
+          <div class="submitContent">
+            <ptoggle disabled value.bind="submitData.offersPrivate"></ptoggle>
+          </div>
+        </section>
+
+        <section class="stageSectionContent" if.bind="!isOpenProposalLike">
+          <div class="submitContentLabel">
+            Make Deal Private
           </div>
           <div class="submitContent">
             <ptoggle disabled value.bind="submitData.isPrivate"></ptoggle>
