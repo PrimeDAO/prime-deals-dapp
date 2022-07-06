@@ -1,10 +1,6 @@
 <template>
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <require from="../../components/daoStageContent/daoStageContent"></require>
-  <stage-wrapper
-    header="Primary DAO Details"
-    wizard-manager.bind="wizardManager">
-
     <dao-stage-content
       data.bind="primaryDao"
       disabled.bind="disabled"
@@ -41,5 +37,4 @@
         Proposal Lead address please add it here as a Representative too.
       </div>
     </dao-stage-content>
-  </stage-wrapper>
 </template>

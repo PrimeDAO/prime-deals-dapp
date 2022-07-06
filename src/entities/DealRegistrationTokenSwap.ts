@@ -1,9 +1,9 @@
 // Importing external dependencies in this file breaks firebase function which import interfaces from here
 
 export interface IProposal {
-  title: string,
-  summary: string,
-  description: string;
+  title?: string,
+  summary?: string,
+  description?: string;
 }
 
 export enum Platforms {
@@ -53,7 +53,7 @@ export interface IDAO {
 }
 
 export interface IProposalLead {
-  address: string,
+  address?: string,
   email?: string;
   // dao?: IDAO /* Deprecated: Proposal lead does not need to be part of the a DAO */
 }

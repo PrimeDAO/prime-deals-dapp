@@ -1,4 +1,4 @@
-import { IBaseWizardStage, IStageMeta, WizardType } from "../../dealWizardTypes";
+import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import * as shortUuid from "short-uuid";
 import { IWizardState, WizardService } from "../../../services/WizardService";
 import {
@@ -21,7 +21,7 @@ import { IsEthAddress } from "../../../../resources/validation-rules";
 import { NumberService, TokenService } from "../../../../services";
 
 @inject()
-export class TermsStage implements IBaseWizardStage {
+export class TermsStage{
   public wizardManager: any;
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 

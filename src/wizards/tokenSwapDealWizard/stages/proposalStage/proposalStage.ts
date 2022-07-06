@@ -1,30 +1,26 @@
-import { IBaseWizardStage } from "../../dealWizardTypes";
-import { IWizardState, WizardService } from "../../../services/WizardService";
 import { IDealRegistrationTokenSwap, IProposal } from "entities/DealRegistrationTokenSwap";
-import { inject } from "aurelia";
+import { IContainer, ICustomElementViewModel, IDisposable, IEventAggregator, inject } from "aurelia";
 import { IValidationRules } from "@aurelia/validation";
 import { IValidationController } from "@aurelia/validation-html";
-import { newInstanceForScope } from "@aurelia/kernel";
 
-@inject()
-export class ProposalStage implements IBaseWizardStage {
-  public wizardManager: any;
-  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
+export class ProposalStage implements ICustomElementViewModel {
 
-  proposal: IProposal;
+  proposal: IProposal = {
+    description: "",
+    summary: "",
+    title: "",
+  };
+  event: IDisposable;
 
   constructor(
-    public wizardService: WizardService,
-    @newInstanceForScope(IValidationController) public form: IValidationController,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
+    @IContainer private readonly container: IContainer,
+    @IEventAggregator private readonly eventAggregator: IEventAggregator,
+    @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
+
   ) {
-  }
-
-  load(): void {
-    this.wizardManager = this.wizardService.currentWizard;
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.proposal = this.wizardState.registrationData.proposal;
-
+    this.proposal = this.registrationData?.proposal;
     this.validationRules
       .on(this.proposal)
       .ensure("title")
@@ -35,10 +31,6 @@ export class ProposalStage implements IBaseWizardStage {
       .ensure("description")
       .required()
       .minLength(10);
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
   }
+
 }

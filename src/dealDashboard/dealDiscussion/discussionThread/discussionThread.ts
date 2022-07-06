@@ -90,7 +90,7 @@ export class DiscussionThread {
     });
   }
 
-  detached(): void {
+  detaching(): void {
     this.discussionsService.unsubscribeFromDiscussion();
     document.removeEventListener("scroll", this.scrollEvent);
   }

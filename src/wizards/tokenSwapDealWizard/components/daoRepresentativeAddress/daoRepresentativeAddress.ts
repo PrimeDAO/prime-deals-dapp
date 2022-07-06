@@ -11,16 +11,13 @@ export class DaoRepresentativeAddress {
   @bindable data: IDAO;
   @bindable wizardManager: WizardStateKey;
 
-  private wizardState: IWizardState<IDealRegistrationTokenSwap>;
-
   constructor(
-    private wizardService: WizardService,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
 
   binding() {
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.validationRules
       .on(this.representative)
@@ -36,7 +33,7 @@ export class DaoRepresentativeAddress {
   }
 
   private daoValidationRepresentativeRestriction(address): boolean {
-    const {primaryDAO, partnerDAO} = this.wizardState.registrationData;
+    const {primaryDAO, partnerDAO} = this.registrationData;
     /** Don't validate, if there is no Partner DAO in the wizard */
     if (partnerDAO === undefined) return true;
 

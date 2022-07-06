@@ -1,4 +1,3 @@
-import { IWizardState } from "wizards/services/WizardService";
 // import { ValidationRules } from "aurelia-validation";
 // import { Validation } from "services/ValidationService";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
@@ -6,12 +5,6 @@ import { IValidationRules } from "@aurelia/validation";
 import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../resources/validation-rules";
 
 export enum WizardType {createOpenProposal, editOpenProposal, createPartneredDeal, editPartneredDeal, makeAnOffer}
-
-export interface IBaseWizardStage {
-  wizardManager: any;
-  wizardState: IWizardState;
-  load;
-}
 
 export interface IStageMeta<Settings = any> {
   wizardType: WizardType;

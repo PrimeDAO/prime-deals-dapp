@@ -1,7 +1,7 @@
 <div class="pstepper">
   <template repeat.for="step of steps">
     <div
-      class="${$index === indexOfActive ? 'active' : ''}"
+      class="${$index === index ? 'active' : ''}"
       click.delegate="onClick($index)"
       data-test="pstepper-step"
     >
@@ -10,7 +10,7 @@
           class="${$index + 1 < steps.length ? 'hasConnector':''} ${step.valid ? 'isValid': ''}"
           number.bind="$index + 1"
           check-mark.to-view="step.valid"
-          active.bind="$index === indexOfActive"
+          active.bind="$index === index"
         >
         </pcircled-number>
         <div data-test="pstepper-step-name" class="${step.valid? 'valid':''}">

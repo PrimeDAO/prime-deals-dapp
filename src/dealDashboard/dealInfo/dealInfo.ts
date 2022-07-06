@@ -47,7 +47,7 @@ export class DealInfo {
     this.eventAggregator.publish("showMessage", "Deal privacy has been successfully submitted");
   }
 
-  public detached() {
+  public detaching() {
     this.subscriptions.dispose();
   }
 
