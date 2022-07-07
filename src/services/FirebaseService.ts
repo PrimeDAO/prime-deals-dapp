@@ -1,6 +1,4 @@
-import SafeAppsSDK, { GatewayTransactionDetails, SendTransactionsResponse, TransactionStatus } from "@gnosis.pm/safe-apps-sdk";
 import { EthereumService } from "services/EthereumService";
-import { ethers } from "ethers";
 import { fromEventPattern, Observable } from "rxjs";
 import { autoinject } from "aurelia-framework";
 import axios from "axios";
@@ -14,12 +12,6 @@ import { BrowserStorageService } from "services/BrowserStorageService";
 import { firebaseAuth } from "./firebase-helpers";
 import { ConsoleLogService } from "./ConsoleLogService";
 import { AlertService } from "./AlertService";
-
-const safeAppOpts = {
-  allowedDomains: [/gnosis-safe.io/],
-};
-const RETRY_SAFE_APP_INTERVAL = 4000;
-const RETRY_SAFE_APP_TIMEOUT = 999999;
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -35,20 +27,6 @@ interface ISignatureStorage {
   signature: string;
   messageToSign: string;
   /** Safe App tx for approving authentication to Deals */
-  safeTxHash: string;
-}
-
-/**
- * Part of the answer in
- * https://stackoverflow.com/questions/71866879/how-to-verify-message-in-wallet-connect-with-ethers-primarily-on-ambire-wallet
- */
-function encryptForGnosis(rawMessage: string) {
-  const rawMessageLength = new Blob([rawMessage]).size;
-  const message = ethers.utils.toUtf8Bytes(
-    "\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage,
-  );
-  const messageHash = ethers.utils.keccak256(message);
-  return messageHash;
 }
 
 @autoinject
@@ -129,8 +107,7 @@ export class FirebaseService {
   }
 
   private async verifySignedMessageAndCreateCustomToken(address: string, message: string, signature: string): Promise<string> {
-    const network = await this.ethereumService.isSafeApp() ? EthereumService.targetedNetwork : undefined;
-    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature, network});
+    const response = await axios.post(`${process.env.FIREBASE_FUNCTIONS_URL}/CI-verifySignedMessageAndCreateCustomToken`, {address, message, signature});
 
     return response.data.token;
   }
@@ -147,6 +124,16 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    /**
+     * We don't require safe addresses to "auth" to the data storage.
+     * Reason: Safes don't have private keys, instead a public tx gets created.
+     *   All parameters are visible, so one could reproduce the "signature" and imitate a Safe address.
+     *   Note: In the very first version of the Safe App integration we required the Safe auth.
+     */
+    if (await this.ethereumService.isSafeAddress(this.ethereumService.defaultAccountAddress)) {
+      return;
+    }
+
     if (this.currentFirebaseUserAddress === address) {
       return;
     }
@@ -155,8 +142,9 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    const { messageToSign, signature, safeTxHash } = await this.getSignatureData(address);
-    this.storeSignatureForAddress(address, signature, messageToSign, safeTxHash);
+    const { messageToSign, signature } = await this.getSignatureData(address);
+
+    this.storeSignatureForAddress(address, signature, messageToSign);
 
     let token: string;
     try {
@@ -191,132 +179,25 @@ export class FirebaseService {
    */
   private async getSignatureData(address: string) {
     const existingData = this.getExistingSignatureAndMessageForAddress(address);
-    let { signature, messageToSign, safeTxHash } = existingData;
+    let { signature, messageToSign } = existingData;
 
     if (signature && messageToSign) {
-      return { messageToSign, signature, safeTxHash };
-    }
-
-    /** A. Production case */
-    if (!(await this.ethereumService.isSafeApp())) {
-      try {
-        // eslint-disable-next-line require-atomic-updates
-        messageToSign = await this.getMessageToSign();
-        signature = await this.requestSignature(messageToSign);
-        this.eventAggregator.publish("database.account.signature.successful");
-
-      } catch (error) {
-        this.eventAggregator.publish("database.account.signature.cancelled");
-        throw error;
-      }
-
       return { messageToSign, signature };
     }
 
-    /**
-     * B. In case of a Safe App, we follow this flow:
-     * 1. Check if there is a queued transaction for authentication
-     * 2. Check if already signed
-     * 2.1 If yes, generate signature and return
-     * 2.2.If not, create tx
-     * 3. User waits for confirmation (Note, they may close the app, then repeat 1.)
-     */
-    const appsSdk = new SafeAppsSDK(safeAppOpts);
-
-    /** 1. */
-    const safeTx = await this.processAndGetTransaction(appsSdk, safeTxHash);
-    this.consoleLogService.logObject("safeTx", safeTx);
-
-    /**
-     * Guard if in queue or done
-     */
-    if (safeTx?.txStatus === TransactionStatus.SUCCESS) {
-      /** 2. */
-      const isSigned = await appsSdk.safe.isMessageSigned(messageToSign);
-
-      /** 2.1 */
-      if (isSigned) {
-        /**
-         * Meanwhile, the tx was successful, in this case, generate the signature, and return.
-         */
-        signature = encryptForGnosis(messageToSign);
-
-        return { messageToSign, signature, safeTxHash };
-      }
-    } else if (safeTx?.txStatus === TransactionStatus.AWAITING_CONFIRMATIONS || safeTx?.txStatus === TransactionStatus.AWAITING_EXECUTION || safeTx?.txStatus === TransactionStatus.PENDING) {
-      return { messageToSign, signature, safeTxHash };
-    }
-
-    /** 2.2 */
+    /** A. Production case */
     try {
-      if (!messageToSign) {
-        // eslint-disable-next-line require-atomic-updates
-        messageToSign = await this.getMessageToSign();
-      }
+      // eslint-disable-next-line require-atomic-updates
+      messageToSign = await this.getMessageToSign();
+      signature = await this.requestSignature(messageToSign);
+      this.eventAggregator.publish("database.account.signature.successful");
 
-      let response: SendTransactionsResponse;
-      try {
-        /** 2.1.1 */
-        response = await appsSdk.txs.signMessage(messageToSign);
-      } catch (error) {
-        this.consoleLogService.logMessage("Failed calling signMessage", "error");
-        throw error;
-      }
-      safeTxHash = response.safeTxHash;
-      this.consoleLogService.logMessage(`safeTxHash: ${safeTxHash}`);
-
-      /**
-       * Extra save, for when user closes app.
-       * Note, signature not provided yet.
-       */
-      this.storeSignatureForAddress(address, "", messageToSign, safeTxHash);
-
-      this.eventAggregator.publish("transaction.sent");
-
-      /**
-       * 3. If the user keeps the app open, and because Gnosis Safe is a contract,
-       * we will have to query until the tx has finished executing.
-       * Only then can we proceed with authenticating to Firebase.
-       */
-      await Utils.waitUntilTrue(async() => {
-        return await appsSdk.safe.isMessageSigned(messageToSign);
-      }, RETRY_SAFE_APP_TIMEOUT, RETRY_SAFE_APP_INTERVAL);
-
-      signature = encryptForGnosis(messageToSign);
-
-      this.eventAggregator.publish("transaction.confirmed");
     } catch (error) {
       this.eventAggregator.publish("database.account.signature.cancelled");
       throw error;
     }
 
-    return { messageToSign, signature, safeTxHash };
-  }
-
-  /**
-   * Inform user with alert if tx is ongoing, then return tx.
-   */
-  private async processAndGetTransaction(appsSdk: SafeAppsSDK, storedSafeTxHash: string | null): Promise<GatewayTransactionDetails> {
-    if (!storedSafeTxHash) return;
-
-    let transaction: GatewayTransactionDetails;
-    try {
-      transaction = await appsSdk.txs.getBySafeTxHash(storedSafeTxHash);
-      if (transaction.txStatus === TransactionStatus.AWAITING_CONFIRMATIONS || transaction.txStatus === TransactionStatus.AWAITING_EXECUTION || transaction.txStatus === TransactionStatus.PENDING) {
-        this.alertService.showAlert({
-          header: "Awaiting confirmation",
-          message: "<p>Transaction has not been approved yet.</p><p>Waiting for confirmation...</p>",
-        });
-      } else {
-        this.consoleLogService.logMessage(`Status of Tx: ${transaction.txStatus}`, "warn");
-        this.consoleLogService.logMessage(`Status of Tx: ${transaction}`, "warn");
-      }
-    } catch (error) {
-      this.consoleLogService.logObject(error.message, error, "error");
-      throw error;
-    }
-
-    return transaction;
+    return { messageToSign, signature };
   }
 
   private async requestSignature(messageToSign: string): Promise<string> {
@@ -330,13 +211,13 @@ export class FirebaseService {
   private getExistingSignatureAndMessageForAddress(address: string): ISignatureStorage {
     const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
 
-    return signaturesAndMessages[address] ? signaturesAndMessages[address] : {signature: null, messageToSign: null, safeTxHash: null};
+    return signaturesAndMessages[address] ? signaturesAndMessages[address] : {signature: null, messageToSign: null};
   }
 
-  private storeSignatureForAddress(address: string, signature: string, messageToSign: string, safeTxHash?: string): void {
+  private storeSignatureForAddress(address: string, signature: string, messageToSign: string): void {
     const signaturesAndMessages = this.browserStorageService.lsGet<Record<string, ISignatureStorage>>(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, {});
 
-    signaturesAndMessages[address] = {signature, messageToSign, safeTxHash};
+    signaturesAndMessages[address] = {signature, messageToSign};
 
     this.browserStorageService.lsSet(FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE, signaturesAndMessages);
   }

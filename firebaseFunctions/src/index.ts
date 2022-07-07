@@ -8,7 +8,6 @@ import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
 import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
-import { verifyEIP1271Signature } from "./hash-validation";
 
 const firestoreAdminClient = new googleCloudFirestore.v1.FirestoreAdminClient();
 const admin = firebaseAdmin.initializeApp();
@@ -224,14 +223,12 @@ export const CI = {
         const address: string = request.body.address;
         const message: string = request.body.message;
         const signature: string = request.body.signature;
-        const network: string = request.body.network;
 
         functions.logger.info(`
           Starting verification for the following:
           Address: ${address},
           Message: ${message},
           Signature: ${signature},
-          Network: ${network}
         `);
 
         try {
@@ -241,40 +238,10 @@ export const CI = {
           return response.sendStatus(500);
         }
 
-        let signerAddress;
-        /**
-         * Verify the signature.
-         * There are 2 cases:
-         * 1. Safe App tx, that uses EIP-1271
-         * 2. "Normal" signature
-         */
-        if (network) {
-          functions.logger.info(`Network: ${network}`);
-
-          /**
-           * For EIP-1271 we can only verify a "signature", which is a tx on the Safe Contract.
-           * The verification method returns a boolean, and not an address as above.
-           */
-          signerAddress = address;
-          try {
-            const verified = await verifyEIP1271Signature(signerAddress, message, network);
-
-            if (!verified) {
-              functions.logger.error(`Debug instructions: 1. address: ${signerAddress}; 2. Message: ${message}`);
-              throw new Error();
-            }
-          } catch (error) {
-            functions.logger.error("Could not verify EIP-1271 signature");
-            functions.logger.error(error.message);
-            functions.logger.error(JSON.stringify(error, null, 2));
-            return response.sendStatus(500);
-          }
-        } else {
-          signerAddress = verifyMessage(
-            message,
-            signature,
-          );
-        }
+        const signerAddress = verifyMessage(
+          message,
+          signature,
+        );
 
         try {
           getAddress(signerAddress);
