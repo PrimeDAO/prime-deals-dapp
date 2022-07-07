@@ -342,8 +342,12 @@ export class EthereumService {
 
   public async ensureMetaMaskWalletProvider(): Promise<void> {
     if (!this.metaMaskWalletProvider) {
-      const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
-      this.metaMaskWalletProvider = provider;
+      try {
+        const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
+        this.metaMaskWalletProvider = provider;
+      } catch (error) {
+        this.consoleLogService.logObject(error.message, error, "error");
+      }
     }
   }
 
@@ -403,9 +407,15 @@ export class EthereumService {
   }
 
   public async getNetworkName(provider: any): Promise<string> {
-    const chainName = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
+    try {
+      const chainName = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
 
-    return chainName;
+      return chainName;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return "";
+    }
+
   }
 
   public async isWrongNetwork(): Promise<boolean> {
@@ -713,43 +723,67 @@ export class EthereumService {
   }
 
   public async getSafeNetwork(): Promise<string | undefined> {
-    if (!(await this.isSafeApp())) return Promise.resolve(undefined);
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(undefined);
 
-    this.ensureSafeAppSdk();
-    const info = await this.safeAppSdk.safe.getInfo();
-    let networkName = ethers.providers.getNetwork(Number(info.chainId)).name;
-    if (networkName === "homestead") {
-      networkName = "mainnet";
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      let networkName = ethers.providers.getNetwork(Number(info.chainId)).name;
+      if (networkName === "homestead") {
+        networkName = "mainnet";
+      }
+      return networkName;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
     }
-    return networkName;
   }
 
   public async isSafeApp(): Promise<boolean> {
-    return await this.web3Modal.isSafeApp();
+    try {
+      return await this.web3Modal.isSafeApp();
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
   }
 
   public async isSafeAddress(safeAddress: string): Promise<boolean> {
-    if (!(await this.isSafeApp())) return Promise.resolve(false);
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
 
-    this.ensureSafeAppSdk();
-    const info = await this.safeAppSdk.safe.getInfo();
-    return safeAddress === info.safeAddress;
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return safeAddress === info.safeAddress;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
   }
 
   public async isMemberOfSafe(address: string): Promise<boolean> {
-    if (!(await this.isSafeApp())) return Promise.resolve(false);
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
 
-    this.ensureSafeAppSdk();
-    const info = await this.safeAppSdk.safe.getInfo();
-    return info.owners.includes(address);
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return info.owners.includes(address);
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
   }
 
   public async isReadOnlySafe(): Promise<boolean> {
-    if (!(await this.isSafeApp())) return Promise.resolve(false);
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
 
-    this.ensureSafeAppSdk();
-    const info = await this.safeAppSdk.safe.getInfo();
-    return info.isReadOnly;
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return info.isReadOnly;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
   }
 }
 
