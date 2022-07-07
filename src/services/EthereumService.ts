@@ -1,3 +1,4 @@
+import SafeAppsSDK from "@gnosis.pm/safe-apps-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { BrowserStorageService } from "./BrowserStorageService";
 /* eslint-disable no-console */
@@ -12,6 +13,10 @@ import { autoinject } from "aurelia-framework";
 import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { DisclaimerService } from "services/DisclaimerService";
 import { Utils } from "services/utils";
+
+const safeAppOpts = {
+  allowedDomains: [/gnosis-safe.io/],
+};
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -133,7 +138,7 @@ export class EthereumService {
 
     const readonlyEndPoint = EthereumService.ProviderEndpoints[EthereumService.targetedNetwork];
     if (!readonlyEndPoint) {
-      throw new Error(`Please connect to either ${Networks.Mainnet} or ${Networks.Rinkeby}`);
+      throw new Error(`Please connect your wallet to either ${Networks.Mainnet} or ${Networks.Rinkeby}`);
     }
 
     // comment out to run DISCONNECTED
@@ -146,6 +151,7 @@ export class EthereumService {
     }
   }
 
+  private safeAppSdk: SafeAppsSDK;
   private web3Modal: Web3Modal;
   /**
    * provided by Web3Modal
@@ -225,6 +231,17 @@ export class EthereumService {
    * provided by ethers given provider from Web3Modal
    */
   public walletProvider: Web3Provider;
+  /**
+   * Difference to `walletProvider`:
+   *   For Safe App, we need to interact with the actual wallet provider
+   *   (a todo is here to rename `walletProvider` to sth like `addressProvider` to account for
+   *     Metamask and Gnosis Safe App cases.)
+   */
+  public metaMaskWalletProvider: Web3Provider & IEIP1193 & ExternalProvider;
+  /**
+   * Might be duplication of `walletProvider`, but it was easier to duplicate.
+   */
+  public safeProvider: Web3Provider & IEIP1193 & ExternalProvider;
   public defaultAccountAddress: Address;
 
   private async connect(): Promise<void> {
@@ -250,43 +267,57 @@ export class EthereumService {
    * silently connect to metamask if a metamask account is already connected,
    * without invoking Web3Modal nor MetaMask popups.
    */
+  public async connectToSafeProvider() {
+    await this.addWalletProviderListeners();
+    // const cachedProvider = this.cachedProvider;
+    // const cachedAccount = this.cachedWalletAccount;
+
+    this.ensureWeb3Modal();
+    await this.ensureSafeProvider();
+
+    /**
+     * TODO: This is copy pasted from the if statement in `connectToConnectedProvider` (with one exception: Disclaimer is ensured here as well)
+     *   --> We should not duplicate this code, and instead find a cleaner way
+     */
+    const chainName = this.chainNameById.get(Number(await this.safeProvider.request({ method: "eth_chainId" })));
+    if (chainName === EthereumService.targetedNetwork) {
+      const accounts = await this.safeProvider.request({ method: "eth_accounts" });
+      if (accounts?.length) {
+        const account = getAddress(accounts[0]);
+        /**
+         * Expected flow: When Disclaimer not accepted, always pop up.
+         * In the Safe App case, we need to call ensure extra, else it does not show up.
+         */
+        await this.disclaimerService.ensurePrimeDisclaimed(account);
+        /**
+         * Dev note: For the Gnosis safe we could remove this if, because for a Safe app it is _expected_ to autoconnect.
+         *   The disclaimer is ensured during `setProvider`. Of course we can make extra sure though.
+         */
+        if (this.disclaimerService.getPrimeDisclaimed(account)) {
+          this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
+          return this.setProvider(this.safeProvider as any);
+        }
+      }
+    }
+  }
+
+  /**
+   * silently connect to metamask if a metamask account is already connected,
+   * without invoking Web3Modal nor MetaMask popups.
+   */
   public async connectToConnectedProvider(): Promise<void> {
     // const cachedProvider = this.cachedProvider;
     // const cachedAccount = this.cachedWalletAccount;
 
     this.ensureWeb3Modal();
+    await this.ensureMetaMaskWalletProvider();
 
-    /**
-     * This if statement is handling Gnosis Safe feature
-     * https://github.com/safe-global/safe-apps-sdk/tree/master/packages/safe-apps-web3modal
-     */
-    if (await this.web3Modal.isSafeApp()) {
-      const safeProvider = await this.web3Modal.requestProvider();
-
-      /**
-       * TODO: This is copy pasted from the if statement below (with one exception: Disclaimer is ensured here as well)
-       *   --> We should not duplicate this code, and instead find a cleaner way
-       */
-      const chainName = this.chainNameById.get(Number(await safeProvider.request({ method: "eth_chainId" })));
-      if (chainName === EthereumService.targetedNetwork) {
-        const accounts = await safeProvider.request({ method: "eth_accounts" });
-        if (accounts?.length) {
-          const account = getAddress(accounts[0]);
-          /**
-           * Expected flow: When Disclaimer not accepted, always pop up.
-           * In the Safe App case, we need to call ensure extra, else it does not show up.
-           */
-          await this.disclaimerService.ensurePrimeDisclaimed(account);
-          if (this.disclaimerService.getPrimeDisclaimed(account)) {
-            this.consoleLogService.logMessage(`autoconnecting to ${account}`, "info");
-            return this.setProvider(safeProvider);
-          }
-        }
-      }
-
+    if (await this.isSafeApp()) {
+      await this.connectToSafeProvider();
+      return;
     }
 
-    const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
+    const provider = this.metaMaskWalletProvider as any;
 
     /**
      * at this writing, `_metamask.isUnlocked` is "experimental", according to MetaMask.
@@ -309,6 +340,33 @@ export class EthereumService {
     }
   }
 
+  public async ensureMetaMaskWalletProvider(): Promise<void> {
+    if (!this.metaMaskWalletProvider) {
+      try {
+        const provider = detectEthereumProvider ? (await detectEthereumProvider({ mustBeMetaMask: true })) as any : undefined;
+        this.metaMaskWalletProvider = provider;
+      } catch (error) {
+        this.consoleLogService.logObject(error.message, error, "error");
+      }
+    }
+  }
+
+  private async addWalletProviderListeners(): Promise<void> {
+    await this.removeWalletProviderListeners();
+
+    await this.ensureMetaMaskWalletProvider();
+    this.metaMaskWalletProvider.on("accountsChanged", this.handleAccountsChanged);
+    this.metaMaskWalletProvider.on("chainChanged", this.handleChainChanged);
+    this.metaMaskWalletProvider.on("disconnect", this.handleDisconnect);
+  }
+
+  private async removeWalletProviderListeners(): Promise<void> {
+    await this.ensureMetaMaskWalletProvider();
+    this.metaMaskWalletProvider.removeListener("accountsChanged", this.handleAccountsChanged);
+    this.metaMaskWalletProvider.removeListener("chainChanged", this.handleChainChanged);
+    this.metaMaskWalletProvider.removeListener("disconnect", this.handleDisconnect);
+  }
+
   private ensureWeb3Modal(): void {
     if (!this.web3Modal) {
       this.web3Modal = new Web3Modal({
@@ -327,6 +385,18 @@ export class EthereumService {
     }
   }
 
+  private async ensureSafeProvider(): Promise<void> {
+    if (!this.safeProvider) {
+      this.safeProvider = await this.web3Modal.requestProvider();
+    }
+  }
+
+  private ensureSafeAppSdk(): void {
+    if (!this.safeAppSdk) {
+      this.safeAppSdk = new SafeAppsSDK(safeAppOpts);
+    }
+  }
+
   private async getNetwork(provider: Web3Provider): Promise<Network> {
     let network = await provider.getNetwork();
     network = Object.assign({}, network);
@@ -334,6 +404,32 @@ export class EthereumService {
       network.name = "mainnet";
     }
     return network;
+  }
+
+  public async getNetworkName(provider: any): Promise<string> {
+    try {
+      const chainName = this.chainNameById.get(Number(await provider.request({ method: "eth_chainId" })));
+
+      return chainName;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return "";
+    }
+
+  }
+
+  public async isWrongNetwork(): Promise<boolean> {
+    await this.ensureMetaMaskWalletProvider();
+    const chainName = await this.getNetworkName(this.metaMaskWalletProvider);
+    return chainName !== EthereumService.targetedNetwork;
+  }
+
+  public async handleWrongNetwork(): Promise<void> {
+    await this.ensureMetaMaskWalletProvider();
+    const provider = this.metaMaskWalletProvider;
+    const connectedTo = await this.getNetworkName(provider);
+
+    this.eventAggregator.publish("Network.wrongNetwork", { provider, connectedTo: connectedTo, need: EthereumService.targetedNetwork });
   }
 
   private async setProvider(web3ModalProvider: Web3Provider & IEIP1193 & ExternalProvider): Promise<void> {
@@ -359,6 +455,11 @@ export class EthereumService {
            */
         this.fireConnectHandler({ chainId: network.chainId, chainName: network.name, provider: this.walletProvider });
         this.fireAccountsChangedHandler(this.defaultAccountAddress);
+
+        /**
+         * Handle events in case of Safe App separately (-> `addWalletProviderListeners`)
+         */
+        if (await this.isSafeApp()) return;
 
         this.web3ModalProvider.on("accountsChanged", this.handleAccountsChanged);
 
@@ -417,7 +518,9 @@ export class EthereumService {
     }
 
     if (network.name !== EthereumService.targetedNetwork) {
-      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.web3ModalProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
+      await this.ensureMetaMaskWalletProvider();
+
+      this.eventAggregator.publish("Network.wrongNetwork", { provider: this.metaMaskWalletProvider, connectedTo: network.name, need: EthereumService.targetedNetwork });
       return;
     }
     else {
@@ -442,6 +545,31 @@ export class EthereumService {
     this.web3ModalProvider = undefined;
     this.walletProvider = undefined;
     this.fireDisconnectHandler(error);
+
+    this.isSafeApp().then((isSafeApp) => {
+      if (isSafeApp) {
+        this.removeWalletProviderListeners();
+      }
+    });
+  }
+
+  /**
+   * Like `disconnect`, but don't reset the providers
+   */
+  public softDisconnect(error: { code: number; message: string }): void {
+    this.web3ModalProvider?.removeListener("accountsChanged", this.handleAccountsChanged);
+    this.web3ModalProvider?.removeListener("chainChanged", this.handleChainChanged);
+    this.web3ModalProvider?.removeListener("disconnect", this.handleDisconnect);
+    this.defaultAccount = undefined;
+    this.defaultAccountAddress = undefined;
+    this.fireAccountsChangedHandler(null);
+    this.fireDisconnectHandler(error);
+
+    this.isSafeApp().then((isSafeApp) => {
+      if (isSafeApp) {
+        this.removeWalletProviderListeners();
+      }
+    });
   }
 
   /**
@@ -460,10 +588,20 @@ export class EthereumService {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexChainId }],
         });
-        this.setProvider(web3ModalProvider as any);
+
+        /**
+         * Safe App: Separate method, because Safe provider does not allow changing chains/networks
+         */
+        if (await this.isSafeApp()) {
+          await this.connectToSafeProvider();
+        } else {
+          await this.setProvider(web3ModalProvider as any);
+        }
+
         return true;
       }
     } catch (err) {
+      this.consoleLogService.logObject(err.message, err, "error");
       // user rejected request
       if (err.code === 4001) {
         // return false;
@@ -584,8 +722,68 @@ export class EthereumService {
       .catch(() => null); // is neither address nor ENS
   }
 
+  public async getSafeNetwork(): Promise<string | undefined> {
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(undefined);
+
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      let networkName = ethers.providers.getNetwork(Number(info.chainId)).name;
+      if (networkName === "homestead") {
+        networkName = "mainnet";
+      }
+      return networkName;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+    }
+  }
+
   public async isSafeApp(): Promise<boolean> {
-    return await this.web3Modal.isSafeApp();
+    try {
+      return await this.web3Modal.isSafeApp();
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
+  }
+
+  public async isSafeAddress(safeAddress: string): Promise<boolean> {
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
+
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return safeAddress === info.safeAddress;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
+  }
+
+  public async isMemberOfSafe(address: string): Promise<boolean> {
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
+
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return info.owners.includes(address);
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
+  }
+
+  public async isReadOnlySafe(): Promise<boolean> {
+    try {
+      if (!(await this.isSafeApp())) return Promise.resolve(false);
+
+      this.ensureSafeAppSdk();
+      const info = await this.safeAppSdk.safe.getInfo();
+      return info.isReadOnly;
+    } catch (error) {
+      this.consoleLogService.logObject(error.message, error, "error");
+      return false;
+    }
   }
 }
 
