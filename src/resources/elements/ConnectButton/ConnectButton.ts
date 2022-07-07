@@ -11,6 +11,9 @@ import { TransactionReceipt } from "services/TransactionsService";
 import { Utils } from "services/utils";
 import { bindable } from "aurelia-typed-observable-plugin";
 
+/**
+ * TODO: Should have constants like this in one place
+ */
 const SAFE_APP_ERROR_CODE = 200;
 const SAFE_APP_CHANGE_EVENT_TIMEOUT = 1000;
 const SAFE_APP_ERROR_TEXT = "The Account you are trying to connect to the Deals Safe App is not listed as an owner of the Safe.";
