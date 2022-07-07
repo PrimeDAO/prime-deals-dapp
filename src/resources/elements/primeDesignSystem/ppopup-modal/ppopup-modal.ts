@@ -33,9 +33,20 @@ export class PPopupModal {
   constructor(private aureliaHelperService: AureliaHelperService) { }
 
   public attached(): void {
-    this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
-    this.showOkButton = !!(this.buttons && ShowButtonsEnum.Primary);
-    this.showCancelButton = !!(this.buttons && ShowButtonsEnum.Secondary);
+    switch (this.buttons) {
+      case ShowButtonsEnum.Primary:
+        this.showOkButton = true;
+        this.showCancelButton = false;
+        break;
+      case ShowButtonsEnum.Secondary:
+        this.showOkButton = false;
+        this.showCancelButton = true;
+        break;
+      default:
+        this.showOkButton = true;
+        this.showCancelButton = true;
+        break;
+    }
     this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
     this.buttonTextSecondary = this.buttonTextSecondary ?? "CANCEL";
     // attach-focus doesn't work
