@@ -138,7 +138,7 @@ export class EthereumService {
 
     const readonlyEndPoint = EthereumService.ProviderEndpoints[EthereumService.targetedNetwork];
     if (!readonlyEndPoint) {
-      throw new Error(`Please connect to either ${Networks.Mainnet} or ${Networks.Rinkeby}`);
+      throw new Error(`Please connect your wallet to either ${Networks.Mainnet} or ${Networks.Rinkeby}`);
     }
 
     // comment out to run DISCONNECTED

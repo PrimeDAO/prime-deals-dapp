@@ -92,7 +92,7 @@ export class App {
         const networkName = await this.ethereumService.getSafeNetwork();
         message = `<p>The safe is currently on <strong style="font-weight:bold;">${networkName}</strong>, but your wallet is connected to <strong style="font-weight:bold;">${info.connectedTo ?? "an unknown network"}</strong>.`
           + `<p>To interact with deals we need you to connect to <strong style="font-weight:bold;">${info.need}</strong> as well.<p>`
-          + `<p>Do you want to switch your connection to <strong style="font-weight:bold;">${info.need}</strong> now?<p>`;
+          + `<p>Do you want to switch your wallet connection to <strong style="font-weight:bold;">${info.need}</strong> now?<p>`;
 
         header = "Unsupported network";
       }
@@ -113,7 +113,7 @@ export class App {
 
       if (notChanged) {
         this.ethereumService.disconnect({ code: -1, message: "wrong network" });
-        this.eventAggregator.publish("handleFailure", `Please connect to ${info.need}`);
+        this.eventAggregator.publish("handleFailure", `Please connect your wallet to ${info.need}`);
       }
     });
 
