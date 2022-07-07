@@ -95,7 +95,7 @@ export class DiscussionsList{
     this.hasDiscussions = !!this.discussions.size;
   }
 
-  detached() {
+  detaching() {
     clearInterval(this.commentTimeInterval);
   }
 

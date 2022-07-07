@@ -130,7 +130,7 @@ export class NumericInput {
     // this.hydrateFromDefaultValue();
   }
 
-  public detached(): void {
+  public detaching(): void {
     if (this.element) {
       this.element.removeEventListener("keydown", (e) => {
         this.keydown(e);

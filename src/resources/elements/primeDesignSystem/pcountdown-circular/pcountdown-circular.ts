@@ -56,7 +56,7 @@ export class PCountdownCircular {
     }
   }
 
-  detached() {
+  detaching() {
     this.stop(false);
   }
 

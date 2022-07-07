@@ -75,10 +75,18 @@
           </div>
         </section>
 
-        <section class="stageSectionContent">
+        <section class="stageSectionContent" if.bind="isOpenProposalLike">
           <div class="submitContentLabel">
-            <template if.bind="isOpenProposalLike">Make Offers Private</template>
-            <template else>Make Deal Private</template>
+            Make Offers Private
+          </div>
+          <div class="submitContent">
+            <ptoggle disabled value.bind="submitData.offersPrivate"></ptoggle>
+          </div>
+        </section>
+
+        <section class="stageSectionContent" if.bind="!isOpenProposalLike">
+          <div class="submitContentLabel">
+            Make Deal Private
           </div>
           <div class="submitContent">
             <ptoggle disabled value.bind="submitData.isPrivate"></ptoggle>
@@ -137,6 +145,53 @@
                       <pre class="subtext">${clause.text}</pre>
                     </div>
                   </template>
+                </template>
+
+                <div class="submitContentLabel">DAOplomat Reward</div>
+
+                <div class="submitDaoTokenCard">
+
+                  <pcard class="rewardsCard">
+                    <table>
+                      <tr>
+                        <td class="submitContentLabel">
+                          Total DAOplomat Reward
+                        </td>
+                        <td class="submitContentLabel">
+                          Total Value (USD)
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>${submitData.terms.daoplomatRewards.percentage * 100}%</td>
+                        <td>~${submitData.terms.daoplomatRewards.percentage * tokensTotal | currency}</td>
+                      </tr>
+                    </table>
+
+                    <hr>
+
+                    <div class="rewardsTable">
+                      <div class="submitContentLabel">
+                        Total DAOplomat Reward
+                      </div>
+                      <div class="submitContentLabel">
+                        Split
+                      </div>
+                      <div class="submitContentLabel splitPriceValue">
+                        Total Value (USD)
+                      </div>
+                      <template repeat.for="daoplomat of submitData.terms.daoplomatRewards.daoplomats">
+                        <etherscanlink
+                          address.bind="daoplomat.address"
+                          text="${daoplomat.address | smallHexString}">
+                        </etherscanlink>
+                        <span>${daoplomat.rewardSplitPercentage / submitData.terms.daoplomatRewards.percentage * 100}%</span>
+                        <span class="splitPriceValue">~${daoplomat.rewardSplitPercentage * tokensTotal | currency}</span>
+                      </template>
+                    </div>
+
+                  </pcard>
+
+                </div>
               </div>
             </pcard>
           </div>

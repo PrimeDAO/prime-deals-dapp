@@ -48,7 +48,7 @@ export class DealDescription {
     this.isMobile = MobileService.isMobile();
   }
 
-  detached() {
+  detaching() {
     window.removeEventListener("resize", this.resizeWatcher);
   }
 

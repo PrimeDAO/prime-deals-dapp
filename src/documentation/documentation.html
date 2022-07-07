@@ -4,8 +4,8 @@
     <div class="sidebar">
       <template repeat.for="doc of routes">
         <a
-          load="${doc.path}"
-          class="document"
+          click.trigger="navigateTo($index)"
+          class="${routes[currentDocIndex].path.includes(doc.path) ? 'active':''}"
         >
           ${doc.title}
         </a>
@@ -25,4 +25,4 @@
       </div>
     </div>
   </div>
-</template>
+</div>

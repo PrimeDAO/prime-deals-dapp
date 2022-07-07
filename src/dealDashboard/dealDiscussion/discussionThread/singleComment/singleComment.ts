@@ -52,7 +52,7 @@ export class SingleComment {
     }, 30000);
   }
 
-  detached() {
+  detaching() {
     clearInterval(this.commentTimeInterval);
   }
 

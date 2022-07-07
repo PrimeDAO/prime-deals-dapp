@@ -33,6 +33,10 @@ export class FormAddressInput {
   ) {
   }
 
+  binding() {
+    this.valueChanged(this.value);
+  }
+
   valueChanged(newValue: string): void {
     if (!this.ignoreNewValue) {
       if (newValue?.trim().length) {
