@@ -87,15 +87,19 @@ export class App {
       let notChanged = true;
 
       let message = `<p>Your wallet is connected to ${info.connectedTo ?? "an unknown network"}, but to interact with deals we need you to connect to ${info.need}.  Do you want to switch your connection ${info.need} now?<p>`;
+      let header: string | undefined = undefined;
       if (await this.ethereumService.isSafeApp()) {
         const networkName = await this.ethereumService.getSafeNetwork();
-        message = `<p>The safe is currently on ${networkName}, but your wallet is connected to ${info.connectedTo ?? "an unknown network"}.`
-          + `<p>To interact with deals we need you to connect to ${info.need} as well.<p>`
-          + `<p>Do you want to switch your connection to ${info.need} now?<p>`;
+        message = `<p>The safe is currently on <strong style="font-weight:bold;">${networkName}</strong>, but your wallet is connected to <strong style="font-weight:bold;">${info.connectedTo ?? "an unknown network"}</strong>.`
+          + `<p>To interact with deals we need you to connect to <strong style="font-weight:bold;">${info.need}</strong> as well.<p>`
+          + `<p>Do you want to switch your connection to <strong style="font-weight:bold;">${info.need}</strong> now?<p>`;
+
+        header = "Unsupported network";
       }
 
       const connect = await this.alertService.showAlert( {
         message,
+        header,
         // eslint-disable-next-line no-bitwise
         buttons: ShowButtonsEnum.Primary | ShowButtonsEnum.Secondary,
         buttonTextPrimary: "Yes, Please",
