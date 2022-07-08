@@ -34,6 +34,7 @@ export class PPopupModal {
 
   public attached(): void {
     /* eslint-disable no-bitwise */
+    this.buttons = this.buttons ?? ShowButtonsEnum.Primary;
     this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
     this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
     this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
