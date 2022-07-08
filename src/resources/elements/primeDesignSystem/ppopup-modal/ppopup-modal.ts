@@ -33,20 +33,9 @@ export class PPopupModal {
   constructor(private aureliaHelperService: AureliaHelperService) { }
 
   public attached(): void {
-    switch (this.buttons) {
-      case ShowButtonsEnum.Primary:
-        this.showOkButton = true;
-        this.showCancelButton = false;
-        break;
-      case ShowButtonsEnum.Secondary:
-        this.showOkButton = false;
-        this.showCancelButton = true;
-        break;
-      default:
-        this.showOkButton = true;
-        this.showCancelButton = true;
-        break;
-    }
+    /* eslint-disable no-bitwise */
+    this.showOkButton = !!(this.buttons & ShowButtonsEnum.Primary);
+    this.showCancelButton = !!(this.buttons & ShowButtonsEnum.Secondary);
     this.buttonTextPrimary = this.buttonTextPrimary ?? "OK";
     this.buttonTextSecondary = this.buttonTextSecondary ?? "CANCEL";
     // attach-focus doesn't work
