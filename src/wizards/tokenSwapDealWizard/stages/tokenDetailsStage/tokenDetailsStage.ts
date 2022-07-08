@@ -9,8 +9,9 @@ import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
 import { areFormsValid } from "../../../../services/ValidationService";
-import { newInstanceForScope } from "@aurelia/kernel";
+import { newInstanceOf } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
+import { inject } from "aurelia";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
@@ -27,11 +28,11 @@ export class TokenDetailsStage {
 
   hasUnsavedChangesForPrimaryDetails = false;
   hasUnsavedChangesForPartnerDetails = false;
-  registrationData: IDealRegistrationTokenSwap;
 
   constructor(
     private wizardService: WizardService,
-    @newInstanceForScope(IValidationController) private form: IValidationController,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
+    @newInstanceOf(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
@@ -58,8 +59,6 @@ export class TokenDetailsStage {
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.wizardState.registrationData.primaryDAO);
     this.stageMetadata.partnerDAOTokenDetailsViewModes = this.stageMetadata.partnerDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.wizardState.registrationData.partnerDAO);
-
-    this.registrationData = this.wizardState.registrationData;
 
     this.validationRules
       .on(this.registrationData)

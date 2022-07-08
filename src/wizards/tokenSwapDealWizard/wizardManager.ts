@@ -27,6 +27,7 @@ import { SubmitStage } from "./stages/submitStage/submitStage";
 import { TokenService } from "../../services";
 import { IWizardStage } from "wizards/services/WizardService";
 import { PrimeErrorPresenter } from "resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import { App } from "../../app";
 
 export class WizardManager implements IRouteableComponent {
   static routes: IRoute[] = [
@@ -148,6 +149,7 @@ export class WizardManager implements IRouteableComponent {
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     @newInstanceForScope(IValidationController) private controller: IValidationController,
+    private readonly dealsService: DealService,
     private readonly presenter: PrimeErrorPresenter,
   ) {
     controller.addSubscriber(this.presenter);
@@ -163,6 +165,7 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
+        await App.dealLoadingPromise;
         this.originalRegistrationData = await this.getDeal(dealId);
       }
       /**
