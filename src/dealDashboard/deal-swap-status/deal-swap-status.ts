@@ -50,6 +50,7 @@ export class DealSwapStatus {
           header: "Congratulations!",
           message: "<p class='excitement'>You have successfully executed the token swap!</p>",
           confetti: true,
+          buttons: ShowButtonsEnum.Primary,
           buttonTextPrimary: "Close",
           className: "congratulatePopup",
         };
