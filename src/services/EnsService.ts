@@ -39,8 +39,8 @@ export class EnsService {
     if (!isCached && !ens) {
       ens = await this.ethereumService.getEnsForAddress(address);
       this.ensCache.set(address, ens);
-      this.addressCache.set(ens, address);
     }
+
     return ens;
   }
 
@@ -65,9 +65,7 @@ export class EnsService {
     if (!isCached && !address) {
       address = await this.ethereumService.getAddressForEns(ens);
       this.addressCache.set(ens, address);
-      this.ensCache.set(address, ens);
     }
-
     return address;
   }
 }
