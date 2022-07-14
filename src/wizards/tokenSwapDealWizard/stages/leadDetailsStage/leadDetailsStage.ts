@@ -1,16 +1,14 @@
-import { IWizardState } from "../../../services/WizardService";
+import { EnsService } from "services/EnsService";
+import { IsEthAddressOrEns } from "./../../../../resources/validation-rules/IsEthAddressOrEns";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { IEthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
-import { IDisposable, IEventAggregator, inject, IPlatform } from "aurelia";
+import { IDisposable, IEventAggregator, inject } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
-import { IsEmail, IsEthAddress } from "../../../../resources/validation-rules";
-import { newInstanceOf } from "@aurelia/kernel";
-import { IValidationController, ValidationResultPresenterService } from "@aurelia/validation-html";
-import { IRouter } from "@aurelia/router";
-import { PrimeErrorPresenter } from "resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import { IsEmail } from "../../../../resources/validation-rules";
+import { IValidationController } from "@aurelia/validation-html";
 
 @processContent(autoSlot)
 export class LeadDetailsStage {
@@ -27,16 +25,16 @@ export class LeadDetailsStage {
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
-
+    private ensService: EnsService,
   ) {
     this.proposalLead = this.registrationData?.proposalLead;
     this.validationRules
       .on(this.proposalLead)
       .ensure("address")
       .required()
-      .withMessage("Wallet address is required")
-      .satisfiesRule(new IsEthAddress())
-      .withMessage("Please enter a valid ethereum address")
+      .withMessage("Wallet address or ENS is required")
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
+      .withMessage("Please enter a valid ethereum address or ENS")
       .ensure("email")
       .required()
       .satisfiesRule(new IsEmail())

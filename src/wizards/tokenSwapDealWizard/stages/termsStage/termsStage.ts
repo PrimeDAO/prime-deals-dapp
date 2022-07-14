@@ -1,6 +1,6 @@
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import * as shortUuid from "short-uuid";
-import { IWizardState, WizardService } from "../../../services/WizardService";
+import { WizardService } from "../../../services/WizardService";
 import {
   IClause,
   IDaoplomatReward,
@@ -12,18 +12,18 @@ import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 import { inject } from "aurelia";
-import { areFormsValid } from "../../../../services/ValidationService";
+// import { areFormsValid } from "../../../../services/ValidationService";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 import { IValidationRules } from "@aurelia/validation";
 import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
-import { IsEthAddress } from "../../../../resources/validation-rules";
-import { NumberService, TokenService } from "../../../../services";
+import { IsEthAddressOrEns } from "../../../../resources/validation-rules";
+import { EnsService, NumberService, TokenService } from "../../../../services";
 
 @inject()
 export class TermsStage{
-  public wizardManager: any;
-  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
+  // public wizardManager: any;
+  public wizardState: any;
 
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
@@ -39,45 +39,47 @@ export class TermsStage{
 
   constructor(
     public wizardService: WizardService,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @newInstanceForScope(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
     public numberService: NumberService, // 'numberService' is used by the template
     private tokenService: TokenService,
     presenter: PrimeErrorPresenter,
+    private ensService: EnsService,
   ) {
     this.form.addSubscriber(presenter);
   }
 
   async load(stageMeta: IStageMeta) {
-    this.wizardManager = this.wizardService.currentWizard;
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
+    // this.wizardManager = this.wizardService.currentWizard;
+    // this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.stageMetadata = stageMeta.settings ?? {};
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
-    this.terms = this.wizardState.registrationData.terms;
+    this.terms = this.registrationData.terms;
 
-    this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-      this.addIdsToClauses(stageMeta.wizardType);
-      this.checkedForUnsavedChanges();
-      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
-      const formResult = await this.form.validate();
-      this.populateRegistrationData();
-      return formResult.valid && formsAreValid && !this.hasUnsavedChanges;
-    });
+    // this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
+    //   this.addIdsToClauses(stageMeta.wizardType);
+    //   this.checkedForUnsavedChanges();
+    //   const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
+    //   const formResult = await this.form.validate();
+    //   this.populateRegistrationData();
+    //   return formResult.valid && formsAreValid && !this.hasUnsavedChanges;
+    // });
 
     this.bindDaoplomatRewards();
 
-    this.tokensTotal = await this.wizardManager.getTokensTotalPrice();
+    // this.tokensTotal = await this.wizardManager.getTokensTotalPrice();
   }
 
   onDelete(index: number): boolean | void {
-    if (this.wizardState.registrationData.terms.clauses.length === 1) {
+    if (this.registrationData.terms.clauses.length === 1) {
       return false;
     }
 
     this.termClauses.splice(index, 1);
-    this.wizardState.registrationData.terms.clauses.splice(index, 1);
+    this.registrationData.terms.clauses.splice(index, 1);
     this.stageMetadata.termsViewModes.splice(index, 1);
   }
 
@@ -86,7 +88,7 @@ export class TermsStage{
       id: "",
       text: "",
     };
-    this.wizardState.registrationData.terms.clauses.push(emptyClause);
+    this.registrationData.terms.clauses.push(emptyClause);
   }
 
   checkedForUnsavedChanges() {
@@ -94,7 +96,7 @@ export class TermsStage{
   }
 
   addIdsToClauses(wizardType: WizardType) {
-    this.wizardState.registrationData.terms.clauses.forEach(clause => {
+    this.registrationData.terms.clauses.forEach(clause => {
       /**
        * 1. !clause.id: If non, generate one.
        * 2. `makeAnOffer`: Generate new ids, else Open Proposal and the new Partnered Deal, will have same ids.
@@ -107,7 +109,7 @@ export class TermsStage{
 
   private getDefaultTermsViewModes(wizardType: WizardType): ViewMode[] {
     const isACreateWizard = [WizardType.createOpenProposal, WizardType.createPartneredDeal].includes(wizardType);
-    return this.wizardState.registrationData.terms.clauses.map(() => isACreateWizard ? "edit" : "view");
+    return this.registrationData.terms.clauses.map(() => isACreateWizard ? "edit" : "view");
   }
 
   toggleDaoplomatRewards = (active: boolean) => {
@@ -116,7 +118,7 @@ export class TermsStage{
         daoplomats: [],
       };
 
-      this.wizardState.registrationData.terms.daoplomatRewards = this.daoplomatRewards;
+      this.registrationData.terms.daoplomatRewards = this.daoplomatRewards;
       this.addDaoplomatRewardsValidation();
       this.addDaoplomat();
     } else {
@@ -145,7 +147,7 @@ export class TermsStage{
       .ensure("address")
       .required()
       .withMessage("Please enter an address or an ENS name")
-      .satisfiesRule(new IsEthAddress())
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
       .withMessage("Please enter a valid address or an ENS name")
       .satisfies((value) => this.daoplomatRewards.daoplomats.filter(daoplomat => daoplomat.address === value).length === 1)
       .withMessage("Address already used")
@@ -203,7 +205,7 @@ export class TermsStage{
       return;
     }
 
-    this.wizardState.registrationData.terms.daoplomatRewards = {
+    this.registrationData.terms.daoplomatRewards = {
       percentage: this.daoplomatRewards.percentage / 100,
       daoplomats: this.daoplomatRewards.daoplomats.map(daoplomat => ({
         ...daoplomat,
