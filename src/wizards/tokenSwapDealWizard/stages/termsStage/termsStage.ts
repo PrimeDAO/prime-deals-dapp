@@ -17,8 +17,8 @@ import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 import { IValidationRules } from "@aurelia/validation";
 import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
-import { IsEthAddress } from "../../../../resources/validation-rules";
-import { NumberService, TokenService } from "../../../../services";
+import { IsEthAddressOrEns } from "../../../../resources/validation-rules";
+import { EnsService, NumberService, TokenService } from "../../../../services";
 
 @inject()
 export class TermsStage{
@@ -45,6 +45,7 @@ export class TermsStage{
     public numberService: NumberService, // 'numberService' is used by the template
     private tokenService: TokenService,
     presenter: PrimeErrorPresenter,
+    private ensService: EnsService,
   ) {
     this.form.addSubscriber(presenter);
   }
@@ -146,7 +147,7 @@ export class TermsStage{
       .ensure("address")
       .required()
       .withMessage("Please enter an address or an ENS name")
-      .satisfiesRule(new IsEthAddress())
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
       .withMessage("Please enter a valid address or an ENS name")
       .satisfies((value) => this.daoplomatRewards.daoplomats.filter(daoplomat => daoplomat.address === value).length === 1)
       .withMessage("Address already used")
