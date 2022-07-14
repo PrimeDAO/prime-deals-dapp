@@ -1,3 +1,5 @@
+import { EnsService } from "services/EnsService";
+import { IsEthAddressOrEns } from "./../../../../resources/validation-rules/IsEthAddressOrEns";
 import { IWizardState } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { IEthereumService } from "../../../../services/EthereumService";
@@ -27,16 +29,16 @@ export class LeadDetailsStage {
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
-
+    private ensService: EnsService,
   ) {
     this.proposalLead = this.registrationData?.proposalLead;
     this.validationRules
       .on(this.proposalLead)
       .ensure("address")
       .required()
-      .withMessage("Wallet address is required")
-      .satisfiesRule(new IsEthAddress())
-      .withMessage("Please enter a valid ethereum address")
+      .withMessage("Wallet address or ENS is required")
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
+      .withMessage("Please enter a valid ethereum address or ENS")
       .ensure("email")
       .required()
       .satisfiesRule(new IsEmail())
