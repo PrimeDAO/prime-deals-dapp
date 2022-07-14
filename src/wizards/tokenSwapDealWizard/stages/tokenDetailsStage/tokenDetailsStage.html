@@ -17,17 +17,17 @@
       </div>
       <div class="stageSectionContent">
         <token-details
-          hide-delete-button.bind="wizardState.registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"
-          on-delete.call="deleteToken($index, wizardState.registrationData.primaryDAO.tokens, primaryDAOTokenDetails, stageMetadata.primaryDAOTokenDetailsViewModes)"
+          hide-delete-button.bind="registrationData.primaryDAO.tokens.length === 1 && !isOpenProposalWizard"
+          on-delete.call="deleteToken($index, registrationData.primaryDAO.tokens, primaryDAOTokenDetails, stageMetadata.primaryDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
-          repeat.for="token of wizardState.registrationData.primaryDAO.tokens"
+          repeat.for="token of registrationData.primaryDAO.tokens"
           token.bind="token"
           view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"></token-details>
 
-        <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.primaryDAO.tokens)"
-          if.bind="wizardState.registrationData.primaryDAO.tokens.length < 2"
+        <pbutton class="addTokenButton" click.delegate="addToken(registrationData.primaryDAO.tokens)"
+          if.bind="registrationData.primaryDAO.tokens.length < 2"
           type="primary">
           Add token
           <i class="fa fa-plus"></i>
@@ -54,16 +54,16 @@
 
       <div class="stageSectionContent">
         <token-details
-          hide-delete-button.bind="wizardState.registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"
-          on-delete.call="deleteToken($index, wizardState.registrationData.partnerDAO.tokens, partnerDAOTokenDetails, stageMetadata.partnerDAOTokenDetailsViewModes)"
+          hide-delete-button.bind="registrationData.partnerDAO.tokens.length === 1 && !isOpenProposalWizard"
+          on-delete.call="deleteToken($index, registrationData.partnerDAO.tokens, partnerDAOTokenDetails, stageMetadata.partnerDAOTokenDetailsViewModes)"
           on-saved.call="checkedForUnsavedChanges()"
-          repeat.for="token of wizardState.registrationData.partnerDAO.tokens"
+          repeat.for="token of registrationData.partnerDAO.tokens"
           token.bind="token"
           view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
           view-model.ref="partnerDAOTokenDetails[$index]"></token-details>
 
-        <pbutton class="addTokenButton" click.delegate="addToken(wizardState.registrationData.partnerDAO.tokens)"
-          if.bind="wizardState.registrationData.partnerDAO.tokens.length < 2"
+        <pbutton class="addTokenButton" click.delegate="addToken(registrationData.partnerDAO.tokens)"
+          if.bind="registrationData.partnerDAO.tokens.length < 2"
           type="primary">
           Add token
           <i class="fa fa-plus"></i>
