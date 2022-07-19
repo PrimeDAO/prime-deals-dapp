@@ -27,7 +27,6 @@ export class TermClause {
   ) {
     this.form = form;
     this.form.addSubscriber(presenter);
-    this.domParser = new DOMParser();
   }
 
   attached(){
@@ -39,7 +38,7 @@ export class TermClause {
       } )
       .then( editor => {
         this.editor = editor;
-        editor.model.document.on( "change:data", (e) => {
+        editor.model.document.on( "change:data", () => {
           const data = this.editor.getData();
           this.clause = {id: "", text: data};
         } );
@@ -61,7 +60,6 @@ export class TermClause {
   }
 
   onSave() {
-    console.log("this.form", this.form);
     return this.form.validate().then(result => result.valid);
   }
 
