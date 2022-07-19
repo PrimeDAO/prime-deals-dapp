@@ -7,6 +7,7 @@ import { IValidationRules } from "@aurelia/validation";
 import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 @inject()
 export class TermClause {
@@ -17,7 +18,8 @@ export class TermClause {
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
-
+  private editor = null;
+  domParser = null;
   constructor(
   @newInstanceForScope(IValidationController) form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
@@ -25,6 +27,27 @@ export class TermClause {
   ) {
     this.form = form;
     this.form.addSubscriber(presenter);
+    this.domParser = new DOMParser();
+  }
+
+  attached(){
+    ClassicEditor
+      .create( document.querySelector( "#editor"), {
+        toolbar: {
+          items: [ "bold", "italic", "underline", "link", "bulletedList", "numberedList" ],
+        },
+      } )
+      .then( editor => {
+        this.editor = editor;
+        editor.model.document.on( "change:data", (e) => {
+          const data = this.editor.getData();
+          this.clause = {id: "", text: data};
+        } );
+
+      } )
+      .catch( error => {
+        console.error( "There was a problem initializing the editor.", error );
+      } );
   }
 
   attaching() {
@@ -37,7 +60,8 @@ export class TermClause {
       .withMessage("Clause must be at least 10 characters");
   }
 
-  onSave(): Promise<boolean> {
+  onSave() {
+    console.log("this.form", this.form);
     return this.form.validate().then(result => result.valid);
   }
 

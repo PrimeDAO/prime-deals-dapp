@@ -15,7 +15,7 @@
         label="${`Clause ${index + 1}`}"
       >
         <!-- Make sure to render new line characters from textarea  -->
-        <pre>${clause.text}</pre>
+        <au-compose class="ckEditor__output" view.bind="clause.text"></au-compose>
       </pform-input>
     </div>
 
@@ -30,10 +30,12 @@
         max-length="500"
         show-counter
       >
+        <!-- <textarea placeholder="Text describing the clause" value.bind="clause.text & validate" id="editor"></textarea> -->
         <ptextarea
           data-test="clauseTextarea"
           placeholder="Text describing the clause"
           rows="4"
+          id="editor"
           max="500"
           value.bind="clause.text & validate"
           view-model.ref="clauseTextareaViewModel"

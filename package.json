@@ -50,6 +50,7 @@
   "dependencies": {
     "@aurelia/validation": "dev",
     "@aurelia/validation-html": "dev",
+    "@ckeditor/ckeditor5-build-classic": "^34.2.0",
     "@metamask/detect-provider": "^1.2.0",
     "@theconvospace/sdk": "^0.4.17",
     "@toruslabs/torus-embed": "^1.23.2",

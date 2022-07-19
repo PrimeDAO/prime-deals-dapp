@@ -1,11 +1,40 @@
-@import "src/resources/elements/primeDesignSystem/variables";
+@import 'src/resources/elements/primeDesignSystem/variables';
 
 term-clause {
   display: block;
-
   .pcard {
     .wizardFormInput {
       margin-bottom: unset;
+    }
+  }
+
+  #editor {
+    color: black;
+  }
+
+  .ckEditor__output {
+    i {
+      font-style: italic;
+    }
+    strong {
+      font-weight: bold;
+    }
+    ul {
+      margin-bottom: 15px;
+      li {
+        list-style-type: disc;
+        margin-bottom: 5px;
+      }
+    }
+    ol {
+      margin-bottom: 15px;
+      li {
+        list-style-type: decimal;
+        margin-bottom: 5px;
+      }
+    }
+    a {
+      color: #eba7da;
     }
   }
 
