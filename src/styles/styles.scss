@@ -1,12 +1,12 @@
-@import "./animations";
-@import "./reset";
-@import "../resources/elements/primeDesignSystem/styles";
-@import "../resources/elements/primeDesignSystem/variables";
-@import "../resources/elements/primeDesignSystem/colors";
-@import "./colors";
-@import "./variables";
-@import "tippy.js/dist/tippy.css"; // TODO: use CDN?
-@import "the-new-css-reset/css/reset.css";
+@import './animations';
+@import './reset';
+@import '../resources/elements/primeDesignSystem/styles';
+@import '../resources/elements/primeDesignSystem/variables';
+@import '../resources/elements/primeDesignSystem/colors';
+@import './colors';
+@import './variables';
+@import 'tippy.js/dist/tippy.css'; // TODO: use CDN?
+@import 'the-new-css-reset/css/reset.css';
 
 html {
   body {
@@ -73,9 +73,8 @@ html {
       }
     }
 
-
     .heading {
-      font-family: "Aeonik";
+      font-family: 'Aeonik';
       font-style: normal;
       font-weight: bold;
       width: fit-content; // so gradients look right
@@ -122,7 +121,7 @@ html {
       font-size: 20px;
       line-height: 24px;
       font-weight: 700;
-      font-family: "Inter";
+      font-family: 'Inter';
     }
 
     .subtitle1 {
@@ -130,13 +129,13 @@ html {
       font-size: 18px;
       line-height: 27px;
       font-weight: 700;
-      font-family: "Inter";
+      font-family: 'Inter';
     }
 
     .subtext {
       color: $Neutral02;
       font-size: 16px;
-      font-family: "Inter";
+      font-family: 'Inter';
       font-weight: 400;
       line-height: 24px;
 
@@ -193,7 +192,6 @@ html {
   .roundedLogo {
     border-radius: 50%;
   }
-
 }
 
 @media screen and (max-width: 1072px) {

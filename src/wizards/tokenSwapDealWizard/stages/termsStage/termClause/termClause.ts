@@ -8,6 +8,7 @@ import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import "./custom.css";
 
 @inject()
 export class TermClause {
