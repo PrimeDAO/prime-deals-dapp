@@ -3,7 +3,7 @@
   "chainId": "4",
   "contracts": {
     "DaoDepositManager": {
-      "address": "0x4621eC063FA5C199BFdd2aC1f7a7fF3A1EdB0ef2",
+      "address": "0xc6FE3C0a832DC3e32e2970DeC953304DEB18908e",
       "abi": [
         {
           "anonymous": false,
@@ -892,18 +892,13 @@
       ]
     },
     "DealManager": {
-      "address": "0xdFB4bEd32051382576BD5f6147347Cb59d2E492A",
+      "address": "0x1A49e850d0fe19C405dF4506191e51366F169329",
       "abi": [
         {
           "inputs": [
             {
               "internalType": "address",
               "name": "_daoDepositManager",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_weth",
               "type": "address"
             }
           ],
@@ -1139,24 +1134,11 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "weth",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         }
       ]
     },
     "TokenSwapModule": {
-      "address": "0x014aFcFA24A5302b371F5A83270E5472AFd668F3",
+      "address": "0xeA61Ea57fB850C04Ff90636fB3CB6c2e4f54108a",
       "abi": [
         {
           "inputs": [
@@ -1164,6 +1146,11 @@
               "internalType": "address",
               "name": "_dealManager",
               "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_dealId",
+              "type": "uint32"
             }
           ],
           "stateMutability": "nonpayable",
@@ -1254,6 +1241,18 @@
             },
             {
               "indexed": false,
+              "internalType": "address[]",
+              "name": "daoplomats",
+              "type": "address[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[][]",
+              "name": "rewardPathTo",
+              "type": "uint256[][]"
+            },
+            {
+              "indexed": false,
               "internalType": "uint32",
               "name": "deadline",
               "type": "uint32"
@@ -1306,12 +1305,38 @@
         },
         {
           "inputs": [],
+          "name": "MAX_DAOplomats",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "MAX_FEE",
           "outputs": [
             {
               "internalType": "uint32",
               "name": "",
               "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "MAX_REWARD",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -1356,6 +1381,16 @@
             {
               "internalType": "uint256[][]",
               "name": "_pathTo",
+              "type": "uint256[][]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_daoplomats",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[][]",
+              "name": "_rewardPathTo",
               "type": "uint256[][]"
             },
             {
@@ -1462,6 +1497,16 @@
                 {
                   "internalType": "uint256[][]",
                   "name": "pathTo",
+                  "type": "uint256[][]"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "daoplomats",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "uint256[][]",
+                  "name": "rewardPathTo",
                   "type": "uint256[][]"
                 },
                 {
