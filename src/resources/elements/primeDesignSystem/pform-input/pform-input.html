@@ -4,7 +4,6 @@
     ${label}
     <pquestion-mark class="labelInfoIcon" if.bind="labelInfo" text.bind="labelInfo"></pquestion-mark>
   </span>
-  ${direction}
   <div class="formInputLabelExtra" if.bind="showCounter">
     ${inputReference.value.length || 0}${maxLength ? '/' + maxLength : ''}
   </div>

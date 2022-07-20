@@ -27,9 +27,9 @@
         class="wizardFormInput"
         data-test="clauseFormInput"
         data-test="clause-input"
-        input-reference.bind="clauseTextareaViewModel"
+        input-reference.bind="clauseTitleInputViewModel"
         label="${`Clause Title`}"
-        max-length="60"
+        max-length="125"
         show-counter
       >
         <pinput-text max="125" value.bind="clause.title & validate" view-model.ref="titleReference"></pinput-text>
