@@ -8,11 +8,15 @@ term-clause {
     }
   }
 
-  #editor {
-    color: black;
+  .clause__title {
+    font-weight: $font-bold;
+    margin-bottom: $spacing-normal;
+    line-height: 24px;
+    color: $Neutral03;
   }
 
   .ckEditor__output {
+    color: $Neutral03;
     i {
       font-style: italic;
     }

@@ -87,6 +87,7 @@ export class TermsStage{
     const emptyClause: IClause = {
       id: "",
       text: "",
+      title: "",
     };
     this.registrationData.terms.clauses.push(emptyClause);
   }

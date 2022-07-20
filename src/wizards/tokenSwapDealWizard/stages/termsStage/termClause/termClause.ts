@@ -41,7 +41,7 @@ export class TermClause {
         this.editor = editor;
         editor.model.document.on( "change:data", () => {
           const data = this.editor.getData();
-          this.clause = {id: "", text: data};
+          this.clause = {...this.clause, text: data};
         } );
 
       } )

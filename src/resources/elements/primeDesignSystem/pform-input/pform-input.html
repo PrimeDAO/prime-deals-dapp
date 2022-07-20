@@ -2,12 +2,9 @@
 <label class="formInputLabel" if.bind="label">
   <span class="formInputLabelTitle">
     ${label}
-    <pquestion-mark
-      class="labelInfoIcon"
-      if.bind="labelInfo"
-      text.bind="labelInfo"
-    ></pquestion-mark>
+    <pquestion-mark class="labelInfoIcon" if.bind="labelInfo" text.bind="labelInfo"></pquestion-mark>
   </span>
+  ${direction}
   <div class="formInputLabelExtra" if.bind="showCounter">
     ${inputReference.value.length || 0}${maxLength ? '/' + maxLength : ''}
   </div>
@@ -18,7 +15,7 @@
 <p if.bind="labelDescription" class="labelDescription">${labelDescription}</p>
 
 <!-- Input section -->
-<div class="inputContainer">
+<div class="inputContainer ${isVertical ? 'isVertical':''}">
   <au-slot></au-slot>
 </div>
 

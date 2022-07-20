@@ -13,8 +13,10 @@
         data-test="clauseFormInput"
         data-test="clause-input"
         label="${`Clause ${index + 1}`}"
+        is-vertical
       >
         <!-- Make sure to render new line characters from textarea  -->
+        <div class="clause__title">${clause.title}</div>
         <au-compose class="ckEditor__output" view.bind="clause.text"></au-compose>
       </pform-input>
     </div>
@@ -26,16 +28,27 @@
         data-test="clauseFormInput"
         data-test="clause-input"
         input-reference.bind="clauseTextareaViewModel"
-        label="${`Clause ${index + 1}`}"
-        max-length="500"
+        label="${`Clause Title`}"
+        max-length="60"
         show-counter
       >
-        <!-- <textarea placeholder="Text describing the clause" value.bind="clause.text & validate" id="editor"></textarea> -->
+        <pinput-text max="125" value.bind="clause.title & validate" view-model.ref="titleReference"></pinput-text>
+      </pform-input>
+      <pform-input
+        class="wizardFormInput"
+        data-test="clauseFormInput"
+        data-test="clause-input"
+        input-reference.bind="clauseTextareaViewModel"
+        label="${`Clause Description`}"
+        max-length="500"
+        is-vertical
+        show-counter
+      >
         <ptextarea
           data-test="clauseTextarea"
           placeholder="Text describing the clause"
           rows="4"
-          class="'ck-content"
+          class="ck ck-content"
           id="editor"
           max="500"
           value.bind="clause.text & validate"
