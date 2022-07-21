@@ -42,7 +42,6 @@ export class TermClause {
       .then( editor => {
         this.editor = editor;
         editor.plugins.get( "WordCount" ).on( "update", ( evt, stats ) => {
-          console.log("stats", stats);
           this.charValue = stats.characters;
           const isOverLimit = stats.characters > 500;
           if (isOverLimit){
@@ -53,7 +52,6 @@ export class TermClause {
 
         editor.model.document.on( "change:data", () => {
           const data = this.editor.getData();
-          console.log("data", data);
           this.clause = {...this.clause, text: marked(data)};
         } );
 
