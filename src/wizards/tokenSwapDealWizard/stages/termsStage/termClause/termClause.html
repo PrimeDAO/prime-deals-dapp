@@ -16,8 +16,9 @@
         is-vertical
       >
         <!-- Make sure to render new line characters from textarea  -->
-        <div class="clause__title">${clause.title}</div>
-        <au-compose class="ckEditor__output" view.bind="clause.text"></au-compose>
+        <div class="clause__title" innerhtml.to-view="">${clause.title}</div>
+        <div class="ckEditor__output" innerhtml.to-view="clause.text | sanitizeHTML"></div>
+        <!-- <au-compose class="ckEditor__output" view.bind="clause.text"></au-compose> -->
       </pform-input>
     </div>
 
@@ -43,17 +44,16 @@
         max-length="500"
         is-vertical
         show-counter
+        char-value.bind="charValue"
       >
-        <ptextarea
+        <textarea class="ck ck-content" id="editor" max="500" rows="4"></textarea>
+        <!-- <ptextarea
           data-test="clauseTextarea"
           placeholder="Text describing the clause"
           rows="4"
-          class="ck ck-content"
-          id="editor"
-          max="500"
           value.bind="clause.text & validate"
           view-model.ref="clauseTextareaViewModel"
-        ></ptextarea>
+        ></ptextarea> -->
       </pform-input>
     </div>
   </editing-card>

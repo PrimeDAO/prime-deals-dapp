@@ -17,7 +17,7 @@ term-clause {
 
   .ckEditor__output {
     color: $Neutral03;
-    i {
+    em {
       font-style: italic;
     }
     strong {
@@ -50,6 +50,9 @@ term-clause {
     }
     strong {
       font-weight: bold;
+    }
+    u {
+      text-decoration: underline;
     }
     ul {
       margin-bottom: 15px;

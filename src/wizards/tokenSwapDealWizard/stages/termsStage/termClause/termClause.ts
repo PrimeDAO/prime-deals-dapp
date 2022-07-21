@@ -7,7 +7,8 @@ import { IValidationRules } from "@aurelia/validation";
 import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { marked } from "marked";
+import Editor from "ckeditor5-custom-build/build/ckeditor";
 import "./custom.css";
 
 @inject()
@@ -20,7 +21,8 @@ export class TermClause {
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
   private editor = null;
-  domParser = null;
+  charValue = null;
+
   constructor(
   @newInstanceForScope(IValidationController) form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
@@ -31,7 +33,7 @@ export class TermClause {
   }
 
   attached(){
-    ClassicEditor
+    Editor
       .create( document.querySelector( "#editor"), {
         toolbar: {
           items: [ "bold", "italic", "underline", "link", "bulletedList", "numberedList" ],
@@ -39,9 +41,20 @@ export class TermClause {
       } )
       .then( editor => {
         this.editor = editor;
+        editor.plugins.get( "WordCount" ).on( "update", ( evt, stats ) => {
+          console.log("stats", stats);
+          this.charValue = stats.characters;
+          const isOverLimit = stats.characters > 500;
+          if (isOverLimit){
+            const trimmedString = this.editor.getData().slice(0, 500);
+            editor.setData(trimmedString);
+          }
+        } );
+
         editor.model.document.on( "change:data", () => {
           const data = this.editor.getData();
-          this.clause = {...this.clause, text: data};
+          console.log("data", data);
+          this.clause = {...this.clause, text: marked(data)};
         } );
 
       } )
