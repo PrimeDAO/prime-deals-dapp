@@ -7,9 +7,9 @@ import { IValidationRules } from "@aurelia/validation";
 import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
-import { marked } from "marked";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import "./custom.css";
+import {marked} from "marked";
 
 @inject()
 export class TermClause {
@@ -52,7 +52,18 @@ export class TermClause {
 
         editor.model.document.on( "change:data", () => {
           const data = this.editor.getData();
-          this.clause = {...this.clause, text: marked(data)};
+          this.clause = {...this.clause, text: data};
+        } );
+
+        editor.editing.view.document.on( "clipboardInput", ( evt, data ) => {
+          const dataTransfer = data.dataTransfer;
+          const textContent = dataTransfer.getData( "text/plain" );
+
+          if ( !textContent ) {
+            return;
+          }
+          const viewContent = marked(textContent);
+          data.content = editor.data.processor.toView(viewContent);
         } );
 
       } )
@@ -64,6 +75,9 @@ export class TermClause {
   attaching() {
     this.validationRules
       .on(this.clause)
+      .ensure("title")
+      .required()
+      .withMessage("Clause requires a title")
       .ensure("text")
       .required()
       .withMessage("Clause requires a description")

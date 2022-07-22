@@ -15,44 +15,18 @@ term-clause {
     color: $Neutral03;
   }
 
-  .ckEditor__output {
+  .ckEditor__output,
+  .ck.ck-content {
     color: $Neutral03;
+    i,
     em {
       font-style: italic;
     }
-    strong {
-      font-weight: bold;
-    }
-    ul {
-      margin-bottom: 15px;
-      li {
-        list-style-type: disc;
-        list-style-position: inside;
-        margin-bottom: 5px;
-      }
-    }
-    ol {
-      margin-bottom: 15px;
-      li {
-        list-style-type: decimal;
-        list-style-position: inside;
-        margin-bottom: 5px;
-      }
-    }
-    a {
-      color: #eba7da;
-    }
-  }
-
-  .ck.ck-content {
-    i {
-      font-style: italic;
-    }
-    strong {
-      font-weight: bold;
-    }
     u {
       text-decoration: underline;
+    }
+    strong {
+      font-weight: bold;
     }
     ul {
       margin-bottom: 15px;
