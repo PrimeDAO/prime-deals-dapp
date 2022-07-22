@@ -338,3 +338,51 @@ export const scheduledFirestoreBackup = functions.pubsub
         throw new Error("Creating backup failed");
       });
   });
+
+/**
+ * Function responsible for running automated data update fetch from DeepDAO API.
+ * It runs every 24 hours.
+ * It stores a map of organizations data inside a Google FireStore collection,
+ * specified in `firebaseFunctions/.env` file
+ */
+export const scheduledDeepDaoOrganizationListUpdate = functions.pubsub
+  .schedule("every 1 minute")
+  .onRun(() =>
+  {
+    console.log("run deepDAO schedule");
+
+    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+    const databaseName =
+      firestoreAdminClient.databasePath(projectId, "(default)");
+
+    functions.logger.log(`
+      Trying to update DeepDAO organizations list
+      Project ID: ${projectId},
+      Database name: ${databaseName},
+    `);
+
+    const orgs = {
+      "org1_id": {
+        name: "org1",
+        avatarUrls: ["http://orgs.images.com/1.jpg"],
+        treasuryAddresses: ["0x1"],
+      },
+      "org2_id": {
+        name: "org2",
+        avatarUrls: ["http://orgs.images.com/2.jpg"],
+        treasuryAddresses: ["0x2"],
+      },
+      "org3_id": {
+        name: "org3",
+        avatarUrls: ["http://orgs.images.com/3.jpg"],
+        treasuryAddresses: ["0x3"],
+      },
+      "org4_id": {
+        name: "org4",
+        avatarUrls: ["http://orgs.images.com/4.jpg"],
+        treasuryAddresses: ["0x4"],
+      },
+    };
+
+    return firestore.doc("/deep-dao/organizations").set(orgs);
+  });
