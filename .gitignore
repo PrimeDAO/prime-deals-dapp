@@ -34,7 +34,6 @@ Thumbs.db
 
 # Dependencies
 node_modules
-ckEditor/build
 
 # Compiled files
 /dist
