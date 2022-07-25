@@ -26,7 +26,7 @@
   --ck-color-base-border: #403453;
   --ck-color-toolbar-border: #403453;
   --ck-color-button-active-bg: #bb5ae4;
-
+  --ck-focus-outer-shadow: transparent;
   /* -- Overrides the default .ck-button class colors. ---------------------------------------- */
 
   --ck-color-button-default-background: var(--ck-custom-background);
@@ -48,8 +48,8 @@
   --ck-color-button-action-disabled-background: hsl(168, 76%, 42%);
   --ck-color-button-action-text: var(--ck-custom-white);
 
-  --ck-color-button-save: hsl(120, 100%, 46%);
-  --ck-color-button-cancel: hsl(15, 100%, 56%);
+  --ck-color-button-save: var(--ck-color-button-active-bg);
+  --ck-color-button-cancel: #9398a8;
 
   /* -- Overrides the default .ck-dropdown class colors. -------------------------------------- */
 
