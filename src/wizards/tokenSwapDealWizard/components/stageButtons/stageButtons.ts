@@ -25,7 +25,6 @@ export class stageButtons {
   }
 
   attached() {
-
     if (this.showSubmit === undefined) {
       this.showSubmit = this.showSubmitButton();
     }
@@ -52,5 +51,9 @@ export class stageButtons {
     const isLastStage = this.currentIndex === this.stageCount - 1;
 
     return isLastStage;
+  }
+
+  currentIndexChanged(){
+    this.showSubmit = this.showSubmitButton();
   }
 }

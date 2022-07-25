@@ -1,10 +1,11 @@
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { AlertService, IAlertModel } from "services/AlertService";
+import { AlertService } from "services/AlertService";
 import { IWizardState } from "wizards/services/WizardService";
 import { IStageMeta, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
 import { DealService } from "services/DealService";
-import { IContainer, IEventAggregator, inject } from "aurelia";
+import { Controller, IContainer, IEventAggregator, inject } from "aurelia";
 import { IRouter } from "@aurelia/router";
+import { WizardManager } from "../../wizardManager";
 
 export class SubmitStage {
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
@@ -26,6 +27,10 @@ export class SubmitStage {
   async load(stageMeta: IStageMeta) {
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
+  }
+  async bound(context: Controller, parentContext: Controller) {
+    const wizardManager = parentContext.parent.viewModel as WizardManager;
+    this.tokensTotal = await wizardManager.getTokensTotalPrice();
   }
 
 }

@@ -12,11 +12,8 @@ import { DealService } from "services/DealService";
 import { Address, fromWei, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
-import { IContainer, IEventAggregator, Registration, singleton } from "aurelia";
+import { IContainer, IEventAggregator, Registration } from "aurelia";
 import { IRoute, IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
-
-import { processContent, watch } from "@aurelia/runtime-html";
-import { autoSlot } from "../../resources/temporary-code";
 import { ProposalStage } from "./stages/proposalStage/proposalStage";
 import { LeadDetailsStage } from "./stages/leadDetailsStage/leadDetailsStage";
 import { PrimaryDaoStage } from "./stages/primaryDaoStage/primaryDaoStage";
@@ -24,10 +21,11 @@ import { PartnerDaoStage } from "./stages/partnerDaoStage/partnerDaoStage";
 import { TokenDetailsStage } from "./stages/tokenDetailsStage/tokenDetailsStage";
 import { TermsStage } from "./stages/termsStage/termsStage";
 import { SubmitStage } from "./stages/submitStage/submitStage";
-import { TokenService } from "../../services";
+import { AlertService, IAlertModel, ITokenInfo, TokenService, Utils } from "../../services";
 import { IWizardStage } from "wizards/services/WizardService";
 import { PrimeErrorPresenter } from "resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import { App } from "../../app";
+import { DealTokenSwap } from "../../entities/DealTokenSwap";
 
 export class WizardManager implements IRouteableComponent {
   static routes: IRoute[] = [
@@ -141,6 +139,7 @@ export class WizardManager implements IRouteableComponent {
 
   constructor(
     private dealService: DealService,
+    private alertService: AlertService,
     private tokenService: TokenService,
     @IEventAggregator private readonly event: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
@@ -156,7 +155,7 @@ export class WizardManager implements IRouteableComponent {
 
   }
 
-  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
+  public async canLoad(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, instruction: RoutingInstruction): Promise<boolean> {
     let canActivate = true;
 
     const dealId = params.id;
@@ -187,8 +186,8 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
-    const result = await this.controller.validate();
-    if (!result.valid) {
+    const result = await this.stages[this.activeIndex].validate?.() ?? await this.controller.validate().then(result => result.valid);
+    if (!result) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
@@ -203,7 +202,7 @@ export class WizardManager implements IRouteableComponent {
    * activate will be invoked when we enter the wizard and everytime we switch stages in the wizard. The only time
    * we need to do all the initialization is the first time.
    */
-  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<void> {
+  public async load(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, instruction: RoutingInstruction): Promise<void> {
     this.root = instruction.route.matching;
     const stageRoute = instruction.route.remaining;
 
@@ -317,4 +316,77 @@ export class WizardManager implements IRouteableComponent {
     return isHidden;
   }
 
+  onSubmit = async () => {
+    try {
+      this.eventAggregator.publish("deal.saving", true);
+
+      const isMakeAnOfferWizard = this.wizardType === WizardType.makeAnOffer;
+
+      const creating = !this.dealId || isMakeAnOfferWizard;
+      let newDeal: DealTokenSwap;
+
+      try {
+        if (creating) {
+          // const newDeal = use this for the button link below
+          newDeal = await this.dealService.createDeal(this.registrationData);
+        } else {
+          await this.dealService.updateRegistration(this.dealId, this.registrationData);
+          // this.eventAggregator.publish("handleInfo", "Your deal registration was successfully saved");
+          newDeal = this.dealService.deals.get(this.dealId);
+          /**
+           * It is possible that the user has just made themselves no longer authorized to see the deal.
+           * Wait for a hopefully reasonable amount of time for the deal to be deleted in that case.
+           * Worst case is they will be booted out of the dashboard.
+           *
+           * If in that case they tried to go anywhere else in the wizard they should
+           * be booted out of the wizard.
+           */
+          await Utils.sleep(1000);
+        }
+
+        const dealIsAvailable = !!this.dealService.deals.get(newDeal.id);
+
+        const urlBase = `${window.location.protocol}//${window.location.host}/deal/${newDeal.id}`;
+
+        const congratulatePopupModel: IAlertModel = {
+          header: "Submitted!",
+          message:
+            `<p class='excitement'>Share your new deal proposal with your community!</p><p class='copyLink'>
+                <copy-to-clipboard-button text-to-copy='${urlBase}'>Copy Deal Link to the Clipboard</copy-to-clipboard-button></p>`,
+          confetti: true,
+          buttonTextPrimary: dealIsAvailable ? "Go to deal" : "close",
+          className: "congratulatePopup",
+        };
+
+        await this.alertService.showAlert(congratulatePopupModel);
+
+        this.router.load(dealIsAvailable ? `/deal/${newDeal.id}` : "/home");
+
+      } catch (error) {
+        this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
+      }
+    } finally {
+      this.eventAggregator.publish("deal.saving", false);
+    }
+  };
+
+  setValidation(callback: () => Promise<boolean> | boolean) {
+    this.stages[this.activeIndex].validate = callback;
+  }
+  /**
+   * This is a duplicate from DealTokenSwap@processTotalPrice
+   */
+  async getTokensTotalPrice() {
+    const deal = this.registrationData;
+    const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];
+    const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+    const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+    await this.tokenService.getTokenPrices(tokensDetails);
+
+    return dealTokens.reduce((sum, item) => {
+      const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+    }, 0);
+  }
 }

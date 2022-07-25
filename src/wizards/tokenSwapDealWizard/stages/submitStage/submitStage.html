@@ -150,8 +150,11 @@
                 <div class="submitContentLabel">DAOplomat Reward</div>
 
                 <div class="submitDaoTokenCard">
+                  <pcard class="rewardsCard" if.bind="!submitData.terms.daoplomatRewards & oneTime">
+                    <i>No DAOplomat Rewards have been set</i>
+                  </pcard>
 
-                  <pcard class="rewardsCard">
+                  <pcard class="rewardsCard" if.bind="submitData.terms.daoplomatRewards & oneTime">
                     <table>
                       <tr>
                         <td class="submitContentLabel">
