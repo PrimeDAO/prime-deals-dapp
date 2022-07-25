@@ -52,6 +52,7 @@ term-clause {
   .ck.ck-editor__main,
   .ck.ck-content {
     min-height: 110px;
+    resize: vertical;
   }
 
   .formInputLabelTitle {
