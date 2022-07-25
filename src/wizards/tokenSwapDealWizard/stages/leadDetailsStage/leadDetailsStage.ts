@@ -36,7 +36,6 @@ export class LeadDetailsStage {
       .satisfiesRule(new IsEthAddressOrEns(this.ensService))
       .withMessage("Please enter a valid ethereum address or ENS")
       .ensure("email")
-      .required()
       .satisfiesRule(new IsEmail())
       .withMessage("Please enter a valid email address");
 
