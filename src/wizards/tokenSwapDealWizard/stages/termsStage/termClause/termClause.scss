@@ -49,6 +49,11 @@ term-clause {
     }
   }
 
+  .ck.ck-editor__main,
+  .ck.ck-content {
+    min-height: 110px;
+  }
+
   .formInputLabelTitle {
     line-height: 33px;
   }
