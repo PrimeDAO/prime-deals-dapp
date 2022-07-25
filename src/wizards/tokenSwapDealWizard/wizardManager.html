@@ -13,6 +13,7 @@
     <stage-buttons
       stage-count.bind="stages.length"
       current-index.bind="activeIndex"
+      on-submit.bind="onSubmit"
       proceed.call="next()"
       previous.call="previous()"
     ></stage-buttons>

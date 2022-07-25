@@ -1,6 +1,5 @@
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import * as shortUuid from "short-uuid";
-import { WizardService } from "../../../services/WizardService";
 import {
   IClause,
   IDaoplomatReward,
@@ -11,7 +10,7 @@ import {
 import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
-import { inject } from "aurelia";
+import { Controller, IContainer, inject } from "aurelia";
 // import { areFormsValid } from "../../../../services/ValidationService";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
@@ -19,9 +18,11 @@ import { IValidationRules } from "@aurelia/validation";
 import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import { IsEthAddressOrEns } from "../../../../resources/validation-rules";
 import { EnsService, NumberService, TokenService } from "../../../../services";
+import { WizardManager } from "../../wizardManager";
+import { areFormsValid } from "../../../../services/ValidationService";
 
 @inject()
-export class TermsStage{
+export class TermsStage {
   // public wizardManager: any;
   public wizardState: any;
 
@@ -36,9 +37,10 @@ export class TermsStage{
 
   private readonly minimumSplitPercentage = 0.001;
   private readonly maximumSplitPercentage = 5;
+  private wizardType: WizardType;
 
   constructor(
-    public wizardService: WizardService,
+    @IContainer public container: IContainer,
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @newInstanceForScope(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
@@ -51,26 +53,28 @@ export class TermsStage{
   }
 
   async load(stageMeta: IStageMeta) {
-    // this.wizardManager = this.wizardService.currentWizard;
-    // this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-
     this.stageMetadata = stageMeta.settings ?? {};
     this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.terms = this.registrationData.terms;
-
-    // this.wizardService.registerStageValidateFunction(this.wizardManager, async () => {
-    //   this.addIdsToClauses(stageMeta.wizardType);
-    //   this.checkedForUnsavedChanges();
-    //   const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
-    //   const formResult = await this.form.validate();
-    //   this.populateRegistrationData();
-    //   return formResult.valid && formsAreValid && !this.hasUnsavedChanges;
-    // });
+    this.wizardType = stageMeta.wizardType;
 
     this.bindDaoplomatRewards();
+  }
 
-    // this.tokensTotal = await this.wizardManager.getTokensTotalPrice();
+  async bound(context: Controller, parentContext: Controller) {
+    const wizardManager = parentContext.parent.viewModel as WizardManager;
+    this.addIdsToClauses(this.wizardType);
+
+    wizardManager.setValidation(async () => {
+      this.checkedForUnsavedChanges();
+      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
+      const formResult = await this.form.validate();
+      this.populateRegistrationData();
+      return formResult.valid && formsAreValid && !this.hasUnsavedChanges;
+    });
+
+    this.tokensTotal = await wizardManager.getTokensTotalPrice();
   }
 
   onDelete(index: number): boolean | void {
