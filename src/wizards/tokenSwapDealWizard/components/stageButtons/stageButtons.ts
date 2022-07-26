@@ -3,6 +3,7 @@ import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Address, IEthereumService } from "services/EthereumService";
 import { bindable, IDisposable, IEventAggregator, inject } from "aurelia";
+import { IRouter } from "@aurelia/router";
 
 @inject()
 export class stageButtons {
@@ -17,6 +18,7 @@ export class stageButtons {
 
   constructor(
     private consoleLogService: ConsoleLogService,
+    @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
@@ -55,5 +57,9 @@ export class stageButtons {
 
   currentIndexChanged(){
     this.showSubmit = this.showSubmitButton();
+  }
+
+  cancel() {
+    this.router.load("");
   }
 }

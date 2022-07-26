@@ -1,4 +1,3 @@
-import { WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
@@ -30,7 +29,6 @@ export class TokenDetailsStage {
   partnerDaoTokens: IToken[];
 
   constructor(
-    private wizardService: WizardService,
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
