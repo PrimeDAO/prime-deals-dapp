@@ -8,7 +8,7 @@ import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
-import "./custom.css";
+// import "./custom.css";
 import {marked} from "marked";
 
 @inject()

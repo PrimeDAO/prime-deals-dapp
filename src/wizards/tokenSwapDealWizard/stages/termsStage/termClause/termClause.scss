@@ -1,6 +1,21 @@
 @import 'src/resources/elements/primeDesignSystem/variables';
 
 term-clause {
+  --ck-custom-background: #{$BG04};
+  --ck-color-base-background: #{$BG04};
+  --ck-color-text: #{$Secondary02};
+  --ck-color-base-border: #{$Border01};
+  --ck-color-toolbar-border: #{$Border01};
+  --ck-color-button-active-bg: #{$Secondary05};
+  --ck-focus-outer-shadow: transparent;
+  --ck-color-focus-border: #{$Secondary02};
+  --ck-color-button-cancel: #{$Neutral02};
+  --ck-color-toolbar-background: #{$BG04};
+  --ck-color-button-default-background: #{$BG04};
+  --ck-color-base-active: #{$Secondary01};
+  --ck-border-radius: #{$border-radius-normal};
+  --ck-focus-ring: 1px solid var(--ck-color-toolbar-border);
+
   display: block;
   .pcard {
     .wizardFormInput {
@@ -13,6 +28,11 @@ term-clause {
     margin-bottom: $spacing-normal;
     line-height: 24px;
     color: $Neutral03;
+  }
+
+  .ck.ck-editor:focus-within {
+    border-radius: $border-radius-normal;
+    box-shadow: 0 0 0 1px $Secondary02;
   }
 
   .ckEditor__output,
