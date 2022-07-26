@@ -86,9 +86,9 @@
             <p>Tokens vested for</p>
             <pform-input data-test="vested-period-field" input-reference.bind="vestedForInput">
               <pinput-group
-                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())">
                 <pinput-numeric
-                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())"
                   not-wei
                   value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"></pinput-numeric>
@@ -100,9 +100,9 @@
             <p>with a cliff of</p>
             <pform-input data-test="cliff-period-field" input-reference.bind="cliffOfInput">
               <pinput-group
-                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())">
                 <pinput-numeric
-                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())"
                   not-wei
                   value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
