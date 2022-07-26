@@ -1,12 +1,12 @@
-@import './animations';
-@import './reset';
-@import '../resources/elements/primeDesignSystem/styles';
-@import '../resources/elements/primeDesignSystem/variables';
-@import '../resources/elements/primeDesignSystem/colors';
-@import './colors';
-@import './variables';
-@import 'tippy.js/dist/tippy.css'; // TODO: use CDN?
-@import 'the-new-css-reset/css/reset.css';
+@import "./animations";
+@import "./reset";
+@import "../resources/elements/primeDesignSystem/styles";
+@import "../resources/elements/primeDesignSystem/variables";
+@import "../resources/elements/primeDesignSystem/colors";
+@import "./colors";
+@import "./variables";
+@import "tippy.js/dist/tippy.css"; // TODO: use CDN?
+@import "the-new-css-reset/css/reset.css";
 
 html {
   body {
