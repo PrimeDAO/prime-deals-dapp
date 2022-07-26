@@ -87,6 +87,7 @@ export interface IDealRegistrationTokenSwap {
   terms: ITerms;
   keepAdminRights: boolean;
   offersPrivate: boolean;
+  totalValueAtExecution?: number;
   isPrivate: boolean;
   fundingPeriod: number;
   dealType: "token-swap" | "joint-venture"

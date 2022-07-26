@@ -799,6 +799,15 @@ export class DealTokenSwap implements IDeal {
               this.ethereumService.defaultAccountAddress,
               this.swapTxHash,
             );
+
+            this.dataSourceDeals.updateRegistration(
+              this.dealDocument.id,
+              this.ethereumService.defaultAccountAddress,
+              {
+                totalValueAtExecution: this.totalPrice,
+              },
+            );
+
             return receipt;
           }
         });
