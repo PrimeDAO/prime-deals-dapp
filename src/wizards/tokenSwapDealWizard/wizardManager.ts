@@ -185,13 +185,8 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
-    const result = await this.controller.validate();
-    if (!result.valid) {
-      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
-      return;
-    }
     this.activeIndex++;
-    this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
+    await this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
   }
 
   /**
@@ -254,14 +249,8 @@ export class WizardManager implements IRouteableComponent {
   public async onStepperClick(index: number) {
     if (this.activeIndex === index) return;
 
-    const result = await this.controller.validate();
-
-    if (index < this.activeIndex || result.valid) {
-
-      this.activeIndex = index;
-      this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
-    }
-
+    this.activeIndex = index;
+    await this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
   }
 
   private getPreviousRoute(wizardType: WizardType) {
