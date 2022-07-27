@@ -220,7 +220,11 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
     }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
 
     functions.logger.log(`Mapped successfully ${Object.keys(orgs).length} organizations.`);
-    return await firestore.doc("/deep-dao/organizations").set(orgs);
+    for (const [id, org] of Object.entries(orgs)) {
+      firestore.collection("deep-dao").doc(id).set(org);
+    }
+    functions.logger.log(`Firebase 'deep-dao' collection updated successfully ${Object.keys(orgs).length} organizations.`);
+    return;
   } catch (err) {
     functions.logger.log(`
       Error mapping DeepDAO organizations.
