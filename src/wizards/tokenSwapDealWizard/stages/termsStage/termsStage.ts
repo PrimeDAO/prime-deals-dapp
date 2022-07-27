@@ -131,6 +131,7 @@ export class TermsStage {
     } else {
       this.validationRules.off(this.daoplomatRewards);
       this.daoplomatRewards = undefined;
+      delete this.registrationData.terms.daoplomatRewards;
     }
 
   };

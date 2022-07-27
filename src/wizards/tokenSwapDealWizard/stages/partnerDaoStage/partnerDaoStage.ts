@@ -20,7 +20,7 @@ export class PartnerDaoStage {
     @newInstanceOf(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
-    this.partnerDao = this.registrationData.primaryDAO;
+    this.partnerDao = this.registrationData.partnerDAO;
     daoStageValidationRules(this.partnerDao, this.validationRules, "Partner DAO", this.registrationData.primaryDAO);
   }
 
