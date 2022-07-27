@@ -1,22 +1,8 @@
 @import "src/resources/elements/primeDesignSystem/variables";
 
 term-clause {
-  --ck-custom-background: #{$BG04};
-  --ck-color-base-background: #{$BG04};
-  --ck-color-text: #{$Secondary02};
-  --ck-color-base-border: #{$Border01};
-  --ck-color-toolbar-border: #{$Border01};
-  --ck-color-button-active-bg: #{$Secondary05};
-  --ck-focus-outer-shadow: transparent;
-  --ck-color-focus-border: #{$Secondary02};
-  --ck-color-button-cancel: #{$Neutral02};
-  --ck-color-toolbar-background: #{$BG04};
-  --ck-color-button-default-background: #{$BG04};
-  --ck-color-base-active: #{$Secondary01};
-  --ck-border-radius: #{$border-radius-normal};
-  --ck-focus-ring: 1px solid var(--ck-color-toolbar-border);
-
   display: block;
+
   .pcard {
     .wizardFormInput {
       margin-bottom: unset;
@@ -38,32 +24,40 @@ term-clause {
   .ckEditor__output,
   .ck.ck-content {
     color: $Neutral03;
+
     i,
     em {
       font-style: italic;
     }
+
     u {
       text-decoration: underline;
     }
+
     strong {
       font-weight: bold;
     }
+
     ul {
       margin-bottom: 15px;
+
       li {
         list-style-type: disc;
         list-style-position: inside;
         margin-bottom: 5px;
       }
     }
+
     ol {
       margin-bottom: 15px;
+
       li {
         list-style-type: decimal;
         list-style-position: inside;
         margin-bottom: 5px;
       }
     }
+
     a {
       color: #eba7da;
     }
