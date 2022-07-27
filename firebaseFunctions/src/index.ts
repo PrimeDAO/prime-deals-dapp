@@ -5,7 +5,7 @@ import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
 import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
-import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection, deepDaoOrganizationListUpdate } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
@@ -342,47 +342,24 @@ export const scheduledFirestoreBackup = functions.pubsub
 /**
  * Function responsible for running automated data update fetch from DeepDAO API.
  * It runs every 24 hours.
- * It stores a map of organizations data inside a Google FireStore collection,
- * specified in `firebaseFunctions/.env` file
+ * It stores a map of organizations data inside a Google FireStore collection - `deep-dao`.
+ * The API-Url and API-Key are specified in `firebaseFunctions/.env` file
  */
 export const scheduledDeepDaoOrganizationListUpdate = functions.pubsub
-  .schedule("every 1 minute")
-  .onRun(() =>
+  .schedule("every 24 hours")
+  .onRun(async () =>
   {
-    console.log("run deepDAO schedule");
-
-    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
-    const databaseName =
-      firestoreAdminClient.databasePath(projectId, "(default)");
-
-    functions.logger.log(`
-      Trying to update DeepDAO organizations list
-      Project ID: ${projectId},
-      Database name: ${databaseName},
-    `);
-
-    const orgs = {
-      "org1_id": {
-        name: "org1",
-        avatarUrls: ["http://orgs.images.com/1.jpg"],
-        treasuryAddresses: ["0x1"],
-      },
-      "org2_id": {
-        name: "org2",
-        avatarUrls: ["http://orgs.images.com/2.jpg"],
-        treasuryAddresses: ["0x2"],
-      },
-      "org3_id": {
-        name: "org3",
-        avatarUrls: ["http://orgs.images.com/3.jpg"],
-        treasuryAddresses: ["0x3"],
-      },
-      "org4_id": {
-        name: "org4",
-        avatarUrls: ["http://orgs.images.com/4.jpg"],
-        treasuryAddresses: ["0x4"],
-      },
-    };
-
-    return firestore.doc("/deep-dao/organizations").set(orgs);
+    return await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
   });
+
+/**
+ * Manually invoke DeepDAO data update
+ */
+export const callDeepDaoAPI = functions.https.onRequest(
+  (request, response) =>
+    // Allow cross-origin requests for this function
+    cors(request, response, async () => {
+      const data = await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
+      return response.status(200).send(data);
+    }),
+);

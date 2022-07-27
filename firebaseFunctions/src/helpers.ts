@@ -2,6 +2,8 @@ import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
 import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IDeepDaoOrganizations } from "../../src/services/DeepDaoTypes";
+import axios from "axios";
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
@@ -157,6 +159,75 @@ export const updateDealUpdatesCollection = (dealId: string): void => {
     dealId,
     modifiedAt,
   });
+};
+
+/**
+ * Imports list of DAO's (Organizations) from DeepDAO API, and stores a map
+ * of organizations data inside a Google FireStore collection - `deep-dao`.
+ * The API-Url and API-Key are specified in `firebaseFunctions/.env` file
+ */
+// eslint-disable-next-line
+export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, functions: any): Promise<FirebaseFirestore.WriteResult> =>
+{
+  const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+  const databaseName =
+    firestoreAdminClient.databasePath(projectId, "(default)");
+
+  functions.logger.log(`
+      Starting daily update for DeepDAO organizations list
+      Project ID: ${projectId},
+      Database name: ${databaseName},
+    `);
+
+  let res: IDeepDaoOrganizations;
+
+  try {
+    res = await (await axios.get(`${process.env.DEEPDAO_API_URL}/organizations`, {
+      headers: {
+        "mode": "cors",
+        "Content-Type": "application/json",
+        "x-api-key": `${process.env.DEEPDAO_API_KEY}`,
+      },
+    })).data.data;
+    functions.logger.log(`Retrived successfully ${res.totalResources} organizations.`);
+  } catch (err) {
+    functions.logger.log(`
+      Error fetching DeepDAO organizations.
+      Error message: ${err.message}.
+    `);
+    return;
+  }
+
+  try {
+    // Converting DAO array into slim object
+    const extractAddresses = (obj: any): FirebaseFirestore.WriteResult =>
+    {
+      return obj.reduce((addresses, { address }) =>
+      {
+        addresses.push(address);
+        return addresses;
+      }, []);
+    };
+
+    const orgs = res.resources.reduce((obj, item): FirebaseFirestore.DocumentData =>
+    {
+      obj[item.organizationId] = {
+        name: item.name,
+        avatarUrl: item.logo,
+        treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
+      };
+      return obj;
+    }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
+
+    functions.logger.log(`Mapped successfully ${Object.keys(orgs).length} organizations.`);
+    return await firestore.doc("/deep-dao/organizations").set(orgs);
+  } catch (err) {
+    functions.logger.log(`
+      Error mapping DeepDAO organizations.
+      Error message: ${err.message}.
+    `);
+    return;
+  }
 };
 
 /**
