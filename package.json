@@ -45,6 +45,7 @@
     "firebase-deploy:master": "firebase deploy --project=production --config=firebase-production.json --only functions:CI,firestore:rules",
     "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
     "firebase-deploy-deepdao-function:default": "firebase deploy --project=default --only functions:scheduledDeepDaoOrganizationListUpdate",
+    "firebase-deploy-deepdao-function:development": "firebase deploy --project=development --only functions:scheduledDeepDaoOrganizationListUpdate",
     "firebase-deploy-deepdao-function:staging": "firebase deploy --project=staging --only functions:scheduledDeepDaoOrganizationListUpdate",
     "firebase-deploy-deepdao-function:production": "firebase deploy --project=production --only functions:scheduledDeepDaoOrganizationListUpdate",
     "seed-build": "cd ./src/server-browser-scripts && tsc",
