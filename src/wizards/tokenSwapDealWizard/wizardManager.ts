@@ -152,7 +152,6 @@ export class WizardManager implements IRouteableComponent {
     private readonly presenter: PrimeErrorPresenter,
   ) {
     controller.addSubscriber(this.presenter);
-
   }
 
   public async canLoad(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, instruction: RoutingInstruction): Promise<boolean> {
@@ -186,8 +185,8 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
-    const result = await this.stages[this.activeIndex].validate?.() ?? await this.controller.validate().then(result => result.valid);
-    if (!result) {
+    const result = await this.controller.validate();
+    if (!result.valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
     }
@@ -215,8 +214,13 @@ export class WizardManager implements IRouteableComponent {
       JSON.parse(JSON.stringify(this.originalRegistrationData))
       :
       new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+    try {
+      const oldReg = this.container.get<IDealRegistrationTokenSwap>("registrationData");
+      Object.assign(oldReg, this.registrationData);
+    } catch (e) {
+      this.container.register(Registration.instance("registrationData", this.registrationData));
 
-    this.container.register(Registration.instance("registrationData", this.registrationData));
+    }
 
     if (wizardType === WizardType.makeAnOffer) {
       this.registrationData.partnerDAO = emptyDaoDetails();
@@ -249,7 +253,10 @@ export class WizardManager implements IRouteableComponent {
 
   public async onStepperClick(index: number) {
     if (this.activeIndex === index) return;
-    if (index < this.activeIndex || (await this.controller.validate()).valid) {
+
+    const result = await this.controller.validate();
+
+    if (index < this.activeIndex || result.valid) {
 
       this.activeIndex = index;
       this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
@@ -370,9 +377,6 @@ export class WizardManager implements IRouteableComponent {
     }
   };
 
-  setValidation(callback: () => Promise<boolean> | boolean) {
-    this.stages[this.activeIndex].validate = callback;
-  }
   /**
    * This is a duplicate from DealTokenSwap@processTotalPrice
    */
@@ -389,4 +393,5 @@ export class WizardManager implements IRouteableComponent {
       return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
     }, 0);
   }
+
 }

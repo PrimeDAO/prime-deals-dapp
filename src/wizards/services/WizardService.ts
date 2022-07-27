@@ -20,7 +20,6 @@ export interface IWizardStage {
   route: string;
   hidden?: boolean;
   form?: IValidationController;
-  validate?: () => Promise<boolean> | boolean;
 }
 
 export type WizardStateKey = WizardManager
@@ -79,14 +78,6 @@ export class WizardService {
   //   this.getActiveStage(wizardStateKey).valid = valid;
   // }
 
-  public registerStageValidateFunction(
-    wizardStateKey: WizardStateKey,
-    validate: () => Promise<boolean>,
-  ) {
-    const stage = this.getActiveStage(wizardStateKey);
-    stage.validate = validate;
-  }
-
   public cancel(wizardStateKey: WizardStateKey): void {
     this.router.load(this.getWizardState(wizardStateKey).cancelRoute);
   }
@@ -117,8 +108,8 @@ export class WizardService {
      * This will set valid state to undefined when the validate function is not uninitialized.
      * What is the use case for this?  When would validate ever be uninitialized? Should that be allowed?
      */
-    const stage = wizardState.stages[currentIndexOfActive];
-    stage.valid = await stage.validate?.();
+    // const stage = wizardState.stages[currentIndexOfActive];
+    // stage.valid = await stage.validate?.();
 
     if (blockIfInvalid && !wizardState.stages[currentIndexOfActive].valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
@@ -183,14 +174,6 @@ export class WizardService {
   public hasWizard(wizardStateKey: WizardStateKey): boolean {
     return this.wizardsStates.has(wizardStateKey);
   }
-
-  public registerForm(wizardStateKey: WizardStateKey, form: IValidationController) {
-    const stage = this.getActiveStage(wizardStateKey);
-
-    form.addSubscriber(this.presenter);
-    stage.validate = () => form.validate().then(result => result.valid);
-  }
-
   // private getWizardStage(wizardStateKey: WizardStateKey, stageName: string): IWizardStage {
   //   return this.getWizardState(wizardStateKey).stages.find(stage => stage.name === stageName);
   // }

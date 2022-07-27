@@ -103,7 +103,7 @@
         label="Keep Administrative Rights With All Incoming Offers"
       >
         <ptoggle
-          value.bind="wizardState.registrationData.keepAdminRights"
+          value.bind="registrationData.keepAdminRights"
         ></ptoggle>
       </pform-input>
     </div>
@@ -133,7 +133,7 @@
     <div class="stageSectionContent">
       <pform-input class="wizardFormInput" label="Make Offers Private">
         <ptoggle
-          value.bind="wizardState.registrationData.offersPrivate"
+          value.bind="registrationData.offersPrivate"
         ></ptoggle>
       </pform-input>
     </div>
@@ -161,7 +161,7 @@
       <pform-input class="wizardFormInput" label="Make Deal Private">
         <ptoggle
           disabled.bind="isMakeAnOfferWizardAndKeepsAdminRights"
-          value.bind="wizardState.registrationData.isPrivate"
+          value.bind="registrationData.isPrivate"
         ></ptoggle>
       </pform-input>
     </div>

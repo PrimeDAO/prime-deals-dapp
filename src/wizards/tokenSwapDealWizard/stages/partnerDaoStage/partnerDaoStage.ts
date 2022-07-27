@@ -1,5 +1,5 @@
 import { IDAO, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IWizardState, WizardService } from "wizards/services/WizardService";
+import { IWizardState } from "wizards/services/WizardService";
 import { daoStageValidationRules, IStageMeta, WizardType } from "../../dealWizardTypes";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
