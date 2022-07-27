@@ -34,7 +34,7 @@ export class TermClause {
 
   attached(){
     Editor
-      .create( document.querySelector( "#editor"), {
+      .create( document.querySelector( `#editor${this.index}`), {
         link: {
           addTargetToExternalLinks: true,
           defaultProtocol: "https://",
