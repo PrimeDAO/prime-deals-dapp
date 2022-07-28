@@ -3,6 +3,7 @@ import { Utils } from "services/utils";
 import { inject } from "aurelia";
 import {
   collection,
+  collectionGroup,
   doc,
   DocumentData,
   getDoc,
@@ -25,6 +26,7 @@ import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import axios from "axios";
 import { IDealDiscussion } from "entities/DealDiscussions";
 import { Hash } from "./EthereumService";
+import { IDAOsData, DEEP_DAO_COLLECTION } from "services";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -489,4 +491,21 @@ export class FirestoreService<
       },
     );
   }
+
+  public async allDeepDaoOrgs(): Promise<Record<string, IDAOsData>>
+  {
+    const orgs = await query(collectionGroup(firebaseDatabase, DEEP_DAO_COLLECTION), where("name", "!=", ""));
+    const querySnapshot = await getDocs(orgs);
+
+    const data = {};
+    querySnapshot.forEach((doc) =>
+    {
+      const { name, avatarUrl, treasuryAddresses } = doc.data();
+      data[doc.id] = { name, avatarUrl, treasuryAddresses };
+    });
+    console.log({data});
+
+    return data;
+  }
+
 }

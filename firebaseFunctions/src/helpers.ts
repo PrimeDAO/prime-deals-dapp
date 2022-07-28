@@ -1,7 +1,7 @@
 import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
-import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, DEEP_DAO_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDeepDaoOrganizations } from "../../src/services/DeepDaoTypes";
 import axios from "axios";
 
@@ -220,9 +220,23 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
     }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
 
     functions.logger.log(`Mapped successfully ${Object.keys(orgs).length} organizations.`);
+    let batch = firestore.batch();
+    let idx = 0;
     for (const [id, org] of Object.entries(orgs)) {
-      firestore.collection("deep-dao").doc(id).set(org);
+      const docRef = firestore.collection(DEEP_DAO_COLLECTION).doc(id); //automatically generate unique id
+      batch.set(docRef, org);
+      idx++;
+      /**
+       * Batches can commit max 500 docs per request.
+       * Once a batch is full, it gets committed and
+       * a new one is created.
+       * */
+      if (idx % 500 === 0) {
+        await batch.commit();
+        batch = firestore.batch();
+      }
     }
+    await batch.commit();
     functions.logger.log(`Firebase 'deep-dao' collection updated successfully ${Object.keys(orgs).length} organizations.`);
     return;
   } catch (err) {
