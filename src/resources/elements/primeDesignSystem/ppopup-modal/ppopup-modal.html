@@ -7,9 +7,10 @@
   >
     <au-slot name="header"></au-slot>
   </au-compose>
-  <au-compose view.bind="message" class="dialogBody">
+  <au-compose view.bind="message" class="dialogBody" if.bind="message">
     <au-slot></au-slot>
   </au-compose>
+  <au-slot else></au-slot>
   <p class="dialogFooter">
     <pbutton
       type="tertiary"

@@ -19,3 +19,4 @@ export * from "./numericInput/numericInput";
 export * from "./popupNotifications/popupNotifications";
 export * from "./primeDesignSystem";
 export * from "./editingCard/editingCard";
+export * from "../../dealDashboard/deal-swap-modal/deal-swap-modal";
