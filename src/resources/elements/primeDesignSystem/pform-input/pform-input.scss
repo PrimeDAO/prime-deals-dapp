@@ -34,7 +34,8 @@ pform-input {
 
   .inputContainer {
     display: flex; // for nicer centering
+    &.isVertical {
+      flex-direction: column;
+    }
   }
-
-
 }

@@ -93,6 +93,7 @@ export class TermsStage {
     const emptyClause: IClause = {
       id: "",
       text: "",
+      title: "",
     };
     this.registrationData.terms.clauses.push(emptyClause);
   }
@@ -130,6 +131,7 @@ export class TermsStage {
     } else {
       this.validationRules.off(this.daoplomatRewards);
       this.daoplomatRewards = undefined;
+      delete this.registrationData.terms.daoplomatRewards;
     }
 
   };

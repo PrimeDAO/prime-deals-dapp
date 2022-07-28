@@ -7,6 +7,9 @@ import { IValidationRules } from "@aurelia/validation";
 import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import Editor from "ckeditor5-custom-build/build/ckeditor";
+import "./custom.css";
+import {marked} from "marked";
 
 @inject()
 export class TermClause {
@@ -17,6 +20,8 @@ export class TermClause {
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: () => void;
+  private editor = null;
+  charValue = null;
 
   constructor(
   @newInstanceForScope(IValidationController) form: IValidationController,
@@ -27,9 +32,56 @@ export class TermClause {
     this.form.addSubscriber(presenter);
   }
 
+  attached(){
+    Editor
+      .create( document.querySelector( `#editor${this.index}`), {
+        link: {
+          addTargetToExternalLinks: true,
+          defaultProtocol: "https://",
+        },
+        toolbar: {
+          items: [ "bold", "italic", "underline", "link", "bulletedList", "numberedList" ],
+        },
+      } )
+      .then( editor => {
+        this.editor = editor;
+        editor.plugins.get( "WordCount" ).on( "update", ( evt, stats ) => {
+          this.charValue = stats.characters;
+          const isOverLimit = stats.characters > 500;
+          if (isOverLimit){
+            const trimmedString = this.editor.getData().slice(0, 500);
+            editor.setData(trimmedString);
+          }
+        } );
+
+        editor.model.document.on( "change:data", () => {
+          const data = this.editor.getData();
+          this.clause = {...this.clause, text: data};
+        } );
+
+        editor.editing.view.document.on( "clipboardInput", ( evt, data ) => {
+          const dataTransfer = data.dataTransfer;
+          const textContent = dataTransfer.getData( "text/plain" );
+
+          if ( !textContent ) {
+            return;
+          }
+          const viewContent = marked(textContent);
+          data.content = editor.data.processor.toView(viewContent);
+        } );
+
+      } )
+      .catch( error => {
+        console.error( "There was a problem initializing the editor.", error );
+      } );
+  }
+
   attaching() {
     this.validationRules
       .on(this.clause)
+      .ensure("title")
+      .required()
+      .withMessage("Clause requires a title")
       .ensure("text")
       .required()
       .withMessage("Clause requires a description")
@@ -37,7 +89,7 @@ export class TermClause {
       .withMessage("Clause must be at least 10 characters");
   }
 
-  onSave(): Promise<boolean> {
+  onSave() {
     return this.form.validate().then(result => result.valid);
   }
 

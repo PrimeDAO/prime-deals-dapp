@@ -11,7 +11,9 @@ export class PFormInput {
   @bindable maxLength = 0;
   @bindable helperMessage = "";
   @bindable validationMessage = "";
+  @bindable charValue = "";
   @bindable validationState?: ValidationState;
+  @bindable({set: toBoolean, type: Boolean}) isVertical = false;
 
   /*
   * By default, "pform-input" will select its first child as the "input" property.
