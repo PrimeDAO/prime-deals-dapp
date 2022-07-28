@@ -13,10 +13,19 @@
         class="wizardFormInput wizardFormInputNarrow"
         data-test="dao-name-field"
         input-reference.bind="nameReference"
-        label.bind="name + ' Name'"
+        label="Select DAO or Enter a DAO Name"
       >
-        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"
-          view-model.ref="nameReference"></pinput-text>
+        <pselect
+          class="wizardFormInput"
+          disabled.bind="disabled"
+          is-searchable="true"
+          placeholder="Please Select..."
+          search-text.bind="daos.name + ' was not found'"
+          search-placeholder="Type To Search..."
+          value.bind="daos.name & validate"
+          data.bind="daos"
+          view-model.ref="nameReference">
+        </pselect>
       </pform-input>
 
       <pform-input
