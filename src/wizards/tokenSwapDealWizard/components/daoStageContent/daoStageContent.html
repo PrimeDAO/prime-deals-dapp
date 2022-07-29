@@ -1,6 +1,7 @@
 <template>
   <require from="../daoRepresentativeAddress/daoRepresentativeAddress"></require>
   <require from="../socialMediaLink/socialMediaLink"></require>
+  <require from="./pselect-daos/pselect-daos"></require>
   <div class="stageSection" data-test="dao-details-section">
     <div class="stageSectionSidebar">
       <h2 class="sidebarHeader heading heading3 title" data-test="section-title">${name}</h2>
@@ -13,10 +14,14 @@
         class="wizardFormInput wizardFormInputNarrow"
         data-test="dao-name-field"
         input-reference.bind="nameReference"
-        label.bind="name + ' Name'"
+        label="Select DAO or Enter a DAO Name"
       >
-        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"
-          view-model.ref="nameReference"></pinput-text>
+        <pselect-daos
+          class="wizardFormInput"
+          disabled.bind="disabled"
+          value.bind="dao & validate"
+          data.bind="daos">
+        </pselect-daos>
       </pform-input>
 
       <pform-input

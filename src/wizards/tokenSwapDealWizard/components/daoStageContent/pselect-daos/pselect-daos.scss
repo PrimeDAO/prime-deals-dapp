@@ -1,0 +1,48 @@
+@import "src/styles/variables";
+
+pselect {
+  width: 100%;
+
+  .ss-main>.ss-content>.ss-search {
+    position: absolute;
+    margin-left: 0;
+    margin-right: 0;
+    border: none;
+    height: 45px;
+    & > input {
+      padding-left: 0;
+      color: $White;
+    }
+    &::before {
+      display: none;
+    }
+    &::after {
+      content: "\f002";
+      font-family: "Font Awesome 5 Free";
+      font-weight: bold;
+      font-size: 17.5px;
+      color: $White;    }
+  }
+
+  .ss-main>.ss-open-above+.ss-content{
+    bottom: 45px;
+    max-height: 202px;
+    height: unset !important;
+    .ss-search {
+      bottom: -44px;
+    }
+  }
+
+  .ss-main>.ss-open-below+.ss-content>.ss-search {
+    top: -46px;
+  }
+
+  .ss-single-selected.ss-open-below,
+  .ss-single-selected.ss-open-above {
+    .placeholder,
+    .ss-arrow,
+    .ss-close {
+      opacity: 0;
+    }
+  }
+}

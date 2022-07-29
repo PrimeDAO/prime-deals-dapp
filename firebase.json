@@ -9,7 +9,7 @@
       "npm --prefix \"$RESOURCE_DIR\" run build"
     ],
     "source": "firebaseFunctions",
-    "runtime": "nodejs16"
+    "runtime": "nodejs14"
   },
   "emulators": {
     "auth": {
@@ -23,6 +23,9 @@
     },
     "ui": {
       "enabled": true
+    },
+    "pubsub": {
+      "port": 8085
     }
   }
 }
