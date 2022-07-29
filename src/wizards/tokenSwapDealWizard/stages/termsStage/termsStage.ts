@@ -42,14 +42,13 @@ export class TermsStage {
   constructor(
     @IContainer public container: IContainer,
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
-    @newInstanceForScope(IValidationController) public form: IValidationController,
+    @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
     public numberService: NumberService, // 'numberService' is used by the template
     private tokenService: TokenService,
     presenter: PrimeErrorPresenter,
     private ensService: EnsService,
   ) {
-    this.form.addSubscriber(presenter);
   }
 
   async load(stageMeta: IStageMeta) {
@@ -59,21 +58,24 @@ export class TermsStage {
     this.terms = this.registrationData.terms;
     this.wizardType = stageMeta.wizardType;
 
+    this.validationRules
+      .on(this.terms)
+      .ensureObject()
+      .satisfies(async () => {
+        this.checkedForUnsavedChanges();
+        const formsAreValid = await areFormsValid(this.termClauses.filter(Boolean).map(viewModel => viewModel.form));
+        this.populateRegistrationData();
+        return formsAreValid && !this.hasUnsavedChanges;
+      });
+
+    this.form.addObject(this.terms);
+
     this.bindDaoplomatRewards();
   }
 
   async bound(context: Controller, parentContext: Controller) {
     const wizardManager = parentContext.parent.viewModel as WizardManager;
     this.addIdsToClauses(this.wizardType);
-
-    wizardManager.setValidation(async () => {
-      this.checkedForUnsavedChanges();
-      const formsAreValid = await areFormsValid(this.termClauses.map(viewModel => viewModel.form));
-      const formResult = await this.form.validate();
-      this.populateRegistrationData();
-      return formResult.valid && formsAreValid && !this.hasUnsavedChanges;
-    });
-
     this.tokensTotal = await wizardManager.getTokensTotalPrice();
   }
 
@@ -91,12 +93,13 @@ export class TermsStage {
     const emptyClause: IClause = {
       id: "",
       text: "",
+      title: "",
     };
     this.registrationData.terms.clauses.push(emptyClause);
   }
 
   checkedForUnsavedChanges() {
-    this.hasUnsavedChanges = this.termClauses.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+    this.hasUnsavedChanges = this.termClauses.filter(Boolean).filter(viewModel => viewModel.viewMode === "edit").length > 0;
   }
 
   addIdsToClauses(wizardType: WizardType) {
@@ -128,6 +131,7 @@ export class TermsStage {
     } else {
       this.validationRules.off(this.daoplomatRewards);
       this.daoplomatRewards = undefined;
+      delete this.registrationData.terms.daoplomatRewards;
     }
 
   };

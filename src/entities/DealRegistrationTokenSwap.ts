@@ -61,6 +61,7 @@ export interface IProposalLead {
 export interface IClause {
   id: string,
   text: string,
+  title:string
 }
 
 export interface IDaoplomatReward {
@@ -137,6 +138,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       clauses: [{
         id: "",
         text: "",
+        title: "",
       }],
     };
     this.keepAdminRights = true;

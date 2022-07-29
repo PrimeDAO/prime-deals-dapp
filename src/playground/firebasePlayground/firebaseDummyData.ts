@@ -43,6 +43,7 @@ export const openProposalDummyData1 = {
       {
         "id": "HFcE73RvJP5dG3cXVKZRJw",
         "text": "A clause asd",
+        "title": "A clause title",
       },
     ],
   },
@@ -118,6 +119,7 @@ export const partnerDealDummyData1 = {
       {
         "id": "0QSWgDPVF6971GTymndrqs",
         "text": "Clause one",
+        "title": "clause one title",
       },
     ],
   },

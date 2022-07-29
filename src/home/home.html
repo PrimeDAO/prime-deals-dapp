@@ -42,7 +42,7 @@
       <!-- Deals Carousel -->
       <div
         class="section deal-carousel"
-        if.to-view="!dealsLoading && featuredDeals && featuredDeals.length"
+        if.to-view="!dealsLoading && (allDeals.open.length || allDeals.partnered.length)"
       >
         <div class="heading02Gradient carousel-selector">
           <span

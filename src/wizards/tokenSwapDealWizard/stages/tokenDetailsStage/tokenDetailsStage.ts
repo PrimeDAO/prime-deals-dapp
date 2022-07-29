@@ -1,4 +1,3 @@
-import { WizardService } from "../../../services/WizardService";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
@@ -8,33 +7,30 @@ import { TokenService } from "services/TokenService";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
-// import { areFormsValid } from "../../../../services/ValidationService";
-import { newInstanceOf } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
-import { Controller, inject } from "aurelia";
-import { WizardManager } from "../../wizardManager";
+import { inject } from "aurelia";
 import { areFormsValid } from "../../../../services/ValidationService";
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
 @processContent(autoSlot)
 export class TokenDetailsStage {
-  // wizardManager: any;
-  wizardState: any;
   wizardType: WizardType;
   isOpenProposalWizard = false;
 
-  primaryDAOTokenDetails: TokenDetails[] = [];
-  partnerDAOTokenDetails: TokenDetails[] = [];
+  primaryDAOTokenDetails: (TokenDetails | null)[] = [];
+  partnerDAOTokenDetails: (TokenDetails | null)[] = [];
   stageMetadata: Partial<TokenDetailsMetadata> = {};
 
   hasUnsavedChangesForPrimaryDetails = false;
   hasUnsavedChangesForPartnerDetails = false;
 
+  primaryDaoTokens: IToken[];
+  partnerDaoTokens: IToken[];
+
   constructor(
-    private wizardService: WizardService,
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
-    @newInstanceOf(IValidationController) public form: IValidationController,
+    @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }
@@ -48,7 +44,6 @@ export class TokenDetailsStage {
   }
 
   load(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
-    // this.wizardManager = this.wizardService.currentWizard;
     this.stageMetadata = stageMeta.settings ?? {};
 
     this.wizardType = stageMeta.wizardType;
@@ -61,6 +56,8 @@ export class TokenDetailsStage {
     this.stageMetadata.partnerDAOTokenDetailsViewModes = this.stageMetadata.partnerDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.registrationData.partnerDAO);
 
+    this.primaryDaoTokens = this.registrationData.primaryDAO.tokens;
+
     this.validationRules
       .on(this.registrationData)
       .ensure("fundingPeriod")
@@ -69,29 +66,43 @@ export class TokenDetailsStage {
       .withMessage("Funding Period is required")
       .min(0)
       .withMessage("Funding Period should be greater or equal to zero");
-  }
 
-  async bound(context: Controller, parentContext: Controller) {
-    const wizardManager = parentContext.parent.viewModel as WizardManager;
+    this.validationRules
+      .on(this.primaryDaoTokens)
+      .ensureObject()
+      .satisfies(async () => {
+        const forms = this.primaryDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
+        const areTokensValid = await areFormsValid(forms);
 
-    wizardManager.setValidation(async () => {
-      const primaryTokensForms = this.primaryDAOTokenDetails.map(viewModel => viewModel.form);
-      const partnerTokensForms = this.partnerDAOTokenDetails.map(viewModel => viewModel.form);
-      const primaryTokensValid = await areFormsValid(primaryTokensForms);
-      const partnerTokensValid = await areFormsValid(partnerTokensForms);
+        this.checkedForUnsavedChanges();
 
-      this.checkedForUnsavedChanges();
-
-      return this.form.validate()
-        .then(async (result) => result.valid &&
-          this.hasValidPrimaryDAOTokensDetailsCount &&
+        return this.hasValidPrimaryDAOTokensDetailsCount &&
           !this.hasUnsavedChangesForPrimaryDetails &&
-          !this.hasUnsavedChangesForPartnerDetails &&
-          this.hasValidPartnerDAOTokensDetailsCount &&
-          primaryTokensValid &&
-          (this.isOpenProposalWizard ? true : partnerTokensValid),
-        );
-    });
+          areTokensValid;
+      });
+    this.form.addObject(this.primaryDaoTokens);
+
+    if (!this.isOpenProposalWizard) {
+      this.registrationData.partnerDAO.tokens = this.registrationData.partnerDAO?.tokens ?? [];
+
+      this.partnerDaoTokens = this.registrationData.partnerDAO.tokens;
+
+      this.validationRules
+        .on(this.partnerDaoTokens)
+        .ensureObject()
+        .satisfies(async () => {
+          const forms = this.partnerDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
+          const areTokensValid = await areFormsValid(forms);
+
+          this.checkedForUnsavedChanges();
+
+          return !this.hasUnsavedChangesForPartnerDetails &&
+            this.hasValidPartnerDAOTokensDetailsCount &&
+            areTokensValid;
+        });
+
+      this.form.addObject(this.partnerDaoTokens);
+    }
   }
 
   addToken(tokens: IToken[]): void {
@@ -124,8 +135,8 @@ export class TokenDetailsStage {
   }
 
   private checkedForUnsavedChanges() {
-    this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
-    this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel.viewMode === "edit").length > 0;
+    this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
+    this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
   }
 
   private addDefaultValuesToRegistrationData(wizardType: WizardType) {

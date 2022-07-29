@@ -1,6 +1,5 @@
 import { IDAO, ISocialMedia } from "entities/DealRegistrationTokenSwap";
 import { bindable, BindingMode, inject } from "aurelia";
-import { WizardService } from "../../../services/WizardService";
 import { IValidationRules } from "@aurelia/validation";
 import { IsValidUrl } from "../../../../resources/validation-rules";
 
@@ -12,7 +11,6 @@ export class SocialMediaLink {
   @bindable data: IDAO;
 
   constructor(
-    private wizardService: WizardService,
     @IValidationRules private validationRules: IValidationRules,
   ) {
   }

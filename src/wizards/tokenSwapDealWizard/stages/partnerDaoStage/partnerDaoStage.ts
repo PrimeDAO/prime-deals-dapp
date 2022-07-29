@@ -1,5 +1,5 @@
 import { IDAO, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IWizardState, WizardService } from "wizards/services/WizardService";
+import { IWizardState } from "wizards/services/WizardService";
 import { daoStageValidationRules, IStageMeta, WizardType } from "../../dealWizardTypes";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
@@ -20,7 +20,7 @@ export class PartnerDaoStage {
     @newInstanceOf(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
-    this.partnerDao = this.registrationData.primaryDAO;
+    this.partnerDao = this.registrationData.partnerDAO;
     daoStageValidationRules(this.partnerDao, this.validationRules, "Partner DAO", this.registrationData.primaryDAO);
   }
 
