@@ -43,14 +43,23 @@ export class DaoStageContent {
     this.hydrateDaosList();
   }
 
+  private prepareAvatarUrl(url) {
+    const pathParts = url.split("/");
+    if (url.includes("https://")) return url;
+    return "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/" + pathParts[pathParts.length - 1];
+  }
+
   async hydrateDaosList(): Promise<boolean> {
     this.daosData = await this.firestoreService.allDeepDaoOrgs();
 
-    this.daos = Object.values(this.daosData).map(item => ({
-      text: item.name,
-      logoUri: item.avatarUrl,
+    this.daos = Object.keys(this.daosData).map(id => ({
+      text: this.daosData[id].name,
+      innerHTML: this.daosData[id].avatarUrl
+        ? `<span><img src="${this.prepareAvatarUrl(this.daosData[id].avatarUrl)}" alt="${this.daosData[id].name}" height="20" /> ${this.daosData[id].name}</span>`
+        : `<span><div style="display: block; width: 20px; height: 20px; border-radius: 50%; background-color: yellow;"></div> ${this.daosData[id].name}</span>`,
+      treasury: this.daosData[id].treasuryAddresses,
+      value: id,
     }));
-    console.log("DAOS", this.daos);
     return true;
   }
 }
