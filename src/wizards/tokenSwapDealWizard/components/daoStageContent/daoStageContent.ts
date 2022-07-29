@@ -1,11 +1,9 @@
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { availableSocialMedias } from "../../dealWizardTypes";
-import { bindable } from "aurelia";
-import { processContent } from "@aurelia/runtime-html";
-import { autoSlot } from "../../../../resources/temporary-code";
+import { bindable, inject } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 
-@processContent(autoSlot)
+@inject()
 export class DaoStageContent {
   @bindable name: string;
   @bindable disabled = false;

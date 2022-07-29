@@ -57,7 +57,6 @@ export const register: IRegistry = {
     container.register(Registration.singleton(DisclaimerService, DisclaimerService));
     container.register(Registration.singleton(FirebaseService, FirebaseService));
     container.register(Registration.singleton(FirestoreService, FirestoreService));
-    container.register(Registration.singleton(FirestoreDealsService, FirestoreDealsService));
     container.register(Registration.singleton(EnsService, EnsService));
     container.register(Registration.singleton(AxiosService, AxiosService));
     container.register(Registration.singleton(AlertService, AlertService));

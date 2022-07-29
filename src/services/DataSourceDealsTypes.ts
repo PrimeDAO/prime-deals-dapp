@@ -73,7 +73,7 @@ export interface IDataSourceDeals {
   updateRegistration<TRegistration extends IDealRegistrationTokenSwap>(
     dealId: IDealIdType,
     accountAddress: Address,
-    registration: TRegistration): Promise<void>;
+    registration: Partial<TRegistration>): Promise<void>;
   /**
    * Adds discussion to clauseDiscussions map
    * @param dealId
