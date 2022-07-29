@@ -369,7 +369,7 @@ export class WizardManager implements IRouteableComponent {
   /**
    * This is a duplicate from DealTokenSwap@processTotalPrice
    */
-  async getTokensTotalPrice() {
+  async getTokensTotalPrice(): Promise<number> {
     const deal = this.registrationData;
     const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];
     const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
@@ -379,7 +379,7 @@ export class WizardManager implements IRouteableComponent {
 
     return dealTokens.reduce((sum, item) => {
       const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount || 0, item.decimals || 0) ?? 0));
     }, 0);
   }
 
