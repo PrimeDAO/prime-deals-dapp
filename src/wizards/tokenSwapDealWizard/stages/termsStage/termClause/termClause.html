@@ -16,7 +16,7 @@
         is-vertical
       >
         <!-- Make sure to render new line characters from textarea  -->
-        <div class="clause__title">${clause.title}</div>
+        <div if.bind="clause.title" class="clause__title">${clause.title}</div>
         <div class="ckEditor__output" innerhtml.to-view="clause.text | sanitizeHTML"></div>
       </pform-input>
     </div>
@@ -45,7 +45,12 @@
         show-counter
         char-value.bind="charValue"
       >
-        <textarea placeholder="Text describing the clause" rows="4" id="${`editor${index}`}"></textarea>
+        <textarea
+          ref="textareaRef"
+          placeholder="Text describing the clause"
+          rows="4"
+          id="${`editor-${index}`}"
+        ></textarea>
       </pform-input>
     </div>
   </editing-card>
