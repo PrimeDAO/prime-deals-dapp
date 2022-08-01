@@ -23,7 +23,7 @@ export class ModalScreen implements ICustomElementViewModel {
     window.addEventListener("resize", this.onResize);
   }
 
-  detached() {
+  detaching() {
     window.removeEventListener("resive", this.onResize);
   }
 

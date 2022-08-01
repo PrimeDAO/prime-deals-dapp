@@ -41,7 +41,7 @@
         <div class="detailsCell">
           <p>
             Logo
-            <img error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
+            <img class="daoSmallLogo" error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
               load.trigger="logoLoaded(true)"
               src.bind="token.logoURI">
           </p>
@@ -86,9 +86,9 @@
             <p>Tokens vested for</p>
             <pform-input data-test="vested-period-field" input-reference.bind="vestedForInput">
               <pinput-group
-                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())">
                 <pinput-numeric
-                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())"
                   not-wei
                   value.bind="token.vestedFor | secondsDays & validate"
                   view-model.ref="vestedForInput"></pinput-numeric>
@@ -100,9 +100,9 @@
             <p>with a cliff of</p>
             <pform-input data-test="cliff-period-field" input-reference.bind="cliffOfInput">
               <pinput-group
-                disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()">
+                disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())">
                 <pinput-numeric
-                  disabled.bind="!token.amount || token.amount.toString() === token.instantTransferAmount.toString()"
+                  disabled.bind="!token.amount || (token.instantTransferAmount && token.amount.toString() === token.instantTransferAmount.toString())"
                   not-wei
                   value.bind="token.cliffOf | secondsDays & validate"
                   view-model.ref="cliffOfInput"></pinput-numeric>
@@ -126,7 +126,7 @@
 
     <div class="tokenDetailsView" if.bind="viewMode === 'view'">
       <p class="tokenName">
-        <img error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
+        <img class="daoLogo" error.trigger="token.logoURI = ''" height="32" if.bind="token.logoURI" src.bind="token.logoURI">
         ${token.name || '-'}
       </p>
       <div class="detailsTable detailsTableInViewMode">

@@ -1,14 +1,21 @@
-<template>
-  <div class="page animated-page au-animate">
-    <div class="wizardManager">
-      <pstepper
-        data-test="wizard-manager-stepper"
-        index-of-active.bind="wizardState.indexOfActive"
-        on-click.call="onStepperClick($event)"
-        steps.bind="wizardState.stages">
-      </pstepper>
+<import from="./components/stageButtons/stageButtons"></import>
+<div class="page animated-page au-animate">
+  <div class="wizardManager">
+    <pstepper
+      data-test="wizard-manager-stepper"
+      index.bind="activeIndex"
+      on-click.call="onStepperClick($event)"
+      steps.bind="stages"
+    >
+    </pstepper>
 
-      <au-viewport default="" viewport="stages"></au-viewport>
-    </div>
+    <au-viewport default="" viewport="stages"></au-viewport>
+    <stage-buttons
+      stage-count.bind="stages.length"
+      current-index.bind="activeIndex"
+      on-submit.bind="onSubmit"
+      proceed.call="next()"
+      previous.call="previous()"
+    ></stage-buttons>
   </div>
-</template>
+</div>

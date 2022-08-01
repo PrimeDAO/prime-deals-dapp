@@ -2,13 +2,11 @@
   <require from="../../components/stageWrapper/stageWrapper"></require>
   <require from="../../components/daoStageContent/daoStageContent"></require>
   <stage-wrapper
-    header="Partner DAO Details"
-    wizard-manager.bind="wizardManager">
+    header="Partner DAO Details">
     <dao-stage-content
-      data.bind="wizardState.registrationData.partnerDAO"
+      data.bind="partnerDao"
       disabled.bind="disabled"
-      name="Partner DAO"
-      wizard-manager.bind="wizardManager">
+      name="Partner DAO">
       <div slot="details-description">
         Please fill in the details of the second DAO for which the deal will be initiated.
       </div>

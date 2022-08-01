@@ -1,8 +1,9 @@
 import { IDAO, IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
-import { IWizardState, WizardService, WizardStateKey } from "wizards/services/WizardService";
+import { WizardStateKey } from "wizards/services/WizardService";
 import { bindable, BindingMode, inject } from "aurelia";
 import { IValidationRules } from "@aurelia/validation";
-import { IsEthAddress } from "../../../../resources/validation-rules";
+import { IsEthAddressOrEns } from "../../../../resources/validation-rules";
+import { EnsService } from "services/EnsService";
 
 @inject()
 export class DaoRepresentativeAddress {
@@ -11,22 +12,20 @@ export class DaoRepresentativeAddress {
   @bindable data: IDAO;
   @bindable wizardManager: WizardStateKey;
 
-  private wizardState: IWizardState<IDealRegistrationTokenSwap>;
-
   constructor(
-    private wizardService: WizardService,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @IValidationRules private validationRules: IValidationRules,
+    private ensService: EnsService,
   ) {
   }
 
   binding() {
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
 
     this.validationRules
       .on(this.representative)
       .ensure("address")
       .required()
-      .satisfiesRule(new IsEthAddress())
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
       .satisfies((value) => {
         return this.data.representatives.filter(representative => representative.address === value).length === 1;
       })
@@ -36,7 +35,7 @@ export class DaoRepresentativeAddress {
   }
 
   private daoValidationRepresentativeRestriction(address): boolean {
-    const {primaryDAO, partnerDAO} = this.wizardState.registrationData;
+    const {primaryDAO, partnerDAO} = this.registrationData;
     /** Don't validate, if there is no Partner DAO in the wizard */
     if (partnerDAO === undefined) return true;
 

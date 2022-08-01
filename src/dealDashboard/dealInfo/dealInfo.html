@@ -24,7 +24,10 @@
         </div>
       </div>
       <div class="daoSocialLinks" if.bind="deal.primaryDao.social_medias.length">
-        <a href.bind="socialMedia.url" repeat.for="socialMedia of deal.primaryDao.social_medias">
+        <a
+          repeat.for="socialMedia of deal.primaryDao.social_medias"
+          href.bind="socialMedia.url"
+          target="_blank">
           <i class.bind="getSocialMediaDetails(socialMedia.name).icon"></i>
         </a>
       </div>
@@ -144,9 +147,36 @@
       </etherscanlink>
     </div>
 
+    <div if.bind="deal.registrationData.terms.daoplomatRewards"
+      class="infoSection totalRepresentatives ${showMoreRewards ? 'active' : ''}"
+      click.delegate="showMoreRewards = !showMoreRewards"
+    >
+      <span class="bodySmallTextBold infoTitle">Total DAOplomat Reward</span>
+      <span>
+        <span class="reward-percent">
+          ${deal.registrationData.terms.daoplomatRewards.percentage * 100}
+        </span>
+        <i class="fas fa-angle-down arrow"></i>
+      </span>
+    </div>
+    <div class="panel" css.bind="{'max-height': maxHeightRewards}" ref="panelRewards">
+      <div class="panel-content">
+        <p
+          class="representative bodySmallText"
+          repeat.for="daoplomat of deal.registrationData.terms.daoplomatRewards.daoplomats"
+        >
+          <etherscanlink 
+            class="representative-dao" 
+            address.bind="daoplomat.address"
+            text="${daoplomat.address | smallHexString}"></etherscanlink>
+          <span class="reward-percent">${daoplomat.rewardSplitPercentage * 100}</span>
+        </p>
+      </div>
+    </div>
+
     <div
-      class="infoSection totalRepresentatives ${showMore ? 'active' : ''}"
-      click.trigger="showMore = !showMore"
+      class="infoSection totalRepresentatives ${showMoreRepresentatives ? 'active' : ''}"
+      click.delegate="showMoreRepresentatives = !showMoreRepresentatives"
     >
       <span class="bodySmallTextBold infoTitle">Total representatives</span>
       <span>
@@ -156,7 +186,7 @@
         <i class="fas fa-angle-down arrow"></i>
       </span>
     </div>
-    <div class="panel" css.bind="{'max-height': maxHeight}" ref="panel">
+    <div class="panel" css.bind="{'max-height': maxHeightRepresentatives}" ref="panelRepresentatives">
       <div class="panel-content">
         <p
           class="representative bodySmallText"

@@ -38,7 +38,7 @@ export class EthBalance {
     this.getBalance();
   }
 
-  private detached(): void {
+  private detaching(): void {
     if (this.subscriptions) {
       this.subscriptions.dispose();
     }

@@ -8,7 +8,6 @@ pform-input {
     color: $Secondary02;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
 
     .formInputLabelTitle {
       @include subHeading;
@@ -35,7 +34,8 @@ pform-input {
 
   .inputContainer {
     display: flex; // for nicer centering
+    &.isVertical {
+      flex-direction: column;
+    }
   }
-
-
 }

@@ -18,12 +18,12 @@
       <!-- Content -->
       <div class="stageSectionContent termsStageSectionContent">
         <term-clause
-          hide-delete-button.bind="terms.clauses.length === 1"
           clause.bind="clause"
-          repeat.for="clause of terms.clauses"
+          hide-delete-button.bind="terms.clauses.length === 1"
           index.bind="$index"
           on-delete.call="onDelete($index)"
           on-saved.call="hasUnsavedChanges && checkedForUnsavedChanges()"
+          repeat.for="clause of terms.clauses"
           view-mode.bind="stageMetadata.termsViewModes[$index]"
           view-model.ref="termClauses[$index]"
         >
@@ -44,6 +44,104 @@
           data-test="errorMessage">
           Please save all your clauses
         </p>
+      </div>
+    </div>
+
+    <div class="stageSection">
+      <!-- Sidebar -->
+      <div class="stageSectionSidebar">
+        <h2 class="sidebarHeader heading heading3 title" data-test="stageSectionSidebarTitle">
+          DAOplomat Reward
+        </h2>
+        <p class="sidebarText">
+          The reward split will incentivize deal makers to bring more deals to the platform and improve the success rate
+          of a deal negotiation.
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div class="stageSectionContent daoplomatRewardsTotalContainer">
+        <pform-input label="Enable DAOplomat Reward">
+          <ptoggle changed.bind="toggleDaoplomatRewards"
+                   value.to-view="daoplomatRewards"
+          ></ptoggle>
+        </pform-input>
+
+        <div if.bind="daoplomatRewards">
+          <pcard>
+            <pform-input
+              class="daoplomatRewardsTotal"
+              input-reference.bind="percentageAmountInput"
+              label="Total DAOplomat Reward"
+              label-description="Percentage of total deal value that will be split among the DAOplomats."
+            >
+              <div class="daoplomatRewardsTotalContent">
+                <pinput-group>
+                  <pinput-numeric
+                    not-wei
+                    value.bind="daoplomatRewards.percentage & validate"
+                    view-model.ref="percentageAmountInput"
+                  ></pinput-numeric>
+                  <template au-slot="after">%</template>
+                </pinput-group>
+
+                <span if.bind="tokensTotal && daoplomatRewards.percentage">~${tokensTotal * daoplomatRewards.percentage | currency} </span>
+              </div>
+
+            </pform-input>
+
+            <div class="daoplomat"
+                 repeat.for="daoplomat of daoplomatRewards.daoplomats"
+            >
+              <!-- these two template variables are used to dynamically assign the view-mode reference in the loop. They are created here so they are scoped to the repeat.for loop -->
+              <let address-input=""></let>
+              <let split-input=""></let>
+              <div>
+                <pform-input
+                  helper-message.bind="addressInput.ens"
+                  input-reference.bind="addressInput"
+                  label.bind="$index === 0 ? 'DAOplomat Address': ''"
+                >
+                  <form-address-input
+                    value.bind="daoplomat.address | checksumAddress & validate"
+                    view-model.ref="addressInput">
+                  </form-address-input>
+                </pform-input>
+              </div>
+              <div>
+                <pform-input
+                  helper-message.bind="daoplomatRewards.percentage && daoplomat.rewardSplitPercentage ? '~' + numberService.formatCurrency(daoplomat.rewardSplitPercentage/100 * daoplomatRewards.percentage * tokensTotal): undefined"
+                  input-reference.bind="splitInput"
+                  label.bind="$index === 0 ? 'Split': ''"
+                >
+                  <div class="daoplomatSplit">
+                    <pinput-group>
+                      <pinput-numeric
+                        not-wei
+                        value.bind="daoplomat.rewardSplitPercentage & validate "
+                        view-model.ref="splitInput"
+                      ></pinput-numeric>
+                      <template au-slot="after">%</template>
+                    </pinput-group>
+                    <a click.delegate="removeDaoplomat($index)">
+                      <i class="fa fa-trash"></i>
+                    </a>
+                  </div>
+                </pform-input>
+              </div>
+            </div>
+
+            <pbutton class="addDaoplomat" click.delegate="addDaoplomat()"
+                     if.bind="daoplomatRewards.daoplomats && daoplomatRewards.daoplomats.length < 8" type="primary">
+              Add Daoplomat
+              <i class="fa fa-plus"></i>
+            </pbutton>
+
+            <ul>
+              <li class="feedbackMessage feedbackMessageVisible errorMessage" repeat.for="r of form.results" if.bind="!r.valid && !r.propertyName">${r}</li>
+            </ul>
+          </pcard>
+        </div>
       </div>
     </div>
   </stage-wrapper>

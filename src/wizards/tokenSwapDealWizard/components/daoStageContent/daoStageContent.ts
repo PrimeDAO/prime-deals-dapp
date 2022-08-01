@@ -1,6 +1,5 @@
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { availableSocialMedias } from "../../dealWizardTypes";
-import { WizardStateKey } from "wizards/services/WizardService";
 import { bindable } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
@@ -13,7 +12,6 @@ export class DaoStageContent {
   @bindable data: IDAO;
   @bindable dataMata: number;
   @bindable someTest: number;
-  @bindable wizardManager: WizardStateKey;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 

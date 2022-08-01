@@ -1,6 +1,7 @@
+import { IValidationController } from "@aurelia/validation-html";
+import { newInstanceForScope } from "@aurelia/kernel";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { IDealIdType } from "./../../services/DataSourceDealsTypes";
-import { IWizardStage, IWizardState, WizardService } from "wizards/services/WizardService";
 import {
   DealRegistrationTokenSwap,
   emptyDaoDetails,
@@ -8,14 +9,11 @@ import {
 } from "entities/DealRegistrationTokenSwap";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
 import { DealService } from "services/DealService";
-import { Address, IEthereumService } from "services/EthereumService";
+import { Address, fromWei, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
-import { IContainer, IEventAggregator } from "aurelia";
+import { IContainer, IEventAggregator, Registration } from "aurelia";
 import { IRoute, IRouteableComponent, IRouter, RoutingInstruction } from "@aurelia/router";
-
-import { processContent, watch } from "@aurelia/runtime-html";
-import { autoSlot } from "../../resources/temporary-code";
 import { ProposalStage } from "./stages/proposalStage/proposalStage";
 import { LeadDetailsStage } from "./stages/leadDetailsStage/leadDetailsStage";
 import { PrimaryDaoStage } from "./stages/primaryDaoStage/primaryDaoStage";
@@ -23,12 +21,22 @@ import { PartnerDaoStage } from "./stages/partnerDaoStage/partnerDaoStage";
 import { TokenDetailsStage } from "./stages/tokenDetailsStage/tokenDetailsStage";
 import { TermsStage } from "./stages/termsStage/termsStage";
 import { SubmitStage } from "./stages/submitStage/submitStage";
+import { AlertService, IAlertModel, ITokenInfo, TokenService, Utils } from "../../services";
+import { IWizardStage } from "wizards/services/WizardService";
+import { PrimeErrorPresenter } from "resources/elements/primeDesignSystem/validation/primeErrorPresenter";
+import { App } from "../../app";
+import { DealTokenSwap } from "../../entities/DealTokenSwap";
 
-@processContent(autoSlot)
 export class WizardManager implements IRouteableComponent {
   static routes: IRoute[] = [
     {
       path: "",
+      title: "Proposal",
+      viewport: "stages",
+      component: ProposalStage,
+    },
+    {
+      path: "proposal",
       title: "Proposal",
       viewport: "stages",
       component: ProposalStage,
@@ -70,17 +78,8 @@ export class WizardManager implements IRouteableComponent {
       component: SubmitStage,
     },
   ];
-  public wizardState: IWizardState<IDealRegistrationTokenSwap>;
 
-  // a meta configuration passed to each stage component in the view
-  // for stage components to know which wizardManger they belong to and what wizardType it is
-  // public stageMeta: IStageMeta;
-
-  // view of the currently active stage
-
-  // view model of the currently active stage
-  // public viewModel: object;
-  public additionalStageMetadata: Record<string, any> [] = [];
+  public additionalStageMetadata: Record<string, any>[] = [];
   public dealId: IDealIdType;
   private wizardType: WizardType;
   private stages: IWizardStage[] = [];
@@ -91,7 +90,7 @@ export class WizardManager implements IRouteableComponent {
   private proposalStage: IWizardStage = {
     name: "Proposal",
     valid: false,
-    route: "",
+    route: "proposal",
   };
   private leadDetailsStage: IWizardStage = {
     valid: false,
@@ -135,20 +134,27 @@ export class WizardManager implements IRouteableComponent {
     this.termsStage,
     this.submitStage,
   ];
+  activeIndex: number;
+  root: any;
 
   constructor(
-    private wizardService: WizardService,
     private dealService: DealService,
+    private alertService: AlertService,
+    private tokenService: TokenService,
+    @IEventAggregator private readonly event: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
     @IContainer private container: IContainer,
-    @IRouter private router: IRouter,
+    @IRouter private readonly router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
+    @newInstanceForScope(IValidationController) private controller: IValidationController,
+    private readonly dealsService: DealService,
+    private readonly presenter: PrimeErrorPresenter,
   ) {
-    this.wizardService.currentWizard = this;
+    controller.addSubscriber(this.presenter);
   }
 
-  public async canLoad(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<boolean> {
+  public async canLoad(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, instruction: RoutingInstruction): Promise<boolean> {
     let canActivate = true;
 
     const dealId = params.id;
@@ -157,6 +163,7 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
+        await App.dealLoadingPromise;
         this.originalRegistrationData = await this.getDeal(dealId);
       }
       /**
@@ -172,6 +179,16 @@ export class WizardManager implements IRouteableComponent {
     return canActivate;
   }
 
+  public previous() {
+    if (this.activeIndex < 1) return;
+    this.onStepperClick(this.activeIndex - 1);
+  }
+
+  public async next() {
+    this.activeIndex++;
+    await this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
+  }
+
   /**
    * This viewmodel is a singleton as long as we stay inside the wizard.  Leave the wizard and we start all over again with
    * a new viewmodel which will need to reinitialize and register itself with the wizardService.
@@ -179,44 +196,41 @@ export class WizardManager implements IRouteableComponent {
    * activate will be invoked when we enter the wizard and everytime we switch stages in the wizard. The only time
    * we need to do all the initialization is the first time.
    */
-  public async load(params: { [STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType }, instruction: RoutingInstruction): Promise<void> {
+  public async load(params: {[STAGE_ROUTE_PARAMETER]: string, id?: IDealIdType}, instruction: RoutingInstruction): Promise<void> {
+    this.root = instruction.route.matching;
     const stageRoute = instruction.route.remaining;
 
     const wizardType = instruction.parameters.parametersRecord.wizardType as number;
 
-    if (!this.wizardService.hasWizard(this)) {
+    this.wizardType = wizardType;
+    this.dealId = params.id;
 
-      this.wizardType = wizardType;
-      this.dealId = params.id;
+    this.registrationData = this.originalRegistrationData ?
+      JSON.parse(JSON.stringify(this.originalRegistrationData))
+      :
+      new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+    try {
+      const oldReg = this.container.get<IDealRegistrationTokenSwap>("registrationData");
+      Object.assign(oldReg, this.registrationData);
+    } catch (e) {
+      this.container.register(Registration.instance("registrationData", this.registrationData));
 
-      this.registrationData = this.originalRegistrationData ?
-        JSON.parse(JSON.stringify(this.originalRegistrationData))
-        :
-        new DealRegistrationTokenSwap(wizardType === WizardType.createPartneredDeal);
+    }
 
-      if (wizardType === WizardType.makeAnOffer) {
-        this.registrationData.partnerDAO = emptyDaoDetails();
-        this.registrationData.isPrivate = this.registrationData.offersPrivate;
-      }
+    if (wizardType === WizardType.makeAnOffer) {
+      this.registrationData.partnerDAO = emptyDaoDetails();
+      this.registrationData.isPrivate = this.registrationData.offersPrivate;
+    }
 
-      this.stages = this.configureStages(wizardType);
+    this.stages = this.configureStages(wizardType);
 
-      this.stages.forEach(stage => {
-        stage.name = stage.name ?? WizardManager.routes.find(route => route.path === stage.route)?.title;
-      });
+    this.stages.forEach(stage => {
+      stage.name = stage.name ?? WizardManager.routes.find(route => route.path === stage.route)?.title;
+    });
 
-      if (this.isHiddenStage(stageRoute)) {
-        this.router.load(this.getPreviousRoute(wizardType));
-        throw new Error("Not a valid URL");
-      }
-
-      this.wizardState = this.wizardService.registerWizard({
-        wizardStateKey: this,
-        stages: this.stages,
-        registrationData: this.registrationData,
-        cancelRoute: "home",
-        previousRoute: this.getPreviousRoute(wizardType),
-      });
+    if (this.isHiddenStage(stageRoute)) {
+      this.router.load(this.getPreviousRoute(wizardType));
+      throw new Error("Not a valid URL");
     }
 
     this.subscriptions.push(this.eventAggregator.subscribe("Network.Changed.Account", (account: Address): void => {
@@ -225,17 +239,18 @@ export class WizardManager implements IRouteableComponent {
 
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
-    const indexOfActiveStage = this.stages.findIndex(stage => stage.route.includes(stageRoute));
-
-    this.wizardService.setActiveStage(this, indexOfActiveStage);
+    this.activeIndex = this.stages.findIndex(stage => stage.route.includes(stageRoute));
   }
 
   public unload() {
     this.subscriptions.dispose();
   }
 
-  public onStepperClick(index: number): void {
-    this.wizardService.goToStage(this, index, false);
+  public async onStepperClick(index: number) {
+    if (this.activeIndex === index) return;
+
+    this.activeIndex = index;
+    await this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
   }
 
   private getPreviousRoute(wizardType: WizardType) {
@@ -245,7 +260,7 @@ export class WizardManager implements IRouteableComponent {
         return "initiate/token-swap";
 
       default:
-        return "home";
+        return "/";
     }
   }
 
@@ -263,36 +278,10 @@ export class WizardManager implements IRouteableComponent {
         break;
     }
 
-    this.setStagesAreValid(wizardType, stages);
-
     return stages;
   }
 
-  private setStagesAreValid(wizardType: WizardType, stages: Array<IWizardStage>): void {
-    /**
-     * for any stages that have been previously checked and found valid,
-     * set stage.valid to true Otherwise, set to undefined, indicating
-     * they have not been checked.
-     */
-    switch (wizardType) {
-      case WizardType.makeAnOffer:
-        // stages.map((stage) => {
-        //   stage.valid = (stage !== this.partnerDaoStage && stage !== this.tokenDetailsStage) ? true : undefined;
-        // });
-        break;
-      case WizardType.editPartneredDeal:
-      case WizardType.editOpenProposal:
-        stages.map((stage) => stage.valid = true);
-        break;
-      case WizardType.createPartneredDeal:
-      case WizardType.createOpenProposal:
-        stages.map((stage) => stage.valid = undefined);
-        break;
-    }
-  }
-
   private async getDeal(id: string): Promise<IDealRegistrationTokenSwap> {
-    await this.dealService.ensureInitialized();
     const deal = this.dealService.deals.get(id);
 
     if (!deal) {
@@ -300,7 +289,6 @@ export class WizardManager implements IRouteableComponent {
       throw new Error("Deal does not exist");
     }
 
-    await deal.ensureInitialized();
     return deal.registrationData;
   }
 
@@ -311,7 +299,7 @@ export class WizardManager implements IRouteableComponent {
       if (this.originalRegistrationData.proposalLead.address !== account || !this.dataSourceDeals.isUserAuthenticatedWithAddress(account)) {
         this.eventAggregator.publish("handleFailure", "Sorry, you are not authorized to modify this deal");
         canAccess = false;
-        this.router.load("/home");
+        this.router.load("/");
       }
     }
 
@@ -324,12 +312,75 @@ export class WizardManager implements IRouteableComponent {
     return isHidden;
   }
 
-  @watch<WizardManager>(x => x.router.isNavigating)
-  onNavigate(oldValue: boolean, newValue: boolean) {
-    if (newValue) {
-      const indexOfActiveStage = this.wizardService.getWizardState(this).indexOfActive;
-      this.additionalStageMetadata[indexOfActiveStage] = this.additionalStageMetadata[indexOfActiveStage] ?? {};
+  onSubmit = async () => {
+    try {
+      this.eventAggregator.publish("deal.saving", true);
+
+      const isMakeAnOfferWizard = this.wizardType === WizardType.makeAnOffer;
+
+      const creating = !this.dealId || isMakeAnOfferWizard;
+      let newDeal: DealTokenSwap;
+
+      try {
+        if (creating) {
+          // const newDeal = use this for the button link below
+          newDeal = await this.dealService.createDeal(this.registrationData);
+        } else {
+          await this.dealService.updateRegistration(this.dealId, this.registrationData);
+          // this.eventAggregator.publish("handleInfo", "Your deal registration was successfully saved");
+          newDeal = this.dealService.deals.get(this.dealId);
+          /**
+           * It is possible that the user has just made themselves no longer authorized to see the deal.
+           * Wait for a hopefully reasonable amount of time for the deal to be deleted in that case.
+           * Worst case is they will be booted out of the dashboard.
+           *
+           * If in that case they tried to go anywhere else in the wizard they should
+           * be booted out of the wizard.
+           */
+          await Utils.sleep(1000);
+        }
+
+        const dealIsAvailable = !!this.dealService.deals.get(newDeal.id);
+
+        const urlBase = `${window.location.protocol}//${window.location.host}/deal/${newDeal.id}`;
+
+        const congratulatePopupModel: IAlertModel = {
+          header: "Submitted!",
+          message:
+            `<p class='excitement'>Share your new deal proposal with your community!</p><p class='copyLink'>
+                <copy-to-clipboard-button text-to-copy='${urlBase}'>Copy Deal Link to the Clipboard</copy-to-clipboard-button></p>`,
+          confetti: true,
+          buttonTextPrimary: dealIsAvailable ? "Go to deal" : "close",
+          className: "congratulatePopup",
+        };
+
+        await this.alertService.showAlert(congratulatePopupModel);
+
+        this.router.load(dealIsAvailable ? `/deal/${newDeal.id}` : "/home");
+
+      } catch (error) {
+        this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
+      }
+    } finally {
+      this.eventAggregator.publish("deal.saving", false);
     }
+  };
+
+  /**
+   * This is a duplicate from DealTokenSwap@processTotalPrice
+   */
+  async getTokensTotalPrice(): Promise<number> {
+    const deal = this.registrationData;
+    const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];
+    const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
+    const tokensDetails = Utils.uniqBy(clonedTokens, "symbol");
+
+    await this.tokenService.getTokenPrices(tokensDetails);
+
+    return dealTokens.reduce((sum, item) => {
+      const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
+      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount || 0, item.decimals || 0) ?? 0));
+    }, 0);
   }
 
 }

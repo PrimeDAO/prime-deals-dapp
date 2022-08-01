@@ -59,7 +59,7 @@
     <pcard if.bind="daoData.tokens.length > 0" repeat.for="token of daoData.tokens">
       <div>
         <p class="tokenName">
-          <img height="32" src.bind="token.logoURI"/>
+          <img height="32" src.bind="token.logoURI" class="daoLogo"/>
           ${token.name || '-'}
         </p>
         <div class="detailsTable detailsTableInViewMode">

@@ -1,9 +1,9 @@
 // Importing external dependencies in this file breaks firebase function which import interfaces from here
 
 export interface IProposal {
-  title: string,
-  summary: string,
-  description: string;
+  title?: string,
+  summary?: string,
+  description?: string;
 }
 
 export enum Platforms {
@@ -53,7 +53,7 @@ export interface IDAO {
 }
 
 export interface IProposalLead {
-  address: string,
+  address?: string,
   email?: string;
   // dao?: IDAO /* Deprecated: Proposal lead does not need to be part of the a DAO */
 }
@@ -61,10 +61,22 @@ export interface IProposalLead {
 export interface IClause {
   id: string,
   text: string,
+  title:string
+}
+
+export interface IDaoplomatReward {
+  address: string,
+  rewardSplitPercentage: number
+}
+
+export interface IDaoplomatRewards {
+  percentage?: number
+  daoplomats: IDaoplomatReward[]
 }
 
 export interface ITerms {
   clauses: Array<IClause>,
+  daoplomatRewards?: IDaoplomatRewards
 }
 
 export interface IDealRegistrationTokenSwap {
@@ -126,6 +138,7 @@ export class DealRegistrationTokenSwap implements IDealRegistrationTokenSwap {
       clauses: [{
         id: "",
         text: "",
+        title: "",
       }],
     };
     this.keepAdminRights = true;

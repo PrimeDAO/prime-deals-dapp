@@ -33,6 +33,10 @@ export class FormAddressInput {
   ) {
   }
 
+  binding() {
+    this.valueChanged(this.value);
+  }
+
   valueChanged(newValue: string): void {
     if (!this.ignoreNewValue) {
       if (newValue?.trim().length) {
@@ -43,9 +47,7 @@ export class FormAddressInput {
           } else {
             const address = await this.ensService.getAddressForEns(newValue);
             if (address) {
-              this.ens = newValue;
-              this.ignoreNewValue = true;
-              this.value = address;
+              this.ens = address;
             } else {
               this.ens = "";
             }

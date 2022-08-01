@@ -35,7 +35,7 @@ export class App implements IRouteableComponent {
     this.eventAggregator.publish("handleException", new EventConfigException("Sorry, an unexpected error occurred", ex));
     return false;
   };
-  dealLoadingPromise: Promise<void>;
+  static dealLoadingPromise: Promise<void>;
 
   constructor(
     @IRouter private router: IRouter,
@@ -67,7 +67,7 @@ export class App implements IRouteableComponent {
     initializeMarkdown(this.domPurify);
 
     this.ethereumService.initialize(network ?? (inDev ? Networks.Rinkeby : Networks.Mainnet));
-    this.dealLoadingPromise = ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork)
+    App.dealLoadingPromise = ContractsDeploymentProvider.initialize(EthereumService.targetedNetwork)
       .then(async () => {
         this.contractsService.setup();
         this.tokenService.setup();
@@ -160,7 +160,7 @@ export class App implements IRouteableComponent {
     }, 1000);
 
     window.addEventListener("resize", () => { this.showingMobileMenu = false; });
-    this.dealLoadingPromise.then(() => this.handleOnOff(false));
+    App.dealLoadingPromise.then(() => this.handleOnOff(false));
   }
 
   private handleOnOff(onOff: boolean): void {
@@ -193,7 +193,7 @@ export class App implements IRouteableComponent {
   private handleScrollEvent(): void {
     if (!this.router.activeComponents[0]) return;
     this.storageService.ssSet(
-      this.getScrollStateKey(this.router.activeComponents[0].route.matching),
+      this.getScrollStateKey(this.router.activeNavigation.path),
       `${window.scrollX},${window.scrollY}`,
     );
   }
@@ -209,10 +209,10 @@ export class App implements IRouteableComponent {
 
   @watch<App>(x => x.router.isNavigating)
   onNavigate(): void {
-    if (this.router.activeComponents[0]?.route) {
+    if (this.router.activeNavigation?.path) {
       const position = this.storageService.ssGet(
         this.getScrollStateKey(
-          this.router.activeComponents[0].route.matching,
+          this.router.activeNavigation.path,
         ),
       );
       window.scrollTo(...position?.split(",").map(x => parseInt(x, 10)) || [0, 0]);

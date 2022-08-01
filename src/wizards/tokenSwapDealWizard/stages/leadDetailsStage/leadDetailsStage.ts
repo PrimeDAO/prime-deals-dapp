@@ -1,36 +1,44 @@
-import { IWizardState, WizardService } from "../../../services/WizardService";
+import { EnsService } from "services/EnsService";
+import { IsEthAddressOrEns } from "./../../../../resources/validation-rules/IsEthAddressOrEns";
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import { IEthereumService } from "../../../../services/EthereumService";
 import { IDealRegistrationTokenSwap, IProposalLead } from "../../../../entities/DealRegistrationTokenSwap";
-import { IDisposable, IEventAggregator } from "aurelia";
+import { IDisposable, IEventAggregator, inject } from "aurelia";
 import { processContent } from "@aurelia/runtime-html";
 import { autoSlot } from "../../../../resources/temporary-code";
 import { IValidationRules } from "@aurelia/validation";
-import { IsEmail, IsEthAddress } from "../../../../resources/validation-rules";
-import { newInstanceForScope } from "@aurelia/kernel";
+import { IsEmail } from "../../../../resources/validation-rules";
 import { IValidationController } from "@aurelia/validation-html";
 
 @processContent(autoSlot)
 export class LeadDetailsStage {
   wizardManager: any;
-  wizardState: IWizardState<IDealRegistrationTokenSwap>;
   isOpenProposalWizard = false;
   isMakeAnOfferWizard = false;
   ethAddress?: string;
-  proposalLead: IProposalLead;
+  proposalLead: IProposalLead = {};
   private accountSubscription: IDisposable;
 
   constructor(
-    public wizardService: WizardService,
-    @newInstanceForScope(IValidationController) public form: IValidationController,
+    @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
+    @IValidationController public form: IValidationController,
     @IEthereumService private ethereumService: IEthereumService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IValidationRules private validationRules: IValidationRules,
+    private ensService: EnsService,
   ) {
-  }
+    this.proposalLead = this.registrationData?.proposalLead;
+    this.validationRules
+      .on(this.proposalLead)
+      .ensure("address")
+      .required()
+      .withMessage("Wallet address or ENS is required")
+      .satisfiesRule(new IsEthAddressOrEns(this.ensService))
+      .withMessage("Please enter a valid ethereum address or ENS")
+      .ensure("email")
+      .satisfiesRule(new IsEmail())
+      .withMessage("Please enter a valid email address");
 
-  get isMakeAnOfferWizardAndKeepsAdminRights() {
-    return this.wizardState.registrationData.keepAdminRights && this.isMakeAnOfferWizard;
   }
 
   attaching(): void {
@@ -40,37 +48,21 @@ export class LeadDetailsStage {
     });
   }
 
+  get isMakeAnOfferWizardAndKeepsAdminRights() {
+    return this.registrationData?.keepAdminRights && this.isMakeAnOfferWizard;
+  }
+
   connectToWallet() {
     this.ethereumService.ensureConnected();
   }
 
-  detached() {
+  detaching() {
     this.accountSubscription.dispose();
   }
 
   load(stageMeta: IStageMeta): void {
-    this.wizardManager = this.wizardService.currentWizard;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
 
-    this.wizardState = this.wizardService.getWizardState(this.wizardManager);
-    this.proposalLead = this.wizardState.registrationData.proposalLead;
-
-    this.validationRules
-      .on(this.proposalLead)
-      .ensure("address")
-      .required()
-      .withMessage("Wallet address is required")
-      .satisfiesRule(new IsEthAddress())
-      .withMessage("Please enter a valid ethereum address")
-      .ensure("email")
-      .required()
-      .satisfiesRule(new IsEmail())
-      .withMessage("Please enter a valid email address");
-
-    this.wizardService.registerForm(
-      this.wizardManager,
-      this.form,
-    );
   }
 }
