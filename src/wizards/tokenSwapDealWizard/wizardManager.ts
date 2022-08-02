@@ -185,13 +185,8 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
-    const result = await this.controller.validate();
-    if (!result.valid) {
-      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
-      return;
-    }
     this.activeIndex++;
-    this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
+    await this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
   }
 
   /**
@@ -254,14 +249,8 @@ export class WizardManager implements IRouteableComponent {
   public async onStepperClick(index: number) {
     if (this.activeIndex === index) return;
 
-    const result = await this.controller.validate();
-
-    if (index < this.activeIndex || result.valid) {
-
-      this.activeIndex = index;
-      this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
-    }
-
+    this.activeIndex = index;
+    await this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
   }
 
   private getPreviousRoute(wizardType: WizardType) {
@@ -380,7 +369,7 @@ export class WizardManager implements IRouteableComponent {
   /**
    * This is a duplicate from DealTokenSwap@processTotalPrice
    */
-  async getTokensTotalPrice() {
+  async getTokensTotalPrice(): Promise<number> {
     const deal = this.registrationData;
     const dealTokens = deal.primaryDAO?.tokens.concat(deal.partnerDAO?.tokens ?? []) ?? [];
     const clonedTokens = dealTokens.map(tokenDetails => Object.assign({}, tokenDetails));
@@ -390,7 +379,7 @@ export class WizardManager implements IRouteableComponent {
 
     return dealTokens.reduce((sum, item) => {
       const tokenDetails: ITokenInfo | undefined = tokensDetails.find(tokenPrice => tokenPrice.symbol === item.symbol);
-      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount, item.decimals) ?? 0));
+      return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount || 0, item.decimals || 0) ?? 0));
     }, 0);
   }
 
