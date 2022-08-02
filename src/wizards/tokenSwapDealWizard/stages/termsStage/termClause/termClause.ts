@@ -1,6 +1,6 @@
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { ViewMode } from "../../../../../resources/elements/editingCard/editingCard";
-import { bindable, BindingMode, inject } from "aurelia";
+import { bindable, BindingMode, inject, observable } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationRules } from "@aurelia/validation";
@@ -22,7 +22,12 @@ export class TermClause {
   @bindable onSaved?: () => void;
   private editor = null;
   charValue = null;
-
+  @observable textareaRef:HTMLTextAreaElement = null;
+  textareaRefChanged(newValue){
+    if (!this.editor && newValue){
+      this.editorInit(this.textareaRef);
+    }
+  }
   constructor(
   @newInstanceForScope(IValidationController) form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
@@ -32,9 +37,26 @@ export class TermClause {
     this.form.addSubscriber(presenter);
   }
 
-  attached(){
+  attaching() {
+    this.validationRules
+      .on(this.clause)
+      .ensure("title")
+      .required()
+      .withMessage("Clause requires a title")
+      .ensure("text")
+      .required()
+      .withMessage("Clause requires a description")
+      .minLength(10)
+      .withMessage("Clause must be at least 10 characters");
+  }
+
+  onSave() {
+    return this.form.validate().then(result => result.valid);
+  }
+
+  editorInit (targetElement:HTMLTextAreaElement){
     Editor
-      .create( document.querySelector( `#editor${this.index}`), {
+      .create( targetElement, {
         link: {
           addTargetToExternalLinks: true,
           defaultProtocol: "https://",
@@ -70,27 +92,17 @@ export class TermClause {
           data.content = editor.data.processor.toView(viewContent);
         } );
 
+        if (this.shouldSetText()){
+          this.editor.setData(this.clause.text);
+        }
       } )
       .catch( error => {
         console.error( "There was a problem initializing the editor.", error );
       } );
   }
 
-  attaching() {
-    this.validationRules
-      .on(this.clause)
-      .ensure("title")
-      .required()
-      .withMessage("Clause requires a title")
-      .ensure("text")
-      .required()
-      .withMessage("Clause requires a description")
-      .minLength(10)
-      .withMessage("Clause must be at least 10 characters");
-  }
-
-  onSave() {
-    return this.form.validate().then(result => result.valid);
+  shouldSetText(){
+    return !this.editor.getData() && this.clause.text;
   }
 
   delete() {
