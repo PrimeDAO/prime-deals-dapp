@@ -66,7 +66,9 @@ export class TermsStage {
         const formsAreValid = await areFormsValid(this.termClauses.filter(Boolean).map(viewModel => viewModel.form));
         this.populateRegistrationData();
         return formsAreValid && !this.hasUnsavedChanges;
-      });
+      })
+      .withMessage("<no display>")
+    ;
 
     this.form.addObject(this.terms);
 
