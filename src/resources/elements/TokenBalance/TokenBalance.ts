@@ -1,6 +1,6 @@
 import { IErc20Token, ITokenInfo } from "services/TokenTypes";
 import { DisposableCollection } from "services/DisposableCollection";
-import { Address, EthereumService, IEthereumService } from "services/EthereumService";
+import { Address, IEthereumService } from "services/EthereumService";
 import { BigNumber } from "ethers";
 import { TokenService } from "services/TokenService";
 import { bindable, containerless, IEventAggregator } from "aurelia";
@@ -45,7 +45,7 @@ export class TokenBalance {
 
   private async initialize(): Promise<void> {
     this.account = this.ethereumService.defaultAccountAddress;
-    await Utils.waitUntilTrue(() => this.tokenService.tokenLists !== undefined);
+    await Utils.waitUntilTrue(() => this.tokenService.tokenLists !== undefined, 2500);
     this.contract = this.tokenService.getTokenContract(this.tokenAddress);
     this.tokenInfo = await this.tokenService.getTokenInfoFromAddress(this.tokenAddress);
     this.getBalance();
