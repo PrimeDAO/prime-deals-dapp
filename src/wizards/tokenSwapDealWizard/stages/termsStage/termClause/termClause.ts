@@ -15,7 +15,6 @@ import {marked} from "marked";
 export class TermClause {
   @bindable clause: IClause;
   @bindable index: number;
-  @bindable({mode: BindingMode.fromView}) form: IValidationController;
   @bindable({mode: BindingMode.twoWay}) viewMode: ViewMode = "edit";
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
@@ -29,25 +28,11 @@ export class TermClause {
     }
   }
   constructor(
-  @newInstanceForScope(IValidationController) form: IValidationController,
+    @newInstanceForScope(IValidationController) public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
     private presenter: PrimeErrorPresenter,
   ) {
-    this.form = form;
     this.form.addSubscriber(presenter);
-  }
-
-  attaching() {
-    this.validationRules
-      .on(this.clause)
-      .ensure("title")
-      .required()
-      .withMessage("Clause requires a title")
-      .ensure("text")
-      .required()
-      .withMessage("Clause requires a description")
-      .minLength(10)
-      .withMessage("Clause must be at least 10 characters");
   }
 
   onSave() {
@@ -95,6 +80,17 @@ export class TermClause {
         if (this.shouldSetText()){
           this.editor.setData(this.clause.text);
         }
+
+        this.validationRules
+          .on(this.clause)
+          .ensure("title")
+          .required()
+          .withMessage("Clause requires a title")
+          .ensure("text")
+          .required()
+          .withMessage("Clause requires a description")
+          .minLength(10)
+          .withMessage("Clause must be at least 10 characters");
       } )
       .catch( error => {
         console.error( "There was a problem initializing the editor.", error );
