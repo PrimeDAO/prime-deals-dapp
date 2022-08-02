@@ -185,6 +185,12 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
+    const result = await this.controller.validate();
+    if (!result.valid) {
+      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
+      return;
+    }
+
     this.activeIndex++;
     await this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
   }
