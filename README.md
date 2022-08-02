@@ -260,3 +260,4 @@ It is written mostly in Typescript, HTML and SCSS, and is bundled using Webpack.
 
 ## Community
 [Join our Discord](https://discord.gg/primedao) and ask how you can get involved with PrimeDAO.
+ 
