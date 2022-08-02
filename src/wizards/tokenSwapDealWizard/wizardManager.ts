@@ -328,6 +328,7 @@ export class WizardManager implements IRouteableComponent {
       let newDeal: DealTokenSwap;
 
       try {
+        console.info(`Saving deal (Deal ID: ${this.dealId})->`, this.registrationData );
         if (creating) {
           // const newDeal = use this for the button link below
           newDeal = await this.dealService.createDeal(this.registrationData);
@@ -365,6 +366,7 @@ export class WizardManager implements IRouteableComponent {
         this.router.load(dealIsAvailable ? `/deal/${newDeal.id}` : "/home");
 
       } catch (error) {
+        console.error(error);
         this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
       }
     } finally {
