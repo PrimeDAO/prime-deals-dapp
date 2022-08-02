@@ -89,6 +89,7 @@ export class TermsStage {
     this.termClauses.splice(index, 1);
     this.registrationData.terms.clauses.splice(index, 1);
     this.stageMetadata.termsViewModes.splice(index, 1);
+    this.checkedForUnsavedChanges();
   }
 
   addClause() {
@@ -222,5 +223,9 @@ export class TermsStage {
         rewardSplitPercentage: daoplomat.rewardSplitPercentage / 100 * (this.daoplomatRewards.percentage / 100),
       })),
     };
+  }
+
+  setClause(index: number, clause: IClause){
+    this.terms.clauses[index] = clause;
   }
 }
