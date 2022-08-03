@@ -163,7 +163,9 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
-        await App.dealLoadingPromise;
+        if (!App.initialized){
+          await App.dealLoadingPromise;
+        }
         this.originalRegistrationData = await this.getDeal(dealId);
       }
       /**
