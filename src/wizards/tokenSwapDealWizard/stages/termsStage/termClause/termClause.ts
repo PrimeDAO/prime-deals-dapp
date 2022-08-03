@@ -19,9 +19,10 @@ export class TermClause {
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: (clause: IClause) => void;
+  @observable textareaRef: HTMLTextAreaElement = null;
+  @bindable clauseError: string = "";
   private editor = null;
   charValue = null;
-  @observable textareaRef: HTMLTextAreaElement = null;
 
   textareaRefChanged(newValue) {
     if (!this.editor && newValue) {
@@ -39,10 +40,21 @@ export class TermClause {
 
   async onSave() {
     const isValid = await this.form.validate().then(result => result.valid);
+    console.log("isValid", isValid);
     if (isValid) {
       this.onSaved?.(this.clause);
     }
     return isValid;
+  }
+
+  setEditorValidationState(state: "valid" | "invalid") {
+    console.log("plah", state, this.editor, document.querySelector(".ck.ck-editor") );
+    const element = document.querySelector(".ck.ck-editor");
+    if (state === "valid") {
+      element.classList.remove("isInvalid");
+      this.clauseError = "";
+    } else {element.classList.add("isInvalid");
+      this.clauseError = "Clause requires a description, at least 10 characters long";}
   }
 
   editorInit(targetElement: HTMLTextAreaElement) {
@@ -87,24 +99,34 @@ export class TermClause {
           this.editor.setData(this.clause.text);
         }
 
-        this.validationRules
-          .on(this.clause)
-          .ensure("title")
-          .required()
-          .withMessage("Clause requires a title")
-          .ensure("text")
-          .required()
-          .withMessage("Clause requires a description")
-          .minLength(10)
-          .withMessage("Clause must be at least 10 characters");
       })
       .catch(error => {
         console.error("There was a problem initializing the editor.", error);
       });
   }
 
+  attaching() {
+    this.validationRules
+      .on(this.clause)
+      .ensure("title")
+      .required()
+      .withMessage("Clause requires a title")
+      .ensure("text")
+      .satisfies(async (text) => {
+        console.log("this.clause", this.clause);
+        if (this.clause.text.length > 17){
+          this.setEditorValidationState("valid");
+        } else {
+          this.setEditorValidationState("invalid");
+        }
+        return text.length > 17;
+      })
+      .withMessage("Clause requires a description");
+    this.form.addObject(this.clause);
+  }
+
   shouldSetText() {
-    return !this.editor.getData() && this.clause.text;
+    return !this.editor.getData() && this.clause?.text;
   }
 
   delete() {

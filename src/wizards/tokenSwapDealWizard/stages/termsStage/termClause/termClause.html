@@ -32,7 +32,11 @@
         max-length="125"
         show-counter
       >
-        <pinput-text view-model.ref="clauseTitleInputViewModel" max="125" value.bind="clause.title & validate"></pinput-text>
+        <pinput-text
+          view-model.ref="clauseTitleInputViewModel"
+          max="125"
+          value.bind="clause.title & validate"
+        ></pinput-text>
       </pform-input>
       <pform-input
         class="wizardFormInput"
@@ -52,6 +56,7 @@
           id="${`editor-${index}`}"
         ></textarea>
       </pform-input>
+      <p if.bind="clauseError">${clauseError}</p>
     </div>
   </editing-card>
 </template>

@@ -21,6 +21,13 @@ term-clause {
     box-shadow: 0 0 0 1px $Secondary02;
   }
 
+  .ck.ck-editor {
+    &.isInvalid {
+      border: 1px solid $Red;
+      border-radius: $border-radius-normal
+    }
+  }
+
   .ckEditor__output,
   .ck.ck-content {
     color: $Neutral03;
