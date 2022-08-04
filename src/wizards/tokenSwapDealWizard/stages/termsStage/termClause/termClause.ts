@@ -26,6 +26,7 @@ export class TermClause {
 
   textareaRefChanged(newValue) {
     if (!this.editor && newValue) {
+      console.log("this.clause", this.clause);
       this.editorInit(this.textareaRef);
     }
   }
@@ -108,6 +109,7 @@ export class TermClause {
   }
 
   attaching() {
+    this.form.addObject(this.clause);
     this.validationRules
       .on(this.clause)
       .ensure("title")
@@ -123,7 +125,7 @@ export class TermClause {
         }
         return this.clause.text.length > 17;
       });
-    this.form.addObject(this.clause);
+
   }
 
   shouldSetText() {
