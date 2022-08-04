@@ -76,6 +76,11 @@ term-clause {
     resize: vertical;
   }
 
+  .ckeditor-error {
+    color: $Red;
+    transform: translateY(-15px)
+  }
+
   .formInputLabelTitle {
     line-height: 33px;
   }

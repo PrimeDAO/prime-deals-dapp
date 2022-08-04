@@ -48,7 +48,9 @@ export class TermClause {
   }
 
   setEditorValidationState(state: "valid" | "invalid") {
-    console.log("plah", state, this.editor, document.querySelector(".ck.ck-editor") );
+    if (this.viewMode === "view"){
+      return;
+    }
     const element = document.querySelector(".ck.ck-editor");
     if (state === "valid") {
       element.classList.remove("isInvalid");
@@ -112,16 +114,15 @@ export class TermClause {
       .required()
       .withMessage("Clause requires a title")
       .ensure("text")
-      .satisfies(async (text) => {
+      .satisfies(async () => {
         console.log("this.clause", this.clause);
         if (this.clause.text.length > 17){
           this.setEditorValidationState("valid");
         } else {
           this.setEditorValidationState("invalid");
         }
-        return text.length > 17;
-      })
-      .withMessage("Clause requires a description");
+        return this.clause.text.length > 17;
+      });
     this.form.addObject(this.clause);
   }
 
