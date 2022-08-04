@@ -36,6 +36,7 @@ export class App implements IRouteableComponent {
     return false;
   };
   static dealLoadingPromise: Promise<void>;
+  static initialized = false;
 
   constructor(
     @IRouter private router: IRouter,
@@ -75,6 +76,7 @@ export class App implements IRouteableComponent {
         this.tokenService.initialize();
         this.ethereumService.connectToConnectedProvider();
         await this.dealsService.initialize();
+        App.initialized = true;
       });
   }
 
