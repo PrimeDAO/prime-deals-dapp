@@ -11,8 +11,6 @@ import "./termsStage.scss";
 import { TermClause } from "./termClause/termClause";
 import { ViewMode } from "../../../../resources/elements/editingCard/editingCard";
 import { Controller, IContainer, inject } from "aurelia";
-// import { areFormsValid } from "../../../../services/ValidationService";
-import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationController } from "@aurelia/validation-html";
 import { IValidationRules } from "@aurelia/validation";
 import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
@@ -23,7 +21,6 @@ import { areFormsValid } from "../../../../services/ValidationService";
 
 @inject()
 export class TermsStage {
-  // public wizardManager: any;
   public wizardState: any;
 
   termClauses: TermClause[] = [];
@@ -64,7 +61,6 @@ export class TermsStage {
       .satisfies(async () => {
         this.checkedForUnsavedChanges();
         const formsAreValid = await areFormsValid(this.termClauses.filter(Boolean).map(viewModel => viewModel.form));
-        this.populateRegistrationData();
         return formsAreValid && !this.hasUnsavedChanges;
       })
       .withMessage("<no display>")
@@ -72,7 +68,7 @@ export class TermsStage {
 
     this.form.addObject(this.terms);
 
-    this.bindDaoplomatRewards();
+    this.daoplomatRewards = this.registrationData.terms.daoplomatRewards;
   }
 
   async bound(context: Controller, parentContext: Controller) {
@@ -195,37 +191,7 @@ export class TermsStage {
     this.form.addObject(this.daoplomatRewards);
   }
 
-  private bindDaoplomatRewards() {
-    if (!this.terms.daoplomatRewards) {
-      return;
-    }
-
-    this.daoplomatRewards = {
-      percentage: this.terms.daoplomatRewards.percentage * 100,
-      daoplomats: this.terms.daoplomatRewards?.daoplomats.map(daoplomat => {
-        daoplomat.rewardSplitPercentage = daoplomat.rewardSplitPercentage / this.terms.daoplomatRewards.percentage * 100;
-        return daoplomat;
-      }),
-    };
-    this.addDaoplomatRewardsValidation();
-    this.daoplomatRewards.daoplomats.forEach(this.addDaoplomatValidation.bind(this));
-  }
-
-  private populateRegistrationData() {
-    if (!this.daoplomatRewards) {
-      return;
-    }
-
-    this.registrationData.terms.daoplomatRewards = {
-      percentage: this.daoplomatRewards.percentage / 100,
-      daoplomats: this.daoplomatRewards.daoplomats.map(daoplomat => ({
-        ...daoplomat,
-        rewardSplitPercentage: daoplomat.rewardSplitPercentage / 100 * (this.daoplomatRewards.percentage / 100),
-      })),
-    };
-  }
-
-  setClause(index: number, clause: IClause){
+  setClause(index: number, clause: IClause) {
     this.terms.clauses[index] = clause;
   }
 }
