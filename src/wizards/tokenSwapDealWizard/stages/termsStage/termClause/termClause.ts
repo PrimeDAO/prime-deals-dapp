@@ -100,35 +100,32 @@ export class TermClause {
           this.editor.setData(this.clause.text);
         }
 
+        this.validationRules
+          .on(this.clause)
+          .ensure("title")
+          .required()
+          .withMessage("Clause requires a title")
+          .ensure("text")
+          .required()
+          .withMessage("Clause requires a description")
+          .minLength(10)
+          .withMessage("Clause must be at least 10 characters");
+        // .satisfies(async () => { // TODO create a component that outputs some text instead of having the ckeditor code in this stage's class
+        //   console.log("this.clause", this.clause);
+        //   // THIS.CLAUSE.TITLE  has value here
+        //   if (this.clause.text.length > 17){
+        //     this.setEditorValidationState("valid");
+        //   } else {
+        //     this.setEditorValidationState("invalid");
+        //   }
+        //   return this.clause.text.length > 17;
+        // });
+        this.form.addObject(this.clause);
+
       })
       .catch(error => {
         console.error("There was a problem initializing the editor.", error);
       });
-  }
-
-  attaching() {
-    console.log("this.clause", this.clause);
-    this.validationRules
-      .on(this.clause)
-      .ensure("title")
-      .satisfies(t => {
-        // WHY YOU EMPTY !?
-        return t && t.length > 0;
-      })
-      .withMessage("Clause requires a title")
-      .ensure("text")
-      .satisfies(async () => {
-        console.log("this.clause", this.clause);
-        // THIS.CLAUSE.TITLE  has value here
-        if (this.clause.text.length > 17){
-          this.setEditorValidationState("valid");
-        } else {
-          this.setEditorValidationState("invalid");
-        }
-        return this.clause.text.length > 17;
-      });
-    this.form.addObject(this.clause);
-
   }
 
   shouldSetText() {
