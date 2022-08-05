@@ -27,10 +27,20 @@ export class SubmitStage {
   async load(stageMeta: IStageMeta) {
     this.isOpenProposalLike = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
     this.isMakeAnOfferWizard = stageMeta.wizardType === WizardType.makeAnOffer;
+
+    this.checkDaoplomatRewards();
   }
+
   async bound(context: Controller, parentContext: Controller) {
     const wizardManager = parentContext.parent.viewModel as WizardManager;
     this.tokensTotal = await wizardManager.getTokensTotalPrice();
   }
 
+  private checkDaoplomatRewards() {
+    const allDaoplomatsHaveCorrectData = this.submitData.terms.daoplomatRewards.daoplomats
+      .every(daoplomat => daoplomat.rewardSplitPercentage && daoplomat.address);
+    if (!this.submitData.terms.daoplomatRewards.percentage || !allDaoplomatsHaveCorrectData) {
+      delete this.submitData.terms.daoplomatRewards;
+    }
+  }
 }

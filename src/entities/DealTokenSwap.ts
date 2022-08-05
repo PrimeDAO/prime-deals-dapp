@@ -677,12 +677,20 @@ export class DealTokenSwap implements IDeal {
     const {tokens, pathTo, pathFrom} = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
     const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
+    const daoplomatRewards = this.registrationData.terms.daoplomatRewards;
+    const daoplomats = daoplomatRewards.daoplomats.map(daoplomat => daoplomat.address);
+    const rewards = [
+      [parseInt((daoplomatRewards.percentage * 100).toFixed(0))],
+      daoplomatRewards.daoplomats.map(daoplomat => parseInt((daoplomat.rewardSplitPercentage * 100).toFixed(0))),
+    ];
 
     const dealParameters = [
       daoAddresses,
       tokens,
       pathFrom,
       pathTo,
+      daoplomats,
+      rewards,
       metadata,
       deadline,
     ];
