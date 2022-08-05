@@ -38,6 +38,7 @@
           value.bind="clause.title & validate"
         ></pinput-text>
       </pform-input>
+
       <pform-input
         class="wizardFormInput"
         data-test="clauseFormInput"
@@ -49,14 +50,17 @@
         show-counter
         char-value.bind="charValue"
       >
-        <textarea
+        <pckeditor-text
+          value.bind="clause.text & validate"
+          validation-state.bind="isEditorValid ? '' : 'error'"
+        ></pckeditor-text>
+        <!-- <textarea
           ref="textareaRef"
           placeholder="Text describing the clause"
           rows="4"
           id="${`editor-${index}`}"
-        ></textarea>
+        ></textarea> -->
       </pform-input>
-      <p if.bind="clauseError" class="ckeditor-error">${clauseError}</p>
     </div>
   </editing-card>
 </template>

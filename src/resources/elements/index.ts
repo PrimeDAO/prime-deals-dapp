@@ -15,6 +15,7 @@ export * from "./horizontal-scroller/horizontal-scroller";
 export * from "./loading-dots/loading-dots";
 export * from "./markdown/markdown";
 export * from "./modalscreen/modalscreen";
+export * from "./ckEditor/pckeditor-text";
 export * from "./numericInput/numericInput";
 export * from "./popupNotifications/popupNotifications";
 export * from "./primeDesignSystem";

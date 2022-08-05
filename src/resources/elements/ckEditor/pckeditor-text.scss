@@ -1,0 +1,12 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
+pckeditor-text {
+    position: relative;
+
+    .feedback-icon {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        color: $Red;
+    }
+}
