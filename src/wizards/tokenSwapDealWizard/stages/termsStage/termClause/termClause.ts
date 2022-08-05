@@ -26,7 +26,6 @@ export class TermClause {
 
   textareaRefChanged(newValue) {
     if (!this.editor && newValue) {
-      console.log("this.clause", this.clause);
       this.editorInit(this.textareaRef);
     }
   }
@@ -41,7 +40,6 @@ export class TermClause {
 
   async onSave() {
     const isValid = await this.form.validate().then(result => result.valid);
-    console.log("isValid", isValid);
     if (isValid) {
       this.onSaved?.(this.clause);
     }
@@ -109,15 +107,19 @@ export class TermClause {
   }
 
   attaching() {
-    this.form.addObject(this.clause);
+    console.log("this.clause", this.clause);
     this.validationRules
       .on(this.clause)
       .ensure("title")
-      .required()
+      .satisfies(t => {
+        // WHY YOU EMPTY !?
+        return t && t.length > 0;
+      })
       .withMessage("Clause requires a title")
       .ensure("text")
       .satisfies(async () => {
         console.log("this.clause", this.clause);
+        // THIS.CLAUSE.TITLE  has value here
         if (this.clause.text.length > 17){
           this.setEditorValidationState("valid");
         } else {
@@ -125,6 +127,7 @@ export class TermClause {
         }
         return this.clause.text.length > 17;
       });
+    this.form.addObject(this.clause);
 
   }
 
