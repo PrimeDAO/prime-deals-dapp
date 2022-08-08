@@ -7,9 +7,6 @@ import { IValidationRules } from "@aurelia/validation";
 import {
   PrimeErrorPresenter,
 } from "../../../../../resources/elements/primeDesignSystem/validation/primeErrorPresenter";
-// import Editor from "ckeditor5-custom-build/build/ckeditor";
-// import "./custom.css";
-// import { marked } from "marked";
 
 @inject()
 export class TermClause {
@@ -26,7 +23,7 @@ export class TermClause {
   async revalidateClause(val){
     console.log("fefer", val);
     const v = await this.form.revalidateErrors();
-    console.log("vs", v);
+    console.log("v", v);
   }
 
   constructor(
