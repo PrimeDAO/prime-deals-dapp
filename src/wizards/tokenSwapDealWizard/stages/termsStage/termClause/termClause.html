@@ -48,18 +48,13 @@
         max-length="500"
         is-vertical
         show-counter
-        char-value.bind="charValue"
+        char-value.bind="charValueParent"
       >
         <pckeditor-text
           value.bind="clause.text & validate"
           validation-state.bind="isEditorValid ? '' : 'error'"
+          char-value.bind="charValueParent"
         ></pckeditor-text>
-        <!-- <textarea
-          ref="textareaRef"
-          placeholder="Text describing the clause"
-          rows="4"
-          id="${`editor-${index}`}"
-        ></textarea> -->
       </pform-input>
     </div>
   </editing-card>

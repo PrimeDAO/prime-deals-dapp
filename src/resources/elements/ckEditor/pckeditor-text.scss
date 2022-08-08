@@ -9,4 +9,11 @@ pckeditor-text {
         bottom: 10px;
         color: $Red;
     }
+
+    >.isInvalid {
+        .ck.ck-editor {
+            border: 1px solid $Red;
+            border-radius: $border-radius-normal
+        }
+    }
 }

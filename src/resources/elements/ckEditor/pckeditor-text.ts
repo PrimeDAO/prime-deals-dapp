@@ -9,8 +9,8 @@ export class PCkeditorText {
   private editorRef: HTMLDivElement;
   @bindable validationState?: ValidationState;
   @bindable({mode: BindingMode.twoWay}) value: string;
+  @bindable({ mode: BindingMode.twoWay}) charValue = 0;
   private editor = null;
-  charValue = null;
 
   // textareaRefChanged(newValue) {
   //   if (!this.editor && newValue) {
@@ -21,8 +21,8 @@ export class PCkeditorText {
   attaching(){
     console.log("this.editorRef", this.editorRef);
     console.log("validationState", this.validationState);
-    if (this.editorRef) {
-
+    console.log("this.value", this.value);
+    if (!this.editor && this.editorRef) {
       Editor
         .create(this.editorRef, {
           link: {
@@ -59,6 +59,10 @@ export class PCkeditorText {
             const viewContent = marked(textContent);
             data.content = editor.data.processor.toView(viewContent);
           });
+
+          if (this.value.length > 0) {
+            this.editor.setData(this.value);
+          }
 
         });
     }

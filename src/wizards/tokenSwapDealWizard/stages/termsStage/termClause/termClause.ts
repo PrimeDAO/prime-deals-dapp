@@ -1,6 +1,6 @@
 import { IClause } from "entities/DealRegistrationTokenSwap";
 import { ViewMode } from "../../../../../resources/elements/editingCard/editingCard";
-import { bindable, BindingMode, inject, observable } from "aurelia";
+import { bindable, BindingMode, inject } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 import { newInstanceForScope } from "@aurelia/kernel";
 import { IValidationRules } from "@aurelia/validation";
@@ -19,11 +19,10 @@ export class TermClause {
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: (clause: IClause) => void;
-  @observable textareaRef: HTMLTextAreaElement = null;
-  @bindable clauseError: string = "";
+  // @observable textareaRef: HTMLTextAreaElement = null;
+  // @bindable clauseError: string = "";
+  @bindable charValueParent = 0;
   private editor = null;
-  charValue = null;
-  isEditorValid:boolean = null;
 
   textareaRefChanged(newValue) {
     if (!this.editor && newValue) {
@@ -41,10 +40,7 @@ export class TermClause {
 
   async onSave() {
     const isValid = await this.form.validate().then(result => result.valid);
-    this.isEditorValid = isValid;
-    if (isValid) {
-      this.onSaved?.(this.clause);
-    }
+    this.onSaved?.(this.clause);
     return isValid;
   }
 
@@ -69,7 +65,7 @@ export class TermClause {
       .ensure("text")
       .required()
       .withMessage("Clause requires a description")
-      .minLength(10)
+      .minLength(17)
       .withMessage("Clause must be at least 10 characters");
   }
 
@@ -143,9 +139,9 @@ export class TermClause {
   //     });
   // }
 
-  shouldSetText() {
-    return !this.editor.getData() && this.clause?.text;
-  }
+  // shouldSetText() {
+  //   return !this.editor.getData() && this.clause?.text;
+  // }
 
   delete() {
     if (this.onDelete()) {
