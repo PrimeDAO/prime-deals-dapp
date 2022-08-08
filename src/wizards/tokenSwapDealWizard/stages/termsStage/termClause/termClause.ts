@@ -13,21 +13,20 @@ import {
 
 @inject()
 export class TermClause {
-  @bindable clause: IClause;
+  @bindable({ callback: "revalidateClause" }) clause: IClause;
   @bindable index: number;
   @bindable({mode: BindingMode.twoWay}) viewMode: ViewMode = "edit";
   @bindable hideDeleteButton: boolean;
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: (clause: IClause) => void;
-  // @observable textareaRef: HTMLTextAreaElement = null;
-  // @bindable clauseError: string = "";
   @bindable charValueParent = 0;
   private editor = null;
+  isEditorValid:boolean = null;
 
-  textareaRefChanged(newValue) {
-    if (!this.editor && newValue) {
-      // this.editorInit(this.textareaRef);
-    }
+  async revalidateClause(val){
+    console.log("fefer", val);
+    const v = await this.form.revalidateErrors();
+    console.log("vs", v);
   }
 
   constructor(
@@ -40,21 +39,12 @@ export class TermClause {
 
   async onSave() {
     const isValid = await this.form.validate().then(result => result.valid);
-    this.onSaved?.(this.clause);
+    this.isEditorValid = isValid;
+    if (isValid) {
+      this.onSaved?.(this.clause);
+    }
     return isValid;
   }
-
-  // setEditorValidationState(state: "valid" | "invalid") {
-  //   if (this.viewMode === "view"){
-  //     return;
-  //   }
-  //   const element = document.querySelector(".ck.ck-editor");
-  //   if (state === "valid") {
-  //     element.classList.remove("isInvalid");
-  //     this.clauseError = "";
-  //   } else {element.classList.add("isInvalid");
-  //     this.clauseError = "Clause requires a description, at least 10 characters long";}
-  // }
 
   attaching(){
     this.validationRules
@@ -69,79 +59,9 @@ export class TermClause {
       .withMessage("Clause must be at least 10 characters");
   }
 
-  // editorInit(targetElement: HTMLTextAreaElement) {
-  //   Editor
-  //     .create(targetElement, {
-  //       link: {
-  //         addTargetToExternalLinks: true,
-  //         defaultProtocol: "https://",
-  //       },
-  //       toolbar: {
-  //         items: ["bold", "italic", "underline", "link", "bulletedList", "numberedList"],
-  //       },
-  //     })
-  //     .then(editor => {
-  //       this.editor = editor;
-  //       editor.plugins.get("WordCount").on("update", (evt, stats) => {
-  //         this.charValue = stats.characters;
-  //         const isOverLimit = stats.characters > 500;
-  //         if (isOverLimit) {
-  //           const trimmedString = this.editor.getData().slice(0, 500);
-  //           editor.setData(trimmedString);
-  //         }
-  //       });
-
-  //       editor.model.document.on("change:data", () => {
-  //         const data = this.editor.getData();
-  //         this.clause = {...this.clause, text: data};
-  //       });
-
-  //       editor.editing.view.document.on("clipboardInput", (evt, data) => {
-  //         const dataTransfer = data.dataTransfer;
-  //         const textContent = dataTransfer.getData("text/plain");
-
-  //         if (!textContent) {
-  //           return;
-  //         }
-  //         const viewContent = marked(textContent);
-  //         data.content = editor.data.processor.toView(viewContent);
-  //       });
-
-  //       if (this.shouldSetText()) {
-  //         this.editor.setData(this.clause.text);
-  //       }
-
-  //       this.validationRules
-  //         .on(this.clause)
-  //         .ensure("title")
-  //         .required()
-  //         .withMessage("Clause requires a title")
-  //         .ensure("text")
-  //         .required()
-  //         .withMessage("Clause requires a description")
-  //         .minLength(10)
-  //         .withMessage("Clause must be at least 10 characters");
-  //       // .satisfies(async () => { // TODO create a component that outputs some text instead of having the ckeditor code in this stage's class
-  //       //   console.log("this.clause", this.clause);
-  //       //   // THIS.CLAUSE.TITLE  has value here
-  //       //   if (this.clause.text.length > 17){
-  //       //     this.setEditorValidationState("valid");
-  //       //   } else {
-  //       //     this.setEditorValidationState("invalid");
-  //       //   }
-  //       //   return this.clause.text.length > 17;
-  //       // });
-  //       this.form.addObject(this.clause);
-
-  //     })
-  //     .catch(error => {
-  //       console.error("There was a problem initializing the editor.", error);
-  //     });
-  // }
-
-  // shouldSetText() {
-  //   return !this.editor.getData() && this.clause?.text;
-  // }
+  shouldSetText() {
+    return !this.editor.getData() && this.clause?.text;
+  }
 
   delete() {
     if (this.onDelete()) {
