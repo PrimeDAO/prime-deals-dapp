@@ -155,8 +155,8 @@
                         <td class="submitContentLabel">Total Value (USD)</td>
                       </tr>
                       <tr>
-                        <td>${submitData.terms.daoplomatRewards.percentage * 100}%</td>
-                        <td>~${submitData.terms.daoplomatRewards.percentage * tokensTotal | currency}</td>
+                        <td>${submitData.terms.daoplomatRewards.percentage| number}%</td>
+                        <td>~${submitData.terms.daoplomatRewards.percentage/100 * tokensTotal | currency}</td>
                       </tr>
                     </table>
 
@@ -169,13 +169,8 @@
                       <template repeat.for="daoplomat of submitData.terms.daoplomatRewards.daoplomats">
                         <etherscanlink address.bind="daoplomat.address" text="${daoplomat.address | smallHexString}">
                         </etherscanlink>
-                        <span
-                          >${daoplomat.rewardSplitPercentage / submitData.terms.daoplomatRewards.percentage *
-                          100}%</span
-                        >
-                        <span class="splitPriceValue"
-                          >~${daoplomat.rewardSplitPercentage * tokensTotal | currency}</span
-                        >
+                        <span>${daoplomat.rewardSplitPercentage | number}%</span>
+                        <span class="splitPriceValue">~${(daoplomat.rewardSplitPercentage /100 * submitData.terms.daoplomatRewards.percentage)/100 * tokensTotal | currency}</span>
                       </template>
                     </div>
                   </pcard>
