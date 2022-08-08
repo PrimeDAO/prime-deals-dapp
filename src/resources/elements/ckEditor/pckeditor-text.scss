@@ -16,4 +16,20 @@ pckeditor-text {
             border-radius: $border-radius-normal
         }
     }
+
+    .ck.ck-editor:focus-within {
+        border-radius: $border-radius-normal;
+        box-shadow: 0 0 0 1px $Secondary02;
+    }
+
+    .ck.ck-content {
+        color: $Neutral03;
+        @include ckeditor-content;
+    }
+
+    .ck.ck-editor__main,
+    .ck.ck-content {
+        min-height: 110px;
+        resize: vertical;
+    }
 }
