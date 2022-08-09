@@ -1,11 +1,13 @@
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { availableSocialMedias } from "../../dealWizardTypes";
-import { bindable } from "aurelia";
+import { bindable, inject } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 import { FirestoreService } from "services/FirestoreService";
 import { IDAOsData } from "services";
 import { ethers } from "ethers";
 import { Utils } from "services/utils";
+
+@inject()
 export class DaoStageContent {
   @bindable name: string;
   @bindable disabled = false;

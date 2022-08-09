@@ -125,7 +125,16 @@
     <div
       ref="totalFunds"
       class="infoSection"
-      if.bind="deal.primaryDao.tokens.length && deal.totalPrice"
+      if.bind="deal.totalValueAtExecution"
+    >
+      <span class="bodySmallTextBold infoTitle">Total value at execution</span>
+      ${deal.totalValueAtExecution | currency}
+    </div>
+
+    <div
+      ref="totalFunds"
+      class="infoSection"
+      if.bind="deal.totalPrice && !deal.totalValueAtExecution"
     >
       <span class="bodySmallTextBold infoTitle">Total funds value</span>
       ${deal.totalPrice | currency}
@@ -154,7 +163,7 @@
       <span class="bodySmallTextBold infoTitle">Total DAOplomat Reward</span>
       <span>
         <span class="reward-percent">
-          ${deal.registrationData.terms.daoplomatRewards.percentage * 100}
+          ${deal.registrationData.terms.daoplomatRewards.percentage}
         </span>
         <i class="fas fa-angle-down arrow"></i>
       </span>
@@ -165,11 +174,11 @@
           class="representative bodySmallText"
           repeat.for="daoplomat of deal.registrationData.terms.daoplomatRewards.daoplomats"
         >
-          <etherscanlink 
-            class="representative-dao" 
+          <etherscanlink
+            class="representative-dao"
             address.bind="daoplomat.address"
             text="${daoplomat.address | smallHexString}"></etherscanlink>
-          <span class="reward-percent">${daoplomat.rewardSplitPercentage * 100}</span>
+          <span class="reward-percent">${daoplomat.rewardSplitPercentage}</span>
         </p>
       </div>
     </div>

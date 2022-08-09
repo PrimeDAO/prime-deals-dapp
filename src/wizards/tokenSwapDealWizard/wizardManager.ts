@@ -163,7 +163,9 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
-        await App.dealLoadingPromise;
+        if (!App.initialized){
+          await App.dealLoadingPromise;
+        }
         this.originalRegistrationData = await this.getDeal(dealId);
       }
       /**
@@ -185,6 +187,12 @@ export class WizardManager implements IRouteableComponent {
   }
 
   public async next() {
+    const result = await this.controller.validate();
+    if (!result.valid) {
+      this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
+      return;
+    }
+
     this.activeIndex++;
     await this.router.load(this.root.replace(/\/+$/g, "") + "/" + this.stages[this.activeIndex].route);
   }
@@ -322,6 +330,7 @@ export class WizardManager implements IRouteableComponent {
       let newDeal: DealTokenSwap;
 
       try {
+        console.info(`Saving deal (Deal ID: ${this.dealId})->`, this.registrationData );
         if (creating) {
           // const newDeal = use this for the button link below
           newDeal = await this.dealService.createDeal(this.registrationData);
@@ -359,6 +368,7 @@ export class WizardManager implements IRouteableComponent {
         this.router.load(dealIsAvailable ? `/deal/${newDeal.id}` : "/home");
 
       } catch (error) {
+        console.error(error);
         this.eventAggregator.publish("handleFailure", `There was an error while creating the Deal: ${error}`);
       }
     } finally {
