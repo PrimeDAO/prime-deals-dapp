@@ -7,7 +7,13 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { TokenService } from "services/TokenService";
 import { ITokenInfo } from "services/TokenTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { IDAO, IDealRegistrationTokenSwap, IProposalLead, IToken } from "entities/DealRegistrationTokenSwap";
+import {
+  IDAO,
+  IDaoplomatRewards,
+  IDealRegistrationTokenSwap,
+  IProposalLead,
+  IToken,
+} from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { IDisposable, IEventAggregator, inject } from "aurelia";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
@@ -677,7 +683,8 @@ export class DealTokenSwap implements IDeal {
     const {tokens, pathTo, pathFrom} = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
     const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
-    const daoplomatRewards = this.registrationData.terms.daoplomatRewards;
+
+    const daoplomatRewards: IDaoplomatRewards = this.registrationData.terms.daoplomatRewards ?? { daoplomats: [], percentage: 0};
     const daoplomats = daoplomatRewards.daoplomats.map(daoplomat => daoplomat.address);
     const rewards = [
       [parseInt((daoplomatRewards.percentage * 100).toFixed(0))],
