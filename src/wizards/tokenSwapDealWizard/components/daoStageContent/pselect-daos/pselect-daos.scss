@@ -3,39 +3,55 @@
 pselect {
   width: 100%;
 
-  .ss-main>.ss-content>.ss-search {
-    position: absolute;
-    margin-left: 0;
-    margin-right: 0;
-    border: none;
-    height: 45px;
-    & > input {
-      padding-left: 0;
-      color: $White;
+  .ss-main{
+    .ss-single-selected {
+      align-items: center;
+      .ss-arrow {
+        display: none;
+      }
+      &::after {
+        content: "\f002";
+        font-family: "Font Awesome 5 Free";
+        font-weight: bold;
+        font-size: 17.5px;
+        color: $White;
+      }
     }
-    &::before {
-      display: none;
+    .ss-content {
+      .ss-search {
+        position: absolute;
+        margin-left: 0;
+        margin-right: 0;
+        border: none;
+        height: 45px;
+        & > input {
+          padding-left: 0;
+          color: $White;
+        }
+        &::before {
+          display: none;
+        }
+      }
+      .ss-list{
+        .ss-option.ss-disabled {
+          cursor: pointer;
+        }
+      }
     }
-    &::after {
-      content: "\f002";
-      font-family: "Font Awesome 5 Free";
-      font-weight: bold;
-      font-size: 17.5px;
-      color: $White;    }
+    .ss-open-above+.ss-content{
+      bottom: 45px;
+      max-height: 202px;
+      height: unset !important;
+      .ss-search {
+        bottom: -44px;
+      }
+    }
+  
+    .ss-open-below+.ss-content>.ss-search {
+      top: -46px;
+    }
   }
 
-  .ss-main>.ss-open-above+.ss-content{
-    bottom: 45px;
-    max-height: 202px;
-    height: unset !important;
-    .ss-search {
-      bottom: -44px;
-    }
-  }
-
-  .ss-main>.ss-open-below+.ss-content>.ss-search {
-    top: -46px;
-  }
 
   .ss-single-selected.ss-open-below,
   .ss-single-selected.ss-open-above {
@@ -46,3 +62,45 @@ pselect {
     }
   }
 }
+
+/*
+@import "src/styles/variables";
+
+pselect-daos .jdropdown {
+  width: 100%;
+  background: $BG01;
+  color: $White;
+
+
+  .jdropdown-header {
+    background-color: $BG04;
+    border: 1px solid $Border01;
+    padding: $spacing-normal;
+    border-radius: $spacing-normal;
+    line-height: 23px;
+  }
+  &.jdropdown-focus .jdropdown-header {
+    border-radius: $spacing-normal $spacing-normal 0 0;
+    border-color: $Secondary02;
+    outline: none;
+  }
+  .jdropdown-container{
+    background: inherit;
+    .jdropdown-content {
+      background: inherit;
+      border-radius: 0 0 $spacing-normal $spacing-normal;
+      border: 1px solid $Secondary02;
+      border-top: none;
+      color: inherit;
+      .jdropdown-item {
+        color: inherit;
+        background-color: inherit;
+        &:hover, &.jdropdown-selected {
+          background-color: $Secondary02;
+        }
+
+      }
+    }
+  }
+}
+*/

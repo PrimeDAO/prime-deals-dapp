@@ -19,8 +19,10 @@
         <pselect-daos
           class="wizardFormInput"
           disabled.bind="disabled"
-          value.bind="dao & validate"
-          data.bind="daos">
+          value.two-way="daoSelected & validate"
+          placeholder="Find your DAO..."
+          on-changed.call="updateContent($event)"
+          data.bind="daosList">
         </pselect-daos>
       </pform-input>
 
@@ -31,11 +33,18 @@
         input-reference.bind="daoTreasuryAddressInput"
         label-info="This address will receive tokens from the token swap"
         label.bind="name +' Treasury Address'">
-        <form-address-input
+        <form-address-input if.bind="treasuryAddressesList.length <= 1"
           disabled.bind="disabled"
           value.bind="data.treasury_address | checksumAddress & validate"
           view-model.ref="daoTreasuryAddressInput">
         </form-address-input>
+        <pselect-daos else
+          class="wizardFormInput"
+          value.two-way="data.treasury_address | checksumAddress & validate"
+          placeholder="Select or enter a treasury address..."
+          on-changed.call="updateTreasury($event)"
+          data.bind="treasuryAddressesList">
+        </pselect-daos>
       </pform-input>
 
       <div class="daoStageAvatar" data-test="dao-avatar-section">

@@ -494,18 +494,21 @@ export class FirestoreService<
 
   public async allDeepDaoOrgs(): Promise<Record<string, IDAOsData>>
   {
-    const orgs = await query(collectionGroup(firebaseDatabase, DEEP_DAO_COLLECTION), where("name", "!=", ""));
+    const orgs = await query(collectionGroup(firebaseDatabase, DEEP_DAO_COLLECTION));
     const querySnapshot = await getDocs(orgs);
 
-    const data = {};
-    querySnapshot.forEach((doc) =>
+    let allOrgs = {};
+    const mappedOrgCollection = {};
+    await querySnapshot.docs.forEach((doc) =>
     {
-      const { name, avatarUrl, treasuryAddresses } = doc.data();
-      data[doc.id] = { name, avatarUrl, treasuryAddresses };
+      allOrgs = {...allOrgs, ...doc.data().DAOs};
     });
-    console.log({data});
+    Object.keys(allOrgs).forEach(orgId => {
+      const { name, avatarUrl, treasuryAddresses } = allOrgs[orgId];
+      mappedOrgCollection[orgId] = { name, avatarUrl, treasuryAddresses };
+    });
 
-    return data;
+    return mappedOrgCollection;
   }
 
 }

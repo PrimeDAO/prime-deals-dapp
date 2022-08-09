@@ -161,6 +161,13 @@ export const updateDealUpdatesCollection = (dealId: string): void => {
   });
 };
 
+const prepareAvatarUrl = (url: string): string => {
+  const pathParts = url?.split("/");
+  return (!url || url.includes("https://"))
+    ? url
+    : "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/" + pathParts[pathParts.length - 1];
+};
+
 /**
  * Imports list of DAO's (Organizations) from DeepDAO API, and stores a map
  * of organizations data inside a Google FireStore collection - `deep-dao`.
@@ -213,30 +220,22 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
     {
       obj[item.organizationId] = {
         name: item.name,
-        avatarUrl: item.logo,
+        avatarUrl: prepareAvatarUrl(item.logo),
         treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
       };
+      functions.logger.log(`Treasury: ${JSON.stringify(obj[item.organizationId].treasuryAddresses)}.`);
       return obj;
     }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
 
     functions.logger.log(`Mapped successfully ${Object.keys(orgs).length} organizations.`);
-    let batch = firestore.batch();
-    let idx = 0;
-    for (const [id, org] of Object.entries(orgs)) {
-      const docRef = firestore.collection(DEEP_DAO_COLLECTION).doc(id); //automatically generate unique id
-      batch.set(docRef, org);
-      idx++;
-      /**
-       * Batches can commit max 500 docs per request.
-       * Once a batch is full, it gets committed and
-       * a new one is created.
-       * */
-      if (idx % 500 === 0) {
-        await batch.commit();
-        batch = firestore.batch();
-      }
+    const BATCH_SIZE = 500;
+    for (let idx = 0; idx < Object.entries(orgs).length / BATCH_SIZE; idx++) {
+      const batch = firestore.batch();
+      const docRef = firestore.collection(DEEP_DAO_COLLECTION).doc("batch" + idx); //automatically generate unique id
+      const batchOrgs = Object.fromEntries(Object.entries(orgs).slice(BATCH_SIZE * idx, BATCH_SIZE * (idx + 1)));
+      batch.set(docRef, {DAOs: batchOrgs});
+      await batch.commit();
     }
-    await batch.commit();
     functions.logger.log(`Firebase 'deep-dao' collection updated successfully ${Object.keys(orgs).length} organizations.`);
     return;
   } catch (err) {
