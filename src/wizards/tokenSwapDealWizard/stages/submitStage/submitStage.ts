@@ -37,9 +37,9 @@ export class SubmitStage {
   }
 
   private checkDaoplomatRewards() {
-    const allDaoplomatsHaveCorrectData = this.submitData.terms.daoplomatRewards.daoplomats
+    const allDaoplomatsHaveCorrectData = this.submitData.terms.daoplomatRewards?.daoplomats
       .every(daoplomat => daoplomat.rewardSplitPercentage && daoplomat.address);
-    if (!this.submitData.terms.daoplomatRewards.percentage || !allDaoplomatsHaveCorrectData) {
+    if (!this.submitData.terms.daoplomatRewards?.percentage || !allDaoplomatsHaveCorrectData) {
       delete this.submitData.terms.daoplomatRewards;
     }
   }
