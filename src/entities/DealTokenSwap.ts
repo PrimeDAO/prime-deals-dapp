@@ -680,7 +680,10 @@ export class DealTokenSwap implements IDeal {
     const metadata = formatBytes32String(this.id);
     const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
 
-    const daoplomatRewards: IDaoplomatRewards = this.registrationData.terms.daoplomatRewards ?? { daoplomats: [], percentage: 0};
+    const daoplomatRewards: IDaoplomatRewards = this.registrationData.terms.daoplomatRewards ?? {
+      daoplomats: [],
+      percentage: 0,
+    };
     const daoplomats = daoplomatRewards.daoplomats.map(daoplomat => daoplomat.address);
     const rewards = [
       [parseInt((daoplomatRewards.percentage * 100).toFixed(0))],
@@ -1027,7 +1030,7 @@ export class DealTokenSwap implements IDeal {
     const pathFrom = tokens.map(tokenAddress => {
       return daos.map(dao => {
         const tokenDetails = dao.tokens.find(details => details.address === tokenAddress);
-        return tokenDetails?.amount ?? 0;
+        return BigNumber.from(tokenDetails?.amount ?? 0);
       });
     });
 
@@ -1035,8 +1038,8 @@ export class DealTokenSwap implements IDeal {
       return daos.flatMap(dao => {
         const tokenDetails = dao.tokens.find(details => details.address === tokenAddress);
         return [
-          tokenDetails?.instantTransferAmount ?? 0,
-          tokenDetails?.vestedTransferAmount ?? 0,
+          BigNumber.from(tokenDetails?.instantTransferAmount ?? 0),
+          BigNumber.from(tokenDetails?.vestedTransferAmount ?? 0),
           tokenDetails?.cliffOf ?? 0,
           tokenDetails?.vestedFor ?? 0,
         ];
