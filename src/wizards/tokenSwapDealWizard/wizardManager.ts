@@ -393,4 +393,7 @@ export class WizardManager implements IRouteableComponent {
     }, 0);
   }
 
+  dispose() {
+    this.container.disposeResolvers();
+  }
 }

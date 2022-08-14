@@ -45,7 +45,7 @@ export class TokenBalance {
 
   private async initialize(): Promise<void> {
     this.account = this.ethereumService.defaultAccountAddress;
-    await Utils.waitUntilTrue(() => this.tokenService.tokenLists !== undefined, 2500);
+    await Utils.waitUntilTrue(() => this.tokenService.tokenLists !== undefined, 5000);
     this.contract = this.tokenService.getTokenContract(this.tokenAddress);
     this.tokenInfo = await this.tokenService.getTokenInfoFromAddress(this.tokenAddress);
     this.getBalance();

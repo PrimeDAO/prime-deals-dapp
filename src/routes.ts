@@ -11,9 +11,7 @@ import { WizardManager } from "./wizards/tokenSwapDealWizard/wizardManager";
 export const routes: IRoute[] = [
   {
     path: "",
-    id: "home",
-    title: "Home",
-    component: Home,
+    redirectTo: "/home",
   },
   {
     path: "home",
