@@ -70,7 +70,7 @@ export class Funding {
     await this.dealService.ensureInitialized();
 
     // await Utils.waitUntilTrue(() => !!this.dealService.deals.get(this.dealId), CONTRACT_TIMEOUT);
-    debugger;
+    // debugger;
 
     this.deal = this.dealService.deals.get(this.dealId);
     // if (!this.deal) return;

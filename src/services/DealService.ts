@@ -295,7 +295,7 @@ export class DealService {
       // await Utils.waitUntilTrue(() => !!this.deals.get(dealId), CONTRACT_TIMEOUT);
 
       /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 290 ~ this.deals.size", this.deals.size);
-      debugger;
+      // debugger;
       const deal = this.deals.get(dealId);
       /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 297 ~ this.deals", this.deals);
       /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 296 ~ deal", deal);

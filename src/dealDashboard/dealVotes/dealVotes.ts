@@ -105,7 +105,7 @@ export class DealVotes {
       return;
     }
 
-    debugger;
+    // debugger;
     if (await this.deal.createSwap()) {
       await Utils.waitUntilTrue(() => !!this.deal.contractDealId, CREATE_SWAP_TIMEOUT); //have to await this so the contractDealId is populated before redirecting to the funding page
       console.log("------------------------------------------------------------------------------------------");
