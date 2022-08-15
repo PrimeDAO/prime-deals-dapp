@@ -1,4 +1,4 @@
-import { DealService } from "services/DealService";
+import { IDealService } from "services/DealService";
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Address, IEthereumService } from "services/EthereumService";
@@ -22,7 +22,7 @@ export class stageButtons {
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IEthereumService private ethereumService: IEthereumService,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
   ) {
   }
 

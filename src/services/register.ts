@@ -20,6 +20,7 @@ import {
   DialogService,
   DisclaimerService,
   EnsService,
+  IDealService,
   IpfsService,
   NumberService,
   PinataIpfsClient,
@@ -39,7 +40,7 @@ export const register: IRegistry = {
     container.register(Registration.singleton(IDataSourceDeals, FirestoreDealsService));
     container.register(Registration.singleton(DOMPurify, DOMPurify));
     container.register(Registration.transient(DealTokenSwap, DealTokenSwap));
-    container.register(Registration.singleton(DealService, DealService));
+    container.register(Registration.singleton(IDealService, DealService));
     container.register(Registration.singleton(ConsoleLogService, ConsoleLogService));
     container.register(Registration.singleton(BrowserStorageService, BrowserStorageService));
     container.register(Registration.singleton(DiscussionsService, DiscussionsService));

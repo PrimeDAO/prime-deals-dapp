@@ -2,10 +2,10 @@ import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { AlertService } from "services/AlertService";
 import { IWizardState } from "wizards/services/WizardService";
 import { IStageMeta, WizardType } from "wizards/tokenSwapDealWizard/dealWizardTypes";
-import { DealService } from "services/DealService";
 import { Controller, IContainer, IEventAggregator, inject } from "aurelia";
 import { IRouter } from "@aurelia/router";
 import { WizardManager } from "../../wizardManager";
+import { IDealService } from "services";
 
 export class SubmitStage {
   public wizardState: IWizardState<IDealRegistrationTokenSwap>;
@@ -17,7 +17,7 @@ export class SubmitStage {
   constructor(
     private alertService: AlertService,
     @IEventAggregator private eventAggregator: IEventAggregator,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     @IRouter private router: IRouter,
     @IContainer private container: IContainer,
     @inject("registrationData") private readonly submitData: IDealRegistrationTokenSwap,

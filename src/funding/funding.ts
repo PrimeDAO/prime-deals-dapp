@@ -7,7 +7,7 @@ import { DateService } from "services/DateService";
 import { EventMessageType } from "./../resources/elements/primeDesignSystem/types";
 import { EventConfig } from "./../services/GeneralEvents";
 import { BigNumber } from "ethers";
-import { DealService } from "services/DealService";
+import { IDealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { Utils } from "services/utils";
 import { IDAO } from "entities/DealRegistrationTokenSwap";
@@ -16,9 +16,12 @@ import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
-import { DialogDeactivationStatuses, IEventAggregator, observable } from "aurelia";
+import { DialogDeactivationStatuses, IEventAggregator, inject, observable } from "aurelia";
 import {IRouter} from "@aurelia/router";
 
+const CONTRACT_TIMEOUT = 60000;
+
+@inject()
 export class Funding {
   private depositColumns: IGridColumn[] = depositColumns;
   private claimTokenGridColumns: IGridColumn[] = claimTokenGridColumns;
@@ -45,7 +48,7 @@ export class Funding {
 
   constructor(
     @IRouter private router: IRouter,
-    private readonly dealService: DealService,
+    @IDealService private readonly dealService: IDealService,
     @IEthereumService private ethereumService: IEthereumService,
     private dateService: DateService,
     @IEventAggregator private eventAggregator: IEventAggregator,
@@ -65,7 +68,13 @@ export class Funding {
   public async load(params: { id: string }): Promise<void> {
     this.dealId = params.id;
     await this.dealService.ensureInitialized();
+
+    // await Utils.waitUntilTrue(() => !!this.dealService.deals.get(this.dealId), CONTRACT_TIMEOUT);
+    debugger;
+
     this.deal = this.dealService.deals.get(this.dealId);
+    // if (!this.deal) return;
+
     //wait until the deal data is there
     await this.deal.ensureInitialized();
     //make sure the deal has initiated funding. If not, send them back to the deal dashboard

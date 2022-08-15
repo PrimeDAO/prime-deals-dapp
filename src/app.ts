@@ -2,7 +2,7 @@ import DOMPurify from "dompurify";
 import { DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import { IRouteableComponent, IRouter } from "@aurelia/router";
 import { ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
-import { DealService } from "services/DealService";
+import { IDealService } from "services/DealService";
 import { AllowedNetworks, EthereumService, IEthereumService, Networks } from "services/EthereumService";
 import { TokenService } from "services/TokenService";
 import { routes } from "./routes";
@@ -47,7 +47,7 @@ export class App implements IRouteableComponent {
     private storageService: BrowserStorageService,
     private readonly tokenService: TokenService,
     private readonly ipfsService: IpfsService,
-    private readonly dealsService: DealService,
+    @IDealService private readonly dealService: IDealService,
     private readonly pinataIpfsClient: PinataIpfsClient,
     private readonly domPurify: DOMPurify,
     private readonly contractsService: ContractsService,
@@ -75,7 +75,7 @@ export class App implements IRouteableComponent {
         this.ipfsService.initialize(this.pinataIpfsClient);
         this.tokenService.initialize();
         this.ethereumService.connectToConnectedProvider();
-        await this.dealsService.initialize();
+        await this.dealService.initialize();
         App.initialized = true;
       });
   }

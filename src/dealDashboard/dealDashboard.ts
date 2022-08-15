@@ -1,10 +1,11 @@
 import { IEthereumService } from "./../services/EthereumService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { DealService } from "../services/DealService";
+import { IDealService } from "../services/DealService";
 import { IRouter, IRouteableComponent } from "@aurelia/router";
-import { IEventAggregator } from "aurelia";
+import { IEventAggregator, inject } from "aurelia";
 import { watch } from "@aurelia/runtime-html";
 
+@inject()
 export class DealDashboard implements IRouteableComponent {
   private deal: DealTokenSwap;
   private discussionId: string = null;
@@ -12,7 +13,7 @@ export class DealDashboard implements IRouteableComponent {
 
   constructor(
     @IEthereumService private ethereumService: IEthereumService,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     @IRouter private router: IRouter,
     @IEventAggregator private eventAggregator: IEventAggregator,
   ) {
@@ -29,6 +30,7 @@ export class DealDashboard implements IRouteableComponent {
   }
 
   public async load(params: { id: string }) {
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: dealDashboard.ts ~ line 33 ~ this.dealService.deals", this.dealService.deals);
     this.deal = this.dealService.deals.get(params.id);
     await this.deal.ensureInitialized();
   }

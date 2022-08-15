@@ -2,7 +2,7 @@ import { skip } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, IBlockInfoNative, IEthereumService, Networks } from "./EthereumService";
-import { inject, IContainer, IEventAggregator, PLATFORM} from "aurelia";
+import { inject, IContainer, IEventAggregator, PLATFORM, DI} from "aurelia";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { AureliaHelperService } from "./AureliaHelperService";
 import { ConsoleLogService } from "./ConsoleLogService";
@@ -16,6 +16,8 @@ import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 import { toBigNumberJs } from "services/BigNumberService";
 import * as applyDiff from "services/ApplyDiffService";
+
+const CONTRACT_TIMEOUT = 60000;
 
 interface ITokenSwapCreatedArgs {
   module: Address,
@@ -54,6 +56,9 @@ interface IFundedDeal {
  * the block in which the TokenSwapModule contract was created
  */
 export let StartingBlockNumber: number;
+
+export type IDealService = DealService;
+export const IDealService = DI.createInterface<IDealService>("DealService");
 
 @inject()
 export class DealService {
@@ -164,6 +169,7 @@ export class DealService {
   }
 
   private async getDeals(): Promise<void> {
+    /* prettier-ignore */ console.log(">>>> 2 >>>> ~ file: DealService.ts ~ line 167 ~ getDeals");
     if (this.dealsSubscription) {
       this.dealsSubscription.unsubscribe();
     }
@@ -229,6 +235,7 @@ export class DealService {
             }));
         }});
 
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 234 ~ promises.length", promises.length);
     return Promise.all(promises);
   }
 
@@ -274,15 +281,31 @@ export class DealService {
   }
 
   private async observeDealFundedInfo(): Promise<void> {
+    /* prettier-ignore */ console.log(">>>> 1 >>>> ~ file: DealService.ts ~ line 277 ~ observeDealFundedInfo");
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
     const filter = moduleContract.filters.TokenSwapCreated();
 
     moduleContract.on(filter, async (_module: Address, contractDealId: number, metadata: string) => {
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 286 ~ contractDealId", contractDealId);
       const dealId = parseBytes32String(metadata);
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 288 ~ dealId", dealId);
       const fundedAt = new Date(this.ethereumService.lastBlock.timestamp * 1000);
       this.fundedDealIds.set(dealId, { fundedAt });
 
+      // await Utils.waitUntilTrue(() => !!this.deals.get(dealId), CONTRACT_TIMEOUT);
+
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 290 ~ this.deals.size", this.deals.size);
+      debugger;
       const deal = this.deals.get(dealId);
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 297 ~ this.deals", this.deals);
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 296 ~ deal", deal);
+
+      /**
+       * When refreshing on the funding page, `deal` is sometimes undefined, should we just return?
+       * What other places can this affect?
+       */
+      // if (!deal) return;
+
       deal.fundingStartedAt = fundedAt;
       deal.contractDealId = contractDealId;
     });
@@ -379,6 +402,7 @@ export class DealService {
     dealDoc: IDealTokenSwapDocument,
     dealsMap?: Map<Address, DealTokenSwap>,
   ): DealTokenSwap {
+    /* prettier-ignore */ console.log(">>>> 3 >>>> ~ file: DealService.ts ~ line 382 ~ _createDeal");
     const deal = this.createDealFromDoc(dealDoc);
     /**
      * this should automatically be true because firestorm automatically does this filtering,
@@ -388,7 +412,9 @@ export class DealService {
       if (!dealsMap) {
         dealsMap = this.deals;
       }
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 406 ~ deal.id", deal.id);
       dealsMap.set(deal.id, deal);
+      // this.deals.set(deal.id, deal);
     }
     /**
      * remove the deal if it is corrupt
@@ -400,6 +426,7 @@ export class DealService {
     });
     this.consoleLogService.logMessage(`instantiated deal: ${deal.id}`, "info");
     deal.initialize(); // asynchronous
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealService.ts ~ line 408 ~ dealsMap.size", dealsMap.size);
     return deal;
   }
 

@@ -4,7 +4,6 @@ import { deletedByAuthorErrorMessage, DiscussionsService } from "dealDashboard/d
 import { Types } from "dealDashboard/discussionsStreamService";
 import { Address, IEthereumService } from "services/EthereumService";
 import { DateService } from "services/DateService";
-import { DealService } from "services/DealService";
 import { Utils } from "services/utils";
 
 import { IComment, IDealDiscussion, IProfile, TCommentDictionary, VoteType } from "entities/DealDiscussions";
@@ -15,6 +14,7 @@ import { IClause } from "entities/DealRegistrationTokenSwap";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { bindable, BindingMode, DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import { IRouter } from "@aurelia/router";
+import { IDealService } from "services/DealService";
 
 export type ILoadingTracker = {
   discussions: boolean;
@@ -75,7 +75,7 @@ export class DiscussionThread {
   constructor(
     @IRouter private router: IRouter,
     private dateService: DateService,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     private consoleLogService: ConsoleLogService,
     private discussionsService: DiscussionsService,
     @IEthereumService private ethereumService: IEthereumService,

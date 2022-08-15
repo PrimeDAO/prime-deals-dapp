@@ -8,7 +8,7 @@ import {
   IDealRegistrationTokenSwap,
 } from "entities/DealRegistrationTokenSwap";
 import { STAGE_ROUTE_PARAMETER, WizardType } from "./dealWizardTypes";
-import { DealService } from "services/DealService";
+import { IDealService } from "services/DealService";
 import { Address, fromWei, IEthereumService } from "services/EthereumService";
 import "../wizards.scss";
 import { DisposableCollection } from "services/DisposableCollection";
@@ -138,7 +138,7 @@ export class WizardManager implements IRouteableComponent {
   root: any;
 
   constructor(
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     private alertService: AlertService,
     private tokenService: TokenService,
     @IEventAggregator private readonly event: IEventAggregator,
@@ -148,7 +148,6 @@ export class WizardManager implements IRouteableComponent {
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     @newInstanceForScope(IValidationController) private controller: IValidationController,
-    private readonly dealsService: DealService,
     private readonly presenter: PrimeErrorPresenter,
   ) {
     controller.addSubscriber(this.presenter);

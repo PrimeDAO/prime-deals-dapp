@@ -6,9 +6,14 @@ import { ConsoleLogService } from "../../services/ConsoleLogService";
 import { EventConfigException } from "services/GeneralEvents";
 import { Utils } from "services/utils";
 import { DiscussionsService } from "../discussionsService";
-import { bindable, DialogDeactivationStatuses, IEventAggregator } from "aurelia";
+import { bindable, DialogDeactivationStatuses, IEventAggregator, inject } from "aurelia";
 import {IRouter} from "@aurelia/router";
 
+// const CREATE_SWAP_TIMEOUT = 5000;
+// const CREATE_SWAP_TIMEOUT = 1000;
+const CREATE_SWAP_TIMEOUT = 60000;
+
+@inject()
 export class DealVotes {
   @bindable deal: DealTokenSwap;
 
@@ -100,8 +105,11 @@ export class DealVotes {
       return;
     }
 
+    debugger;
     if (await this.deal.createSwap()) {
-      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId, CREATE_SWAP_TIMEOUT); //have to await this so the contractDealId is populated before redirecting to the funding page
+      console.log("------------------------------------------------------------------------------------------");
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: dealVotes.ts ~ line 110 ~ this.deal.contractDealId", this.deal.contractDealId);
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     } else {
@@ -110,6 +118,7 @@ export class DealVotes {
   }
 
   goToFunding() {
+    /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: dealVotes.ts ~ line 117 ~ goToFunding");
     this.router.load(`funding/${this.deal.id}`);
   }
 

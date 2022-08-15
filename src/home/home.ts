@@ -1,5 +1,5 @@
 import { DealTokenSwap } from "entities/DealTokenSwap";
-import { DealService } from "services/DealService";
+import { IDealService } from "services/DealService";
 import { IRouter } from "@aurelia/router";
 type DealType = "open" | "partnered";
 
@@ -11,7 +11,7 @@ export class Home {
 
   constructor(
     @IRouter protected router: IRouter,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
   ) {
   }
 

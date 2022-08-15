@@ -1,6 +1,5 @@
 import { EthereumService, IEthereumService } from "./../services/EthereumService";
 import { BrowserStorageService } from "services/BrowserStorageService";
-import { DealService } from "services/DealService";
 import { EventConfigFailure } from "services/GeneralEvents";
 import { ConsoleLogService } from "services/ConsoleLogService";
 import { Convo } from "@theconvospace/sdk";
@@ -12,6 +11,7 @@ import { IDeal } from "entities/IDealTypes";
 import { COMMENTS_STREAM_UPDATED, DiscussionsStreamService, Types } from "./discussionsStreamService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { IEventAggregator, inject } from "aurelia";
+import { IDealService } from "services/DealService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   modifiedAt: string
@@ -32,7 +32,7 @@ export class DiscussionsService {
     @IEthereumService private ethereumService: IEthereumService,
     private consoleLogService: ConsoleLogService,
     @IEventAggregator private eventAggregator: IEventAggregator,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     @IDataSourceDeals private dataSourceDeals: IDataSourceDeals,
     private dateService: DateService,
     private discussionsStreamService: DiscussionsStreamService,

@@ -2,13 +2,13 @@ import { inject, singleton, IEventAggregator } from "aurelia";
 
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
-import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { Address, IEthereumService } from "services/EthereumService";
 import { SortOrder } from "services/SortService";
 import { SortService } from "services/SortService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { IRouter } from "@aurelia/router";
+import { IDealService } from "services/DealService";
 
 /**
  * This is the view model for the deals page
@@ -27,7 +27,7 @@ export class Deals {
   private subscriptions = new DisposableCollection();
 
   constructor(
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     @IEventAggregator private eventAggregator: IEventAggregator,
     private dateService: DateService,
     @IEthereumService private ethereumService: IEthereumService,

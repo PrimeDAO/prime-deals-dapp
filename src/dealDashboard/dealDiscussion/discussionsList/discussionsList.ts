@@ -1,7 +1,6 @@
 import { IEthereumService } from "./../../../services/EthereumService";
 
 import { DiscussionsService } from "../../discussionsService";
-import { DealService } from "services/DealService";
 import { DateService } from "services/DateService";
 
 import { DealTokenSwap } from "entities/DealTokenSwap";
@@ -11,6 +10,7 @@ import { IClause } from "entities/DealRegistrationTokenSwap";
 import { bindable, BindingMode, IEventAggregator, ISignaler } from "aurelia";
 import {IRouter} from "@aurelia/router";
 import { toBoolean } from "resources/binding-behaviours";
+import { IDealService } from "services/DealService";
 
 interface IDiscussionListItem extends IDealDiscussion {
   lastModified: string
@@ -70,7 +70,7 @@ export class DiscussionsList{
     @IEventAggregator private eventAggregator: IEventAggregator,
     @IRouter private router: IRouter,
     private dateService: DateService,
-    private dealService: DealService,
+    @IDealService private dealService: IDealService,
     @IEthereumService private ethereumService: IEthereumService,
     private discussionsService: DiscussionsService,
     @ISignaler private bindingSignaler: ISignaler,

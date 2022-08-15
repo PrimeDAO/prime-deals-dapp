@@ -584,6 +584,7 @@ export class DealTokenSwap implements IDeal {
       await this.loadDepositContracts(); // now that we have registrationData
 
       this.contractDealId = await this.moduleContract.metadataToDealId(formatBytes32String(this.id));
+      /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealTokenSwap.ts ~ line 587 ~ this.contractDealId", this.contractDealId);
 
       // no need to await
       this.hydrateDaoTransactions();
@@ -705,6 +706,7 @@ export class DealTokenSwap implements IDeal {
       () => this.moduleContract.createSwap(...dealParameters))
       .then(async receipt => {
         if (receipt) {
+          /* prettier-ignore */ console.log(">>>> _ >>>> ~ file: DealTokenSwap.ts ~ line 709 ~ receipt", receipt);
           //need to set the fundingStartedAt here because it will be undefined until the page refreshes and will cause an infinite loop of errors on the UI
           this.fundingStartedAt = new Date();
           this.hydrate();
