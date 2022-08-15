@@ -174,13 +174,9 @@ export class Deals {
     this.showMine = !this.showMine;
     if (this.showMine) {
       //if showing only "my deals" check to see which tab to display by default if there are no deals in either tab
-      const openDeals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
-      const partneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
-      if (openDeals) {
+      const hasPartneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
+      if (!hasPartneredDeals) {
         this.cardIndex = 0;
-      }
-      else if (partneredDeals) {
-        this.cardIndex = 1;
       }
     }
   }
