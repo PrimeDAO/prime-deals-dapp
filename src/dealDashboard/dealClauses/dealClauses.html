@@ -3,8 +3,12 @@
     <h2 class="subtitle heading heading3">Deal Clauses</h2>
   </header>
   <ol>
+
+    <!-- Note the `&& clause.id` check in the class attr. -->
+    <!-- Reason: `clause.id` could be `""`, and when no discussion is selected `discussionId` is `""` too -->
+    <!-- Note2: `clause.id` should never be `""`, just make extra sure (see bug Github #1130) -->
     <li
-      class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
+      class="clause ${authorized? 'isPrivate' : ''} ${(discussionId === clause.id) && clause.id ? 'active' : ''}"
       repeat.for="clause of clauses"
     >
       <span class="marker">${$index + 1}</span>
