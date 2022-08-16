@@ -120,8 +120,8 @@ export class DaoStageContent {
     this.isLoadingDAO = false;
   }
 
-  attached() {
-    if (this.hydrateDaosList()) {
+  async attached() {
+    if (await this.hydrateDaosList()) {
       this.refSelectDAO.setAttribute("options", this.daoListStr);
     }
 
