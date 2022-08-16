@@ -17,6 +17,7 @@ deal-clauses {
     list-style-position: inside;
 
     .clause {
+      @include ckeditor-content;
       display: flex;
       gap: $spacing-normal * 2;
       vertical-align: top;
@@ -31,6 +32,7 @@ deal-clauses {
       transition-delay: calc($hover-transition-speed-fast / 2);
 
       @include pre;
+
       .body {
         width: calc(100% - 165px);
         word-wrap: anywhere;
@@ -73,7 +75,8 @@ deal-clauses {
         }
       }
 
-      &.isPrivate:hover, &.active {
+      &.isPrivate:hover,
+      &.active {
         transition-delay: 0s;
 
         &:not(.active) span {
@@ -99,8 +102,8 @@ deal-clauses {
     @media screen and (max-width: $MaxContentBodyWidth) {
       margin-left: 0;
 
-      .clause{
-        .body{
+      .clause {
+        .body {
           width: auto;
         }
       }

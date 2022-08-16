@@ -5,16 +5,21 @@
   <ol>
     <li
       class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
-      repeat.for="clause of clauses">
+      repeat.for="clause of clauses"
+    >
       <span class="marker">${$index + 1}</span>
-      <pre class="body">${clause.text}</pre>
+      <pre class="body" innerhtml.to-view="clauseTest | sanitizeHTML"></pre>
       <span
         data-test="add-or-read-button"
         class="button"
         click.trigger="addOrReadDiscussion(clause.text, clause.id)"
-        if.to-view="authorized">
+        if.to-view="authorized"
+      >
         <div
-          if.to-view="!discussionsService.discussions[clause.id] || discussionsService.discussions[clause.id].replies === 0">Begin A Discussion</div>
+          if.to-view="!discussionsService.discussions[clause.id] || discussionsService.discussions[clause.id].replies === 0"
+        >
+          Begin A Discussion
+        </div>
         <div else>Discuss</div>
         <img src="/comment.svg" />
       </span>
