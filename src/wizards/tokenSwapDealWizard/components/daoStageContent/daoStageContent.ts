@@ -19,8 +19,14 @@ interface IAutoCompleteSelectEvent extends Event {
   detail: IAutoCompleteSelectItem
 }
 
-const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000);
+enum DropdownEvent {
+  SelectionChanged= "daoSelectionChanged",
+  NewAdded= "newDaoAdded",
+  Cleared= "inputCleared",
+}
 
+const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000);
+const DAO_PLACEHODER_AVATAR = "DAO_placeholder.svg";
 @inject()
 export class DaoStageContent {
   @bindable name: string;
@@ -38,7 +44,9 @@ export class DaoStageContent {
   private daoSelected: string;
   private refSelectDAO: HTMLElement;
   @observable private refSelectTreasury: HTMLElement = null;
-  private isFromDeepDAO: boolean;
+  private isFromDeepDAO = false;
+  private isLoadingDAO = false;
+  private isNewDAO = false;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 
@@ -96,39 +104,47 @@ export class DaoStageContent {
           treasury: []}),
         );
       newInputSelectElement.setAttribute("options", JSON.stringify(options));
-      newInputSelectElement.addEventListener("daoSelectionChanged", async (e: IAutoCompleteSelectEvent) => {
+      newInputSelectElement.addEventListener(DropdownEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) => {
         this.data.treasury_address = e.detail.id;
         this.form.revalidateErrors();
       });
 
-      newInputSelectElement.addEventListener("inputCleared", () => {
+      newInputSelectElement.addEventListener(DropdownEvent.Cleared, () => {
         this.data.treasury_address = "";
       });
     }
   }
 
-  isLoadingDAO = false;
+  resetDeepDAO(){
+    this.isFromDeepDAO = false;
+    this.isLoadingDAO = false;
+  }
 
   attached() {
     if (this.hydrateDaosList()) {
       this.refSelectDAO.setAttribute("options", this.daoListStr);
     }
 
-    this.refSelectDAO.addEventListener("daoSelectionChanged", async (e: IAutoCompleteSelectEvent) =>
+    this.refSelectDAO.addEventListener(DropdownEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) =>
     {
-      this.isLoadingDAO = true;
+      if (!this.isNewDAO) {
+        this.isLoadingDAO = true;
+        this.isFromDeepDAO = true;
+      }
+      this.isNewDAO = false;
+
       this.treasuryAddresses = e.detail.treasury || [];
       if (this.treasuryAddresses.length === 1) {
         this.data.treasury_address = await this.resolveENS(this.treasuryAddresses[0]);
       }
-      this.isFromDeepDAO = true;
       this.data.name = e.detail.name;
-      this.data.logoURI = e.detail.avatarUrl === "DAO_placeholder.svg" ? "" : e.detail.avatarUrl;
+      this.data.logoURI = e.detail.avatarUrl === DAO_PLACEHODER_AVATAR ? "" : e.detail.avatarUrl;
       this.data.deepDAOId = e.detail.id;
       this.isLoadingDAO = false;
+      this.form.revalidateErrors();
     });
 
-    this.refSelectDAO.addEventListener("newDaoAdded", async (e: IAutoCompleteSelectEvent) =>
+    this.refSelectDAO.addEventListener(DropdownEvent.NewAdded, async (e: IAutoCompleteSelectEvent) =>
     {
       this.treasuryAddresses = [];
       this.data.name = e.detail.name;
@@ -136,9 +152,12 @@ export class DaoStageContent {
       this.isFromDeepDAO = false;
       this.data.logoURI = "";
       this.data.deepDAOId = "";
+
+      this.isNewDAO = true;
+      this.resetDeepDAO();
     });
 
-    this.refSelectDAO.addEventListener("inputCleared", () => {
+    this.refSelectDAO.addEventListener(DropdownEvent.Cleared, () => {
       this.data.name = "";
       this.data.treasury_address = "";
       this.treasuryAddresses = [];
@@ -162,7 +181,7 @@ export class DaoStageContent {
     }
     this.daosList = Object.keys(this.daosData).map(id => ({
       name: this.daosData[id].name,
-      avatarUrl: this.daosData[id].avatarUrl || "DAO_placeholder.svg",
+      avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHODER_AVATAR,
       id,
       treasury: this.daosData[id].treasuryAddresses,
     }));
