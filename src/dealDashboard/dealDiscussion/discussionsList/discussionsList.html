@@ -42,7 +42,7 @@
           repeat.for="[discussionId, discussion] of discussions">
           <div class="td idx">${findClauseIndex(discussionId) }</div>
           <div class="td topic">
-            <pre>${clauses.get(discussionId).text}</pre>
+            <pre innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></pre></pre>
             <p class="creator desktop only">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdBy.name">
