@@ -49,4 +49,68 @@ dao-stage-content {
     background-position: center;
     background-size: cover;
   }
+
+  autocomplete-select {
+    --borderRadius: #{$spacing-normal};
+    --spacingSmall: #{$spacing-small};
+    --spacingNormal: #{$spacing-normal};
+    --backgroundNormal: #{$BG04};
+    --borderNormal: #{$Border01};
+    --borderHighlight: #{$Secondary02};
+    --optionHover: #{$Border01};
+    --textNormal: #{$Neutral04};
+    --textWarning: #{$Orange};
+    --textError: #{$Red};
+
+    width: 100%;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    &.is-loading {
+      justify-content: center;
+      align-items: center;
+      font-size: $font-size4;
+      i {
+        color: $Secondary01
+      }
+    }
+    min-height: 172px;
+    width: 100%;
+    gap: 24px;
+    header {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: $spacing-small;
+      color: $Neutral04;
+    }
+    main {
+      color: $Orange;
+    }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span {
+        .mono {
+          display: block;
+        }
+        .color {
+          display: none;
+        }
+        &:hover {
+          .mono {
+            display: none;
+          }
+          .color {
+            display: block;
+          }
+        }
+      }
+    }
+  }
 }

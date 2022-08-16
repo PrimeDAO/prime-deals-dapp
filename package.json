@@ -47,7 +47,7 @@
     "firebase-deploy-deepdao-function:default": "firebase deploy --project=default --only functions:scheduledDeepDaoOrganizationListUpdate",
     "firebase-deploy-deepdao-function:development": "firebase deploy --project=development --only functions:scheduledDeepDaoOrganizationListUpdate",
     "firebase-deploy-deepdao-function:staging": "firebase deploy --project=staging --only functions:scheduledDeepDaoOrganizationListUpdate",
-    "firebase-deploy-deepdao-function:production": "firebase deploy --project=production --only functions:scheduledDeepDaoOrganizationListUpdate",
+    "firebase-deploy-deepdao-function:production": "firebase deploy --project=production --only functions:scheduledDeepDaoOrganizationListUpdate --config=firebase-production.json",
     "seed-build": "cd ./src/server-browser-scripts && tsc",
     "seed-run": "node -e 'import(\"./dist/seed/src/server-browser-scripts/seed-data.js\").then(x=> x.resetDeals())' -r dotenv/config . dotenv_config_path=./.env"
   },

@@ -50,6 +50,7 @@ export interface IDAO {
   representatives: Array<IRepresentative>;
   tokens?: Array<IToken>;
   platform?: Platforms;
+  deepDAOId?: string;
 }
 
 export interface IProposalLead {

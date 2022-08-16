@@ -1,11 +1,25 @@
 import { IDAO } from "entities/DealRegistrationTokenSwap";
 import { availableSocialMedias } from "../../dealWizardTypes";
-import { bindable, inject } from "aurelia";
+import { bindable, inject, observable } from "aurelia";
 import { IValidationController } from "@aurelia/validation-html";
 import { FirestoreService } from "services/FirestoreService";
 import { IDAOsData } from "services";
 import { ethers } from "ethers";
 import { Utils } from "services/utils";
+import "cl-webcomp-poc";
+
+interface IAutoCompleteSelectItem {
+  name: string,
+  avatarUrl?: string,
+  id: string,
+  treasury?: string[],
+}
+
+interface IAutoCompleteSelectEvent extends Event {
+  detail: IAutoCompleteSelectItem
+}
+
+const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000);
 
 @inject()
 export class DaoStageContent {
@@ -17,9 +31,14 @@ export class DaoStageContent {
 
   private daosData: Record<string, IDAOsData>;
   private daosList = [];
+  private daoListStr: string = "[]";
+  private treasuryAddresses = [];
   private treasuryAddressesList = [];
-  // private treasurySelected: string;
+  private treasurySelected: string;
   private daoSelected: string;
+  private refSelectDAO: HTMLElement;
+  @observable private refSelectTreasury: HTMLElement = null;
+  private isFromDeepDAO: boolean;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 
@@ -55,40 +74,84 @@ export class DaoStageContent {
     }
   }
 
-  private async resolveAddresses (mixedEnsAndAddresses: string[]): Promise<{ text: string, value: string}[]> {
+  private async resolveAddresses (mixedEnsAndAddresses: string[]): Promise<{ name: string, value: string }[]> {
     const res = mixedEnsAndAddresses.map(async (item) => {
       const address = await this.resolveENS(item);
-      return { text: `${item} ${address ? "(" + Utils.smallHexString(address) + ")" : ""}`, value: address };
+      return {
+        name: `${item}${address ? " (" + Utils.smallHexString(address) + ")" : ""}`,
+        value: address ?? item,
+      };
     });
 
     return Promise.all(res);
   }
 
-  async updateContent ($event): Promise<void>
-  {
-    const { avatarUrl, name, treasuryAddresses } = this.daosData[$event];
-    this.treasuryAddressesList = await this.resolveAddresses(treasuryAddresses);
+  async refSelectTreasuryChanged(newInputSelectElement) {
+    if (newInputSelectElement && this.treasuryAddresses) {
+      const options = (await this.resolveAddresses(this.treasuryAddresses))
+        .map( address => ({
+          name: address.name,
+          avatarUrl: "",
+          id: address.value,
+          treasury: []}),
+        );
+      newInputSelectElement.setAttribute("options", JSON.stringify(options));
+      newInputSelectElement.addEventListener("daoSelectionChanged", async (e: IAutoCompleteSelectEvent) => {
+        this.data.treasury_address = e.detail.id;
+        this.form.revalidateErrors();
+      });
 
-    this.data = {
-      ...this.data,
-      logoURI: avatarUrl || "",
-      treasury_address: this.treasuryAddressesList[this.data.treasury_address] || "",
-      name: name || this.daoSelected,
-    };
+      newInputSelectElement.addEventListener("inputCleared", () => {
+        this.data.treasury_address = "";
+      });
+    }
   }
 
-  async updateTreasury($event): Promise<void> {
-    const value = this.daosData[this.data.name].treasuryAddresses[$event];
-    this.data.treasury_address = value;
-  }
+  isLoadingDAO = false;
 
   attached() {
-    this.hydrateDaosList();
+    if (this.hydrateDaosList()) {
+      this.refSelectDAO.setAttribute("options", this.daoListStr);
+    }
+
+    this.refSelectDAO.addEventListener("daoSelectionChanged", async (e: IAutoCompleteSelectEvent) =>
+    {
+      this.isLoadingDAO = true;
+      this.treasuryAddresses = e.detail.treasury || [];
+      if (this.treasuryAddresses.length === 1) {
+        this.data.treasury_address = await this.resolveENS(this.treasuryAddresses[0]);
+      }
+      this.isFromDeepDAO = true;
+      this.data.name = e.detail.name;
+      this.data.logoURI = e.detail.avatarUrl === "DAO_placeholder.svg" ? "" : e.detail.avatarUrl;
+      this.data.deepDAOId = e.detail.id;
+      this.isLoadingDAO = false;
+    });
+
+    this.refSelectDAO.addEventListener("newDaoAdded", async (e: IAutoCompleteSelectEvent) =>
+    {
+      this.treasuryAddresses = [];
+      this.data.name = e.detail.name;
+      this.data.treasury_address = "";
+      this.isFromDeepDAO = false;
+      this.data.logoURI = "";
+      this.data.deepDAOId = "";
+    });
+
+    this.refSelectDAO.addEventListener("inputCleared", () => {
+      this.data.name = "";
+      this.data.treasury_address = "";
+      this.treasuryAddresses = [];
+      this.data.logoURI = "";
+      this.data.deepDAOId = "";
+      this.isFromDeepDAO = false;
+    });
+
   }
 
   async hydrateDaosList(): Promise<boolean> {
     const cachedDAOsList = JSON.parse(localStorage.getItem("daosData"));
-    if (!cachedDAOsList || cachedDAOsList.date < (Date.now() - (24 * 60 * 60 * 1000))) {
+    if (!cachedDAOsList || cachedDAOsList.date < LAST_1_DAY) {
       this.daosData = await this.firestoreService.allDeepDaoOrgs();
       localStorage.setItem("daosData", JSON.stringify({
         date: Date.now(),
@@ -98,11 +161,12 @@ export class DaoStageContent {
       this.daosData = cachedDAOsList.data;
     }
     this.daosList = Object.keys(this.daosData).map(id => ({
-      text: this.daosData[id].name,
-      innerHTML: `<span><img src="${this.daosData[id].avatarUrl ? this.daosData[id].avatarUrl : "DAO_placeholder.svg"}" alt="${this.daosData[id].name}" height="20" /> ${this.daosData[id].name}</span>`,
+      name: this.daosData[id].name,
+      avatarUrl: this.daosData[id].avatarUrl || "DAO_placeholder.svg",
+      id,
       treasury: this.daosData[id].treasuryAddresses,
-      value: id,
     }));
-    return true;
+    this.daoListStr = JSON.stringify(this.daosList);
+    return typeof JSON.parse(this.daoListStr) === "object";
   }
 }

@@ -1,7 +1,6 @@
 <template>
   <require from="../daoRepresentativeAddress/daoRepresentativeAddress"></require>
   <require from="../socialMediaLink/socialMediaLink"></require>
-  <require from="./pselect-daos/pselect-daos"></require>
   <div class="stageSection" data-test="dao-details-section">
     <div class="stageSectionSidebar">
       <h2 class="sidebarHeader heading heading3 title" data-test="section-title">${name}</h2>
@@ -16,14 +15,38 @@
         input-reference.bind="nameReference"
         label="Select DAO or Enter a DAO Name"
       >
-        <pselect-daos
-          class="wizardFormInput"
-          disabled.bind="disabled"
-          value.two-way="daoSelected & validate"
-          placeholder="Find your DAO..."
-          on-changed.call="updateContent($event)"
-          data.bind="daosList">
-        </pselect-daos>
+        <autocomplete-select
+          placeholder="Select your DAO..."
+          searchText="No DAO found, add '%VAL%' manually"
+          value.bind="data.name"
+          ref="refSelectDAO">
+          <span slot="button-icon-close"><i class="fas fa-times"></i></span>
+          <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
+          <span slot="button-icon-regular"><i class="fas fa-search"></i></span>
+        </autocomplete-select>
+        </pform-input>
+        <pform-input if.bind="isLoadingDAO" class="wizardFormInput wizardFormInputNarrow">
+          <pcard class="deepDao is-loading">
+            <span><i class="spinner fas fa-circle-notch fa-spin"></i> Loading...</span>
+          </pcard>
+        </pform-input>
+        <pform-input if.bind="isFromDeepDAO" class="wizardFormInput wizardFormInputNarrow">
+          <pcard class="deepDao" if.to-view="!isLoadingDAO">
+            <header>
+              <h1 class="title heading">Powered by DeepDAO.io</h1>
+              <hr>
+            </header>
+            <main>
+              <p>Note: Fields are pre-filled with the info found on DeepDAO.io. If there are multiple options you can chose from a dropdown list. It is also possible to manually override the info by typing.</p>
+            </main>
+            <footer>
+              <a href="https://deepdao.io/organization/${data.deepDAOId}/organization_data/finance" target="_blank"><i class="fas fa-arrow-right"></i> View DAO on DeepDAO.io</a>
+              <span>
+                <img src="./deepdao-logo-mono.svg" class="mono">
+                <img src="./deepdao-logo-color.svg" class="color">
+              </span>
+            </footer>
+          </pcard>
       </pform-input>
 
       <pform-input
@@ -33,18 +56,20 @@
         input-reference.bind="daoTreasuryAddressInput"
         label-info="This address will receive tokens from the token swap"
         label.bind="name +' Treasury Address'">
-        <form-address-input if.bind="treasuryAddressesList.length <= 1"
+        <form-address-input if.bind="treasuryAddresses.length <= 1"
           disabled.bind="disabled"
           value.bind="data.treasury_address | checksumAddress & validate"
           view-model.ref="daoTreasuryAddressInput">
         </form-address-input>
-        <pselect-daos else
-          class="wizardFormInput"
-          value.two-way="data.treasury_address | checksumAddress & validate"
-          placeholder="Select or enter a treasury address..."
-          on-changed.call="updateTreasury($event)"
-          data.bind="treasuryAddressesList">
-        </pselect-daos>
+        <autocomplete-select else
+          placeholder="Select treasury address..."
+          searchText="Address not found, add manually"
+          value.bind="data.treasury_address"
+          ref="refSelectTreasury">
+          <span slot="button-icon-close"><i class="fas fa-times"></i></span>
+          <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
+          <span slot="button-icon-regular"><i class="fas fa-search"></i></span>
+        </autocomplete-select>
       </pform-input>
 
       <div class="daoStageAvatar" data-test="dao-avatar-section">
