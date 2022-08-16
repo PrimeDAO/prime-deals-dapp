@@ -1,5 +1,6 @@
 @import "../../../../resources/elements/primeDesignSystem/_variables.scss";
 @import "../../../../resources/elements/primeDesignSystem/_colors.scss";
+@import "../../../../styles/variables";
 
 @mixin commonContentLabel {
   margin: 2px 0;
@@ -76,6 +77,7 @@ $submitCardWidth: 645px;
     }
 
     &.submitTermsCard {
+      @include ckeditor-content;
       margin-top: 30px;
     }
 
