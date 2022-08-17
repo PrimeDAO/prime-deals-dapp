@@ -17,6 +17,7 @@ deal-clauses {
     list-style-position: inside;
 
     .clause {
+      @include ckeditor-content;
       display: flex;
       gap: $spacing-normal * 2;
       vertical-align: top;
@@ -31,6 +32,7 @@ deal-clauses {
       transition-delay: calc($hover-transition-speed-fast / 2);
 
       @include pre;
+
       .body {
         width: calc(100% - 165px);
         word-wrap: anywhere;
@@ -40,6 +42,14 @@ deal-clauses {
           font-size: 12px;
           text-overflow: ellipsis;
         }
+      }
+
+      .heading {
+        font-size: 24px;
+        line-height: 33px;
+        font-weight: 700;
+        word-wrap: anywhere;
+        text-overflow: ellipsis;
       }
 
       .button {
@@ -73,7 +83,8 @@ deal-clauses {
         }
       }
 
-      &.isPrivate:hover, &.active {
+      &.isPrivate:hover,
+      &.active {
         transition-delay: 0s;
 
         &:not(.active) span {
@@ -99,8 +110,8 @@ deal-clauses {
     @media screen and (max-width: $MaxContentBodyWidth) {
       margin-left: 0;
 
-      .clause{
-        .body{
+      .clause {
+        .body {
           width: auto;
         }
       }
