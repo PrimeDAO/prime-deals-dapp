@@ -39,7 +39,7 @@
     <div data-test="deals-loading" class="section loading" if.to-view="dealsLoading">
       <i class="spinner fa fas fa-circle-notch fa-spin"></i>
     </div>
-    <div class="section deal-carousel" if.to-view="!dealsLoading && gridDeals.length">
+    <div class="section deal-carousel" if.to-view="!dealsLoading && allDeals.length">
       <div class="heading02Gradient carousel-selector">
         <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
           data-test="open-proposals-tab"

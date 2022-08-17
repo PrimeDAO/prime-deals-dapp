@@ -137,7 +137,7 @@ export class Deals {
   }
 
   private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string): DealTokenSwap[] {
-    if (this.cardIndex === undefined) {
+    if (cardIndex === undefined) {
       return [];
     }
 
@@ -155,7 +155,11 @@ export class Deals {
 
   private filterDeals(deals: DealTokenSwap[], showMine: boolean, address: string) {
     return showMine
-      ? deals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address))
+      ? deals.filter((x: DealTokenSwap) =>
+        x.registrationData.proposalLead?.address === address
+        || x.registrationData.primaryDAO?.representatives.some(y => y.address === address)
+        || x.registrationData.partnerDAO?.representatives.some(y => y.address === address),
+      )
       : deals;
   }
 
