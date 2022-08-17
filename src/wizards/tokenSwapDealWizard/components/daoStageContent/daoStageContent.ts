@@ -26,7 +26,8 @@ enum DropdownEvent {
 }
 
 const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000);
-const DAO_PLACEHODER_AVATAR = "DAO_placeholder.svg";
+const DAO_PLACEHOLDER_AVATAR = "DAO_placeholder.svg";
+
 @inject()
 export class DaoStageContent {
   @bindable name: string;
@@ -133,7 +134,7 @@ export class DaoStageContent {
         this.data.treasury_address = await this.resolveENS(this.treasuryAddresses[0]);
       }
       this.data.name = e.detail.name;
-      this.data.logoURI = e.detail.avatarUrl === DAO_PLACEHODER_AVATAR ? "" : e.detail.avatarUrl;
+      this.data.logoURI = e.detail.avatarUrl === DAO_PLACEHOLDER_AVATAR ? "" : e.detail.avatarUrl;
       this.data.deepDAOId = e.detail.id;
       this.isLoadingDAO = false;
       this.form.revalidateErrors();
@@ -174,7 +175,7 @@ export class DaoStageContent {
     }
     this.daosList = Object.keys(this.daosData).map(id => ({
       name: this.daosData[id].name,
-      avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHODER_AVATAR,
+      avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHOLDER_AVATAR,
       id,
       treasury: this.daosData[id].treasuryAddresses,
     }));
