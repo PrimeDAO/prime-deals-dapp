@@ -30,7 +30,7 @@
           <p>Decimals</p>
           <p if.bind="!tokenDetailsNotFound.decimals">${token.decimals}</p>
           <pform-input data-test="token-decimals-field"
-            input-reference.bind="decimalsInput">
+                       input-reference.bind="decimalsInput">
             <pinput-numeric
               if.bind="tokenDetailsNotFound.decimals"
               not-wei
@@ -42,19 +42,19 @@
           <p>
             Logo
             <img class="daoSmallLogo" error.trigger="logoLoaded(false)" height="19" if.bind="validTokenLogoURI"
-              load.trigger="logoLoaded(true)"
-              src.bind="token.logoURI">
+                 load.trigger="logoLoaded(true)"
+                 src.bind="token.logoURI">
           </p>
           <pform-input input-reference.bind="logoImageInput">
             <pinput-text value.bind="token.logoURI & validate"
-              view-model.ref="logoImageInput"></pinput-text>
+                         view-model.ref="logoImageInput"></pinput-text>
           </pform-input>
         </div>
       </div>
       <pform-input data-test="token-amount-field"
-        input-reference.bind="amountInput"
-        label="Total Amount of Tokens to Swap"
-        label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
+                   input-reference.bind="amountInput"
+                   label="Total Amount of Tokens to Swap"
+                   label-description="This defines the total amount of token that will be transferred to the other DAO during the swap. You can adjust this amount at any time before the start of the funding phase of the deal.">
         <pinput-numeric
           decimals.bind="token.decimals"
           disabled.bind="!token.decimals"
@@ -80,7 +80,7 @@
       </pform-input>
 
       <pform-input label="Vesting Setup"
-        label-description="If you have defined a Vested amount, once the deal is executed on-chain, that amount will start to be released linearly throughout the Vesting period. If you define a Cliff period, tokens will not be claimable before the Cliff period ends. If you don't define a Cliff period, tokens will be progressively available to be claimed on a daily basis after the Vesting period starts.">
+                   label-description="If you have defined a Vested amount, once the deal is executed on-chain, that amount will start to be released linearly throughout the Vesting period. If you define a Cliff period, tokens will not be claimable before the Cliff period ends. If you don't define a Cliff period, tokens will be progressively available to be claimed on a daily basis after the Vesting period starts.">
         <div class="vesting">
           <div class="vesting-input">
             <p>Tokens vested for</p>
@@ -115,7 +115,7 @@
 
       <div class="tokenDetailsFooter">
         <pbutton class="deleteButton" click.delegate="onDelete()" data-test="deleteTokenDetail"
-          if.bind="!hideDeleteButton" type="tertiary">
+                 if.bind="!hideDeleteButton" type="tertiary">
           Delete
           <i class="fa fa-trash"></i>
         </pbutton>
@@ -145,7 +145,7 @@
           <p>Total Amount of Tokens to Swap</p>
           <p>
             <formatted-number if.bind="token.amount >= 0" thousands-separated
-              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
+                              value.to-view="token.amount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -156,7 +156,7 @@
           <p>Instant transfer</p>
           <p>
             <formatted-number if.bind="token.instantTransferAmount" thousands-separated
-              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
+                              value.to-view="token.instantTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
@@ -167,29 +167,32 @@
           <p>Vested transfer</p>
           <p>
             <formatted-number if.bind="token.vestedTransferAmount" thousands-separated
-              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
+                              value.to-view="token.vestedTransferAmount | ethwei:token.decimals"></formatted-number>
             <template else>
               -
             </template>
           </p>
         </div>
 
-        <div class="detailsCell" ptooltip.bind="withCommas(token.vestedFor) + ' seconds'">
+        <div class="detailsCell">
           <p>Vested for</p>
-          <p>
+          <div ptooltip.bind="withCommas(token.vestedFor) + ' seconds'">
             <formatted-number hide-tooltip if.bind="token.vestedFor"
-              value.to-view="token.vestedFor | secondsDays | number"></formatted-number>
+                              value.to-view="token.vestedFor | secondsDays | number"></formatted-number>
             <template else>0</template>
             days
-          </p>
+          </div>
         </div>
 
-        <div class="detailsCell" ptooltip.bind="withCommas(token.cliffOf) + ' seconds'">
+        <div class="detailsCell">
           <p>Cliff of</p>
-          <formatted-number hide-tooltip if.bind="token.cliffOf"
-            value.to-view="token.cliffOf | secondsDays | number"></formatted-number>
-          <template else>0</template>
-          days
+          <div ptooltip.bind="withCommas(token.cliffOf) + ' seconds'">
+
+            <formatted-number hide-tooltip if.bind="token.cliffOf"
+                              value.to-view="token.cliffOf | secondsDays | number"></formatted-number>
+            <template else>0</template>
+            days
+          </div>
         </div>
       </div>
 

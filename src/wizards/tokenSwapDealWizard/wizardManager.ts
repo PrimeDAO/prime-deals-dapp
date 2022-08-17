@@ -314,6 +314,10 @@ export class WizardManager implements IRouteableComponent {
     return canAccess;
   }
 
+  get cancelRoute() {
+    return this.dealId ? `/deal/${this.dealId}` : "/home";
+  }
+
   private isHiddenStage(stageRoute: string): boolean {
     const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
     const isHidden = hiddenStage !== -1;
