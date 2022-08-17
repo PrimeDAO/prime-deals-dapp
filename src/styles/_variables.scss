@@ -65,4 +65,8 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
       margin-bottom: 5px;
     }
   }
+
+  a {
+    color: #eba7da;
+  }
 }

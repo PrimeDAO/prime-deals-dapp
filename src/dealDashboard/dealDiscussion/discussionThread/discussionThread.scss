@@ -40,6 +40,10 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+
+    .content {
+      @include ckeditor-content;
+    }
   }
 
   .sticky-area {

@@ -8,7 +8,11 @@
       repeat.for="clause of clauses"
     >
       <span class="marker">${$index + 1}</span>
-      <pre class="body" innerhtml.to-view="clause.text | sanitizeHTML"></pre>
+      <pre class="body">
+        <h2 class="heading">${clause.title}</h2>
+        <div innerhtml.to-view="clause.text | sanitizeHTML"></div>
+      </pre>
+
       <span
         data-test="add-or-read-button"
         class="button"

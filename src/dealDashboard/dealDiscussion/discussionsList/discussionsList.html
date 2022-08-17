@@ -35,22 +35,21 @@
         <span class="activity head desktop only h-centered">Activity</span>
       </div>
       <div class="tbody">
-        <div class="tr"
+        <div
+          class="tr"
           data-test="single-topic"
           id="${discussionId}"
           click.trigger="navigateTo(`${discussionId}`)"
-          repeat.for="[discussionId, discussion] of discussions">
+          repeat.for="[discussionId, discussion] of discussions"
+        >
           <div class="td idx">${findClauseIndex(discussionId) }</div>
           <div class="td topic">
-            <pre innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></pre></pre>
+            <h2>${clauses.get(discussionId).title}</h2>
+            <div innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></div>
             <p class="creator desktop only">
               <i class="fas fa-pencil-alt"></i>
-              <span if.bind="discussion.createdBy.name">
-                Created by ${discussion.createdBy.name}
-              </span>
-              <span else>
-                Created by ${discussion.createdBy.address | smallHexString}
-              </span>
+              <span if.bind="discussion.createdBy.name"> Created by ${discussion.createdBy.name} </span>
+              <span else> Created by ${discussion.createdBy.address | smallHexString} </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
