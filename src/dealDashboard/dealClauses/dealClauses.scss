@@ -32,20 +32,12 @@ deal-clauses {
       list-style-type:none;
       display: flex;
       gap: 16px;
-      // vertical-align: top;
       padding: $spacing-normal * 2;
-      // padding-right: 150px;
-      cursor: default;
-
       border-radius: $border-radius-normal;
       background-color: $Border02;
-      // transition: background-color $hover-transition-speed-fast ease-in-out;
-      // transition-delay: calc($hover-transition-speed-fast / 2);
 
       .body {
-        width: calc(100% - 165px);
         word-wrap: anywhere;
-        padding: 6px 0;
 
         small {
           font-size: 12px;
@@ -54,8 +46,8 @@ deal-clauses {
       }
 
       .heading {
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 16px;
+        line-height: 24px;
         font-weight: 700;
         word-wrap: anywhere;
         margin-bottom: $spacing-normal;
@@ -77,7 +69,6 @@ deal-clauses {
         color: $Neutral04;
         text-align: right;
         margin: $spacing-normal * 2 auto 0;
-        display: flex;
         cursor: pointer;
 
         img {
@@ -86,24 +77,12 @@ deal-clauses {
         }
       }
 
-      &.isPrivate:hover,
-      &.active {
-
-        &:not(.active) .button {
-          display: flex;
-        }
-
+      &:hover.isPrivate,
+      &:hover.active {
         background-color: $Border03;
-      }
 
-      .marker {
-        font-size: 26px;
-        font-weight: 700;
-        font-family: "Inter";
-        color: $Border01;
-
-        &::after {
-          content: ".";
+        .button {
+          display: flex;
         }
       }
     }
