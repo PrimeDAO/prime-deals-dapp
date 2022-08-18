@@ -173,7 +173,7 @@ export class DaoStageContent {
   async hydrateDaosList(): Promise<boolean> {
     const cachedDAOsList = JSON.parse(localStorage.getItem("daosData"));
     if (!cachedDAOsList || cachedDAOsList.date < LAST_1_DAY) {
-      this.daosData = await this.firestoreService.allDeepDaoOrgs();
+      this.daosData = (await this.firestoreService.allDeepDaoOrgs());
       localStorage.setItem("daosData", JSON.stringify({
         date: Date.now(),
         data: this.daosData,
@@ -181,12 +181,20 @@ export class DaoStageContent {
     } else {
       this.daosData = cachedDAOsList.data;
     }
-    this.daosList = Object.keys(this.daosData).map(id => ({
-      name: this.daosData[id].name,
-      avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHOLDER_AVATAR,
-      id,
-      treasury: this.daosData[id].treasuryAddresses,
-    }));
+    this.daosList = Object.keys(this.daosData)
+      .map(id => {
+        const dao: IAutoCompleteSelectItem = {
+          name: this.daosData[id].name.trim(),
+          avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHOLDER_AVATAR,
+          id,
+          treasury: [...this.daosData[id].treasuryAddresses],
+        };
+        return dao;
+      })
+      .filter((dao: IAutoCompleteSelectItem) => !!dao.name)
+      .sort((a: IAutoCompleteSelectItem, b: IAutoCompleteSelectItem) => {
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      });
     this.daoListStr = JSON.stringify(this.daosList);
 
     if (this.data?.name) {
