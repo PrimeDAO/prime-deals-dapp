@@ -7,7 +7,7 @@ is deployed to https://deals.prime.xyz.
 
 Smart contracts have their own repository [here](https://github.com/PrimeDAO/deals-contracts).
 
-User documentation can be found at https://deals.prime.xyz/documentation/
+User documentation can be found at https://deals.prime.xyz/documentation/.
 
 ## Development
 

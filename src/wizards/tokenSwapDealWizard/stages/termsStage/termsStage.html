@@ -22,7 +22,7 @@
           hide-delete-button.bind="terms.clauses.length === 1"
           index.bind="$index"
           on-delete.call="onDelete($index)"
-          on-saved.call="hasUnsavedChanges && checkedForUnsavedChanges()"
+          on-saved.call="setClause($index, $event)"
           repeat.for="clause of terms.clauses"
           view-mode.bind="stageMetadata.termsViewModes[$index]"
           view-model.ref="termClauses[$index]"
@@ -85,7 +85,7 @@
                   <template au-slot="after">%</template>
                 </pinput-group>
 
-                <span if.bind="tokensTotal && daoplomatRewards.percentage">~${tokensTotal * daoplomatRewards.percentage | currency} </span>
+                <span if.bind="tokensTotal && daoplomatRewards.percentage">~${tokensTotal * daoplomatRewards.percentage/100 | currency} </span>
               </div>
 
             </pform-input>
@@ -110,7 +110,7 @@
               </div>
               <div>
                 <pform-input
-                  helper-message.bind="daoplomatRewards.percentage && daoplomat.rewardSplitPercentage ? '~' + numberService.formatCurrency(daoplomat.rewardSplitPercentage/100 * daoplomatRewards.percentage * tokensTotal): undefined"
+                  helper-message.bind="daoplomatRewards.percentage && daoplomat.rewardSplitPercentage ? '~' + numberService.formatCurrency((daoplomat.rewardSplitPercentage/100 * daoplomatRewards.percentage)/100 * tokensTotal): undefined"
                   input-reference.bind="splitInput"
                   label.bind="$index === 0 ? 'Split': ''"
                 >

@@ -7,7 +7,13 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { TokenService } from "services/TokenService";
 import { ITokenInfo } from "services/TokenTypes";
 import { ConsoleLogService } from "services/ConsoleLogService";
-import { IDAO, IDealRegistrationTokenSwap, IProposalLead, IToken } from "entities/DealRegistrationTokenSwap";
+import {
+  IDAO,
+  IDaoplomatRewards,
+  IDealRegistrationTokenSwap,
+  IProposalLead,
+  IToken,
+} from "entities/DealRegistrationTokenSwap";
 import { Utils } from "services/utils";
 import { IDisposable, IEventAggregator, inject } from "aurelia";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
@@ -670,19 +676,27 @@ export class DealTokenSwap implements IDeal {
    * @returns
    */
   public createSwap(): Promise<TransactionReceipt> {
-    const daoAddresses = [
-      this.primaryDao.treasury_address,
-      this.partnerDao.treasury_address,
-    ];
-    const {tokens, pathTo, pathFrom} = this.constructDealCreateParameters();
+    const {daoAddresses, tokens, pathTo, pathFrom} = this.constructDealCreateParameters();
     const metadata = formatBytes32String(this.id);
     const deadline = 1712882813; // TODO: remove HACK this.fundingPeriod;
+
+    const daoplomatRewards: IDaoplomatRewards = this.registrationData.terms.daoplomatRewards ?? {
+      daoplomats: [],
+      percentage: 0,
+    };
+    const daoplomats = daoplomatRewards.daoplomats.map(daoplomat => daoplomat.address);
+    const rewards = [
+      [parseInt((daoplomatRewards.percentage * 100).toFixed(0))],
+      daoplomatRewards.daoplomats.map(daoplomat => parseInt((daoplomat.rewardSplitPercentage * 100).toFixed(0))),
+    ];
 
     const dealParameters = [
       daoAddresses,
       tokens,
       pathFrom,
       pathTo,
+      daoplomats,
+      rewards,
       metadata,
       deadline,
     ];
@@ -996,41 +1010,42 @@ export class DealTokenSwap implements IDeal {
    * pulled from deal-contracts
    * @returns
    */
-  private constructDealCreateParameters(): {tokens: Array<unknown>, pathTo: Array<unknown>, pathFrom: Array<unknown>} {
-    const tokens = new Array<unknown>();
-    const pathTo = new Array<unknown>();
-    const pathFrom = new Array<unknown>();
-    const zero = 0;
-    const fourZeros = [0, 0, 0, 0];
+  private constructDealCreateParameters(): {daoAddresses: string[], tokens: Array<unknown>, pathTo: Array<unknown>, pathFrom: Array<unknown>} {
+    const daos = [
+      {
+        address: this.primaryDao.treasury_address,
+        tokens: this.primaryDao.tokens,
+      },
+      {
+        address: this.partnerDao.treasury_address,
+        tokens: this.partnerDao.tokens,
+      },
+    ];
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.primaryDao.tokens.length; i++) {
-      if (!tokens.includes(this.primaryDao.tokens[i].address)) {
-        tokens.push(this.primaryDao.tokens[i].address);
-        pathFrom.push([BigNumber.from(this.primaryDao.tokens[i].amount), zero]);
-        pathTo.push([
-          ...fourZeros,
-          BigNumber.from(this.primaryDao.tokens[i].instantTransferAmount),
-          BigNumber.from(this.primaryDao.tokens[i].vestedTransferAmount),
-          this.primaryDao.tokens[i].cliffOf ?? 0,
-          this.primaryDao.tokens[i].vestedFor ?? 0,
-        ]);
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.partnerDao.tokens.length; i++) {
-      if (!tokens.includes(this.partnerDao.tokens[i].address)) {
-        tokens.push(this.partnerDao.tokens[i].address);
-        pathFrom.push([zero, BigNumber.from(this.partnerDao.tokens[i].amount)]);
-        pathTo.push([
-          BigNumber.from(this.partnerDao.tokens[i].instantTransferAmount),
-          BigNumber.from(this.partnerDao.tokens[i].vestedTransferAmount),
-          this.partnerDao.tokens[i].cliffOf ?? 0,
-          this.partnerDao.tokens[i].vestedFor ?? 0,
-          ...fourZeros,
-        ]);
-      }
-    }
-    return {tokens, pathTo, pathFrom};
+    const daoAddresses = daos.map(dao => dao.address);
+
+    const allTokensAddresses = daos.flatMap(dao => dao.tokens.map(tokenDetails => tokenDetails.address));
+    const tokens = Array.from(new Set(allTokensAddresses));
+
+    const pathFrom = tokens.map(tokenAddress => {
+      return daos.map(dao => {
+        const tokenDetails = dao.tokens.find(details => details.address === tokenAddress);
+        return BigNumber.from(tokenDetails?.amount ?? 0);
+      });
+    });
+
+    const pathTo = tokens.map(tokenAddress => {
+      return daos.flatMap(dao => {
+        const tokenDetails = dao.tokens.find(details => details.address === tokenAddress);
+        return [
+          BigNumber.from(tokenDetails?.instantTransferAmount ?? 0),
+          BigNumber.from(tokenDetails?.vestedTransferAmount ?? 0),
+          tokenDetails?.cliffOf ?? 0,
+          tokenDetails?.vestedFor ?? 0,
+        ];
+      });
+    });
+
+    return {daoAddresses, tokens, pathTo, pathFrom};
   }
 }

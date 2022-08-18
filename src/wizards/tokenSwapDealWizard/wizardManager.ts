@@ -163,7 +163,9 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
-        await App.dealLoadingPromise;
+        if (!App.initialized){
+          await App.dealLoadingPromise;
+        }
         this.originalRegistrationData = await this.getDeal(dealId);
       }
       /**
@@ -312,6 +314,10 @@ export class WizardManager implements IRouteableComponent {
     return canAccess;
   }
 
+  get cancelRoute() {
+    return this.dealId ? `/deal/${this.dealId}` : "/home";
+  }
+
   private isHiddenStage(stageRoute: string): boolean {
     const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
     const isHidden = hiddenStage !== -1;
@@ -391,4 +397,7 @@ export class WizardManager implements IRouteableComponent {
     }, 0);
   }
 
+  dispose() {
+    this.container.disposeResolvers();
+  }
 }
