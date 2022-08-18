@@ -5,6 +5,8 @@ import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATE
 import { IDeepDaoOrganizations } from "../../src/services/DeepDaoTypes";
 import axios from "axios";
 
+const DEEP_DAO_ASSETS_URL = "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/";
+
 /**
  * Checks if the only change to the deal is isPrivacy flag change
  *
@@ -161,11 +163,18 @@ export const updateDealUpdatesCollection = (dealId: string): void => {
   });
 };
 
-const prepareAvatarUrl = (url: string): string => {
+/**
+ * DeepDAO api returns mixed avatar URL, which in some cases contains
+ * the full URL and in others return only the file name.
+ * This function unify urls to always contain the full URL path.
+ * @param url string
+ * @returns string
+ */
+const unifyAvatarUrl = (url: string): string => {
   const pathParts = url?.split("/");
   return (!url || url.includes("https://"))
-    ? url
-    : "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/" + pathParts[pathParts.length - 1];
+    ? url || ""
+    : DEEP_DAO_ASSETS_URL + pathParts[pathParts.length - 1];
 };
 
 /**
@@ -220,7 +229,7 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
     {
       obj[item.organizationId] = {
         name: item.name,
-        avatarUrl: prepareAvatarUrl(item.logo),
+        avatarUrl: unifyAvatarUrl(item.logo),
         treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
       };
       functions.logger.log(`Treasury: ${JSON.stringify(obj[item.organizationId].treasuryAddresses)}.`);

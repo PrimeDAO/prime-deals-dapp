@@ -1,9 +1,9 @@
 export interface IDeepDaoGovernanceItem
 {
-  "platform": string,
-  "id": string,
-  "name": string,
-  "address": string,
+  platform: string,
+  id: string,
+  name: string,
+  address: string,
 }
 
 export interface IDeepDaoOrganization
@@ -18,7 +18,7 @@ export interface IDeepDaoOrganization
   votes: number,
   tokens: string[],
   governance: IDeepDaoGovernanceItem[],
-  "updatedAt": Date,
+  updatedAt: Date,
 }
 
 export interface IDeepDaoOrganizations

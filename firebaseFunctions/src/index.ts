@@ -354,14 +354,16 @@ export const scheduledDeepDaoOrganizationListUpdate = functions.pubsub
     return await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
   });
 
-/**
- * Manually invoke DeepDAO data update
- */
-export const callDeepDaoAPI = functions.https.onRequest(
-  (request, response) =>
-    // Allow cross-origin requests for this function
-    cors(request, response, async () => {
-      const data = await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
-      return response.status(200).send(data);
-    }),
-);
+// /**
+//  * Manually invoke DeepDAO data update.
+//  * For use to create the deepDao collection in the Emulators
+//  * where the schedule won't work.
+//  */
+// export const callDeepDaoAPI = functions.https.onRequest(
+//   (request, response) =>
+//     // Allow cross-origin requests for this function
+//     cors(request, response, async () => {
+//       const data = await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
+//       return response.status(200).send(data);
+//     }),
+// );
