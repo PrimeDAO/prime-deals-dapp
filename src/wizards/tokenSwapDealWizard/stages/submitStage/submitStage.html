@@ -142,7 +142,7 @@
                   <template if.bind="true">
                     <div class="submitContentLabel">Clause ${$index + 1}</div>
                     <div class="submitContent">
-                      <pre class="subtext">${clause.text}</pre>
+                      <pre class="subtext" innerhtml.to-view="clause.text | sanitizeHTML"></pre>
                     </div>
                   </template>
                 </template>

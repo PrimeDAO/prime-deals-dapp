@@ -22,7 +22,7 @@
     padding-bottom: $spacing-medium-small + $spacing-normal;
     border-bottom: 1px solid $Secondary02;
 
-    & > span {
+    &>span {
       display: flex;
       justify-content: space-between;
     }
@@ -121,7 +121,7 @@
         gap: 13px;
 
         &:hover {
-          button > i.fa-times {
+          button>i.fa-times {
             color: $Primary01;
           }
         }
@@ -153,10 +153,10 @@
         white-space: nowrap;
       }
 
-      & > ptextarea {
+      &>ptextarea {
         grid-area: input;
 
-        & > textarea {
+        &>textarea {
           min-height: (24px + $spacing-normal) * 2; // 2 rows
           height: (24px + $spacing-normal) * 2;
           resize: vertical;
@@ -164,11 +164,11 @@
         }
       }
 
-      & > .action.do {
+      &>.action.do {
         grid-area: action-bottom;
       }
 
-      & > .action.heading {
+      &>.action.heading {
         button {
           padding: $spacing-small $spacing-normal * 2;
         }
@@ -193,7 +193,7 @@
           margin-bottom: 10px;
         }
 
-        & > .action.do {
+        &>.action.do {
           margin-top: 10px;
         }
       }

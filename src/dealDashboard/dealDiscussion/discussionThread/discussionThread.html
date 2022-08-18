@@ -27,10 +27,12 @@
           <i class="spinner fa fas fa-circle-notch fa-spin"></i>
           Loading comments...
         </div>
-        <div if.bind="!isLoading.discussions && !threadComments.length" data-test="no-comments-text" class="no comment">
-          <template if.bind="!hasApiError">
-            ${noCommentsText}
-          </template>
+        <div
+          if.bind="!isLoading.discussions && !threadComments.length"
+          data-test="no-comments-text"
+          class="no comment"
+        >
+          <template if.bind="!hasApiError"> ${noCommentsText} </template>
           <div else class="discussions-loading-error">
             <div>
               <span class="fas fa-exclamation-triangle"></span>
@@ -40,7 +42,9 @@
               data-test="reload-discussions"
               class="reload-discussions"
               type="primary"
-              click.trigger="initialize()">Reload Discussion</pbutton>
+              click.trigger="initialize()"
+              >Reload Discussion</pbutton
+            >
           </div>
         </div>
 
@@ -49,7 +53,8 @@
           repeat.for="comment of threadComments"
           ref="refComments[$index]"
           id="${comment._id}"
-          class="comment">
+          class="comment"
+        >
           <single-comment
             comment-action.call="doAction($event.action, $event.args)"
             discussion-id.two-way="deal.dealDocument.id"
@@ -61,7 +66,8 @@
             replies-to.bind="comment.replyTo ? (threadDictionary[comment.replyTo] ? threadDictionary[comment.replyTo] : deletedComment) : ''"
             replies-to-profile.bind="comment.replyTo ? (threadProfiles[threadDictionary[comment.replyTo].author]) : ''"
             is-authorized.bind="authorized"
-            comment.bind="comment">
+            comment.bind="comment"
+          >
           </single-comment>
         </div>
       </section>
@@ -96,7 +102,8 @@
           rows="2"
           validation-state="${isLoading.commenting ? 'validating' : ''}"
           disabled.bind="isLoading.commenting"
-          class="comment-input">
+          class="comment-input"
+        >
         </ptextarea>
         <pbutton
           data-test="comment-input-button"
@@ -105,7 +112,8 @@
           full-width
           disabled.bind="isLoading.commenting || !comment.length"
           loading.bind="isLoading.commenting"
-          click.trigger="addComment()">
+          click.trigger="addComment()"
+        >
           ${replyToComment ? "Reply" : "Comment"}
         </pbutton>
       </section>
