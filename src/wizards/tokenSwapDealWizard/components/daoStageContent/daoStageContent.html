@@ -17,9 +17,8 @@
       >
         <autocomplete-select
           placeholder="Select your DAO..."
-          searchText="No DAO found, add '%VAL%' manually"
-          value.bind="data.name"
-          default-avatar="./DAO_placeholder.svg"
+          search-text="No DAO found, add '%VAL%' manually"
+          default-avatar="DAO_placeholder.svg"
           ref="refSelectDAO">
           <span slot="button-icon-close"><i class="fas fa-times"></i></span>
           <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
@@ -65,7 +64,6 @@
         <autocomplete-select else
           placeholder="Select treasury address..."
           searchText="Address not found, add manually"
-          value.bind="data.treasury_address"
           ref="refSelectTreasury">
           <span slot="button-icon-close"><i class="fas fa-times"></i></span>
           <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>

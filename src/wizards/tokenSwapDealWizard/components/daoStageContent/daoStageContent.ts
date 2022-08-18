@@ -45,15 +45,18 @@ export class DaoStageContent {
   private daoSelected: string;
   private refSelectDAO: HTMLElement;
   @observable private refSelectTreasury: HTMLElement = null;
-  private isFromDeepDAO = false;
-  private isLoadingDAO = false;
+  private isFromDeepDAO:boolean = false;
+  private isLoadingDAO:boolean = false;
+  private isHydrated: boolean = false;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
 
   constructor(
     @IValidationController private form: IValidationController,
     private firestoreService: FirestoreService<any, any>,
-  ) {}
+  ) {
+    this.hydrateDaosList();
+  }
 
   addRepresentative() {
     this.data.representatives.push({address: ""});
@@ -104,10 +107,14 @@ export class DaoStageContent {
           treasury: []}),
         );
       newInputSelectElement.setAttribute("options", JSON.stringify(options));
-      newInputSelectElement.addEventListener(DropdownEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) => {
+      newInputSelectElement.addEventListener(DropdownEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) =>
+      {
         this.data.treasury_address = e.detail.id;
         this.form.revalidateErrors();
       });
+
+      const currentOption = options.find(option => (option.id === this.data.treasury_address));
+      if (currentOption?.name) newInputSelectElement.setAttribute("value", currentOption.name);
 
       newInputSelectElement.addEventListener(DropdownEvent.Cleared, () => {
         this.data.treasury_address = "";
@@ -116,11 +123,10 @@ export class DaoStageContent {
   }
 
   async attached() {
-    if (await this.hydrateDaosList()) {
-      this.refSelectDAO.setAttribute("options", this.daoListStr);
-      this.refSelectDAO.setAttribute("value", this.data.name);
-      this.isFromDeepDAO = this.data.deepDAOId && !this.data.deepDAOId.startsWith("custom-dao-");
-    }
+    if (!this.isHydrated) await this.hydrateDaosList();
+    this.refSelectDAO.setAttribute("options", this.daoListStr);
+    this.refSelectDAO.setAttribute("value", this.data.name);
+    this.isFromDeepDAO = this.data.deepDAOId && !this.data.deepDAOId.startsWith("custom-dao-");
 
     this.refSelectDAO.addEventListener(DropdownEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) =>
     {
@@ -180,6 +186,13 @@ export class DaoStageContent {
       treasury: this.daosData[id].treasuryAddresses,
     }));
     this.daoListStr = JSON.stringify(this.daosList);
-    return typeof JSON.parse(this.daoListStr) === "object";
+
+    if (this.data?.name) {
+      const currentDAO = this.daosList.find(dao => dao.name === this.data.name);
+      if (currentDAO) {
+        this.treasuryAddresses = currentDAO.treasury;
+      }
+      return typeof JSON.parse(this.daoListStr) === "object";
+    }
   }
 }
