@@ -1,21 +1,15 @@
 <template>
   <div class="header">
-    <h1 class="subtitle heading heading1 gradient" id="discussionsSection">
-      Discuss
-    </h1>
+    <h1 class="subtitle heading heading1 gradient" id="discussionsSection">Discuss</h1>
   </div>
 
   <section data-test="discussions-list" class="section discussions-list">
     <!-- always when there are no discussions-->
     <section if.bind="!discussions.size">
       <p data-test="discussions-list-instructions" class="instructions">
-        <span>
-          None of the clauses are currently being discussed.
-        </span>
+        <span> None of the clauses are currently being discussed. </span>
         <!-- always when connected and authorized -->
-        <span if.to-view="deal.isUserRepresentativeOrLead">
-          Click on a clause to begin a discussion.
-        </span>
+        <span if.to-view="deal.isUserRepresentativeOrLead"> Click on a clause to begin a discussion. </span>
       </p>
     </section>
 
@@ -23,11 +17,12 @@
     <section if.to-view="!ethereumService.defaultAccountAddress">
       <p data-test="discussions-list-instructions" class="instructions">
         Only the deal proposal lead and representatives can participate in discussions.
-        <a class="connect-link" href="" click.trigger="ethereumService.ensureConnected()">Connect</a> to see if you are authorized to begin a discussion.
+        <a class="connect-link" href="" click.trigger="ethereumService.ensureConnected()">Connect</a> to see if you are
+        authorized to begin a discussion.
       </p>
     </section>
 
-    <div class="table" if.bind="discussions.size" >
+    <div class="table" if.bind="discussions.size">
       <div class="thead">
         <span class="idx head">#</span>
         <span class="topic head">Topic</span>
@@ -35,22 +30,21 @@
         <span class="activity head desktop only h-centered">Activity</span>
       </div>
       <div class="tbody">
-        <div class="tr"
+        <div
+          class="tr"
           data-test="single-topic"
           id="${discussionId}"
           click.trigger="navigateTo(`${discussionId}`)"
-          repeat.for="[discussionId, discussion] of discussions">
+          repeat.for="[discussionId, discussion] of discussions"
+        >
           <div class="td idx">${findClauseIndex(discussionId) }</div>
           <div class="td topic">
-            <pre>${clauses.get(discussionId).text}</pre>
+            <h2>${clauses.get(discussionId).title}</h2>
+            <div innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></div>
             <p class="creator desktop only">
               <i class="fas fa-pencil-alt"></i>
-              <span if.bind="discussion.createdBy.name">
-                Created by ${discussion.createdBy.name}
-              </span>
-              <span else>
-                Created by ${discussion.createdBy.address | smallHexString}
-              </span>
+              <span if.bind="discussion.createdBy.name"> Created by ${discussion.createdBy.name} </span>
+              <span else> Created by ${discussion.createdBy.address | smallHexString} </span>
               on ${dateService.formattedTime(discussion.createdAt).short()}
             </p>
           </div>
@@ -60,12 +54,8 @@
           </div>
           <div data-test="number-of-replies" class="td replies h-centered v-centered">
             <i class="fas fa-reply mobile only"></i>
-            <span if.to-view="deal.isAuthenticatedRepresentativeOrLead">
-              ${discussion.replies || 0}
-            </span>
-            <span else>
-              ${discussion.publicReplies || 0}
-            </span>
+            <span if.to-view="deal.isAuthenticatedRepresentativeOrLead"> ${discussion.replies || 0} </span>
+            <span else> ${discussion.publicReplies || 0} </span>
           </div>
           <div data-test="time-since-last-activity" class="td activity h-centered v-centered">
             <i class="fas fa-bolt mobile only"></i>
@@ -79,7 +69,8 @@
       <button
         repeat.for="page of [{isActive: true},{isActive: false},{isActive: false},{isActive: false},{isActive: false}]"
         class="page button ${page.isActive? 'active' : ''}"
-        type="tertiary">
+        type="tertiary"
+      >
         ${$index + 1}
       </button>
       <button class="pagination button right" type="tertiary">></button>
