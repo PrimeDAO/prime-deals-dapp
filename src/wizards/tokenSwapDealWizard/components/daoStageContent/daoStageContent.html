@@ -69,6 +69,12 @@
           <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
           <span slot="button-icon-search"><i class="fas fa-search"></i></span>
         </autocomplete-select>
+        <span class="link-buttons" if.bind="data.treasury_address && isValidTreasuryAddress && isFromDeepDAO">
+          <copy-to-clipboard-button text-to-copy.bind="data.treasury_address"></copy-to-clipboard-button>
+          <etherscan-button
+            address.bind="data.treasury_address">
+          </etherscan-button>
+        </span>
       </pform-input>
 
       <div class="daoStageAvatar" data-test="dao-avatar-section">

@@ -19,6 +19,12 @@ dao-stage-content {
     border-bottom: 1px solid;
   }
 
+  .link-buttons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-normal;
+    padding-left: calc(2 * $spacing-normal);
+  }
   .multiFieldTitle {
     color: $Secondary02;
     margin-bottom: $spacing-normal;

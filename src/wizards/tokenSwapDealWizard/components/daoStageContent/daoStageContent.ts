@@ -79,10 +79,8 @@ export class DaoStageContent {
   async resolveENS(name: string): Promise<string> {
     const provider = new ethers.providers.EtherscanProvider(1, process.env.ETHERSCAN_KEY);
 
-    if (ethers.utils.isValidName(name) && !ethers.utils.isAddress(name)) {
-      const address = await provider.resolveName(name);
-      return address || name;
-    }
+    const isAddress = ethers.utils.isAddress(name);
+    return (!isAddress) && await provider.resolveName(name);
   }
 
   private async resolveAddresses (mixedEnsAndAddresses: string[]): Promise<{ name: string, value: string }[]> {
@@ -90,11 +88,15 @@ export class DaoStageContent {
       const address = await this.resolveENS(item);
       return {
         name: `${item}${address ? " (" + Utils.smallHexString(address) + ")" : ""}`,
-        value: address ?? item,
+        value: address || item,
       };
     });
 
     return Promise.all(res);
+  }
+
+  private get isValidTreasuryAddress(): boolean {
+    return ethers.utils.isAddress(this.data.treasury_address);
   }
 
   async refSelectTreasuryChanged(newInputSelectElement) {
