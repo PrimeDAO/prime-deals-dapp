@@ -7,24 +7,6 @@
       class="clause ${authorized? 'isPrivate' : ''} ${discussionId === clause.id ? 'active' : ''}"
       repeat.for="clause of clauses"
     >
-      <!-- <span class="marker">${$index + 1}</span>
-      <h2 class="heading">${clause.title}</h2>
-      <div innerhtml.to-view="clause.text | sanitizeHTML"></div>
-
-      <span
-        data-test="add-or-read-button"
-        class="button"
-        click.trigger="addOrReadDiscussion(clause.text, clause.id)"
-        if.to-view="authorized"
-      >
-        <div
-          if.to-view="!discussionsService.discussions[clause.id] || discussionsService.discussions[clause.id].replies === 0"
-        >
-          Begin A Discussion
-        </div>
-        <div else>Discuss</div>
-        <img src="/comment.svg" />
-      </span> -->
       <div class="clauseContent">
         <h2 class="heading">${clause.title}</h2>
         <div class="body" innerhtml.to-view="clause.text | sanitizeHTML"></div>
