@@ -960,7 +960,7 @@ export class DealTokenSwap implements IDeal {
 
       token.claimingClaimed = this.getClaimedAmount(dao, token.address);
       if (tokenClaimableAmounts.size > 0) {
-        token.claimingClaimable = tokenClaimableAmounts.get(token.address);
+        token.claimingClaimable = tokenClaimableAmounts.get(token.address) ?? BigNumber.from(0);
       } else {
         token.claimingClaimable = BigNumber.from(0);
       }
