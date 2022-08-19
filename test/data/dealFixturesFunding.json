@@ -10,7 +10,7 @@
         "proposal": {
             "summary": "07ok7dl_summary",
             "description": "07ok7dl_description",
-            "title": "[1] Isnt:1 - VFor:0 - COf:0"
+            "title": "[1] Isnt:1"
         },
         "proposalLead": {
             "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
@@ -100,7 +100,7 @@
         "proposal": {
             "summary": "07ok7dl_summary",
             "description": "07ok7dl_description",
-            "title": "[2] Isnt:1 - VFor:1 - COf:0.5"
+            "title": "[2] Isnt:1"
         },
         "proposalLead": {
             "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
@@ -190,7 +190,7 @@
         "proposal": {
             "summary": "07ok7dl_summary",
             "description": "07ok7dl_description",
-            "title": "[3] Isnt:1 - VFor:0 - COf:0"
+            "title": "[3] Isnt:1"
         },
         "proposalLead": {
             "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
@@ -280,7 +280,7 @@
         "proposal": {
             "summary": "07ok7dl_summary",
             "description": "07ok7dl_description",
-            "title": "[4] Isnt:0.5 - VFor:0 - COf:0"
+            "title": "[4] Isnt:0.5 - Vest:0.5"
         },
         "proposalLead": {
             "address": "0xE834627cDE2dC8F55Fe4a26741D3e91527A8a498",
@@ -302,12 +302,12 @@
                     "amount": "10000000000000000000",
                     "cliffOf": 0,
                     "decimals": 18,
-                    "instantTransferAmount": "10000000000000000000",
+                    "instantTransferAmount": "5000000000000000000",
                     "logoURI": "https://primedao.mypinata.cloud/ipfs/QmVChZZtAijsiTnMRFb6ziQLnRocXnBU2Lb3F67K2ZPHho",
                     "name": "Dai Stablecoin",
                     "symbol": "DAI",
                     "vestedFor": 0,
-                    "vestedTransferAmount": "0"
+                    "vestedTransferAmount": "5000000000000000000"
                 }
             ],
             "representatives": [
