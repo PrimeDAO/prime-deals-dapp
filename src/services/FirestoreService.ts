@@ -389,6 +389,12 @@ export class FirestoreService<
         {merge: true},
       );
     } catch (error) {
+      /**
+       * Debugging note: If FirebaseError says sth about "Document fields must not be empty (found in field clauseDiscussions.``",
+       * then a property is empty, which should not happen!
+       *
+       * Possible solution: Requires to modify Firestore. CAUTION!!
+       */
       throw new Error(error);
     }
 
