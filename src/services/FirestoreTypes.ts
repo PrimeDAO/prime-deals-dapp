@@ -8,8 +8,7 @@ export interface IFirebaseDocument<T = any> {
   data: T;
 }
 
-export interface IDAOsData
-{
+export interface IDAOsData {
   name: string,
   avatarUrl: string,
   treasuryAddresses: Array<string>,

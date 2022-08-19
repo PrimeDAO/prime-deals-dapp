@@ -165,7 +165,9 @@ export const updateDealUpdatesCollection = (dealId: string): void => {
 
 /**
  * DeepDAO api returns mixed avatar URL, which in some cases contains
- * the full URL and in others return only the file name.
+ * the full URL and in others return only the file name:
+ * var1: {...,"logo": "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/communifty.eth.png",...}
+ * var2: {...,"logo": "flamingo.png",...}
  * This function unify urls to always contain the full URL path.
  * @param url string
  * @returns string
@@ -177,11 +179,6 @@ const unifyAvatarUrl = (url: string): string => {
     : DEEP_DAO_ASSETS_URL + pathParts[pathParts.length - 1];
 };
 
-/**
- * Imports list of DAO's (Organizations) from DeepDAO API, and stores a map
- * of organizations data inside a Google FireStore collection - `deep-dao`.
- * The API-Url and API-Key are specified in `firebaseFunctions/.env` file
- */
 // eslint-disable-next-line
 export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, functions: any): Promise<FirebaseFirestore.WriteResult> =>
 {

@@ -101,18 +101,18 @@ dao-stage-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      span {
-        .mono {
+      .deep-dao-logo {
+        .logo-mono {
           display: block;
         }
-        .color {
+        .logo-color {
           display: none;
         }
         &:hover {
-          .mono {
+          .logo-mono {
             display: none;
           }
-          .color {
+          .logo-color {
             display: block;
           }
         }
