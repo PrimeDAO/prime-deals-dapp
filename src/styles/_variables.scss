@@ -62,9 +62,6 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
       padding-left: $spacing-small;
     }
   }
-  p, li {
-    color: $Neutral02;
-  }
   a {
     color: #eba7da;
   }

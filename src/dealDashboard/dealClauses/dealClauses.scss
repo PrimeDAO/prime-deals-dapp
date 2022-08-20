@@ -47,7 +47,9 @@ deal-clauses {
           word-wrap: anywhere;
           text-overflow: ellipsis;
         }
-
+        p, li {
+          color: $Neutral02;
+        }
       }
 
       .button {

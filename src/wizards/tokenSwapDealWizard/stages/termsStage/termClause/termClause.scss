@@ -24,8 +24,11 @@ term-clause {
 
   .ckEditor__output,
   .ck.ck-content {
+    p, li {
+      color: $Neutral03;
+    }
     a {
-      color: #eba7da;
+      color: $Secondary01;
     }
   }
 
