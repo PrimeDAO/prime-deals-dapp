@@ -18,7 +18,6 @@ deal-clauses {
       gap: $spacing-medium-small * 2;
       vertical-align: top;
       padding: $spacing-normal $spacing-medium-small;
-      // padding-right: 150px;
       cursor: default;
       position: relative;
 
@@ -34,7 +33,7 @@ deal-clauses {
         word-wrap: anywhere;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: $spacing-normal;
 
         small {
           font-size: 12px;

@@ -40,7 +40,6 @@
           <div class="td idx">${findClauseIndex(discussionId) }</div>
           <div class="td topic">
             <h2>${clauses.get(discussionId).title}</h2>
-            <!-- <div innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></div> -->
             <p class="creator desktop only">
               <i class="fas fa-pencil-alt"></i>
               <span if.bind="discussion.createdBy.name"> Created by ${discussion.createdBy.name} </span>
