@@ -46,25 +46,25 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
   }
 
   ul {
-    margin-bottom: 15px;
-
     li {
       list-style-type: disc;
       list-style-position: inside;
-      margin-bottom: 5px;
     }
   }
 
   ol {
-    margin-bottom: 15px;
+    line-height: 24px;
+    font-family: Inter;
 
     li {
       list-style-type: decimal;
       list-style-position: inside;
-      margin-bottom: 5px;
+      padding-left: $spacing-small;
     }
   }
-
+  p, li {
+    color: $Neutral02;
+  }
   a {
     color: #eba7da;
   }
