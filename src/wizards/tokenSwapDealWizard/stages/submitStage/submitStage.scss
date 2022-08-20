@@ -40,8 +40,15 @@ $submitCardWidth: 645px;
 
     @include pre;
 
-    .subtext {
+    .clause-content {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-normal;
+      font-family: Inter;
       color: $Neutral04;
+      .heading {
+        overflow-wrap: anywhere;
+      }
     }
   }
 

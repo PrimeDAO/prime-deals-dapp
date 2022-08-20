@@ -142,7 +142,10 @@
                   <template if.bind="true">
                     <div class="submitContentLabel">Clause ${$index + 1}</div>
                     <div class="submitContent">
-                      <pre class="subtext" innerhtml.to-view="clause.text | sanitizeHTML"></pre>
+                      <pre class="clause-content">
+                        <h2 data-test="thread-header" class="heading topic" >${clause.title}</h2>
+                        <div data-test="thread-content" class="content" innerhtml.to-view="clause.text | sanitizeHTML"></div>
+                      </pre>
                     </div>
                   </template>
                 </template>
