@@ -8,10 +8,6 @@
       </div>
     </section>
     <hgroup class="title" ref="refTitle">
-      <pre>
-        <h2 data-test="thread-header" class="heading topic" >${clauses.get(discussionId).title}</h2>
-        <div data-test="thread-content" class="content" innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></div>
-      </pre>
       <span if.bind="dealDiscussion && dealDiscussion.createdBy.address">
         <h3 class="subtext">Clause #${clauseIndex}</h3>
         <h3 class="subtext">
@@ -20,6 +16,10 @@
           at ${ dateService.formattedTime(dealDiscussion.createdAt).short() }
         </h3>
       </span>
+      <pre>
+        <h2 data-test="thread-header" class="heading topic" >${clauses.get(discussionId).title}</h2>
+        <!-- <div data-test="thread-content" class="content" innerhtml.to-view="clauses.get(discussionId).text | sanitizeHTML"></div> -->
+      </pre>
     </hgroup>
     <div class="sticky-area">
       <section class="comments container">
