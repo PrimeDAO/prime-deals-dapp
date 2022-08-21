@@ -124,6 +124,13 @@
           margin-bottom: 80px;
           gap: 28px;
         }
+
+        .scrollerContainer {
+          .scroller {
+            flex-direction: row;
+            gap: calc($spacing-normal * 2);
+          }
+        }
       }
 
       &.hero {
