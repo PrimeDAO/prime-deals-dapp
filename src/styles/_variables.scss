@@ -62,6 +62,6 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
   }
 
   a {
-    color: #eba7da;
+    color: $Secondary01;
   }
 }
