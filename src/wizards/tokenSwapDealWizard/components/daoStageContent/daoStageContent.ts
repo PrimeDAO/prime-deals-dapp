@@ -7,7 +7,7 @@ import { IDAOsData } from "services";
 import { ethers } from "ethers";
 import { EnsService } from "services";
 import { Utils } from "services/utils";
-import { AutoCompleteSelect } from "cl-webcomp-poc/components/AutoCompleteSelect";
+import { AutoCompleteSelect } from "cl-webcomp-poc/components/AutocompleteSelect";
 
 interface IAutocompleteSelectItem {
   name: string,
