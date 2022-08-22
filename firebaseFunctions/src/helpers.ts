@@ -229,7 +229,6 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
         avatarUrl: unifyAvatarUrl(item.logo),
         treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
       };
-      functions.logger.log(`Treasury: ${JSON.stringify(obj[item.organizationId].treasuryAddresses)}.`);
       return obj;
     }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
 
