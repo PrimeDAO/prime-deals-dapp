@@ -6,8 +6,7 @@ $hover-transition-speed-medium: 0.3s;
 $hover-transition-speed-slow: 0.4s;
 
 deal-clauses {
-
-  ol {
+  &>ol {
     display: grid;
     gap: $spacing-normal;
     list-style-type: decimal;
