@@ -16,7 +16,7 @@
         is-vertical
       >
         <!-- Make sure to render new line characters from textarea  -->
-        <div if.bind="clause.title" class="clause__title">${clause.title}</div>
+        <h2 if.bind="clause.title" class="clause__title">${clause.title}</h2>
         <div class="ckEditor__output" innerhtml.to-view="clause.text | sanitizeHTML"></div>
       </pform-input>
     </div>
