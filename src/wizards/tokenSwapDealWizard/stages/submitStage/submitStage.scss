@@ -38,13 +38,12 @@ $submitCardWidth: 645px;
       margin-bottom: inherit;
     }
 
-    @include pre;
-
-    .subtext {
+    .submitContent {
       color: $Neutral04;
 
       .heading {
         word-break: break-all;
+        margin-bottom: $spacing-normal;
       }
     }
   }
