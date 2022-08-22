@@ -9,6 +9,8 @@ import { DiscussionsService } from "../discussionsService";
 import { bindable, DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import {IRouter} from "@aurelia/router";
 
+const CREATE_SWAP_TIMEOUT = 60000;
+
 export class DealVotes {
   @bindable deal: DealTokenSwap;
 
@@ -101,7 +103,7 @@ export class DealVotes {
     }
 
     if (await this.deal.createSwap()) {
-      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId, CREATE_SWAP_TIMEOUT); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     } else {

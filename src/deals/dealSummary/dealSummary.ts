@@ -19,7 +19,7 @@ export class DealSummary {
     @IRouter private router: IRouter,
   ) { }
 
-  public async attached(): Promise<void> {
+  attached() {
     this.loading = false;
   }
 

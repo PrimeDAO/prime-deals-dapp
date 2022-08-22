@@ -86,6 +86,16 @@ export const routes: IRoute[] = [
     },
   },
   {
+    // The router can't handle routes that have slashes and don't exist, so we need to manually define the fallback for them
+    path: "/initiate/token-swap/:id",
+    redirectTo: "home",
+  },
+  {
+    // The router can't handle routes that have slashes and don't exist, so we need to manually define the fallback for them
+    path: "/initiate/:id",
+    redirectTo: "home",
+  },
+  {
     path: "make-an-offer/:id",
     id: "makeOfferWizard",
     title: "Make an offer",
@@ -111,5 +121,9 @@ export const routes: IRoute[] = [
     parameters: {
       wizardType: WizardType.editPartneredDeal,
     },
+  },
+  {
+    path: "*",
+    redirectTo: "/home",
   },
 ];
