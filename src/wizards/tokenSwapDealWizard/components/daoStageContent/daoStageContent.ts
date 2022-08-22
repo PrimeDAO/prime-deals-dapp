@@ -7,7 +7,7 @@ import { IDAOsData } from "services";
 import { ethers } from "ethers";
 import { EnsService } from "services";
 import { Utils } from "services/utils";
-import "cl-webcomp-poc/components/AutoCompleteSelect";
+import { AutoCompleteSelect } from "cl-webcomp-poc/components/AutoCompleteSelect";
 
 interface IAutocompleteSelectItem {
   name: string,
@@ -26,12 +26,12 @@ interface ITreasuryAddressItem {
 }
 
 enum AutocompleteSelectEvent {
-  SelectionChanged= "daoSelectionChanged",
-  NewAdded= "newDaoAdded",
-  Cleared= "inputCleared",
+  SelectionChanged = "daoSelectionChanged",
+  NewAdded = "newDaoAdded",
+  Cleared = "inputCleared",
 }
 
-const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000);
+const LAST_1_DAY = Date.now() - (24 * 60 * 60 * 1000)
 const DAO_PLACEHOLDER_AVATAR = "DAO_placeholder.svg";
 
 @inject()
@@ -46,10 +46,10 @@ export class DaoStageContent {
   private daosList: IAutocompleteSelectItem[] = [];
   private daoListStr: string = "[]";
   private treasuryAddresses: string[] = [];
-  private refSelectDAO: HTMLElement;
-  @observable private refSelectTreasury: HTMLElement = null;
-  private isFromDeepDAO:boolean = false;
-  private isLoadingDAO:boolean = false;
+  private refSelectDAO: AutoCompleteSelect;
+  @observable private refSelectTreasury: AutoCompleteSelect = null;
+  private isFromDeepDAO: boolean = false;
+  private isLoadingDAO: boolean = false;
   private isHydrated: boolean = false;
 
   availableSocialMedias = availableSocialMedias.map(item => ({text: item.name, value: item.name}));
@@ -95,31 +95,33 @@ export class DaoStageContent {
     return ethers.utils.isAddress(this.data.treasury_address);
   }
 
-  async refSelectTreasuryChanged(newInputSelectElement): Promise<void> {
+  async refSelectTreasuryChanged(newInputSelectElement: AutoCompleteSelect): Promise<void> {
     if (newInputSelectElement && this.treasuryAddresses) {
       const options = (await this.resolveAddresses(this.treasuryAddresses))
-        .map( (address: ITreasuryAddressItem): IAutocompleteSelectItem => ({
+        .map((address: ITreasuryAddressItem): IAutocompleteSelectItem => ({
           name: address.name,
           avatarUrl: "",
           id: address.value,
-          treasury: []}),
-        );
-      newInputSelectElement.setAttribute("options", JSON.stringify(options));
-      newInputSelectElement.addEventListener(AutocompleteSelectEvent.SelectionChanged, async (e: IAutocompleteSelectEvent) =>
-      {
+          treasury: [],
+        }));
+
+      const currentOption = options.find((option: IAutocompleteSelectItem) => (option.id === this.data.treasury_address));
+      newInputSelectElement.init({
+        options,
+        value: currentOption?.name || "",
+      });
+
+      newInputSelectElement.addEventListener(AutocompleteSelectEvent.SelectionChanged, async (e: IAutocompleteSelectEvent) => {
         this.data.treasury_address = e.detail.id;
         this.form.revalidateErrors();
       });
-
-      const currentOption = options.find((option: IAutocompleteSelectItem) => (option.id === this.data.treasury_address));
-      if (currentOption?.name) newInputSelectElement.setAttribute("value", currentOption.name);
 
       newInputSelectElement.addEventListener(AutocompleteSelectEvent.Cleared, (): void => {
         this.data.treasury_address = "";
       });
     }
   }
-  
+
   setCommonDeepDaoDefaults(): void {
     this.treasuryAddresses = [];
     this.data.logoURI = "";
@@ -129,12 +131,12 @@ export class DaoStageContent {
 
   async attached(): Promise<void> {
     if (!this.isHydrated) await this.hydrateDaosList();
-    this.refSelectDAO.setAttribute("options", this.daoListStr);
-    this.refSelectDAO.setAttribute("value", this.data.name);
-    this.isFromDeepDAO = this.data.deepDAOId && !this.data.deepDAOId.startsWith("custom-dao-");
+    this.refSelectDAO.init({
+      options: this.daosList,
+      value: this.data.name,
+    });
 
-    this.refSelectDAO.addEventListener(AutocompleteSelectEvent.SelectionChanged, async (e: IAutocompleteSelectEvent): Promise<void> =>
-    {
+    this.refSelectDAO.addEventListener(AutocompleteSelectEvent.SelectionChanged, async (e: IAutocompleteSelectEvent): Promise<void> => {
       if (!e.detail.id.startsWith("custom-dao-")) {
         this.isLoadingDAO = true;
         this.isFromDeepDAO = true;
@@ -152,8 +154,7 @@ export class DaoStageContent {
       this.form.revalidateErrors();
     });
 
-    this.refSelectDAO.addEventListener(AutocompleteSelectEvent.NewAdded, async (e: IAutocompleteSelectEvent): Promise<void> =>
-    {
+    this.refSelectDAO.addEventListener(AutocompleteSelectEvent.NewAdded, async (e: IAutocompleteSelectEvent): Promise<void> => {
       this.setCommonDeepDaoDefaults();
       this.data.name = e.detail.name;
       this.data.deepDAOId = e.detail.id;
