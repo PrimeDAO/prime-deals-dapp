@@ -42,6 +42,10 @@ $submitCardWidth: 645px;
 
     .subtext {
       color: $Neutral04;
+
+      .heading {
+        word-break: break-all;
+      }
     }
   }
 
