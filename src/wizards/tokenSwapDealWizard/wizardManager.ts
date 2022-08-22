@@ -249,6 +249,7 @@ export class WizardManager implements IRouteableComponent {
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     this.activeIndex = this.stages.findIndex(stage => stage.route.includes(stageRoute));
 
+    // this is needed to save the stage's state in the current opened wizard
     this.stages.forEach(stage => {
       this.container.register(Registration.instance(`wizardSettings.${stage.route}`, {}));
     });
