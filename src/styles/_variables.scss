@@ -45,24 +45,20 @@ $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
     font-weight: bold;
   }
 
-  ul {
-    margin-bottom: 15px;
-
-    li {
-      list-style-type: disc;
-      list-style-position: inside;
-      margin-bottom: 5px;
-    }
+  p, li {
+    margin-bottom: $spacing-small;
+    color: $Neutral03;
+    font-family: Inter;
   }
 
-  ol {
-    margin-bottom: 15px;
+  ul li {
+    list-style-position: inside;
+    list-style-type: disc;
+  }
 
-    li {
-      list-style-type: decimal;
-      list-style-position: inside;
-      margin-bottom: 5px;
-    }
+  ol li {
+    list-style-position: inside;
+    list-style-type: decimal;
   }
 
   a {
