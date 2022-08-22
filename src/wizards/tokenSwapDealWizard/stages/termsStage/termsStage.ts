@@ -90,7 +90,7 @@ export class TermsStage {
 
   addClause() {
     const emptyClause: IClause = {
-      id: "",
+      id: shortUuid.generate(),
       text: "",
       title: "",
     };
