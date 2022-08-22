@@ -82,6 +82,9 @@ $submitCardWidth: 645px;
     &.submitTermsCard {
       @include ckeditor-content;
       margin-top: 30px;
+      .heading.topic {
+        color: $White;
+      }
     }
 
     &.submitDaoCard {

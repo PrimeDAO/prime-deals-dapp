@@ -34,6 +34,9 @@ deal-clauses {
 
       .body {
         word-wrap: anywhere;
+        p, li {
+          color: $Neutral02;
+        }
       }
 
       .heading {
@@ -82,11 +85,6 @@ deal-clauses {
       display: flex;
       flex-direction: column;
       width: 100%;
-
-      .body {
-        color: $Neutral02;
-      }
-
     }
 
     @media screen and (max-width: $MaxContentBodyWidth) {
