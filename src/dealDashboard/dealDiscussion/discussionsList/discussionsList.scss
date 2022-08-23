@@ -60,24 +60,32 @@ discussions-list {
         }
       }
     }
+
     .idx {
       grid-area: idx;
     }
+
     .topic {
+      @include ckeditor-content;
       grid-area: topic;
     }
+
     .replies {
       grid-area: replies;
     }
+
     .activity {
       grid-area: activity;
     }
+
     .created-at {
       grid-area: created;
     }
+
     .v-centered {
       vertical-align: middle;
     }
+
     .h-centered {
       text-align: center;
     }
