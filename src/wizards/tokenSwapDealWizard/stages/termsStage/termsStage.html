@@ -24,7 +24,7 @@
           on-delete.call="onDelete($index)"
           on-saved.call="setClause($index, $event)"
           repeat.for="clause of terms.clauses"
-          view-mode.bind="stageMetadata.termsViewModes[$index]"
+          view-mode.bind="stageSettings.termsViewModes[$index]"
           view-model.ref="termClauses[$index]"
         >
         </term-clause>
