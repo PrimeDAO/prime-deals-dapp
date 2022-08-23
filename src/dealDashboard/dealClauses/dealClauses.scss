@@ -6,64 +6,54 @@ $hover-transition-speed-medium: 0.3s;
 $hover-transition-speed-slow: 0.4s;
 
 deal-clauses {
-  p {
-    margin-bottom: 20px;
-  }
-
-  ol {
+  &>ol {
     display: grid;
-    gap: $spacing-small;
+    gap: $spacing-normal;
     list-style-type: decimal;
     list-style-position: inside;
+    counter-reset: clause;
 
     .clause {
       @include ckeditor-content;
+
+      &::before {
+        counter-increment: clause;
+        content: counter(clause)'.';
+        font-size: 26px;
+        font-weight: 700;
+        font-family: "Inter";
+        color: $Secondary01;
+      }
+
+      list-style-type:none;
       display: flex;
-      gap: $spacing-normal * 2;
-      vertical-align: top;
-      padding: $spacing-normal $spacing-medium-small;
-      // padding-right: 150px;
-      cursor: default;
-      position: relative;
-
+      gap: 16px;
+      padding: $spacing-normal * 2;
       border-radius: $border-radius-normal;
-      background-color: transparent;
-      transition: background-color $hover-transition-speed-fast ease-in-out;
-      transition-delay: calc($hover-transition-speed-fast / 2);
-
-      @include pre;
+      background-color: $Border02;
 
       .body {
-        width: calc(100% - 165px);
         word-wrap: anywhere;
-        padding: 6px 0;
-
-        small {
-          font-size: 12px;
-          text-overflow: ellipsis;
+        p, li {
+          color: $Neutral02;
         }
       }
 
       .heading {
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 16px;
+        line-height: 24px;
         font-weight: 700;
         word-wrap: anywhere;
-        text-overflow: ellipsis;
+        margin-bottom: $spacing-normal;
       }
 
       .button {
-        position: absolute;
-        display: flex;
         gap: $spacing-normal * 1.2;
         align-items: center;
         line-height: 19px;
-        right: 0;
-        top: 0;
         height: 100%;
         padding: 0 $spacing-normal * 1.5;
-        background: $BG02;
-        opacity: 0;
+        display: none;
         justify-content: center;
         border-radius: $border-radius-normal;
         text-transform: uppercase;
@@ -71,10 +61,8 @@ deal-clauses {
         font-weight: 700;
         letter-spacing: 0.6px;
         color: $Neutral04;
-        transition: opacity $hover-transition-speed-fast ease-in;
-        transition-delay: 0s;
-        max-width: 200px;
         text-align: right;
+        margin: $spacing-normal * 2 auto 0;
         cursor: pointer;
 
         img {
@@ -83,28 +71,20 @@ deal-clauses {
         }
       }
 
-      &.isPrivate:hover,
-      &.active {
-        transition-delay: 0s;
+      &:hover.isPrivate,
+      &:hover.active {
+        background-color: $Border03;
 
-        &:not(.active) span {
-          transition-delay: calc($hover-transition-speed-fast / 2);
-          opacity: 1;
-        }
-
-        background-color: $BG02;
-      }
-
-      .marker {
-        font-size: 26px;
-        font-weight: 700;
-        font-family: "Inter";
-        color: $Border01;
-
-        &::after {
-          content: ".";
+        .button {
+          display: flex;
         }
       }
+    }
+
+    .clauseContent {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
     }
 
     @media screen and (max-width: $MaxContentBodyWidth) {

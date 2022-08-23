@@ -23,7 +23,7 @@
                   value.to-view="token.fundingDeposited | ethwei:token.decimals"
                 ></formatted-number>
                 <formatted-number
-                  if.to-view="deal.isClaiming"
+                  if.to-view="deal.isClaiming && token.claimingInstantTransferAmount"
                   thousands-separated
                   value.to-view="getTotalClaimed(token.claimingClaimed, token.claimingInstantTransferAmount, token.claimingFee) | ethwei:token.decimals"
                 ></formatted-number>
@@ -41,7 +41,7 @@
           <div class="progress-bar">
             <pprogress-bar
               max.bind="token.amount"
-              current.bind="deal.isClaiming ? getTotalClaimed(token.claimingClaimed, token.claimingInstantTransferAmount, token.claimingFee) : token.fundingDeposited"
+              current.bind="deal.isClaiming && token.claimingInstantTransferAmount ? getTotalClaimed(token.claimingClaimed, token.claimingInstantTransferAmount, token.claimingFee) : token.fundingDeposited"
             ></pprogress-bar>
           </div>
         </div>

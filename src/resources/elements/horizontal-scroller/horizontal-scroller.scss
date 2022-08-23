@@ -68,24 +68,3 @@
     left: -16px;
   }
 }
-
-@media screen and (max-width: $PageBreakWidth) {
-  .scrollerContainer {
-    display: block;
-    position: unset;
-    text-align: center;
-
-    .scroller {
-      flex-direction: column;
-
-      > div:not(:last-of-type) {
-        margin-bottom: 24px;
-      }
-    }
-
-    .rightButton,
-    .leftButton {
-      display: none;
-    }
-  }
-}

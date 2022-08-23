@@ -16,7 +16,7 @@
   .title {
     background-color: inherit;
     position: sticky;
-    top: 70px;
+    top: 95px;
     z-index: 1;
     padding-top: $spacing-normal;
     padding-bottom: $spacing-medium-small + $spacing-normal;
@@ -25,12 +25,18 @@
     &>span {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      height: 60px;
+    }
+
+    pre {
+      white-space: inherit;
     }
 
     .topic {
       font-family: "Inter";
-      font-size: 24px;
-      line-height: 33px;
+      font-size: 20px;
+      line-height: 28px;
       font-weight: 700;
       word-wrap: anywhere;
 

@@ -40,7 +40,7 @@ export class HorizontalScroller {
     /**
      * scroll by the sum of the widths of the wholly-visible items
      */
-    return itemWidth * visibleItemsCount;
+    return itemWidth * visibleItemsCount || itemWidth/* fix: visibleItemsCount is 0 */;
   }
 
   get atEnd(): boolean {
