@@ -6,11 +6,7 @@ $hover-transition-speed-medium: 0.3s;
 $hover-transition-speed-slow: 0.4s;
 
 deal-clauses {
-  p {
-    margin-bottom: 20px;
-  }
-
-  ol {
+  &>ol {
     display: grid;
     gap: $spacing-normal;
     list-style-type: decimal;
@@ -38,10 +34,8 @@ deal-clauses {
 
       .body {
         word-wrap: anywhere;
-
-        small {
-          font-size: 12px;
-          text-overflow: ellipsis;
+        p, li {
+          color: $Neutral02;
         }
       }
 
@@ -91,11 +85,6 @@ deal-clauses {
       display: flex;
       flex-direction: column;
       width: 100%;
-
-      .body {
-        color: $Neutral02;
-      }
-
     }
 
     @media screen and (max-width: $MaxContentBodyWidth) {
