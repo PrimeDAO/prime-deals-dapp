@@ -58,19 +58,40 @@ export class TermClause {
       })
       .then(editor => {
         this.editor = editor;
+        let tempContent = null;
         editor.plugins.get("WordCount").on("update", (evt, stats) => {
+          console.log("targetElement", targetElement);
           this.charValue = stats.characters;
           const isOverLimit = stats.characters > 500;
           if (isOverLimit) {
-            const trimmedString = this.editor.getData().slice(0, 500);
-            editor.setData(trimmedString);
+            if (tempContent){
+              return;
+            }
+            tempContent = this.editor.getData();
+            // s.substr(s.length - 5, 5).trim()
+            editor.setData(tempContent);
+            this.editor.model.change( writer => {
+              writer.setSelection( writer.createPositionAt( editor.model.document.getRoot(), "end" ) );
+              return;
+            } );
+          }
+          else {
+            const data = this.editor.getData();
+            this.clause = {...this.clause, text: data};
+            if (tempContent) {
+              tempContent = null;
+            }
           }
         });
 
-        editor.model.document.on("change:data", () => {
-          const data = this.editor.getData();
-          this.clause = {...this.clause, text: data};
-        });
+        // editor.model.document.on("change:data", () => {
+        //   if (tempContent) {
+        //     this.editor.setData(tempContent);
+        //   } else {
+        //     const data = this.editor.getData();
+        //     this.clause = {...this.clause, text: data};
+        //   }
+        // });
 
         editor.editing.view.document.on("clipboardInput", (evt, data) => {
           const dataTransfer = data.dataTransfer;
