@@ -18,7 +18,7 @@ export class DisposableCollection implements IDisposable {
       this._dispose(disposable);
     } else {
       for (disposable of this.disposables) {
-        disposable.dispose();
+        disposable?.dispose();
       }
       this.disposables.length = 0;
     }
