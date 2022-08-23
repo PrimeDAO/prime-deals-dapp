@@ -74,7 +74,7 @@ export class TokenDetailsStage {
         const forms = this.primaryDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
         const areTokensValid = await areFormsValid(forms);
 
-        this.checkedForUnsavedChanges();
+        this.checkedForUnsavedChangesForPrimaryDao();
 
         return this.hasValidPrimaryDAOTokensDetailsCount &&
           !this.hasUnsavedChangesForPrimaryDetails &&
@@ -94,7 +94,7 @@ export class TokenDetailsStage {
           const forms = this.partnerDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
           const areTokensValid = await areFormsValid(forms);
 
-          this.checkedForUnsavedChanges();
+          this.checkedForUnsavedChangesForPartnerDao();
 
           return !this.hasUnsavedChangesForPartnerDetails &&
             this.hasValidPartnerDAOTokensDetailsCount &&
@@ -135,7 +135,15 @@ export class TokenDetailsStage {
   }
 
   private checkedForUnsavedChanges() {
+    this.checkedForUnsavedChangesForPrimaryDao();
+    this.checkedForUnsavedChangesForPartnerDao();
+  }
+
+  private checkedForUnsavedChangesForPrimaryDao() {
     this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
+  }
+
+  private checkedForUnsavedChangesForPartnerDao() {
     this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
   }
 
