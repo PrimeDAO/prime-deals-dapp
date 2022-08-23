@@ -4,8 +4,8 @@ import { IRouter } from "@aurelia/router";
 type DealType = "open" | "partnered";
 
 export class Home {
-  private cardIndex = 0;
-  private dealType: DealType = "open";
+  private cardIndex = 1;
+  private dealType: DealType = "partnered";
   private dealsLoading = false;
   static MAX_DEALS_COUNT = 10;
 
