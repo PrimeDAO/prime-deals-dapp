@@ -135,6 +135,8 @@ export class DaoStageContent {
       value: this.data.name,
     });
 
+    this.isFromDeepDAO = !!(this.daosList.find(dao => dao.name === this.data.name));
+
     this.refSelectDAO.addEventListener(AutoCompleteSelectEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent): Promise<void> => {
       if (!e.detail.id.startsWith("custom-dao-")) {
         this.isLoadingDAO = true;
@@ -147,7 +149,7 @@ export class DaoStageContent {
         this.data.treasury_address = ethers.utils.isAddress(resolvedAddress) ? resolvedAddress : "";
       }
       this.data.name = e.detail.name;
-      this.data.logoURI = e.detail.avatarUrl === DAO_PLACEHOLDER_AVATAR ? "" : e.detail.avatarUrl;
+      this.data.logoURI = e.detail.avatarUrl === DAO_PLACEHOLDER_AVATAR ? this.data.logoURI : e.detail.avatarUrl;
       this.data.deepDAOId = e.detail.id;
       this.isLoadingDAO = false;
       this.form.revalidateErrors();
