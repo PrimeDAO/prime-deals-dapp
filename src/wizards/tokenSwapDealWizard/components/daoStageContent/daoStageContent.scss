@@ -73,9 +73,13 @@ dao-stage-content {
     font-size: 18px;
   }
 
-  .pcard {
+  .deepDao.pcard {
     display: flex;
     flex-direction: column;
+    font-family: Inter;
+    min-height: 172px;
+    width: 100%;
+    gap: 24px;
     &.is-loading {
       justify-content: center;
       align-items: center;
@@ -84,9 +88,6 @@ dao-stage-content {
         color: $Secondary01
       }
     }
-    min-height: 172px;
-    width: 100%;
-    gap: 24px;
     header {
       display: flex;
       flex-direction: column;
