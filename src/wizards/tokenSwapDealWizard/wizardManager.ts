@@ -188,9 +188,19 @@ export class WizardManager implements IRouteableComponent {
 
   public async next() {
     const result = await this.controller.validate();
+    this.stages[this.activeIndex].valid = result.valid;
     if (!result.valid) {
       this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check the page for validation errors");
       return;
+    }
+
+    // Make sure all the stages are valid before continuing
+    if (this.wizardType === WizardType.createOpenProposal || this.wizardType === WizardType.createPartneredDeal) {
+      const wizardIsInvalid = this.stages.some(stage => !stage.valid);
+      if (wizardIsInvalid) {
+        this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check if all the stages are valid");
+        return;
+      }
     }
 
     this.activeIndex++;
