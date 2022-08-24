@@ -9,6 +9,8 @@ import { FIREBASE_MESSAGE_TO_SIGN } from "./FirestoreTypes";
 import { DateService } from "./DateService";
 import { BrowserStorageService } from "services/BrowserStorageService";
 import { firebaseAuth } from "./firebase-helpers";
+import { ConsoleLogService } from "./ConsoleLogService";
+import { AlertService } from "./AlertService";
 
 /**
  * TODO: Should define a new place for this type, and all other `Address` imports should take it from there
@@ -23,6 +25,7 @@ const FIREBASE_AUTHENTICATION_SIGNATURES_STORAGE = "FIREBASE_AUTHENTICATION_SIGN
 interface ISignatureStorage {
   signature: string;
   messageToSign: string;
+  /** Safe App tx for approving authentication to Deals */
 }
 
 @inject()
@@ -35,6 +38,8 @@ export class FirebaseService {
     @IEthereumService private ethereumService: IEthereumService,
     private dateService: DateService,
     private browserStorageService: BrowserStorageService,
+    private consoleLogService: ConsoleLogService,
+    private alertService: AlertService,
   ) {
   }
 
@@ -59,7 +64,8 @@ export class FirebaseService {
       try {
         return this.signInToFirebase(address)
           .then(() => true)
-          .catch(() => {
+          .catch((error) => {
+            this.consoleLogService.logObject(error.message, error, "error");
             this.eventAggregator.publish("handleFailure", "Authentication failed");
             return false;
           });
@@ -117,6 +123,16 @@ export class FirebaseService {
    * Requests custom token for the address from Firebase function and signs in to Firebase
    */
   private async signInToFirebase(address: string): Promise<UserCredential> {
+    /**
+     * We don't require safe addresses to "auth" to the data storage.
+     * Reason: Safes don't have private keys, instead a public tx gets created.
+     *   All parameters are visible, so one could reproduce the "signature" and imitate a Safe address.
+     *   Note: In the very first version of the Safe App integration we required the Safe auth.
+     */
+    if (await this.ethereumService.isSafeAddress(this.ethereumService.defaultAccountAddress)) {
+      return;
+    }
+
     if (this.currentFirebaseUserAddress === address) {
       return;
     }
@@ -125,21 +141,9 @@ export class FirebaseService {
     // (could happen when user disconnect and connect a new wallet)
     await signOut(firebaseAuth);
 
-    let {signature, messageToSign} = this.getExistingSignatureAndMessageForAddress(address);
+    const { messageToSign, signature } = await this.getSignatureData(address);
 
-    if (!signature) {
-      messageToSign = await this.getMessageToSign();
-
-      try {
-        signature = await this.requestSignature(messageToSign);
-        this.storeSignatureForAddress(address, signature, messageToSign);
-        this.eventAggregator.publish("database.account.signature.successful");
-
-      } catch {
-        this.eventAggregator.publish("database.account.signature.cancelled");
-        throw new Error();
-      }
-    }
+    this.storeSignatureForAddress(address, signature, messageToSign);
 
     let token: string;
     try {
@@ -156,6 +160,43 @@ export class FirebaseService {
 
     // Signs in to Firebase with a given custom token
     return this.signInWithCustomToken(token);
+  }
+
+  /**
+   * Signature data is generated differently depending on
+   * A. Production app
+   * B. Safe App
+   *
+   * For A. generate the message, and take the signature from the wallet provider
+   *
+   * For B. genreate the message, monitor tx status in the multi-sig queue.
+   *   If there is no tx yet, create one.
+   *   If tx is ongoing, wait.
+   *   If tx successful, generate signature from message (note, signature not in the sense of a private key signature,
+   *     but just an encrypted message. We kept the "signature" variable, because validation is still based on a message
+   *     and the "signature".)
+   */
+  private async getSignatureData(address: string) {
+    const existingData = this.getExistingSignatureAndMessageForAddress(address);
+    let { signature, messageToSign } = existingData;
+
+    if (signature && messageToSign) {
+      return { messageToSign, signature };
+    }
+
+    /** A. Production case */
+    try {
+      // eslint-disable-next-line require-atomic-updates
+      messageToSign = await this.getMessageToSign();
+      signature = await this.requestSignature(messageToSign);
+      this.eventAggregator.publish("database.account.signature.successful");
+
+    } catch (error) {
+      this.eventAggregator.publish("database.account.signature.cancelled");
+      throw error;
+    }
+
+    return { messageToSign, signature };
   }
 
   private async requestSignature(messageToSign: string): Promise<string> {

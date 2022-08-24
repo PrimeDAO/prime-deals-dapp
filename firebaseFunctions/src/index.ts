@@ -231,7 +231,7 @@ export const CI = {
           Starting verification for the following:
           Address: ${address},
           Message: ${message},
-          Signature: ${signature}
+          Signature: ${signature},
         `);
 
         try {

@@ -243,8 +243,70 @@ Deploy Firebase from you local machine to the default project (used by Vercel pr
 
 In the project directory (make sure you have firebase cli and you are authenticated) Run:
 ```
-firebase deploy
+npm run firebase-deploy:default
 ```
+
+### Firestore rules
+
+Cloud Firestore Security Rules provide access control and data validation to the Firestore database. Official documentation: https://firebase.google.com/docs/firestore/security/get-started
+
+Currently we maintain two sets of rules
+
+1. `firestore-testing.rules` file used for local, development and staging
+2. `firestore-production.rules` file used for production
+
+### Firebase config
+
+The Firebase config file is required to [deploy assets with the Firebase CLI](https://firebase.google.com/docs/cli#deployment) because it specifies which files and settings are deployed
+
+[https://firebase.google.com/docs/cli#the_firebasejson_file](https://firebase.google.com/docs/cli#the_firebasejson_file)
+
+Default name of the file is `firebase.json` and it would be automatically picked up by Firebase CLI, however we decided against using it. Therefore we have to always manually specify which config file to use.
+
+Currently we maintain two config files
+
+1. `firebase-testing.json` file used for local, development and staging
+2. `firebase-production.json` file used for production
+
+To use them we have to add the following param to every Firebase CLI commend:
+
+`--config=firebase-production.json`  or `--config=firebase-testing.json`
+
+### Firebase related npm scripts
+
+#### Development related scripts
+
+1. `npm run firebase` - builds Firebase Functions and starts emulators
+2. `npm run firebase:watch` - builds Firebase Functions in watch mode and starts emulators - might not work on all OS
+3. `npm run firebase-emulators:start` - starts emulators
+4. `npm run firebase-functions:build` - builds Firebase Functions
+5. `npm run firebase-functions:watch` - builds Firebase Functions in watch mode
+
+#### Seed data related scripts
+
+1. `npm run firebase-update-seed-data` - update emulators seed data with data from the currently running emulators
+2. `npm run firebase-update-seed-data:e2e` - update e2e emulators seed data with data from the currently running emulators
+
+#### Deployment related scripts
+All the scripts specified below deploy Firebase Functions that are part of the `CI` object in `firebaseFunctions/src/index.ts`
+As of 12/08/2022 following Firebase Functions are deployed using the scripts below:
+- `onDealCreate`
+- `updateDealStructure`
+- `onVoteUpdate`
+- `createDeal`
+- `verifySignedMessageAndCreateCustomToken`
+
+1. `npm run firebase-deploy:default` - deploys Firebase Functions to `prime-deals-local` project
+2. `npm run firebase-deploy:development` - deploys Firebase Functions to `prime-deals-development` project
+3. `npm run firebase-deploy:staging` - deploys Firebase Functions to `prime-deals-staging` project
+4. `npm run firebase-deploy:staging-mainnet` - deploys Firebase Functions to `prime-deals-staging` project
+5. `npm run firebase-deploy:master` - deploys Firebase Functions to `prime-deals-production` project
+
+Those scripts are used by github CI to deploy to Firebase on push to following branches: development, staging, staging-mainnet, master
+
+#### Additional scripts
+
+`npm run firebase-deploy-backup-function` - deploys scheduled backup function to `prime-deals-production` project
 
 ## Git hooks
 It's advised to use post-merge git hook which builds firebase functions for you,

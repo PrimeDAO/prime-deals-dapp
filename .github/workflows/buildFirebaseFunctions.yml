@@ -1,7 +1,7 @@
 name: Build Firebase functions
 on:
   pull_request:
-    branches: [ development, staging, master ]
+    branches: [ development, staging, staging-mainnet, master ]
 jobs:
   Build_firebase:
     runs-on: ubuntu-latest

@@ -54,7 +54,7 @@ export class Deals {
     this.dealsLoading = false;
 
     if (this.cardIndex === undefined) {
-      this.cardIndex = this.dealService.openProposals?.length ? 1 : 0;
+      this.cardIndex = this.dealService.partneredDeals?.length ? 1 : 0;
     }
     this.sortDirection = SortOrder.DESC;
     this.sort("age");
