@@ -62,8 +62,8 @@ export class DealService {
    * key is a deal Id
    */
   public deals: Map<IDealIdType, DealTokenSwap> = new Map<IDealIdType, DealTokenSwap>();
-  private executedDealIds: Map<string, IExecutedDeal>;
-  private fundedDealIds: Map<string, IFundedDeal>;
+  private executedDealIds: Map<string, IExecutedDeal> = new Map();
+  private fundedDealIds: Map<string, IFundedDeal> = new Map();
 
   public static getDealFee(amount: BigNumber): BigNumber {
     return BigNumber.from(toBigNumberJs(amount).multipliedBy(.003).toString());
