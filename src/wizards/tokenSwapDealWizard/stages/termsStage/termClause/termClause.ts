@@ -20,6 +20,8 @@ export class TermClause {
   @bindable onDelete: () => boolean | undefined;
   @bindable onSaved?: (clause: IClause) => void;
   private editor = null;
+  private tempContent = null;
+  private enableInput = null;
   charValue = null;
   @observable textareaRef: HTMLTextAreaElement = null;
 
@@ -45,6 +47,22 @@ export class TermClause {
     return isValid;
   }
 
+  disableCommand( cmd ) {
+    cmd.on( "set:isEnabled", forceDisable, { priority: "highest" } );
+    cmd.isEnabled = false;
+
+    return () => {
+      cmd.off( "set:isEnabled", forceDisable );
+      cmd.isEnabled = true;
+      cmd.refresh();
+    };
+
+    function forceDisable( evt ) {
+      evt.return = false;
+      evt.stop();
+    }
+  }
+
   editorInit(targetElement: HTMLTextAreaElement) {
     Editor
       .create(targetElement, {
@@ -58,33 +76,29 @@ export class TermClause {
       })
       .then(editor => {
         this.editor = editor;
-        let tempContent = null;
         editor.plugins.get("WordCount").on("update", (evt, stats) => {
-          // console.log("targetElement", targetElement);
           this.charValue = stats.characters;
           const isOverLimit = stats.characters > 500;
           if (isOverLimit) {
-            if (tempContent){
+            this.enableInput = this.disableCommand( editor.commands.get( "input" ) );
+            if (this.tempContent){
               return;
             }
-            tempContent = this.editor.getData();
+            this.tempContent = this.editor.getData();
             // s.substr(s.length - 5, 5).trim()
           }
           else {
-            tempContent = null;
+            this.tempContent = null;
+            if (this.enableInput) {
+              this.enableInput();
+              this.enableInput = null;
+            }
           }
         });
 
         editor.model.document.on("change:data", () => {
-          if (tempContent) {
-            editor.model.change( writer => {
-              const insertPosition = editor.model.document.selection.getFirstPosition();
-              writer.insert( tempContent, insertPosition );
-            } );
-          } else {
-            const data = this.editor.getData();
-            this.clause = {...this.clause, text: data};
-          }
+          const data = this.editor.getData();
+          this.clause = {...this.clause, text: data};
         });
 
         editor.editing.view.document.on("clipboardInput", (evt, data) => {
@@ -95,7 +109,7 @@ export class TermClause {
             return;
           }
           const viewContent = marked(textContent);
-          data.content = editor.data.processor.toView(viewContent);
+          data.content = this.tempContent ?editor.data.processor.toView(this.tempContent) : editor.data.processor.toView(viewContent);
         });
 
         if (this.shouldSetText()) {
