@@ -59,7 +59,7 @@ const httpsCorsRules =  {
 }
 
 module.exports = function (env, _webpackOptions) {
-  const { analyze, tests, development } = env;
+  const { analyze, tests, development, https } = env;
 
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
