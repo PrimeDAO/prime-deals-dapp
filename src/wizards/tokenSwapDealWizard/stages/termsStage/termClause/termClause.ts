@@ -111,10 +111,11 @@ export class TermClause {
             return;
           }
           const viewContent = marked(textContent);
-          if (textContent.length + editor.getData().length > 500) {
+          if (textContent.length + editor.getData().length >= 500) {
             // editor.commands.execute("selectAll");
             // editor.commands.execute("delete");
-            const index = 507 - editor.getData().length;
+            const limit = editor.getData().startsWith("<p>") && editor.getData().endsWith("</p>") ? 507 : 500;
+            const index = limit - editor.getData().length < 0 ? 0 : limit - editor.getData().length;
             const str = textContent.slice(0, index);
             data.content = editor.data.processor.toView(str);
             return;
