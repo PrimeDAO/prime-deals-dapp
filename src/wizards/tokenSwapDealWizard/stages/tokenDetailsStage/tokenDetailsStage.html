@@ -18,11 +18,10 @@
       <div class="stageSectionContent">
         <token-details
           hide-delete-button.bind="primaryDaoTokens.length === 1 && !isOpenProposalWizard"
-          on-delete.call="deleteToken($index, primaryDaoTokens, primaryDAOTokenDetails, stageMetadata.primaryDAOTokenDetailsViewModes)"
-          on-saved.call="checkedForUnsavedChanges()"
+          on-delete.call="deleteToken($index, primaryDaoTokens, primaryDAOTokenDetails, stageSettings.primaryDAOTokenDetailsViewModes)"
           repeat.for="token of primaryDaoTokens"
           token.bind="token"
-          view-mode.bind="stageMetadata.primaryDAOTokenDetailsViewModes[$index]"
+          view-mode.bind="stageSettings.primaryDAOTokenDetailsViewModes[$index]"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"></token-details>
 
@@ -55,11 +54,10 @@
       <div class="stageSectionContent">
         <token-details
           hide-delete-button.bind="partnerDaoTokens.length === 1 && !isOpenProposalWizard"
-          on-delete.call="deleteToken($index, partnerDaoTokens, partnerDAOTokenDetails, stageMetadata.partnerDAOTokenDetailsViewModes)"
-          on-saved.call="checkedForUnsavedChanges()"
+          on-delete.call="deleteToken($index, partnerDaoTokens, partnerDAOTokenDetails, stageSettings.partnerDAOTokenDetailsViewModes)"
           repeat.for="token of partnerDaoTokens"
           token.bind="token"
-          view-mode.bind="stageMetadata.partnerDAOTokenDetailsViewModes[$index]"
+          view-mode.bind="stageSettings.partnerDAOTokenDetailsViewModes[$index]"
           view-model.ref="partnerDAOTokenDetails[$index]"></token-details>
 
         <pbutton class="addTokenButton" click.delegate="addToken(partnerDaoTokens)"

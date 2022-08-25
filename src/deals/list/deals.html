@@ -27,7 +27,7 @@
         Initiate a deal
       </pbutton>
     </div>
-    <div class="section no-deals heading02" if.to-view="!dealsLoading && featuredDeals && featuredDeals.length === 0">
+    <div class="section no-deals heading02" if.to-view="!dealsLoading && !allDeals.length">
       ${showMine ? "You are not currently part of any deal" : "No deals are authorized for view" }
       <pbutton
         type="primary"
@@ -39,7 +39,7 @@
     <div data-test="deals-loading" class="section loading" if.to-view="dealsLoading">
       <i class="spinner fa fas fa-circle-notch fa-spin"></i>
     </div>
-    <div class="section deal-carousel" if.to-view="!dealsLoading && (!featuredDeals || featuredDeals.length)">
+    <div class="section deal-carousel" if.to-view="!dealsLoading && allDeals.length">
       <div class="heading02Gradient carousel-selector">
         <span if.to-view="isTabVisible(0,showMine,ethereumService.defaultAccountAddress)"
           data-test="open-proposals-tab"

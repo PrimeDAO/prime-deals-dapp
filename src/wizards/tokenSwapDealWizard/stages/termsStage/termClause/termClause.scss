@@ -1,4 +1,5 @@
 @import "src/resources/elements/primeDesignSystem/variables";
+@import "src/styles/variables";
 
 term-clause {
   display: block;
@@ -13,11 +14,16 @@ term-clause {
     font-weight: $font-bold;
     margin-bottom: $spacing-normal;
     line-height: 24px;
-    color: $Neutral03;
+    color: $White;
   }
 
-  .ckEditor__output {
-    color: $Neutral03;
+  .ck.ck-editor:focus-within {
+    border-radius: $border-radius-normal;
+    box-shadow: 0 0 0 1px $Secondary02;
+  }
+
+  .ckEditor__output,
+  .ck.ck-content {
     @include ckeditor-content;
   }
 

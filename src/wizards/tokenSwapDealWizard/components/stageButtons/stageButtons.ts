@@ -13,6 +13,7 @@ export class stageButtons {
   @bindable stageCount = 0;
   @bindable proceed: () => void;
   @bindable previous: () => void;
+  @bindable cancelRoute: string;
   connectedAddress?: Address;
   private accountSubscription: IDisposable;
 
@@ -60,6 +61,6 @@ export class stageButtons {
   }
 
   cancel() {
-    this.router.load("");
+    this.router.load(this.cancelRoute);
   }
 }

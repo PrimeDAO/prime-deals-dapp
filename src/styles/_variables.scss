@@ -6,8 +6,8 @@ $MinContentBodyPaddingLeftRight: 160px;
 $MaxContentBodyWidth: 1120px;
 
 $ContentBodyWidth: clamp($MinContentBodyWidth,
-  calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
-  $MaxContentBodyWidth);
+    calc(100% - (#{$MinContentBodyPaddingLeftRight} * 2)),
+    $MaxContentBodyWidth);
 
 /**
  * For the pages whose mainContent should have extra padding at the top.
@@ -20,12 +20,48 @@ $ContentMinLeftRightPadding: 20px;
 $MaxContentBodyWidthMobile: calc(100% - (#{$ContentMinLeftRightPadding} * 2));
 
 $ContentBodyWidthMobile: minmax($MinContentBodyWidth,
-  calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
-  $MaxContentBodyWidthMobile);
+    calc(100vw - (#{$ContentMinLeftRightPadding} * 2)),
+    $MaxContentBodyWidthMobile);
 
 $BodyPaddingLeftRightMobile: calc((100% - #{$ContentBodyWidthMobile}) / 2);
 
 @mixin tokenIcon {
   width: 19px;
   border-radius: 9px;
+}
+
+@mixin ckeditor-content {
+
+  i,
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  p, li {
+    margin-bottom: $spacing-small;
+    color: $Neutral03;
+    font-family: Inter;
+  }
+
+  ul li {
+    list-style-position: inside;
+    list-style-type: disc;
+  }
+
+  ol li {
+    list-style-position: inside;
+    list-style-type: decimal;
+  }
+
+  a {
+    color: $Secondary01;
+  }
 }

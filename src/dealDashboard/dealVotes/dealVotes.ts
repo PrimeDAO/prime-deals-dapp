@@ -9,79 +9,83 @@ import { DiscussionsService } from "../discussionsService";
 import { bindable, DialogDeactivationStatuses, IEventAggregator } from "aurelia";
 import {IRouter} from "@aurelia/router";
 
+const CREATE_SWAP_TIMEOUT = 60000;
+
 export class DealVotes {
   @bindable deal: DealTokenSwap;
 
   accepting = false;
   declining = false;
 
-  everyTextCopy = [
-    {
-      condition: () => this.deal.isCancelled,
-      voteText: "Deal is cancelled",
-      statusText: "Voting is disabled",
-    },
-    {
-      condition: () => this.deal.isFullyClaimed,
-      voteText: "Deal is completed. All tokens have been claimed!",
-      statusText: "Completed",
-    },
-    {
-      condition: () => this.deal.isClaiming,
-      voteText: "Swap has been executed. Tokens can now be claimed.",
-      statusText: "Claiming",
-    },
-    {
-      condition: () => this.deal.isFunding,
-      voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, the token swap can be executed",
-      statusText: "Deal is approved",
-    },
-    {
-      condition: () => this.deal.isFailed,
-      voteText: "Voting is closed. You can find the voting history below.",
-      statusText: "Token Swap Failed",
-    },
-    {
-      condition: () => !this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
-      voteText: "Waiting for the representatives to vote",
-      statusText: "Voting is progress",
-    },
-    {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
-      voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. Once the deal is approved, the Proposal Lead will initiate the funding phase",
-      statusText: "Voting in progress",
-    },
-    {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
-      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, the Proposal Lead will initiate the funding phase",
-      statusText: "Voting in progress",
-    },
-    {
-      condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedProposalLead,
-      voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, you can initiate the funding phase",
-      statusText: "Voting in progress",
-    },
-    {
-      condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
-      voteText: "Waiting for the Proposal Lead to initiate the funding phase.  You may still change your vote if you wish to",
-      statusText: "Voting is completed",
-    },
-    {
-      condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
-      voteText: "Waiting for the Proposal Lead to initiate the funding phase",
-      statusText: "Voting is completed",
-    },
-    {
-      condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
-      voteText: "You can now initiate the funding phase. You may still change your vote if you wish to",
-      statusText: "Voting is completed",
-    },
-    {
-      condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
-      voteText: "You can now initiate the funding phase",
-      statusText: "Voting is completed",
-    },
-  ];
+  get everyTextCopy() {
+    return [
+      {
+        condition: () => this.deal.isCancelled,
+        voteText: "Deal is cancelled",
+        statusText: "Voting is disabled",
+      },
+      {
+        condition: () => this.deal.isFullyClaimed,
+        voteText: "Deal is completed. All tokens have been claimed!",
+        statusText: "Completed",
+      },
+      {
+        condition: () => this.deal.isClaiming,
+        voteText: "Swap has been executed. Tokens can now be claimed.",
+        statusText: "Claiming",
+      },
+      {
+        condition: () => this.deal.isFunding,
+        voteText: "Deal is approved. Representatives can go to the funding page to deposit their tokens. Once completed, the token swap can be executed",
+        statusText: "Deal is approved",
+      },
+      {
+        condition: () => this.deal.isFailed,
+        voteText: "Voting is closed. You can find the voting history below.",
+        statusText: "Token Swap Failed",
+      },
+      {
+        condition: () => !this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
+        voteText: "Waiting for the representatives to vote",
+        statusText: "Voting is progress",
+      },
+      {
+        condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
+        voteText: "You have cast your vote. Please wait for other representatives to cast theirs. You are able to change your vote before the funding phase is initiated. Once the deal is approved, the Proposal Lead will initiate the funding phase",
+        statusText: "Voting in progress",
+      },
+      {
+        condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.hasRepresentativeVoted && !this.deal.isAuthenticatedProposalLead,
+        voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, the Proposal Lead will initiate the funding phase",
+        statusText: "Voting in progress",
+      },
+      {
+        condition: () => !this.deal.majorityHasVoted && this.deal.isAuthenticatedProposalLead,
+        voteText: "The deal will be approved once the majority has voted in favor. Once the deal is approved, you can initiate the funding phase",
+        statusText: "Voting in progress",
+      },
+      {
+        condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
+        voteText: "Waiting for the Proposal Lead to initiate the funding phase.  You may still change your vote if you wish to",
+        statusText: "Voting is completed",
+      },
+      {
+        condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && !this.deal.isAuthenticatedProposalLead,
+        voteText: "Waiting for the Proposal Lead to initiate the funding phase",
+        statusText: "Voting is completed",
+      },
+      {
+        condition: () => this.deal.majorityHasVoted && this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
+        voteText: "You can now initiate the funding phase. You may still change your vote if you wish to",
+        statusText: "Voting is completed",
+      },
+      {
+        condition: () => this.deal.majorityHasVoted && !this.deal.isAuthenticatedRepresentativeUser && this.deal.isAuthenticatedProposalLead,
+        voteText: "You can now initiate the funding phase",
+        statusText: "Voting is completed",
+      },
+    ];
+  }
 
   constructor(
     @IRouter private router: IRouter,
@@ -101,7 +105,7 @@ export class DealVotes {
     }
 
     if (await this.deal.createSwap()) {
-      await Utils.waitUntilTrue(() => !!this.deal.contractDealId); //have to await this so the contractDealId is populated before redirecting to the funding page
+      await Utils.waitUntilTrue(() => !!this.deal.contractDealId, CREATE_SWAP_TIMEOUT); //have to await this so the contractDealId is populated before redirecting to the funding page
       this.eventAggregator.publish("handleInfo", "The funding phase is successfully started");
       this.goToFunding();
     } else {

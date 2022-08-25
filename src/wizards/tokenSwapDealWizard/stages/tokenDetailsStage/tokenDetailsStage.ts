@@ -30,6 +30,7 @@ export class TokenDetailsStage {
 
   constructor(
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
+    @inject("wizardSettings.token-details") private readonly stageSettings: TokenDetailsMetadata,
     @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
   ) {
@@ -44,16 +45,15 @@ export class TokenDetailsStage {
   }
 
   load(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
-    this.stageMetadata = stageMeta.settings ?? {};
 
     this.wizardType = stageMeta.wizardType;
     this.isOpenProposalWizard = [WizardType.createOpenProposal, WizardType.editOpenProposal].includes(stageMeta.wizardType);
 
     this.addDefaultValuesToRegistrationData(stageMeta.wizardType);
 
-    this.stageMetadata.primaryDAOTokenDetailsViewModes = this.stageMetadata.primaryDAOTokenDetailsViewModes
+    this.stageSettings.primaryDAOTokenDetailsViewModes = this.stageSettings.primaryDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.registrationData.primaryDAO);
-    this.stageMetadata.partnerDAOTokenDetailsViewModes = this.stageMetadata.partnerDAOTokenDetailsViewModes
+    this.stageSettings.partnerDAOTokenDetailsViewModes = this.stageSettings.partnerDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.registrationData.partnerDAO);
 
     this.primaryDaoTokens = this.registrationData.primaryDAO.tokens;
@@ -74,7 +74,7 @@ export class TokenDetailsStage {
         const forms = this.primaryDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
         const areTokensValid = await areFormsValid(forms);
 
-        this.checkedForUnsavedChanges();
+        this.checkedForUnsavedChangesForPrimaryDao();
 
         return this.hasValidPrimaryDAOTokensDetailsCount &&
           !this.hasUnsavedChangesForPrimaryDetails &&
@@ -94,7 +94,7 @@ export class TokenDetailsStage {
           const forms = this.partnerDAOTokenDetails.filter(Boolean).map(viewModel => viewModel.form);
           const areTokensValid = await areFormsValid(forms);
 
-          this.checkedForUnsavedChanges();
+          this.checkedForUnsavedChangesForPartnerDao();
 
           return !this.hasUnsavedChangesForPartnerDetails &&
             this.hasValidPartnerDAOTokensDetailsCount &&
@@ -135,7 +135,15 @@ export class TokenDetailsStage {
   }
 
   private checkedForUnsavedChanges() {
+    this.checkedForUnsavedChangesForPrimaryDao();
+    this.checkedForUnsavedChangesForPartnerDao();
+  }
+
+  private checkedForUnsavedChangesForPrimaryDao() {
     this.hasUnsavedChangesForPrimaryDetails = this.primaryDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
+  }
+
+  private checkedForUnsavedChangesForPartnerDao() {
     this.hasUnsavedChangesForPartnerDetails = this.partnerDAOTokenDetails.filter(viewModel => viewModel?.viewMode === "edit").length > 0;
   }
 

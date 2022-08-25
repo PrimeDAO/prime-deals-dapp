@@ -163,7 +163,7 @@ export class WizardManager implements IRouteableComponent {
      */
     if (dealId) {
       if (!this.originalRegistrationData) {
-        if (!App.initialized){
+        if (!App.initialized) {
           await App.dealLoadingPromise;
         }
         this.originalRegistrationData = await this.getDeal(dealId);
@@ -248,6 +248,11 @@ export class WizardManager implements IRouteableComponent {
     // Getting the index of currently active stage route.
     // It is passed to the wizardService registerWizard method to register it with correct indexOfActive
     this.activeIndex = this.stages.findIndex(stage => stage.route.includes(stageRoute));
+
+    // this is needed to save the stage's state in the current opened wizard
+    this.stages.forEach(stage => {
+      this.container.register(Registration.instance(`wizardSettings.${stage.route}`, {}));
+    });
   }
 
   public unload() {
@@ -314,6 +319,10 @@ export class WizardManager implements IRouteableComponent {
     return canAccess;
   }
 
+  get cancelRoute() {
+    return this.dealId ? `/deal/${this.dealId}` : "/home";
+  }
+
   private isHiddenStage(stageRoute: string): boolean {
     const hiddenStage = this.stages.findIndex(stage => stage.route === stageRoute && stage.hidden);
     const isHidden = hiddenStage !== -1;
@@ -330,7 +339,7 @@ export class WizardManager implements IRouteableComponent {
       let newDeal: DealTokenSwap;
 
       try {
-        console.info(`Saving deal (Deal ID: ${this.dealId})->`, this.registrationData );
+        console.info(`Saving deal (Deal ID: ${this.dealId})->`, this.registrationData);
         if (creating) {
           // const newDeal = use this for the button link below
           newDeal = await this.dealService.createDeal(this.registrationData);
@@ -392,5 +401,4 @@ export class WizardManager implements IRouteableComponent {
       return sum + (tokenDetails?.price ?? 0) * (Number(fromWei(item.amount || 0, item.decimals || 0) ?? 0));
     }, 0);
   }
-
 }

@@ -1,12 +1,11 @@
-import { inject, singleton, IEventAggregator } from "aurelia";
+import { IEventAggregator, inject, singleton } from "aurelia";
 
 import { IDataSourceDeals } from "services/DataSourceDealsTypes";
 import { DateService } from "services/DateService";
 import { DealService } from "services/DealService";
 import { DealTokenSwap } from "entities/DealTokenSwap";
 import { Address, IEthereumService } from "services/EthereumService";
-import { SortOrder } from "services/SortService";
-import { SortService } from "services/SortService";
+import { SortOrder, SortService } from "services/SortService";
 import { DisposableCollection } from "services/DisposableCollection";
 import { IRouter } from "@aurelia/router";
 
@@ -55,7 +54,7 @@ export class Deals {
     this.dealsLoading = false;
 
     if (this.cardIndex === undefined) {
-      this.cardIndex = this.dealService.openProposals?.length ? 0 : 1;
+      this.cardIndex = this.dealService.openProposals?.length ? 1 : 0;
     }
     this.sortDirection = SortOrder.DESC;
     this.sort("age");
@@ -137,24 +136,31 @@ export class Deals {
     }
   }
 
-  /**
-   * Returns a filtered set of deals based on criteria being passed in from the deal service
-   * @param cardIndex The current Tab
-   * @param showMine Whether or not to show your current deals
-   * @returns
-   */
   private getDealsForCardIndex(cardIndex: number, showMine: boolean, address: string): DealTokenSwap[] {
-    if (this.cardIndex === undefined) {
+    if (cardIndex === undefined) {
       return [];
     }
 
-    if (cardIndex === 0) {
-      //open proposals
-      return !showMine ? this.dealService.openProposals : this.dealService.openProposals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address));
-    } else {
-      //partnered deals
-      return !showMine ? this.dealService.partneredDeals : this.dealService.partneredDeals.filter((x: DealTokenSwap) => x.registrationData.proposalLead?.address === address || x.registrationData.primaryDAO?.representatives.some(y => y.address === address) || x.registrationData.partnerDAO?.representatives.some(y => y.address === address));
-    }
+    const deals = cardIndex === 0 ? this.dealService.openProposals : this.dealService.partneredDeals;
+
+    return this.filterDeals(deals, showMine, address);
+  }
+
+  get allDeals(): DealTokenSwap[] {
+    const deals = this.dealService.openProposals.concat(this.dealService.partneredDeals);
+
+    const address = this.ethereumService.defaultAccountAddress;
+    return this.filterDeals(deals, this.showMine, address);
+  }
+
+  private filterDeals(deals: DealTokenSwap[], showMine: boolean, address: string) {
+    return showMine
+      ? deals.filter((x: DealTokenSwap) =>
+        x.registrationData.proposalLead?.address === address
+        || x.registrationData.primaryDAO?.representatives.some(y => y.address === address)
+        || x.registrationData.partnerDAO?.representatives.some(y => y.address === address),
+      )
+      : deals;
   }
 
   /**
@@ -174,13 +180,13 @@ export class Deals {
     this.showMine = !this.showMine;
     if (this.showMine) {
       //if showing only "my deals" check to see which tab to display by default if there are no deals in either tab
-      const openDeals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
-      const partneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
-      if (openDeals) {
-        this.cardIndex = 0;
-      }
-      else if (partneredDeals) {
+      const hasPartneredDeals = this.isTabVisible(1, this.showMine, this.ethereumService.defaultAccountAddress);
+      const hasOpenProposals = this.isTabVisible(0, this.showMine, this.ethereumService.defaultAccountAddress);
+      if (this.cardIndex === 0 && !hasOpenProposals) {
         this.cardIndex = 1;
+      }
+      if (this.cardIndex === 1 && !hasPartneredDeals) {
+        this.cardIndex = 0;
       }
     }
   }

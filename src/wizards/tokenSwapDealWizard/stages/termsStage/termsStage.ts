@@ -25,7 +25,6 @@ export class TermsStage {
 
   termClauses: TermClause[] = [];
   hasUnsavedChanges = false;
-  stageMetadata: {termsViewModes?: ViewMode[]} = {};
 
   terms: ITerms;
   daoplomatRewards?: IDaoplomatRewards;
@@ -39,6 +38,7 @@ export class TermsStage {
   constructor(
     @IContainer public container: IContainer,
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
+    @inject("wizardSettings.terms") private readonly stageSettings: {termsViewModes?: ViewMode[]},
     @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
     public numberService: NumberService, // 'numberService' is used by the template
@@ -49,8 +49,7 @@ export class TermsStage {
   }
 
   async load(stageMeta: IStageMeta) {
-    this.stageMetadata = stageMeta.settings ?? {};
-    this.stageMetadata.termsViewModes = this.stageMetadata.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
+    this.stageSettings.termsViewModes = this.stageSettings.termsViewModes ?? this.getDefaultTermsViewModes(stageMeta.wizardType);
 
     this.terms = this.registrationData.terms;
     this.wizardType = stageMeta.wizardType;
@@ -84,13 +83,13 @@ export class TermsStage {
 
     this.termClauses.splice(index, 1);
     this.registrationData.terms.clauses.splice(index, 1);
-    this.stageMetadata.termsViewModes.splice(index, 1);
+    this.stageSettings.termsViewModes.splice(index, 1);
     this.checkedForUnsavedChanges();
   }
 
   addClause() {
     const emptyClause: IClause = {
-      id: "",
+      id: shortUuid.generate(),
       text: "",
       title: "",
     };

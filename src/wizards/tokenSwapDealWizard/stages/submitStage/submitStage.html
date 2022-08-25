@@ -135,8 +135,8 @@
                   <template if.bind="true">
                     <div class="submitContentLabel">Clause ${$index + 1}</div>
                     <div class="submitContent">
-                      <p if.bind="clause.title" class="clauseTitle">${clause.title}</p>
-                      <pre class="subtext" innerhtml.to-view="clause.text | sanitizeHTML"></pre>
+                      <h2 class="heading topic">${clause.title}</h2>
+                      <div class="content" innerhtml.to-view="clause.text | sanitizeHTML"></div>
                     </div>
                   </template>
                 </template>
@@ -170,7 +170,10 @@
                         <etherscanlink address.bind="daoplomat.address" text="${daoplomat.address | smallHexString}">
                         </etherscanlink>
                         <span>${daoplomat.rewardSplitPercentage | number}%</span>
-                        <span class="splitPriceValue">~${(daoplomat.rewardSplitPercentage /100 * submitData.terms.daoplomatRewards.percentage)/100 * tokensTotal | currency}</span>
+                        <span class="splitPriceValue"
+                          >~${(daoplomat.rewardSplitPercentage /100 * submitData.terms.daoplomatRewards.percentage)/100
+                          * tokensTotal | currency}</span
+                        >
                       </template>
                     </div>
                   </pcard>
