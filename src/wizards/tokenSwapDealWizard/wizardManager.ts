@@ -202,7 +202,7 @@ export class WizardManager implements IRouteableComponent {
        * if we are on the last stage and going to submit, make sure all *visible* stages are valid
        * (the Submit stage is not visible).
        */
-      const wizardIsInvalid = this.stages.filter(stage => stage.hidden).some(stage => !stage.valid);
+      const wizardIsInvalid = this.stages.filter(stage => !stage.hidden).some(stage => !stage.valid);
       if (wizardIsInvalid) {
         this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check if all the stages are valid");
         return;
