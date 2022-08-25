@@ -32,7 +32,7 @@ export class Home {
     this.dealsLoading = false;
 
     if (this.cardIndex === undefined) {
-      this.cardIndex = this.allDeals.open.length ? 0 : 1;
+      this.cardIndex = this.allDeals.partnered.length ? 1 : 0;
     }
   }
 

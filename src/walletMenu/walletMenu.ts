@@ -15,6 +15,7 @@ export class WalletMenu {
    */
   thisClickHandler = this.handleClick.bind(this);
   thisEscHandler = this.handleEsc.bind(this);
+  private isSafeApp: boolean;
 
   constructor(
     @IEthereumService private ethereumService: IEthereumService,
@@ -23,13 +24,17 @@ export class WalletMenu {
     this.primeAddress = ContractsService.getContractAddress(ContractNames.PRIME);
   }
 
+  async attached() {
+    this.isSafeApp = await this.ethereumService.isSafeApp();
+  }
+
   showingChanged(show: boolean, a): void {
     if (show) {
       this.metamaskHasPrimeToken = this.ethereumService.getMetamaskHasToken(this.primeAddress);
       PLATFORM.taskQueue.queueTask(() => {
         document.addEventListener("click", this.thisClickHandler);
         document.addEventListener("keydown", this.thisEscHandler);
-      })
+      });
     } else {
       document.removeEventListener("click", this.thisClickHandler);
       document.removeEventListener("keydown", this.thisEscHandler);

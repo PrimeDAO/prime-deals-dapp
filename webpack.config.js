@@ -51,8 +51,15 @@ const ensureArray = (config) => config && (Array.isArray(config) ? config : [con
 const when = (condition, config, negativeConfig) =>
   condition ? ensureArray(config) : ensureArray(negativeConfig)
 
+const httpsCorsRules =  {
+  "Access-Control-Allow-Origin": "*",
+  // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+  "Access-Control-Allow-Methods": "GET",
+  "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+}
+
 module.exports = function (env, _webpackOptions) {
-  const { analyze, tests, development } = env;
+  const { analyze, tests, development, https } = env;
 
   const production = env.production || process.env.NODE_ENV === 'production';
   return {
@@ -120,7 +127,9 @@ module.exports = function (env, _webpackOptions) {
       },
       compress: true,
       port: 3340,
-      hot: true
+      hot: true,
+      server: https ? 'https' : 'http',
+      headers: https ? httpsCorsRules : {}
     },
     module: {
       rules: [

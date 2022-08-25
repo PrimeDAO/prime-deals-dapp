@@ -37,25 +37,6 @@ export class ConsoleLogService {
     this.subscriptions.dispose();
   }
 
-  public logMessage(msg: string, level: ConsoleLogMessageTypes = "info"): void {
-    switch (level) {
-      case "info":
-      default:
-        this.logger.info(msg);
-        break;
-      case "warn":
-      case "warning":
-        this.logger.warn(msg);
-        break;
-      case "error":
-        this.logger.error(msg);
-        break;
-      case "debug":
-        this.logger.debug(msg);
-        break;
-    }
-  }
-
   private handleSuccess(config: EventConfig | string) {
     this.logMessage(this.getMessage(config), "debug");
   }
@@ -110,6 +91,44 @@ export class ConsoleLogService {
           this.logMessage(this.getMessage(config), "debug");
           break;
       }
+    }
+  }
+
+  public logMessage(msg: string, level: ConsoleLogMessageTypes = "info"): void {
+    switch (level) {
+      case "info":
+      default:
+        this.logger.info(msg);
+        break;
+      case "warn":
+      case "warning":
+        this.logger.warn(msg);
+        break;
+      case "error":
+        this.logger.error(msg);
+        break;
+      case "debug":
+        this.logger.debug(msg);
+        break;
+    }
+  }
+
+  public logObject(msg: string, obj: any, level: ConsoleLogMessageTypes = "info"): void {
+    switch (level) {
+      case "info":
+      default:
+        this.logger.info(msg, obj);
+        break;
+      case "warn":
+      case "warning":
+        this.logger.warn(msg, obj);
+        break;
+      case "error":
+        this.logger.error(msg, obj);
+        break;
+      case "debug":
+        this.logger.debug(msg, obj);
+        break;
     }
   }
 }

@@ -23,8 +23,9 @@
         </pbutton>
       </div>
     </div>
-    <div class="connectButton" data-test="connectButton" else>
-      <pbutton click.trigger="onConnect()" type="secondary connect">Connect to a Wallet</pbutton>
+    <div else data-test="connectButton" class="connectButton">
+      <pbutton if.bind="isSafeApp" type="secondary connect" click.delegate="connectToSafe()">Connect to Safe</pbutton>
+      <pbutton else type="secondary connect" click.delegate="onConnect()">Connect to a Wallet</pbutton>
     </div>
   </div>
   </div>

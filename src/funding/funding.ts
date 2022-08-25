@@ -16,6 +16,8 @@ import { IAlertModel } from "services/AlertService";
 import { IGridColumn } from "resources/elements/primeDesignSystem/pgrid/pgrid";
 import { depositColumns, claimTokenGridColumns } from "./funding-grid-columns";
 import { AureliaHelperService } from "services/AureliaHelperService";
+import { formatBytes32String } from "ethers/lib/utils";
+import { ConsoleLogService } from "services/ConsoleLogService";
 import { DialogDeactivationStatuses, IEventAggregator, observable } from "aurelia";
 import {IRouter} from "@aurelia/router";
 
@@ -53,6 +55,7 @@ export class Funding {
     private alertService: AlertService,
     private tokenService: TokenService,
     private aureliaHelperService: AureliaHelperService,
+    private consoleLogService: ConsoleLogService,
   ) {
     this.eventAggregator.subscribe("Network.Changed.Account", async (): Promise<void> => {
       //This is for the page to redirect to the home page if the user changes their account address while on the funding page and their new account address isn't part of this deal
@@ -72,6 +75,12 @@ export class Funding {
     if (!this.deal.fundingWasInitiated) this.goToDealPage();
     //Make sure the connected account is part of this deal. Otherwise redirect to home page.
     this.verifySecurity();
+
+    const contractDealId = await this.deal.moduleContract.metadataToDealId(formatBytes32String(this.dealId));
+    this.consoleLogService.logMessage(">>>>> Start Funding logs <<<<<");
+    this.consoleLogService.logMessage(`2.1 [Funding#activate] dealId: ${this.dealId}`);
+    this.consoleLogService.logMessage(`2.2 [Funding#activate] contractDealId: ${contractDealId}`);
+
     //wait until the dao transactions from the contract are there
     await Utils.waitUntilTrue(() => this.deal.daoTokenTransactions !== undefined);
     //wait until the dao token claims from the contract are there
@@ -84,6 +93,9 @@ export class Funding {
     await this.deal.hydrateDaoTransactions();
     //get contract token information from the other DAO
     if (this.deal.isFunding || this.deal.isFailed){
+      this.consoleLogService.logMessage(`3.1 [#initializeData] isFunding: ${this.deal.isFunding}`);
+      this.consoleLogService.logMessage(`3.2 [#initializeData] isFailed: ${this.deal.isFailed}`);
+
       await this.setTokenFundingData();
       if (!this.deal.isFailed && this.firstDao.tokens.length === 1) {
         //if there is only one token, auto select it in the deposit form
@@ -93,6 +105,8 @@ export class Funding {
         await this.setFundingTokenAllowance();
       }
     } else if (this.deal.isClaiming){
+      this.consoleLogService.logMessage(`3.3 [Funding#initializeData] isClaiming: ${this.deal.isClaiming}`);
+
       await this.setTokenClaimingData();
     }
   }
@@ -316,12 +330,16 @@ export class Funding {
     if (this.selectedToken !== null && this.selectedToken >= 0){
       const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
       this.accountBalance = await contract.balanceOf(this.ethereumService.defaultAccountAddress);
+
+      this.consoleLogService.logMessage(`6. [Funding#setAccountBalance] accountBalance: ${this.accountBalance}`);
     }
   }
 
   public async setFundingTokenAllowance(): Promise<void> {
     const contract = this.tokenService.getTokenContract(this.firstDao.tokens[this.selectedToken].address);
     this.userFundingTokenAllowance = await contract.allowance(this.ethereumService.defaultAccountAddress, this.deal.daoDepositContracts.get(this.firstDao).address);
+
+    this.consoleLogService.logMessage(`7. [Funding#setFundingTokenAllowance] userFundingTokenAllowance: ${this.userFundingTokenAllowance}`);
   }
 
   public get firstDao() : IDAO{
@@ -363,6 +381,8 @@ export class Funding {
     this.processing = true;
     const transaction = await this.deal.claim(this.firstDao);
     if (transaction){
+      this.consoleLogService.logObject("9. [Funding#claimTokens] transaction: ", transaction);
+
       const congratulatePopupModel: IAlertModel = {
         header: "Congratulations!",
         message: "<p class='excitement'>You have successfully claimed your tokens!</p>",
