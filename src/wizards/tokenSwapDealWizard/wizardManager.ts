@@ -194,9 +194,15 @@ export class WizardManager implements IRouteableComponent {
       return;
     }
 
-    // Make sure all the stages are valid before continuing
-    if (this.wizardType === WizardType.createOpenProposal || this.wizardType === WizardType.createPartneredDeal) {
-      const wizardIsInvalid = this.stages.some(stage => !stage.valid);
+    // Make sure all the stages are valid before continuing to the submit stage
+    const isLastStage = this.activeIndex === this.stages.length - 2;
+    const isNewDeal = this.wizardType === WizardType.createOpenProposal || this.wizardType === WizardType.createPartneredDeal;
+    if (isNewDeal && isLastStage) {
+      /**
+       * if we are on the last stage and going to submit, make sure all *visible* stages are valid
+       * (the Submit stage is not visible).
+       */
+      const wizardIsInvalid = this.stages.filter(stage => stage.hidden).some(stage => !stage.valid);
       if (wizardIsInvalid) {
         this.eventAggregator.publish("handleValidationError", "Unable to proceed, please check if all the stages are valid");
         return;
@@ -272,7 +278,13 @@ export class WizardManager implements IRouteableComponent {
   public async onStepperClick(index: number) {
     if (this.activeIndex === index) return;
 
+    // save the validation state of the previous stage to make sure we can proceed to the submit stage
+    await this.controller.validate().then(result => {
+      this.stages[this.activeIndex].valid = result.valid;
+    });
+
     this.activeIndex = index;
+
     await this.router.load(this.root.replace(/\/$/, "") + "/" + this.stages[index].route);
   }
 
