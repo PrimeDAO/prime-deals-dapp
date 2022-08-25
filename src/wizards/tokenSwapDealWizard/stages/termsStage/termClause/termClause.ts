@@ -76,6 +76,9 @@ export class TermClause {
       })
       .then(editor => {
         this.editor = editor;
+        editor.plugins.get("WordCount").on("clipboardInput", (evt, stats) => {
+          console.log("stats,ect", stats, evt);
+        });
         editor.plugins.get("WordCount").on("update", (evt, stats) => {
           this.charValue = stats.characters;
           const isOverLimit = stats.characters > 500;
@@ -85,7 +88,6 @@ export class TermClause {
               return;
             }
             this.tempContent = this.editor.getData();
-            // s.substr(s.length - 5, 5).trim()
           }
           else {
             this.tempContent = null;
@@ -109,7 +111,15 @@ export class TermClause {
             return;
           }
           const viewContent = marked(textContent);
-          data.content = this.tempContent ?editor.data.processor.toView(this.tempContent) : editor.data.processor.toView(viewContent);
+          if (textContent.length + editor.getData().length > 500) {
+            // editor.commands.execute("selectAll");
+            // editor.commands.execute("delete");
+            const index = 507 - editor.getData().length;
+            const str = textContent.slice(0, index);
+            data.content = editor.data.processor.toView(str);
+            return;
+          }
+          data.content = editor.data.processor.toView(viewContent);
         });
 
         if (this.shouldSetText()) {
