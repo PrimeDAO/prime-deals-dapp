@@ -76,9 +76,6 @@ export class TermClause {
       })
       .then(editor => {
         this.editor = editor;
-        editor.plugins.get("WordCount").on("clipboardInput", (evt, stats) => {
-          console.log("stats,ect", stats, evt);
-        });
         editor.plugins.get("WordCount").on("update", (evt, stats) => {
           this.charValue = stats.characters;
           const isOverLimit = stats.characters > 500;
@@ -112,8 +109,6 @@ export class TermClause {
           }
           const viewContent = marked(textContent);
           if (textContent.length + editor.getData().length >= 500) {
-            // editor.commands.execute("selectAll");
-            // editor.commands.execute("delete");
             const limit = editor.getData().startsWith("<p>") && editor.getData().endsWith("</p>") ? 507 : 500;
             const index = limit - editor.getData().length < 0 ? 0 : limit - editor.getData().length;
             const str = textContent.slice(0, index);
