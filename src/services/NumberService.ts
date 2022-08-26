@@ -80,12 +80,12 @@ export class NumberService {
      * returns NaN.
      */
     if (!!value && (Math.abs(value) <= 0.000001)) {
-      return numeral(0).format(formatString, Math.trunc) as string;
+      return numeral(0).format(formatString) as string;
     } else {
       /**
        * supply trunc as rounding function because we don't want to round up
        */
-      return numeral(value).format(formatString, Math.trunc) as string;
+      return numeral(value).format(formatString) as string;
     }
   }
 
