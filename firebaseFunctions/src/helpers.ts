@@ -1,7 +1,11 @@
 import { isEqual } from "lodash";
 import { firestore, PARTNER_DAO_VOTES_COLLECTION, PRIMARY_DAO_VOTES_COLLECTION } from "./index";
 import { IDealDAOVotingSummary, IDealTokenSwapDocument, IDealVotingSummary } from "../../src/entities/IDealTypes";
-import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IFirebaseDocument, DEALS_TOKEN_SWAP_COLLECTION, DEALS_TOKEN_SWAP_UPDATES_COLLECTION, DEEP_DAO_COLLECTION } from "../../src/services/FirestoreTypes";
+import { IDeepDaoOrganizations } from "../../src/services/DeepDaoTypes";
+import axios from "axios";
+
+const DEEP_DAO_ASSETS_URL = "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/dao/logo/";
 
 /**
  * Checks if the only change to the deal is isPrivacy flag change
@@ -157,6 +161,95 @@ export const updateDealUpdatesCollection = (dealId: string): void => {
     dealId,
     modifiedAt,
   });
+};
+
+/**
+ * DeepDAO api returns mixed avatar URL, which in some cases contains
+ * the full URL and in others return only the file name:
+ * var1: {...,"logo": "https://deepdao-uploads.s3.us-east-2.amazonaws.com/assets/snapshots/spaces/communifty.eth.png",...}
+ * var2: {...,"logo": "flamingo.png",...}
+ * This function unify urls to always contain the full URL path.
+ * @param url string
+ * @returns string
+ */
+const unifyAvatarUrl = (url: string): string => {
+  const pathParts = url?.split("/");
+  return (!url || url.includes("https://"))
+    ? url || ""
+    : DEEP_DAO_ASSETS_URL + pathParts[pathParts.length - 1];
+};
+
+// eslint-disable-next-line
+export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, functions: any): Promise<FirebaseFirestore.WriteResult> =>
+{
+  const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+  const databaseName =
+    firestoreAdminClient.databasePath(projectId, "(default)");
+
+  functions.logger.log(`
+      Starting daily update for DeepDAO organizations list
+      Project ID: ${projectId},
+      Database name: ${databaseName},
+    `);
+
+  let res: IDeepDaoOrganizations;
+
+  try {
+    res = await (await axios.get(`${process.env.DEEPDAO_API_URL}/organizations`, {
+      headers: {
+        "mode": "cors",
+        "Content-Type": "application/json",
+        "x-api-key": `${process.env.DEEPDAO_API_KEY}`,
+      },
+    })).data.data;
+    functions.logger.log(`Retrived successfully ${res.totalResources} organizations.`);
+  } catch (err) {
+    functions.logger.log(`
+      Error fetching DeepDAO organizations.
+      Error message: ${err.message}.
+    `);
+    return;
+  }
+
+  try {
+    // Converting DAO array into slim object
+    const extractAddresses = (obj: any): FirebaseFirestore.WriteResult =>
+    {
+      return obj.reduce((addresses, { address }) =>
+      {
+        addresses.push(address);
+        return addresses;
+      }, []);
+    };
+
+    const orgs = res.resources.reduce((obj, item): FirebaseFirestore.DocumentData =>
+    {
+      obj[item.organizationId] = {
+        name: item.name,
+        avatarUrl: unifyAvatarUrl(item.logo),
+        treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
+      };
+      return obj;
+    }, {} as FirebaseFirestore.CollectionGroup<FirebaseFirestore.DocumentData>);
+
+    functions.logger.log(`Mapped successfully ${Object.keys(orgs).length} organizations.`);
+    const BATCH_SIZE = 500;
+    for (let idx = 0; idx < Object.entries(orgs).length / BATCH_SIZE; idx++) {
+      const batch = firestore.batch();
+      const docRef = firestore.collection(DEEP_DAO_COLLECTION).doc("batch" + idx); //automatically generate unique id
+      const batchOrgs = Object.fromEntries(Object.entries(orgs).slice(BATCH_SIZE * idx, BATCH_SIZE * (idx + 1)));
+      batch.set(docRef, {DAOs: batchOrgs});
+      await batch.commit();
+    }
+    functions.logger.log(`Firebase 'deep-dao' collection updated successfully ${Object.keys(orgs).length} organizations.`);
+    return;
+  } catch (err) {
+    functions.logger.log(`
+      Error mapping DeepDAO organizations.
+      Error message: ${err.message}.
+    `);
+    return;
+  }
 };
 
 /**

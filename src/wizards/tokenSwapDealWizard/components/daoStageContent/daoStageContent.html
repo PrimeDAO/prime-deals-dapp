@@ -13,10 +13,43 @@
         class="wizardFormInput wizardFormInputNarrow"
         data-test="dao-name-field"
         input-reference.bind="nameReference"
-        label.bind="name + ' Name'"
+        label="Select DAO or Enter a DAO Name"
       >
-        <pinput-text disabled.bind="disabled" value.bind="data.name & validate"
-          view-model.ref="nameReference"></pinput-text>
+        <autocomplete-select
+          placeholder="Select your DAO..."
+          search-text="No DAO found, add '%VAL%' manually"
+          default-avatar="DAO_placeholder.svg"
+          ref="refSelectDAO"
+        >
+          <span slot="button-icon-close"><i class="fas fa-times"></i></span>
+          <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
+          <span slot="button-icon-search"><i class="fas fa-search"></i></span>
+        </autocomplete-select>
+      </pform-input>
+      <pform-input if.bind="isLoadingDAO" class="wizardFormInput wizardFormInputNarrow">
+        <pcard class="deepDao is-loading">
+          <span><i class="spinner fas fa-circle-notch fa-spin"></i> Loading...</span>
+        </pcard>
+      </pform-input>
+      <pform-input if.bind="isFromDeepDAO" class="wizardFormInput wizardFormInputNarrow">
+        <pcard class="deepDao" if.to-view="!isLoadingDAO">
+          <header>
+            <h1 class="title heading">Powered by DeepDAO.io</h1>
+            <hr />
+          </header>
+          <main>
+            <p>Note: Fields are pre-filled with the info found on DeepDAO.io. If there are multiple options you can chose from a dropdown list. It is also possible to manually override the info by typing.</p>
+          </main>
+          <footer>
+            <a href="https://deepdao.io/organization/${data.deepDAOId}/organization_data/finance" target="_blank">
+              <i class="fas fa-arrow-right"></i> View DAO on DeepDAO.io
+            </a>
+            <span class="deep-dao-logo">
+              <img src="./deepdao-logo-mono.svg" class="logo-mono">
+              <img src="./deepdao-logo-color.svg" class="logo-color">
+            </span>
+          </footer>
+        </pcard>
       </pform-input>
 
       <pform-input
@@ -26,11 +59,25 @@
         input-reference.bind="daoTreasuryAddressInput"
         label-info="This address will receive tokens from the token swap"
         label.bind="name +' Treasury Address'">
-        <form-address-input
+        <form-address-input if.bind="treasuryAddresses.length <= 1"
           disabled.bind="disabled"
           value.bind="data.treasury_address | checksumAddress & validate"
           view-model.ref="daoTreasuryAddressInput">
         </form-address-input>
+        <autocomplete-select else
+          placeholder="Select treasury address..."
+          searchText="Address not found, add manually"
+          ref="refSelectTreasury">
+          <span slot="button-icon-close"><i class="fas fa-times"></i></span>
+          <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
+          <span slot="button-icon-search"><i class="fas fa-search"></i></span>
+        </autocomplete-select>
+        <span class="link-buttons" if.bind="data.treasury_address && isValidTreasuryAddress && isFromDeepDAO">
+          <copy-to-clipboard-button text-to-copy.bind="data.treasury_address"></copy-to-clipboard-button>
+          <etherscan-button
+            address.bind="data.treasury_address">
+          </etherscan-button>
+        </span>
       </pform-input>
 
       <div class="daoStageAvatar" data-test="dao-avatar-section">
@@ -39,14 +86,12 @@
           data-test="dao-avatar-field"
           label-info="JPG, GIF, PNG or BMP formats Square aspect ratio Recommended size: 400x400px Maximum 5MB file size"
           input-reference.bind="imageReference"
-          label.bind="name + ' Avatar'"
-        >
+          label.bind="name + ' Avatar'">
           <pinput-text
             disabled.bind="disabled"
             placeholder="Image URL..."
             value.bind="data.logoURI & debounce:600 & validate"
-            view-model.ref="imageReference"
-          >
+            view-model.ref="imageReference">
           </pinput-text>
         </pform-input>
         <div
@@ -88,7 +133,6 @@
           + Add An External Link
         </button>
       </div>
-
     </div>
   </div>
   <div class="stageSection" data-test="dao-representatives-section">

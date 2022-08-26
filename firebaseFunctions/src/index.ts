@@ -5,7 +5,7 @@ import * as corsLib from "cors";
 import * as shortUuid from "short-uuid";
 import { getAddress, verifyMessage } from "ethers/lib/utils";
 import { IDealTokenSwapDocument } from "../../src/entities/IDealTypes";
-import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection } from "./helpers";
+import { generateVotingSummary, initializeVotes, initializeVotingSummary, isModifiedAtOnlyUpdate, isRegistrationDataPrivacyOnlyUpdate, isRegistrationDataUpdated, resetVotes, updateDealUpdatesCollection, deepDaoOrganizationListUpdate } from "./helpers";
 import { DEALS_TOKEN_SWAP_COLLECTION } from "../../src/services/FirestoreTypes";
 import { IDealRegistrationTokenSwap } from "../../src/entities/DealRegistrationTokenSwap";
 
@@ -340,3 +340,30 @@ export const scheduledFirestoreBackup = functions.pubsub
         throw new Error("Creating backup failed");
       });
   });
+
+/**
+ * Function responsible for running automated data update fetch from DeepDAO API.
+ * It runs every 24 hours.
+ * It stores a map of organizations data inside a Google FireStore collection - `deep-dao`.
+ * The API-Url and API-Key are specified in `firebaseFunctions/.env` file
+ */
+export const scheduledDeepDaoOrganizationListUpdate = functions.pubsub
+  .schedule("every 24 hours")
+  .onRun(async () =>
+  {
+    return await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
+  });
+
+// /**
+//  * Manually invoke DeepDAO data update.
+//  * For use to create the deepDao collection in the Emulators
+//  * where the schedule won't work.
+//  */
+// export const callDeepDaoAPI = functions.https.onRequest(
+//   (request, response) =>
+//     // Allow cross-origin requests for this function
+//     cors(request, response, async () => {
+//       const data = await deepDaoOrganizationListUpdate(firestoreAdminClient, functions);
+//       return response.status(200).send(data);
+//     }),
+// );

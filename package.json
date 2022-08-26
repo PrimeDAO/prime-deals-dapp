@@ -44,6 +44,10 @@
     "firebase-deploy:staging": "firebase deploy --project=staging --only functions:CI,firestore:rules",
     "firebase-deploy:master": "firebase deploy --project=production --config=firebase-production.json --only functions:CI,firestore:rules",
     "firebase-deploy-backup-function": "firebase deploy --project=production --only functions:scheduledFirestoreBackup",
+    "firebase-deploy-deepdao-function:default": "firebase deploy --project=default --only functions:scheduledDeepDaoOrganizationListUpdate",
+    "firebase-deploy-deepdao-function:development": "firebase deploy --project=development --only functions:scheduledDeepDaoOrganizationListUpdate",
+    "firebase-deploy-deepdao-function:staging": "firebase deploy --project=staging --only functions:scheduledDeepDaoOrganizationListUpdate",
+    "firebase-deploy-deepdao-function:production": "firebase deploy --project=production --only functions:scheduledDeepDaoOrganizationListUpdate --config=firebase-production.json",
     "seed-build": "cd ./src/server-browser-scripts && tsc",
     "seed-run": "node -e 'import(\"./dist/seed/src/server-browser-scripts/seed-data.js\").then(x=> x.resetDeals())' -r dotenv/config . dotenv_config_path=./.env"
   },
@@ -60,6 +64,7 @@
     "buffer": "^6.0.3",
     "cids": "^1.1.9",
     "ckeditor5-custom-build": "file:ckEditor",
+    "cl-webcomp-poc": "^0.1.2",
     "copy-webpack-plugin": "^11.0.0",
     "crypto-browserify": "^3.12.0",
     "dompurify": "^2.3.8",
