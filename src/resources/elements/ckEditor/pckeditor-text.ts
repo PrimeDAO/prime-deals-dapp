@@ -44,22 +44,16 @@ export class PCkeditorText {
         })
         .then(editor => {
           this.editor = editor;
+          const inputCommand = editor.commands.get( "input" );
           editor.plugins.get("WordCount").on("update", (evt, stats) => {
             this.charValue = stats.characters;
             const isOverLimit = stats.characters > 500;
             if (isOverLimit) {
-              this.enableInput = this.disableCommand( editor.commands.get( "input" ) );
-              if (this.tempContent){
-                return;
-              }
-              this.tempContent = this.editor.getData();
+              inputCommand.isEnabled = false;
             }
             else {
-              this.tempContent = null;
-              if (this.enableInput) {
-                this.enableInput();
-                this.enableInput = null;
-              }
+              inputCommand.isEnabled = true;
+              inputCommand.refresh();
             }
           });
 

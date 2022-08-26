@@ -18,8 +18,6 @@ export class TermClause {
   @bindable onSaved?: (clause: IClause) => void;
   @bindable charValueParent = 0;
   private editor = null;
-  // private tempContent = null;
-  // private enableInput = null;
   charValue = null;
   isEditorValid:boolean = null;
 
@@ -40,100 +38,22 @@ export class TermClause {
     return isValid;
   }
 
-  // disableCommand( cmd ) {
-  //   cmd.on( "set:isEnabled", forceDisable, { priority: "highest" } );
-  //   cmd.isEnabled = false;
+  attaching(){
+    this.validationRules
+      .on(this.clause)
+      .ensure("title")
+      .required()
+      .withMessage("Clause requires a title")
+      .ensure("text")
+      .required()
+      .withMessage("Clause requires a description")
+      .minLength(17)
+      .withMessage("Clause must be at least 10 characters");
+  }
 
-  //   return () => {
-  //     cmd.off( "set:isEnabled", forceDisable );
-  //     cmd.isEnabled = true;
-  //     cmd.refresh();
-  //   };
-
-  //   function forceDisable( evt ) {
-  //     evt.return = false;
-  //     evt.stop();
-  //   }
-  // }
-
-  // editorInit(targetElement: HTMLTextAreaElement) {
-  //   Editor
-  //     .create(targetElement, {
-  //       link: {
-  //         addTargetToExternalLinks: true,
-  //         defaultProtocol: "https://",
-  //       },
-  //       toolbar: {
-  //         items: ["bold", "italic", "underline", "link", "bulletedList", "numberedList"],
-  //       },
-  //     })
-  //     .then(editor => {
-  //       this.editor = editor;
-  //       editor.plugins.get("WordCount").on("update", (evt, stats) => {
-  //         this.charValue = stats.characters;
-  //         const isOverLimit = stats.characters > 500;
-  //         if (isOverLimit) {
-  //           this.enableInput = this.disableCommand( editor.commands.get( "input" ) );
-  //           if (this.tempContent){
-  //             return;
-  //           }
-  //           this.tempContent = this.editor.getData();
-  //         }
-  //         else {
-  //           this.tempContent = null;
-  //           if (this.enableInput) {
-  //             this.enableInput();
-  //             this.enableInput = null;
-  //           }
-  //         }
-  //       });
-
-  //       editor.model.document.on("change:data", () => {
-  //         const data = this.editor.getData();
-  //         this.clause = {...this.clause, text: data};
-  //       });
-
-  //       editor.editing.view.document.on("clipboardInput", (evt, data) => {
-  //         const dataTransfer = data.dataTransfer;
-  //         const textContent = dataTransfer.getData("text/plain");
-
-  //         if (!textContent) {
-  //           return;
-  //         }
-  //         const viewContent = marked(textContent);
-  //         if (textContent.length + editor.getData().length >= 500) {
-  //           const limit = editor.getData().startsWith("<p>") && editor.getData().endsWith("</p>") ? 507 : 500;
-  //           const index = limit - editor.getData().length < 0 ? 0 : limit - editor.getData().length;
-  //           const str = textContent.slice(0, index);
-  //           data.content = editor.data.processor.toView(str);
-  //           return;
-  //         }
-  //         data.content = editor.data.processor.toView(viewContent);
-  //       });
-
-  //       if (this.shouldSetText()) {
-  //         this.editor.setData(this.clause.text);
-  //       }
-
-  //       this.validationRules
-  //         .on(this.clause)
-  //         .ensure("title")
-  //         .required()
-  //         .withMessage("Clause requires a title")
-  //         .ensure("text")
-  //         .required()
-  //         .withMessage("Clause requires a description")
-  //         .minLength(10)
-  //         .withMessage("Clause must be at least 10 characters");
-  //     })
-  //     .catch(error => {
-  //       console.error("There was a problem initializing the editor.", error);
-  //     });
-  // }
-
-  // shouldSetText() {
-  //   return !this.editor.getData() && this.clause?.text;
-  // }
+  shouldSetText() {
+    return !this.editor.getData() && this.clause?.text;
+  }
 
   delete() {
     if (this.onDelete()) {
