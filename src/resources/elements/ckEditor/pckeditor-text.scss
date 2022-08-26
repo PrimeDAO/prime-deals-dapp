@@ -1,0 +1,35 @@
+@import "src/resources/elements/primeDesignSystem/variables";
+
+pckeditor-text {
+    position: relative;
+
+    .feedback-icon {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        color: $Red;
+    }
+
+    >.isInvalid {
+        .ck.ck-editor {
+            border: 1px solid $Red;
+            border-radius: $border-radius-normal
+        }
+    }
+
+    .ck.ck-editor:focus-within {
+        border-radius: $border-radius-normal;
+        box-shadow: 0 0 0 1px $Secondary02;
+    }
+
+    .ck.ck-content {
+        color: $Neutral03;
+        @include ckeditor-content;
+    }
+
+    .ck.ck-editor__main,
+    .ck.ck-content {
+        min-height: 110px;
+        resize: vertical;
+    }
+}

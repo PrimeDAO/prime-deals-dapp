@@ -32,8 +32,13 @@
         max-length="125"
         show-counter
       >
-        <pinput-text view-model.ref="clauseTitleInputViewModel" max="125" value.bind="clause.title & validate"></pinput-text>
+        <pinput-text
+          view-model.ref="clauseTitleInputViewModel"
+          max="125"
+          value.bind="clause.title & validate"
+        ></pinput-text>
       </pform-input>
+
       <pform-input
         class="wizardFormInput"
         data-test="clauseFormInput"
@@ -43,14 +48,13 @@
         max-length="500"
         is-vertical
         show-counter
-        char-value.bind="charValue"
+        char-value.bind="charValueParent"
       >
-        <textarea
-          ref="textareaRef"
-          placeholder="Text describing the clause"
-          rows="4"
-          id="${`editor-${index}`}"
-        ></textarea>
+        <pckeditor-text
+          value.bind="clause.text & validate"
+          validation-state.bind="isEditorValid ? '' : 'error'"
+          char-value.bind="charValueParent"
+        ></pckeditor-text>
       </pform-input>
     </div>
   </editing-card>
