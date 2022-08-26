@@ -227,6 +227,7 @@ export const deepDaoOrganizationListUpdate = async (firestoreAdminClient: any, f
       obj[item.organizationId] = {
         name: item.name,
         avatarUrl: unifyAvatarUrl(item.logo),
+        tokenAddresses: item.tokens || [],
         treasuryAddresses: item.governance ? extractAddresses(item.governance) : [],
       };
       return obj;

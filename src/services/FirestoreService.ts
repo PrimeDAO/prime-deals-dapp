@@ -510,8 +510,8 @@ export class FirestoreService<
       allOrgs = {...allOrgs, ...doc.data().DAOs};
     });
     Object.keys(allOrgs).forEach(orgId => {
-      const { name, avatarUrl, treasuryAddresses } = allOrgs[orgId];
-      mappedOrgCollection[orgId] = { name, avatarUrl, treasuryAddresses };
+      const { name, avatarUrl, tokenAddresses, treasuryAddresses } = allOrgs[orgId];
+      mappedOrgCollection[orgId] = { name, avatarUrl, tokenAddresses, treasuryAddresses };
     });
 
     return mappedOrgCollection;

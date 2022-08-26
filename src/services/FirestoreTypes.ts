@@ -11,5 +11,6 @@ export interface IFirebaseDocument<T = any> {
 export interface IDAOsData {
   name: string,
   avatarUrl: string,
+  tokenAddresses: Array<string>,
   treasuryAddresses: Array<string>,
 }
