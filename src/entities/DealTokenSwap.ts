@@ -22,6 +22,7 @@ import TransactionsService, { TransactionReceipt } from "services/TransactionsSe
 import { toBigNumberJs } from "services/BigNumberService";
 import { AureliaHelperService } from "services/AureliaHelperService";
 import { DealService } from "services/DealService";
+import { BehaviorSubject } from "rxjs";
 
 // interface ITokenSwapInfo {
 //   // the participating DAOs
@@ -104,6 +105,7 @@ export class DealTokenSwap implements IDeal {
   private now: Date;
 
   public id: IDealIdType;
+  public loaded$ = new BehaviorSubject(false);
   public dealInitialized: boolean;
   public totalPrice?: number;
   public initializing = true;
@@ -537,6 +539,7 @@ export class DealTokenSwap implements IDeal {
       }
     })
       .finally(() => {
+        this.loaded$.next(true);
         this.initializing = false;
       });
   }

@@ -9,6 +9,7 @@ import { formatUnits, getAddress, parseUnits } from "ethers/lib/utils";
 import { Utils } from "./utils";
 import { DI, IEventAggregator, inject } from "aurelia";
 import { DisclaimerService } from "./DisclaimerService";
+import { Subject } from "rxjs";
 
 interface IEIP1193 {
   on(eventName: "accountsChanged", handler: (accounts: Array<Address>) => void);
@@ -110,6 +111,7 @@ export class EthereumService {
   public walletProvider: Web3Provider;
   public defaultAccountAddress: Address;
   public lastBlock: IBlockInfo;
+  public lastBlock$ = new Subject<IBlockInfo>();
   private blockSubscribed: boolean;
   private web3Modal: Web3Modal;
   /**
@@ -358,6 +360,7 @@ export class EthereumService {
   private handleNewBlock = async (blockNumber: number): Promise<void> => {
     const block = await this.getBlock(blockNumber);
     this.lastBlock = block;
+    this.lastBlock$.next(block);
     this.eventAggregator.publish("Network.NewBlock", block);
   };
 

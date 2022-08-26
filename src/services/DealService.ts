@@ -1,4 +1,4 @@
-import { skip } from "rxjs/operators";
+import { combineLatest, combineLatestWith, filter, skip, take } from "rxjs/operators";
 import { SortOrder, SortService } from "services/SortService";
 import { IDealRegistrationTokenSwap } from "entities/DealRegistrationTokenSwap";
 import { Address, EthereumService, IBlockInfoNative, IEthereumService, Networks } from "./EthereumService";
@@ -10,7 +10,7 @@ import { IDataSourceDeals, IDealIdType } from "services/DataSourceDealsTypes";
 import { ContractNames, ContractsService, IStandardEvent } from "services/ContractsService";
 import { IDealTokenSwapDocument } from "entities/IDealTypes";
 import { EventConfigException } from "services/GeneralEvents";
-import { Subscription } from "rxjs";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { Utils } from "services/utils";
 import { parseBytes32String } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
@@ -64,6 +64,8 @@ export class DealService {
   public deals: Map<IDealIdType, DealTokenSwap> = new Map<IDealIdType, DealTokenSwap>();
   private executedDealIds: Map<string, IExecutedDeal> = new Map();
   private fundedDealIds: Map<string, IFundedDeal> = new Map();
+  private contractsLoaded$ = new Subject<{module: Address, contractDealId: number, metadata:string}>();
+  private deals$ = new BehaviorSubject(new Map<IDealIdType, DealTokenSwap>());
 
   public static getDealFee(amount: BigNumber): BigNumber {
     return BigNumber.from(toBigNumberJs(amount).multipliedBy(.003).toString());
@@ -148,7 +150,7 @@ export class DealService {
     });
 
     await Promise.all([this.getDealExecuted(), this.getDealFundedInfo()]);
-    return this.loadDeals();
+    await this.loadDeals();
   }
 
   public async loadDeals(): Promise<void> {
@@ -199,6 +201,8 @@ export class DealService {
             this.deals.delete(key);
           }
         });
+
+        this.deals$.next(this.deals);
       })
       .catch((error) => {
         this.deals = new Map();
@@ -274,17 +278,29 @@ export class DealService {
   }
 
   private async observeDealFundedInfo(): Promise<void> {
+    this.contractsLoaded$.pipe(
+      combineLatestWith(
+        this.ethereumService.lastBlock$,
+        this.deals$.pipe(filter(deals => Boolean(deals.size))),
+      ),
+    )
+      .pipe(take(1))
+      .subscribe(([contractData, lastBlock, deals]) => {
+        const {contractDealId, metadata} = contractData;
+
+        const dealId = parseBytes32String(metadata);
+        const fundedAt = new Date(lastBlock.timestamp * 1000);
+        this.fundedDealIds.set(dealId, {fundedAt});
+
+        const deal = deals.get(dealId);
+        deal.fundingStartedAt = fundedAt;
+        deal.contractDealId = contractDealId;
+      });
+
     const moduleContract = await this.contractsService.getContractFor(ContractNames.TOKENSWAPMODULE);
-    const filter = moduleContract.filters.TokenSwapCreated();
-
-    moduleContract.on(filter, async (_module: Address, contractDealId: number, metadata: string) => {
-      const dealId = parseBytes32String(metadata);
-      const fundedAt = new Date(this.ethereumService.lastBlock.timestamp * 1000);
-      this.fundedDealIds.set(dealId, { fundedAt });
-
-      const deal = this.deals.get(dealId);
-      deal.fundingStartedAt = fundedAt;
-      deal.contractDealId = contractDealId;
+    const contractFilter = moduleContract.filters.TokenSwapCreated();
+    moduleContract.on(contractFilter, async (module: Address, contractDealId: number, metadata: string) => {
+      this.contractsLoaded$.next({module, contractDealId, metadata});
     });
   }
 
