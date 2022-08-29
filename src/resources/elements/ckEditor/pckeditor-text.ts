@@ -11,8 +11,6 @@ export class PCkeditorText {
   @bindable({mode: BindingMode.twoWay}) value: string;
   @bindable({ mode: BindingMode.twoWay}) charValue = 0;
   private editor = null;
-  private tempContent = null;
-  private enableInput = null;
 
   disableCommand( cmd ) {
     cmd.on( "set:isEnabled", forceDisable, { priority: "highest" } );
@@ -65,12 +63,12 @@ export class PCkeditorText {
           editor.editing.view.document.on("clipboardInput", (evt, data) => {
             const dataTransfer = data.dataTransfer;
             const textContent = dataTransfer.getData("text/plain");
-
+            const totalDataLength = textContent.length + editor.getData().length;
             if (!textContent) {
               return;
             }
             const viewContent = marked(textContent);
-            if (textContent.length + editor.getData().length >= 500) {
+            if (totalDataLength >= 500) {
               const limit = editor.getData().startsWith("<p>") && editor.getData().endsWith("</p>") ? 507 : 500;
               const index = limit - editor.getData().length < 0 ? 0 : limit - editor.getData().length;
               const str = textContent.slice(0, index);
