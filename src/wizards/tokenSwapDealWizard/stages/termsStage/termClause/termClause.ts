@@ -18,13 +18,8 @@ export class TermClause {
   @bindable onSaved?: (clause: IClause) => void;
   @bindable charValueParent = 0;
   private editor = null;
+  charValue = null;
   isEditorValid:boolean = null;
-
-  async revalidateClause(val){
-    console.log("fefer", val);
-    const v = await this.form.revalidateErrors();
-    console.log("v", v);
-  }
 
   constructor(
     @newInstanceForScope(IValidationController) public form: IValidationController,

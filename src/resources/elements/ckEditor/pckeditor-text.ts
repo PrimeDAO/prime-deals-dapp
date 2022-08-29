@@ -12,9 +12,23 @@ export class PCkeditorText {
   @bindable({ mode: BindingMode.twoWay}) charValue = 0;
   private editor = null;
 
+  disableCommand( cmd ) {
+    cmd.on( "set:isEnabled", forceDisable, { priority: "highest" } );
+    cmd.isEnabled = false;
+
+    return () => {
+      cmd.off( "set:isEnabled", forceDisable );
+      cmd.isEnabled = true;
+      cmd.refresh();
+    };
+
+    function forceDisable( evt ) {
+      evt.return = false;
+      evt.stop();
+    }
+  }
+
   attaching(){
-    console.log("validationState", this.validationState);
-    console.log("this.value", this.value);
     if (!this.editor && this.editorRef) {
       Editor
         .create(this.editorRef, {
@@ -28,12 +42,16 @@ export class PCkeditorText {
         })
         .then(editor => {
           this.editor = editor;
+          const inputCommand = editor.commands.get( "input" );
           editor.plugins.get("WordCount").on("update", (evt, stats) => {
             this.charValue = stats.characters;
             const isOverLimit = stats.characters > 500;
             if (isOverLimit) {
-              const trimmedString = this.editor.getData().slice(0, 500);
-              editor.setData(trimmedString);
+              inputCommand.isEnabled = false;
+            }
+            else {
+              inputCommand.isEnabled = true;
+              inputCommand.refresh();
             }
           });
 
@@ -45,11 +63,18 @@ export class PCkeditorText {
           editor.editing.view.document.on("clipboardInput", (evt, data) => {
             const dataTransfer = data.dataTransfer;
             const textContent = dataTransfer.getData("text/plain");
-
+            const totalDataLength = textContent.length + editor.getData().length;
             if (!textContent) {
               return;
             }
             const viewContent = marked(textContent);
+            if (totalDataLength >= 500) {
+              const limit = editor.getData().startsWith("<p>") && editor.getData().endsWith("</p>") ? 507 : 500;
+              const index = limit - editor.getData().length < 0 ? 0 : limit - editor.getData().length;
+              const str = textContent.slice(0, index);
+              data.content = editor.data.processor.toView(str);
+              return;
+            }
             data.content = editor.data.processor.toView(viewContent);
           });
         });
