@@ -8,11 +8,20 @@
         input-reference.bind="addressInput"
         label="Token Address"
         label-info="Make sure to use the native contract address of the token">
-        <pinput-text
+        <pinput-text if.to-view="tokenOptions && tokenOptions.length <= 1"
           placeholder="0x..."
           validation-state.bind="tokenInfoLoading? 'validating': addressInput.validationState !== 'validating' ? addressInput.validationState : undefined"
           value.bind="token.address | checksumAddress & validate"
           view-model.ref="addressInput"></pinput-text>
+        <autocomplete-select else
+          placeholder="Select token address..."
+          searchText="Address not found, add manually"
+          value.two-way="token.address | checksumAddress & validate"
+          ref="refSelectToken">
+          <span slot="button-icon-close"><i class="fas fa-times"></i></span>
+          <span slot="button-icon-add"><i class="fas fa-plus-circle"></i></span>
+          <span slot="button-icon-search"><i class="fas fa-search"></i></span>
+        </autocomplete-select>
       </pform-input>
       <div class="detailsTable" data-test="tokenDetailsMetadata" if.bind="showTokenDetails">
         <div class="detailsCell">

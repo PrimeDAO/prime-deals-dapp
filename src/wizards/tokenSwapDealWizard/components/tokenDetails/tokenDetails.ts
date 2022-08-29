@@ -14,16 +14,37 @@ import { PrimeErrorPresenter } from "../../../../resources/elements/primeDesignS
 import { ImageExtension, ImageSize, ImageUrl, IsEthAddress } from "../../../../resources/validation-rules";
 import { ValidationService } from "../../../../services/ValidationService";
 import { ViewMode } from "../../../../resources";
+import { AutoCompleteSelect } from "cl-webcomp-poc/components/AutocompleteSelect";
+
+interface IAutoCompleteSelectItem {
+  name: string,
+  avatarUrl?: string,
+  id: string,
+  token: string[],
+  treasury?: string[],
+}
+
+interface IAutoCompleteSelectEvent extends Event {
+  detail: IAutoCompleteSelectItem
+}
+
+enum AutoCompleteSelectEvent {
+  SelectionChanged = "daoSelectionChanged",
+  NewAdded = "newDaoAdded",
+  Cleared = "inputCleared",
+}
 
 @inject()
 export class TokenDetails {
   @bindable token: IToken;
+  @bindable tokenOptions: string[] = [];
   @bindable wizardType: WizardType;
   @bindable({mode: BindingMode.fromView}) onDelete: () => void;
   @bindable({mode: BindingMode.twoWay}) viewMode: ViewMode = "edit";
   @bindable hideDeleteButton: boolean;
   @bindable onSaved?: () => void;
 
+  refSelectToken: AutoCompleteSelect;
   tokenInfoLoading = false;
   showTokenDetails = false;
   saving = false;
@@ -57,6 +78,32 @@ export class TokenDetails {
 
     if (this.token.address && (this.token.logoURI || this.token.name || this.token.decimals || this.token.symbol)) {
       this.showTokenDetails = true;
+    }
+  }
+
+  attached() {
+    if(this.refSelectToken) {
+      const options = this.tokenOptions.map((tokenAddress: string): IAutoCompleteSelectItem => ({
+        name: tokenAddress,
+        avatarUrl: "",
+        id: tokenAddress,
+        token: [],
+        treasury: [],
+      })) || null;
+
+      if (options) {
+        const currentOption = options.find((option: IAutoCompleteSelectItem) => (option.id === this.token.address)) || undefined;
+        this.refSelectToken.init({
+          options,
+          value: currentOption?.name || "",
+        });
+
+        this.refSelectToken.addEventListener(AutoCompleteSelectEvent.SelectionChanged, async (e: IAutoCompleteSelectEvent) => {
+          if (!this.refSelectToken.value) {
+            this.refSelectToken.value = e.detail.id;
+          }
+        });
+      }
     }
   }
 

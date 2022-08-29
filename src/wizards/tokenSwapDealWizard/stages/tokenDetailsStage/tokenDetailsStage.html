@@ -21,6 +21,7 @@
           on-delete.call="deleteToken($index, primaryDaoTokens, primaryDAOTokenDetails, stageSettings.primaryDAOTokenDetailsViewModes)"
           repeat.for="token of primaryDaoTokens"
           token.bind="token"
+          token-options.to-view="primaryDaoTokenOptions"
           view-mode.bind="stageSettings.primaryDAOTokenDetailsViewModes[$index]"
           view-model.ref="primaryDAOTokenDetails[$index]"
           wizard-type.bind="wizardType"></token-details>
@@ -57,6 +58,7 @@
           on-delete.call="deleteToken($index, partnerDaoTokens, partnerDAOTokenDetails, stageSettings.partnerDAOTokenDetailsViewModes)"
           repeat.for="token of partnerDaoTokens"
           token.bind="token"
+          token-options.bind="partnerDaoTokenOptions"
           view-mode.bind="stageSettings.partnerDAOTokenDetailsViewModes[$index]"
           view-model.ref="partnerDAOTokenDetails[$index]"></token-details>
 

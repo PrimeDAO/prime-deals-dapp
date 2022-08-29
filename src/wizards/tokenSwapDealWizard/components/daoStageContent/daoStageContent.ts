@@ -8,11 +8,13 @@ import { ethers } from "ethers";
 import { EnsService } from "services";
 import { Utils } from "services/utils";
 import { AutoCompleteSelect } from "cl-webcomp-poc/components/AutocompleteSelect";
+import { BrowserStorageService } from "services/BrowserStorageService";
 
 interface IAutoCompleteSelectItem {
   name: string,
   avatarUrl?: string,
   id: string,
+  token: string[],
   treasury?: string[],
 }
 
@@ -57,6 +59,7 @@ export class DaoStageContent {
     @IValidationController private form: IValidationController,
     private firestoreService: FirestoreService<any, any>,
     private ensService: EnsService,
+    private browserStorageService: BrowserStorageService,
   ) {
     this.hydrateDaosList();
   }
@@ -101,6 +104,7 @@ export class DaoStageContent {
           name: address.name,
           avatarUrl: "",
           id: address.value,
+          token: [],
           treasury: [],
         }));
 
@@ -171,13 +175,13 @@ export class DaoStageContent {
   }
 
   async hydrateDaosList(): Promise<void> {
-    const cachedDAOsList = JSON.parse(localStorage.getItem("daosData"));
+    const cachedDAOsList = this.browserStorageService.lsGet("daosData");
     if (!cachedDAOsList || cachedDAOsList.date < LAST_1_DAY) {
       this.daosData = (await this.firestoreService.allDeepDaoOrgs());
-      localStorage.setItem("daosData", JSON.stringify({
+      this.browserStorageService.lsSet("daosData", {
         date: Date.now(),
         data: this.daosData,
-      }));
+      });
     } else {
       this.daosData = cachedDAOsList.data;
     }
@@ -187,6 +191,7 @@ export class DaoStageContent {
           name: this.daosData[id].name.trim(),
           avatarUrl: this.daosData[id].avatarUrl || DAO_PLACEHOLDER_AVATAR,
           id,
+          token: [...this.daosData[id].tokenAddresses || []],
           treasury: [...this.daosData[id].treasuryAddresses],
         };
         return dao;

@@ -1,3 +1,4 @@
+import { BrowserStorageService } from './../../../../services/BrowserStorageService';
 import { IStageMeta, WizardType } from "../../dealWizardTypes";
 import "./tokenDetailsStage.scss";
 import { IDAO, IDealRegistrationTokenSwap, IToken } from "../../../../entities/DealRegistrationTokenSwap";
@@ -10,6 +11,20 @@ import { IValidationRules } from "@aurelia/validation";
 import { IValidationController } from "@aurelia/validation-html";
 import { inject } from "aurelia";
 import { areFormsValid } from "../../../../services/ValidationService";
+
+interface IDAOData {
+      name: string,
+      avatarUrl?: string,
+      tokenAddresses: string[],
+      treasuryAddresses?: string[],
+}
+
+interface IDAOsData {
+  date: Date,
+  data: {
+    id: IDAOData,
+  }
+}
 
 type TokenDetailsMetadata = Record<"primaryDAOTokenDetailsViewModes" | "partnerDAOTokenDetailsViewModes", ViewMode[]>;
 
@@ -27,12 +42,14 @@ export class TokenDetailsStage {
 
   primaryDaoTokens: IToken[];
   partnerDaoTokens: IToken[];
+  daosFromStorage: IDAOsData;
 
   constructor(
     @inject("registrationData") private readonly registrationData: IDealRegistrationTokenSwap,
     @inject("wizardSettings.token-details") private readonly stageSettings: TokenDetailsMetadata,
     @IValidationController public form: IValidationController,
     @IValidationRules private validationRules: IValidationRules,
+    private browserStorageService: BrowserStorageService,
   ) {
   }
 
@@ -43,6 +60,19 @@ export class TokenDetailsStage {
   get hasValidPartnerDAOTokensDetailsCount(): boolean {
     return !this.isOpenProposalWizard ? Boolean(this.registrationData.partnerDAO?.tokens.length) : true;
   }
+
+  get primaryDaoTokenOptions(): string[] {
+    if (!this.registrationData.primaryDAO.deepDAOId) return [];
+    const primaryDaoData: IDAOData = this.daosFromStorage.data[this.registrationData.primaryDAO.deepDAOId] || [];
+    return primaryDaoData?.tokenAddresses || [];
+  }
+
+  get partnerDaoTokenOptions(): string[] {
+    if (!this.registrationData.partnerDAO.deepDAOId) return [];
+    const partnerDaoData: IDAOData = this.daosFromStorage.data[this.registrationData.partnerDAO.deepDAOId] || [];
+    return partnerDaoData?.tokenAddresses || [];
+  }
+
 
   load(stageMeta: IStageMeta<TokenDetailsMetadata>): void {
 
@@ -56,7 +86,17 @@ export class TokenDetailsStage {
     this.stageSettings.partnerDAOTokenDetailsViewModes = this.stageSettings.partnerDAOTokenDetailsViewModes
       ?? this.getDefaultTokenDetailsViewModes(stageMeta.wizardType, this.registrationData.partnerDAO);
 
+    this.daosFromStorage = this.browserStorageService.lsGet("daosData");
+
     this.primaryDaoTokens = this.registrationData.primaryDAO.tokens;
+    if (this.primaryDaoTokenOptions?.length === 1) {
+      if (!this.primaryDaoTokens[0]) {
+        this.addToken(this.primaryDaoTokens);
+      }
+      if (!this.primaryDaoTokens[0].address) {
+        this.primaryDaoTokens[0].address = this.primaryDaoTokenOptions[0];
+      }
+    }
 
     this.validationRules
       .on(this.registrationData)
@@ -86,6 +126,9 @@ export class TokenDetailsStage {
       this.registrationData.partnerDAO.tokens = this.registrationData.partnerDAO?.tokens ?? [];
 
       this.partnerDaoTokens = this.registrationData.partnerDAO.tokens;
+      if (this.partnerDaoTokenOptions?.length === 1 && !this.partnerDaoTokens[0].address) {
+        this.partnerDaoTokens[0].address = this.partnerDaoTokenOptions[0];
+      }
 
       this.validationRules
         .on(this.partnerDaoTokens)
