@@ -107,7 +107,7 @@ export class TokenService {
     return `${name.toLowerCase()}_${symbol.toLowerCase()}`;
   }
 
-  private getTokenGeckoId(name: string, symbol: string, address:string): string {
+  private getTokenGeckoId(name: string, symbol: string, address:string = null): string {
     const id = this.coinAddressIdDictionary.get(address) || this.geckoCoinInfo.get(this.getTokenGeckoMapKey(name, symbol));
     if (id) {
       return id;
@@ -199,7 +199,6 @@ export class TokenService {
           tokenInfo.price = cachedPrice;
         } else {
           if (!tokenInfo.id) {
-            // tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
             tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol, tokenInfo.address);
           }
           if (tokenInfo.id) {
@@ -295,8 +294,7 @@ export class TokenService {
   public getTokenGeckoInfo(tokenInfo: ITokenInfo): Promise<ITokenInfo> {
 
     if (!tokenInfo.id) {
-      tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol, tokenInfo.address);
-      console.log("tokenInfo.id2", tokenInfo.id);
+      tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
     }
 
     if (tokenInfo.id) { // else is not in coingecko
