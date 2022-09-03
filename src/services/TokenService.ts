@@ -71,7 +71,8 @@ export class TokenService {
 
   public async initialize(): Promise<TokenListMap> {
     this.geckoCoinInfo = new Map<string, string>();
-    const uri = `https://pro-api.coingecko.com/api/v3/coins/list?x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+    this.coinAddressIdDictionary = new Map<string, string>();
+    const uri = `https://pro-api.coingecko.com/api/v3/coins/list?include_platform=true&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
 
     TimingService.start("get geckoCoinInfo");
     /**
@@ -80,17 +81,23 @@ export class TokenService {
     await axios.get(uri)
       .then((response) => {
         if (response.data && response.data.length) {
-          response.data.map((tokenInfo: ITokenInfo) =>
-            this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id));
+          response.data.map((tokenInfo: ITokenInfo) => this.coinMapping(tokenInfo));
         }
       });
     TimingService.end("get geckoCoinInfo");
-
     return this.tokenLists = await this.tokenListService.fetchLists();
   }
 
   private geckoCoinInfo: Map<string, string>;
+  private coinAddressIdDictionary: Map<string, string>;
 
+  private coinMapping(tokenInfo: ITokenInfo){
+    if (tokenInfo.platforms?.ethereum) {
+      this.coinAddressIdDictionary.set(ethers.utils.getAddress(tokenInfo.platforms?.ethereum), tokenInfo.id);
+    } else {
+      this.geckoCoinInfo.set(this.getTokenGeckoMapKey(tokenInfo.name, tokenInfo.symbol), tokenInfo.id);
+    }
+  }
   private getTokenGeckoMapKey(name: string, symbol: string): string {
     // PRIMEDao Token HACK!!!
     if (name.toLowerCase() === "primedao token") { name = "primedao"; }
@@ -100,8 +107,8 @@ export class TokenService {
     return `${name.toLowerCase()}_${symbol.toLowerCase()}`;
   }
 
-  private getTokenGeckoId(name: string, symbol: string): string {
-    const id = this.geckoCoinInfo.get(this.getTokenGeckoMapKey(name, symbol));
+  private getTokenGeckoId(name: string, symbol: string, address:string = null): string {
+    const id = this.coinAddressIdDictionary.get(address) || this.geckoCoinInfo.get(this.getTokenGeckoMapKey(name, symbol));
     if (id) {
       return id;
     } else {
@@ -192,7 +199,7 @@ export class TokenService {
           tokenInfo.price = cachedPrice;
         } else {
           if (!tokenInfo.id) {
-            tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol);
+            tokenInfo.id = this.getTokenGeckoId(tokenInfo.name, tokenInfo.symbol, tokenInfo.address);
           }
           if (tokenInfo.id) {
             tokensByGeckoId.set(tokenInfo.id, tokenInfo);
@@ -267,7 +274,6 @@ export class TokenService {
         this.consoleLogService.logMessage(`registered token: ${tokenAddress}`, "info");
       }
     });
-
     await this.getTokenPrices(tokenInfos);
 
     return tokenInfos;
